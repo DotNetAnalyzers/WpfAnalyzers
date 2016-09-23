@@ -1,0 +1,16 @@
+﻿type project
+title WpfAnalyzers
+id WpfAnalyzers
+tags wpf roslyn analyzer
+projectUrl https://github.com/JohanLarsson/WpfAnalyzers
+licenseUrl http://opensource.org/licenses/MIT
+include-referenced-projects true
+
+excludeddependencies
+  JetBrains.Annotations
+  StyleCop.Analyzers
+  Microsoft.CodeAnalysis.CSharp.Workspaces
+  Microsoft.CodeAnalysis.Analyzers
+  System.Collections.Immutable
+  System.Reflection.Metadata
+  Microsoft.Composition

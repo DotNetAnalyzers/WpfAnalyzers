@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+// ReSharper disable ParameterHidesMember
 namespace WpfAnalyzers.Test
 {
     using System;
@@ -40,15 +41,9 @@ namespace WpfAnalyzers.Test
             }
         }
 
-        public DiagnosticSeverity Severity
-        {
-            get; set;
-        }
+        public DiagnosticSeverity Severity { get; set; }
 
-        public string Id
-        {
-            get; set;
-        }
+        public string Id { get; set; }
 
         public string Message
         {
@@ -73,25 +68,11 @@ namespace WpfAnalyzers.Test
             }
         }
 
-        public LocalizableString MessageFormat
-        {
-            get;
-            set;
-        }
+        public LocalizableString MessageFormat { get; set; }
 
-        public object[] MessageArguments
-        {
-            get;
-            set;
-        }
+        public object[] MessageArguments { get; set; }
 
-        public bool HasLocation
-        {
-            get
-            {
-                return (this.spans != null) && (this.spans.Length > 0);
-            }
-        }
+        public bool HasLocation => (this.spans != null) && (this.spans.Length > 0);
 
         public DiagnosticResult WithArguments(params object[] arguments)
         {
@@ -163,10 +144,7 @@ namespace WpfAnalyzers.Test
             }
             else
             {
-                newSpans = new FileLinePositionSpan[1]
-                {
-                    span,
-                };
+                newSpans = new[] { span };
             }
 
             // clone the object, so that the fluent syntax will work on immutable objects.

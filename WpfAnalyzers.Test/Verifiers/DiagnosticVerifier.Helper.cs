@@ -24,8 +24,6 @@ namespace WpfAnalyzers.Test
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
         private static readonly string VisualBasicDefaultExt = "vb";
-        private static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
-        private static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
         private static readonly string TestProjectName = "TestProject";
 
         /// <summary>

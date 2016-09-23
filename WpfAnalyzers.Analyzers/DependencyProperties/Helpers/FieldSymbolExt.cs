@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.DependencyProperties.Internals
+﻿namespace WpfAnalyzers.DependencyProperties
 {
     using Microsoft.CodeAnalysis;
 

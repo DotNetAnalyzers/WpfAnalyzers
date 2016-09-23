@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+// ReSharper disable PossibleMultipleEnumeration
 namespace WpfAnalyzers.Test
 {
     using System;
@@ -90,6 +91,8 @@ namespace WpfAnalyzers.Test
         [Test]
         public void TestHelpLink()
         {
+            Assert.Inconclusive("No docs yet.");
+            // ReSharper disable HeuristicUnreachableCode
             foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
             {
                 foreach (var diagnostic in diagnosticAnalyzer.SupportedDiagnostics)
@@ -104,6 +107,7 @@ namespace WpfAnalyzers.Test
                     Assert.AreEqual(expected, diagnostic.HelpLinkUri);
                 }
             }
+            // ReSharper restore HeuristicUnreachableCode
         }
 
         /// <summary>

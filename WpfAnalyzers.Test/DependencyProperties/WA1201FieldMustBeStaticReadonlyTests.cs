@@ -57,8 +57,12 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task WhenNotReadonly()
+        [TestCase("public static", "public static readonly")]
+        [TestCase("public", "public static readonly")]
+        [TestCase("public readonly", "public static readonly")]
+        [TestCase("private static", "private static readonly")]
+        [TestCase("private", "private static readonly")]
+        public async Task WhenNotReadonly(string before, string after)
         {
             var testCode = @"
     using System.Windows;
@@ -75,7 +79,7 @@
             set { SetValue(BarProperty, value); }
         }
     }";
-
+            testCode = testCode.Replace("public static DependencyProperty", before + " DependencyProperty");
             var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -94,6 +98,7 @@
             set { SetValue(BarProperty, value); }
         }
     }";
+            fixedCode = fixedCode.Replace("public static readonly DependencyProperty", after + " DependencyProperty");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 

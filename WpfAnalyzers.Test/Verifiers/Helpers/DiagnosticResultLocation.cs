@@ -18,12 +18,12 @@ namespace WpfAnalyzers.Test
         {
             if (line < 0 && column < 0)
             {
-                throw new ArgumentOutOfRangeException("At least one of line and column must be > 0");
+                throw new ArgumentOutOfRangeException(nameof(line), "At least one of line and column must be > 0");
             }
 
             if (line < -1 || column < -1)
             {
-                throw new ArgumentOutOfRangeException("Both line and column must be >= -1");
+                throw new ArgumentOutOfRangeException(nameof(line), "Both line and column must be >= -1");
             }
 
             this.Path = path;

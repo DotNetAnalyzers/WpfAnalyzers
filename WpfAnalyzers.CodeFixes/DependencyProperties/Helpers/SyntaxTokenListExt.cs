@@ -33,6 +33,8 @@
             {
                 switch (modifiers[i].Kind())
                 {
+                    case SyntaxKind.ReadOnlyKeyword:
+                        return modifiers;
                     case SyntaxKind.StaticKeyword:
                     case SyntaxKind.PublicKeyword:
                     case SyntaxKind.ProtectedKeyword:

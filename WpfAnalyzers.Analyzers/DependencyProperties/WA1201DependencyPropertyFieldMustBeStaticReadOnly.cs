@@ -6,8 +6,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    using WpfAnalyzers.DependencyProperties.Internals;
-
     /// <summary>
     /// DependencyProperty field must be named &lt;Name&gt;Property
     /// </summary>
@@ -52,6 +50,7 @@
             if (!fieldSymbol.IsReadOnly)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name));
+                return;
             }
 
             if (!fieldSymbol.IsStatic)

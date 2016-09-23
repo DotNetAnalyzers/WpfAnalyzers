@@ -1,4 +1,4 @@
 # WpfAnalyzer
 ============
 
-Brainstorming ideas for roslyn analyzers for WPF.
+Roslyn analyzers for WPF.
