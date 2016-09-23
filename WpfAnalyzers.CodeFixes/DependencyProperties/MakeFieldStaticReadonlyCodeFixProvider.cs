@@ -14,7 +14,7 @@
     internal class MakeFieldStaticReadonlyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1201DependencyPropertyFieldMustBeStaticReadOnly.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1201FieldMustBeStaticReadOnly.DiagnosticId);
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)

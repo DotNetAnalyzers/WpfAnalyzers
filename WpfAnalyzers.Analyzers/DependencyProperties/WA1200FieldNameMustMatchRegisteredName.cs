@@ -10,7 +10,7 @@
     /// DependencyProperty field must be named &lt;Name&gt;Property
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1200DependencyPropertyFieldMustBeNamedNameProperty : DiagnosticAnalyzer
+    internal class WA1200FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WA1200";
         private const string Title = "DependencyProperty field must be named <Name>Property";

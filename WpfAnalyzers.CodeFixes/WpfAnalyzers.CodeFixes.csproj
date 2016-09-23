@@ -39,7 +39,7 @@
     <Compile Include="DependencyProperties\Helpers\SyntaxTokenListExt.cs" />
     <Compile Include="FinishedTasks.cs" />
     <Compile Include="DependencyProperties\MakeFieldStaticReadonlyCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\RenameDependencyPropertyFieldCodeFixProvider.cs" />
+    <Compile Include="DependencyProperties\RenameFieldCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +62,17 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\.paket\paket.targets" />
+  <ItemGroup>
+    <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\Newtonsoft.Json.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+    <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+    <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll">
       <Paket>True</Paket>

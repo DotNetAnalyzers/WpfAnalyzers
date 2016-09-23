@@ -100,12 +100,12 @@
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1200DependencyPropertyFieldMustBeNamedNameProperty();
+            yield return new WA1200FieldNameMustMatchRegisteredName();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new RenameDependencyPropertyFieldCodeFixProvider();
+            return new RenameFieldCodeFixProvider();
         }
     }
 }

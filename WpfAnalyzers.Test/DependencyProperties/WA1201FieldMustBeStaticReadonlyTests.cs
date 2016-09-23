@@ -104,7 +104,7 @@
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1201DependencyPropertyFieldMustBeStaticReadOnly();
+            yield return new WA1201FieldMustBeStaticReadOnly();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

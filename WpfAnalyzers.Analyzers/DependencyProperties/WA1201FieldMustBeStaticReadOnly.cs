@@ -8,10 +8,10 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// DependencyProperty field must be named &lt;Name&gt;Property
+    /// DependencyProperty field must be static readonly.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1201DependencyPropertyFieldMustBeStaticReadOnly : DiagnosticAnalyzer
+    internal class WA1201FieldMustBeStaticReadOnly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WA1201";
         private const string Title = "DependencyProperty field must be static and readonly";

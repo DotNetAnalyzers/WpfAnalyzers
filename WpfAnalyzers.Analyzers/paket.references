@@ -4,3 +4,6 @@ Microsoft.CodeAnalysis.Analyzers
 Microsoft.CodeAnalysis.Common
 System.Collections.Immutable
 
+group Analyzers
+  StyleCop.Analyzers
+

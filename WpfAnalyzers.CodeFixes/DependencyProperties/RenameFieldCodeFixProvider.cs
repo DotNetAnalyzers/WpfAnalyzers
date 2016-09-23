@@ -9,12 +9,12 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameDependencyPropertyFieldCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameFieldCodeFixProvider))]
     [Shared]
-    internal class RenameDependencyPropertyFieldCodeFixProvider : CodeFixProvider
+    internal class RenameFieldCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1200DependencyPropertyFieldMustBeNamedNameProperty.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1200FieldNameMustMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
