@@ -1,21 +1,19 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    /// <summary>
-    /// DependencyProperty field must be named &lt;Name&gt;Property
-    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1200FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
+    internal class WA1202DefaultValueTypeMustMatch : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1200";
-        private const string Title = "DependencyProperty field must be named <Name>Property";
-        private const string MessageFormat = "DependencyProperty '{0}' field must be named {1}Property";
-        private const string Description = "DependencyProperty field must be named <Name>Property";
+        public const string DiagnosticId = "WA1202";
+        private const string Title = "DependencyProperty default value must be of the type it is registered as.";
+        private const string MessageFormat = "DependencyProperty '{0}' default value must be of type {1}";
+        private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -23,7 +21,7 @@
             Title,
             MessageFormat,
             AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
+            DiagnosticSeverity.Error,
             AnalyzerConstants.EnabledByDefault,
             Description,
             HelpLink);
@@ -53,28 +51,9 @@
                 return;
             }
 
-            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
-            if (registeredName == null)
-            {
-                return;
-            }
-
-            if (!IsMatch(fieldSymbol.Name, registeredName))
-            {
-                var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldSymbol.Name, registeredName));
-            }
-        }
-
-        private static bool IsMatch(string name, string registeredName)
-        {
-            const string Suffix = "Property";
-            if (name.Length != registeredName.Length + Suffix.Length)
-            {
-                return false;
-            }
-
-            return name.StartsWith(registeredName) && name.EndsWith(Suffix);
+            var type = fieldDeclaration.DependencyPropertyRegisteredType();
+            var defaultValue = fieldDeclaration.DependencyPropertyRegisteredDefaultValue();
+            throw new NotImplementedException();
         }
     }
 }

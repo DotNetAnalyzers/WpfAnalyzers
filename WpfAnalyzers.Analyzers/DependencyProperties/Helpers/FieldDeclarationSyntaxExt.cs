@@ -2,25 +2,15 @@
 {
     using System;
     using System.Linq;
-
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class FieldDeclarationSyntaxExt
     {
-        internal static string RegisteredDependencyPropertyName(this FieldDeclarationSyntax declaration)
+        internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)
         {
-            var invocation = declaration.DescendantNodes()
-                                        .OfType<VariableDeclaratorSyntax>()
-                                        .FirstOrDefault()
-                                        ?.DescendantNodes()
-                                        .OfType<EqualsValueClauseSyntax>()
-                                        .FirstOrDefault()
-                                        ?.DescendantNodes()
-                                        .OfType<MemberAccessExpressionSyntax>()
-                                        .FirstOrDefault();
-            if (invocation == null || !invocation.IsDependencyPropertyRegister())
+            MemberAccessExpressionSyntax invocation;
+            if (!TryGetRegisterInvocation(declaration, out invocation))
             {
                 return null;
             }
@@ -56,6 +46,30 @@
             }
 
             return null;
+        }
+
+        internal static string DependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string DependencyPropertyRegisteredDefaultValue(this FieldDeclarationSyntax declaration)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static bool TryGetRegisterInvocation(FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
+        {
+            invocation = declaration.DescendantNodes()
+                .OfType<VariableDeclaratorSyntax>()
+                .FirstOrDefault()
+                ?.DescendantNodes()
+                .OfType<EqualsValueClauseSyntax>()
+                .FirstOrDefault()
+                ?.DescendantNodes()
+                .OfType<MemberAccessExpressionSyntax>()
+                .FirstOrDefault();
+            return invocation != null && invocation.IsDependencyPropertyRegister();
         }
 
         private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)

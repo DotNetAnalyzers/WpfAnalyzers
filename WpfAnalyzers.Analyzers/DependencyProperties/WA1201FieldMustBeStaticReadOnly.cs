@@ -54,7 +54,7 @@
                 return;
             }
 
-            if (fieldDeclaration.RegisteredDependencyPropertyName() == null)
+            if (fieldDeclaration.DependencyPropertyRegisteredName() == null)
             {
                 return;
             }

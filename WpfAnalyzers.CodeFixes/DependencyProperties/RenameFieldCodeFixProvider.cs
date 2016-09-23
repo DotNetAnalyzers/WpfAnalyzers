@@ -48,7 +48,7 @@
         {
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
-            var registeredName = fieldDeclaration.RegisteredDependencyPropertyName();
+            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
             var updatedDeclaration = RenameHelper.RenameSymbolAsync(
                 document,
                 syntaxRoot,
