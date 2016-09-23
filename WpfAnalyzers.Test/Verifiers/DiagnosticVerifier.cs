@@ -289,9 +289,6 @@ namespace WpfAnalyzers.Test
                 actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 message);
 
-            var actualStartLinePosition = actualSpan.StartLinePosition;
-            var actualEndLinePosition = actualSpan.EndLinePosition;
-
             VerifyLinePosition(analyzers, diagnostic, actualSpan.StartLinePosition, expected.StartLinePosition, "start");
             if (expected.StartLinePosition < expected.EndLinePosition)
             {
