@@ -5,8 +5,8 @@
 
     public class FooControl : Control
     {
-        public static readonly System.Windows.DependencyProperty BarProperty = DependencyProperty.Register(
-            "Error",
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            "Meh",
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));

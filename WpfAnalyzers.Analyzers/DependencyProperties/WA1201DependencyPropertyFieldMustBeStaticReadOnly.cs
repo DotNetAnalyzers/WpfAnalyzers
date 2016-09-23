@@ -4,6 +4,7 @@
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -43,6 +44,17 @@
         {
             var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
             if (!fieldSymbol.IsDependencyPropertyField())
+            {
+                return;
+            }
+
+            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
+            if (fieldDeclaration == null || fieldDeclaration.IsMissing)
+            {
+                return;
+            }
+
+            if (fieldDeclaration.RegisteredDependencyPropertyName() == null)
             {
                 return;
             }

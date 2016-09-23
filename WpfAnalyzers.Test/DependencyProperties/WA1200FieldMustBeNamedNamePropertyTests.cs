@@ -77,7 +77,7 @@
         }
     }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 30).WithArguments("BarProperty", "Error");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 51).WithArguments("BarProperty", "Error");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -105,7 +105,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return null;
+            return new RenameDependencyPropertyFieldCodeFixProvider();
         }
     }
 }
