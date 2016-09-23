@@ -1,0 +1,6 @@
+Microsoft.CodeAnalysis.CSharp
+Microsoft.Composition
+Microsoft.CodeAnalysis.Analyzers
+Microsoft.CodeAnalysis.Common
+System.Collections.Immutable
+

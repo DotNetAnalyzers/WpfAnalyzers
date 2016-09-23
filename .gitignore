@@ -1,0 +1,45 @@
+# Build output
+bin/
+obj/
+
+# Artifacts of the IDE and build
+*.sln.ide/
+.vs/
+packages/
+*.suo
+*.user
+TestResults/
+OpenCover.Reports/
+.nuget/NuGet.exe
+build/nuget/
+*.log
+
+# Visual Studio performance tools
+*.psess
+*.vsp
+*.vspx
+
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*

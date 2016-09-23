@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A96555-15B1-4A0C-ADC1-059CEAA3F788}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
+		.paket\paket.targets = .paket\paket.targets
+		.paket\Readme.paket.md = .paket\Readme.paket.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Analyzers", "WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj", "{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.CodeFixes", "WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj", "{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
