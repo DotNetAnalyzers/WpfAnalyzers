@@ -37,12 +37,6 @@
                 {
                     return identifierName.Identifier.Text;
                 }
-
-                //var memberName = argument.Expression as MemberAccessExpressionSyntax;
-                //if (memberName != null)
-                //{
-                //    return memberName.Name?.Identifier.Text;
-                //}
             }
 
             return null;
@@ -50,6 +44,12 @@
 
         internal static string DependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration)
         {
+            MemberAccessExpressionSyntax invocation;
+            if (!TryGetRegisterInvocation(declaration, out invocation))
+            {
+                return null;
+            }
+
             throw new NotImplementedException();
         }
 

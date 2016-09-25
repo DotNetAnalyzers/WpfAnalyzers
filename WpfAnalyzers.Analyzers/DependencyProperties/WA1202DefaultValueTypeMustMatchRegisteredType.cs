@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1202DefaultValueTypeMustMatch : DiagnosticAnalyzer
+    internal class WA1202DefaultValueTypeMustMatchRegisteredType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WA1202";
         private const string Title = "DependencyProperty default value must be of the type it is registered as.";
