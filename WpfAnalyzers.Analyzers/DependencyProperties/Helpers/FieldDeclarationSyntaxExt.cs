@@ -60,16 +60,12 @@
 
         private static bool TryGetRegisterInvocation(FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
-            invocation = declaration.DescendantNodes()
-                .OfType<VariableDeclaratorSyntax>()
-                .FirstOrDefault()
-                ?.DescendantNodes()
-                .OfType<EqualsValueClauseSyntax>()
-                .FirstOrDefault()
-                ?.DescendantNodes()
-                .OfType<MemberAccessExpressionSyntax>()
-                .FirstOrDefault();
-            return invocation != null && invocation.IsDependencyPropertyRegister();
+            invocation = (declaration.Declaration
+                    .Variables
+                    .FirstOrDefault()
+                    .Initializer.Value as InvocationExpressionSyntax)
+                ?.Expression as MemberAccessExpressionSyntax;
+            return invocation?.IsDependencyPropertyRegister() == true;
         }
 
         private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)
