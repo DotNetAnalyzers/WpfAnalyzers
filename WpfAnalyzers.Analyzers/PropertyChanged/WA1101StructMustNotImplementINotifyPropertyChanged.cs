@@ -1,12 +1,14 @@
 ﻿namespace WpfAnalyzers.PropertyChanged
 {
-    using System;
     using System.Collections.Immutable;
+    using System.Linq;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+
+    using WpfAnalyzers.PropertyChanged.Helpers;
 
     /// <summary>
     /// DependencyProperty field must be static readonly.
@@ -44,18 +46,10 @@
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var structDeclaration = (StructDeclarationSyntax)context.Node;
-            var types = structDeclaration?.BaseList?.Types;
-            if (types == null)
+            if (structDeclaration.ImplementsINotifyPropertyChanged())
             {
-                return;
-            }
-
-            foreach (var type in types.Value)
-            {
-                if ((type.Type as IdentifierNameSyntax)?.Identifier.Text.EndsWith("INotifyPropertyChanged") == true)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, type.GetLocation(), context.ContainingSymbol.Name));
-                }
+                var type = structDeclaration?.BaseList?.Types.First(x => x.IsINotifyPropertyChanged());
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, type.GetLocation(), context.ContainingSymbol.Name));
             }
         }
     }

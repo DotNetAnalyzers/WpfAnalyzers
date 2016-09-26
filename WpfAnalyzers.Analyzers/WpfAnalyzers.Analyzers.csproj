@@ -47,6 +47,8 @@
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
+    <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChanged.cs" />
   </ItemGroup>
   <ItemGroup>
