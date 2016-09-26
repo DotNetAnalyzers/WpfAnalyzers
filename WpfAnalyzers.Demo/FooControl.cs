@@ -1,20 +1,21 @@
 ﻿namespace WpfAnalyzers.Demo
 {
+    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            "Meh",
-            typeof(int),
+            "Bar",
+            typeof(ObservableCollection<int>),
             typeof(FooControl),
-            new PropertyMetadata(default(int)));
+            new PropertyMetadata(new ObservableCollection<int>()));
 
-        public int Bar
+        public ObservableCollection<int> Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            get { return (ObservableCollection<int>)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
         }
     }
 }

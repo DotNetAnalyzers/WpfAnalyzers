@@ -10,6 +10,7 @@ nuget Microsoft.Composition 1.0.27
 group Analyzers
   source http://www.nuget.org/api/v2/
   nuget StyleCop.Analyzers
+  nuget JetBrains.Annotations
 
 group Test
   source http://www.nuget.org/api/v2/
