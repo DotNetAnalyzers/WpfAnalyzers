@@ -39,6 +39,7 @@
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\MemberAccessExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1201FieldMustBeStaticReadOnly.cs" />
