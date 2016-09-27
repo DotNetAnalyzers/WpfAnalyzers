@@ -84,7 +84,7 @@
         }
 
         [Test]
-        public async Task WhenNotMatchingRegisteredName()
+        public async Task WhenNotMatching()
         {
             var testCode = @"
     using System.Windows;
@@ -160,6 +160,56 @@
             set { this.SetValue(BarProperty, value); }
         }
     }";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotMatchingReadonly()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Error
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        protected set { this.SetValue(BarPropertyKey, value); }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        protected set { this.SetValue(BarPropertyKey, value); }
+    }
+}";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 

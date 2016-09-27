@@ -23,5 +23,20 @@
 
             return true;
         }
+
+        internal static bool IsDependencyPropertyKeyProperty(this MemberAccessExpressionSyntax memberAccess)
+        {
+            if (memberAccess == null || memberAccess.IsMissing)
+            {
+                return false;
+            }
+
+            if (memberAccess.Name.Identifier.ValueText != "DependencyProperty")
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

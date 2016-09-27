@@ -44,7 +44,7 @@
                 return;
             }
 
-            var registeredName = propertyDeclaration.DependencyPropertyRegisteredName();
+            var registeredName = propertyDeclaration.DependencyPropertyRegisteredNameFromGetter();
             var propertyName = propertyDeclaration.Name();
             if (registeredName == null || propertyName == null)
             {

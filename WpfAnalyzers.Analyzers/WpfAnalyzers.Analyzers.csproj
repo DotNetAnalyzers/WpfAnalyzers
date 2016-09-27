@@ -37,16 +37,19 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="DependencyProperties\Helpers\ClassDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExt.cs" />
     <Compile Include="DependencyProperties\Helpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\MemberAccessExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\PropertyDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1201FieldMustBeStaticReadOnly.cs" />
     <Compile Include="DependencyProperties\WA1202DefaultValueTypeMustMatchRegisteredType.cs" />
     <Compile Include="DependencyProperties\WA1203ClrPropertyNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1204ClrPropertyTypeMustMatchRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WA1205ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />

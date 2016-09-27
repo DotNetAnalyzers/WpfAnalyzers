@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,7 +13,7 @@
             return property?.Identifier.Text;
         }
 
-        internal static string DependencyPropertyRegisteredName(this PropertyDeclarationSyntax property)
+        internal static string DependencyPropertyRegisteredNameFromGetter(this PropertyDeclarationSyntax property)
         {
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyPropertyFromGetter(out dependencyProperty))
@@ -71,6 +73,22 @@
             return null;
         }
 
+        internal static FieldDeclarationSyntax GetDependencyPropertyFromGetter(this PropertyDeclarationSyntax propertyDeclaration)
+        {
+            FieldDeclarationSyntax dp;
+            return TryGetDependencyPropertyFromGetter(propertyDeclaration, out dp)
+                       ? dp
+                       : null;
+        }
+
+        internal static FieldDeclarationSyntax GetDependencyPropertyFromSetter(this PropertyDeclarationSyntax propertyDeclaration)
+        {
+            FieldDeclarationSyntax dp;
+            return TryGetDependencyPropertyFromSetter(propertyDeclaration, out dp)
+                       ? dp
+                       : null;
+        }
+
         internal static bool TryGetDependencyPropertyFromGetter(
             this PropertyDeclarationSyntax propertyDeclaration,
             out FieldDeclarationSyntax dependencyProperty)
@@ -84,27 +102,25 @@
                 return false;
             }
 
-            var arg = invocation.ArgumentList?.Arguments.FirstOrDefault()?.Expression as IdentifierNameSyntax;
-            if (arg == null)
+            dependencyProperty = GetFieldFromFirstArgument(propertyDeclaration, invocation.ArgumentList);
+            return dependencyProperty != null;
+        }
+
+        internal static bool TryGetDependencyPropertyFromSetter(this PropertyDeclarationSyntax propertyDeclaration, out FieldDeclarationSyntax dependencyProperty)
+        {
+            var setter = propertyDeclaration.SetAccessorDeclaration();
+            var statement = setter?.Body?.Statements.FirstOrDefault() as ExpressionStatementSyntax;
+            var invocation = statement?.Expression as InvocationExpressionSyntax;
+            if (invocation == null)
             {
                 dependencyProperty = null;
                 return false;
             }
 
-            var classDeclaration = (ClassDeclarationSyntax)propertyDeclaration.Parent;
-            foreach (var member in classDeclaration.Members)
+            if (invocation.Name() == "SetValue" && invocation.ArgumentList.Arguments.Count == 2)
             {
-                var field = member as FieldDeclarationSyntax;
-                if (!field.IsDependencyPropertyType())
-                {
-                    continue;
-                }
-
-                if (field.Name() == arg.Identifier.Text)
-                {
-                    dependencyProperty = field;
-                    return true;
-                }
+                dependencyProperty = GetFieldFromFirstArgument(propertyDeclaration, invocation.ArgumentList);
+                return dependencyProperty != null;
             }
 
             dependencyProperty = null;
@@ -126,6 +142,18 @@
             }
 
             return null;
+        }
+
+        private static FieldDeclarationSyntax GetFieldFromFirstArgument(PropertyDeclarationSyntax property, ArgumentListSyntax arguments)
+        {
+            if (arguments == null || arguments.Arguments.Count == 0)
+            {
+                return null;
+            }
+
+            var arg = arguments.Arguments[0].Expression as IdentifierNameSyntax;
+            var classDeclaration = (ClassDeclarationSyntax)property.Parent;
+            return classDeclaration.FieldDeclaration(arg?.Identifier.Text);
         }
     }
 }

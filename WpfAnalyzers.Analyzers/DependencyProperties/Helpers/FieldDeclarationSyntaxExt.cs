@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
+
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -11,6 +13,12 @@
             return type?.Identifier.Text == Names.DependencyProperty;
         }
 
+        internal static bool IsDependencyPropertyKeyType(this FieldDeclarationSyntax declaration)
+        {
+            var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
+            return type?.Identifier.Text == Names.DependencyPropertyKey;
+        }
+
         internal static string Name(this FieldDeclarationSyntax declaration)
         {
             var variables = declaration?.Declaration?.Variables;
@@ -20,6 +28,36 @@
             }
 
             return variables.Value[0].Identifier.Text;
+        }
+
+        internal static FieldDeclarationSyntax DependencyPropertyKey(this FieldDeclarationSyntax field)
+        {
+            if (!field.IsDependencyPropertyType())
+            {
+                return null;
+            }
+
+            var declarationSyntax = field.Declaration;
+            if (declarationSyntax == null || declarationSyntax.Variables.Count != 1)
+            {
+                return null;
+            }
+
+            var variable = declarationSyntax?.Variables.FirstOrDefault();
+            if (variable == null)
+            {
+                return null;
+            }
+
+            var memberAccess = variable.Initializer.Value as MemberAccessExpressionSyntax;
+            if (!memberAccess.IsDependencyPropertyKeyProperty())
+            {
+                return null;
+            }
+
+            var classSyntax = (ClassDeclarationSyntax)field.Parent;
+            var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.Text;
+            return classSyntax.FieldDeclaration(name);
         }
 
         internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)
@@ -79,7 +117,7 @@
 
             return null;
         }
-  
+
         private static bool TryGetRegisterInvocation(FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
             invocation = (declaration.Declaration
