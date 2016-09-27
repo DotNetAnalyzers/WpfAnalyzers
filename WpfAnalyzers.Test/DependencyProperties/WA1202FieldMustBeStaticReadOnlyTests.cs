@@ -89,7 +89,7 @@ public class FooControl : Control
         [TestCase("public readonly", "public static readonly")]
         [TestCase("private static", "private static readonly")]
         [TestCase("private", "private static readonly")]
-        public async Task WhenNotReadonly(string before, string after)
+        public async Task WhenNotStaticAndReadonly(string before, string after)
         {
             var testCode = @"
     using System.Windows;
@@ -107,7 +107,7 @@ public class FooControl : Control
         }
     }";
             testCode = testCode.Replace("public static DependencyProperty", before + " DependencyProperty");
-            var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty");
+            var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty", "DependencyProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -153,7 +153,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty");
+            var expected = this.CSharpDiagnostic().WithLocation(7, 5).WithArguments("BarPropertyKey", "DependencyPropertyKey", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"

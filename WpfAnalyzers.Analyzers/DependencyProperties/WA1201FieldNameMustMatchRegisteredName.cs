@@ -12,7 +12,7 @@
     {
         public const string DiagnosticId = "WA1201";
         private const string Title = "DependencyPropertyKey field name must match registered name.";
-        private const string MessageFormat = "DependencyPropertyKey '{0}' field must be named {1}PropertyKey";
+        private const string MessageFormat = "Field '{0}' that is backing field for the DependencyPropertyKey registered as '{1}' must be named '{1}PropertyKey'";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 

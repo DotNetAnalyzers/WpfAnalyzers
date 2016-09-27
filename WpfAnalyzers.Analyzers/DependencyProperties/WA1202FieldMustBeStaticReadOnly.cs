@@ -12,7 +12,7 @@
     {
         public const string DiagnosticId = "WA1202";
         private const string Title = "DependencyProperty field must be static and readonly";
-        private const string MessageFormat = "DependencyProperty '{0}' field must be static and readonly";
+        private const string MessageFormat = "Field '{0}' that is backing field for the {1} registered as '{2}' must be static and readonly";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -39,32 +39,22 @@
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
-            if (!fieldSymbol.IsDependencyPropertyField())
-            {
-                return;
-            }
-
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null || fieldDeclaration.IsMissing)
             {
                 return;
             }
 
-            if (fieldDeclaration.DependencyPropertyRegisteredName() == null)
+            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
+            if (registeredName == null)
             {
                 return;
             }
 
-            if (!fieldSymbol.IsReadOnly)
+            var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
+            if (!fieldSymbol.IsReadOnly || !fieldSymbol.IsStatic)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name));
-                return;
-            }
-
-            if (!fieldSymbol.IsStatic)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name, fieldSymbol.Type.Name, registeredName));
             }
         }
     }
