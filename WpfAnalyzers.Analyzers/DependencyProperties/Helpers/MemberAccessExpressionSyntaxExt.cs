@@ -6,42 +6,22 @@
     {
         internal static bool IsDependencyPropertyRegister(this MemberAccessExpressionSyntax memberAccess)
         {
-            if (memberAccess == null || memberAccess.IsMissing)
-            {
-                return false;
-            }
+            return memberAccess.IsDependencyPropertyCall("Register");
+        }
 
-            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
-            {
-                return false;
-            }
-
-            if (memberAccess.Name.Identifier.ValueText != "Register")
-            {
-                return false;
-            }
-
-            return true;
+        internal static bool IsDependencyPropertyRegisterAttached(this MemberAccessExpressionSyntax memberAccess)
+        {
+            return memberAccess.IsDependencyPropertyCall("RegisterAttached");
         }
 
         internal static bool IsDependencyPropertyRegisterReadOnly(this MemberAccessExpressionSyntax memberAccess)
         {
-            if (memberAccess == null || memberAccess.IsMissing)
-            {
-                return false;
-            }
+            return memberAccess.IsDependencyPropertyCall("RegisterReadOnly");
+        }
 
-            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
-            {
-                return false;
-            }
-
-            if (memberAccess.Name.Identifier.ValueText != "RegisterReadOnly")
-            {
-                return false;
-            }
-
-            return true;
+        internal static bool IsDependencyPropertyRegisterAttachedReadOnly(this MemberAccessExpressionSyntax memberAccess)
+        {
+            return memberAccess.IsDependencyPropertyCall("RegisterAttachedReadOnly");
         }
 
         internal static bool IsDependencyPropertyKeyProperty(this MemberAccessExpressionSyntax memberAccess)
@@ -51,12 +31,22 @@
                 return false;
             }
 
-            if (memberAccess.Name.Identifier.ValueText != "DependencyProperty")
+            return memberAccess.Name?.Identifier.ValueText == "DependencyProperty";
+        }
+
+        private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)
+        {
+            if (memberAccess == null || memberAccess.IsMissing)
             {
                 return false;
             }
 
-            return true;
+            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
+            {
+                return false;
+            }
+
+            return memberAccess.Name?.Identifier.ValueText == name;
         }
     }
 }

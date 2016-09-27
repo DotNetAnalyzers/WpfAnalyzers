@@ -164,13 +164,16 @@
                     .FirstOrDefault()
                     .Initializer.Value as InvocationExpressionSyntax)
                 ?.Expression as MemberAccessExpressionSyntax;
-            if (invocation.IsDependencyPropertyRegister() || invocation.IsDependencyPropertyRegisterReadOnly())
+            if (invocation.IsDependencyPropertyRegister() ||
+                invocation.IsDependencyPropertyRegisterReadOnly() ||
+                invocation.IsDependencyPropertyRegisterAttached() ||
+                invocation.IsDependencyPropertyRegisterAttachedReadOnly())
             {
                 return true;
             }
 
             FieldDeclarationSyntax propertyKey;
-            if (!declaration.TryGetDependencyPropertyKey( out propertyKey))
+            if (!declaration.TryGetDependencyPropertyKey(out propertyKey))
             {
                 return false;
             }
@@ -181,7 +184,8 @@
                                      .Initializer.Value as InvocationExpressionSyntax)
                                      ?.Expression as
                              MemberAccessExpressionSyntax;
-            if (invocation.IsDependencyPropertyRegisterReadOnly())
+            if (invocation.IsDependencyPropertyRegisterReadOnly() ||
+                invocation.IsDependencyPropertyRegisterAttachedReadOnly())
             {
                 return true;
             }

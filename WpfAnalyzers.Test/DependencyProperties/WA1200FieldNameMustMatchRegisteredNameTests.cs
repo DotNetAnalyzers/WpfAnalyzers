@@ -86,6 +86,34 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task HappyPathAttached()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenNotMatching()
         {
             var testCode = @"
@@ -170,6 +198,58 @@ public class FooControl : Control
     {
         get { return (int) GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotMatchingAttached()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty Error = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(Error, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(Error);
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 47).WithArguments("BarProperty", "Error");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
     }
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
