@@ -59,7 +59,7 @@
         }
 
         [Test]
-        public async Task PropertyNotNamedNameProperty()
+        public async Task WhenNotMatchingRegisteredName()
         {
             var testCode = @"
     using System.Windows;

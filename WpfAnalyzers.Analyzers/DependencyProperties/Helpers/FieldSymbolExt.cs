@@ -6,7 +6,7 @@
     {
         internal static bool IsDependencyPropertyField(this IFieldSymbol fieldSymbol)
         {
-            return fieldSymbol.Type.Name == Names.DependencyPropertyType;
+            return fieldSymbol.Type.Name == Names.DependencyProperty;
         }
     }
 }

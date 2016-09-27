@@ -5,6 +5,23 @@
 
     internal static class FieldDeclarationSyntaxExt
     {
+        internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
+        {
+            var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
+            return type?.Identifier.Text == Names.DependencyProperty;
+        }
+
+        internal static string Name(this FieldDeclarationSyntax declaration)
+        {
+            var variables = declaration?.Declaration?.Variables;
+            if (variables?.Count != 1)
+            {
+                return null;
+            }
+
+            return variables.Value[0].Identifier.Text;
+        }
+
         internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)
         {
             MemberAccessExpressionSyntax invocation;

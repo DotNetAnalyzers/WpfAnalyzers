@@ -7,9 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    /// <summary>
-    /// DependencyProperty field must be static readonly.
-    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WA1201FieldMustBeStaticReadOnly : DiagnosticAnalyzer
     {

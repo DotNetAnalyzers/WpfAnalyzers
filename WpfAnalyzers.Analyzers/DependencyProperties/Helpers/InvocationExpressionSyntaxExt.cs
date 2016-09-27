@@ -1,18 +1,41 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class InvocationExpressionSyntaxExt
     {
-        internal static bool IsNameOfInvocation(this InvocationExpressionSyntax invocation)
+        internal static string Name(this InvocationExpressionSyntax invocation)
         {
             if (invocation == null)
             {
-                return false;
+                return null;
             }
 
-            var identifier = invocation.Expression as IdentifierNameSyntax;
-            return identifier?.Identifier.ValueText == "nameof";
+            switch (invocation.Kind())
+            {
+                case SyntaxKind.InvocationExpression:
+                case SyntaxKind.SimpleMemberAccessExpression:
+                case SyntaxKind.TypeOfExpression:
+                    var identifierName = invocation.Expression as IdentifierNameSyntax;
+                    if (identifierName == null)
+                    {
+                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                        if (memberAccess != null && memberAccess.Expression is ThisExpressionSyntax)
+                        {
+                            identifierName = memberAccess.Name as IdentifierNameSyntax;
+                        }
+                    }
+
+                    return identifierName?.Identifier.Text;
+                default:
+                    return null;
+            }
+        }
+
+        internal static bool IsNameOfInvocation(this InvocationExpressionSyntax invocation)
+        {
+            return invocation.Name() == "nameof";
         }
 
         internal static bool TryGetNameOfResult(this InvocationExpressionSyntax nameOfInvocation, out string result)

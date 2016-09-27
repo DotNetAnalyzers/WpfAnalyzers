@@ -2,6 +2,6 @@
 {
     internal static class Names
     {
-        public const string DependencyPropertyType = "DependencyProperty";
+        public const string DependencyProperty = "DependencyProperty";
     }
 }

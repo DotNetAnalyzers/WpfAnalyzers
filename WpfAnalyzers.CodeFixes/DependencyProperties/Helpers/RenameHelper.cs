@@ -43,8 +43,8 @@ namespace WpfAnalyzers.DependencyProperties
                 // If the symbol is a class or struct, the name can't be the same as any of its members.
                 if (typeKind == TypeKind.Class || typeKind == TypeKind.Struct)
                 {
-                    var members = (symbol as INamedTypeSymbol)?.GetMembers(name);
-                    if (members.HasValue && !members.Value.IsDefaultOrEmpty)
+                    var members = ((INamedTypeSymbol)symbol).GetMembers(name);
+                    if (!members.IsDefaultOrEmpty)
                     {
                         return false;
                     }

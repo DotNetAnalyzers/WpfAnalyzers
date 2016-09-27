@@ -6,16 +6,13 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    /// <summary>
-    /// DependencyProperty field must be named &lt;Name&gt;Property
-    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WA1200FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WA1200";
-        private const string Title = "DependencyProperty field must be named <Name>Property";
+        private const string Title = "DependencyProperty field must match registered name.";
         private const string MessageFormat = "DependencyProperty '{0}' field must be named {1}Property";
-        private const string Description = "DependencyProperty field must be named <Name>Property";
+        private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -41,14 +38,8 @@
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
-            if (!fieldSymbol.IsDependencyPropertyField())
-            {
-                return;
-            }
-
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing)
+            if (fieldDeclaration == null || fieldDeclaration.IsMissing || !fieldDeclaration.IsDependencyPropertyType())
             {
                 return;
             }
@@ -59,10 +50,11 @@
                 return;
             }
 
-            if (!IsMatch(fieldSymbol.Name, registeredName))
+            var fieldName = fieldDeclaration.Name();
+            if (!IsMatch(fieldName, registeredName))
             {
                 var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldSymbol.Name, registeredName));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldName, registeredName));
             }
         }
 

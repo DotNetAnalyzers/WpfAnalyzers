@@ -49,7 +49,7 @@
             if (structDeclaration.ImplementsINotifyPropertyChanged())
             {
                 var type = structDeclaration?.BaseList?.Types.First(x => x.IsINotifyPropertyChanged());
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, type.GetLocation(), context.ContainingSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, type?.GetLocation() ?? structDeclaration?.GetLocation(), context.ContainingSymbol.Name));
             }
         }
     }

@@ -11,7 +11,7 @@
                 return false;
             }
 
-            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyPropertyType)
+            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
             {
                 return false;
             }

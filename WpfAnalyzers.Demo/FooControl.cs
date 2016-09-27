@@ -14,7 +14,7 @@
 
         public ObservableCollection<int> Bar
         {
-            get { return (ObservableCollection<int>)GetValue(BarProperty); }
+            get { return (ObservableCollection<int>)this.GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }
