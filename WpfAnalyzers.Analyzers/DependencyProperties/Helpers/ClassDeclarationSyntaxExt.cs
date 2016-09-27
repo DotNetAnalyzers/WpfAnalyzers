@@ -9,9 +9,9 @@
             return classDeclaration?.Identifier.Text;
         }
 
-        internal static FieldDeclarationSyntax FieldDeclaration(this ClassDeclarationSyntax classSyntax, string name)
+        internal static FieldDeclarationSyntax Field(this ClassDeclarationSyntax classSyntax, string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (classSyntax == null || classSyntax.IsMissing || string.IsNullOrWhiteSpace(name))
             {
                 return null;
             }
@@ -26,6 +26,11 @@
             }
 
             return null;
+        }
+
+        internal static FieldDeclarationSyntax Field(this ClassDeclarationSyntax classSyntax, IdentifierNameSyntax name)
+        {
+            return classSyntax.Field(name?.Identifier.Text);
         }
     }
 }

@@ -33,42 +33,46 @@
             return null;
         }
 
-        internal static AccessorDeclarationSyntax GetAccessorDeclaration(this PropertyDeclarationSyntax property)
+        internal static bool TryGetGetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
         {
+            result = null;
             var accessors = property?.AccessorList?.Accessors;
             if (accessors == null)
             {
-                return null;
+                return false;
             }
 
             foreach (var accessor in accessors)
             {
                 if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
                 {
-                    return accessor;
+                    result = accessor;
+                    return true;
                 }
             }
 
-            return null;
+            return false;
         }
 
-        internal static AccessorDeclarationSyntax SetAccessorDeclaration(this PropertyDeclarationSyntax property)
+        internal static bool TryGetSetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
         {
+            result = null;
             var accessors = property?.AccessorList?.Accessors;
             if (accessors == null)
             {
-                return null;
+                return false;
             }
 
             foreach (var accessor in accessors)
             {
                 if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
                 {
-                    return accessor;
+                    result = accessor;
+                    return true;
                 }
             }
 
-            return null;
+            return false;
         }
 
         internal static FieldDeclarationSyntax GetDependencyPropertyFromGetter(this PropertyDeclarationSyntax propertyDeclaration)
@@ -88,40 +92,51 @@
         }
 
         internal static bool TryGetDependencyPropertyFromGetter(
-            this PropertyDeclarationSyntax propertyDeclaration,
+            this PropertyDeclarationSyntax property,
             out FieldDeclarationSyntax dependencyProperty)
         {
-            var getter = propertyDeclaration.GetAccessorDeclaration();
-            var returnStatement = getter.Body?.Statements.FirstOrDefault() as ReturnStatementSyntax;
-            var invocation = GetValueInvocation(returnStatement?.Expression);
-            if (invocation == null)
+            dependencyProperty = null;
+            AccessorDeclarationSyntax getter;
+            if (!property.TryGetGetAccessorDeclaration(out getter))
             {
-                dependencyProperty = null;
                 return false;
             }
 
-            dependencyProperty = GetFieldFromFirstArgument(propertyDeclaration, invocation.ArgumentList);
+            var returnStatement = getter.Body?.Statements.FirstOrDefault() as ReturnStatementSyntax;
+            var invocation = GetValueInvocation(returnStatement?.Expression);
+            if (invocation == null || invocation.ArgumentList.Arguments.Count != 1)
+            {
+                return false;
+            }
+
+            dependencyProperty = property.Class()
+                .Field(invocation.ArgumentList.Arguments.First().Expression as IdentifierNameSyntax);
             return dependencyProperty != null;
         }
 
-        internal static bool TryGetDependencyPropertyFromSetter(this PropertyDeclarationSyntax propertyDeclaration, out FieldDeclarationSyntax dependencyProperty)
+        internal static bool TryGetDependencyPropertyFromSetter(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)
         {
-            var setter = propertyDeclaration.SetAccessorDeclaration();
+            dependencyProperty = null;
+            AccessorDeclarationSyntax setter;
+            if (!property.TryGetSetAccessorDeclaration(out setter))
+            {
+                return false;
+            }
+
             var statement = setter?.Body?.Statements.FirstOrDefault() as ExpressionStatementSyntax;
             var invocation = statement?.Expression as InvocationExpressionSyntax;
             if (invocation == null)
             {
-                dependencyProperty = null;
                 return false;
             }
 
             if (invocation.Name() == "SetValue" && invocation.ArgumentList.Arguments.Count == 2)
             {
-                dependencyProperty = GetFieldFromFirstArgument(propertyDeclaration, invocation.ArgumentList);
+                dependencyProperty = property.Class()
+                                             .Field(invocation.ArgumentList.Arguments.First().Expression as IdentifierNameSyntax);
                 return dependencyProperty != null;
             }
 
-            dependencyProperty = null;
             return false;
         }
 
@@ -140,18 +155,6 @@
             }
 
             return null;
-        }
-
-        private static FieldDeclarationSyntax GetFieldFromFirstArgument(PropertyDeclarationSyntax property, ArgumentListSyntax arguments)
-        {
-            if (arguments == null || arguments.Arguments.Count == 0)
-            {
-                return null;
-            }
-
-            var arg = arguments.Arguments[0].Expression as IdentifierNameSyntax;
-            var classDeclaration = (ClassDeclarationSyntax)property.Parent;
-            return classDeclaration.FieldDeclaration(arg?.Identifier.Text);
         }
     }
 }

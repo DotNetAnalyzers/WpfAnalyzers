@@ -65,7 +65,7 @@
 
             var classSyntax = (ClassDeclarationSyntax)field.Parent;
             var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.Text;
-            return classSyntax.FieldDeclaration(name);
+            return classSyntax.Field(name);
         }
 
         internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)

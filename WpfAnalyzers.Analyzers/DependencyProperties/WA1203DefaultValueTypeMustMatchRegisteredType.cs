@@ -34,7 +34,7 @@
 //        {
 //            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 //            context.EnableConcurrentExecution();
-//            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+//            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.Field);
 //        }
 
 //        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
