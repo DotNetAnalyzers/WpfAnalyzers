@@ -41,6 +41,37 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task WhenWrongOrderAttached()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarPropertyKey, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey", "BarProperty");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new WA1204KeyFieldMustComeBeforePropertyField();
