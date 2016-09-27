@@ -53,6 +53,7 @@
     <Compile Include="DependencyProperties\WA1201FieldMustBeStaticReadonlyTests.cs" />
     <Compile Include="DependencyProperties\WA1203ClrPropertyNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1200FieldMustBeNamedNamePropertyTests.cs" />
+    <Compile Include="DependencyProperties\WA1204ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChangedTests.cs" />
     <Compile Include="PublicApiTests.cs" />

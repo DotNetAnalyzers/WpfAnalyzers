@@ -22,6 +22,17 @@
             return null;
         }
 
+        internal static TypeSyntax DependencyPropertyRegisteredType(this PropertyDeclarationSyntax property)
+        {
+            FieldDeclarationSyntax dependencyProperty;
+            if (property.TryGetDependencyPropertyFromGetter(out dependencyProperty))
+            {
+                return dependencyProperty.DependencyPropertyRegisteredType();
+            }
+
+            return null;
+        }
+
         internal static AccessorDeclarationSyntax GetAccessorDeclaration(this PropertyDeclarationSyntax property)
         {
             var accessors = property?.AccessorList?.Accessors;
