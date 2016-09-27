@@ -235,7 +235,6 @@ public static class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-
         [Test]
         public async Task WhenNotReadonlyAttachedPropertyKey()
         {
@@ -291,7 +290,6 @@ public static class Foo
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
-
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
