@@ -45,7 +45,12 @@
                 return;
             }
 
-            var registeredType = propertyDeclaration.DependencyPropertyRegisteredType();
+            TypeSyntax registeredType;
+            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredType(out registeredType))
+            {
+                return;
+            }
+
             var propertyType = propertyDeclaration.Type;
             if (registeredType == null || propertyType == null)
             {

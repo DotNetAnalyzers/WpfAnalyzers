@@ -38,34 +38,36 @@
             return variables.Value[0].Identifier.Text;
         }
 
-        internal static FieldDeclarationSyntax DependencyPropertyKey(this FieldDeclarationSyntax field)
+        internal static bool TryGetDependencyPropertyKey(this FieldDeclarationSyntax field, out FieldDeclarationSyntax result)
         {
+            result = null;
             if (!field.IsDependencyPropertyType())
             {
-                return null;
+                return false;
             }
 
             var declarationSyntax = field.Declaration;
             if (declarationSyntax == null || declarationSyntax.Variables.Count != 1)
             {
-                return null;
+                return false;
             }
 
             var variable = declarationSyntax.Variables.FirstOrDefault();
             if (variable == null)
             {
-                return null;
+                return false;
             }
 
             var memberAccess = variable.Initializer.Value as MemberAccessExpressionSyntax;
             if (!memberAccess.IsDependencyPropertyKeyProperty())
             {
-                return null;
+                return false;
             }
 
             var classSyntax = (ClassDeclarationSyntax)field.Parent;
             var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.Text;
-            return classSyntax.Field(name);
+            result = classSyntax.Field(name);
+            return result != null;
         }
 
         internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)
@@ -167,7 +169,12 @@
                 return true;
             }
 
-            var propertyKey = declaration.DependencyPropertyKey();
+            FieldDeclarationSyntax propertyKey;
+            if (!declaration.TryGetDependencyPropertyKey( out propertyKey))
+            {
+                return false;
+            }
+
             invocation = (propertyKey.Declaration
                                      .Variables
                                      .FirstOrDefault()

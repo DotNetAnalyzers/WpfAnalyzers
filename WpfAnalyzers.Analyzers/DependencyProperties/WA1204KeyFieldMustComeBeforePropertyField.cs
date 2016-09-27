@@ -45,18 +45,18 @@
                 return;
             }
 
-            var keyField = declaration.DependencyPropertyKey();
-            if (keyField == null)
+            FieldDeclarationSyntax key;
+            if (!declaration.TryGetDependencyPropertyKey(out key))
             {
                 return;
             }
 
-            if (keyField.SpanStart < declaration.SpanStart)
+            if (key.SpanStart < declaration.SpanStart)
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), keyField.Name(), declaration.Name()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), key.Name(), declaration.Name()));
         }
     }
 }

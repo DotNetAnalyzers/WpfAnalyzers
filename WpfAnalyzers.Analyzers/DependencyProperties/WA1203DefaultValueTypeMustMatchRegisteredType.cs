@@ -51,7 +51,7 @@
 //                return;
 //            }
 
-//            var type = fieldDeclaration.DependencyPropertyRegisteredType();
+//            var type = fieldDeclaration.TryGetDependencyPropertyRegisteredType();
 //            var defaultValue = fieldDeclaration.DependencyPropertyRegisteredDefaultValue();
 //            throw new NotImplementedException();
 //        }

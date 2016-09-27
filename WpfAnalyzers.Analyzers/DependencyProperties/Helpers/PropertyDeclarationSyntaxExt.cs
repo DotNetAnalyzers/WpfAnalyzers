@@ -22,15 +22,16 @@
             return null;
         }
 
-        internal static TypeSyntax DependencyPropertyRegisteredType(this PropertyDeclarationSyntax property)
+        internal static bool TryGetDependencyPropertyRegisteredType(this PropertyDeclarationSyntax property, out TypeSyntax result)
         {
+            result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyPropertyFromGetter(out dependencyProperty))
             {
-                return dependencyProperty.DependencyPropertyRegisteredType();
+                result = dependencyProperty.DependencyPropertyRegisteredType();
             }
 
-            return null;
+            return result != null;
         }
 
         internal static bool TryGetGetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)

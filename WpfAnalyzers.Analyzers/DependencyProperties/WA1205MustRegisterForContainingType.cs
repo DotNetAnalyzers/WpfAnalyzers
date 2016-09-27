@@ -45,7 +45,8 @@
                 return;
             }
 
-            if (declaration.IsDependencyPropertyField() && declaration.DependencyPropertyKey() != null)
+            FieldDeclarationSyntax key;
+            if (declaration.IsDependencyPropertyField() && declaration.TryGetDependencyPropertyKey(out key))
             {
                 return;
             }

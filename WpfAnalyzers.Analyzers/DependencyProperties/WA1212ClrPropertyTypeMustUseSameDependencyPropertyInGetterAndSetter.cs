@@ -52,9 +52,13 @@
                 return;
             }
 
-            if (getter.DependencyPropertyKey() == setter)
+            FieldDeclarationSyntax key;
+            if (getter.TryGetDependencyPropertyKey(out key))
             {
-                return;
+                if (key == setter)
+                {
+                    return;
+                }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));
