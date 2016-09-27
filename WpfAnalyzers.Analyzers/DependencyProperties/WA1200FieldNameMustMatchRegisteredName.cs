@@ -11,7 +11,7 @@
     {
         public const string DiagnosticId = "WA1200";
         private const string Title = "DependencyProperty field name must match registered name.";
-        private const string MessageFormat = "DependencyProperty '{0}' field must be named {1}Property";
+        private const string MessageFormat = "Field '{0}' that is backing field for the DependencyProperty registered as '{1}' must be named '{1}Property'";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 

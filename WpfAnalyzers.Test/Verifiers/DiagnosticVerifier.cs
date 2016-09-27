@@ -184,19 +184,20 @@ namespace WpfAnalyzers.Test
         /// diagnostics for the sources.</param>
         private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expectedResults)
         {
-            int expectedCount = expectedResults.Length;
-            int actualCount = actualResults.Count();
+            var expectedCount = expectedResults.Length;
+            var actualCount = actualResults.Count();
 
             if (expectedCount != actualCount)
             {
-                string diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "    NONE.";
-
-                Assert.True(
-                    false,
-                    string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput));
+                var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "    NONE.";
+                var message = $"Mismatch between number of diagnostics returned, expected \"{expectedCount}\" actual \"{actualCount}\"\r\n" +
+                               "\r\n" +
+                               "Diagnostics:\r\n" +
+                              $"{diagnosticsOutput}\r\n";
+                Assert.Fail(message);
             }
 
-            for (int i = 0; i < expectedResults.Length; i++)
+            for (var i = 0; i < expectedResults.Length; i++)
             {
                 var actual = actualResults.ElementAt(i);
                 var expected = expectedResults[i];
@@ -205,11 +206,11 @@ namespace WpfAnalyzers.Test
                 {
                     if (actual.Location != Location.None)
                     {
-                        string message =
-                            string.Format(
-                                "Expected:\nA project diagnostic with No location\nActual:\n{0}",
-                                FormatDiagnostics(analyzers, actual));
-                        Assert.True(false, message);
+                        var message = "Expected:\n" +
+                                      "A project diagnostic with No location\n" +
+                                      "Actual:\n" +
+                                     $"{FormatDiagnostics(analyzers, actual)}";
+                        Assert.Fail(message);
                     }
                 }
                 else
@@ -219,16 +220,12 @@ namespace WpfAnalyzers.Test
 
                     if (additionalLocations.Length != expected.Spans.Length - 1)
                     {
-                        Assert.True(
-                            false,
-                            string.Format(
-                                "Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                                expected.Spans.Length - 1,
-                                additionalLocations.Length,
-                                FormatDiagnostics(analyzers, actual)));
+                        var message = $"Expected {expected.Spans.Length - 1} additional locations but got {additionalLocations.Length} for Diagnostic:\r\n" +
+                                      $"    {FormatDiagnostics(analyzers, actual)}\r\n";
+                        Assert.Fail(message);
                     }
 
-                    for (int j = 0; j < additionalLocations.Length; ++j)
+                    for (var j = 0; j < additionalLocations.Length; ++j)
                     {
                         VerifyDiagnosticLocation(analyzers, actual, additionalLocations[j], expected.Spans[j + 1]);
                     }
@@ -236,35 +233,29 @@ namespace WpfAnalyzers.Test
 
                 if (actual.Id != expected.Id)
                 {
-                    string message =
-                        string.Format(
-                            "Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Id,
-                            actual.Id,
-                            FormatDiagnostics(analyzers, actual));
-                    Assert.True(false, message);
+                    var message = $"Expected diagnostic id to be \"{expected.Id}\" was \"{actual.Id}\"\r\n" +
+                                   "\r\n" +
+                                   "Diagnostic:\r\n" +
+                                  $"    {FormatDiagnostics(analyzers, actual)}\r\n";
+                    Assert.Fail(message);
                 }
 
                 if (actual.Severity != expected.Severity)
                 {
-                    string message =
-                        string.Format(
-                            "Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Severity,
-                            actual.Severity,
-                            FormatDiagnostics(analyzers, actual));
-                    Assert.True(false, message);
+                    var message = $"Expected diagnostic severity to be \"{expected.Severity}\" was \"{actual.Severity}\"\r\n" +
+                                   "\r\n" +
+                                   "Diagnostic:\r\n" +
+                                  $"    {FormatDiagnostics(analyzers, actual)}\r\n";
+                    Assert.Fail(message);
                 }
 
                 if (actual.GetMessage() != expected.Message)
                 {
-                    string message =
-                        string.Format(
-                            "Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Message,
-                            actual.GetMessage(),
-                            FormatDiagnostics(analyzers, actual));
-                    Assert.True(false, message);
+                    var message = $"Expected diagnostic message to be \"{expected.Message}\" was \"{actual.GetMessage()}\"\r\n" +
+                                  $"\r\n" +
+                                  $"Diagnostic:\r\n" +
+                                  $"    {FormatDiagnostics(analyzers, actual)}\r\n";
+                    Assert.Fail(message);
                 }
             }
         }
@@ -283,7 +274,7 @@ namespace WpfAnalyzers.Test
         {
             var actualSpan = actual.GetLineSpan();
 
-            string message =
+            var message =
                 string.Format(
                     "Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Path,
@@ -303,29 +294,29 @@ namespace WpfAnalyzers.Test
         private static void VerifyLinePosition(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, LinePosition actualLinePosition, LinePosition expectedLinePosition, string positionText)
         {
             // Only check the line position if it matters
-            if (expectedLinePosition.Line > 0)
+            if (expectedLinePosition.Line > 0 && 
+                actualLinePosition.Line + 1 != expectedLinePosition.Line)
             {
-                Assert.True(
-                    (actualLinePosition.Line + 1) == expectedLinePosition.Line,
-                    string.Format(
-                        "Expected diagnostic to {0} on line \"{1}\" was actually on line \"{2}\"\r\n\r\nDiagnostic:\r\n    {3}\r\n",
-                        positionText,
-                        expectedLinePosition.Line,
-                        actualLinePosition.Line + 1,
-                        FormatDiagnostics(analyzers, diagnostic)));
+                var formattedDiagnostics = FormatDiagnostics(analyzers, diagnostic);
+                var message = $"Expected diagnostic on line \"{expectedLinePosition.Line}\"\r\n" +
+                              $"Actual   diagnostic on line \"{actualLinePosition.Line + 1}\"\r\n" +
+                               "\r\n" +
+                               "Diagnostic:\r\n" +
+                              $"{formattedDiagnostics}\r\n";
+                Assert.Fail(message);
             }
 
             // Only check the column position if it matters
-            if (expectedLinePosition.Character > 0)
+            if (expectedLinePosition.Character > 0 &&
+               actualLinePosition.Character + 1 != expectedLinePosition.Character)
             {
-                Assert.True(
-                    (actualLinePosition.Character + 1) == expectedLinePosition.Character,
-                    string.Format(
-                        "Expected diagnostic to {0} at column \"{1}\" was actually at column \"{2}\"\r\n\r\nDiagnostic:\r\n    {3}\r\n",
-                        positionText,
-                        expectedLinePosition.Character,
-                        actualLinePosition.Character + 1,
-                        FormatDiagnostics(analyzers, diagnostic)));
+                var formattedDiagnostics = FormatDiagnostics(analyzers, diagnostic);
+                var message = $"Expected diagnostic at column \"{expectedLinePosition.Character}\"\r\n" +
+                              $"Actual   diagnostic at column \"{actualLinePosition.Character + 1}\"\r\n" +
+                               "\r\n" +
+                               "Diagnostic:\r\n" +
+                              $"{formattedDiagnostics}\r\n";
+                Assert.Fail(message);
             }
         }
 
@@ -338,7 +329,7 @@ namespace WpfAnalyzers.Test
         private static string FormatDiagnostics(ImmutableArray<DiagnosticAnalyzer> analyzers, params Diagnostic[] diagnostics)
         {
             var builder = new StringBuilder();
-            for (int i = 0; i < diagnostics.Length; ++i)
+            for (var i = 0; i < diagnostics.Length; ++i)
             {
                 var diagnosticsId = diagnostics[i].Id;
 
@@ -358,9 +349,9 @@ namespace WpfAnalyzers.Test
                     {
                         Assert.True(
                             location.IsInSource,
-                            string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{0}", diagnostics[i]));
+                            $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{diagnostics[i]}");
 
-                        string resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
+                        var resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                         builder.AppendFormat(
