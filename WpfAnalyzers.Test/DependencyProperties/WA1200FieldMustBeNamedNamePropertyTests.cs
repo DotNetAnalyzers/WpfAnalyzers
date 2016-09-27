@@ -137,7 +137,7 @@ public class FooControl : Control
     public static readonly DependencyProperty ErrorProperty = BarPropertyKey.DependencyProperty;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 51).WithArguments("BarProperty", "Error");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 47).WithArguments("ErrorProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"

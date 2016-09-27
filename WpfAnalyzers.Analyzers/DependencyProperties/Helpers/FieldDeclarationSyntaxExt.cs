@@ -125,7 +125,24 @@
                     .FirstOrDefault()
                     .Initializer.Value as InvocationExpressionSyntax)
                 ?.Expression as MemberAccessExpressionSyntax;
-            return invocation?.IsDependencyPropertyRegister() == true;
+            if (invocation?.IsDependencyPropertyRegister() == true)
+            {
+                return true;
+            }
+
+            var propertyKey = declaration.DependencyPropertyKey();
+            invocation = (propertyKey.Declaration
+                                     .Variables
+                                     .FirstOrDefault()
+                                     .Initializer.Value as InvocationExpressionSyntax)
+                                     ?.Expression as
+                             MemberAccessExpressionSyntax;
+            if (invocation?.IsDependencyPropertyRegisterReadOnly() == true)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)

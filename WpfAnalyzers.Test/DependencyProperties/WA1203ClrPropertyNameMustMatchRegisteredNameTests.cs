@@ -84,6 +84,33 @@
         }
 
         [Test]
+        public async Task HappyPathReadonly()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        protected set { this.SetValue(BarPropertyKey, value); }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenNotMatching()
         {
             var testCode = @"
@@ -187,7 +214,7 @@ public class FooControl : Control
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"

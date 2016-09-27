@@ -24,6 +24,26 @@
             return true;
         }
 
+        internal static bool IsDependencyPropertyRegisterReadOnly(this MemberAccessExpressionSyntax memberAccess)
+        {
+            if (memberAccess == null || memberAccess.IsMissing)
+            {
+                return false;
+            }
+
+            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
+            {
+                return false;
+            }
+
+            if (memberAccess.Name.Identifier.ValueText != "RegisterReadOnly")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         internal static bool IsDependencyPropertyKeyProperty(this MemberAccessExpressionSyntax memberAccess)
         {
             if (memberAccess == null || memberAccess.IsMissing)
