@@ -189,8 +189,10 @@ namespace WpfAnalyzers.Test
 
             if (expectedCount != actualCount)
             {
-                var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "    NONE.";
-                var message = $"Mismatch between number of diagnostics returned, expected \"{expectedCount}\" actual \"{actualCount}\"\r\n" +
+                var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "NONE.";
+                var message =  "Mismatch between number of diagnostics returned\r\n" +
+                              $"Expected \"{expectedCount}\"\r\n" +
+                              $"Actual   \"{actualCount}\"\r\n" +
                                "\r\n" +
                                "Diagnostics:\r\n" +
                               $"{diagnosticsOutput}\r\n";
