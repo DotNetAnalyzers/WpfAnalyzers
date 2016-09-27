@@ -5,6 +5,16 @@
 
     internal static class FieldDeclarationSyntaxExt
     {
+        internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
+        {
+            return declaration.IsDependencyPropertyType() && declaration.DependencyPropertyRegisteredName() != null;
+        }
+
+        internal static bool IsDependencyPropertyKeyField(this FieldDeclarationSyntax declaration)
+        {
+            return declaration.IsDependencyPropertyKeyType() && declaration.DependencyPropertyRegisteredName() != null;
+        }
+
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
         {
             var type = declaration?.Declaration?.Type as IdentifierNameSyntax;

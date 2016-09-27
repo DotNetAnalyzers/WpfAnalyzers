@@ -10,7 +10,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WA1206ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests : DiagnosticVerifier
+    public class WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPathFormatted()
@@ -122,7 +122,7 @@ public class FooControl : Control
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1206ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter();
+            yield return new WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter();
         }
     }
 }

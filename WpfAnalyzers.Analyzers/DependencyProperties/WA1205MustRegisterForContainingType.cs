@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;
@@ -8,11 +9,11 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1205ClrPropertyTypeMustMatchRegisteredType : DiagnosticAnalyzer
+    internal class WA1205MustRegisterForContainingType : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1205";
-        private const string Title = "DependencyProperty CLR property type must match registered type.";
-        private const string MessageFormat = "Property '{0}' must be of type {1}";
+        public const string DiagnosticId = "WA1204";
+        private const string Title = "DependencyProperty must be registered for containing type.";
+        private const string MessageFormat = "Property '{0}' must be registered for {1}";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -34,28 +35,31 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
-            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
-            {
-                return;
-            }
+            var declaration = context.Node as FieldDeclarationSyntax;
+            throw new NotImplementedException("message");
+            
+            //if (declaration == null || declaration.IsMissing || !declaration.IsDependencyPropertyField())
+            //{
+            //    return;
+            //}
 
-            var registeredType = propertyDeclaration.DependencyPropertyRegisteredType();
-            var propertyType = propertyDeclaration.Type;
-            if (registeredType == null || propertyType == null)
-            {
-                return;
-            }
+            //var keyField = declaration.DependencyPropertyKey();
+            //if (keyField == null)
+            //{
+            //    return;
+            //}
 
-            if (!context.SemanticModel.GetTypeInfo(propertyType).Equals(context.SemanticModel.GetTypeInfo(registeredType)))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyType.GetLocation(), propertyDeclaration.Name(), context.SemanticModel.GetTypeInfo(registeredType).Type));
-            }
+            //if (keyField.SpanStart < declaration.SpanStart)
+            //{
+            //    return;
+            //}
+
+            //context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), declaration.Name()));
         }
     }
 }

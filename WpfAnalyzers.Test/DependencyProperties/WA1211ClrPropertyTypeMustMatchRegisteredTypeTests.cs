@@ -10,7 +10,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WA1205ClrPropertyTypeMustMatchRegisteredTypeTests : DiagnosticVerifier
+    public class WA1211ClrPropertyTypeMustMatchRegisteredTypeTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPathFormatted()
@@ -89,7 +89,7 @@ public class FooControl : Control
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1205ClrPropertyTypeMustMatchRegisteredType();
+            yield return new WA1211ClrPropertyTypeMustMatchRegisteredType();
         }
     }
 }

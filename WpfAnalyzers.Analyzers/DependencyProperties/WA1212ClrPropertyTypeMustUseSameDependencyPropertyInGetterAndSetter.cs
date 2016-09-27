@@ -8,9 +8,9 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1206ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter : DiagnosticAnalyzer
+    internal class WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1206";
+        public const string DiagnosticId = "WA1212";
         private const string Title = "DependencyProperty CLR property use same dependency proiperty in getter and setter.";
         private const string MessageFormat = "Property '{0}' must access same dependency property in getter and setter";
         private const string Description = Title;
