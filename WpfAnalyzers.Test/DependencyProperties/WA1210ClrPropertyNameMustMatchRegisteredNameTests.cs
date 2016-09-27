@@ -50,8 +50,14 @@
 
         public int Bar
         {
-            get { return (int) GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
+            get
+            {
+                return (int)this.GetValue(BarProperty);
+            }
+            protected set
+            {
+                this.SetValue(BarProperty, value);
+            }
         }
     }";
 
