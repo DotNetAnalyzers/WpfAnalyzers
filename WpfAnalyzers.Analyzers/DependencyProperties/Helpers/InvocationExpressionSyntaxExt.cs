@@ -33,9 +33,19 @@
             }
         }
 
-        internal static bool IsNameOfInvocation(this InvocationExpressionSyntax invocation)
+        internal static bool IsNameOf(this InvocationExpressionSyntax invocation)
         {
             return invocation.Name() == "nameof";
+        }
+
+        internal static bool IsSetValue(this InvocationExpressionSyntax invocation)
+        {
+            return invocation.Name() == "SetValue";
+        }
+
+        internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation)
+        {
+            return invocation.Name() == "SetCurrentValue";
         }
 
         internal static bool TryGetNameOfResult(this InvocationExpressionSyntax nameOfInvocation, out string result)
@@ -46,7 +56,7 @@
                 return false;
             }
 
-            if (nameOfInvocation.IsNameOfInvocation())
+            if (nameOfInvocation.IsNameOf())
             {
                 var argument = nameOfInvocation.ArgumentList.Arguments[0];
                 var identifierName = argument.Expression as IdentifierNameSyntax;

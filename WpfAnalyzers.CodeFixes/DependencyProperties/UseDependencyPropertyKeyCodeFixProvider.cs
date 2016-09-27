@@ -1,28 +1,29 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameFieldCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseDependencyPropertyKeyCodeFixProvider))]
     [Shared]
-    internal class RenamePropertyCodeFixProvider : CodeFixProvider
+    internal class UseDependencyPropertyKeyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WA1210ClrPropertyNameMustMatchRegisteredName.DiagnosticId);
+            ImmutableArray.Create(WA1220UseDependencyPropertyKeyForSettingReadOnlyProperties.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+                                           .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -34,7 +35,7 @@
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Rename property to match registered name.",
+                        "Use DependencyPropertyKey when setting a readonly property.",
                         cancellationToken =>
                             GetTransformedDocumentAsync(
                                 context.Document,
@@ -54,17 +55,7 @@
             Diagnostic diagnostic,
             CancellationToken cancellationToken)
         {
-            var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-
-            FieldDeclarationSyntax dependencyProperty;
-            if (declaration.TryGetDependencyPropertyFromGetter(out dependencyProperty))
-            {
-                var registeredName = dependencyProperty.DependencyPropertyRegisteredName();
-                return RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, cancellationToken);
-            }
-
-            return RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, declaration.Name(), cancellationToken);
+            throw new NotImplementedException();
         }
     }
 }

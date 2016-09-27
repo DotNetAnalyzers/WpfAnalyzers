@@ -7,16 +7,16 @@
     {
         private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
             "Bar",
-            typeof(int),
+            typeof(object),
             typeof(FooControl),
-            new PropertyMetadata(default(int)));
+            new PropertyMetadata(default(object)));
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-        public int Bar
+        public void Error()
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set { this.SetValue(BarPropertyKey, value); }
+            this.SetValue(BarPropertyKey, null);
+            this.SetCurrentValue(BarProperty, null);
         }
     }
 }

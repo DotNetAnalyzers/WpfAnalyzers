@@ -38,6 +38,7 @@
     <Compile Include="DependencyProperties\Helpers\RenameHelper.cs" />
     <Compile Include="DependencyProperties\Helpers\SyntaxTokenListExt.cs" />
     <Compile Include="DependencyProperties\RenamePropertyCodeFixProvider.cs" />
+    <Compile Include="DependencyProperties\UseDependencyPropertyKeyCodeFixProvider.cs" />
     <Compile Include="FinishedTasks.cs" />
     <Compile Include="DependencyProperties\MakeFieldStaticReadonlyCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\RenameFieldCodeFixProvider.cs" />
