@@ -50,11 +50,12 @@
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
-    <Compile Include="DependencyProperties\WA1201FieldMustBeStaticReadonlyTests.cs" />
-    <Compile Include="DependencyProperties\WA1203ClrPropertyNameMustMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WA1200FieldMustBeNamedNamePropertyTests.cs" />
-    <Compile Include="DependencyProperties\WA1204ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />
+    <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WA1202FieldMustBeStaticReadOnlyTests.cs" />
+    <Compile Include="DependencyProperties\WA1204ClrPropertyNameMustMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1205ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />
+    <Compile Include="DependencyProperties\WA1206ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChangedTests.cs" />
     <Compile Include="PublicApiTests.cs" />

@@ -72,6 +72,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="paket.references" />
+    <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\WpfAnalyzers.Analyzers\bin\$(Configuration)\WpfAnalyzers.Analyzers.dll" />

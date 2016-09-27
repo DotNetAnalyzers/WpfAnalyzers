@@ -7,9 +7,9 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1203ClrPropertyNameMustMatchRegisteredName : DiagnosticAnalyzer
+    internal class WA1204ClrPropertyNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1203";
+        public const string DiagnosticId = "WA1204";
         private const string Title = "DependencyProperty CLR property name must match registered name.";
         private const string MessageFormat = "Property '{0}' must be named {1}";
         private const string Description = Title;

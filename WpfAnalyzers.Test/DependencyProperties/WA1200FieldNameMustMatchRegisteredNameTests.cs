@@ -74,6 +74,12 @@ public class FooControl : Control
         new PropertyMetadata(default(int)));
 
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int) GetValue(BarProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -135,6 +141,12 @@ public class FooControl : Control
         new PropertyMetadata(default(int)));
 
     public static readonly DependencyProperty ErrorProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int) GetValue(ErrorProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(13, 47).WithArguments("ErrorProperty", "Bar");
@@ -153,44 +165,12 @@ public class FooControl : Control
         new PropertyMetadata(default(int)));
 
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-}";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
 
-        [Test]
-        public async Task WhenNotMatchingReadonlyKeyField()
-        {
-            var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    private static readonly DependencyPropertyKey ErrorPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 51).WithArguments("BarProperty", "Error");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+    public int Bar
+    {
+        get { return (int) GetValue(BarProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }

@@ -8,11 +8,11 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1201FieldMustBeStaticReadOnly : DiagnosticAnalyzer
+    internal class WA1205ClrPropertyTypeMustMatchRegisteredType : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1201";
-        private const string Title = "DependencyProperty field must be static and readonly";
-        private const string MessageFormat = "DependencyProperty '{0}' field must be static and readonly";
+        public const string DiagnosticId = "WA1205";
+        private const string Title = "DependencyProperty CLR property type must match registered type.";
+        private const string MessageFormat = "Property '{0}' must be of type {1}";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -21,7 +21,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
+                                                                      DiagnosticSeverity.Error,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
@@ -34,37 +34,27 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
         }
 
-        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
-            if (!fieldSymbol.IsDependencyPropertyField())
+            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
+            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
             {
                 return;
             }
 
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing)
+            var registeredType = propertyDeclaration.DependencyPropertyRegisteredType();
+            var propertyType = propertyDeclaration.Type;
+            if (registeredType == null || propertyType == null)
             {
                 return;
             }
 
-            if (fieldDeclaration.DependencyPropertyRegisteredName() == null)
+            if (!context.SemanticModel.GetTypeInfo(propertyType).Equals(context.SemanticModel.GetTypeInfo(registeredType)))
             {
-                return;
-            }
-
-            if (!fieldSymbol.IsReadOnly)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name));
-                return;
-            }
-
-            if (!fieldSymbol.IsStatic)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyType.GetLocation(), propertyDeclaration.Name(), context.SemanticModel.GetTypeInfo(registeredType).Type));
             }
         }
     }

@@ -10,7 +10,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WA1205ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests : DiagnosticVerifier
+    public class WA1205ClrPropertyTypeMustMatchRegisteredTypeTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPathFormatted()
@@ -63,33 +63,6 @@
         }
 
         [Test]
-        public async Task HappyPathReadOnly()
-        {
-            var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public int Bar
-    {
-        get { return (int)this.GetValue(BarProperty); }
-        protected set { this.SetValue(BarPropertyKey, value); }
-    }
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Test]
         public async Task WhenNotMatching()
         {
             var testCode = @"
@@ -104,25 +77,19 @@ public class FooControl : Control
         typeof(FooControl),
         new PropertyMetadata(default(int)));
 
-    public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-        ""Other"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public int Bar
+    public double Bar
     {
-        get { return (int)this.GetValue(BarProperty); }
-        set { this.SetValue(OtherProperty, value); }
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 12).WithArguments("Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1205ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter();
+            yield return new WA1205ClrPropertyTypeMustMatchRegisteredType();
         }
     }
 }

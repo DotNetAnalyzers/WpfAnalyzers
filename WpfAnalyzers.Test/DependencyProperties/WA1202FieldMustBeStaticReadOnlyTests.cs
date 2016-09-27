@@ -11,7 +11,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WA1201FieldMustBeStaticReadOnlyTests : CodeFixVerifier
+    public class WA1202FieldMustBeStaticReadOnlyTests : CodeFixVerifier
     {
         [Test]
         public async Task HappyPath()
@@ -104,7 +104,7 @@
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WA1201FieldMustBeStaticReadOnly();
+            yield return new WA1202FieldMustBeStaticReadOnly();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

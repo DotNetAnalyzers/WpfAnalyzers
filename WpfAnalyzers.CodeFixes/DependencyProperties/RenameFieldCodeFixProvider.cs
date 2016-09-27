@@ -14,7 +14,10 @@
     internal class RenameFieldCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1200FieldNameMustMatchRegisteredName.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                WA1200FieldNameMustMatchRegisteredName.DiagnosticId,
+                WA1201FieldNameMustMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -49,11 +52,16 @@
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
+
+            var newName = diagnostic.Id == WA1200FieldNameMustMatchRegisteredName.DiagnosticId
+                              ? registeredName + "Property"
+                              : registeredName + "PropertyKey";
+
             var updatedDeclaration = RenameHelper.RenameSymbolAsync(
                 document,
                 syntaxRoot,
                 token,
-                registeredName + "Property",
+                newName,
                 cancellationToken);
             return updatedDeclaration;
         }

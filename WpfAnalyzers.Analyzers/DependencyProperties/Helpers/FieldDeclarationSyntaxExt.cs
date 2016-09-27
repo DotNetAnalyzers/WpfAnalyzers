@@ -1,7 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
-
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -43,7 +41,7 @@
                 return null;
             }
 
-            var variable = declarationSyntax?.Variables.FirstOrDefault();
+            var variable = declarationSyntax.Variables.FirstOrDefault();
             if (variable == null)
             {
                 return null;
@@ -125,7 +123,7 @@
                     .FirstOrDefault()
                     .Initializer.Value as InvocationExpressionSyntax)
                 ?.Expression as MemberAccessExpressionSyntax;
-            if (invocation?.IsDependencyPropertyRegister() == true)
+            if (invocation.IsDependencyPropertyRegister() || invocation.IsDependencyPropertyRegisterReadOnly())
             {
                 return true;
             }
@@ -137,7 +135,7 @@
                                      .Initializer.Value as InvocationExpressionSyntax)
                                      ?.Expression as
                              MemberAccessExpressionSyntax;
-            if (invocation?.IsDependencyPropertyRegisterReadOnly() == true)
+            if (invocation.IsDependencyPropertyRegisterReadOnly())
             {
                 return true;
             }

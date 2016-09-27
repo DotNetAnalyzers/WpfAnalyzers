@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;
@@ -9,11 +8,11 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1205ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter : DiagnosticAnalyzer
+    internal class WA1201FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1205";
-        private const string Title = "DependencyProperty CLR property use same dependency proiperty in getter and setter.";
-        private const string MessageFormat = "Property '{0}' must access same dependency property in getter and setter";
+        public const string DiagnosticId = "WA1201";
+        private const string Title = "DependencyPropertyKey field name must match registered name.";
+        private const string MessageFormat = "DependencyPropertyKey '{0}' field must be named {1}PropertyKey";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -22,7 +21,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
+                                                                      DiagnosticSeverity.Warning,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
@@ -35,30 +34,40 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
-            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
+            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
+            if (fieldDeclaration == null || fieldDeclaration.IsMissing || !fieldDeclaration.IsDependencyPropertyKeyType())
             {
                 return;
             }
 
-            var setter = propertyDeclaration.GetDependencyPropertyFromSetter();
-            var getter = propertyDeclaration.GetDependencyPropertyFromGetter();
-            if (getter == null || setter == null || getter == setter)
+            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
+            if (registeredName == null)
             {
                 return;
             }
 
-            if (getter.DependencyPropertyKey() == setter)
+            var fieldName = fieldDeclaration.Name();
+            if (!IsMatch(fieldName, registeredName))
             {
-                return;
+                var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldName, registeredName));
+            }
+        }
+
+        private static bool IsMatch(string name, string registeredName)
+        {
+            const string Suffix = "PropertyKey";
+            if (name.Length != registeredName.Length + Suffix.Length)
+            {
+                return false;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));
+            return name.StartsWith(registeredName) && name.EndsWith(Suffix);
         }
     }
 }

@@ -10,7 +10,7 @@
     internal class WA1200FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WA1200";
-        private const string Title = "DependencyProperty field must match registered name.";
+        private const string Title = "DependencyProperty field name must match registered name.";
         private const string MessageFormat = "DependencyProperty '{0}' field must be named {1}Property";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";

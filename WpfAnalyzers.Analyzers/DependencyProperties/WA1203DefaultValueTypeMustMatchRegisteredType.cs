@@ -8,9 +8,9 @@
 //    using Microsoft.CodeAnalysis.Diagnostics;
 
 //    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-//    internal class WA1202DefaultValueTypeMustMatchRegisteredType : DiagnosticAnalyzer
+//    internal class WA1203DefaultValueTypeMustMatchRegisteredType : DiagnosticAnalyzer
 //    {
-//        public const string DiagnosticId = "WA1202";
+//        public const string DiagnosticId = "WA1203";
 //        private const string Title = "DependencyProperty default value must be of the type it is registered as.";
 //        private const string MessageFormat = "DependencyProperty '{0}' default value must be of type {1}";
 //        private const string Description = Title;
