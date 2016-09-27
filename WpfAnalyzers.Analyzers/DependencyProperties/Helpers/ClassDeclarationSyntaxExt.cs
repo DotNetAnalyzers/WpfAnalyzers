@@ -4,6 +4,11 @@
 
     internal static class ClassDeclarationSyntaxExt
     {
+        internal static string Name(this ClassDeclarationSyntax classDeclaration)
+        {
+            return classDeclaration?.Identifier.Text;
+        }
+
         internal static FieldDeclarationSyntax FieldDeclaration(this ClassDeclarationSyntax classSyntax, string name)
         {
             if (string.IsNullOrWhiteSpace(name))

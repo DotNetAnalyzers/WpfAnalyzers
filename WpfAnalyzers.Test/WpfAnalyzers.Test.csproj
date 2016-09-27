@@ -52,7 +52,8 @@
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
     <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1202FieldMustBeStaticReadOnlyTests.cs" />
-    <Compile Include="DependencyProperties\WA1204FieldMustBeStaticReadOnlyTests.cs" />
+    <Compile Include="DependencyProperties\WA1204KeyFieldMustComeBeforePropertyFieldTests.cs" />
+    <Compile Include="DependencyProperties\WA1205MustRegisterForContainingTypeTests.cs" />
     <Compile Include="DependencyProperties\WA1210ClrPropertyNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1211ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />

@@ -126,6 +126,35 @@
             return null;
         }
 
+        internal static TypeSyntax DependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration)
+        {
+            MemberAccessExpressionSyntax invocation;
+            if (!TryGetRegisterInvocation(declaration, out invocation))
+            {
+                return null;
+            }
+
+            var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
+            if (args == null || args.Arguments.Count < 3)
+            {
+                return null;
+            }
+
+            var typeArg = args.Arguments[2];
+            if (typeArg == null)
+            {
+                return null;
+            }
+
+            TypeSyntax result;
+            if (typeArg.Expression.TryGetTypeOfResult(out result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
         private static bool TryGetRegisterInvocation(FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
             invocation = (declaration.Declaration

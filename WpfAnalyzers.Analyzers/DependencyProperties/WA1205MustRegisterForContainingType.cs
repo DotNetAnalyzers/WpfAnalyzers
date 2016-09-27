@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;
@@ -11,9 +10,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WA1205MustRegisterForContainingType : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1204";
+        public const string DiagnosticId = "WA1205";
         private const string Title = "DependencyProperty must be registered for containing type.";
-        private const string MessageFormat = "Property '{0}' must be registered for {1}";
+        private const string MessageFormat = "DependencyProperty '{0}' must be registered for {1}";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -41,25 +40,24 @@
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = context.Node as FieldDeclarationSyntax;
-            throw new NotImplementedException("message");
-            
-            //if (declaration == null || declaration.IsMissing || !declaration.IsDependencyPropertyField())
-            //{
-            //    return;
-            //}
+            if (declaration == null || declaration.IsMissing || !(declaration.IsDependencyPropertyField() || declaration.IsDependencyPropertyKeyField()))
+            {
+                return;
+            }
 
-            //var keyField = declaration.DependencyPropertyKey();
-            //if (keyField == null)
-            //{
-            //    return;
-            //}
+            if (declaration.IsDependencyPropertyField() && declaration.DependencyPropertyKey() != null)
+            {
+                return;
+            }
 
-            //if (keyField.SpanStart < declaration.SpanStart)
-            //{
-            //    return;
-            //}
+            var ownerType = declaration.DependencyPropertyRegisteredOwnerType() as IdentifierNameSyntax;
+            var ownerName = ((ClassDeclarationSyntax)declaration.Parent).Name();
+            if (ownerType == null || ownerType.Identifier.Text == ownerName)
+            {
+                return;
+            }
 
-            //context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), declaration.Name()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, ownerType.GetLocation(), declaration.Name(), ownerName));
         }
     }
 }
