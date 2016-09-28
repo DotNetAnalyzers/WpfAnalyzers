@@ -17,36 +17,48 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1202FieldMustBeStaticReadOnly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                          .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         "Make static readonly",
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        _ => Task.FromResult(FixDocument(context, diagnostic, syntaxRoot)),
                         nameof(MakeFieldStaticReadonlyCodeFixProvider)),
                     diagnostic);
             }
-
-            return FinishedTasks.CompletedTask;
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static Document FixDocument(CodeFixContext context, Diagnostic diagnostic, SyntaxNode syntaxRoot)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<FieldDeclarationSyntax>();
+            SyntaxNode updated;
+            if (TryFix(diagnostic, syntaxRoot, out updated))
+            {
+                return context.Document.WithSyntaxRoot(updated);
+            }
+
+            return context.Document;
+        }
+
+        private static bool TryFix(Diagnostic diagnostic, SyntaxNode syntaxRoot, out SyntaxNode result)
+        {
+            result = syntaxRoot;
+            var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                             .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             if (fieldDeclaration == null || fieldDeclaration.IsMissing)
             {
-                return document;
+                return false;
             }
 
             var updatedModifiers = fieldDeclaration.Modifiers
                                                    .WithStatic()
                                                    .WithReadOnly();
             var updatedDeclaration = fieldDeclaration.WithModifiers(updatedModifiers);
-            syntaxRoot = syntaxRoot.ReplaceNode(fieldDeclaration, updatedDeclaration);
-            return document.WithSyntaxRoot(syntaxRoot);
+            result = syntaxRoot.ReplaceNode(fieldDeclaration, updatedDeclaration);
+            return true;
         }
     }
 }
