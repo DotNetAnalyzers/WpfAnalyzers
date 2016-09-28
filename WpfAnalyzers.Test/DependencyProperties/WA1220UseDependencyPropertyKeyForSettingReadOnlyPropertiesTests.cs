@@ -150,7 +150,8 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.Replace("SetValue", method);
-            var expected = this.CSharpDiagnostic().WithLocation(18, 31).WithArguments("BarProperty", "BarPropertyKey");
+            int column = 16 + method.Length;
+            var expected = this.CSharpDiagnostic().WithLocation(18, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -205,7 +206,8 @@ public static class Foo
     }
 }";
             testCode = testCode.Replace("SetValue", method);
-            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("BarProperty", "BarPropertyKey");
+            int column = 18 + method.Length;
+            var expected = this.CSharpDiagnostic().WithLocation(16, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"

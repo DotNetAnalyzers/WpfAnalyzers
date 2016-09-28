@@ -71,7 +71,7 @@
             var member = declarator.Initializer.Value as MemberAccessExpressionSyntax;
             if (member.IsDependencyPropertyKeyProperty())
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), argument, member.Expression));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), argument, member?.Expression));
             }
         }
     }

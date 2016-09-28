@@ -17,48 +17,37 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1202FieldMustBeStaticReadOnly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         "Make static readonly",
-                        _ => Task.FromResult(FixDocument(context, diagnostic, syntaxRoot)),
+                        _ => ApplyFixAsync(context, diagnostic),
                         nameof(MakeFieldStaticReadonlyCodeFixProvider)),
                     diagnostic);
             }
+
+            return FinishedTasks.Task;
         }
 
-        private static Document FixDocument(CodeFixContext context, Diagnostic diagnostic, SyntaxNode syntaxRoot)
+        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-            SyntaxNode updated;
-            if (TryFix(diagnostic, syntaxRoot, out updated))
-            {
-                return context.Document.WithSyntaxRoot(updated);
-            }
-
-            return context.Document;
-        }
-
-        private static bool TryFix(Diagnostic diagnostic, SyntaxNode syntaxRoot, out SyntaxNode result)
-        {
-            result = syntaxRoot;
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                              .ConfigureAwait(false);
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             if (fieldDeclaration == null || fieldDeclaration.IsMissing)
             {
-                return false;
+                return context.Document;
             }
 
             var updatedModifiers = fieldDeclaration.Modifiers
                                                    .WithStatic()
                                                    .WithReadOnly();
             var updatedDeclaration = fieldDeclaration.WithModifiers(updatedModifiers);
-            result = syntaxRoot.ReplaceNode(fieldDeclaration, updatedDeclaration);
-            return true;
+            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(fieldDeclaration, updatedDeclaration));
         }
     }
 }
