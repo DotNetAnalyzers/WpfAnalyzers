@@ -20,18 +20,14 @@ NUGET
       System.Collections.Immutable (>= 1.1.37)
 
 GROUP Analyzers
+FRAMEWORK: NET452
 NUGET
   remote: http://www.nuget.org/api/v2
     JetBrains.Annotations (10.1.5)
-      System.Runtime (>= 4.0) - framework: dnxcore50
-    Microsoft.NETCore.Platforms (1.0.1) - framework: dnxcore50
-    Microsoft.NETCore.Targets (1.0.1) - framework: dnxcore50
     StyleCop.Analyzers (1.0)
-    System.Runtime (4.1) - framework: dnxcore50
-      Microsoft.NETCore.Platforms (>= 1.0.1) - framework: dnxcore50, netstandard10, netstandard12, netstandard13, >= netstandard15
-      Microsoft.NETCore.Targets (>= 1.0.1) - framework: dnxcore50, netstandard10, netstandard12, netstandard13, >= netstandard15
 
 GROUP Test
+FRAMEWORK: NET452
 NUGET
   remote: http://www.nuget.org/api/v2
     NUnit (3.4.1)

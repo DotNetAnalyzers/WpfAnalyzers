@@ -1,16 +1,18 @@
-﻿type project
+﻿type file
+version 0.1.6.1-dev
 title WpfAnalyzers
 id WpfAnalyzers
-tags wpf roslyn analyzer
+authors Johan Larsson
+owners Johan Larsson
+copyright Copyright Johan Larsson 2016
+developmentDependency true
+description Roslyn analyzers for WPF.
+tags WPF Roslyn Diagnostic Analyzer
+
 projectUrl https://github.com/JohanLarsson/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
-include-referenced-projects true
 
-excludeddependencies
-  JetBrains.Annotations
-  StyleCop.Analyzers
-  Microsoft.CodeAnalysis.CSharp.Workspaces
-  Microsoft.CodeAnalysis.Analyzers
-  System.Collections.Immutable
-  System.Reflection.Metadata
-  Microsoft.Composition
+files
+  ../WpfAnalyzers.Analyzers/bin/Release/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
+  ../WpfAnalyzers.CodeFixes/bin/Release/WpfAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
+

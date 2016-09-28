@@ -32,7 +32,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>WpfAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\WpfAnalyzers.CodeFixes.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
