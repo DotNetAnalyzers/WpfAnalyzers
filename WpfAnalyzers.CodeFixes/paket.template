@@ -1,5 +1,5 @@
 ﻿type file
-version 0.1.6.4-dev
+version 0.1.7.0-dev
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
@@ -15,4 +15,5 @@ licenseUrl http://opensource.org/licenses/MIT
 files
   ../WpfAnalyzers.Analyzers/bin/Release/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
   ../WpfAnalyzers.CodeFixes/bin/Release/WpfAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
+  ../.paket/tools/*.ps1 ==> tools
 
