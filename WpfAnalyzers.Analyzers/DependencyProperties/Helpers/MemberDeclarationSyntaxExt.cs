@@ -6,7 +6,7 @@
     {
         internal static ClassDeclarationSyntax Class(this MemberDeclarationSyntax member)
         {
-            return (ClassDeclarationSyntax) member.Parent;
+            return (ClassDeclarationSyntax)member.Parent;
         }
     }
 }

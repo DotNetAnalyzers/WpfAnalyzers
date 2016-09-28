@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>WpfAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\WpfAnalyzers.CodeFixes.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>WpfAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\WpfAnalyzers.CodeFixes.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +52,7 @@
     <None Include="app.config" />
     <None Include="paket.references" />
     <None Include="paket.template" />
+    <None Include="WpfAnalyzers.CodeFixes.ruleset" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
