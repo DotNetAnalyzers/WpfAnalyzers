@@ -15,9 +15,9 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant(false)]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("0.1.6.2")]
-[assembly: AssemblyFileVersion("0.1.6.2")]
-[assembly: AssemblyInformationalVersion("0.1.6.2-dev")]
+[assembly: AssemblyVersion("0.1.6.3")]
+[assembly: AssemblyFileVersion("0.1.6.3")]
+[assembly: AssemblyInformationalVersion("0.1.6.3-dev")]
 
 [assembly: InternalsVisibleTo("WpfAnalyzers.CodeFixes")]
 [assembly: InternalsVisibleTo("WpfAnalyzers.Test")]
