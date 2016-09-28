@@ -159,11 +159,11 @@
 
         private static bool TryGetRegisterInvocation(FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
-            invocation = (declaration.Declaration
-                    .Variables
-                    .FirstOrDefault()
-                    .Initializer.Value as InvocationExpressionSyntax)
-                ?.Expression as MemberAccessExpressionSyntax;
+            if (!TryGetInitializerCall(declaration, out invocation))
+            {
+                return false;
+            }
+
             if (invocation.IsDependencyPropertyRegister() ||
                 invocation.IsDependencyPropertyRegisterReadOnly() ||
                 invocation.IsDependencyPropertyRegisterAttached() ||
@@ -178,12 +178,11 @@
                 return false;
             }
 
-            invocation = (propertyKey.Declaration
-                                     .Variables
-                                     .FirstOrDefault()
-                                     .Initializer.Value as InvocationExpressionSyntax)
-                                     ?.Expression as
-                             MemberAccessExpressionSyntax;
+            if (!TryGetInitializerCall(propertyKey, out invocation))
+            {
+                return false;
+            }
+
             if (invocation.IsDependencyPropertyRegisterReadOnly() ||
                 invocation.IsDependencyPropertyRegisterAttachedReadOnly())
             {
@@ -191,6 +190,28 @@
             }
 
             return false;
+        }
+
+        private static bool TryGetInitializerCall(FieldDeclarationSyntax field, out MemberAccessExpressionSyntax result)
+        {
+            var initializer = field?.Declaration
+                            ?.Variables
+                            .FirstOrDefault()
+                            ?.Initializer
+                            ?.Value;
+            result = initializer as MemberAccessExpressionSyntax;
+            if (result != null)
+            {
+                return true;
+            }
+
+            var invocation = initializer as InvocationExpressionSyntax;
+            if (invocation != null)
+            {
+                result = invocation.Expression as MemberAccessExpressionSyntax;
+            }
+
+            return result != null;
         }
 
         private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)
