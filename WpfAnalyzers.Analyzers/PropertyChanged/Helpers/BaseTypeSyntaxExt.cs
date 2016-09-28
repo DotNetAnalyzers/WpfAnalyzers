@@ -6,7 +6,7 @@
     {
         internal static bool IsINotifyPropertyChanged(this BaseTypeSyntax baseType)
         {
-            return (baseType.Type as IdentifierNameSyntax)?.Identifier.Text.EndsWith("INotifyPropertyChanged") == true;
+            return (baseType.Type as IdentifierNameSyntax)?.Identifier.ValueText.EndsWith("INotifyPropertyChanged") == true;
         }
     }
 }

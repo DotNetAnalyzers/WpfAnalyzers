@@ -27,7 +27,7 @@
                         }
                     }
 
-                    return identifierName?.Identifier.Text;
+                    return identifierName?.Identifier.ValueText;
                 default:
                     return null;
             }
@@ -62,7 +62,7 @@
                 var identifierName = argument.Expression as IdentifierNameSyntax;
                 if (identifierName != null)
                 {
-                    result = identifierName.Identifier.Text;
+                    result = identifierName.Identifier.ValueText;
                     return true;
                 }
             }

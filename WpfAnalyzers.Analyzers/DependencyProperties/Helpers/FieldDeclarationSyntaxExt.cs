@@ -18,13 +18,13 @@
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
         {
             var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
-            return type?.Identifier.Text == Names.DependencyProperty;
+            return type?.Identifier.ValueText == Names.DependencyProperty;
         }
 
         internal static bool IsDependencyPropertyKeyType(this FieldDeclarationSyntax declaration)
         {
             var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
-            return type?.Identifier.Text == Names.DependencyPropertyKey;
+            return type?.Identifier.ValueText == Names.DependencyPropertyKey;
         }
 
         internal static string Name(this FieldDeclarationSyntax declaration)
@@ -35,7 +35,7 @@
                 return null;
             }
 
-            return variables.Value[0].Identifier.Text;
+            return variables.Value[0].Identifier.ValueText;
         }
 
         internal static bool TryGetDependencyPropertyKey(this FieldDeclarationSyntax field, out FieldDeclarationSyntax result)
@@ -65,7 +65,7 @@
             }
 
             var classSyntax = (ClassDeclarationSyntax)field.Parent;
-            var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.Text;
+            var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.ValueText;
             result = classSyntax.Field(name);
             return result != null;
         }

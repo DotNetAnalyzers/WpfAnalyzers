@@ -6,7 +6,7 @@
     {
         internal static string Name(this ClassDeclarationSyntax classDeclaration)
         {
-            return classDeclaration?.Identifier.Text;
+            return classDeclaration?.Identifier.ValueText;
         }
 
         internal static FieldDeclarationSyntax Field(this ClassDeclarationSyntax classSyntax, string name)
@@ -30,7 +30,7 @@
 
         internal static FieldDeclarationSyntax Field(this ClassDeclarationSyntax classSyntax, IdentifierNameSyntax name)
         {
-            return classSyntax.Field(name?.Identifier.Text);
+            return classSyntax.Field(name?.Identifier.ValueText);
         }
     }
 }

@@ -8,7 +8,7 @@
     {
         internal static string Name(this PropertyDeclarationSyntax property)
         {
-            return property?.Identifier.Text;
+            return property?.Identifier.ValueText;
         }
 
         internal static string DependencyPropertyRegisteredNameFromGetter(this PropertyDeclarationSyntax property)

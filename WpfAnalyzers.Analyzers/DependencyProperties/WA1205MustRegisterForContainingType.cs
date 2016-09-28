@@ -53,7 +53,7 @@
 
             var ownerType = declaration.DependencyPropertyRegisteredOwnerType() as IdentifierNameSyntax;
             var ownerName = ((ClassDeclarationSyntax)declaration.Parent).Name();
-            if (ownerType == null || ownerType.Identifier.Text == ownerName)
+            if (ownerType == null || ownerType.Identifier.ValueText == ownerName)
             {
                 return;
             }

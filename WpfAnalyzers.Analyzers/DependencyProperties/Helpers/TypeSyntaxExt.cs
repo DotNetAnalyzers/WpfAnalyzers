@@ -6,7 +6,7 @@
     {
         internal static bool IsDependencyProperty(this TypeSyntax typeSyntax)
         {
-            return (typeSyntax as IdentifierNameSyntax)?.Identifier.Text == Names.DependencyProperty;
+            return (typeSyntax as IdentifierNameSyntax)?.Identifier.ValueText == Names.DependencyProperty;
         }
     }
 }

@@ -84,6 +84,15 @@ namespace WpfAnalyzers.Test
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Test]
+        public void IdMatches()
+        {
+            foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
+            {
+                StringAssert.StartsWith(diagnosticAnalyzer.SupportedDiagnostics.Single().Id, diagnosticAnalyzer.GetType().Name);
+            }
+        }
+
         /// <summary>
         /// Verifies that each diagnostics contains a <see cref="DiagnosticDescriptor.HelpLinkUri"/> in the expected
         /// format.

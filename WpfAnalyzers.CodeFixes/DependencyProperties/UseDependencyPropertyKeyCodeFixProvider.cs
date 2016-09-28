@@ -57,7 +57,7 @@
             var identifierNameSyntax = old as IdentifierNameSyntax;
             if (identifierNameSyntax != null)
             {
-                return identifierNameSyntax.Identifier.Text == "SetCurrentValue"
+                return identifierNameSyntax.Identifier.ValueText == "SetCurrentValue"
                            ? identifierNameSyntax.WithIdentifier(SyntaxFactory.Identifier("SetValue"))
                            : identifierNameSyntax;
             }
