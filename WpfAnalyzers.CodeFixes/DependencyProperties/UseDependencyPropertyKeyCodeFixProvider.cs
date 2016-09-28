@@ -1,9 +1,7 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
@@ -92,7 +90,7 @@
             }
 
             var member = declarator.Initializer.Value as MemberAccessExpressionSyntax;
-            if (member.IsDependencyPropertyKeyProperty())
+            if (member?.Expression != null && member.IsDependencyPropertyKeyProperty())
             {
                 var updated = argument.WithExpression(member.Expression);
                 return argumentList.WithArguments(argumentList.Arguments.Replace(argument, updated));

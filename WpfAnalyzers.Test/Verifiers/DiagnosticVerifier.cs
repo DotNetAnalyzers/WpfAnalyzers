@@ -300,7 +300,8 @@ namespace WpfAnalyzers.Test
                 actualLinePosition.Line + 1 != expectedLinePosition.Line)
             {
                 var formattedDiagnostics = FormatDiagnostics(analyzers, diagnostic);
-                var message = $"Expected diagnostic on line \"{expectedLinePosition.Line}\"\r\n" +
+                var message = $"Diagnostic: {positionText}\r\n" +
+                              $"Expected diagnostic on line \"{expectedLinePosition.Line}\"\r\n" +
                               $"Actual   diagnostic on line \"{actualLinePosition.Line + 1}\"\r\n" +
                                "\r\n" +
                                "Diagnostic:\r\n" +
@@ -313,7 +314,8 @@ namespace WpfAnalyzers.Test
                actualLinePosition.Character + 1 != expectedLinePosition.Character)
             {
                 var formattedDiagnostics = FormatDiagnostics(analyzers, diagnostic);
-                var message = $"Expected diagnostic at column \"{expectedLinePosition.Character}\"\r\n" +
+                var message = $"Diagnostic: {positionText}\r\n" +
+                              $"Expected diagnostic at column \"{expectedLinePosition.Character}\"\r\n" +
                               $"Actual   diagnostic at column \"{actualLinePosition.Character + 1}\"\r\n" +
                                "\r\n" +
                                "Diagnostic:\r\n" +
