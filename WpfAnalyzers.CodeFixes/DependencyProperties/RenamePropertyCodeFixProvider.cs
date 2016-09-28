@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameFieldCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenamePropertyCodeFixProvider))]
     [Shared]
     internal class RenamePropertyCodeFixProvider : CodeFixProvider
     {

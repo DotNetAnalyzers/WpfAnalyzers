@@ -6,8 +6,10 @@ namespace WpfAnalyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Composition;
     using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -24,6 +26,19 @@ namespace WpfAnalyzers.Test
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
         private const int DefaultNumberOfIncrementalIterations = -1000;
+
+        [Test]
+        public void NameMatchesExportedName()
+        {
+            var codeFixProvider = this.GetCSharpCodeFixProvider();
+            if (codeFixProvider == null)
+            {
+                return;
+            }
+
+            var exportAttribute = codeFixProvider.GetType().GetCustomAttribute<ExportCodeFixProviderAttribute>();
+            Assert.AreEqual(codeFixProvider.GetType().Name, exportAttribute.Name);
+        }
 
         /// <summary>
         /// Returns the code fix being tested (C#) - to be implemented in non-abstract class.
