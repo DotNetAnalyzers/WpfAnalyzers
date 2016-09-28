@@ -16,11 +16,11 @@
                 {
                     var dependencyProperty = method.Class()
                                                    .Field(argument.Expression as IdentifierNameSyntax);
-                    result = dependencyProperty?.DependencyPropertyRegisteredName();
+                    return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
                 }
             }
 
-            return result != null;
+            return false;
         }
 
         internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedSet(this MethodDeclarationSyntax method, out string result)
@@ -36,11 +36,11 @@
                 {
                     var dependencyProperty = method.Class()
                                                    .Field(dpArg.Expression as IdentifierNameSyntax);
-                    result = dependencyProperty.DependencyPropertyRegisteredName();
+                    return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
                 }
             }
 
-            return result != null;
+            return false;
         }
 
         private static bool TryGetSingleChildInvocation(this MethodDeclarationSyntax method, out ExpressionSyntax result)

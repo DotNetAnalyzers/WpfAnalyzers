@@ -59,8 +59,8 @@
                 return;
             }
 
-            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
-            if (registeredName == null)
+            string registeredName;
+            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
             {
                 return;
             }

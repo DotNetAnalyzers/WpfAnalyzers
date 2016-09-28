@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.DependencyProperties
+namespace WpfAnalyzers.DependencyProperties
 {
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -28,10 +28,10 @@
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyProperty(out dependencyProperty))
             {
-                result = dependencyProperty.DependencyPropertyRegisteredName();
+               return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
             }
 
-            return result != null;
+            return false;
         }
 
         internal static bool TryGetDependencyPropertyRegisteredType(this PropertyDeclarationSyntax property, out TypeSyntax result)

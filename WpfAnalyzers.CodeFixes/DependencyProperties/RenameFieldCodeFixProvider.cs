@@ -48,14 +48,18 @@
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
-            var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
+            string registeredName;
+            if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
+            {
+                var newName = diagnostic.Id == WA1200FieldNameMustMatchRegisteredName.DiagnosticId
+                  ? registeredName + "Property"
+                  : registeredName + "PropertyKey";
 
-            var newName = diagnostic.Id == WA1200FieldNameMustMatchRegisteredName.DiagnosticId
-                              ? registeredName + "Property"
-                              : registeredName + "PropertyKey";
+                return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, context.CancellationToken)
+                                         .ConfigureAwait(false);
+            }
 
-            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, context.CancellationToken)
-                                     .ConfigureAwait(false);
+            return document.Project.Solution;
         }
     }
 }

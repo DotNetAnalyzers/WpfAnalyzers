@@ -7,12 +7,16 @@
     {
         internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
         {
-            return declaration.IsDependencyPropertyType() && declaration.DependencyPropertyRegisteredName() != null;
+            string temp;
+            return declaration.IsDependencyPropertyType() &&
+                   declaration.TryGetDependencyPropertyRegisteredName(out temp);
         }
 
         internal static bool IsDependencyPropertyKeyField(this FieldDeclarationSyntax declaration)
         {
-            return declaration.IsDependencyPropertyKeyType() && declaration.DependencyPropertyRegisteredName() != null;
+            string temp;
+            return declaration.IsDependencyPropertyKeyType() &&
+                   declaration.TryGetDependencyPropertyRegisteredName(out temp);
         }
 
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
@@ -61,33 +65,38 @@
             return result != null;
         }
 
-        internal static string DependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration)
+        internal static bool TryGetDependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration, out string result)
         {
+            result = null;
+            if (declaration == null)
+            {
+                return false;
+            }
+
             MemberAccessExpressionSyntax invocation;
             if (!TryGetRegisterInvocation(declaration, out invocation))
             {
-                return null;
+                return false;
             }
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
             if (nameArg == null)
             {
-                return null;
+                return false;
             }
 
-            string result;
             if (TryGetStringLiteral(nameArg.Expression, out result))
             {
-                return result;
+                return true;
             }
 
             if ((nameArg.Expression as InvocationExpressionSyntax)?.TryGetNameOfResult(out result) == true)
             {
-                return result;
+                return true;
             }
 
-            return null;
+            return false;
         }
 
         internal static TypeSyntax DependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration)
