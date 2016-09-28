@@ -99,33 +99,28 @@
             return false;
         }
 
-        internal static TypeSyntax DependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration)
+        internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
         {
+            result = null;
             MemberAccessExpressionSyntax invocation;
             if (!TryGetRegisterInvocation(declaration, out invocation))
             {
-                return null;
+                return false;
             }
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             if (args == null || args.Arguments.Count < 2)
             {
-                return null;
+                return false;
             }
 
             var typeArg = args.Arguments[1];
             if (typeArg == null)
             {
-                return null;
+                return false;
             }
 
-            TypeSyntax result;
-            if (typeArg.Expression.TryGetTypeOfResult(out result))
-            {
-                return result;
-            }
-
-            return null;
+            return typeArg.Expression.TryGetTypeOfResult(out result);
         }
 
         internal static TypeSyntax DependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration)

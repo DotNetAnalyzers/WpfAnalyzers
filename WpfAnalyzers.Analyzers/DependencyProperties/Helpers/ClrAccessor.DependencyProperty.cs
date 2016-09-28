@@ -40,10 +40,10 @@ namespace WpfAnalyzers.DependencyProperties
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyProperty(out dependencyProperty))
             {
-                result = dependencyProperty.DependencyPropertyRegisteredType();
+                return dependencyProperty.TryGetDependencyPropertyRegisteredType(out result);
             }
 
-            return result != null;
+            return false;
         }
 
         internal static bool TryGetDependencyPropertyFromGetter(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)
