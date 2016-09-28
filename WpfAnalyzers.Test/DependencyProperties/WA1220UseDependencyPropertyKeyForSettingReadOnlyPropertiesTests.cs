@@ -11,7 +11,9 @@
     public class WA1220UseDependencyPropertyKeyForSettingReadOnlyPropertiesTests : CodeFixVerifier
     {
         [TestCase("SetValue")]
+        [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
+        [TestCase("this.SetCurrentValue")]
         public async Task SetValueHappyPath(string method)
         {
             var testCode = @"
@@ -28,7 +30,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarProperty, value); }
     }
 }";
@@ -56,7 +58,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";
@@ -122,7 +124,9 @@ public static class Foo
         }
 
         [TestCase("SetValue")]
+        [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
+        [TestCase("this.SetCurrentValue")]
         public async Task SetValueErrorReadOnly(string method)
         {
             var testCode = @"
@@ -141,12 +145,12 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarProperty, value); }
     }
 }";
             testCode = testCode.Replace("SetValue", method);
-            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("BarProperty", "BarPropertyKey");
+            var expected = this.CSharpDiagnostic().WithLocation(18, 31).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -165,10 +169,11 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";
+            fixedCode = fixedCode.Replace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 

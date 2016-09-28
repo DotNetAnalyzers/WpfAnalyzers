@@ -29,7 +29,7 @@
 
         public int Bar
         {
-            get { return (int) GetValue(BarProperty); }
+            get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }";

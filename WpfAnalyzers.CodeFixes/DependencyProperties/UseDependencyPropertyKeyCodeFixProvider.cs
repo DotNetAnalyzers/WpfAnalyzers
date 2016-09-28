@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseDependencyPropertyKeyCodeFixProvider))]
     [Shared]
@@ -33,29 +34,32 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "Use DependencyPropertyKey when setting a readonly property.",
-                        cancellationToken =>
-                            GetTransformedDocumentAsync(
-                                context.Document,
-                                syntaxRoot,
-                                token,
-                                diagnostic,
-                                cancellationToken),
-                        this.GetType().Name),
-                    diagnostic);
+                SyntaxNode updated;
+                if (TryFix(diagnostic, syntaxRoot, out updated))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            "Use DependencyPropertyKey when setting a readonly property.",
+                            _ => Task.FromResult(context.Document.WithSyntaxRoot(updated)),
+                            nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                        diagnostic);
+                }
             }
         }
 
-        private static Task<Solution> GetTransformedDocumentAsync(
-            Document document,
-            SyntaxNode syntaxRoot,
-            SyntaxToken token,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+        private static bool TryFix(Diagnostic diagnostic, SyntaxNode syntaxRoot, out SyntaxNode result)
         {
-            throw new NotImplementedException();
+            result = syntaxRoot;
+            var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                             .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            if (invocation == null || invocation.IsMissing)
+            {
+                return false;
+            }
+
+            SyntaxNode updated = invocation;
+            result = syntaxRoot.ReplaceNode(invocation, updated);
+            return true;
         }
     }
 }

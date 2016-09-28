@@ -25,7 +25,7 @@
 
         public int Bar
         {
-            get { return (int) GetValue(BarProperty); }
+            get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }";
@@ -50,7 +50,7 @@
 
         public int Bar
         {
-            get { return (int) GetValue(BarProperty); }
+            get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }";
@@ -77,7 +77,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";
@@ -127,7 +127,7 @@ public static class Foo
 
         public int Bar
         {
-            get { return (int) GetValue(BarProperty); }
+            get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }";
@@ -146,7 +146,7 @@ public static class Foo
 
         public int Bar
         {
-            get { return (int) GetValue(ErrorProperty); }
+            get { return (int)GetValue(ErrorProperty); }
             set { SetValue(ErrorProperty, value); }
         }
     }";
@@ -172,7 +172,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(ErrorProperty); }
+        get { return (int)GetValue(ErrorProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";
@@ -196,7 +196,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";

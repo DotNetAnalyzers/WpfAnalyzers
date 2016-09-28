@@ -34,7 +34,7 @@ public class FooControl : Control
     
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarProperty, value); }
     }
 }";
@@ -91,7 +91,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(ErrorPropertyKey, value); }
     }
 }";
@@ -115,7 +115,7 @@ public class FooControl : Control
 
     public int Bar
     {
-        get { return (int) GetValue(BarProperty); }
+        get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
     }
 }";
