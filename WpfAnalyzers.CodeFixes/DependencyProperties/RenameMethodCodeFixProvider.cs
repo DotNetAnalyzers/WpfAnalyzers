@@ -3,25 +3,26 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameFieldCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMethodCodeFixProvider))]
     [Shared]
-    internal class RenamePropertyCodeFixProvider : CodeFixProvider
+    internal class RenameMethodCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WA1210ClrPropertyNameMustMatchRegisteredName.DiagnosticId);
+            ImmutableArray.Create(WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+                                           .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -44,15 +45,25 @@
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+                                           .ConfigureAwait(false);
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            var method = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                        .FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
             string registeredName;
-            if (declaration.TryGetDependencyPropertyRegisteredName(out registeredName))
+            string expectedName = null;
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(out registeredName))
             {
-                return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, context.CancellationToken).ConfigureAwait(false);
+                expectedName = "Get" + registeredName;
+            }
+            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(out registeredName))
+            {
+                expectedName = "Set" + registeredName;
+            }
+
+            if (expectedName != null)
+            {
+                return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, expectedName, context.CancellationToken).ConfigureAwait(false);
             }
 
             return document.Project.Solution;

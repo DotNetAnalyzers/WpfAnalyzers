@@ -11,7 +11,7 @@
     {
         public const string DiagnosticId = "WA1210";
         private const string Title = "DependencyProperty CLR property name must match registered name.";
-        private const string MessageFormat = "Property '{0}' must be named {1}";
+        private const string MessageFormat = "Property '{0}' must be named '{1}'";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -44,7 +44,12 @@
                 return;
             }
 
-            var registeredName = propertyDeclaration.DependencyPropertyRegisteredNameFromGetter();
+            string registeredName;
+            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
+            {
+                return;
+            }
+
             var propertyName = propertyDeclaration.Name();
             if (registeredName == null || propertyName == null)
             {

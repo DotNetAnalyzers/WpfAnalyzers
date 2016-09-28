@@ -43,11 +43,15 @@
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="DependencyProperties\Helpers\ClassDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\ExpressionSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExt.cs" />
     <Compile Include="DependencyProperties\Helpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\MemberAccessExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\MemberDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\MethodDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\ClrAccessor.cs" />
     <Compile Include="DependencyProperties\Helpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
@@ -59,6 +63,7 @@
     <Compile Include="DependencyProperties\WA1211ClrPropertyTypeMustMatchRegisteredType.cs" />
     <Compile Include="DependencyProperties\WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter.cs" />
     <Compile Include="DependencyProperties\WA1204KeyFieldMustComeBeforePropertyField.cs" />
+    <Compile Include="DependencyProperties\WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyProperties.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
@@ -80,6 +85,12 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="..\.paket\paket.targets" />
+  <ItemGroup>
+    <Analyzer Include="..\packages\analyzers\AsyncUsageAnalyzers\analyzers\dotnet\AsyncUsageAnalyzers.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\Newtonsoft.Json.dll">
       <Paket>True</Paket>
@@ -174,5 +185,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Import Project="..\.paket\paket.targets" />
 </Project>

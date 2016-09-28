@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DependencyProperties\Helpers\RenameHelper.cs" />
     <Compile Include="DependencyProperties\Helpers\SyntaxTokenListExt.cs" />
+    <Compile Include="DependencyProperties\RenameMethodCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\RenamePropertyCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\UseDependencyPropertyKeyCodeFixProvider.cs" />
     <Compile Include="FinishedTasks.cs" />
@@ -68,6 +69,12 @@
       <Project>{18eb2a1b-98ea-4dcf-a97c-d9e8a5da747b}</Project>
       <Name>WpfAnalyzers.Analyzers</Name>
     </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\.paket\paket.targets" />
+  <ItemGroup>
+    <Analyzer Include="..\packages\analyzers\AsyncUsageAnalyzers\analyzers\dotnet\AsyncUsageAnalyzers.dll">
+      <Paket>True</Paket>
+    </Analyzer>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\Newtonsoft.Json.dll">
@@ -190,5 +197,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Import Project="..\.paket\paket.targets" />
 </Project>

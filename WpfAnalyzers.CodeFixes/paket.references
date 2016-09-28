@@ -8,4 +8,5 @@ System.Collections.Immutable
 
 group Analyzers
   StyleCop.Analyzers
+  AsyncUsageAnalyzers
 

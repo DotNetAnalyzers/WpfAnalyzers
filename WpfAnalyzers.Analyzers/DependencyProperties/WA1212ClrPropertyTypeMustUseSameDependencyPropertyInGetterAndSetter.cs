@@ -45,23 +45,27 @@
                 return;
             }
 
-            var setter = propertyDeclaration.GetDependencyPropertyFromSetter();
-            var getter = propertyDeclaration.GetDependencyPropertyFromGetter();
-            if (getter == null || setter == null || getter == setter)
+            FieldDeclarationSyntax setter;
+            FieldDeclarationSyntax getter;
+            if (propertyDeclaration.TryGetDependencyPropertyFromGetter(out getter) &&
+                propertyDeclaration.TryGetDependencyPropertyFromSetter(out setter))
             {
-                return;
-            }
-
-            FieldDeclarationSyntax key;
-            if (getter.TryGetDependencyPropertyKey(out key))
-            {
-                if (key == setter)
+                if (getter == setter)
                 {
                     return;
                 }
-            }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));
+                FieldDeclarationSyntax key;
+                if (getter.TryGetDependencyPropertyKey(out key))
+                {
+                    if (key == setter)
+                    {
+                        return;
+                    }
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));
+            }
         }
     }
 }

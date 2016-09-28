@@ -44,7 +44,7 @@
                 return context.Document;
             }
 
-            var semanticModel = await context.Document.GetSemanticModelAsync();
+            var semanticModel = await context.Document.GetSemanticModelAsync().ConfigureAwait(false);
 
             SyntaxNode updated = invocation.WithExpression(SetValueExpression(invocation.Expression))
                                            .WithArgumentList(UpdateArgumentList(invocation.ArgumentList, semanticModel));

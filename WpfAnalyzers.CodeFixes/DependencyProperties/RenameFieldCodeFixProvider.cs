@@ -2,7 +2,6 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -36,19 +35,17 @@
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         "Rename field to match registered name.",
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, token, diagnostic, cancellationToken),
-                        nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                        _ => ApplyFixAsync(context, diagnostic),
+                        this.GetType().Name),
                     diagnostic);
             }
         }
 
-        private static Task<Solution> GetTransformedDocumentAsync(
-            Document document,
-            SyntaxNode syntaxRoot,
-            SyntaxToken token,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+        private static async Task<Solution> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
         {
+            var document = context.Document;
+            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var registeredName = fieldDeclaration.DependencyPropertyRegisteredName();
@@ -57,13 +54,8 @@
                               ? registeredName + "Property"
                               : registeredName + "PropertyKey";
 
-            var updatedDeclaration = RenameHelper.RenameSymbolAsync(
-                document,
-                syntaxRoot,
-                token,
-                newName,
-                cancellationToken);
-            return updatedDeclaration;
+            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, context.CancellationToken)
+                                     .ConfigureAwait(false);
         }
     }
 }
