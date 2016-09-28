@@ -47,13 +47,32 @@
                 return;
             }
 
-            var symbol = context.ContainingSymbol;
-            var argument = declaration.ArgumentList.Arguments[0];
-            //declaration.
-            //var dependencyProperty = property.Class()
-            //    .Field(invocation.ArgumentList.Arguments.First().Expression as IdentifierNameSyntax);
+            var symbolInfo = context.SemanticModel.GetSymbolInfo(declaration, context.CancellationToken);
+            if (symbolInfo.Symbol.ContainingType.Name != Names.DependencyObject)
+            {
+                return;
+            }
 
-            //context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), key.Name(), declaration.Name()));
+            var argument = declaration.ArgumentList.Arguments[0];
+            var dp = context.SemanticModel.GetSymbolInfo(argument.Expression);
+            if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
+            {
+                return;
+            }
+
+            var declarator = dp.Symbol
+                               .DeclaringSyntaxReferences[0]
+                               .GetSyntax(context.CancellationToken) as VariableDeclaratorSyntax;
+            if (declarator == null)
+            {
+                return;
+            }
+
+            var member = declarator.Initializer.Value as MemberAccessExpressionSyntax;
+            if (member.IsDependencyPropertyKeyProperty())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), argument, member.Expression));
+            }
         }
     }
 }

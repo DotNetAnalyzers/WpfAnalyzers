@@ -31,7 +31,7 @@
                 return false;
             }
 
-            return memberAccess.Name?.Identifier.ValueText == "DependencyProperty";
+            return memberAccess.Name?.Identifier.ValueText == Names.DependencyProperty;
         }
 
         private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)

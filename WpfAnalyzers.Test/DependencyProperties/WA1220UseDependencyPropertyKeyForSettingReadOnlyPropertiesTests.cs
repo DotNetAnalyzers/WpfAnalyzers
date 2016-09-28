@@ -37,9 +37,8 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public async Task SetValueHappyPathReadOnly(string method)
+        [Test]
+        public async Task SetValueHappyPathReadOnly()
         {
             var testCode = @"
 using System.Windows;
@@ -61,13 +60,12 @@ public class FooControl : Control
         set { SetValue(BarPropertyKey, value); }
     }
 }";
-            testCode = testCode.Replace("SetValue", method);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task SetValueHappyAttached(string method)
+        public async Task SetValueHappyPathAttached(string method)
         {
             var testCode = @"
 using System.Windows;
@@ -94,9 +92,8 @@ public static class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public async Task SetValueHappyAttachedReadOnly(string method)
+        [Test]
+        public async Task SetValueHappyPathAttachedReadOnly()
         {
             var testCode = @"
 using System.Windows;
@@ -121,7 +118,6 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-            testCode = testCode.Replace("SetValue", method);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -150,7 +146,8 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.Replace("SetValue", method);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("BarProperty", "BarPropertyKey");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -172,7 +169,6 @@ public class FooControl : Control
         set { SetValue(BarPropertyKey, value); }
     }
 }";
-            fixedCode = fixedCode.Replace("SetValue", method);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
@@ -204,7 +200,8 @@ public static class Foo
     }
 }";
             testCode = testCode.Replace("SetValue", method);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("BarProperty", "BarPropertyKey");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -229,7 +226,6 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-            fixedCode = fixedCode.Replace("SetValue", method);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
