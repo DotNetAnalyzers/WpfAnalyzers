@@ -6,22 +6,22 @@
     {
         internal static bool IsDependencyPropertyRegister(this MemberAccessExpressionSyntax memberAccess)
         {
-            return memberAccess.IsDependencyPropertyCall("Register");
+            return memberAccess.IsDependencyPropertyCall(Names.Register);
         }
 
         internal static bool IsDependencyPropertyRegisterAttached(this MemberAccessExpressionSyntax memberAccess)
         {
-            return memberAccess.IsDependencyPropertyCall("RegisterAttached");
+            return memberAccess.IsDependencyPropertyCall(Names.RegisterAttached);
         }
 
         internal static bool IsDependencyPropertyRegisterReadOnly(this MemberAccessExpressionSyntax memberAccess)
         {
-            return memberAccess.IsDependencyPropertyCall("RegisterReadOnly");
+            return memberAccess.IsDependencyPropertyCall(Names.RegisterReadOnly);
         }
 
         internal static bool IsDependencyPropertyRegisterAttachedReadOnly(this MemberAccessExpressionSyntax memberAccess)
         {
-            return memberAccess.IsDependencyPropertyCall("RegisterAttachedReadOnly");
+            return memberAccess.IsDependencyPropertyCall(Names.RegisterAttachedReadOnly);
         }
 
         internal static bool IsDependencyPropertyKeyProperty(this MemberAccessExpressionSyntax memberAccess)

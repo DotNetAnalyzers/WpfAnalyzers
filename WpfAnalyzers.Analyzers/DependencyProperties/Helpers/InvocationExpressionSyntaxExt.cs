@@ -38,14 +38,19 @@
             return invocation.Name() == "nameof";
         }
 
+        internal static bool IsGetValue(this InvocationExpressionSyntax invocation)
+        {
+            return invocation.Name() == Names.GetValue && invocation?.ArgumentList?.Arguments.Count == 1;
+        }
+
         internal static bool IsSetValue(this InvocationExpressionSyntax invocation)
         {
-            return invocation.Name() == "SetValue";
+            return invocation.Name() == Names.SetValue && invocation?.ArgumentList?.Arguments.Count == 2;
         }
 
         internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation)
         {
-            return invocation.Name() == "SetCurrentValue";
+            return invocation.Name() == Names.SetCurrentValue && invocation?.ArgumentList?.Arguments.Count == 2;
         }
 
         internal static bool TryGetNameOfResult(this InvocationExpressionSyntax nameOfInvocation, out string result)

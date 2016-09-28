@@ -6,48 +6,49 @@
     {
         internal static bool TryGetGetValueInvocation(
             this ExpressionSyntax returnExpression,
-            out InvocationExpressionSyntax getValueInvocation,
+            out InvocationExpressionSyntax getValue,
             out ArgumentSyntax dependencyProperty)
         {
+            getValue = null;
             dependencyProperty = null;
-            getValueInvocation = null;
-            var castExpressionSyntax = returnExpression as CastExpressionSyntax;
-            if (castExpressionSyntax != null)
+            var cast = returnExpression as CastExpressionSyntax;
+            if (cast != null)
             {
                 return TryGetGetValueInvocation(
-                    castExpressionSyntax.Expression,
-                    out getValueInvocation,
+                    cast.Expression,
+                    out getValue,
                     out dependencyProperty);
             }
 
             var invocation = returnExpression as InvocationExpressionSyntax;
-            if (invocation.Name() == "GetValue" && invocation?.ArgumentList?.Arguments.Count == 1)
+            if (invocation.Name() == Names.GetValue && invocation?.ArgumentList?.Arguments.Count == 1)
             {
-                getValueInvocation = invocation;
+                getValue = invocation;
                 dependencyProperty = invocation.ArgumentList.Arguments[0];
             }
 
-            return getValueInvocation != null;
+            return getValue != null;
         }
 
         internal static bool TryGetSetValueInvocation(
             this ExpressionSyntax returnExpression,
-            out InvocationExpressionSyntax setValueInvocation,
+            out InvocationExpressionSyntax setValue,
             out ArgumentSyntax dependencyProperty,
             out ArgumentSyntax argument)
         {
-            setValueInvocation = null;
+            setValue = null;
             dependencyProperty = null;
             argument = null;
             var invocation = returnExpression as InvocationExpressionSyntax;
-            if (invocation.Name() == "SetValue" && invocation?.ArgumentList?.Arguments.Count == 2)
+            if (invocation.Name() == Names.SetValue &&
+                invocation?.ArgumentList?.Arguments.Count == 2)
             {
-                setValueInvocation = invocation;
+                setValue = invocation;
                 dependencyProperty = invocation.ArgumentList.Arguments[0];
                 argument = invocation.ArgumentList.Arguments[1];
             }
 
-            return setValueInvocation != null;
+            return setValue != null;
         }
     }
 }
