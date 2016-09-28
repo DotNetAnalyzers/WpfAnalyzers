@@ -123,33 +123,28 @@
             return typeArg.Expression.TryGetTypeOfResult(out result);
         }
 
-        internal static TypeSyntax DependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration)
+        internal static bool TryGetDependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
         {
+            result = null;
             MemberAccessExpressionSyntax invocation;
             if (!TryGetRegisterInvocation(declaration, out invocation))
             {
-                return null;
+                return false;
             }
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             if (args == null || args.Arguments.Count < 3)
             {
-                return null;
+                return false;
             }
 
             var typeArg = args.Arguments[2];
             if (typeArg == null)
             {
-                return null;
+                return false;
             }
 
-            TypeSyntax result;
-            if (typeArg.Expression.TryGetTypeOfResult(out result))
-            {
-                return result;
-            }
-
-            return null;
+            return typeArg.Expression.TryGetTypeOfResult(out result);
         }
 
         private static bool TryGetRegisterInvocation(

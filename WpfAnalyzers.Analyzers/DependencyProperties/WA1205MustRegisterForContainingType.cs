@@ -51,9 +51,14 @@
                 return;
             }
 
-            var ownerType = declaration.DependencyPropertyRegisteredOwnerType() as IdentifierNameSyntax;
+            TypeSyntax ownerType;
+            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(out ownerType))
+            {
+                return;
+            }
+
             var ownerName = ((ClassDeclarationSyntax)declaration.Parent).Name();
-            if (ownerType == null || ownerType.Identifier.ValueText == ownerName)
+            if (ownerType.Name() == ownerName)
             {
                 return;
             }
