@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class ClrAccessor
+    internal static partial class ClrAccessor
     {
         internal static bool TryGetDependencyProperty(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)
         {

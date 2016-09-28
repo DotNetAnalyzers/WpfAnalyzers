@@ -30,7 +30,7 @@
                 return false;
             }
 
-            foreach (var accessor in accessors)
+            foreach (var accessor in accessors.Value)
             {
                 if (accessor.IsKind(kind))
                 {
