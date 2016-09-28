@@ -39,7 +39,15 @@
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing || !fieldDeclaration.IsDependencyPropertyType())
+            if (fieldDeclaration == null ||
+                fieldDeclaration.IsMissing ||
+                !fieldDeclaration.IsDependencyPropertyType())
+            {
+                return;
+            }
+
+            var fieldName = fieldDeclaration.Name();
+            if (fieldName == null)
             {
                 return;
             }
@@ -50,7 +58,6 @@
                 return;
             }
 
-            var fieldName = fieldDeclaration.Name();
             if (!IsMatch(fieldName, registeredName))
             {
                 var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
