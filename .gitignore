@@ -50,4 +50,5 @@ $tf*/
 *.dll
 packages/*
 publish/*
+WpfAnalyzers.Demo/*
 .vs/*
