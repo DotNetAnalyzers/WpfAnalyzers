@@ -59,9 +59,8 @@
                 return false;
             }
 
-            var classSyntax = (ClassDeclarationSyntax)field.Parent;
             var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.ValueText;
-            result = classSyntax.Field(name);
+            result = field.DeclaringType().Field(name);
             return result != null;
         }
 
