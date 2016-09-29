@@ -38,7 +38,7 @@
             var doc = CreateStub(descriptorInfo);
             DumpIfDebug(doc);
             ////File.WriteAllText(descriptorInfo.DocFileName, doc);
-            Assert.Inconclusive($"Documentation is missing for {id}");
+            Assert.Fail($"Documentation is missing for {id}");
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
