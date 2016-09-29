@@ -12,7 +12,7 @@
     {
         public const string DiagnosticId = "WA1231";
         private const string Title = "CLR accessor for attached property must match registered type.";
-        private const string MessageFormat = "Method '{0}' {1}";
+        private const string MessageFormat = "{0} must match registered type {1}";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -57,7 +57,7 @@
                 var registeredTypeSymbol = context.SemanticModel.GetTypeInfo(registeredType).Type;
                 if (!TypeHelper.IsSameType(methodSymbol.ReturnType, registeredTypeSymbol))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), methodSymbol, signature));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), "Return type", registeredTypeSymbol));
                 }
             }
             else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(out registeredType))
@@ -65,7 +65,7 @@
                 var registeredTypeSymbol = context.SemanticModel.GetTypeInfo(registeredType).Type;
                 if (!TypeHelper.IsSameType(methodSymbol.Parameters[1].Type, registeredTypeSymbol))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), method, methodSymbol.Parameters[0].Type));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), "Value type", registeredTypeSymbol));
                 }
             }
         }

@@ -127,7 +127,7 @@ public static class Foo
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(12, 57).WithArguments("SetBar", "public static void SetBar(System.Windows.FrameworkElement element, int value)");
+            var expected = this.CSharpDiagnostic().WithLocation(14, 57).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -156,7 +156,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 62).WithArguments("SetBar", "public static void SetBar(this System.Windows.FrameworkElement element, int value)");
+            var expected = this.CSharpDiagnostic().WithLocation(12, 62).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -181,7 +181,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(14, 62).WithArguments("SetBar", "public static void SetBar(this System.Windows.FrameworkElement element, int value)");
+            var expected = this.CSharpDiagnostic().WithLocation(14, 62).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -215,7 +215,7 @@ public static class Foo
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("Foo.GetBar", "int GetBar(System.Windows.FrameworkElement element)");
+            var expected = this.CSharpDiagnostic().WithLocation(19, 19).WithArguments("Return type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -244,7 +244,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("GetBar", "public static int GetBar(this System.Windows.FrameworkElement element)");
+            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("Return type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
