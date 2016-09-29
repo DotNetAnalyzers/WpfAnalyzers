@@ -5,18 +5,30 @@
 
     public class FooControl : Control
     {
-        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            "Bar",
-            typeof(object),
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
             typeof(FooControl),
-            new PropertyMetadata(default(object)));
+            new PropertyMetadata(default(int)));
 
-        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        private static readonly DependencyPropertyKey BarReadOnlyPropertyKey = DependencyProperty.RegisterReadOnly(
+            "BarReadOnly",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
 
-        public void Error()
+        public static readonly DependencyProperty BarReadOnlyProperty = BarReadOnlyPropertyKey.DependencyProperty;
+
+        public int Bar
         {
-            this.SetValue(BarPropertyKey, null);
-            this.SetCurrentValue(BarProperty, null);
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public int BarReadOnly
+        {
+            get { return (int)this.GetValue(BarReadOnlyProperty); }
+            protected set { this.SetValue(BarReadOnlyPropertyKey, value); }
         }
     }
 }

@@ -56,7 +56,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Foo.cs" />
+    <Compile Include="FooViewModel.cs" />
+    <Compile Include="FooWithAttached.cs" />
     <Compile Include="FooControl.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
