@@ -14,7 +14,7 @@
                 InvocationExpressionSyntax getValue;
                 if (invocation.TryGetGetValueInvocation(out getValue, out argument))
                 {
-                    var dependencyProperty = method.Class()
+                    var dependencyProperty = method.DeclaringType()
                                                    .Field(argument.Expression as IdentifierNameSyntax);
                     return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
                 }
@@ -34,7 +34,7 @@
                 ArgumentSyntax arg;
                 if (invocation.TryGetSetValueInvocation(out setValueCall, out dpArg, out arg))
                 {
-                    var dependencyProperty = method.Class()
+                    var dependencyProperty = method.DeclaringType()
                                                    .Field(dpArg.Expression as IdentifierNameSyntax);
                     return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
                 }

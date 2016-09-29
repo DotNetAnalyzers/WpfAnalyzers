@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
-    <Compile Include="DependencyProperties\Helpers\ClassDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\ClrAccessor.AttachedProperty.cs" />
     <Compile Include="DependencyProperties\Helpers\ExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
@@ -53,6 +52,7 @@
     <Compile Include="DependencyProperties\Helpers\MethodDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\ClrAccessor.DependencyProperty.cs" />
     <Compile Include="DependencyProperties\Helpers\PropertyDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredName.cs" />

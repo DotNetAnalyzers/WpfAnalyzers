@@ -4,9 +4,9 @@
 
     internal static class MemberDeclarationSyntaxExt
     {
-        internal static ClassDeclarationSyntax Class(this MemberDeclarationSyntax member)
+        internal static TypeDeclarationSyntax DeclaringType(this MemberDeclarationSyntax member)
         {
-            return (ClassDeclarationSyntax)member.Parent;
+            return (TypeDeclarationSyntax)member.Parent;
         }
     }
 }

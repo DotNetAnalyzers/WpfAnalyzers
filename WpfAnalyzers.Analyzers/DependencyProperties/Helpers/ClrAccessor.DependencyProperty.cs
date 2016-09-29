@@ -63,7 +63,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            dependencyProperty = property.Class()
+            dependencyProperty = property.DeclaringType()
                                          .Field(argument.Expression as IdentifierNameSyntax);
             FieldDeclarationSyntax dependencyPropertyKey;
             if (dependencyProperty.TryGetDependencyPropertyKey(out dependencyPropertyKey))
@@ -101,7 +101,7 @@ namespace WpfAnalyzers.DependencyProperties
             ArgumentSyntax arg;
             if (invocation.TryGetSetValueInvocation(out setValueCall, out dpArg, out arg))
             {
-                dependencyProperty = property.Class()
+                dependencyProperty = property.DeclaringType()
                                              .Field(dpArg.Expression as IdentifierNameSyntax);
                 return dependencyProperty != null;
             }
