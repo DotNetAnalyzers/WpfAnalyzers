@@ -30,7 +30,7 @@
 
         internal static FieldDeclarationSyntax Field(this TypeDeclarationSyntax type, IdentifierNameSyntax name)
         {
-            return type.Field(name?.Identifier.ValueText);
+            return type?.Field(name?.Identifier.ValueText);
         }
     }
 }

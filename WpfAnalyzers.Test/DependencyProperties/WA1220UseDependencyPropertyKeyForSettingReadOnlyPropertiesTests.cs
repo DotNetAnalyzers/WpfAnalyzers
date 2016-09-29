@@ -35,7 +35,7 @@ public class FooControl : Control
     }
 }";
 
-            testCode = testCode.Replace("SetValue", method);
+            testCode = testCode.AssertReplace("SetValue", method);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -90,7 +90,7 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-            testCode = testCode.Replace("SetValue", method);
+            testCode = testCode.AssertReplace("SetValue", method);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -149,7 +149,7 @@ public class FooControl : Control
         set { SetValue(BarProperty, value); }
     }
 }";
-            testCode = testCode.Replace("SetValue", method);
+            testCode = testCode.AssertReplace("SetValue", method);
             int column = 16 + method.Length;
             var expected = this.CSharpDiagnostic().WithLocation(18, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -174,7 +174,7 @@ public class FooControl : Control
         set { SetValue(BarPropertyKey, value); }
     }
 }";
-            fixedCode = fixedCode.Replace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+            fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
@@ -205,7 +205,7 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-            testCode = testCode.Replace("SetValue", method);
+            testCode = testCode.AssertReplace("SetValue", method);
             int column = 18 + method.Length;
             var expected = this.CSharpDiagnostic().WithLocation(16, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

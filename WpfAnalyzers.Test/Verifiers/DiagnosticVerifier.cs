@@ -294,12 +294,12 @@ namespace WpfAnalyzers.Test
         {
             var actualSpan = actual.GetLineSpan();
 
-            var message =
-                string.Format(
-                    "Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                    expected.Path,
-                    actualSpan.Path,
-                    FormatDiagnostics(analyzers, diagnostic));
+            var message =  "Diagnostic not found in expected file.\r\n" +
+                          $"Expected: \"{expected.Path}\"\r\n" +
+                          $"Actual:   \"{actualSpan.Path}\"\r\n" +
+                           "\r\n" + 
+                          $"Diagnostic:\r\n" + 
+                          $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
             Assert.True(
                 actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 message);

@@ -45,21 +45,23 @@
                 return;
             }
 
+            var propertySymbol = context.ContainingSymbol as IPropertySymbol;
+            if (propertySymbol == null)
+            {
+                return;
+            }
+
             TypeSyntax registeredType;
             if (!propertyDeclaration.TryGetDependencyPropertyRegisteredType(out registeredType))
             {
                 return;
             }
 
-            var propertyType = propertyDeclaration.Type;
-            if (registeredType == null || propertyType == null)
+            var actualTypeSymbol = propertySymbol.Type;
+            var registeredTypeSymbol = context.SemanticModel.GetTypeInfo(registeredType);
+            if (!TypeHelper.IsSameType(actualTypeSymbol, registeredTypeSymbol.Type))
             {
-                return;
-            }
-
-            if (!context.SemanticModel.GetTypeInfo(propertyType).Equals(context.SemanticModel.GetTypeInfo(registeredType)))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyType.GetLocation(), propertyDeclaration.Name(), context.SemanticModel.GetTypeInfo(registeredType).Type));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Type.GetLocation(), propertySymbol, registeredTypeSymbol.Type));
             }
         }
     }

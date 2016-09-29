@@ -12,10 +12,15 @@
 
     public class WA1231ClrAccessorsForAttachedPropertyMustMatchRegisteredTypeTests : DiagnosticVerifier
     {
-        [Test]
-        public async Task HappyPathFormatted()
+        [TestCase("int")]
+        [TestCase("int?")]
+        [TestCase("Nullable<int>")]
+        [TestCase("ObservableCollection<int>")]
+        public async Task HappyPath(string typeName)
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
@@ -36,7 +41,7 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-
+            testCode = testCode.AssertReplace("int", typeName);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -92,10 +97,15 @@ public static class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task WhenNotMatchingSetMethod()
+        [TestCase("double")]
+        [TestCase("int?")]
+        [TestCase("Nullable<int>")]
+        [TestCase("ObservableCollection<int>")]
+        public async Task WhenNotMatchingSetMethod(string typeName)
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
@@ -116,6 +126,7 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
+            testCode = testCode.AssertReplace("double", typeName);
             var expected = this.CSharpDiagnostic().WithLocation(12, 57).WithArguments("SetBar", "public static void SetBar(System.Windows.FrameworkElement element, int value)");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -174,10 +185,15 @@ public static class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task WhenNotMatchingGetMethod()
+        [TestCase("double")]
+        [TestCase("int?")]
+        [TestCase("Nullable<int>")]
+        [TestCase("ObservableCollection<int>")]
+        public async Task WhenNotMatchingGetMethod(string typeName)
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
@@ -198,7 +214,8 @@ public static class Foo
         return (double)element.GetValue(BarProperty);
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("GetBar", "public static int GetBar(System.Windows.FrameworkElement element)");
+            testCode = testCode.AssertReplace("double", typeName);
+            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("Foo.GetBar", "int GetBar(System.Windows.FrameworkElement element)");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -40,30 +40,38 @@
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = context.Node as FieldDeclarationSyntax;
-            if (declaration == null || declaration.IsMissing || !(declaration.IsDependencyPropertyField() || declaration.IsDependencyPropertyKeyField()))
+            if (declaration == null ||
+                declaration.IsMissing ||
+                !(declaration.IsDependencyPropertyField() ||
+                declaration.IsDependencyPropertyKeyField()))
             {
                 return;
             }
 
-            FieldDeclarationSyntax key;
-            if (declaration.IsDependencyPropertyField() && declaration.TryGetDependencyPropertyKey(out key))
+            var fieldSymbol = context.ContainingSymbol as IFieldSymbol;
+            if (fieldSymbol == null)
             {
                 return;
             }
 
-            TypeSyntax ownerType;
-            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(out ownerType))
+            FieldDeclarationSyntax dependencyPropertyKey;
+            if (declaration.IsDependencyPropertyField() && declaration.TryGetDependencyPropertyKey(out dependencyPropertyKey))
             {
                 return;
             }
 
-            var ownerName = ((ClassDeclarationSyntax)declaration.Parent).Name();
-            if (ownerType.Name() == ownerName)
+            TypeSyntax registeredOwnerType;
+            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(out registeredOwnerType))
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, ownerType.GetLocation(), declaration.Name(), ownerName));
+            var semanticModel = context.SemanticModel;
+            var containingType = fieldSymbol.ContainingSymbol as ITypeSymbol;
+            if (!TypeHelper.IsSameType(semanticModel?.GetTypeInfo(registeredOwnerType).Type, containingType))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, registeredOwnerType.GetLocation(), fieldSymbol, containingType));
+            }
         }
     }
 }

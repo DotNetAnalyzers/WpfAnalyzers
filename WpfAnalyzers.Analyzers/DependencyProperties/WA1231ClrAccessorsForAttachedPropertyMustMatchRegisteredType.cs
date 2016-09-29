@@ -12,7 +12,7 @@
     {
         public const string DiagnosticId = "WA1231";
         private const string Title = "CLR accessor for attached property must match registered type.";
-        private const string MessageFormat = "Method '{0}' must have signature '{1}'";
+        private const string MessageFormat = "Method '{0}' {1}";
         private const string Description = Title;
         private const string HelpLink = "http://stackoverflow.com/";
 
@@ -45,43 +45,29 @@
                 return;
             }
 
-            TypeSyntax registeredType;
+            var methodSymbol = context.ContainingSymbol as IMethodSymbol;
+            if (methodSymbol == null)
+            {
+                return;
+            }
 
-            var methodName = method.Name();
+            TypeSyntax registeredType;
             if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedGet(out registeredType))
             {
-                if (!IsMatchingReturnType(method, registeredType))
+                var registeredTypeSymbol = context.SemanticModel.GetTypeInfo(registeredType).Type;
+                if (!TypeHelper.IsSameType(methodSymbol.ReturnType, registeredTypeSymbol))
                 {
-                    var signature = $"public static {registeredType} {methodName}({FormatFirstParameter((IMethodSymbol)context.ContainingSymbol)})";
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), methodName, signature));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), methodSymbol, signature));
                 }
             }
             else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(out registeredType))
             {
-                if (!IsMatchingSetValueType(method, registeredType))
+                var registeredTypeSymbol = context.SemanticModel.GetTypeInfo(registeredType).Type;
+                if (!TypeHelper.IsSameType(methodSymbol.Parameters[1].Type, registeredTypeSymbol))
                 {
-                    var signature = $"public static void {methodName}({FormatFirstParameter(context.ContainingSymbol as IMethodSymbol)}, {registeredType} value)";
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), methodName, signature));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), method, methodSymbol.Parameters[0].Type));
                 }
             }
-        }
-
-        private static bool IsMatchingReturnType(MethodDeclarationSyntax clrMethod, TypeSyntax registeredType)
-        {
-            return clrMethod.ReturnType.Name() == registeredType.Name();
-        }
-
-        private static bool IsMatchingSetValueType(MethodDeclarationSyntax clrMethod, TypeSyntax registeredType)
-        {
-            return clrMethod.ParameterList.Parameters[1].Type.Name() == registeredType.Name();
-        }
-
-        private static string FormatFirstParameter(IMethodSymbol method)
-        {
-            var parameter = method.Parameters[0];
-            return method.IsExtensionMethod
-                       ? $"this {parameter.Type} {parameter.Name}"
-                       : $"{parameter.Type} {parameter.Name}";
         }
     }
 }

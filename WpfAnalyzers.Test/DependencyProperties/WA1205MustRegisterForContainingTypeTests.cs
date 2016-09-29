@@ -12,8 +12,38 @@
 
     public class WA1205MustRegisterForContainingTypeTests : DiagnosticVerifier
     {
-        [Test]
-        public async Task WhenNotOwner()
+        [TestCase("FooControl")]
+        [TestCase("FooControl<T>")]
+        public async Task HappyPath(string typeName)
+        {
+            var testCode = @"
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    // registering for an owner that is not containing type.
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        nameof(Bar),
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            testCode = testCode.AssertReplace("FooControl", typeName);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("class BarControl", "typeof(BarControl)")]
+        [TestCase("class BarControl<T>", "typeof(BarControl<int>)")]
+        public async Task WhenNotOwner(string typeName, string typeofName)
         {
             var testCode = @"
 using System.Windows;
@@ -38,8 +68,9 @@ public class FooControl : Control
         set { this.SetValue(BarProperty, value); }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("BarProperty", "FooControl");
+            testCode = testCode.AssertReplace("class BarControl", typeName)
+                               .AssertReplace("typeof(BarControl)", typeofName);
+            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -72,7 +103,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("BarPropertyKey", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("FooControl.BarPropertyKey", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -105,7 +136,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("BarProperty", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("Foo.BarProperty", "Foo");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -140,7 +171,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("BarPropertyKey", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("Foo.BarPropertyKey", "Foo");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
