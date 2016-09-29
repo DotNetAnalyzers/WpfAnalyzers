@@ -231,7 +231,10 @@ namespace WpfAnalyzers.Test
 
                     if (additionalLocations.Length != expected.Spans.Length - 1)
                     {
-                        var message = $"Expected {expected.Spans.Length - 1} additional locations but got {additionalLocations.Length} for Diagnostic:\r\n" +
+                        var message = $"Locations differ:\r\n" +
+                                      $"Expected: {expected.Spans.Length - 1}\r\n" +
+                                      $"Actual:   {additionalLocations.Length}\r\n" + 
+                                      $"For Diagnostic:\r\n" +
                                       $"    {FormatDiagnostics(analyzers, actual)}\r\n";
                         Assert.Fail(message);
                     }
@@ -244,7 +247,9 @@ namespace WpfAnalyzers.Test
 
                 if (actual.Id != expected.Id)
                 {
-                    var message = $"Expected diagnostic id to be \"{expected.Id}\" was \"{actual.Id}\"\r\n" +
+                    var message = $"Diagnostic id differs:\r\n" +
+                                  $"Expected: \"{expected.Id}\"\r\n" + 
+                                  $"Actual:   \"{actual.Id}\"\r\n" +
                                    "\r\n" +
                                    "Diagnostic:\r\n" +
                                   $"    {FormatDiagnostics(analyzers, actual)}\r\n";
@@ -253,7 +258,9 @@ namespace WpfAnalyzers.Test
 
                 if (actual.Severity != expected.Severity)
                 {
-                    var message = $"Expected diagnostic severity to be \"{expected.Severity}\" was \"{actual.Severity}\"\r\n" +
+                    var message = $"Diagnostic severity differs:\r\n" +
+                                  $"Expected: \"{expected.Severity}\"\r\n" + 
+                                  $"Actual:   \"{actual.Severity}\"\r\n" +
                                    "\r\n" +
                                    "Diagnostic:\r\n" +
                                   $"    {FormatDiagnostics(analyzers, actual)}\r\n";
@@ -262,7 +269,9 @@ namespace WpfAnalyzers.Test
 
                 if (actual.GetMessage() != expected.Message)
                 {
-                    var message = $"Expected diagnostic message to be \"{expected.Message}\" was \"{actual.GetMessage()}\"\r\n" +
+                    var message = $"Diagnostic message differs:\r\n" +
+                                  $"Expected: \"{expected.Message}\"\r\n" + 
+                                  $"Actual:   \"{actual.GetMessage()}\"\r\n" +
                                   $"\r\n" +
                                   $"Diagnostic:\r\n" +
                                   $"    {FormatDiagnostics(analyzers, actual)}\r\n";

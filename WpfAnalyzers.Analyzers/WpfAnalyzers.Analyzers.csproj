@@ -65,6 +65,7 @@
     <Compile Include="DependencyProperties\WA1204KeyFieldMustComeBeforePropertyField.cs" />
     <Compile Include="DependencyProperties\WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyProperties.cs" />
+    <Compile Include="DependencyProperties\WA1231ClrAccessorsForAttachedPropertyMustMatchRegisteredType.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
