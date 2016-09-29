@@ -6,7 +6,7 @@
     {
         internal static TypeDeclarationSyntax DeclaringType(this MemberDeclarationSyntax member)
         {
-            return (TypeDeclarationSyntax)member.Parent;
+            return member.Parent as TypeDeclarationSyntax;
         }
     }
 }

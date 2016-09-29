@@ -410,7 +410,7 @@ namespace WpfAnalyzers.Test
             var document = this.CreateDocument(source, language);
             var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
 
-            var index = diagnosticIndex.HasValue ? diagnosticIndex.Value : 0;
+            var index = diagnosticIndex ?? 0;
 
             Assert.True(index < analyzerDiagnostics.Count());
 

@@ -53,6 +53,7 @@
     <Compile Include="DependencyProperties\Helpers\ClrAccessor.DependencyProperty.cs" />
     <Compile Include="DependencyProperties\Helpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\TypeDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\Helpers\TypeHelper.cs" />
     <Compile Include="DependencyProperties\Helpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredName.cs" />
@@ -92,6 +93,17 @@
       <Paket>True</Paket>
     </Analyzer>
   </ItemGroup>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
+      <ItemGroup>
+        <Reference Include="JetBrains.Annotations">
+          <HintPath>..\packages\analyzers\JetBrains.Annotations\lib\net\JetBrains.Annotations.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
   <ItemGroup>
     <Analyzer Include="..\packages\analyzers\StyleCop.Analyzers\analyzers\dotnet\cs\Newtonsoft.Json.dll">
       <Paket>True</Paket>

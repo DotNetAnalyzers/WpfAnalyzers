@@ -61,6 +61,7 @@
     <Compile Include="DependencyProperties\WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests.cs" />
     <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyPropertiesTests.cs" />
     <Compile Include="DependencyProperties\WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredNameTests.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChangedTests.cs" />
     <Compile Include="PublicApiTests.cs" />

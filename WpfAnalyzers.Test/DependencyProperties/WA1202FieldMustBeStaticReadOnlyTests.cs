@@ -106,7 +106,7 @@ public class FooControl : Control
             set { SetValue(BarProperty, value); }
         }
     }";
-            testCode = testCode.Replace("public static DependencyProperty", before + " DependencyProperty");
+            testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
             var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty", "DependencyProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -125,7 +125,7 @@ public class FooControl : Control
             set { SetValue(BarProperty, value); }
         }
     }";
-            fixedCode = fixedCode.Replace("public static readonly DependencyProperty", after + " DependencyProperty");
+            fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 

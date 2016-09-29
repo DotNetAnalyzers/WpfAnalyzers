@@ -29,7 +29,7 @@
             set { SetValue(BarProperty, value); }
         }
     }";
-            testCode = testCode.Replace("nameof(Bar)", nameof);
+            testCode = testCode.AssertReplace("nameof(Bar)", nameof);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
