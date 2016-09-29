@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class TypeSyntaxExt
@@ -13,8 +12,24 @@
                 return identifier.Identifier.ValueText;
             }
 
-            System.Diagnostics.Debugger.Break();
-            throw new NotImplementedException($"Cannot get name of {type}");
+            var predefinedType = type as PredefinedTypeSyntax;
+            if (predefinedType != null)
+            {
+                return predefinedType.Keyword.ValueText;
+            }
+
+            return type?.ToString();
+        }
+
+        internal static bool IsVoid(this TypeSyntax type)
+        {
+            var predefinedType = type as PredefinedTypeSyntax;
+            if (predefinedType == null)
+            {
+                return false;
+            }
+
+            return predefinedType.Keyword.ValueText == "void";
         }
     }
 }

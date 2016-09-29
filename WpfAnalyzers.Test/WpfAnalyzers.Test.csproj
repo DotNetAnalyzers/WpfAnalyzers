@@ -56,6 +56,7 @@
     <Compile Include="DependencyProperties\WA1205MustRegisterForContainingTypeTests.cs" />
     <Compile Include="DependencyProperties\WA1210ClrPropertyNameMustMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WA1231ClrAccessorsForAttachedPropertyMustMatchRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WA1211ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests.cs" />
     <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyPropertiesTests.cs" />
