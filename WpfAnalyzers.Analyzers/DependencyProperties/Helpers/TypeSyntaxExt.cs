@@ -10,7 +10,7 @@
             var identifier = type as IdentifierNameSyntax;
             if (identifier != null)
             {
-                return identifier?.Identifier.ValueText;
+                return identifier.Identifier.ValueText;
             }
 
             System.Diagnostics.Debugger.Break();

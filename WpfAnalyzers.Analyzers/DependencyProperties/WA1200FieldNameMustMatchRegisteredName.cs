@@ -74,13 +74,13 @@
 
         private static bool IsMatch(string name, string registeredName)
         {
-            const string Suffix = "Property";
-            if (name.Length != registeredName.Length + Suffix.Length)
+            const string suffix = "Property";
+            if (name.Length != registeredName.Length + suffix.Length)
             {
                 return false;
             }
 
-            return name.StartsWith(registeredName) && name.EndsWith(Suffix);
+            return name.StartsWith(registeredName) && name.EndsWith(suffix);
         }
     }
 }
