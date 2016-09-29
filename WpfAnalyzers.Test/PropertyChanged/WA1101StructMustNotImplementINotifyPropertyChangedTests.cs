@@ -4,14 +4,13 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
 
     using WpfAnalyzers.PropertyChanged;
 
-    public class WA1101StructMustNotImplementINotifyPropertyChangedTests : CodeFixVerifier
+    public class WA1101StructMustNotImplementINotifyPropertyChangedTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPath()
@@ -42,11 +41,6 @@ public struct Foo : INotifyPropertyChanged
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new WA1101StructMustNotImplementINotifyPropertyChanged();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return null;
         }
     }
 }

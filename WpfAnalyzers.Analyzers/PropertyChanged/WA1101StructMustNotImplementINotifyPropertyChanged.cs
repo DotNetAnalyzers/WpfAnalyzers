@@ -10,9 +10,6 @@
 
     using WpfAnalyzers.PropertyChanged.Helpers;
 
-    /// <summary>
-    /// DependencyProperty field must be static readonly.
-    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WA1101StructMustNotImplementINotifyPropertyChanged : DiagnosticAnalyzer
     {
