@@ -4,11 +4,6 @@
 
     internal static class TypeDeclarationSyntaxExt
     {
-        internal static string Name(this TypeDeclarationSyntax type)
-        {
-            return type?.Identifier.ValueText;
-        }
-
         internal static FieldDeclarationSyntax Field(this TypeDeclarationSyntax type, string name)
         {
             if (type == null || type.IsMissing || string.IsNullOrWhiteSpace(name))
