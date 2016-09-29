@@ -1,0 +1,7 @@
+version: 1.0.{build}
+configuration: Release
+platform: Any CPU
+cache: packages -> paket.lock
+build:
+  project: WpfAnalyzers.sln
+  verbosity: minimal
