@@ -30,6 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{AB970A83
 		.paket\tools\uninstall.ps1 = .paket\tools\uninstall.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916-2704-452C-9FD4-8EA6247E6589}"
+	ProjectSection(SolutionItems) = preProject
+		documentation\WA0001.md = documentation\WA0001.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +59,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AB970A83-4723-44EA-95EC-D591AF6EC75D} = {A1A96555-15B1-4A0C-ADC1-059CEAA3F788}
+		{700F1916-2704-452C-9FD4-8EA6247E6589} = {BAD2A4EE-6739-4830-BC74-2F8CF785A572}
 	EndGlobalSection
 EndGlobal

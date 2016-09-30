@@ -55,7 +55,7 @@
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\TypeSyntaxExt.cs" />
-    <Compile Include="DependencyProperties\WA1200FieldNameMustMatchRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WA0001FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WA1202FieldMustBeStaticReadOnly.cs" />
     <Compile Include="DependencyProperties\WA1203DefaultValueTypeMustMatchRegisteredType.cs" />

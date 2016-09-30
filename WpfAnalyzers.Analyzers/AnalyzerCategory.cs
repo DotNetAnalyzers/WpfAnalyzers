@@ -11,6 +11,6 @@ namespace WpfAnalyzers
         /// <summary>
         /// Category definition for naming rules.
         /// </summary>
-        internal const string DependencyProperties = "WpfAnalyzers.CSharp.DependencyProperties";
+        internal const string DependencyProperties = "WpfAnalyzers.DependencyProperties";
     }
 }

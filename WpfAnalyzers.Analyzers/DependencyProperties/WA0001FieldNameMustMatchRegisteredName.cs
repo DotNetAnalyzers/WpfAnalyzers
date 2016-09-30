@@ -8,9 +8,9 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WA1200FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
+    internal class WA0001FieldNameMustMatchRegisteredName : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WA1200";
+        public const string DiagnosticId = "WA0001";
 
         private const string Title = "DependencyProperty field name must match registered name.";
 

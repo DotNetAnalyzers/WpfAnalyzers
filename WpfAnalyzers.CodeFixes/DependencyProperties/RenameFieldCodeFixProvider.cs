@@ -15,7 +15,7 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                WA1200FieldNameMustMatchRegisteredName.DiagnosticId,
+                WA0001FieldNameMustMatchRegisteredName.DiagnosticId,
                 WA1201FieldNameMustMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@
             string registeredName;
             if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
             {
-                var newName = diagnostic.Id == WA1200FieldNameMustMatchRegisteredName.DiagnosticId
+                var newName = diagnostic.Id == WA0001FieldNameMustMatchRegisteredName.DiagnosticId
                   ? registeredName + "Property"
                   : registeredName + "PropertyKey";
 
