@@ -26,10 +26,6 @@ Roslyn analyzers for WPF.
   <td>CLR accessor for attached property must match registered name.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md">WPF0010</a></td>
-  <td>DependencyProperty default value must be of the type it is registered as.</td>
-</tr>
-<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md">WPF0011</a></td>
   <td>DependencyProperty must be registered for containing type.</td>
 </tr>

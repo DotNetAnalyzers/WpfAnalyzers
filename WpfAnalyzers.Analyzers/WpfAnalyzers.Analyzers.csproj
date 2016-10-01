@@ -58,7 +58,6 @@
     <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0002FieldMatchesRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnly.cs" />
-    <Compile Include="DependencyProperties\WPF0010DefaultValueMatchesRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0011RegisterContainingTypeAsOwner.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredType.cs" />
