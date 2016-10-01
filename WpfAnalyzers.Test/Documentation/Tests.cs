@@ -48,7 +48,18 @@
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Title(DescriptorInfo descriptorInfo)
         {
-            Assert.AreEqual($"## {descriptorInfo.DiagnosticDescriptor.Title}", File.ReadLines(descriptorInfo.DocFileName).Skip(1).First());
+            Assert.AreEqual(File.ReadLines(descriptorInfo.DocFileName).Skip(1).First(), $"## {descriptorInfo.DiagnosticDescriptor.Title}");
+        }
+
+        [TestCaseSource(nameof(DescriptorsWithDocs))]
+        public void Description(DescriptorInfo descriptorInfo)
+        {
+            var expected = File.ReadLines(descriptorInfo.DocFileName)
+                               .SkipWhile(l => !l.StartsWith("## Description"))
+                               .Skip(1)
+                               .FirstOrDefault(l => !string.IsNullOrWhiteSpace(l));
+            DumpIfDebug(expected);
+            Assert.AreEqual(expected, descriptorInfo.DiagnosticDescriptor.Description.ToString());
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
