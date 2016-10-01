@@ -1,5 +1,4 @@
-# WpfAnalyzer
-============
+# WpfAnalyzers
 
 [![Join the chat at https://gitter.im/DotNetAnalyzers/WpfAnalyzers](https://badges.gitter.im/DotNetAnalyzers/WpfAnalyzers.svg)](https://gitter.im/DotNetAnalyzers/WpfAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
@@ -7,3 +6,60 @@
 [![NuGet](https://img.shields.io/nuget/v/WpfAnalyzers.svg)](https://www.nuget.org/packages/WpfAnalyzers/)
 
 Roslyn analyzers for WPF.
+
+<!-- start generated table -->
+<table>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md">WPF0001</a></td>
+  <td>Backing field for a dependency property name must match registered name.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md">WPF0002</a></td>
+  <td>DependencyPropertyKey field name must match registered name.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md">WPF0003</a></td>
+  <td>DependencyProperty CLR property name must match registered name.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md">WPF0004</a></td>
+  <td>CLR accessor for attached property must match registered name.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md">WPF0010</a></td>
+  <td>DependencyProperty default value must be of the type it is registered as.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md">WPF0011</a></td>
+  <td>DependencyProperty must be registered for containing type.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md">WPF0012</a></td>
+  <td>DependencyProperty CLR property type must match registered type.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md">WPF0013</a></td>
+  <td>CLR accessor for attached property must match registered type.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
+  <td>DependencyProperty field must be static and readonly</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md">WPF0031</a></td>
+  <td>DependencyPropertyKey field must come before DependencyProperty field.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md">WPF0032</a></td>
+  <td>DependencyProperty CLR property use same dependency proiperty in getter and setter.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
+  <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
+  <td>Struct must not implement INotifyPropertyChanged</td>
+</tr>
+<table>
+<!-- end generated table -->

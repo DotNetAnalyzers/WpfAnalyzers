@@ -4,7 +4,7 @@
     {
         internal static string ForId(string id)
         {
-            return $"http://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{id}.md";
+            return $"https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{id}.md";
         }
     }
 }
