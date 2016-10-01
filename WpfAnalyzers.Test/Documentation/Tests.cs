@@ -33,16 +33,7 @@
 
             var descriptor = descriptorInfo.DiagnosticDescriptor;
             var id = descriptor.Id;
-            var doc = Properties.Resources.DiagnosticDocTemplate
-                                .Replace("{ID}", id)
-                                .Replace("## ADD TITLE HERE", $"## {descriptor.Title}")
-                                .Replace("{SEVERITY}", descriptor.DefaultSeverity.ToString())
-                                .Replace("{CATEGORY}", descriptor.Category)
-                                .Replace("{URL}", descriptorInfo.CodeFileUri)
-                                .Replace("{TYPENAME}", descriptorInfo.DiagnosticAnalyzer.GetType().Name)
-                                .Replace("ADD DESCRIPTION HERE", descriptor.Description.ToString())
-                                .Replace("{TITLE}", descriptorInfo.DiagnosticDescriptor.Title.ToString())
-                                .Replace("{TRIMMEDTYPENAME}", descriptorInfo.DiagnosticAnalyzer.GetType().Name.Substring(id.Length));
+            var doc = CreateStub(descriptorInfo);
             DumpIfDebug(doc);
             ////File.WriteAllText(descriptorInfo.DocFileName, doc);
             Assert.Inconclusive($"Documentation is missing for {id}");
@@ -61,29 +52,77 @@
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
-        public void TableId(DescriptorInfo descriptorInfo)
+        public void Table(DescriptorInfo descriptorInfo)
         {
-            Assert.AreEqual($"  <td>{descriptorInfo.DiagnosticDescriptor.Id}</td>", File.ReadLines(descriptorInfo.DocFileName).SkipWhile(l=>l!= "<!-- start generated table -->").Skip(4).First());
-        }
-
-        [TestCaseSource(nameof(DescriptorsWithDocs))]
-        public void TableSeverity(DescriptorInfo descriptorInfo)
-        {
-            Assert.AreEqual($"  <td>{descriptorInfo.DiagnosticDescriptor.DefaultSeverity}</td>", File.ReadLines(descriptorInfo.DocFileName).SkipWhile(l => l != "<!-- start generated table -->").Skip(8).First());
-        }
-
-        [TestCaseSource(nameof(DescriptorsWithDocs))]
-        public void TableCategory(DescriptorInfo descriptorInfo)
-        {
-            Assert.AreEqual($"  <td>{descriptorInfo.DiagnosticDescriptor.Category}</td>", File.ReadLines(descriptorInfo.DocFileName).SkipWhile(l => l != "<!-- start generated table -->").Skip(12).First());
-        }
-
-        [TestCaseSource(nameof(DescriptorsWithDocs))]
-        public void TableLink(DescriptorInfo descriptorInfo)
-        {
-            var expected = FormatLinkRow(descriptorInfo);
+            var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            Assert.AreEqual(expected, File.ReadLines(descriptorInfo.DocFileName).SkipWhile(l => l != "<!-- start generated table -->").Skip(16).First());
+            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestCaseSource(nameof(DescriptorsWithDocs))]
+        public void ConfigSeverity(DescriptorInfo descriptorInfo)
+        {
+            var expected = GetTable(CreateStub(descriptorInfo));
+            DumpIfDebug(expected);
+            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
+            Assert.AreEqual(expected, actual);
+        }
+
+        private static string CreateStub(DescriptorInfo descriptorInfo)
+        {
+            var descriptor = descriptorInfo.DiagnosticDescriptor;
+            return CreateStub(
+                descriptor.Id,
+                descriptor.Title.ToString(),
+                descriptor.DefaultSeverity,
+                descriptorInfo.CodeFileUri,
+                descriptor.Category,
+                descriptorInfo.DiagnosticAnalyzer.GetType()
+                              .Name,
+                descriptor.Description.ToString());
+        }
+
+        private static string CreateStub(
+            string id,
+            string title,
+            DiagnosticSeverity severity,
+            string codeFileUrl,
+            string category,
+            string typeName,
+            string description)
+        {
+            return Properties.Resources.DiagnosticDocTemplate.Replace("{ID}", id)
+                             .Replace("## ADD TITLE HERE", $"## {title}")
+                             .Replace("{SEVERITY}", severity.ToString())
+                             .Replace("{CATEGORY}", category)
+                             .Replace("{URL}", codeFileUrl ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers")
+                             .Replace("{TYPENAME}", typeName)
+                             .Replace("ADD DESCRIPTION HERE", description ?? "ADD DESCRIPTION HERE")
+                             .Replace("{TITLE}", title)
+                             .Replace("{TRIMMEDTYPENAME}", typeName.Substring(id.Length));
+        }
+
+        private static string GetTable(string doc)
+        {
+            return GetSection(doc, "<!-- start generated table -->", "<!-- end generated table -->");
+        }
+
+        private static string GetConfigSeverity(string doc)
+        {
+            return GetSection(doc, "<!-- start generated config severity -->", "<!-- end generated config severity -->");
+        }
+
+        private static string GetSection(string doc, string startToken, string endToken)
+        {
+            var start = doc.IndexOf(startToken);
+            var end = doc.IndexOf(endToken) + endToken.Length;
+            return doc.Substring(start, end - start);
+        }
+
+        private static string FormatLinkRow(DescriptorInfo descriptorInfo)
+        {
+            return $@"  <td><a href=""{descriptorInfo.CodeFileUri}"">{descriptorInfo.DiagnosticAnalyzer.GetType().Name}</a></td>";
         }
 
         [Conditional("DEBUG")]
@@ -92,11 +131,6 @@
             Console.Write(text);
             Console.WriteLine();
             Console.WriteLine();
-        }
-
-        private static string FormatLinkRow(DescriptorInfo descriptorInfo)
-        {
-            return $@"  <td><a href=""{descriptorInfo.CodeFileUri}"">{descriptorInfo.DiagnosticAnalyzer.GetType().Name}</a></td>";
         }
 
         public class DescriptorInfo
