@@ -11,7 +11,7 @@ Roslyn analyzers for WPF.
 <table>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md">WPF0001</a></td>
-  <td>Backing field for a dependency property name must match registered name.</td>
+  <td>Backing field for a DependencyProperty must match registered name.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md">WPF0002</a></td>
