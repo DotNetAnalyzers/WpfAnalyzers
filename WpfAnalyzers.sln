@@ -32,7 +32,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{AB970A83
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916-2704-452C-9FD4-8EA6247E6589}"
 	ProjectSection(SolutionItems) = preProject
-		documentation\WA0001.md = documentation\WA0001.md
+		documentation\WPF0001.md = documentation\WPF0001.md
+		documentation\WPF0002.md = documentation\WPF0002.md
+		documentation\WPF0003.md = documentation\WPF0003.md
+		documentation\WPF0004.md = documentation\WPF0004.md
+		documentation\WPF0010.md = documentation\WPF0010.md
+		documentation\WPF0011.md = documentation\WPF0011.md
+		documentation\WPF0012.md = documentation\WPF0012.md
+		documentation\WPF0013.md = documentation\WPF0013.md
+		documentation\WPF0030.md = documentation\WPF0030.md
+		documentation\WPF0031.md = documentation\WPF0031.md
+		documentation\WPF0032.md = documentation\WPF0032.md
+		documentation\WPF0040.md = documentation\WPF0040.md
+		documentation\WPF1001.md = documentation\WPF1001.md
 	EndProjectSection
 EndProject
 Global

@@ -16,7 +16,7 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WA1220UseDependencyPropertyKeyForSettingReadOnlyProperties.DiagnosticId);
+            ImmutableArray.Create(WPF0040SetUsingDependencyPropertyKey.DiagnosticId);
 
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
