@@ -5,6 +5,8 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Text;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
@@ -62,6 +64,28 @@
             Assert.AreEqual(expected, descriptorInfo.DiagnosticDescriptor.Description.ToString());
         }
 
+        [Test]
+        public void Index()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("<!-- start generated table -->")
+                   .AppendLine("<table>");
+            foreach (var info in DescriptorsWithDocs.OrderBy(x => x.DiagnosticDescriptor.Id))
+            {
+                builder.AppendLine("<tr>");
+                builder.AppendLine($@"  <td><a href=""{info.DiagnosticDescriptor.HelpLinkUri}"">{info.DiagnosticDescriptor.Id}</a></td>");
+                builder.AppendLine($"  <td>{info.DiagnosticDescriptor.Title}</td>");
+                builder.AppendLine("</tr>");
+            }
+
+            builder.AppendLine("<table>")
+                   .Append("<!-- end generated table -->");
+            var expected = builder.ToString();
+            DumpIfDebug(expected);
+            var actual = GetTable(File.ReadAllText(Path.Combine(SolutionDirectory, "Readme.md")));
+            Assert.AreEqual(expected, actual);
+        }
+
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Table(DescriptorInfo descriptorInfo)
         {
@@ -89,8 +113,7 @@
                 descriptor.DefaultSeverity,
                 descriptorInfo.CodeFileUri,
                 descriptor.Category,
-                descriptorInfo.DiagnosticAnalyzer.GetType()
-                              .Name,
+                descriptorInfo.DiagnosticAnalyzer.GetType().Name,
                 descriptor.Description.ToString());
         }
 
@@ -126,14 +149,9 @@
 
         private static string GetSection(string doc, string startToken, string endToken)
         {
-            var start = doc.IndexOf(startToken);
-            var end = doc.IndexOf(endToken) + endToken.Length;
+            var start = doc.IndexOf(startToken, StringComparison.Ordinal);
+            var end = doc.IndexOf(endToken, StringComparison.Ordinal) + endToken.Length;
             return doc.Substring(start, end - start);
-        }
-
-        private static string FormatLinkRow(DescriptorInfo descriptorInfo)
-        {
-            return $@"  <td><a href=""{descriptorInfo.CodeFileUri}"">{descriptorInfo.DiagnosticAnalyzer.GetType().Name}</a></td>";
         }
 
         [Conditional("DEBUG")]

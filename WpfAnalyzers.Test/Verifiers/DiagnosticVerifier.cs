@@ -116,7 +116,7 @@ namespace WpfAnalyzers.Test
                         continue;
                     }
 
-                    string expected = $"http://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{diagnostic.Id}.md";
+                    string expected = $"https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{diagnostic.Id}.md";
                     Assert.AreEqual(expected, diagnostic.HelpLinkUri);
                 }
             }
