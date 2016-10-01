@@ -7,6 +7,7 @@ namespace WpfAnalyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -89,6 +90,9 @@ namespace WpfAnalyzers.Test
         {
             foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
             {
+                var expected = $"{diagnosticAnalyzer.GetType().Name}Tests";
+                DumpIfDebug(expected);
+                Assert.AreEqual(expected, this.GetType().Name, "Name of test class does not match analyzer name.");
                 StringAssert.StartsWith(diagnosticAnalyzer.SupportedDiagnostics.Single().Id, diagnosticAnalyzer.GetType().Name);
             }
         }
@@ -100,7 +104,6 @@ namespace WpfAnalyzers.Test
         [Test]
         public void TestHelpLink()
         {
-            Assert.Inconclusive("No docs yet.");
             // ReSharper disable HeuristicUnreachableCode
             foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
             {
@@ -108,11 +111,12 @@ namespace WpfAnalyzers.Test
                 {
                     if (diagnostic.DefaultSeverity == DiagnosticSeverity.Hidden && diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
                     {
+                        Assert.Inconclusive(diagnostic.HelpLinkUri);
                         // This diagnostic will never appear in the UI.
                         continue;
                     }
 
-                    string expected = $"https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/{diagnostic.Id}.md";
+                    string expected = $"http://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{diagnostic.Id}.md";
                     Assert.AreEqual(expected, diagnostic.HelpLinkUri);
                 }
             }
@@ -179,6 +183,14 @@ namespace WpfAnalyzers.Test
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
+        [Conditional("DEBUG")]
+        private static void DumpIfDebug(string text)
+        {
+            Console.Write(text);
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
         /// <summary>
         /// Checks each of the actual <see cref="Diagnostic"/>s found and compares them with the corresponding
         /// <see cref="DiagnosticResult"/> in the array of expected results. <see cref="Diagnostic"/>s are considered
@@ -199,7 +211,7 @@ namespace WpfAnalyzers.Test
             if (expectedCount != actualCount)
             {
                 var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "NONE.";
-                var message =  "Mismatch between number of diagnostics returned\r\n" +
+                var message = "Mismatch between number of diagnostics returned\r\n" +
                               $"Expected \"{expectedCount}\"\r\n" +
                               $"Actual   \"{actualCount}\"\r\n" +
                                "\r\n" +
@@ -233,7 +245,7 @@ namespace WpfAnalyzers.Test
                     {
                         var message = $"Locations differ:\r\n" +
                                       $"Expected: {expected.Spans.Length - 1}\r\n" +
-                                      $"Actual:   {additionalLocations.Length}\r\n" + 
+                                      $"Actual:   {additionalLocations.Length}\r\n" +
                                       $"For Diagnostic:\r\n" +
                                       $"    {FormatDiagnostics(analyzers, actual)}\r\n";
                         Assert.Fail(message);
@@ -248,7 +260,7 @@ namespace WpfAnalyzers.Test
                 if (actual.Id != expected.Id)
                 {
                     var message = $"Diagnostic id differs:\r\n" +
-                                  $"Expected: \"{expected.Id}\"\r\n" + 
+                                  $"Expected: \"{expected.Id}\"\r\n" +
                                   $"Actual:   \"{actual.Id}\"\r\n" +
                                    "\r\n" +
                                    "Diagnostic:\r\n" +
@@ -259,7 +271,7 @@ namespace WpfAnalyzers.Test
                 if (actual.Severity != expected.Severity)
                 {
                     var message = $"Diagnostic severity differs:\r\n" +
-                                  $"Expected: \"{expected.Severity}\"\r\n" + 
+                                  $"Expected: \"{expected.Severity}\"\r\n" +
                                   $"Actual:   \"{actual.Severity}\"\r\n" +
                                    "\r\n" +
                                    "Diagnostic:\r\n" +
@@ -270,7 +282,7 @@ namespace WpfAnalyzers.Test
                 if (actual.GetMessage() != expected.Message)
                 {
                     var message = $"Diagnostic message differs:\r\n" +
-                                  $"Expected: \"{expected.Message}\"\r\n" + 
+                                  $"Expected: \"{expected.Message}\"\r\n" +
                                   $"Actual:   \"{actual.GetMessage()}\"\r\n" +
                                   $"\r\n" +
                                   $"Diagnostic:\r\n" +
@@ -294,11 +306,11 @@ namespace WpfAnalyzers.Test
         {
             var actualSpan = actual.GetLineSpan();
 
-            var message =  "Diagnostic not found in expected file.\r\n" +
+            var message = "Diagnostic not found in expected file.\r\n" +
                           $"Expected: \"{expected.Path}\"\r\n" +
                           $"Actual:   \"{actualSpan.Path}\"\r\n" +
-                           "\r\n" + 
-                          $"Diagnostic:\r\n" + 
+                           "\r\n" +
+                          $"Diagnostic:\r\n" +
                           $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
             Assert.True(
                 actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
@@ -314,7 +326,7 @@ namespace WpfAnalyzers.Test
         private static void VerifyLinePosition(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, LinePosition actualLinePosition, LinePosition expectedLinePosition, string positionText)
         {
             // Only check the line position if it matters
-            if (expectedLinePosition.Line > 0 && 
+            if (expectedLinePosition.Line > 0 &&
                 actualLinePosition.Line + 1 != expectedLinePosition.Line)
             {
                 var formattedDiagnostics = FormatDiagnostics(analyzers, diagnostic);

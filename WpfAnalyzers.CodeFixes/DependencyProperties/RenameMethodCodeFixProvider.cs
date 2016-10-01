@@ -15,7 +15,7 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredName.DiagnosticId);
+            ImmutableArray.Create(WPF0004ClrMethodMatchesRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)

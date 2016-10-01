@@ -50,20 +50,26 @@
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
-    <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WA1202FieldMustBeStaticReadOnlyTests.cs" />
-    <Compile Include="DependencyProperties\WA1204KeyFieldMustComeBeforePropertyFieldTests.cs" />
-    <Compile Include="DependencyProperties\WA1205MustRegisterForContainingTypeTests.cs" />
-    <Compile Include="DependencyProperties\WA1210ClrPropertyNameMustMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WA0001FieldNameMustMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WA1231ClrAccessorsForAttachedPropertyMustMatchRegisteredTypeTests.cs" />
-    <Compile Include="DependencyProperties\WA1211ClrPropertyTypeMustMatchRegisteredTypeTests.cs" />
-    <Compile Include="DependencyProperties\WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetterTests.cs" />
-    <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyPropertiesTests.cs" />
-    <Compile Include="DependencyProperties\WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0011RegisterContainingTypeAsOwnerTests.cs" />
+    <Compile Include="DependencyProperties\WPF0031FieldOrderTests.cs" />
+    <Compile Include="DependencyProperties\WPF0002FieldMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnlyTests.cs" />
+    <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0013ClrAccessorMatchesRegisteredTypeTests.cs" />
+    <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredTypeTests.cs" />
+    <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />
+    <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKeyTests.cs" />
+    <Compile Include="DependencyProperties\WPF0004ClrMethodMatchesRegisteredNameTests.cs" />
+    <Compile Include="Documentation\Tests.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChangedTests.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyChanged\WPF1001StructMustNotNotifyTests.cs" />
     <Compile Include="PublicApiTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.Helper.cs" />
@@ -104,6 +110,16 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll">
       <Paket>True</Paket>
     </Analyzer>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Documentation\DiagnosticDocTemplate.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">

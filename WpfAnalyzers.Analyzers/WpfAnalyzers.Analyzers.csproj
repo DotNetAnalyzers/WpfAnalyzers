@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
-    <Compile Include="DependencyProperties\ClrAccessorHelpers\ClrAccessor.AttachedProperty.cs" />
+    <Compile Include="DependencyProperties\ClrAccessorHelpers\AttachedPropertyClrAccessor.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\ExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\DependencyPropertyField.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
@@ -50,30 +50,31 @@
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\MemberAccessExpressionSyntaxExt.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\MemberDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\MethodDeclarationSyntaxExt.cs" />
-    <Compile Include="DependencyProperties\ClrAccessorHelpers\ClrAccessor.DependencyProperty.cs" />
+    <Compile Include="DependencyProperties\ClrAccessorHelpers\DependencyPropertyClrAccessor.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="DependencyProperties\SyntaxtTreeHelpers\TypeSyntaxExt.cs" />
-    <Compile Include="DependencyProperties\WA0001FieldNameMustMatchRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WA1201FieldNameMustMatchRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WA1202FieldMustBeStaticReadOnly.cs" />
-    <Compile Include="DependencyProperties\WA1203DefaultValueTypeMustMatchRegisteredType.cs" />
-    <Compile Include="DependencyProperties\WA1205MustRegisterForContainingType.cs" />
-    <Compile Include="DependencyProperties\WA1210ClrPropertyNameMustMatchRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WA1211ClrPropertyTypeMustMatchRegisteredType.cs" />
-    <Compile Include="DependencyProperties\WA1212ClrPropertyTypeMustUseSameDependencyPropertyInGetterAndSetter.cs" />
-    <Compile Include="DependencyProperties\WA1204KeyFieldMustComeBeforePropertyField.cs" />
-    <Compile Include="DependencyProperties\WA1230ClrAccessorsForAttachedPropertyMustMatchRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WA1220UseDependencyPropertyKeyForSettingReadOnlyProperties.cs" />
-    <Compile Include="DependencyProperties\WA1231ClrAccessorsForAttachedPropertyMustMatchRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WPF0002FieldMatchesRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnly.cs" />
+    <Compile Include="DependencyProperties\WPF0010DefaultValueMatchesRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WPF0011RegisterContainingTypeAsOwner.cs" />
+    <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty.cs" />
+    <Compile Include="DependencyProperties\WPF0031FieldOrder.cs" />
+    <Compile Include="DependencyProperties\WPF0004ClrMethodMatchesRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKey.cs" />
+    <Compile Include="DependencyProperties\WPF0013ClrAccessorMatchesRegisteredType.cs" />
+    <Compile Include="HelpLink.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
-    <Compile Include="PropertyChanged\WA1101StructMustNotImplementINotifyPropertyChanged.cs" />
+    <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

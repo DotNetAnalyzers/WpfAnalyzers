@@ -13,7 +13,7 @@
     internal class MakeFieldStaticReadonlyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WA1202FieldMustBeStaticReadOnly.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030FieldMustBeStaticReadOnly.DiagnosticId);
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
