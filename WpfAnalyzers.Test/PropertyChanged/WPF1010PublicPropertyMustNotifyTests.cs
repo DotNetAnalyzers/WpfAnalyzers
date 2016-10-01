@@ -59,27 +59,65 @@ public class Foo
         }
 
         [Test]
-        public async Task HappyPathInternal()
+        public async Task HappyPathInternalClass()
         {
             // maybe this should notify?
             var testCode = @"
 internal class Foo
 {
-    public static int Bar { get; set; }
+    public int Bar { get; set; }
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Test]
-        public async Task WhenNotifying()
+        public async Task HappyPathInternalProperty()
+        {
+            // maybe this should notify?
+            var testCode = @"
+public class Foo
+{
+    internal int Bar { get; set; }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("public int Bar { get; set; }")]
+        [TestCase("public int Bar { get; private set; }")]
+        public async Task WhenNotNotifyingAutoProperty(string property)
         {
             var testCode = @"
-using System.ComponentModel;
-
 public class Foo
 {
     public int Bar { get; set; }
+}";
+
+            testCode = testCode.AssertReplace("public int Bar { get; set; }", property);
+            var expected = this.CSharpDiagnostic().WithLocation(4, 16).WithArguments("Bar");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotNotifyingWithBackingField(string property)
+        {
+            var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+        private set
+        {
+            this.value = value;
+        }
+    }
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(6, 16).WithArguments("Bar");
