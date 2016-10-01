@@ -19,7 +19,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md">WPF0003</a></td>
-  <td>DependencyProperty CLR property name must match registered name.</td>
+  <td>CLR property for a DependencyProperty should match registered name.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md">WPF0004</a></td>

@@ -7,12 +7,12 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0003ClrPropertyMatchesRegisteredName : DiagnosticAnalyzer
+    internal class WPF0003ClrPropertyForDependencyPropertyShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0003";
-        private const string Title = "DependencyProperty CLR property name must match registered name.";
+        private const string Title = "CLR property for a DependencyProperty should match registered name.";
         private const string MessageFormat = "Property '{0}' must be named '{1}'";
-        private const string Description = Title;
+        private const string Description = "A CLR property accessor for a DependencyProperty must have the same name as the DependencyProperty is registered with.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
