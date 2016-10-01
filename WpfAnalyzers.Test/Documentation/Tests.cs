@@ -63,9 +63,9 @@
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void ConfigSeverity(DescriptorInfo descriptorInfo)
         {
-            var expected = GetTable(CreateStub(descriptorInfo));
+            var expected = GetConfigSeverity(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
+            var actual = GetConfigSeverity(File.ReadAllText(descriptorInfo.DocFileName));
             Assert.AreEqual(expected, actual);
         }
 
