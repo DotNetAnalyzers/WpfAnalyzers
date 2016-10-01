@@ -60,7 +60,7 @@
     <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKeyTests.cs" />
-    <Compile Include="DependencyProperties\WPF0004ClrMethodMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredNameTests.cs" />
     <Compile Include="Documentation\Tests.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
