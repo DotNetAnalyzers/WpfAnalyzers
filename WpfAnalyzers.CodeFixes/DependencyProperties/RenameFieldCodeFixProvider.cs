@@ -16,7 +16,7 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 WPF0001FieldMatchesRegisteredName.DiagnosticId,
-                WPF0002FieldMatchesRegisteredName.DiagnosticId);
+                WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)

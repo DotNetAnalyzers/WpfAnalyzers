@@ -52,7 +52,7 @@
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
     <Compile Include="DependencyProperties\WPF0011RegisterContainingTypeAsOwnerTests.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrderTests.cs" />
-    <Compile Include="DependencyProperties\WPF0002FieldMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0002BackingFieldFoDependencyPropertyKeyShouldMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnlyTests.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredNameTests.cs" />
