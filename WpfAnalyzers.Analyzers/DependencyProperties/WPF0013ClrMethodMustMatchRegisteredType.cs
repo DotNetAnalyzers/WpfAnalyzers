@@ -53,14 +53,14 @@
             }
 
             ITypeSymbol registeredType;
-            if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedGet(context.SemanticModel, out registeredType))
+            if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedGet(context.SemanticModel, context.CancellationToken, out registeredType))
             {
                 if (!methodSymbol.ReturnType.IsSameType(registeredType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), "Return type", registeredType));
                 }
             }
-            else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(context.SemanticModel, out registeredType))
+            else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(context.SemanticModel, context.CancellationToken, out registeredType))
             {
                 if (!methodSymbol.Parameters[1].Type.IsSameType(registeredType))
                 {

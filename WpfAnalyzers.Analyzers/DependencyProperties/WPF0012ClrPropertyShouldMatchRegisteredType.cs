@@ -53,7 +53,7 @@
             }
 
             ITypeSymbol registeredType;
-            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredType(context.SemanticModel, out registeredType))
+            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredType(context.SemanticModel, context.CancellationToken, out registeredType))
             {
                 return;
             }

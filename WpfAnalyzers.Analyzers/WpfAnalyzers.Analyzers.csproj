@@ -58,6 +58,7 @@
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyClrAccessor.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeDeclarationSyntaxExt.cs" />
+    <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredType.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName.cs" />

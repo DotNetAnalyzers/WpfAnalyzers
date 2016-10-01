@@ -45,13 +45,13 @@ namespace WpfAnalyzers.DependencyProperties
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredType(this PropertyDeclarationSyntax property, SemanticModel semanticModel, out ITypeSymbol result)
+        internal static bool TryGetDependencyPropertyRegisteredType(this PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyProperty(out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredType(semanticModel, out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredType(semanticModel, cancellationToken, out result);
             }
 
             return false;

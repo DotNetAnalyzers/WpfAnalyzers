@@ -43,7 +43,7 @@
             return false;
         }
 
-        internal static bool TryGetType(this ArgumentSyntax argument, SemanticModel semanticModel, out ITypeSymbol result)
+        internal static bool TryGetType(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
             if (argument?.Expression == null || semanticModel == null)
@@ -60,7 +60,7 @@
             if (typeOf != null)
             {
                 var typeSyntax = typeOf.Type;
-                var typeInfo = semanticModel.GetTypeInfo(typeSyntax);
+                var typeInfo = semanticModel.GetTypeInfo(typeSyntax, cancellationToken);
                 result = typeInfo.Type;
                 return result != null;
             }
