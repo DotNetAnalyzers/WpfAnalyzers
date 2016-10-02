@@ -8,9 +8,7 @@ namespace WpfAnalyzers
     /// </summary>
     internal static class AnalyzerCategory
     {
-        /// <summary>
-        /// Category definition for naming rules.
-        /// </summary>
         internal const string DependencyProperties = "WpfAnalyzers.DependencyProperties";
+        internal const string PropertyChanged = "WpfAnalyzers.PropertyChanged";
     }
 }

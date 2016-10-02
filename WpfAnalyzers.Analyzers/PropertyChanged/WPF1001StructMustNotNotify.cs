@@ -23,7 +23,7 @@
                                                                       DiagnosticId,
                                                                       Title,
                                                                       MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
+                                                                      AnalyzerCategory.PropertyChanged,
                                                                       DiagnosticSeverity.Error,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,

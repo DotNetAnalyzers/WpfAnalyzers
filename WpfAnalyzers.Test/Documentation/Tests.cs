@@ -104,6 +104,22 @@
             Assert.AreEqual(expected, actual);
         }
 
+        [Test, Explicit]
+        public void DumpStub()
+        {
+            var stub = CreateStub(
+                "WPF00XX",
+                "Avoid side effects in CLR accessor.",
+                DiagnosticSeverity.Warning,
+                "https://github.com/DotNetAnalyzers/WpfAnalyzers",
+                AnalyzerCategory.DependencyProperties,
+                "AvoidSideEffectsInClrAccessor.",
+                "Bindings do not call accessor when updating value. Use callbacks."
+            );
+
+            Console.Write(stub);
+        }
+
         private static string CreateStub(DescriptorInfo descriptorInfo)
         {
             var descriptor = descriptorInfo.DiagnosticDescriptor;
