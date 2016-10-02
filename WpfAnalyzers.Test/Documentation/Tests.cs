@@ -60,8 +60,11 @@
                                .SkipWhile(l => !l.StartsWith("## Description"))
                                .Skip(1)
                                .FirstOrDefault(l => !string.IsNullOrWhiteSpace(l));
+            var actual = descriptorInfo.DiagnosticDescriptor.Description.ToString();
+
             DumpIfDebug(expected);
-            Assert.AreEqual(expected, descriptorInfo.DiagnosticDescriptor.Description.ToString());
+            DumpIfDebug(actual);
+            Assert.AreEqual(expected, actual);
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]

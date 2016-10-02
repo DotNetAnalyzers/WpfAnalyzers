@@ -27,7 +27,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md">WPF0011</a></td>
-  <td>DependencyProperty must be registered for containing type.</td>
+  <td>Containing type should be used as registered owner.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md">WPF0012</a></td>

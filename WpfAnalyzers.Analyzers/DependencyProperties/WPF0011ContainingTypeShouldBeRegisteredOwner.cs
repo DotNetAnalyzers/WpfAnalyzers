@@ -8,12 +8,12 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0011RegisterContainingTypeAsOwner : DiagnosticAnalyzer
+    internal class WPF0011ContainingTypeShouldBeRegisteredOwner : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0011";
-        private const string Title = "DependencyProperty must be registered for containing type.";
+        private const string Title = "Containing type should be used as registered owner.";
         private const string MessageFormat = "DependencyProperty '{0}' must be registered for {1}";
-        private const string Description = Title;
+        private const string Description = "When registering a DependencyProperty register containing type as owner type.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -21,7 +21,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
+                                                                      DiagnosticSeverity.Warning,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
