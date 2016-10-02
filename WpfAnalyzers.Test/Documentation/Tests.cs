@@ -83,6 +83,14 @@
         }
 
         [Test]
+        public void UniqueIds()
+        {
+            CollectionAssert.AllItemsAreUnique(Descriptors.Select(x => x.DiagnosticDescriptor.Id));
+            CollectionAssert.AllItemsAreUnique(Descriptors.Select(x => x.DiagnosticDescriptor.Title));
+            CollectionAssert.AllItemsAreUnique(Descriptors.Select(x => x.DiagnosticDescriptor.Description));
+        }
+
+        [Test]
         public void Index()
         {
             var builder = new StringBuilder();
