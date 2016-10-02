@@ -10,7 +10,69 @@
     public class WPF1010MutablePublicPropertyMustNotifyTests : DiagnosticVerifier
     {
         [Test]
-        public async Task HappyPathStruct()
+        public async Task HappyPathCallsRaisePropertyChanged()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get { return this.value; }
+            set
+            {
+                if (value == this.value) return;
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task HappyPathCallsInvoke()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get { return this.value; }
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+            }
+        }
+    }";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoreStruct()
         {
             var testCode = @"
 public struct Foo
@@ -22,7 +84,7 @@ public struct Foo
         }
 
         [Test]
-        public async Task HappyPathGetOnly()
+        public async Task IgnoreGetOnly()
         {
             var testCode = @"
 public class Foo
@@ -34,7 +96,7 @@ public class Foo
         }
 
         [Test]
-        public async Task HappyPathAbstract()
+        public async Task IgnoreAbstract()
         {
             var testCode = @"
 public abstract class Foo
@@ -59,7 +121,7 @@ public class Foo
         }
 
         [Test]
-        public async Task HappyPathInternalClass()
+        public async Task IgnoreInternalClass()
         {
             // maybe this should notify?
             var testCode = @"
@@ -72,7 +134,7 @@ internal class Foo
         }
 
         [Test]
-        public async Task HappyPathInternalProperty()
+        public async Task IgnoreInternalProperty()
         {
             // maybe this should notify?
             var testCode = @"
