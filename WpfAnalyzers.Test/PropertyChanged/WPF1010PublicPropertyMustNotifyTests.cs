@@ -7,7 +7,7 @@
     using NUnit.Framework;
     using WpfAnalyzers.PropertyChanged;
 
-    public class WPF1010MutablePublicPropertyMustNotifyTests : DiagnosticVerifier
+    public class WPF1010MutablePublicPropertyShouldNotifyTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPathCallsRaisePropertyChanged()
@@ -188,7 +188,7 @@ public class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF1010MutablePublicPropertyMustNotify();
+            yield return new WPF1010MutablePublicPropertyShouldNotify();
         }
     }
 }

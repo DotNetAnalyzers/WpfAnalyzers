@@ -8,10 +8,10 @@
     using WpfAnalyzers.DependencyProperties;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1010MutablePublicPropertyMustNotify : DiagnosticAnalyzer
+    internal class WPF1010MutablePublicPropertyShouldNotify : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1010";
-        private const string Title = "Mutable public property must notify.";
+        private const string Title = "Mutable public property should notify.";
         private const string MessageFormat = "Property '{0}' must notify about changes.";
         private const string Description = "Enable this rule if all mutable public properties should notify when changed.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);

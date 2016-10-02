@@ -59,7 +59,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1010.md">WPF1010</a></td>
-  <td>Mutable public property must notify.</td>
+  <td>Mutable public property should notify.</td>
 </tr>
 <table>
 <!-- end generated table -->
