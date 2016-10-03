@@ -60,7 +60,7 @@
     <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnly.cs" />
     <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwner.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WPF0012ClrPropertyTypeShouldBeRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrder.cs" />
     <Compile Include="DependencyProperties\WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredName.cs" />

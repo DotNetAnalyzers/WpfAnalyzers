@@ -31,7 +31,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md">WPF0012</a></td>
-  <td>DependencyProperty CLR property type must match registered type.</td>
+  <td>CLR property type should match registered type.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md">WPF0013</a></td>

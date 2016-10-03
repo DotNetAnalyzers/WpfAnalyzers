@@ -57,7 +57,7 @@
     <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrAccessorMatchesRegisteredTypeTests.cs" />
-    <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredTypeTests.cs" />
+    <Compile Include="DependencyProperties\WPF0012ClrPropertyTypeShouldBeRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKeyTests.cs" />
     <Compile Include="DependencyProperties\WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredNameTests.cs" />
