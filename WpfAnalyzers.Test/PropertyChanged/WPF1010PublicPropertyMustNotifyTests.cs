@@ -18,16 +18,17 @@
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int value;
+        private int bar;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int Bar
         {
-            get { return this.value; }
+            get { return this.bar; }
             set
             {
-                if (value == this.value) return;
-                this.value = value;
+                if (value == this.bar) return;
+                this.bar = value;
                 this.OnPropertyChanged();
             }
         }
@@ -49,21 +50,21 @@
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int value;
+        private int bar;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int Bar
         {
-            get { return this.value; }
+            get { return this.bar; }
             set
             {
-                if (value == this.value)
+                if (value == this.bar)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+                this.bar = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
             }
         }
     }";

@@ -42,8 +42,7 @@
             var declaration = (PropertyDeclarationSyntax)context.Node;
             if (declaration.IsMissing ||
                 !declaration.Modifiers.Any(SyntaxKind.PublicKeyword) ||
-                declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
-                !IsAutoProperty(declaration))
+                declaration.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 return;
             }
@@ -63,7 +62,17 @@
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), context.ContainingSymbol.Name));
+            if (IsAutoProperty(declaration))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), context.ContainingSymbol.Name));
+                return;
+            }
+
+            AccessorDeclarationSyntax setter;
+            if (declaration.TryGetSetAccessorDeclaration(out setter))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), context.ContainingSymbol.Name));
+            }
         }
 
         private static bool IsAutoProperty(PropertyDeclarationSyntax property)
