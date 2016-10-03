@@ -8,10 +8,10 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0001FieldMatchesRegisteredName : DiagnosticAnalyzer
+    internal class WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0001";
-        private const string Title = "Backing field for a DependencyProperty must match registered name.";
+        private const string Title = "Backing field for a DependencyProperty should match registered name.";
         private const string MessageFormat = "Field '{0}' that is backing field for the DependencyProperty registered as '{1}' must be named '{1}Property'";
         private const string Description = "A dependency property's backing field must be named with the name it is registered with suffixed by 'Property'";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
