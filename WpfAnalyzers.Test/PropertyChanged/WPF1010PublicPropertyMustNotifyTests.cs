@@ -163,7 +163,7 @@ public class Foo
         }
 
         [Test]
-        public async Task WhenNotNotifyingWithBackingField(string property)
+        public async Task WhenNotNotifyingWithBackingField()
         {
             var testCode = @"
 public class Foo

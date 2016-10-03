@@ -12,8 +12,8 @@
     {
         public const string DiagnosticId = "WPF1010";
         private const string Title = "Mutable public property should notify.";
-        private const string MessageFormat = "Property '{0}' must notify about changes.";
-        private const string Description = "Enable this rule if all mutable public properties should notify when changed.";
+        private const string MessageFormat = "Property '{0}' must notify when value changes.";
+        private const string Description = "All mutable public properties should notify when their value changes.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
