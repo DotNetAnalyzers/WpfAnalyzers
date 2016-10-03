@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using WpfAnalyzers.DependencyProperties;
+    using WpfAnalyzers.PropertyChanged.Helpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF1010MutablePublicPropertyShouldNotify : DiagnosticAnalyzer
@@ -71,6 +72,22 @@
             AccessorDeclarationSyntax setter;
             if (declaration.TryGetSetAccessorDeclaration(out setter))
             {
+                if (declaration.IsDependencyPropertyAccessor())
+                {
+                    return;
+                }
+
+                foreach (var name in setter.RaisesPropertyChangedFor(context.SemanticModel))
+                {
+                    if (string.IsNullOrEmpty(name) ||
+                        name == propertySymbol.Name)
+                    {
+                        // raising with null or empty means that all properties notifies
+                        // this is how a wpf binding sees it.
+                        return;
+                    }
+                }
+                
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), context.ContainingSymbol.Name));
             }
         }

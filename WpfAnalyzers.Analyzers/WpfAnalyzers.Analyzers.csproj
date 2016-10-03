@@ -72,6 +72,7 @@
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
+    <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotify.cs" />

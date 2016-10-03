@@ -9,8 +9,84 @@
 
     public class WPF1010MutablePublicPropertyShouldNotifyTests : DiagnosticVerifier
     {
+        [TestCase("null")]
+        [TestCase("string.Empty")]
+        [TestCase(@"""Bar""")]
+        [TestCase(@"nameof(Bar)")]
+        [TestCase(@"nameof(this.Bar)")]
+        public async Task HappyPathCallsOnPropertyChanged(string propertyName)
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(""Bar"");
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }";
+
+            testCode = testCode.AssertReplace(@""" Bar""", propertyName);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("null")]
+        [TestCase("string.Empty")]
+        [TestCase(@"""Bar""")]
+        [TestCase(@"nameof(Bar)")]
+        [TestCase(@"nameof(this.Bar)")]
+        public async Task HappyPathCallsRaisePropertyChangedWithEventArgs(string propertyName)
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(""Bar""));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }";
+
+            testCode = testCode.AssertReplace(@""" Bar""", propertyName);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Test]
-        public async Task HappyPathCallsRaisePropertyChanged()
+        public async Task HappyPathCallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
     using System.ComponentModel;
@@ -42,8 +118,12 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task HappyPathCallsInvoke()
+        [TestCase("null")]
+        [TestCase("string.Empty")]
+        [TestCase(@"""Bar""")]
+        [TestCase(@"nameof(Bar)")]
+        [TestCase(@"nameof(this.Bar)")]
+        public async Task HappyPathInvokes(string propertyName)
         {
             var testCode = @"
     using System.ComponentModel;
@@ -64,11 +144,11 @@
                 }
 
                 this.bar = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
             }
         }
     }";
-
+            testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -109,7 +189,7 @@ public abstract class Foo
         }
 
         [Test]
-        public async Task HappyPathStatic()
+        public async Task IgnoreStatic()
         {
             // maybe this should notify?
             var testCode = @"
@@ -144,6 +224,27 @@ public class Foo
     internal int Bar { get; set; }
 }";
 
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoreDependencyProperty()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int) this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
