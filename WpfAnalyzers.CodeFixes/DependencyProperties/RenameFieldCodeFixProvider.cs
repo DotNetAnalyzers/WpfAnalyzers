@@ -15,7 +15,7 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                WPF0001FieldMatchesRegisteredName.DiagnosticId,
+                WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredName.DiagnosticId,
                 WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@
             string registeredName;
             if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
             {
-                var newName = diagnostic.Id == WPF0001FieldMatchesRegisteredName.DiagnosticId
+                var newName = diagnostic.Id == WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredName.DiagnosticId
                   ? registeredName + "Property"
                   : registeredName + "PropertyKey";
 
