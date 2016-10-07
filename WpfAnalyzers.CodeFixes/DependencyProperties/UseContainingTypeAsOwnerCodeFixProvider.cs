@@ -2,27 +2,28 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenamePropertyCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseContainingTypeAsOwnerCodeFixProvider))]
     [Shared]
-    internal class RenamePropertyCodeFixProvider : CodeFixProvider
+    internal class UseContainingTypeAsOwnerCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId);
+            ImmutableArray.Create(WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -34,33 +35,39 @@
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Rename property to match registered name.",
+                        "Register containing type as owner.",
                         _ => ApplyFixAsync(context, diagnostic),
                         this.GetType().Name),
                     diagnostic);
             }
         }
 
-        private static async Task<Solution> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
 
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
+            var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                     .FirstAncestorOrSelf<ArgumentSyntax>();
 
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                        .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-
-            string registeredName;
-            if (declaration.TryGetDependencyPropertyRegisteredName(semanticModel, out registeredName))
+            if (argument == null)
             {
-                return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, context.CancellationToken).ConfigureAwait(false);
+                return document;
             }
 
-            return document.Project.Solution;
+            var typeOfExpression = argument.Expression as TypeOfExpressionSyntax;
+            var containingType = argument.Ancestors()
+                             .OfType<TypeDeclarationSyntax>()
+                             .FirstOrDefault();
+
+            if (containingType == null || typeOfExpression == null)
+            {
+                return document;
+            }
+
+            var updated = typeOfExpression.WithType(SyntaxFactory.IdentifierName(containingType.Identifier.ValueText));
+            return document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeOfExpression, updated));
         }
     }
 }
