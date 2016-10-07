@@ -43,7 +43,7 @@
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="DependencyProperties\Helpers\AttachedPropertyClrAccessor.cs" />
-    <Compile Include="Helpers\SyntaxtTreeHelpers\ExpressionSyntaxExt.cs" />
+    <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
@@ -72,8 +72,10 @@
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
+    <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />
+    <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotify.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

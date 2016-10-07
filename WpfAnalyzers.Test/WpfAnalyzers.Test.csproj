@@ -69,6 +69,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyChanged\WPF1010PublicPropertyMustNotifyTests.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotifyTests.cs" />
     <Compile Include="PublicApiTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
