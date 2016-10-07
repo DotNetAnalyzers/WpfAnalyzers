@@ -46,17 +46,20 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
+
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var method = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                         .FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
             string registeredName;
             string expectedName = null;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(out registeredName))
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(semanticModel, out registeredName))
             {
                 expectedName = "Get" + registeredName;
             }
-            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(out registeredName))
+            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, out registeredName))
             {
                 expectedName = "Set" + registeredName;
             }

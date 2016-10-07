@@ -45,11 +45,13 @@
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             string registeredName;
-            if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(out registeredName))
+            if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(semanticModel, out registeredName))
             {
                 var newName = diagnostic.Id == WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredName.DiagnosticId
                   ? registeredName + "Property"

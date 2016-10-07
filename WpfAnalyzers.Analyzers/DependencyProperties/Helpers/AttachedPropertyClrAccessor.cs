@@ -50,25 +50,25 @@
             return setValue != null;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedGet(this MethodDeclarationSyntax method, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedGet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromGetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
             }
 
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedSet(this MethodDeclarationSyntax method, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedSet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromSetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
             }
 
             return false;

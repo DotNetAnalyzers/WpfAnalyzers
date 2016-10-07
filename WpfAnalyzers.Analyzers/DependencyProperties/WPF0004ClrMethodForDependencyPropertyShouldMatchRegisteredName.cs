@@ -52,7 +52,7 @@
             }
 
             string registeredName;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(out registeredName))
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(context.SemanticModel, out registeredName))
             {
                 if (!IsMatchingGetName(methodName, registeredName))
                 {
@@ -60,7 +60,7 @@
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Get" + registeredName));
                 }
             }
-            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(out registeredName))
+            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(context.SemanticModel, out registeredName))
             {
                 if (!IsMatchingSetName(methodName, registeredName))
                 {

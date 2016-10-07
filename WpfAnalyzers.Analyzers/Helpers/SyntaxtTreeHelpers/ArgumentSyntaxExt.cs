@@ -9,7 +9,7 @@
         internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, out string result)
         {
             result = null;
-            if (argument?.Expression == null)
+            if (argument?.Expression == null || semanticModel == null)
             {
                 return false;
             }
@@ -39,40 +39,6 @@
             }
 
             return false;
-        }
-
-        internal static bool TryGetString(this ArgumentSyntax argument, out string result)
-        {
-            result = null;
-            if (argument == null)
-            {
-                return false;
-            }
-
-            if (TryGetStringLiteral(argument.Expression, out result))
-            {
-                return true;
-            }
-
-            if ((argument.Expression as InvocationExpressionSyntax)?.TryGetNameOfResult(out result) == true)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)
-        {
-            var literal = expression as LiteralExpressionSyntax;
-            if (literal == null || literal.Kind() != SyntaxKind.StringLiteralExpression)
-            {
-                result = null;
-                return false;
-            }
-
-            result = literal.Token.ValueText;
-            return true;
         }
 
         private static bool IsNameOf(this ExpressionSyntax expression)

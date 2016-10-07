@@ -1,21 +1,22 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DependencyPropertyField
     {
         internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
         {
-            string temp;
+            MemberAccessExpressionSyntax temp;
             return declaration.IsDependencyPropertyType() &&
-                   declaration.TryGetDependencyPropertyRegisteredName(out temp);
+                   declaration.TryGetRegisterInvocation(out temp);
         }
 
         internal static bool IsDependencyPropertyKeyField(this FieldDeclarationSyntax declaration)
         {
-            string temp;
+            MemberAccessExpressionSyntax temp;
             return declaration.IsDependencyPropertyKeyType() &&
-                   declaration.TryGetDependencyPropertyRegisteredName(out temp);
+                   declaration.TryGetRegisterInvocation(out temp);
         }
 
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
@@ -63,7 +64,7 @@
             return result != null;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredName(this FieldDeclarationSyntax declaration, SemanticModel semanticModel, out string result)
         {
             result = null;
             if (declaration == null)
@@ -79,7 +80,7 @@
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
-            return nameArg.TryGetString(out result);
+            return nameArg.TryGetString(semanticModel, out result);
         }
 
         internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
@@ -130,9 +131,7 @@
             return typeArg.Expression.TryGetTypeOfResult(out result);
         }
 
-        private static bool TryGetRegisterInvocation(
-            FieldDeclarationSyntax declaration,
-            out MemberAccessExpressionSyntax invocation)
+        private static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
             if (!TryGetInitializerCall(declaration, out invocation))
             {

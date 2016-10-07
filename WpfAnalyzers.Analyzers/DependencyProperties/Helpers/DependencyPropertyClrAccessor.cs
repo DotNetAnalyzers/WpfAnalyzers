@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.DependencyProperties
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DependencyPropertyClrAccessor
@@ -30,13 +31,13 @@ namespace WpfAnalyzers.DependencyProperties
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredName(this PropertyDeclarationSyntax property, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredName(this PropertyDeclarationSyntax property, SemanticModel semanticModel, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyProperty(out dependencyProperty))
             {
-               return dependencyProperty.TryGetDependencyPropertyRegisteredName(out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
             }
 
             return false;

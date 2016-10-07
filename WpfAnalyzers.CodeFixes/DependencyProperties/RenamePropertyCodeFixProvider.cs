@@ -45,12 +45,16 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                 .ConfigureAwait(false);
+
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
+
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                 .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
 
             string registeredName;
-            if (declaration.TryGetDependencyPropertyRegisteredName(out registeredName))
+            if (declaration.TryGetDependencyPropertyRegisteredName(semanticModel, out registeredName))
             {
                 return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, context.CancellationToken).ConfigureAwait(false);
             }
