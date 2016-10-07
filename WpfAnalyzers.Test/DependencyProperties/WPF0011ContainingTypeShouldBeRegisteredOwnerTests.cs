@@ -10,7 +10,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0011RegisterContainingTypeAsOwnerTests : DiagnosticVerifier
+    public class WPF0011ContainingTypeShouldBeRegisteredOwnerTests : DiagnosticVerifier
     {
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
@@ -177,7 +177,7 @@ public static class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0011RegisterContainingTypeAsOwner();
+            yield return new WPF0011ContainingTypeShouldBeRegisteredOwner();
         }
     }
 }
