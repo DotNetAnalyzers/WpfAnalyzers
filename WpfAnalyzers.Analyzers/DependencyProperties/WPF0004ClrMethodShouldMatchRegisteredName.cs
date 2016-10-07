@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredName : DiagnosticAnalyzer
+    internal class WPF0004ClrMethodShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0004";
         private const string Title = "CLR method for a DependencyProperty should match registered name.";

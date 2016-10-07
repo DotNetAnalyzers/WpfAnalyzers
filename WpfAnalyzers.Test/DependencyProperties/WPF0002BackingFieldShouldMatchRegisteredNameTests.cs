@@ -11,7 +11,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredNameTests : CodeFixVerifier
+    public class WPF0002BackingFieldShouldMatchRegisteredNameTests : CodeFixVerifier
     {
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
@@ -180,7 +180,7 @@ public static class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredName();
+            yield return new WPF0002BackingFieldShouldMatchRegisteredName();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

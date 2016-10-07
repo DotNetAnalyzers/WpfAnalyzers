@@ -10,7 +10,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0013ClrAccessorMatchesRegisteredTypeTests : DiagnosticVerifier
+    public class WPF0013ClrMethodMustMatchRegisteredTypeTests : DiagnosticVerifier
     {
         [TestCase("int")]
         [TestCase("int?")]
@@ -250,7 +250,7 @@ public static class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0013ClrAccessorMatchesRegisteredType();
+            yield return new WPF0013ClrMethodMustMatchRegisteredType();
         }
     }
 }

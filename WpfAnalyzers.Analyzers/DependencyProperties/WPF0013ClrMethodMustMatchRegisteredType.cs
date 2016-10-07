@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0013ClrAccessorMatchesRegisteredType : DiagnosticAnalyzer
+    internal class WPF0013ClrMethodMustMatchRegisteredType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0013";
         private const string Title = "CLR accessor for attached property must match registered type.";

@@ -11,7 +11,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredNameTests : CodeFixVerifier
+    public class WPF0004ClrMethodShouldMatchRegisteredNameTests : CodeFixVerifier
     {
         [Test]
         public async Task HappyPath()
@@ -273,7 +273,7 @@ public static class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredName();
+            yield return new WPF0004ClrMethodShouldMatchRegisteredName();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider() => new RenameMethodCodeFixProvider();
