@@ -8,10 +8,10 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0012ClrPropertyMatchesRegisteredType : DiagnosticAnalyzer
+    internal class WPF0012ClrPropertyTypeShouldBeRegisteredType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0012";
-        private const string Title = "DependencyProperty CLR property type must match registered type.";
+        private const string Title = "CLR property type should match registered type.";
         private const string MessageFormat = "Property '{0}' must be of type {1}";
         private const string Description = Title;
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
@@ -21,7 +21,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
+                                                                      DiagnosticSeverity.Warning,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
