@@ -11,7 +11,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0030FieldMustBeStaticReadOnlyTests : CodeFixVerifier
+    public class WPF0030BackingFieldShouldBeStaticReadonlyTests : CodeFixVerifier
     {
         [Test]
         public async Task HappyPath()
@@ -84,6 +84,49 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [TestCase("FooControl")]
+        [TestCase("FooControl<T>")]
+        public async Task HappyPathAddOwner(string typeName)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public double Bar
+    {
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            testCode = testCode.AssertReplace("FooControl", typeName);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [TestCase("public static", "public static readonly")]
         [TestCase("public", "public static readonly")]
         [TestCase("public readonly", "public static readonly")]
@@ -153,7 +196,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(7, 5).WithArguments("BarPropertyKey", "DependencyPropertyKey", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(7, 5).WithArguments("BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -262,7 +305,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey", "DependencyPropertyKey", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -291,9 +334,91 @@ public static class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [TestCase("FooControl")]
+        [TestCase("FooControl<T>")]
+        public async Task WhenNotAddOwner(string typeName)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}
+
+public class FooControl : Control
+{
+    public static DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public double Bar
+    {
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            testCode = testCode.AssertReplace("FooControl", typeName);
+            var expected = this.CSharpDiagnostic().WithLocation(28, 5).WithArguments("BarProperty");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public double Bar
+    {
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("FooControl", typeName);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0030FieldMustBeStaticReadOnly();
+            yield return new WPF0030BackingFieldShouldBeStaticReadonly();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

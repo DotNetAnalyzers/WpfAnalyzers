@@ -8,12 +8,12 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0030FieldMustBeStaticReadOnly : DiagnosticAnalyzer
+    internal class WPF0030BackingFieldShouldBeStaticReadonly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0030";
-        private const string Title = "DependencyProperty field must be static and readonly";
-        private const string MessageFormat = "Field '{0}' that is backing field for the {1} registered as '{2}' must be static and readonly";
-        private const string Description = Title;
+        private const string Title = "Backing field for a DependencyProperty should be static and readonly.";
+        private const string MessageFormat = "Field '{0}' is backing field for a DependencyProperty and should be static and readonly.";
+        private const string Description = "Backing field for a DependencyProperty should be static and readonly.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -45,8 +45,8 @@
                 return;
             }
 
-            string registeredName;
-            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, out registeredName))
+            if (!fieldDeclaration.IsDependencyPropertyField() &&
+                !fieldDeclaration.IsDependencyPropertyKeyField())
             {
                 return;
             }
@@ -54,7 +54,7 @@
             var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
             if (!fieldSymbol.IsReadOnly || !fieldSymbol.IsStatic)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name, fieldSymbol.Type.Name, registeredName));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name, fieldSymbol.Type.Name));
             }
         }
     }

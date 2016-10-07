@@ -52,10 +52,10 @@
     <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
     <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwnerTests.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrderTests.cs" />
-    <Compile Include="DependencyProperties\WPF0002BackingFieldFoDependencyPropertyKeyShouldMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnlyTests.cs" />
-    <Compile Include="DependencyProperties\WPF0003ClrPropertyMatchesRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WPF0001FieldMatchesRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0030BackingFieldShouldBeStaticReadonlyTests.cs" />
+    <Compile Include="DependencyProperties\WPF0003ClrPropertyForDependencyPropertyShouldMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredNameTests.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrAccessorMatchesRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyTypeShouldBeRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />

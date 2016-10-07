@@ -57,7 +57,7 @@
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldForDependencyPropertyShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldForDependencyPropertyKeyShouldMatchRegisteredName.cs" />
-    <Compile Include="DependencyProperties\WPF0030FieldMustBeStaticReadOnly.cs" />
+    <Compile Include="DependencyProperties\WPF0030BackingFieldShouldBeStaticReadonly.cs" />
     <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwner.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyForDependencyPropertyShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyTypeShouldBeRegisteredType.cs" />
