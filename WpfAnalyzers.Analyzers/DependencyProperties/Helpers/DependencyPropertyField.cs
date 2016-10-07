@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DependencyPropertyField
@@ -80,22 +79,7 @@
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
-            if (nameArg == null)
-            {
-                return false;
-            }
-
-            if (TryGetStringLiteral(nameArg.Expression, out result))
-            {
-                return true;
-            }
-
-            if ((nameArg.Expression as InvocationExpressionSyntax)?.TryGetNameOfResult(out result) == true)
-            {
-                return true;
-            }
-
-            return false;
+            return nameArg.TryGetString(out result);
         }
 
         internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
@@ -199,19 +183,6 @@
             }
 
             return result != null;
-        }
-
-        private static bool TryGetStringLiteral(ExpressionSyntax expression, out string result)
-        {
-            var literal = expression as LiteralExpressionSyntax;
-            if (literal == null || literal.Kind() != SyntaxKind.StringLiteralExpression)
-            {
-                result = null;
-                return false;
-            }
-
-            result = literal.Token.ValueText;
-            return true;
         }
     }
 }

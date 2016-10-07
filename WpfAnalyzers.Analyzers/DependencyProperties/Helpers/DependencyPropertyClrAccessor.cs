@@ -4,6 +4,14 @@ namespace WpfAnalyzers.DependencyProperties
 
     internal static class DependencyPropertyClrAccessor
     {
+        internal static bool IsDependencyPropertyAccessor(this PropertyDeclarationSyntax property)
+        {
+            FieldDeclarationSyntax getter;
+            FieldDeclarationSyntax setter;
+            return TryGetDependencyPropertyFromGetter(property, out getter) &&
+                   TryGetDependencyPropertyFromSetter(property, out setter);
+        }
+
         internal static bool TryGetDependencyProperty(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)
         {
             dependencyProperty = null;
