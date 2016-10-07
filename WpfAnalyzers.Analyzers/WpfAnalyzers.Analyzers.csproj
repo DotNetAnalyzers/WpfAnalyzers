@@ -43,8 +43,8 @@
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="DependencyProperties\Helpers\AttachedPropertyClrAccessor.cs" />
-    <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
+    <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\MemberAccessExpressionSyntaxExt.cs" />

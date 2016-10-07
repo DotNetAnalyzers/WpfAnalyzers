@@ -70,7 +70,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("class BarControl", typeName)
                                .AssertReplace("typeof(BarControl)", typeofName);
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("FooControl.BarProperty", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocation(15, 9).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -103,7 +103,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("FooControl.BarPropertyKey", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocation(15, 9).WithArguments("FooControl.BarPropertyKey", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -136,7 +136,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("Foo.BarProperty", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 9).WithArguments("Foo.BarProperty", "Foo");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -171,7 +171,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("Foo.BarPropertyKey", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocation(13, 9).WithArguments("Foo.BarPropertyKey", "Foo");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

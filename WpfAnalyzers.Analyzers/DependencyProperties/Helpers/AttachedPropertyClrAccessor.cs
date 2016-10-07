@@ -74,25 +74,25 @@
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredTypeFromAttachedGet(this MethodDeclarationSyntax method, out TypeSyntax result)
+        internal static bool TryGetDependencyPropertyRegisteredTypeFromAttachedGet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out ITypeSymbol result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromGetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredType(out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredType(semanticModel, out result);
             }
 
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredTypeFromAttachedSet(this MethodDeclarationSyntax method, out TypeSyntax result)
+        internal static bool TryGetDependencyPropertyRegisteredTypeFromAttachedSet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out ITypeSymbol result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromSetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredType(out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredType(semanticModel, out result);
             }
 
             return false;

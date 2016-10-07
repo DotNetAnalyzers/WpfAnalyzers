@@ -52,41 +52,5 @@
         {
             return invocation.Name() == Names.SetCurrentValue && invocation?.ArgumentList?.Arguments.Count == 2;
         }
-
-        internal static bool TryGetNameOfResult(this InvocationExpressionSyntax nameOfInvocation, out string result)
-        {
-            if (nameOfInvocation == null)
-            {
-                result = null;
-                return false;
-            }
-
-            if (nameOfInvocation.IsNameOf())
-            {
-                var argument = nameOfInvocation.ArgumentList.Arguments[0];
-                var identifierName = argument.Expression as IdentifierNameSyntax;
-                if (identifierName != null)
-                {
-                    result = identifierName.Identifier.ValueText;
-                    return true;
-                }
-            }
-
-            result = null;
-            return false;
-        }
-
-        internal static bool TryGetTypeOfResult(this ExpressionSyntax invocation, out TypeSyntax result)
-        {
-            var typeOfExpression = invocation as TypeOfExpressionSyntax;
-            if (typeOfExpression == null)
-            {
-                result = null;
-                return false;
-            }
-
-            result = typeOfExpression.Type;
-            return true;
-        }
     }
 }

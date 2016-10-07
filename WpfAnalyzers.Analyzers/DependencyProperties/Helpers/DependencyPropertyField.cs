@@ -83,7 +83,7 @@
             return nameArg.TryGetString(semanticModel, out result);
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
+        internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax declaration, SemanticModel semanticModel, out ITypeSymbol result)
         {
             result = null;
             MemberAccessExpressionSyntax invocation;
@@ -104,11 +104,12 @@
                 return false;
             }
 
-            return typeArg.Expression.TryGetTypeOfResult(out result);
+            return typeArg.TryGetType(semanticModel, out result);
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration, out TypeSyntax result)
+        internal static bool TryGetDependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax declaration, SemanticModel semanticModel, out ArgumentSyntax argument, out ITypeSymbol result)
         {
+            argument = null;
             result = null;
             MemberAccessExpressionSyntax invocation;
             if (!TryGetRegisterInvocation(declaration, out invocation))
@@ -122,13 +123,8 @@
                 return false;
             }
 
-            var typeArg = args.Arguments[2];
-            if (typeArg == null)
-            {
-                return false;
-            }
-
-            return typeArg.Expression.TryGetTypeOfResult(out result);
+            argument = args.Arguments[2];
+            return argument.TryGetType(semanticModel, out result);
         }
 
         private static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)

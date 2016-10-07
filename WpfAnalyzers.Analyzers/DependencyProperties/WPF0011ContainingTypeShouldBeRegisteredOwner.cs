@@ -60,17 +60,17 @@
                 return;
             }
 
-            TypeSyntax registeredOwnerType;
-            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(out registeredOwnerType))
+            ITypeSymbol registeredOwnerType;
+            ArgumentSyntax arg;
+            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(context.SemanticModel, out arg, out registeredOwnerType))
             {
                 return;
             }
 
-            var semanticModel = context.SemanticModel;
             var containingType = fieldSymbol.ContainingSymbol as ITypeSymbol;
-            if (!TypeHelper.IsSameType(semanticModel?.GetTypeInfo(registeredOwnerType).Type, containingType))
+            if (!TypeHelper.IsSameType(registeredOwnerType, containingType))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, registeredOwnerType.GetLocation(), fieldSymbol, containingType));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), fieldSymbol, containingType));
             }
         }
     }
