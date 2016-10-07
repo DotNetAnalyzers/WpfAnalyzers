@@ -8,12 +8,12 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0004ClrMethodMatchesRegisteredName : DiagnosticAnalyzer
+    internal class WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0004";
-        private const string Title = "CLR accessor for attached property must match registered name.";
+        private const string Title = "CLR method for a DependencyProperty should match registered name.";
         private const string MessageFormat = "Method '{0}' must be named '{1}'";
-        private const string Description = Title;
+        private const string Description = "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -21,7 +21,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
+                                                                      DiagnosticSeverity.Warning,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);

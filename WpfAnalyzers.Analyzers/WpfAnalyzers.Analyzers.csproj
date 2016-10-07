@@ -63,7 +63,7 @@
     <Compile Include="DependencyProperties\WPF0012ClrPropertyMatchesRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrder.cs" />
-    <Compile Include="DependencyProperties\WPF0004ClrMethodMatchesRegisteredName.cs" />
+    <Compile Include="DependencyProperties\WPF0004ClrMethodForDependencyPropertyShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKey.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrAccessorMatchesRegisteredType.cs" />
     <Compile Include="HelpLink.cs" />
