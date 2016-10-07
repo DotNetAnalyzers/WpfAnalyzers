@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.DependencyProperties
+﻿namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
