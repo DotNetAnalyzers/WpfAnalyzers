@@ -41,9 +41,52 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [TestCase("class BarControl", "typeof(BarControl)")]
-        [TestCase("class BarControl<T>", "typeof(BarControl<int>)")]
-        public async Task WhenNotOwner(string typeName, string typeofName)
+        [TestCase("FooControl")]
+        [TestCase("FooControl<T>")]
+        public async Task HappyPathAddOwner(string typeName)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public double Bar
+    {
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            testCode = testCode.AssertReplace("FooControl", typeName);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("BarControl")]
+        [TestCase("BarControl<T>")]
+        public async Task WhenNotContainingType(string typeName)
         {
             var testCode = @"
 using System.Windows;
@@ -68,14 +111,14 @@ public class FooControl : Control
         set { this.SetValue(BarProperty, value); }
     }
 }";
-            testCode = testCode.AssertReplace("class BarControl", typeName)
-                               .AssertReplace("typeof(BarControl)", typeofName);
+            testCode = testCode.AssertReplace("class BarControl", $"class {typeName}")
+                               .AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
             var expected = this.CSharpDiagnostic().WithLocation(15, 9).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Test]
-        public async Task WhenNotOwnerReadOnly()
+        public async Task WhenNotContainingTypeReadOnly()
         {
             var testCode = @"
 using System.Windows;
@@ -108,7 +151,7 @@ public class FooControl : Control
         }
 
         [Test]
-        public async Task WhenNotOwnerAttached()
+        public async Task WhenNotContainingTypeAttached()
         {
             var testCode = @"
 using System.Windows;
@@ -141,7 +184,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task WhenNotOwnerAttachedReadonly()
+        public async Task WhenNotContainingTypeAttachedReadonly()
         {
             var testCode = @"
 using System.Windows;
@@ -172,6 +215,53 @@ public static class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(13, 9).WithArguments("Foo.BarPropertyKey", "Foo");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotContainingTypeAddOwner()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetBar(DependencyObject element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}
+
+public class BarControl : Control
+{
+}
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(BarControl));
+
+    public double Bar
+    {
+        get { return (double)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(32, 86).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

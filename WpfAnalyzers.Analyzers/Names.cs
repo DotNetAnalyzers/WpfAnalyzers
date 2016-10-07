@@ -9,6 +9,7 @@
         public const string RegisterAttached = "RegisterAttached";
         public const string RegisterReadOnly = "RegisterReadOnly";
         public const string RegisterAttachedReadOnly = "RegisterAttachedReadOnly";
+        public const string AddOwner = "AddOwner";
         public const string GetValue = "GetValue";
         public const string SetValue = "SetValue";
         public const string SetCurrentValue = "SetCurrentValue";

@@ -9,7 +9,8 @@
         {
             MemberAccessExpressionSyntax temp;
             return declaration.IsDependencyPropertyType() &&
-                   declaration.TryGetRegisterInvocation(out temp);
+                   (declaration.TryGetRegisterInvocation(out temp) ||
+                    declaration.TryGetAddOwnerInvocation(out temp));
         }
 
         internal static bool IsDependencyPropertyKeyField(this FieldDeclarationSyntax declaration)
@@ -112,19 +113,31 @@
             argument = null;
             result = null;
             MemberAccessExpressionSyntax invocation;
-            if (!TryGetRegisterInvocation(declaration, out invocation))
+            if (TryGetRegisterInvocation(declaration, out invocation))
             {
-                return false;
+                var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
+                if (args == null || args.Arguments.Count < 3)
+                {
+                    return false;
+                }
+
+                argument = args.Arguments[2];
+                return argument.TryGetType(semanticModel, out result);
             }
 
-            var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
-            if (args == null || args.Arguments.Count < 3)
+            if (TryGetAddOwnerInvocation(declaration, out invocation))
             {
-                return false;
+                var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
+                if (args == null || args.Arguments.Count < 1)
+                {
+                    return false;
+                }
+
+                argument = args.Arguments[0];
+                return argument.TryGetType(semanticModel, out result);
             }
 
-            argument = args.Arguments[2];
-            return argument.TryGetType(semanticModel, out result);
+            return false;
         }
 
         private static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
@@ -159,6 +172,16 @@
             }
 
             return false;
+        }
+
+        private static bool TryGetAddOwnerInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
+        {
+            if (!TryGetInitializerCall(declaration, out invocation))
+            {
+                return false;
+            }
+
+            return invocation.IsDependencyPropertyAddOwner();
         }
 
         private static bool TryGetInitializerCall(FieldDeclarationSyntax field, out MemberAccessExpressionSyntax result)

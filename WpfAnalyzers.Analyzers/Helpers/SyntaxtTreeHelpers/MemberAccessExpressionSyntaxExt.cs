@@ -24,6 +24,16 @@
             return memberAccess.IsDependencyPropertyCall(Names.RegisterAttachedReadOnly);
         }
 
+        internal static bool IsDependencyPropertyAddOwner(this MemberAccessExpressionSyntax memberAccess)
+        {
+            if (memberAccess == null || memberAccess.IsMissing)
+            {
+                return false;
+            }
+
+            return memberAccess.Name?.Identifier.ValueText == Names.AddOwner;
+        }
+
         internal static bool IsDependencyPropertyKeyProperty(this MemberAccessExpressionSyntax memberAccess)
         {
             if (memberAccess == null || memberAccess.IsMissing)
