@@ -8,7 +8,7 @@
     using NUnit.Framework;
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0003ClrPropertyMatchesRegisteredNameTests : CodeFixVerifier
+    public class WPF0003ClrPropertyForDependencyPropertyShouldMatchRegisteredNameTests : CodeFixVerifier
     {
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
@@ -248,7 +248,7 @@ public class FooControl : Control
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF0003ClrPropertyMatchesRegisteredName();
+            yield return new WPF0003ClrPropertyForDependencyPropertyShouldMatchRegisteredName();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
