@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
     using System.Linq;
 
@@ -90,7 +89,7 @@
 
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (!invocation.TryGetSetValueArguments(context.SemanticModel, out property, out value))
+            if (!invocation.TryGetSetValueArguments(context.SemanticModel, context.CancellationToken, out property, out value))
             {
                 return;
             }
@@ -106,7 +105,7 @@
             var clrMethod = invocation.Ancestors()
                                       .OfType<MethodDeclarationSyntax>()
                                       .FirstOrDefault();
-            if (clrMethod.IsAttachedSetAccessor(context.SemanticModel))
+            if (clrMethod.IsAttachedSetAccessor(context.SemanticModel, context.CancellationToken))
             {
                 return;
             }

@@ -55,11 +55,11 @@
 
             string registeredName;
             string expectedName = null;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(semanticModel, out registeredName))
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(semanticModel, context.CancellationToken, out registeredName))
             {
                 expectedName = "Get" + registeredName;
             }
-            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, out registeredName))
+            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, context.CancellationToken, out registeredName))
             {
                 expectedName = "Set" + registeredName;
             }

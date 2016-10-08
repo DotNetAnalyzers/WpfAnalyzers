@@ -1,15 +1,17 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class AttachedPropertyClrAccessor
     {
-        internal static bool IsAttachedSetAccessor(this MethodDeclarationSyntax method, SemanticModel semanticModel)
+        internal static bool IsAttachedSetAccessor(this MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             string name;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, out name))
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, cancellationToken, out name))
             {
                 return method.Name()
                              .IsParts("Set", name);
@@ -62,25 +64,25 @@
             return setValue != null;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedGet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedGet(this MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromGetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, cancellationToken, out result);
             }
 
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedSet(this MethodDeclarationSyntax method, SemanticModel semanticModel, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredNameFromAttachedSet(this MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (AttachedPropertyHelper.TryGetFromSetMethod(method, out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, cancellationToken, out result);
             }
 
             return false;

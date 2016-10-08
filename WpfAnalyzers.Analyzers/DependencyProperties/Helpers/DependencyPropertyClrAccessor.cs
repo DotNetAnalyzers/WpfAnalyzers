@@ -1,5 +1,7 @@
 namespace WpfAnalyzers.DependencyProperties
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -31,13 +33,13 @@ namespace WpfAnalyzers.DependencyProperties
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredName(this PropertyDeclarationSyntax property, SemanticModel semanticModel, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredName(this PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             FieldDeclarationSyntax dependencyProperty;
             if (property.TryGetDependencyProperty(out dependencyProperty))
             {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, out result);
+                return dependencyProperty.TryGetDependencyPropertyRegisteredName(semanticModel, cancellationToken, out result);
             }
 
             return false;

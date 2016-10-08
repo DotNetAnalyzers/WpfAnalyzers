@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -39,13 +41,13 @@
             return invocation.Name() == "nameof";
         }
 
-        internal static bool IsGetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
+        internal static bool IsGetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             ArgumentSyntax _;
-            return TryGetGetValueArgument(invocation, semanticModel, out _);
+            return TryGetGetValueArgument(invocation, semanticModel, cancellationToken, out _);
         }
 
-        internal static bool TryGetGetValueArgument(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property)
+        internal static bool TryGetGetValueArgument(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property)
         {
             property = null;
             if (invocation.Name() != Names.GetValue || invocation?.ArgumentList?.Arguments.Count != 1)
@@ -53,7 +55,7 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;
@@ -63,14 +65,14 @@
             return true;
         }
 
-        internal static bool IsSetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
+        internal static bool IsSetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             ArgumentSyntax _;
             ArgumentSyntax __;
-            return TryGetSetValueArguments(invocation, semanticModel, out _, out __);
+            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _, out __);
         }
 
-        internal static bool TryGetSetValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property, out ArgumentSyntax value)
+        internal static bool TryGetSetValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out ArgumentSyntax value)
         {
             property = null;
             value = null;
@@ -79,7 +81,7 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;
@@ -90,14 +92,14 @@
             return true;
         }
 
-        internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
+        internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             ArgumentSyntax _;
             ArgumentSyntax __;
-            return TryGetSetValueArguments(invocation, semanticModel, out _, out __);
+            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _, out __);
         }
 
-        internal static bool TryGetSetCurrentValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property, out ArgumentSyntax value)
+        internal static bool TryGetSetCurrentValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out ArgumentSyntax value)
         {
             property = null;
             value = null;
@@ -106,7 +108,7 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;

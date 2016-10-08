@@ -8,7 +8,7 @@
 
     internal static class ArgumentSyntaxExt
     {
-        internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, out string result)
+        internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             if (argument?.Expression == null || semanticModel == null)
@@ -24,7 +24,7 @@
             if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression) ||
                 argument.Expression.IsNameOf())
             {
-                var cv = semanticModel.GetConstantValue(argument.Expression);
+                var cv = semanticModel.GetConstantValue(argument.Expression, cancellationToken);
                 if (cv.HasValue && cv.Value is string)
                 {
                     result = (string)cv.Value;
@@ -32,7 +32,7 @@
                 }
             }
 
-            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
+            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
             if (symbolInfo.Symbol?.ContainingType?.Name == "String" &&
                 symbolInfo.Symbol?.Name == "Empty")
             {

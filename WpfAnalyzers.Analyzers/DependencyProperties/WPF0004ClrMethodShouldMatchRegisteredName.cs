@@ -52,7 +52,7 @@
             }
 
             string registeredName;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(context.SemanticModel, out registeredName))
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(context.SemanticModel, context.CancellationToken, out registeredName))
             {
                 if (!methodName.IsParts("Get", registeredName))
                 {
@@ -60,7 +60,7 @@
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Get" + registeredName));
                 }
             }
-            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(context.SemanticModel, out registeredName))
+            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(context.SemanticModel, context.CancellationToken, out registeredName))
             {
                 if (!methodName.IsParts("Set", registeredName))
                 {

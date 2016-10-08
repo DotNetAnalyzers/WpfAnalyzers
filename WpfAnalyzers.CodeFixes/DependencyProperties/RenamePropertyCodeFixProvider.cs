@@ -55,7 +55,7 @@
                                         .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
 
             string registeredName;
-            if (declaration.TryGetDependencyPropertyRegisteredName(semanticModel, out registeredName))
+            if (declaration.TryGetDependencyPropertyRegisteredName(semanticModel, context.CancellationToken, out registeredName))
             {
                 return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, context.CancellationToken).ConfigureAwait(false);
             }

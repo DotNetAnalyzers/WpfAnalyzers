@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -78,7 +77,7 @@
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
                 ArgumentSyntax property;
                 ArgumentSyntax value;
-                if (!invocation.TryGetSetValueArguments(semanticModel, out property, out value))
+                if (!invocation.TryGetSetValueArguments(semanticModel, context.CancellationToken, out property, out value))
                 {
                     return context.Document;
                 }

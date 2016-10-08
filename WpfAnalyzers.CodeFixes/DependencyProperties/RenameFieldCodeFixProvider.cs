@@ -51,7 +51,7 @@
             var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                              .FirstAncestorOrSelf<FieldDeclarationSyntax>();
             string registeredName;
-            if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(semanticModel, out registeredName))
+            if (fieldDeclaration.TryGetDependencyPropertyRegisteredName(semanticModel, context.CancellationToken, out registeredName))
             {
                 var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
                   ? registeredName + "Property"

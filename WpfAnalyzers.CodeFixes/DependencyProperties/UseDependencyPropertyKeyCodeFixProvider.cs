@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
@@ -46,7 +47,7 @@
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
             SyntaxNode updated = invocation.WithExpression(SetValueExpression(invocation.Expression))
-                                           .WithArgumentList(UpdateArgumentList(invocation.ArgumentList, semanticModel));
+                                           .WithArgumentList(UpdateArgumentList(invocation.ArgumentList, semanticModel, context.CancellationToken));
 
             return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(invocation, updated));
         }
@@ -71,10 +72,10 @@
             return old;
         }
 
-        private static ArgumentListSyntax UpdateArgumentList(ArgumentListSyntax argumentList, SemanticModel semanticModel)
+        private static ArgumentListSyntax UpdateArgumentList(ArgumentListSyntax argumentList, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var argument = argumentList.Arguments[0];
-            var dp = semanticModel.GetSymbolInfo(argument.Expression);
+            var dp = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
             if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
             {
                 return argumentList;

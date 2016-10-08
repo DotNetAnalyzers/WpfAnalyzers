@@ -46,7 +46,7 @@
             }
 
             string registeredName;
-            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, out registeredName))
+            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, context.CancellationToken, out registeredName))
             {
                 return;
             }

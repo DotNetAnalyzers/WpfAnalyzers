@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -63,7 +65,7 @@
             return result != null;
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredName(this FieldDeclarationSyntax field, SemanticModel semanticModel, out string result)
+        internal static bool TryGetDependencyPropertyRegisteredName(this FieldDeclarationSyntax field, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             if (field == null)
@@ -79,7 +81,7 @@
 
             var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
-            return nameArg.TryGetString(semanticModel, out result);
+            return nameArg.TryGetString(semanticModel, cancellationToken, out result);
         }
 
         internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax field, SemanticModel semanticModel, out ITypeSymbol result)

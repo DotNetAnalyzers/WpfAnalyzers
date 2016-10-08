@@ -55,12 +55,12 @@
             }
 
             string registeredName;
-            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, out registeredName))
+            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, context.CancellationToken, out registeredName))
             {
                 return;
             }
 
-            if (!StringHelper.IsParts(fieldName, registeredName, "Property"))
+            if (!fieldName.IsParts(registeredName, "Property"))
             {
                 var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldName, registeredName));

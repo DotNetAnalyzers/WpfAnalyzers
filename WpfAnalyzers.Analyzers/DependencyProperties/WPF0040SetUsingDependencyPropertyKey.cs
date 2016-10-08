@@ -47,8 +47,8 @@
             var invocation = context.Node as InvocationExpressionSyntax;
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (!invocation.TryGetSetValueArguments(context.SemanticModel, out property, out value) &&
-                !invocation.TryGetSetCurrentValueArguments(context.SemanticModel, out property, out value))
+            if (!invocation.TryGetSetValueArguments(context.SemanticModel, context.CancellationToken, out property, out value) &&
+                !invocation.TryGetSetCurrentValueArguments(context.SemanticModel, context.CancellationToken, out property, out value))
             {
                 return;
             }
