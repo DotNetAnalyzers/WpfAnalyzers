@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using WpfAnalyzers.SymbolHelpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0011ContainingTypeShouldBeRegisteredOwner : DiagnosticAnalyzer
@@ -68,7 +69,7 @@
             }
 
             var containingType = fieldSymbol.ContainingSymbol as ITypeSymbol;
-            if (!TypeHelper.IsSameType(registeredOwnerType, containingType))
+            if (!registeredOwnerType.IsSameType(containingType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), fieldSymbol, containingType));
             }

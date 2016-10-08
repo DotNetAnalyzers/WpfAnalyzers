@@ -390,7 +390,7 @@ namespace WpfAnalyzers.Test
                     message.Append("\r\n");
                 }
 
-                Assert.True(false, message.ToString());
+                Assert.Fail(message.ToString());
             }
 
             // After applying all of the code fixes, compare the resulting string to the inputted one
@@ -401,7 +401,7 @@ namespace WpfAnalyzers.Test
             for (int i = 0; i < updatedDocuments.Length; i++)
             {
                 var actual = await GetStringFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                Assert.AreEqual(newSources[i], actual);
+                Assert.AreEqual(newSources[i].NormalizeNewLine(), actual.NormalizeNewLine());
             }
         }
 

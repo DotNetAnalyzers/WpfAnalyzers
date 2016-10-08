@@ -1,20 +1,20 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
     using System.Collections.Immutable;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+
     using WpfAnalyzers.SymbolHelpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0013ClrMethodMustMatchRegisteredType : DiagnosticAnalyzer
+    internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0013";
-        private const string Title = "CLR accessor for attached property must match registered type.";
-        private const string MessageFormat = "{0} must match registered type {1}";
-        private const string Description = Title;
+        public const string DiagnosticId = "WPF0041";
+        private const string Title = "Set mutable dependency properties using SetCurrentValue.";
+        private const string MessageFormat = "Use SetCurrentValue({0}, {1})";
+        private const string Description = "Prefer setting mutable dependency properties using SetCurrentValue.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -35,37 +35,44 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(HandleAssignment, SyntaxKind.SimpleAssignmentExpression);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
-            var method = context.Node as MethodDeclarationSyntax;
-            if (method == null || method.IsMissing)
+            var assignment = context.Node as AssignmentExpressionSyntax;
+            if (assignment == null || context.SemanticModel == null)
             {
                 return;
             }
 
-            var methodSymbol = context.ContainingSymbol as IMethodSymbol;
-            if (methodSymbol == null)
+            var property = context.SemanticModel.GetSymbolInfo(assignment.Left, context.CancellationToken).Symbol as IPropertySymbol;
+            if (!property.IsPotentialDependencyPropertyAccessor())
             {
                 return;
             }
 
-            ITypeSymbol registeredType;
-            if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedGet(context.SemanticModel, out registeredType))
+            AccessorDeclarationSyntax setter;
+            if (property.TryGetSetterSyntax(out setter))
             {
-                if (!methodSymbol.ReturnType.IsSameType(registeredType))
+                FieldDeclarationSyntax dependencyProperty;
+                if (setter.TryGetDependencyPropertyFromSetter(out dependencyProperty))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), "Return type", registeredType));
+                    if (dependencyProperty.IsDependencyPropertyKeyField())
+                    {
+                        return;
+                    }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), dependencyProperty.Name(), assignment.Right));
                 }
+
+                return;
             }
-            else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(context.SemanticModel, out registeredType))
+
+            IFieldSymbol field;
+            if (property.TryGetMutableDependencyPropertyField(out field))
             {
-                if (!methodSymbol.Parameters[1].Type.IsSameType(registeredType))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), "Value type", registeredType));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.Name, assignment.Right));
             }
         }
     }
