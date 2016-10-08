@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -64,6 +66,25 @@
             }
 
             return false;
+        }
+
+        internal static bool TryGetDependencyPropertyFieldDeclaration(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out FieldDeclarationSyntax result)
+        {
+            result = null;
+            var dp = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
+            if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
+            {
+                return false;
+            }
+
+            var declarator = dp.Symbol.DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
+            if (declarator == null)
+            {
+                return false;
+            }
+
+            result = declarator.Parent?.Parent as FieldDeclarationSyntax;
+            return result != null;
         }
 
         private static bool IsNameOf(this ExpressionSyntax expression)

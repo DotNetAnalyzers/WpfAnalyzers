@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -43,14 +44,58 @@
             return invocation.Name() == Names.GetValue && invocation?.ArgumentList?.Arguments.Count == 1;
         }
 
-        internal static bool IsSetValue(this InvocationExpressionSyntax invocation)
+        internal static bool IsSetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
         {
-            return invocation.Name() == Names.SetValue && invocation?.ArgumentList?.Arguments.Count == 2;
+            ArgumentSyntax _;
+            ArgumentSyntax __;
+            return TryGetSetValueArguments(invocation, semanticModel, out _, out __);
         }
 
-        internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation)
+        internal static bool TryGetSetValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property, out ArgumentSyntax value)
         {
-            return invocation.Name() == Names.SetCurrentValue && invocation?.ArgumentList?.Arguments.Count == 2;
+            property = null;
+            value = null;
+            if (invocation.Name() != Names.SetValue || invocation?.ArgumentList?.Arguments.Count != 2)
+            {
+                return false;
+            }
+
+            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
+            {
+                return false;
+            }
+
+            property = invocation.ArgumentList.Arguments[0];
+            value = invocation.ArgumentList.Arguments[1];
+            return true;
+        }
+
+        internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
+        {
+            ArgumentSyntax _;
+            ArgumentSyntax __;
+            return TryGetSetValueArguments(invocation, semanticModel, out _, out __);
+        }
+
+        internal static bool TryGetSetCurrentValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property, out ArgumentSyntax value)
+        {
+            property = null;
+            value = null;
+            if (invocation.Name() != Names.SetCurrentValue || invocation?.ArgumentList?.Arguments.Count != 2)
+            {
+                return false;
+            }
+
+            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
+            {
+                return false;
+            }
+
+            property = invocation.ArgumentList.Arguments[0];
+            value = invocation.ArgumentList.Arguments[1];
+            return true;
         }
     }
 }

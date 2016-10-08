@@ -44,36 +44,23 @@
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as InvocationExpressionSyntax;
-            if (declaration == null || declaration.IsMissing || declaration.ArgumentList?.Arguments.Count != 2 ||
-                !(declaration.IsSetValue() || declaration.IsSetSetCurrentValue()))
+            var invocation = context.Node as InvocationExpressionSyntax;
+            ArgumentSyntax property;
+            ArgumentSyntax value;
+            if (!invocation.TryGetSetValueArguments(context.SemanticModel, out property, out value) &&
+                !invocation.TryGetSetCurrentValueArguments(context.SemanticModel, out property, out value))
             {
                 return;
             }
 
-            var symbolInfo = context.SemanticModel.GetSymbolInfo(declaration, context.CancellationToken);
-            if (symbolInfo.Symbol.ContainingType.Name != Names.DependencyObject)
+            FieldDeclarationSyntax field;
+            if (property.TryGetDependencyPropertyFieldDeclaration(context.SemanticModel, context.CancellationToken, out field))
             {
-                return;
-            }
-
-            var argument = declaration.ArgumentList.Arguments[0];
-            var dp = context.SemanticModel.GetSymbolInfo(argument.Expression, context.CancellationToken);
-            if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
-            {
-                return;
-            }
-
-            var declarator = dp.Symbol.DeclaringSyntaxReferences[0].GetSyntax(context.CancellationToken) as VariableDeclaratorSyntax;
-            if (declarator == null)
-            {
-                return;
-            }
-
-            var member = declarator.Initializer.Value as MemberAccessExpressionSyntax;
-            if (member.IsDependencyPropertyKeyProperty())
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), argument, member?.Expression));
+                FieldDeclarationSyntax key;
+                if (field.TryGetDependencyPropertyKey(out key))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, property.GetLocation(), property, key.Name()));
+                }
             }
         }
     }

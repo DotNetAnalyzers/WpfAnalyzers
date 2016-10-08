@@ -29,7 +29,7 @@
             return getValue != null;
         }
 
-        internal static bool TryGetSetValueInvocation(
+        internal static bool TryGetSetValueArguments(
             this ExpressionSyntax returnExpression,
             out InvocationExpressionSyntax setValue,
             out ArgumentSyntax dependencyProperty,
@@ -153,7 +153,7 @@
                     InvocationExpressionSyntax setValueCall;
                     ArgumentSyntax dpArg;
                     ArgumentSyntax arg;
-                    if (invocation.TryGetSetValueInvocation(out setValueCall, out dpArg, out arg))
+                    if (invocation.TryGetSetValueArguments(out setValueCall, out dpArg, out arg))
                     {
                         result = method.DeclaringType()
                                        .Field(dpArg.Expression as IdentifierNameSyntax);

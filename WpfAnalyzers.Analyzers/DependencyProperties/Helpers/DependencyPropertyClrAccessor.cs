@@ -114,7 +114,7 @@ namespace WpfAnalyzers.DependencyProperties
             InvocationExpressionSyntax setValueCall;
             ArgumentSyntax dpArg;
             ArgumentSyntax arg;
-            if (invocation.TryGetSetValueInvocation(out setValueCall, out dpArg, out arg))
+            if (invocation.TryGetSetValueArguments(out setValueCall, out dpArg, out arg))
             {
                 dependencyProperty = setter.DeclaringType()
                                            .Field(dpArg.Expression as IdentifierNameSyntax);
