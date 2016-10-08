@@ -61,6 +61,7 @@
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKeyTests.cs" />
     <Compile Include="DependencyProperties\WPF0004ClrMethodShouldMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValueTests.cs" />
     <Compile Include="Documentation\Tests.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

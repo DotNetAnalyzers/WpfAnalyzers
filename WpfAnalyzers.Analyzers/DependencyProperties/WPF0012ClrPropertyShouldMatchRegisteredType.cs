@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using WpfAnalyzers.SymbolHelpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0012ClrPropertyShouldMatchRegisteredType : DiagnosticAnalyzer
@@ -58,7 +59,7 @@
             }
 
             var actualTypeSymbol = propertySymbol.Type;
-            if (!TypeHelper.IsSameType(actualTypeSymbol, registeredType))
+            if (!actualTypeSymbol.IsSameType(registeredType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Type.GetLocation(), propertySymbol, registeredType));
             }

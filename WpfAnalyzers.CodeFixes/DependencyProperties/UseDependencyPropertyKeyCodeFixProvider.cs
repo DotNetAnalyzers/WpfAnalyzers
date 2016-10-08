@@ -15,8 +15,7 @@
     internal class UseDependencyPropertyKeyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0040SetUsingDependencyPropertyKey.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0040SetUsingDependencyPropertyKey.DiagnosticId);
 
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -44,7 +43,7 @@
                 return context.Document;
             }
 
-            var semanticModel = await context.Document.GetSemanticModelAsync().ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
             SyntaxNode updated = invocation.WithExpression(SetValueExpression(invocation.Expression))
                                            .WithArgumentList(UpdateArgumentList(invocation.ArgumentList, semanticModel));

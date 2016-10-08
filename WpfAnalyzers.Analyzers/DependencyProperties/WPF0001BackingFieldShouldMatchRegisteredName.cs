@@ -60,22 +60,11 @@
                 return;
             }
 
-            if (!IsMatch(fieldName, registeredName))
+            if (!StringHelper.IsParts(fieldName, registeredName, "Property"))
             {
                 var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldName, registeredName));
             }
-        }
-
-        private static bool IsMatch(string name, string registeredName)
-        {
-            const string suffix = "Property";
-            if (name.Length != registeredName.Length + suffix.Length)
-            {
-                return false;
-            }
-
-            return name.StartsWith(registeredName) && name.EndsWith(suffix);
         }
     }
 }

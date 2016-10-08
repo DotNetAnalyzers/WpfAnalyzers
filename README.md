@@ -54,6 +54,10 @@ Roslyn analyzers for WPF.
   <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md">WPF0041</a></td>
+  <td>Set mutable dependency properties using SetCurrentValue.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>

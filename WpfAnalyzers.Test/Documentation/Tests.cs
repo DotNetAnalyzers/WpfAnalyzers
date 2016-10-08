@@ -23,7 +23,7 @@
 
         private static string SolutionDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
 
-        private static string DocumentssDirectory => Path.Combine(SolutionDirectory, "documentation");
+        private static string DocumentsDirectory => Path.Combine(SolutionDirectory, "documentation");
 
         [TestCaseSource(nameof(Descriptors))]
         public void MissingDocs(DescriptorInfo descriptorInfo)
@@ -119,7 +119,7 @@
         public void DumpStub()
         {
             var stub = CreateStub(
-                "WPF00XX",
+                "WPF0041",
                 "Avoid side effects in CLR accessor.",
                 DiagnosticSeverity.Warning,
                 "https://github.com/DotNetAnalyzers/WpfAnalyzers",
@@ -128,6 +128,7 @@
                 "Bindings do not call accessor when updating value. Use callbacks."
             );
 
+            File.WriteAllText(Path.Combine(DocumentsDirectory, "Generated.md"), stub);
             Console.Write(stub);
         }
 
@@ -194,7 +195,7 @@
             public DescriptorInfo(DiagnosticAnalyzer analyzer)
             {
                 this.DiagnosticAnalyzer = analyzer;
-                this.DocFileName = Path.Combine(DocumentssDirectory, this.DiagnosticDescriptor.Id + ".md");
+                this.DocFileName = Path.Combine(DocumentsDirectory, this.DiagnosticDescriptor.Id + ".md");
                 this.CodeFileName = Directory.EnumerateFiles(
                                                  SolutionDirectory,
                                                  analyzer.GetType().Name + ".cs",

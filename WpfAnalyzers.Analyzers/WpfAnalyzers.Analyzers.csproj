@@ -42,8 +42,13 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Helpers\SymbolHelpers\TypeSymbolExt.cs" />
+    <Compile Include="Helpers\SyntaxtTreeHelpers\AccessorDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\AttachedPropertyClrAccessor.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
+    <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue.cs" />
+    <Compile Include="Helpers\SymbolHelpers\PropertySymbolExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
@@ -53,7 +58,6 @@
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyClrAccessor.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeDeclarationSyntaxExt.cs" />
-    <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName.cs" />

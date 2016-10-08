@@ -92,6 +92,12 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
+            return TryGetDependencyPropertyFromSetter(setter, out dependencyProperty);
+        }
+
+        internal static bool TryGetDependencyPropertyFromSetter(this AccessorDeclarationSyntax setter, out FieldDeclarationSyntax dependencyProperty)
+        {
+            dependencyProperty = null;
             var statements = setter?.Body?.Statements;
             if (statements?.Count != 1)
             {
@@ -110,8 +116,8 @@ namespace WpfAnalyzers.DependencyProperties
             ArgumentSyntax arg;
             if (invocation.TryGetSetValueInvocation(out setValueCall, out dpArg, out arg))
             {
-                dependencyProperty = property.DeclaringType()
-                                             .Field(dpArg.Expression as IdentifierNameSyntax);
+                dependencyProperty = setter.DeclaringType()
+                                           .Field(dpArg.Expression as IdentifierNameSyntax);
                 return dependencyProperty != null;
             }
 

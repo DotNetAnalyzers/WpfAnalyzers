@@ -54,7 +54,7 @@
             string registeredName;
             if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(context.SemanticModel, out registeredName))
             {
-                if (!IsMatchingGetName(methodName, registeredName))
+                if (!methodName.IsParts("Get", registeredName))
                 {
                     var identifier = method.Identifier;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Get" + registeredName));
@@ -62,32 +62,12 @@
             }
             else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(context.SemanticModel, out registeredName))
             {
-                if (!IsMatchingSetName(methodName, registeredName))
+                if (!methodName.IsParts("Set", registeredName))
                 {
                     var identifier = method.Identifier;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Set" + registeredName));
                 }
             }
-        }
-
-        private static bool IsMatchingGetName(string methodName, string registeredName)
-        {
-            if (methodName.Length != registeredName.Length + 3)
-            {
-                return false;
-            }
-
-            return methodName.StartsWith("Get") && methodName.EndsWith(registeredName);
-        }
-
-        private static bool IsMatchingSetName(string methodName, string registeredName)
-        {
-            if (methodName.Length != registeredName.Length + 3)
-            {
-                return false;
-            }
-
-            return methodName.StartsWith("Set") && methodName.EndsWith(registeredName);
         }
     }
 }
