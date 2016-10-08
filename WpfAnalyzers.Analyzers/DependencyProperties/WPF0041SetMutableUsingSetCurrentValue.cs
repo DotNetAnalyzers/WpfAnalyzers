@@ -1,6 +1,9 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Linq;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -36,6 +39,7 @@
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(HandleAssignment, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
         }
 
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
@@ -73,6 +77,44 @@
             if (property.TryGetMutableDependencyPropertyField(out field))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.Name, assignment.Right));
+            }
+        }
+
+        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
+        {
+            var invocation = context.Node as InvocationExpressionSyntax;
+            if (invocation == null || context.SemanticModel == null)
+            {
+                return;
+            }
+
+            ArgumentSyntax property;
+            ArgumentSyntax value;
+            if (!invocation.TryGetSetValueArguments(context.SemanticModel, out property, out value))
+            {
+                return;
+            }
+
+            var clrProperty = invocation.Ancestors()
+                                        .OfType<PropertyDeclarationSyntax>()
+                                        .FirstOrDefault();
+            if (clrProperty.IsDependencyPropertyAccessor())
+            {
+                return;
+            }
+
+            var clrMethod = invocation.Ancestors()
+                                      .OfType<MethodDeclarationSyntax>()
+                                      .FirstOrDefault();
+            if (clrMethod.IsAttachedSetAccessor(context.SemanticModel))
+            {
+                return;
+            }
+
+            var typeInfo = context.SemanticModel.GetTypeInfo(property.Expression, context.CancellationToken);
+            if (typeInfo.Type?.Name == Names.DependencyProperty)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
             }
         }
     }

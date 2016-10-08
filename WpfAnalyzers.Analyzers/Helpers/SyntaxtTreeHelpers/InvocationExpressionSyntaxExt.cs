@@ -39,9 +39,28 @@
             return invocation.Name() == "nameof";
         }
 
-        internal static bool IsGetValue(this InvocationExpressionSyntax invocation)
+        internal static bool IsGetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)
         {
-            return invocation.Name() == Names.GetValue && invocation?.ArgumentList?.Arguments.Count == 1;
+            ArgumentSyntax _;
+            return TryGetGetValueArgument(invocation, semanticModel, out _);
+        }
+
+        internal static bool TryGetGetValueArgument(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, out ArgumentSyntax property)
+        {
+            property = null;
+            if (invocation.Name() != Names.GetValue || invocation?.ArgumentList?.Arguments.Count != 1)
+            {
+                return false;
+            }
+
+            var symbol = semanticModel.GetSymbolInfo(invocation).Symbol;
+            if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
+            {
+                return false;
+            }
+
+            property = invocation.ArgumentList.Arguments[0];
+            return true;
         }
 
         internal static bool IsSetValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel)

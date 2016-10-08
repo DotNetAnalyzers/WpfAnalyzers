@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -50,28 +51,49 @@
                               .ConfigureAwait(false);
             var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                        .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
-            if (assignment == null || assignment.IsMissing)
+            if (assignment != null)
             {
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                ArgumentListSyntax arguments;
+                if (!TryCreateArguments(assignment, semanticModel, context.CancellationToken, out arguments))
+                {
+                    return context.Document;
+                }
+
+                ExpressionSyntax call;
+                if (!TryCreateCallExpression(assignment, out call))
+                {
+                    return context.Document;
+                }
+
+                var invocationExpression = SyntaxFactory.InvocationExpression(call, arguments);
+                var updated = syntaxRoot.ReplaceNode(assignment, invocationExpression);
+                return context.Document.WithSyntaxRoot(updated);
+            }
+
+            var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            if (invocation != null)
+            {
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                ArgumentSyntax property;
+                ArgumentSyntax value;
+                if (!invocation.TryGetSetValueArguments(semanticModel, out property, out value))
+                {
+                    return context.Document;
+                }
+
+                ExpressionSyntax setCurrentValue;
+                if (TryCreateCallExpression(invocation, out setCurrentValue))
+                {
+                    var updated = syntaxRoot.ReplaceNode(invocation.Expression, setCurrentValue);
+                    return context.Document.WithSyntaxRoot(updated);
+                }
+
                 return context.Document;
             }
 
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
-            ArgumentListSyntax arguments;
-            if (!TryCreateArguments(assignment, semanticModel, context.CancellationToken, out arguments))
-            {
-                return context.Document;
-            }
-
-            ExpressionSyntax call;
-            if (!TryCreateCallExpression(assignment, out call))
-            {
-                return context.Document;
-            }
-
-            var invocationExpression = SyntaxFactory.InvocationExpression(call, arguments);
-            var updated = syntaxRoot.ReplaceNode(assignment, invocationExpression);
-            return context.Document.WithSyntaxRoot(updated);
+            return context.Document;
         }
 
         private static bool TryCreateCallExpression(AssignmentExpressionSyntax assignment, out ExpressionSyntax result)
@@ -91,6 +113,31 @@
             }
 
             if (assignment.Left.IsKind(SyntaxKind.IdentifierName))
+            {
+                result = SetCurrentValueIdentifier;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryCreateCallExpression(InvocationExpressionSyntax invocation, out ExpressionSyntax result)
+        {
+            result = null;
+            var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+            if (memberAccess != null)
+            {
+                if (memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
+                {
+                    result = ThisSetCurrentValueExpression;
+                    return true;
+                }
+
+                result = memberAccess.WithName(SetCurrentValueIdentifier);
+                return true;
+            }
+
+            if (invocation.Expression.IsKind(SyntaxKind.IdentifierName))
             {
                 result = SetCurrentValueIdentifier;
                 return true;

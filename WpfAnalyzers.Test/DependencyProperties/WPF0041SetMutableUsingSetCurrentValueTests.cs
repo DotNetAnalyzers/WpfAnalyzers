@@ -1,6 +1,7 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties
 {
     using System.Collections.Generic;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -148,7 +149,7 @@ public class FooControl : Control
 
     public void Meh()
     {
-        this.Bar = 1;
+        this.SetCurrentValue(BarProperty, 1);
     }
 
     private int CreateValue() => 4;
@@ -156,7 +157,74 @@ public class FooControl : Control
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
                                  : "";
-            fixedCode = fixedCode.AssertReplace("this.Bar = 1;", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
+            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [TestCase("SetValue(BarProperty, 1);")]
+        [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
+        public async Task WhenSettingMutableUsingSetValue(string setExpression)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        SetValue(BarProperty, 1);
+    }
+
+    private int CreateValue() => 4;
+}";
+            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
+            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
+            var expected = this.CSharpDiagnostic().WithLocation(21, 9).WithArguments("BarProperty", value);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.SetCurrentValue(BarProperty, 1);
+    }
+
+    private int CreateValue() => 4;
+}";
+            var thisPrefix = setExpression.StartsWith("this.")
+                                 ? "this."
+                                 : "";
+            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
@@ -222,12 +290,12 @@ public class Baz
     public void Meh()
     {
         var control = new FooControl();
-        control.Bar = 1;
+        control.SetCurrentValue(FooControl.BarProperty, 1);
     }
 
     private int CreateValue() => 2;
 }";
-            fixedCode = fixedCode.AssertReplace("Bar = 1;", $"SetCurrentValue(FooControl.BarProperty, {right});");
+            fixedCode = fixedCode.AssertReplace("control.SetCurrentValue(FooControl.BarProperty, 1);", $"control.SetCurrentValue(FooControl.BarProperty, {right});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 

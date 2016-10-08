@@ -6,6 +6,18 @@
 
     internal static class AttachedPropertyClrAccessor
     {
+        internal static bool IsAttachedSetAccessor(this MethodDeclarationSyntax method, SemanticModel semanticModel)
+        {
+            string name;
+            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(semanticModel, out name))
+            {
+                return method.Name()
+                             .IsParts("Set", name);
+            }
+
+            return false;
+        }
+
         internal static bool TryGetGetValueInvocation(
             this ExpressionSyntax returnExpression,
             out InvocationExpressionSyntax getValue,
