@@ -211,6 +211,70 @@ public class FooControl : Control
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task WhenSettingClrPropertyInBaseclass()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    public void Bar()
+    {
+        this.Text = ""abc"";
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("TextProperty", "\"abc\"");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    public void Bar()
+    {
+        this.SetCurrentValue(TextProperty, ""abc"");
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenSetValueForPropertyInBaseclass()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    public void Bar()
+    {
+        this.SetValue(TextProperty, ""abc"");
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("TextProperty", "\"abc\"");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    public void Bar()
+    {
+        this.SetCurrentValue(TextProperty, ""abc"");
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         [TestCase("SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, this.CreateValue());")]

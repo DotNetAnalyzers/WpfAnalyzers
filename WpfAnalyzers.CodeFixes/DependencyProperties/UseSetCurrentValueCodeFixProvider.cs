@@ -197,7 +197,7 @@
         private static ArgumentListSyntax CreateArguments(IFieldSymbol field, ITypeSymbol type, AssignmentExpressionSyntax assignment)
         {
             // a hack here, feels like the semantic model should be able to answer this.
-            var identifier = field.ContainingType.IsAssignableTo(type)
+            var identifier = type.IsAssignableTo(field.ContainingType)
                 ? SyntaxFactory.IdentifierName(field.Name)
                 : SyntaxFactory.IdentifierName($"{field.ContainingType.Name}.{field.Name}");
             return SyntaxFactory.ArgumentList()
