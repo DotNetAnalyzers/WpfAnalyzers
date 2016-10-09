@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="DependencyProperties\Helpers\DependencyPropertyRegistration.cs" />
+    <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\SymbolHelpers\TypeSymbolExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\AccessorDeclarationSyntaxExt.cs" />
@@ -52,7 +54,6 @@
     <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
-    <Compile Include="Helpers\SyntaxtTreeHelpers\MemberAccessExpressionSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\MemberDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\MethodDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyClrAccessor.cs" />

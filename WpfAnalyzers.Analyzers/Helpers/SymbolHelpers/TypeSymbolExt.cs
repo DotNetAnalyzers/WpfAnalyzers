@@ -1,8 +1,9 @@
-﻿namespace WpfAnalyzers.SymbolHelpers
+﻿namespace WpfAnalyzers
 {
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class TypeSymbolExt
@@ -15,6 +16,33 @@
             }
 
             return first.Equals(other);
+        }
+
+        internal static bool IsRepresentationConservingConversion(
+            this ITypeSymbol toType,
+            ExpressionSyntax valueExpression,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
+        {
+            var conversion = semanticModel.ClassifyConversion(valueExpression, toType);
+            if (!conversion.Exists)
+            {
+                return false;
+            }
+
+            if (conversion.IsIdentity ||
+                conversion.IsReference ||
+                conversion.IsNullLiteral)
+            {
+                return true;
+            }
+
+            if (toType.IsNullable(valueExpression, semanticModel, cancellationToken))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)

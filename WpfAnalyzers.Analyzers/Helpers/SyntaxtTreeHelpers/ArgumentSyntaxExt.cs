@@ -6,6 +6,8 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    using WpfAnalyzers.DependencyProperties;
+
     internal static class ArgumentSyntaxExt
     {
         internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
@@ -85,6 +87,18 @@
 
             result = declarator.Parent?.Parent as FieldDeclarationSyntax;
             return result != null;
+        }
+
+        internal static bool TryGetDependencyPropertyRegistration(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out MemberAccessExpressionSyntax result)
+        {
+            result = null;
+            FieldDeclarationSyntax field;
+            if (TryGetDependencyPropertyFieldDeclaration(argument, semanticModel, cancellationToken, out field))
+            {
+                return field.TryGetRegisterInvocation(out result);
+            }
+
+            return false;
         }
 
         private static bool IsNameOf(this ExpressionSyntax expression)
