@@ -10,6 +10,23 @@
 
     internal static class ArgumentSyntaxExt
     {
+        internal static bool IsOfTypeObject(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (argument?.Expression == null)
+            {
+                return false;
+            }
+
+            var symbol = semanticModel.GetTypeInfo(argument.Expression, cancellationToken)
+                                      .Type;
+            if (symbol == null)
+            {
+                return false;
+            }
+
+            return symbol.BaseType == null;
+        }
+
         internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;

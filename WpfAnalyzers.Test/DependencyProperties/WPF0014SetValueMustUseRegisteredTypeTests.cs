@@ -37,6 +37,37 @@ public class FooControl : Control
     public void Meh()
     {
         this.SetValue(BarProperty, 1);
+        this.SetCurrentValue(BarProperty, 1);
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task HappyPathObject()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.SetValue(BarProperty, (object)1);
+        this.SetCurrentValue(BarProperty, (object)1);
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

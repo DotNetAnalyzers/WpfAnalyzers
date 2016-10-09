@@ -54,6 +54,11 @@
             if (invocation.TryGetSetValueArguments(context.SemanticModel, context.CancellationToken, out property, out value) ||
                 invocation.TryGetSetCurrentValueArguments(context.SemanticModel, context.CancellationToken, out property, out value))
             {
+                if (value.IsOfTypeObject(context.SemanticModel, context.CancellationToken))
+                {
+                    return;
+                }
+
                 MemberAccessExpressionSyntax registration;
                 if (property.TryGetDependencyPropertyRegistration(context.SemanticModel, context.CancellationToken, out registration))
                 {
