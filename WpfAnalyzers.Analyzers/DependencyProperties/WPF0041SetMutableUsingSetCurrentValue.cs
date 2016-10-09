@@ -8,8 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    using WpfAnalyzers.SymbolHelpers;
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {

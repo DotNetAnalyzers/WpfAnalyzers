@@ -42,6 +42,10 @@ Roslyn analyzers for WPF.
   <td>CLR accessor for attached property must match registered type.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md">WPF0014</a></td>
+  <td>SetValue must use registered type.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
   <td>Backing field for a DependencyProperty should be static and readonly.</td>
 </tr>

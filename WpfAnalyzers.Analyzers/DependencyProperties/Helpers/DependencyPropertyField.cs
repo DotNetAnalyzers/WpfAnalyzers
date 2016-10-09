@@ -73,61 +73,40 @@
                 return false;
             }
 
-            MemberAccessExpressionSyntax invocation;
-            if (!TryGetRegisterInvocation(field, out invocation))
+            MemberAccessExpressionSyntax registerCall;
+            if (!TryGetRegisterInvocation(field, out registerCall))
             {
                 return false;
             }
 
-            var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
-            var nameArg = args?.Arguments.FirstOrDefault();
-            return nameArg.TryGetString(semanticModel, cancellationToken, out result);
+            return registerCall.TryGetRegisteredName(semanticModel, cancellationToken, out result);
         }
 
         internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
-            MemberAccessExpressionSyntax invocation;
-            if (!TryGetRegisterInvocation(field, out invocation))
+            MemberAccessExpressionSyntax registerCall;
+            if (!TryGetRegisterInvocation(field, out registerCall))
             {
                 return false;
             }
 
-            var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
-            if (args == null || args.Arguments.Count < 2)
-            {
-                return false;
-            }
-
-            var typeArg = args.Arguments[1];
-            if (typeArg == null)
-            {
-                return false;
-            }
-
-            return typeArg.TryGetType(semanticModel, cancellationToken, out result);
+            return registerCall.TryGetRegisteredType(semanticModel, cancellationToken, out result);
         }
 
         internal static bool TryGetDependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax field, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax argument, out ITypeSymbol result)
         {
             argument = null;
             result = null;
-            MemberAccessExpressionSyntax invocation;
-            if (TryGetRegisterInvocation(field, out invocation))
+            MemberAccessExpressionSyntax registerCall;
+            if (TryGetRegisterInvocation(field, out registerCall))
             {
-                var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
-                if (args == null || args.Arguments.Count < 3)
-                {
-                    return false;
-                }
-
-                argument = args.Arguments[2];
-                return argument.TryGetType(semanticModel, cancellationToken, out result);
+                return registerCall.TryGetRegisteredOwnerType(semanticModel, cancellationToken, out argument, out result);
             }
 
-            if (TryGetAddOwnerInvocation(field, out invocation))
+            if (TryGetAddOwnerInvocation(field, out registerCall))
             {
-                var args = (invocation.Parent as InvocationExpressionSyntax)?.ArgumentList;
+                var args = (registerCall.Parent as InvocationExpressionSyntax)?.ArgumentList;
                 if (args == null || args.Arguments.Count < 1)
                 {
                     return false;
@@ -159,7 +138,7 @@
             return (IFieldSymbol)semanticModel.GetDeclaredSymbol(field.Declaration.Variables[0]);
         }
 
-        private static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
+        internal static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
         {
             if (!TryGetInitializerCall(declaration, out invocation))
             {

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.SymbolHelpers
+﻿namespace WpfAnalyzers
 {
     using System.Linq;
 

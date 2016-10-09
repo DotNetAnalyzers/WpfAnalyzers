@@ -7,7 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using WpfAnalyzers.SymbolHelpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0010DefaultValueMustMatchRegisteredType : DiagnosticAnalyzer
@@ -78,20 +77,14 @@
             }
 
             var defaultValue = objectCreation.ArgumentList.Arguments[0].Expression;
-            var conversion = context.SemanticModel.ClassifyConversion(defaultValue, type, true);
-            if (conversion.IsIdentity ||
-                conversion.IsReference ||
-                conversion.IsNullLiteral)
+            if (
+                !type.IsRepresentationConservingConversion(
+                    defaultValue,
+                    context.SemanticModel,
+                    context.CancellationToken))
             {
-                return;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), registerCall.Ancestors().OfType<FieldDeclarationSyntax>().FirstOrDefault()?.Name(), type));
             }
-
-            if (type.IsNullable(defaultValue, context.SemanticModel, context.CancellationToken))
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), registerCall.Ancestors().OfType<FieldDeclarationSyntax>().FirstOrDefault()?.Name(), type));
         }
 
         private static bool TryGetRegisterCall(ObjectCreationExpressionSyntax objectCreation, out InvocationExpressionSyntax result)
