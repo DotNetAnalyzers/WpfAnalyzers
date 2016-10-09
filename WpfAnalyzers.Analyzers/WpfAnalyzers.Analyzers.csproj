@@ -45,6 +45,7 @@
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyRegistration.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Helpers\SymbolHelpers\FieldSymbolExt.cs" />
     <Compile Include="Helpers\SymbolHelpers\TypeSymbolExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\AccessorDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\Helpers\AttachedPropertyClrAccessor.cs" />

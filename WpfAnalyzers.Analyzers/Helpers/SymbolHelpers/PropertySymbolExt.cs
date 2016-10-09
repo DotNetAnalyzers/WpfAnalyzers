@@ -16,21 +16,20 @@
             }
 
             var reference = property.SetMethod.DeclaringSyntaxReferences[0];
-            setter = reference.SyntaxTree.GetRoot().FindNode(reference.Span) as AccessorDeclarationSyntax;
+            setter = reference.SyntaxTree.GetRoot()
+                              .FindNode(reference.Span) as AccessorDeclarationSyntax;
             return setter != null;
         }
 
         internal static bool IsPotentialDependencyPropertyAccessor(this IPropertySymbol property)
         {
-            return property != null &&
-                   !property.IsIndexer &&
-                   !property.IsReadOnly &&
-                   !property.IsWriteOnly &&
-                   !property.IsStatic &&
-                   property.ContainingType.IsAssignableToDependencyObject();
+            return property != null && !property.IsIndexer && !property.IsReadOnly && !property.IsWriteOnly &&
+                   !property.IsStatic && property.ContainingType.IsAssignableToDependencyObject();
         }
 
-        internal static bool TryGetMutableDependencyPropertyField(this IPropertySymbol property, out IFieldSymbol result)
+        internal static bool TryGetMutableDependencyPropertyField(
+            this IPropertySymbol property,
+            out IFieldSymbol result)
         {
             result = null;
             if (!property.IsPotentialDependencyPropertyAccessor())
@@ -42,8 +41,7 @@
             {
                 if (name.IsParts(property.Name, "Property"))
                 {
-                    result = property.ContainingType
-                                     .GetMembers(name)
+                    result = property.ContainingType.GetMembers(name)
                                      .OfType<IFieldSymbol>()
                                      .FirstOrDefault();
                 }

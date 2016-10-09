@@ -42,6 +42,24 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task HappyPathTextBox()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static void Bar()
+    {
+        var textBox = new TextBox();
+        textBox.SetValue(TextBox.TextProperty, ""abc"");
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [TestCase("SetValue(BarProperty, 1.0)")]
         [TestCase("SetCurrentValue(BarProperty, 1.0)")]
         [TestCase("this.SetValue(BarProperty, 1.0)")]
@@ -151,6 +169,51 @@ public static class Foo
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocation(26,39).WithArguments("SetValue", "int");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task WhenNotMatchingTextBoxTextProperty(string setMethod)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static void Bar()
+    {
+        var textBox = new TextBox();
+        textBox.SetValue(TextBox.TextProperty, 1);
+    }
+}";
+            testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+            var col = Regex.Match(testCode.Line(10), "TextBox.TextProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
+            var expected = this.CSharpDiagnostic().WithLocation(10, col).WithArguments(setMethod, "string");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task WhenNotMatchingTextElementFontSizeProperty(string setMethod)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+public static class Foo
+{
+    public static void Bar()
+    {
+        var textBox = new TextBox();
+        textBox.SetValue(TextElement.FontSizeProperty, 1);
+    }
+}";
+            testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+            var col = Regex.Match(testCode.Line(10), "TextElement.FontSizeProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
+            var expected = this.CSharpDiagnostic().WithLocation(10, col).WithArguments(setMethod, "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

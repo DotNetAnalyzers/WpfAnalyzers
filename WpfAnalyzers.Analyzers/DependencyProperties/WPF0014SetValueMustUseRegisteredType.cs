@@ -57,12 +57,24 @@
                 MemberAccessExpressionSyntax registration;
                 if (property.TryGetDependencyPropertyRegistration(context.SemanticModel, context.CancellationToken, out registration))
                 {
-                    ITypeSymbol type;
-                    if (registration.TryGetRegisteredType(context.SemanticModel, context.CancellationToken, out type))
+                    ITypeSymbol registeredType;
+                    if (registration.TryGetRegisteredType(context.SemanticModel, context.CancellationToken, out registeredType))
                     {
-                        if (!type.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
+                        if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), invocation.Name(), type));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), invocation.Name(), registeredType));
+                        }
+                    }
+                }
+                else
+                {
+                    var field = context.SemanticModel.GetSymbolInfo(property.Expression, context.CancellationToken).Symbol as IFieldSymbol;
+                    ITypeSymbol registeredType;
+                    if (field.TryGetRegisteredType(out registeredType))
+                    {
+                        if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), invocation.Name(), registeredType));
                         }
                     }
                 }
