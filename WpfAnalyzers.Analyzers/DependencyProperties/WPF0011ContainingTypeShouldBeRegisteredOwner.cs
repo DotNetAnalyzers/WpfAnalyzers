@@ -63,7 +63,7 @@
 
             ITypeSymbol registeredOwnerType;
             ArgumentSyntax arg;
-            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(context.SemanticModel, out arg, out registeredOwnerType))
+            if (!declaration.TryGetDependencyPropertyRegisteredOwnerType(context.SemanticModel, context.CancellationToken, out arg, out registeredOwnerType))
             {
                 return;
             }

@@ -1,6 +1,9 @@
 ﻿namespace WpfAnalyzers.SymbolHelpers
 {
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class TypeSymbolExt
     {
@@ -12,6 +15,18 @@
             }
 
             return first.Equals(other);
+        }
+
+        internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var namedTypeSymbol = nullableType as INamedTypeSymbol;
+            if (namedTypeSymbol == null || !namedTypeSymbol.IsGenericType || namedTypeSymbol.Name != "Nullable" || namedTypeSymbol.TypeParameters.Length != 1)
+            {
+                return false;
+            }
+
+            var typeInfo = semanticModel.GetTypeInfo(value, cancellationToken);
+            return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
         }
 
         internal static bool IsAssignableToDependencyObject(this ITypeSymbol type)
