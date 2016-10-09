@@ -154,12 +154,6 @@
                 return false;
             }
 
-            var classDeclaration = assignment.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-            if (classDeclaration == null)
-            {
-                return false;
-            }
-
             AccessorDeclarationSyntax setter;
             if (!property.TryGetSetterSyntax(out setter))
             {
@@ -168,8 +162,7 @@
                     IFieldSymbol field;
                     if (property.TryGetMutableDependencyPropertyField(out field))
                     {
-                        var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-                        return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
+                        return TryCreateArguments(field, assignment, semanticModel, cancellationToken, out result);
                     }
                 }
 
@@ -188,23 +181,43 @@
                 IFieldSymbol field;
                 if (dependencyProperty.TryGetFieldSymbol(semanticModel, cancellationToken, out field))
                 {
-                    var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-                    return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
+
+                    return TryCreateArguments(field, assignment, semanticModel, cancellationToken, out result);
                 }
             }
 
             return false;
         }
 
-        private static bool TryCreateArguments(IFieldSymbol field, ITypeSymbol type, AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
+        private static bool TryCreateArguments(IFieldSymbol dependencyProperty, AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
         {
             result = null;
+            var classDeclaration = assignment.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            if (classDeclaration == null)
+            {
+                return false;
+            }
+
+            var containingType = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
+
+            var assignedType = semanticModel.GetTypeInfo(assignment.Left, cancellationToken).Type;
+
+            ArgumentSyntax value;
+            if (assignedType.IsRepresentationConservingConversion(assignment.Right, semanticModel, cancellationToken))
+            {
+                value = SyntaxFactory.Argument(assignment.Right);
+            }
+            else
+            {
+                value = SyntaxFactory.Argument(SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(assignedType.ToMinimalDisplayString(semanticModel, 0)), assignment.Right));
+            }
+
             if (assignment.Left.IsKind(SyntaxKind.IdentifierName))
             {
                 result = SyntaxFactory.ArgumentList()
                     .AddArguments(
-                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name)),
-                        SyntaxFactory.Argument(assignment.Right))
+                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(dependencyProperty.Name)),
+                        value)
                     .NormalizeWhitespace();
                 return true;
             }
@@ -215,15 +228,15 @@
                 var declaringType = semanticModel.GetTypeInfo(memberAccess.Expression, cancellationToken)
                                               .Type;
 
-                var identifier = type.IsAssignableTo(declaringType)
-                                     ? SyntaxFactory.IdentifierName(field.Name)
-                                     : SyntaxFactory.IdentifierName($"{declaringType.ToMinimalDisplayString(semanticModel, 0)}.{field.Name}");
+                var identifier = containingType.IsAssignableTo(declaringType)
+                                     ? SyntaxFactory.IdentifierName(dependencyProperty.Name)
+                                     : SyntaxFactory.IdentifierName($"{declaringType.ToMinimalDisplayString(semanticModel, 0)}.{dependencyProperty.Name}");
 
                 identifier = identifier.WithAdditionalAnnotations(Simplifier.Annotation);
                 result = SyntaxFactory.ArgumentList()
                                     .AddArguments(
                                         SyntaxFactory.Argument(identifier),
-                                        SyntaxFactory.Argument(assignment.Right))
+                                        value)
                                     .NormalizeWhitespace();
                 return true;
             }

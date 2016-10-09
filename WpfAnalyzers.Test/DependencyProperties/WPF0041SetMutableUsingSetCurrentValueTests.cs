@@ -257,8 +257,9 @@ public class FooControl : Control
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [TestCase("fooControl.Bar = 1;", "fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
-        [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);", "fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("fooControl.Bar = 1;", "fooControl.SetCurrentValue(FooControl.BarProperty, (double)1);")]
+        [TestCase("fooControl.Bar = 1.0;", "fooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
+        [TestCase("fooControl.SetValue(FooControl.BarProperty, 1.0);", "fooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
         [TestCase("fooControl.Bar = CreateValue();", "fooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("fooControl.SetValue(FooControl.BarProperty, CreateValue());", "fooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("fooControl.SetValue(FooControl.BarProperty, CreateObjectValue());", "fooControl.SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
@@ -272,13 +273,13 @@ public class FooControl : Control
 {
     public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
         ""Bar"",
-        typeof(int),
+        typeof(double),
         typeof(FooControl),
-        new PropertyMetadata(default(int)));
+        new PropertyMetadata(default(double)));
 
-    public int Bar
+    public double Bar
     {
-        get { return (int)this.GetValue(BarProperty); }
+        get { return (double)this.GetValue(BarProperty); }
         set { this.SetValue(BarProperty, value); }
     }
 }";
@@ -295,11 +296,11 @@ public static class Foo
         fooControl.Bar = 1;
     }
 
-    private static int CreateValue() => 4;
+    private static double CreateValue() => 4;
     private static object CreateObjectValue() => 4;
 }";
             testCode = testCode.AssertReplace("fooControl.Bar = 1;", before);
-            var value = Regex.Match(after, @"fooControl\.SetCurrentValue\(FooControl\.BarProperty, (?<value>.+)\);")
+            var value = Regex.Match(after, @"fooControl\.SetCurrentValue\(FooControl\.BarProperty, (\(double\))?(?<value>.+)\);", RegexOptions.ExplicitCapture)
                              .Groups["value"].Value;
             var expected = this.CSharpDiagnostic().WithLocation(10, 9).WithArguments("FooControl.BarProperty", value);
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
@@ -316,7 +317,7 @@ public static class Foo
         fooControl.SetCurrentValue(FooControl.BarProperty, 1);
     }
 
-    private static int CreateValue() => 4;
+    private static double CreateValue() => 4;
     private static object CreateObjectValue() => 4;
 }";
             fixedCode = fixedCode.AssertReplace("fooControl.SetCurrentValue(FooControl.BarProperty, 1);", after);
@@ -639,9 +640,29 @@ public class FooControl : TextBox
             var expected = this.CSharpDiagnostic().WithLocation(20, 9).WithArguments("ValueProperty", "1");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            Assert.Inconclusive("Not sure what is best here");
-            // ReSharper disable once HeuristicUnreachableCode
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.SetCurrentValue(ValueProperty, (double)1);
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Test]

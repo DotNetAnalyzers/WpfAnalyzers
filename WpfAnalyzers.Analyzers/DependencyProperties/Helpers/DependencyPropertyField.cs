@@ -4,9 +4,6 @@
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
-    using CSharpExtensions = Microsoft.CodeAnalysis.CSharp.CSharpExtensions;
 
     internal static class DependencyPropertyField
     {
