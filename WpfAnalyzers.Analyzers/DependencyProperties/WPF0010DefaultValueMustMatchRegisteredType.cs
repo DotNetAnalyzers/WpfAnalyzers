@@ -77,11 +77,12 @@
             }
 
             var defaultValue = objectCreation.ArgumentList.Arguments[0].Expression;
-            if (
-                !type.IsRepresentationConservingConversion(
-                    defaultValue,
-                    context.SemanticModel,
-                    context.CancellationToken))
+            if (context.SemanticModel.GetTypeInfo(defaultValue, context.CancellationToken).Type.IsObject())
+            {
+                return;
+            }
+
+            if (!type.IsRepresentationConservingConversion(defaultValue,context.SemanticModel, context.CancellationToken))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), registerCall.Ancestors().OfType<FieldDeclarationSyntax>().FirstOrDefault()?.Name(), type));
             }

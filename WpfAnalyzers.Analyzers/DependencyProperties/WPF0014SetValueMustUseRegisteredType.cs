@@ -54,7 +54,7 @@
             if (invocation.TryGetSetValueArguments(context.SemanticModel, context.CancellationToken, out property, out value) ||
                 invocation.TryGetSetCurrentValueArguments(context.SemanticModel, context.CancellationToken, out property, out value))
             {
-                if (value.IsOfTypeObject(context.SemanticModel, context.CancellationToken))
+                if (value.IsObject(context.SemanticModel, context.CancellationToken))
                 {
                     return;
                 }

@@ -45,6 +45,11 @@
             return false;
         }
 
+        internal static bool IsObject(this ITypeSymbol type)
+        {
+            return type != null && type.BaseType == null;
+        }
+
         internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var namedTypeSymbol = nullableType as INamedTypeSymbol;

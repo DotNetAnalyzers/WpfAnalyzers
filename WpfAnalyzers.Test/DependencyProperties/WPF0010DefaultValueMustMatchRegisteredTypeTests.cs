@@ -48,6 +48,7 @@ public class FooControl : Control
         [TestCase("int?", "new PropertyMetadata(default(int?))")]
         [TestCase("Nullable<int>", "new PropertyMetadata(default(int?))")]
         [TestCase("int", "new PropertyMetadata(CreateDefaultValue())")]
+        [TestCase("int", "new PropertyMetadata(CreateObjectValue())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(null)")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
@@ -84,6 +85,7 @@ public class FooControl : Control
     }
 
     private static double CreateDefaultValue() => default(double);
+    private static object CreateObjectValue() => default(double);
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata)
                                .AssertReplace("double", typeName);
