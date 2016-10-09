@@ -94,6 +94,56 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task IgnoredInObjectInitializer()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static void Bar()
+    {
+        var textBlock = new TextBlock
+        {
+            Text = ""abc"",
+            VerticalAlignment = VerticalAlignment.Center,
+            IsHitTestVisible = false
+        };
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoredInConstructor()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    public FooControl()
+    {
+        this.Value = 2;
+    }
+
+    public double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [TestCase("Bar = 1;")]
         [TestCase("this.Bar = 1;")]
         [TestCase("this.Bar = this.CreateValue();")]

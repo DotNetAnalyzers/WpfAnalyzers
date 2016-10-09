@@ -41,6 +41,12 @@
 
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
+            if (IsInObjectInitializer(context.Node) ||
+                IsInConstructor(context.Node))
+            {
+                return;
+            }
+
             var assignment = context.Node as AssignmentExpressionSyntax;
             if (assignment == null || context.SemanticModel == null)
             {
@@ -113,6 +119,23 @@
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
             }
+        }
+
+        private static bool IsInObjectInitializer(SyntaxNode node)
+        {
+            return node.Parent.IsKind(SyntaxKind.ObjectInitializerExpression);
+        }
+
+        private static bool IsInConstructor(SyntaxNode node)
+        {
+            var statement = node.Parent as StatementSyntax;
+            var blockSyntax = statement?.Parent as BlockSyntax;
+            if (blockSyntax == null)
+            {
+                return false;
+            }
+
+            return blockSyntax.Parent.IsKind(SyntaxKind.ConstructorDeclaration);
         }
     }
 }
