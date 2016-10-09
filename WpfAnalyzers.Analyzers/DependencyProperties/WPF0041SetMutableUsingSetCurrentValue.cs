@@ -60,6 +60,7 @@
             }
 
             AccessorDeclarationSyntax setter;
+            IFieldSymbol field;
             if (property.TryGetSetterSyntax(out setter))
             {
                 FieldDeclarationSyntax dependencyProperty;
@@ -70,13 +71,23 @@
                         return;
                     }
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), dependencyProperty.Name(), assignment.Right));
+                    if (context.Node.SyntaxTree == dependencyProperty.SyntaxTree)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), dependencyProperty.Name(), assignment.Right));
+                    }
+                    else if (dependencyProperty.TryGetFieldSymbol(context.SemanticModel, context.CancellationToken, out field))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field, assignment.Right));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), "Not found", assignment.Right));
+                    }
                 }
 
                 return;
             }
 
-            IFieldSymbol field;
             if (property.TryGetMutableDependencyPropertyField(out field))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.Name, assignment.Right));

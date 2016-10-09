@@ -185,9 +185,12 @@
                     return false;
                 }
 
-                var field = dependencyProperty.FieldSymbol(semanticModel);
-                var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-                return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
+                IFieldSymbol field;
+                if (dependencyProperty.TryGetFieldSymbol(semanticModel, cancellationToken, out field))
+                {
+                    var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
+                    return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
+                }
             }
 
             return false;

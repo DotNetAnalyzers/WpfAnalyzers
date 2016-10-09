@@ -4,6 +4,9 @@
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+
+    using CSharpExtensions = Microsoft.CodeAnalysis.CSharp.CSharpExtensions;
 
     internal static class DependencyPropertyField
     {
@@ -133,9 +136,18 @@
             return true;
         }
 
-        internal static IFieldSymbol FieldSymbol(this FieldDeclarationSyntax field, SemanticModel semanticModel)
+        internal static bool TryGetFieldSymbol(this FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
-            return (IFieldSymbol)semanticModel.GetDeclaredSymbol(field.Declaration.Variables[0]);
+            var variables = fieldDeclaration?.Declaration?.Variables;
+            if (variables?.Count != 1)
+            {
+                field = null;
+                return false;
+            }
+
+            semanticModel = semanticModel.Compilation.GetSemanticModel(fieldDeclaration.SyntaxTree);
+            field = semanticModel.GetDeclaredSymbol(variables.Value[0], cancellationToken) as IFieldSymbol;
+            return field != null;
         }
 
         internal static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
