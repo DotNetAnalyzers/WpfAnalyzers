@@ -212,6 +212,94 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task WhenSettingInternalClrProperty()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.Value = 1.0;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(20, 9).WithArguments("ValueProperty", "1.0");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.SetCurrentValue(ValueProperty, 1.0);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+
+        [Test]
+        public async Task WhenSettingClrPropertyWithImplicitCast()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.Value = 1;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(20, 9).WithArguments("ValueProperty", "1");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            Assert.Inconclusive("Not sure what is best here");
+            // ReSharper disable once HeuristicUnreachableCode
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenSettingClrPropertyInBaseclass()
         {
             var testCode = @"
