@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Simplification;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseSetCurrentValueCodeFixProvider))]
     [Shared]
@@ -168,8 +169,7 @@
                     if (property.TryGetMutableDependencyPropertyField(out field))
                     {
                         var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-                        result = CreateArguments(field, type, assignment);
-                        return true;
+                        return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
                     }
                 }
 
@@ -187,24 +187,45 @@
 
                 var field = dependencyProperty.FieldSymbol(semanticModel);
                 var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-                result = CreateArguments(field, type, assignment);
-                return true;
+                return TryCreateArguments(field, type, assignment, semanticModel, cancellationToken, out result);
             }
 
             return false;
         }
 
-        private static ArgumentListSyntax CreateArguments(IFieldSymbol field, ITypeSymbol type, AssignmentExpressionSyntax assignment)
+        private static bool TryCreateArguments(IFieldSymbol field, ITypeSymbol type, AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
         {
-            // a hack here, feels like the semantic model should be able to answer this.
-            var identifier = type.IsAssignableTo(field.ContainingType)
-                ? SyntaxFactory.IdentifierName(field.Name)
-                : SyntaxFactory.IdentifierName($"{field.ContainingType.Name}.{field.Name}");
-            return SyntaxFactory.ArgumentList()
-                                     .AddArguments(
-                                         SyntaxFactory.Argument(identifier),
-                                         SyntaxFactory.Argument(assignment.Right))
-                                     .NormalizeWhitespace();
+            result = null;
+            if (assignment.Left.IsKind(SyntaxKind.IdentifierName))
+            {
+                result = SyntaxFactory.ArgumentList()
+                    .AddArguments(
+                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name)),
+                        SyntaxFactory.Argument(assignment.Right))
+                    .NormalizeWhitespace();
+                return true;
+            }
+
+            var memberAccess = assignment.Left as MemberAccessExpressionSyntax;
+            if (memberAccess?.Expression != null)
+            {
+                var declaringType = semanticModel.GetTypeInfo(memberAccess.Expression, cancellationToken)
+                                              .Type;
+
+                var identifier = type.IsAssignableTo(declaringType)
+                                     ? SyntaxFactory.IdentifierName(field.Name)
+                                     : SyntaxFactory.IdentifierName($"{declaringType.ToMinimalDisplayString(semanticModel, 0)}.{field.Name}");
+
+                identifier = identifier.WithAdditionalAnnotations(Simplifier.Annotation);
+                result = SyntaxFactory.ArgumentList()
+                                    .AddArguments(
+                                        SyntaxFactory.Argument(identifier),
+                                        SyntaxFactory.Argument(assignment.Right))
+                                    .NormalizeWhitespace();
+                return true;
+            }
+
+            return false;
         }
     }
 }

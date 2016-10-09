@@ -74,8 +74,18 @@
 
         internal static bool IsAssignableTo(this ITypeSymbol type, ITypeSymbol other)
         {
+            var otherNamedType = other as INamedTypeSymbol;
             while (type?.BaseType != null)
             {
+                var namedType = type as INamedTypeSymbol;
+                if (namedType?.IsGenericType == true)
+                {
+                    if (IsSameType(namedType.OriginalDefinition, otherNamedType))
+                    {
+                        return true;
+                    }
+                }
+
                 if (IsSameType(type, other))
                 {
                     return true;

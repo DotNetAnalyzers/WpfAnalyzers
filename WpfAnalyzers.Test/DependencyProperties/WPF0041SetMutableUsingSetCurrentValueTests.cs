@@ -265,6 +265,181 @@ public class FooControl : TextBox
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task WhenSettingClrPropertyInGenericClass()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.Value = 1.0;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(20, 9).WithArguments("ValueProperty", "1.0");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+
+    public void Bar()
+    {
+        this.SetCurrentValue(ValueProperty, 1.0);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenSettingClrPropertyInSubclassGenericClass()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}
+
+public class BarControl : FooControl<int>
+{
+    public void Bar()
+    {
+        this.Value = 1.0;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(23, 9).WithArguments("ValueProperty", "1.0");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}
+
+public class BarControl : FooControl<int>
+{
+    public void Bar()
+    {
+        this.SetCurrentValue(ValueProperty, 1.0);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenSettingClrPropertyOnGenericClass()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}
+
+public static class Foo
+{
+    public static void Bar()
+    {
+        var fooControl = new FooControl<int>();
+        fooControl.Value = 1.0;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(24, 9).WithArguments("ValueProperty", "1.0");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : TextBox
+{
+    internal static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl<T>));
+
+    internal double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}
+
+public static class Foo
+{
+    public static void Bar()
+    {
+        var fooControl = new FooControl<int>();
+        fooControl.SetCurrentValue(FooControl<int>.ValueProperty, 1.0);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
 
         [Test]
         public async Task WhenSettingClrPropertyWithImplicitCast()
