@@ -212,6 +212,64 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task WhenSettingMutableUsingClrPropertyObject()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        var value = GetValue(BarProperty);
+        SetValue(BarProperty, value);
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(22, 9).WithArguments("BarProperty", "value");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        var value = GetValue(BarProperty);
+        SetCurrentValue(BarProperty, value);
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenSettingInternalClrProperty()
         {
             var testCode = @"

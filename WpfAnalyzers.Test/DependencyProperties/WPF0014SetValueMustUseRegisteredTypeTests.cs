@@ -74,6 +74,37 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task HappyPathObject2()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        var value = this.GetValue(BarProperty);
+        this.SetValue(BarProperty, value);
+        this.SetCurrentValue(BarProperty, value);
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task HappyPathTextBox()
         {
             var testCode = @"
