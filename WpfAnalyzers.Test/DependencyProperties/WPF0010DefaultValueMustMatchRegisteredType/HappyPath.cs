@@ -118,6 +118,44 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task DependencyPropertyWhenBoxed()
+        {
+            var booleanBoxesCode = @"
+internal static class BooleanBoxes
+{
+    internal static readonly object True = true;
+    internal static readonly object False = false;
+
+    internal static object Box(bool value)
+    {
+        return value
+                    ? True
+                    : False;
+    }
+}";
+
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(bool),
+        typeof(FooControl),
+        new PropertyMetadata(BooleanBoxes.Box(true)));
+
+    public bool Value
+    {
+        get { return (bool)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"
@@ -166,6 +204,48 @@ public static class Foo
 }";
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AttachedPropertyWhenBoxed()
+        {
+            var booleanBoxesCode = @"
+internal static class BooleanBoxes
+{
+    internal static readonly object True = true;
+    internal static readonly object False = false;
+
+    internal static object Box(bool value)
+    {
+        return value
+                    ? True
+                    : False;
+    }
+}";
+
+            var testCode = @"
+using System;
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(bool),
+        typeof(Foo),
+        new PropertyMetadata(BooleanBoxes.Box(true)));
+
+    public static void SetBar(FrameworkElement element, bool value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static bool GetBar(FrameworkElement element)
+    {
+        return (bool)element.GetValue(BarProperty);
+    }
+}";
+            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
         }
 
         [Test]

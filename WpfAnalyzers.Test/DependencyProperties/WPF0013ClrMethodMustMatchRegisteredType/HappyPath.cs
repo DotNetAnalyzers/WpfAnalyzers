@@ -70,6 +70,48 @@ public static class Foo
         }
 
         [Test]
+        public async Task AttachedPropertyWhenBoxed()
+        {
+            var booleanBoxesCode = @"
+internal static class BooleanBoxes
+{
+    internal static readonly object True = true;
+    internal static readonly object False = false;
+
+    internal static object Box(bool value)
+    {
+        return value
+                    ? True
+                    : False;
+    }
+}";
+
+            var testCode = @"
+using System;
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(bool),
+        typeof(Foo),
+        new PropertyMetadata(default(bool)));
+
+    public static void SetBar(FrameworkElement element, bool value)
+    {
+        element.SetValue(BarProperty, BooleanBoxes.Box(value));
+    }
+
+    public static bool GetBar(FrameworkElement element)
+    {
+        return (bool)element.GetValue(BarProperty);
+    }
+}";
+            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadOnlyAttachedProperty()
         {
             var testCode = @"
