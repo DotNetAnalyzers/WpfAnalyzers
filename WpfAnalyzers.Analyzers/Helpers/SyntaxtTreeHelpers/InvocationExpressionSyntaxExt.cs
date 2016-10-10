@@ -55,7 +55,9 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
+            var symbol = semanticModel.SemanticModelFor(invocation)
+                                      .GetSymbolInfo(invocation, cancellationToken)
+                                      .Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;
@@ -81,7 +83,9 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
+            var symbol = semanticModel.SemanticModelFor(invocation)
+                                      .GetSymbolInfo(invocation, cancellationToken)
+                                      .Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;
@@ -108,7 +112,9 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
+            var symbol = semanticModel.SemanticModelFor(invocation)
+                                      .GetSymbolInfo(invocation, cancellationToken)
+                                      .Symbol;
             if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
             {
                 return false;

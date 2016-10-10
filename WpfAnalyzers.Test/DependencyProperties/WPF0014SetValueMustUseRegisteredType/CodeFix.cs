@@ -144,7 +144,6 @@ public static class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public async Task TextElementFontSizeProperty(string setMethod)
@@ -164,6 +163,43 @@ public static class Foo
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
             var col = Regex.Match(testCode.Line(10), "TextElement.FontSizeProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
             var expected = this.CSharpDiagnostic().WithLocation(10, col).WithArguments(setMethod, "double");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task SetCurrentValueInLambda(string setMethod)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Bar
+    {
+        get { return (int)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.Loaded += (sender, args) =>
+        {
+            this.SetCurrentValue(BarProperty, 1.0);
+        };
+    }
+}";
+
+            testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
+            var col = Regex.Match(testCode.Line(23), $"            this\\.{setMethod}\\(BarProperty, +(?<value>[^ )]+)\\);", RegexOptions.ExplicitCapture).Groups["value"].Index + 1;
+            var expected = this.CSharpDiagnostic().WithLocation(23, col).WithArguments(setMethod, "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

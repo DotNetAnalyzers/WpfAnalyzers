@@ -69,7 +69,7 @@
         internal static string ToArgumentString(this IFieldSymbol field, SemanticModel semanticModel, int position)
         {
             Debug.Assert(field.IsStatic, "field.IsStatic");
-            if(semanticModel.LookupStaticMembers(position).Contains(field))
+            if (semanticModel.LookupStaticMembers(position).Contains(field))
             {
                 return field.Name;
             }

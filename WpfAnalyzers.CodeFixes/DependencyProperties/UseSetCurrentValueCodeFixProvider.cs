@@ -40,7 +40,7 @@
                                           .ConfigureAwait(false);
             var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                        .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
-            if (assignment != null)
+            if (assignment != null && assignment.IsKind(SyntaxKind.SimpleAssignmentExpression))
             {
                 return await ApplyFixAsync(context, syntaxRoot, assignment).ConfigureAwait(false);
             }

@@ -24,7 +24,8 @@
             SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
-            var conversion = semanticModel.ClassifyConversion(valueExpression, toType);
+            var conversion = semanticModel.SemanticModelFor(valueExpression)
+                                          .ClassifyConversion(valueExpression, toType);
             if (!conversion.Exists)
             {
                 return false;
@@ -58,7 +59,8 @@
                 return false;
             }
 
-            var typeInfo = semanticModel.GetTypeInfo(value, cancellationToken);
+            var typeInfo = semanticModel.SemanticModelFor(value)
+                                        .GetTypeInfo(value, cancellationToken);
             return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
         }
 

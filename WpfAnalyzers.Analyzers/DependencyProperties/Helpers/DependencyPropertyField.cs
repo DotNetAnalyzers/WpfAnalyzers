@@ -113,7 +113,7 @@
                 }
 
                 argument = args.Arguments[0];
-                return argument.TryGetType(semanticModel, cancellationToken, out result);
+                return argument.TryGetTypeofType(semanticModel, cancellationToken, out result);
             }
 
             return false;
@@ -142,8 +142,8 @@
                 return false;
             }
 
-            semanticModel = semanticModel.Compilation.GetSemanticModel(fieldDeclaration.SyntaxTree);
-            field = semanticModel.GetDeclaredSymbol(variables.Value[0], cancellationToken) as IFieldSymbol;
+            field = semanticModel.SemanticModelFor(fieldDeclaration)
+                                 .GetDeclaredSymbol(variables.Value[0], cancellationToken) as IFieldSymbol;
             return field != null;
         }
 

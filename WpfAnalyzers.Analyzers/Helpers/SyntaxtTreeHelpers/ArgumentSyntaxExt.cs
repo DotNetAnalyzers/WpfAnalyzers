@@ -17,7 +17,8 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetTypeInfo(argument.Expression, cancellationToken)
+            var symbol = semanticModel.SemanticModelFor(argument.Expression)
+                                      .GetTypeInfo(argument.Expression, cancellationToken)
                                       .Type;
             return symbol.IsObject();
         }
@@ -38,7 +39,8 @@
             if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression) ||
                 argument.Expression.IsNameOf())
             {
-                var cv = semanticModel.GetConstantValue(argument.Expression, cancellationToken);
+                var cv = semanticModel.SemanticModelFor(argument.Expression)
+                                      .GetConstantValue(argument.Expression, cancellationToken);
                 if (cv.HasValue && cv.Value is string)
                 {
                     result = (string)cv.Value;
@@ -46,7 +48,8 @@
                 }
             }
 
-            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
+            var symbolInfo = semanticModel.SemanticModelFor(argument.Expression)
+                                          .GetSymbolInfo(argument.Expression, cancellationToken);
             if (symbolInfo.Symbol?.ContainingType?.Name == "String" &&
                 symbolInfo.Symbol?.Name == "Empty")
             {
@@ -57,7 +60,7 @@
             return false;
         }
 
-        internal static bool TryGetType(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        internal static bool TryGetTypeofType(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
             if (argument?.Expression == null || semanticModel == null)
@@ -65,16 +68,12 @@
                 return false;
             }
 
-            if (argument.Expression.IsKind(SyntaxKind.NullLiteralExpression))
-            {
-                return true;
-            }
-
             var typeOf = argument.Expression as TypeOfExpressionSyntax;
             if (typeOf != null)
             {
                 var typeSyntax = typeOf.Type;
-                var typeInfo = semanticModel.GetTypeInfo(typeSyntax, cancellationToken);
+                var typeInfo = semanticModel.SemanticModelFor(typeSyntax)
+                                            .GetTypeInfo(typeSyntax, cancellationToken);
                 result = typeInfo.Type;
                 return result != null;
             }
@@ -85,7 +84,8 @@
         internal static bool TryGetDependencyPropertyFieldDeclaration(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out FieldDeclarationSyntax result)
         {
             result = null;
-            var dp = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
+            var dp = semanticModel.SemanticModelFor(argument.Expression)
+                                  .GetSymbolInfo(argument.Expression, cancellationToken);
             if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
             {
                 return false;

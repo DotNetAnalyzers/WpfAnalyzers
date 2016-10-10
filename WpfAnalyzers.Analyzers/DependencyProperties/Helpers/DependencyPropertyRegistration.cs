@@ -95,7 +95,7 @@
                 return false;
             }
 
-            return typeArg.TryGetType(semanticModel, cancellationToken, out result);
+            return typeArg.TryGetTypeofType(semanticModel, cancellationToken, out result);
         }
 
         internal static bool TryGetRegisteredOwnerType(this MemberAccessExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax argument, out ITypeSymbol result)
@@ -110,7 +110,7 @@
             }
 
             argument = args.Arguments[2];
-            return argument.TryGetType(semanticModel, cancellationToken, out result);
+            return argument.TryGetTypeofType(semanticModel, cancellationToken, out result);
         }
     }
 }
