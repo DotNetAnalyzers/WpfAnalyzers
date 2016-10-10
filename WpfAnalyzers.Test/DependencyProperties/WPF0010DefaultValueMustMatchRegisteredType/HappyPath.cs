@@ -1,6 +1,5 @@
 namespace WpfAnalyzers.Test.DependencyProperties.WPF0010DefaultValueMustMatchRegisteredType
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;

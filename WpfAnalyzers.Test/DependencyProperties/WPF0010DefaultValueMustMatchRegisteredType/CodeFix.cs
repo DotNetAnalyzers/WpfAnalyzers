@@ -7,7 +7,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class WPF0010DefaultValueMustMatchRegisteredTypeTests : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
+    internal class CodeFix : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
     {
         [TestCase("int", "new PropertyMetadata(default(double))")]
         [TestCase("int", "new PropertyMetadata(0.0)")]

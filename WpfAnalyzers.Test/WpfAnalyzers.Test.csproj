@@ -54,8 +54,9 @@
     <Compile Include="DependencyProperties\WPF0003ClrPropertyShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0004ClrMethodShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredType\HappyPath.cs" />
-    <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredType\WPF0010DefaultValueMustMatchRegisteredTypeTests.cs" />
-    <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwnerTests.cs" />
+    <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredType\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwner\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwner\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrderTests.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\CodeFix.cs" />
