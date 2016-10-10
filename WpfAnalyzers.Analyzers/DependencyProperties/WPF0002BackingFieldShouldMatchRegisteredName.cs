@@ -40,7 +40,9 @@
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing || !fieldDeclaration.IsDependencyPropertyKeyType())
+            if (fieldDeclaration == null ||
+                fieldDeclaration.IsMissing ||
+                fieldDeclaration.IsDependencyPropertyField())
             {
                 return;
             }

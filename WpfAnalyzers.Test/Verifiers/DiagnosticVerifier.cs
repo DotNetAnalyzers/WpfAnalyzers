@@ -14,7 +14,6 @@ namespace WpfAnalyzers.Test
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
     using NUnit.Framework;
 
@@ -35,11 +34,11 @@ namespace WpfAnalyzers.Test
         }
 
         /// <summary>
-        /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
+        /// Gets or sets the value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.IndentationSize"/> to apply to the test
         /// workspace.
         /// </summary>
         /// <value>
-        /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
+        /// The value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.IndentationSize"/> to apply to the test workspace.
         /// </value>
         public int IndentationSize
         {
@@ -48,11 +47,11 @@ namespace WpfAnalyzers.Test
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
+        /// Gets or sets a value indicating whether the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.UseTabs"/> option is applied to the
         /// test workspace.
         /// </summary>
         /// <value>
-        /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// The value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.UseTabs"/> to apply to the test workspace.
         /// </value>
         public bool UseTabs
         {
@@ -61,10 +60,10 @@ namespace WpfAnalyzers.Test
         }
 
         /// <summary>
-        /// Gets or sets the value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// Gets or sets the value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.TabSize"/> to apply to the test workspace.
         /// </summary>
         /// <value>
-        /// The value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// The value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.TabSize"/> to apply to the test workspace.
         /// </value>
         public int TabSize
         {
@@ -72,7 +71,7 @@ namespace WpfAnalyzers.Test
             protected set;
         }
 
-        protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
+        protected internal static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
@@ -90,10 +89,8 @@ namespace WpfAnalyzers.Test
         {
             foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
             {
-                var expected = $"{diagnosticAnalyzer.GetType().Name}Tests";
-                DumpIfDebug(expected);
-                Assert.AreEqual(expected, this.GetType().Name, "Name of test class does not match analyzer name.");
                 StringAssert.StartsWith(diagnosticAnalyzer.SupportedDiagnostics.Single().Id, diagnosticAnalyzer.GetType().Name);
+                StringAssert.Contains(diagnosticAnalyzer.GetType().Name, this.GetType().FullName, "Name of test class does not match analyzer name.");
             }
         }
 
@@ -129,7 +126,23 @@ namespace WpfAnalyzers.Test
         /// <returns>
         /// New instances of all the C# analyzers being tested.
         /// </returns>
-        protected abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
+        internal abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
+
+        /// <summary>
+        /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
+        /// <note type="note">
+        /// <para>Input a <see cref="DiagnosticResult"/> for the expected <see cref="Diagnostic"/>.</para>
+        /// </note>
+        /// </summary>
+        /// <param name="source">A class in the form of a string to run the analyzer on.</param>
+        /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
+        /// be reported by the analyzer for the specified source.</param>
+        /// <param name="filename">The filename or null if the default filename should be used</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, string filename = null)
+        {
+            return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, CancellationToken.None, filename);
+        }
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -143,7 +156,7 @@ namespace WpfAnalyzers.Test
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <param name="filename">The filename or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken, string filename = null)
+        public Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken, string filename = null)
         {
             return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken, filename);
         }
@@ -160,7 +173,7 @@ namespace WpfAnalyzers.Test
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <param name="filename">The filename or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken, string filename = null)
+        public Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken, string filename = null)
         {
             return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filename != null ? new[] { filename } : null);
         }

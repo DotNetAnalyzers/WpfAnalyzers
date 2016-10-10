@@ -49,15 +49,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
-    <Compile Include="DependencyProperties\Helpers\FieldSymbolExtTests.cs" />
+    <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
+    <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwnerTests.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrderTests.cs" />
-    <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0030BackingFieldShouldBeStaticReadonlyTests.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyShouldMatchRegisteredNameTests.cs" />
-    <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredNameTests.cs" />
+    <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyShouldMatchRegisteredTypeTests.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests.cs" />
@@ -76,8 +77,11 @@
     <Compile Include="PublicApiTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.Helper.cs" />
+    <Compile Include="Verifiers\CodeFixVerifier{TAnalyzer,TCodeFix}.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.Helper.cs" />
+    <Compile Include="Verifiers\DiagnosticVerifier{TAnalyzer}.cs" />
+    <Compile Include="Verifiers\HappyPathVerifier{TAnalyzer}.cs" />
     <Compile Include="Verifiers\Helpers\DiagnosticResult.cs" />
     <Compile Include="Verifiers\Helpers\DiagnosticResultLocation.cs" />
     <Compile Include="Verifiers\Helpers\MetadataReferences.cs" />
@@ -124,6 +128,7 @@
       <Paket>True</Paket>
     </Analyzer>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
       <ItemGroup>
