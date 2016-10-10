@@ -190,9 +190,26 @@ namespace WpfAnalyzers.Test
         /// be reported by the analyzer for the specified source.</param>
         /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult expected, string[] filenames = null)
+        public Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult expected, string[] filenames = null)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), new[] { expected }, CancellationToken.None, filenames);
+        }
+
+        /// <summary>
+        /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the input strings as sources.
+        /// <note type="note">
+        /// <para>Input a <see cref="DiagnosticResult"/> for each <see cref="Diagnostic"/> expected.</para>
+        /// </note>
+        /// </summary>
+        /// <param name="sources">A collection of strings to create source documents from to run the analyzers
+        /// on.</param>
+        /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
+        /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, string[] filenames = null)
+        {
+            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, CancellationToken.None, filenames);
         }
 
         /// <summary>
@@ -208,7 +225,7 @@ namespace WpfAnalyzers.Test
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult expected, CancellationToken cancellationToken, string[] filenames = null)
+        public Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult expected, CancellationToken cancellationToken, string[] filenames = null)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(),new[] { expected}, cancellationToken, filenames);
         }
@@ -226,7 +243,7 @@ namespace WpfAnalyzers.Test
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames = null)
+        public Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames = null)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }

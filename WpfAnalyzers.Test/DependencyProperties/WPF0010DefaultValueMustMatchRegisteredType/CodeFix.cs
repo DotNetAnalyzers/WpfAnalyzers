@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0010DefaultValueMustMatchRegisteredType
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -49,7 +48,7 @@ public class FooControl : Control
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(1)", metadata);
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(16, 30).WithArguments("ValueProperty", typeName);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Test]
@@ -79,7 +78,7 @@ public class FooControl : Control
     }
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 30).WithArguments("ValuePropertyKey", "double");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Test]
@@ -102,7 +101,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarProperty", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Test]
@@ -127,7 +126,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarPropertyKey", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

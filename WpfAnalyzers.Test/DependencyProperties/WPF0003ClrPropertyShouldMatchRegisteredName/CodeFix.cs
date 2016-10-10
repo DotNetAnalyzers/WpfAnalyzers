@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0003ClrPropertyShouldMatchRegisteredName
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -29,7 +28,7 @@
     }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
     using System.Windows;
@@ -69,7 +68,7 @@
     }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
     using System.Windows;
@@ -114,7 +113,7 @@ public class FooControl : Control
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;

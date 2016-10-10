@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0004ClrMethodShouldMatchRegisteredName
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -35,7 +34,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(17, 23).WithArguments("GetError", "GetBar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -81,7 +80,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("GetError", "GetBar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -127,7 +126,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 24).WithArguments("SetError", "SetBar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -173,7 +172,7 @@ public static class Foo
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 24).WithArguments("SetError", "SetBar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;

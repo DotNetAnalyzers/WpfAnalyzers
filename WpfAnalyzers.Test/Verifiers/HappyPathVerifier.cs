@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System.Linq;
     using System.Threading;
@@ -26,6 +26,11 @@
         protected async Task VerifyHappyPathAsync(string testCode)
         {
             await DiagnosticVerifier.VerifyCSharpDiagnosticAsync(testCode, Test.DiagnosticVerifier.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected async Task VerifyHappyPathAsync(string[] testCode)
+        {
+            await DiagnosticVerifier.VerifyCSharpDiagnosticAsync(testCode, Test.DiagnosticVerifier.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }
