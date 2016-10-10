@@ -54,43 +54,11 @@
             }
 
             var property = context.SemanticModel.GetSymbolInfo(assignment.Left, context.CancellationToken).Symbol as IPropertySymbol;
-            if (!property.IsPotentialDependencyPropertyAccessor())
-            {
-                return;
-            }
 
-            AccessorDeclarationSyntax setter;
             IFieldSymbol field;
-            if (property.TryGetSetterSyntax(out setter))
+            if (property.TryGetMutableDependencyPropertyField(context.SemanticModel, context.CancellationToken, out field))
             {
-                FieldDeclarationSyntax dependencyProperty;
-                if (setter.TryGetDependencyPropertyFromSetter(out dependencyProperty))
-                {
-                    if (dependencyProperty.IsDependencyPropertyKeyField())
-                    {
-                        return;
-                    }
-
-                    if (context.Node.SyntaxTree == dependencyProperty.SyntaxTree)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), dependencyProperty.Name(), assignment.Right));
-                    }
-                    else if (dependencyProperty.TryGetFieldSymbol(context.SemanticModel, context.CancellationToken, out field))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field, assignment.Right));
-                    }
-                    else
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), "Not found", assignment.Right));
-                    }
-                }
-
-                return;
-            }
-
-            if (property.TryGetMutableDependencyPropertyField(out field))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.Name, assignment.Right));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.ToArgumentString(context.SemanticModel, context.Node.SpanStart), assignment.Right));
             }
         }
 

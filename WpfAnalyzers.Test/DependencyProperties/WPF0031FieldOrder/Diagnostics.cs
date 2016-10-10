@@ -1,19 +1,16 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0031FieldOrder
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0031FieldOrderTests : DiagnosticVerifier
+    internal class Diagnostics : DiagnosticVerifier<WPF0031FieldOrder>
     {
         [Test]
-        public async Task WhenWrongOrder()
+        public async Task DependencyProperty()
         {
             var testCode = @"
 using System.Windows;
@@ -42,7 +39,7 @@ public class FooControl : Control
         }
 
         [Test]
-        public async Task WhenWrongOrderAttached()
+        public async Task Attached()
         {
             var testCode = @"
 using System.Windows;
@@ -70,11 +67,6 @@ public static class Foo
 
             var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey", "BarProperty");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new WPF0031FieldOrder();
         }
     }
 }

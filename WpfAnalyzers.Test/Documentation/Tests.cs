@@ -115,7 +115,7 @@
             Assert.AreEqual(expected, actual);
         }
 
-        [Test, Explicit]
+        ////[Test, Explicit] // commenting this out so that it does not show up as excluded.
         public void DumpStub()
         {
             var stub = CreateStub(

@@ -1,9 +1,12 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Linq;
+    using System.Threading;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    using WpfAnalyzers.DependencyProperties;
 
     internal static class PropertySymbolExt
     {
@@ -23,13 +26,15 @@
 
         internal static bool IsPotentialDependencyPropertyAccessor(this IPropertySymbol property)
         {
-            return property != null && !property.IsIndexer && !property.IsReadOnly && !property.IsWriteOnly &&
-                   !property.IsStatic && property.ContainingType.IsAssignableToDependencyObject();
+            return property != null &&
+                   !property.IsIndexer &&
+                   !property.IsReadOnly &&
+                   !property.IsWriteOnly &&
+                   !property.IsStatic && 
+                   property.ContainingType.IsAssignableToDependencyObject();
         }
 
-        internal static bool TryGetMutableDependencyPropertyField(
-            this IPropertySymbol property,
-            out IFieldSymbol result)
+        internal static bool TryGetMutableDependencyPropertyField(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
         {
             result = null;
             if (!property.IsPotentialDependencyPropertyAccessor())
@@ -37,16 +42,37 @@
                 return false;
             }
 
-            foreach (var name in property.ContainingType.MemberNames)
+            AccessorDeclarationSyntax setter;
+            if (TryGetSetterSyntax(property, out setter))
             {
-                if (name.IsParts(property.Name, "Property"))
+                FieldDeclarationSyntax fieldDeclaration;
+                if (setter.TryGetDependencyPropertyFromSetter(out fieldDeclaration))
                 {
-                    result = property.ContainingType.GetMembers(name)
+                    if (fieldDeclaration.IsDependencyPropertyKeyField())
+                    {
+                        return false;
+                    }
+
+                    result = property.ContainingType.GetMembers(fieldDeclaration.Name())
                                      .OfType<IFieldSymbol>()
                                      .FirstOrDefault();
+                    return result != null;
+                }
+            }
+
+            foreach (var field in property.ContainingType.GetMembers().OfType<IFieldSymbol>())
+            {
+                if (field.Name.IsParts(property.Name, "Property"))
+                {
+                    if (!field.IsPotentialDependencyPropertyBackingField())
+                    {
+                        return false;
+                    }
+
+                    result = field;
                 }
 
-                if (name.IsParts(property.Name, "PropertyKey"))
+                if (field.Name.IsParts(property.Name, "PropertyKey"))
                 {
                     return false;
                 }

@@ -2,7 +2,6 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -11,23 +10,14 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Simplification;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseSetCurrentValueCodeFixProvider))]
     [Shared]
     internal class UseSetCurrentValueCodeFixProvider : CodeFixProvider
     {
-        private static readonly IdentifierNameSyntax SetCurrentValueIdentifier = SyntaxFactory.IdentifierName(Names.SetCurrentValue);
-
-        private static readonly ExpressionSyntax ThisSetCurrentValueExpression =
-            SyntaxFactory.MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                SyntaxFactory.ThisExpression(),
-                SyntaxFactory.Token(SyntaxKind.DotToken),
-                SetCurrentValueIdentifier);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0041SetMutableUsingSetCurrentValue.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(WPF0041SetMutableUsingSetCurrentValue.DiagnosticId);
 
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -47,201 +37,157 @@
         private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                              .ConfigureAwait(false);
+                                          .ConfigureAwait(false);
             var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                        .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
             if (assignment != null)
             {
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                ArgumentListSyntax arguments;
-                if (!TryCreateArguments(assignment, semanticModel, context.CancellationToken, out arguments))
-                {
-                    return context.Document;
-                }
-
-                ExpressionSyntax call;
-                if (!TryCreateCallExpression(assignment, out call))
-                {
-                    return context.Document;
-                }
-
-                var invocationExpression = SyntaxFactory.InvocationExpression(call, arguments);
-                var updated = syntaxRoot.ReplaceNode(assignment, invocationExpression);
-                return context.Document.WithSyntaxRoot(updated);
+                return await ApplyFixAsync(context, syntaxRoot, assignment).ConfigureAwait(false);
             }
 
             var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+                                       .FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (invocation != null)
             {
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                ArgumentSyntax property;
-                ArgumentSyntax value;
-                if (!invocation.TryGetSetValueArguments(semanticModel, context.CancellationToken, out property, out value))
-                {
-                    return context.Document;
-                }
-
-                ExpressionSyntax setCurrentValue;
-                if (TryCreateCallExpression(invocation, out setCurrentValue))
-                {
-                    var updated = syntaxRoot.ReplaceNode(invocation.Expression, setCurrentValue);
-                    return context.Document.WithSyntaxRoot(updated);
-                }
-
-                return context.Document;
+                return await ApplyFixAsync(context, syntaxRoot, invocation).ConfigureAwait(false);
             }
 
             return context.Document;
         }
 
-        private static bool TryCreateCallExpression(AssignmentExpressionSyntax assignment, out ExpressionSyntax result)
+        private static async Task<Document> ApplyFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, AssignmentExpressionSyntax assignment)
         {
-            result = null;
-            var memberAccess = assignment.Left as MemberAccessExpressionSyntax;
-            if (memberAccess != null)
+            ExpressionSyntax setCurrentValue;
+            if (!SetCurrentValueExpression.TryCreate(assignment, out setCurrentValue))
             {
-                if (memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
-                {
-                    result = ThisSetCurrentValueExpression;
-                    return true;
-                }
-
-                result = memberAccess.WithName(SetCurrentValueIdentifier);
-                return true;
+                return context.Document;
             }
 
-            if (assignment.Left.IsKind(SyntaxKind.IdentifierName))
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            ArgumentSyntax property;
+            if (!Arguments.TryCreateProperty(assignment, semanticModel, context.CancellationToken, out property))
             {
-                result = SetCurrentValueIdentifier;
-                return true;
+                return context.Document;
             }
 
-            return false;
+            ArgumentSyntax value;
+            if (!Arguments.TryCreateValue(assignment, semanticModel, context.CancellationToken, out value))
+            {
+                return context.Document;
+            }
+
+            var setCurrentValueInvocation = SyntaxFactory.InvocationExpression(setCurrentValue, SyntaxFactory.ArgumentList().AddArguments(property, value));
+            var updated = syntaxRoot.ReplaceNode(assignment, setCurrentValueInvocation);
+            return context.Document.WithSyntaxRoot(updated);
         }
 
-        private static bool TryCreateCallExpression(InvocationExpressionSyntax invocation, out ExpressionSyntax result)
+        private static async Task<Document> ApplyFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, InvocationExpressionSyntax invocation)
         {
-            result = null;
-            var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-            if (memberAccess != null)
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
+            ArgumentSyntax property;
+            ArgumentSyntax value;
+            if (!invocation.TryGetSetValueArguments(semanticModel, context.CancellationToken, out property, out value))
             {
-                if (memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
-                {
-                    result = ThisSetCurrentValueExpression;
-                    return true;
-                }
-
-                result = memberAccess.WithName(SetCurrentValueIdentifier);
-                return true;
+                return context.Document;
             }
 
-            if (invocation.Expression.IsKind(SyntaxKind.IdentifierName))
+            ExpressionSyntax setCurrentValue;
+            if (SetCurrentValueExpression.TryCreate(invocation, out setCurrentValue))
             {
-                result = SetCurrentValueIdentifier;
-                return true;
+                var updated = syntaxRoot.ReplaceNode(invocation.Expression, setCurrentValue);
+                return context.Document.WithSyntaxRoot(updated);
             }
 
-            return false;
+            return context.Document;
         }
 
-        private static bool TryCreateArguments(AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
+        private static class SetCurrentValueExpression
         {
-            result = null;
-            var property = semanticModel.GetSymbolInfo(assignment.Left, cancellationToken).Symbol as IPropertySymbol;
-            if (property == null || property.IsIndexer)
+            private static readonly IdentifierNameSyntax SetCurrentValueIdentifier = SyntaxFactory.IdentifierName(Names.SetCurrentValue);
+
+            internal static bool TryCreate(AssignmentExpressionSyntax assignment, out ExpressionSyntax result)
             {
-                return false;
+                return TryCreate(assignment.Left, out result);
             }
 
-            AccessorDeclarationSyntax setter;
-            if (!property.TryGetSetterSyntax(out setter))
+            internal static bool TryCreate(InvocationExpressionSyntax invocation, out ExpressionSyntax result)
             {
-                if (property.ContainingType.IsAssignableToDependencyObject())
+                return TryCreate(invocation.Expression, out result);
+            }
+
+            private static bool TryCreate(ExpressionSyntax expression, out ExpressionSyntax result)
+            {
+                result = null;
+                var memberAccess = expression as MemberAccessExpressionSyntax;
+                if (memberAccess != null)
                 {
-                    IFieldSymbol field;
-                    if (property.TryGetMutableDependencyPropertyField(out field))
+                    if (memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
                     {
-                        return TryCreateArguments(field, assignment, semanticModel, cancellationToken, out result);
+                        result = memberAccess.WithName(SetCurrentValueIdentifier);
+                        return true;
                     }
+
+                    result = memberAccess.WithName(SetCurrentValueIdentifier);
+                    return true;
+                }
+
+                if (expression.IsKind(SyntaxKind.IdentifierName))
+                {
+                    result = SetCurrentValueIdentifier;
+                    return true;
                 }
 
                 return false;
             }
+        }
 
-            FieldDeclarationSyntax dependencyProperty;
-            if (setter.TryGetDependencyPropertyFromSetter(out dependencyProperty))
+        private static class Arguments
+        {
+            internal static bool TryCreateProperty(AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax result)
             {
-                FieldDeclarationSyntax temp;
-                if (dependencyProperty.TryGetDependencyPropertyKey(out temp))
+                result = null;
+                var property = semanticModel.GetSymbolInfo(assignment.Left, cancellationToken).Symbol as IPropertySymbol;
+
+                IFieldSymbol fieldSymbol;
+                if (property.TryGetMutableDependencyPropertyField(semanticModel, cancellationToken, out fieldSymbol))
                 {
+                    var minimalDisplayString = fieldSymbol.ToArgumentString(
+                        semanticModel,
+                        assignment.SpanStart);
+                    var expressionSyntax = SyntaxFactory.ParseExpression(minimalDisplayString);
+                    result = SyntaxFactory.Argument(expressionSyntax);
+                }
+
+                return result != null;
+            }
+
+            internal static bool TryCreateValue(AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax result)
+            {
+                var assignedType = semanticModel.GetTypeInfo(assignment.Left)
+                                              .Type;
+                if (assignedType == null)
+                {
+                    result = null;
                     return false;
                 }
 
-                IFieldSymbol field;
-                if (dependencyProperty.TryGetFieldSymbol(semanticModel, cancellationToken, out field))
+                var valueExpression = assignment.Right;
+                if (assignedType.IsRepresentationConservingConversion(valueExpression, semanticModel, cancellationToken))
                 {
-
-                    return TryCreateArguments(field, assignment, semanticModel, cancellationToken, out result);
+                    result = SyntaxFactory.Argument(valueExpression);
                 }
+                else
+                {
+                    result = SyntaxFactory.Argument(
+                            SyntaxFactory.CastExpression(
+                                SyntaxFactory.ParseTypeName(
+                                    assignedType.ToMinimalDisplayString(semanticModel, 0)),
+                                    valueExpression));
+                }
+
+                return result != null;
             }
-
-            return false;
-        }
-
-        private static bool TryCreateArguments(IFieldSymbol dependencyProperty, AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
-        {
-            result = null;
-            var classDeclaration = assignment.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-            if (classDeclaration == null)
-            {
-                return false;
-            }
-
-            var containingType = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-
-            var assignedType = semanticModel.GetTypeInfo(assignment.Left, cancellationToken).Type;
-
-            ArgumentSyntax value;
-            if (assignedType.IsRepresentationConservingConversion(assignment.Right, semanticModel, cancellationToken))
-            {
-                value = SyntaxFactory.Argument(assignment.Right);
-            }
-            else
-            {
-                value = SyntaxFactory.Argument(SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(assignedType.ToMinimalDisplayString(semanticModel, 0)), assignment.Right));
-            }
-
-            if (assignment.Left.IsKind(SyntaxKind.IdentifierName))
-            {
-                result = SyntaxFactory.ArgumentList()
-                    .AddArguments(
-                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(dependencyProperty.Name)),
-                        value)
-                    .NormalizeWhitespace();
-                return true;
-            }
-
-            var memberAccess = assignment.Left as MemberAccessExpressionSyntax;
-            if (memberAccess?.Expression != null)
-            {
-                var declaringType = semanticModel.GetTypeInfo(memberAccess.Expression, cancellationToken)
-                                              .Type;
-
-                var identifier = containingType.IsAssignableTo(declaringType)
-                                     ? SyntaxFactory.IdentifierName(dependencyProperty.Name)
-                                     : SyntaxFactory.IdentifierName($"{declaringType.ToMinimalDisplayString(semanticModel, 0)}.{dependencyProperty.Name}");
-
-                identifier = identifier.WithAdditionalAnnotations(Simplifier.Annotation);
-                result = SyntaxFactory.ArgumentList()
-                                    .AddArguments(
-                                        SyntaxFactory.Argument(identifier),
-                                        value)
-                                    .NormalizeWhitespace();
-                return true;
-            }
-
-            return false;
         }
     }
 }
