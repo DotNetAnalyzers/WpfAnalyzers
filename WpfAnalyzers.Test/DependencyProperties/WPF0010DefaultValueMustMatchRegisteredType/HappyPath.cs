@@ -34,6 +34,35 @@ public class FooControl : Control
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task DependencyPropertyMetadataWithCallbackOnly()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"", 
+        typeof(int), 
+        typeof(FooControl), 
+        new PropertyMetadata(OnValueChanged));
+
+    public int Bar
+    {
+        get { return (int) this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
         [TestCase("int", "new PropertyMetadata()")]
         [TestCase("int", "new FrameworkPropertyMetadata()")]
         [TestCase("int", "new PropertyMetadata(default(int))")]

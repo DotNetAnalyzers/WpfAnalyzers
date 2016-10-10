@@ -41,15 +41,27 @@
         private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = context.Node as ObjectCreationExpressionSyntax;
-            var typeSymbol = context.SemanticModel.GetTypeInfo(objectCreation).Type;
+            var metaDataType = context.SemanticModel.GetTypeInfo(objectCreation).Type;
             var propertyMetadata = context.Compilation.GetTypeByMetadataName("System.Windows.PropertyMetadata");
-            if (!typeSymbol.IsAssignableTo(propertyMetadata) ||
+            if (!metaDataType.IsAssignableTo(propertyMetadata) ||
                 objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
             {
                 return;
             }
 
-            if (!propertyMetadata.ContainingNamespace.Equals(typeSymbol.ContainingNamespace))
+            var constructor = context.SemanticModel.GetSymbolInfo(objectCreation)
+                                      .Symbol as IMethodSymbol;
+            if (constructor == null || constructor.Parameters.Length == 0)
+            {
+                return;
+            }
+
+            if (!constructor.Parameters[0].Type.IsObject())
+            {
+                return;
+            }
+
+            if (!propertyMetadata.ContainingNamespace.Equals(metaDataType.ContainingNamespace))
             {
                 // don't think there is a way to handle custom subclassed.
                 // should not be common
@@ -82,7 +94,7 @@
                 return;
             }
 
-            if (!type.IsRepresentationConservingConversion(defaultValue,context.SemanticModel, context.CancellationToken))
+            if (!type.IsRepresentationConservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), registerCall.Ancestors().OfType<FieldDeclarationSyntax>().FirstOrDefault()?.Name(), type));
             }
