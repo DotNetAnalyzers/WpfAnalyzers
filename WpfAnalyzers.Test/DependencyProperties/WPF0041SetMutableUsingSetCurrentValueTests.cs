@@ -141,6 +141,127 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task IgnoredInClrProperty()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    public double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoredInClrPropertyWhenSettingBoxed()
+        {
+            var boolBoxesCode = @"
+
+public static class BooleanBoxes
+{
+    public static readonly object True = true;
+    public static readonly object False = false;
+}";
+
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(
+        nameof(IsTrue),
+        typeof(bool),
+        typeof(FooControl),
+        new PropertyMetadata(default(bool)));
+
+    public bool IsTrue
+    {
+        get { return (bool)this.GetValue(IsTrueProperty); }
+        set { this.SetValue(IsTrueProperty, value ? BooleanBoxes.True : BooleanBoxes.False); }
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, boolBoxesCode }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoredInClrSetMethod()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty IsTrueProperty = DependencyProperty.RegisterAttached(
+        ""IsTrue"",
+        typeof(bool),
+        typeof(Foo),
+        new PropertyMetadata(default(bool)));
+
+    public static void SetIsTrue(this DependencyObject element, bool value)
+    {
+        element.SetValue(IsTrueProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static bool GetIsTrue(this DependencyObject element)
+    {
+        return (bool)element.GetValue(IsTrueProperty);
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoredInClrSetMethodWhenBoxed()
+        {
+            var boolBoxesCode = @"
+
+public static class BooleanBoxes
+{
+    public static readonly object True = true;
+    public static readonly object False = false;
+}";
+
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty IsTrueProperty = DependencyProperty.RegisterAttached(
+        ""IsTrue"",
+        typeof(bool),
+        typeof(Foo),
+        new PropertyMetadata(default(bool)));
+
+    public static void SetIsTrue(this DependencyObject element, bool value)
+    {
+        element.SetValue(IsTrueProperty, value ? BooleanBoxes.True : BooleanBoxes.False);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static bool GetIsTrue(this DependencyObject element)
+    {
+        return (bool)element.GetValue(IsTrueProperty);
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, boolBoxesCode }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task IgnoredInObjectInitializer()
         {
             var testCode = @"
