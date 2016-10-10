@@ -1,94 +1,16 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0004ClrMethodShouldMatchRegisteredName
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
 
     using WpfAnalyzers.DependencyProperties;
 
-    public class WPF0004ClrMethodShouldMatchRegisteredNameTests : CodeFixVerifier
+    internal class CodeFix : CodeFixVerifier<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>
     {
         [Test]
-        public async Task HappyPath()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-    public static void SetBar(this FrameworkElement element, int value)
-    {
-        element.SetValue(BarProperty, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int)element.GetValue(BarProperty);
-    }
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task HappyPathExpressionBody()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task HappyPathReadonly()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task WhenGetterNotMatching()
+        public async Task AttachedPropertyGetMethod()
         {
             var testCode = @"
 using System.Windows;
@@ -140,7 +62,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task WhenGetterNotMatchingExpressionBody()
+        public async Task AttachedPropertyGetMethodExpressionBody()
         {
             var testCode = @"
 using System.Windows;
@@ -180,7 +102,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task WhenSetterNotMatching()
+        public async Task AttachedPropertySetMethod()
         {
             var testCode = @"
 using System.Windows;
@@ -232,7 +154,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task WhenSetterNotMatchingExpressionBody()
+        public async Task AttachedPropertySetMethodExpressionBody()
         {
             var testCode = @"
 using System.Windows;
@@ -270,12 +192,5 @@ public static class Foo
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
-
-        internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new WPF0004ClrMethodShouldMatchRegisteredName();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider() => new RenameMethodCodeFixProvider();
     }
 }

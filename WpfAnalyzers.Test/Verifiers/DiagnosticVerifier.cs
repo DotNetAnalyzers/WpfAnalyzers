@@ -197,6 +197,7 @@ namespace WpfAnalyzers.Test
         }
 
         [Conditional("DEBUG")]
+        // ReSharper disable once UnusedMember.Local
         private static void DumpIfDebug(string text)
         {
             Console.Write(text);
