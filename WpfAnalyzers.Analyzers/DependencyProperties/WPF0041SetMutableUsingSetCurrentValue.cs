@@ -70,6 +70,12 @@
                 return;
             }
 
+            if (IsInObjectInitializer(context.Node) ||
+                IsInConstructor(context.Node))
+            {
+                return;
+            }
+
             ArgumentSyntax property;
             ArgumentSyntax value;
             if (!invocation.TryGetSetValueArguments(context.SemanticModel, context.CancellationToken, out property, out value))

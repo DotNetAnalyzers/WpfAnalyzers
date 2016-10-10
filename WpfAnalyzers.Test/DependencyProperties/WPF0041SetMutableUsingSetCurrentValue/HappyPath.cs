@@ -340,7 +340,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task IgnoredDependencyPropertyInObjectInitializer()
+        public async Task IgnoredClrPropertyInObjectInitializer()
         {
             var testCode = @"
 using System.Windows;
@@ -362,7 +362,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task IgnoredDependencyPropertyInConstructor()
+        public async Task IgnoredClrPropertyInConstructor()
         {
             var testCode = @"
 using System.Windows;
@@ -378,6 +378,35 @@ public class FooControl : Control
     public FooControl()
     {
         this.Value = 2;
+    }
+
+    public double Value
+    {
+        get { return (double)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoredSetValueInConstructor()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(double),
+        typeof(FooControl));
+
+    public FooControl()
+    {
+        SetValue(ValueProperty, 2);
+        this.SetValue(ValueProperty, 2);
     }
 
     public double Value
