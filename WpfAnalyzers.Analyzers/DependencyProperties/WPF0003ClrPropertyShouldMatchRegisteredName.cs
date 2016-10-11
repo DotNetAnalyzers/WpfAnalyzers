@@ -1,6 +1,8 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
     using System.Collections.Immutable;
+    using System.Threading.Tasks;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,22 +46,20 @@
                 return;
             }
 
+            var property = context.ContainingSymbol as IPropertySymbol;
+            if (property == null || !property.IsPotentialClrProperty())
+            {
+                return;
+            }
+
             string registeredName;
-            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, context.CancellationToken, out registeredName))
+            if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out registeredName))
             {
-                return;
-            }
-
-            var propertyName = propertyDeclaration.Name();
-            if (registeredName == null || propertyName == null)
-            {
-                return;
-            }
-
-            if (registeredName != propertyName)
-            {
-                var identifier = propertyDeclaration.Identifier;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), propertyName, registeredName));
+                if (registeredName != property.Name)
+                {
+                    var identifier = propertyDeclaration.Identifier;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), property.Name, registeredName));
+                }
             }
         }
     }

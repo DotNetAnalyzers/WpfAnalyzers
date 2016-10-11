@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -8,6 +9,27 @@
 
     internal static class InvocationExpressionSyntaxExt
     {
+        internal static bool TryGetArgumentAtIndex(
+            this InvocationExpressionSyntax invocation,
+            int index,
+            out ArgumentSyntax result)
+        {
+            result = null;
+            if (invocation?.ArgumentList?.Arguments == null)
+            {
+                return false;
+            }
+
+            if (invocation.ArgumentList.Arguments.Count <= index)
+            {
+                return false;
+            }
+
+            result = invocation.ArgumentList.Arguments[index];
+            return true;
+        }
+
+        [Obsolete("Use symbols")]
         internal static string Name(this InvocationExpressionSyntax invocation)
         {
             if (invocation == null)
@@ -74,26 +96,43 @@
             return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _, out __);
         }
 
+        internal static bool TryGetSetValueArguments(this InvocationExpressionSyntax invocation,
+                                                     SemanticModel semanticModel,
+                                                     CancellationToken cancellationToken,
+                                                     out ArgumentListSyntax result)
+        {
+            result = null;
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            var setter = semanticModel.SemanticModelFor(invocation)
+                                            .GetSymbolInfo(invocation).Symbol as IMethodSymbol;
+            if (setter?.ContainingSymbol.Name != Names.DependencyObject ||
+                setter.Name != Names.SetValue ||
+                setter.Parameters.Length != 2)
+            {
+                return false;
+            }
+
+            result = invocation.ArgumentList;
+            return true;
+        }
+
         internal static bool TryGetSetValueArguments(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out ArgumentSyntax value)
         {
+            ArgumentListSyntax argumentList;
+            if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out argumentList))
+            {
+                property = argumentList.Arguments[0];
+                value = argumentList.Arguments[1];
+                return true;
+            }
+
             property = null;
             value = null;
-            if (invocation.Name() != Names.SetValue || invocation?.ArgumentList?.Arguments.Count != 2)
-            {
-                return false;
-            }
-
-            var symbol = semanticModel.SemanticModelFor(invocation)
-                                      .GetSymbolInfo(invocation, cancellationToken)
-                                      .Symbol;
-            if (symbol?.ContainingSymbol?.Name != Names.DependencyObject)
-            {
-                return false;
-            }
-
-            property = invocation.ArgumentList.Arguments[0];
-            value = invocation.ArgumentList.Arguments[1];
-            return true;
+            return false;
         }
 
         internal static bool IsSetSetCurrentValue(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -76,7 +76,7 @@
             Debug.Assert(registration.IsAnyDependencyPropertyRegister(), "Must be a register call");
             var args = (registration.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
-            return nameArg.TryGetString(semanticModel, cancellationToken, out result);
+            return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
         }
 
         internal static bool TryGetRegisteredType(this MemberAccessExpressionSyntax registration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)

@@ -7,11 +7,12 @@
 
     internal static class DependencyPropertyField
     {
+
         internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
         {
             MemberAccessExpressionSyntax temp;
             return declaration.IsDependencyPropertyType() &&
-                   (declaration.TryGetRegisterInvocation(out temp) ||
+                   (declaration.TryGetRegisterCall(out temp) ||
                     declaration.TryGetAddOwnerInvocation(out temp));
         }
 
@@ -19,7 +20,7 @@
         {
             MemberAccessExpressionSyntax temp;
             return declaration.IsDependencyPropertyKeyType() &&
-                   declaration.TryGetRegisterInvocation(out temp);
+                   declaration.TryGetRegisterCall(out temp);
         }
 
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
@@ -48,11 +49,7 @@
                 return false;
             }
 
-            var variable = declarationSyntax.Variables.FirstOrDefault();
-            if (variable == null)
-            {
-                return false;
-            }
+            var variable = declarationSyntax.Variables.First();
 
             var memberAccess = variable.Initializer.Value as MemberAccessExpressionSyntax;
             if (!memberAccess.IsDependencyPropertyKeyProperty())
@@ -61,6 +58,11 @@
             }
 
             var name = (memberAccess?.Expression as IdentifierNameSyntax)?.Identifier.ValueText;
+            if (name == null)
+            {
+                return false;
+            }
+
             result = field.DeclaringType().Field(name);
             return result != null;
         }
@@ -74,7 +76,7 @@
             }
 
             MemberAccessExpressionSyntax registerCall;
-            if (!TryGetRegisterInvocation(field, out registerCall))
+            if (!TryGetRegisterCall(field, out registerCall))
             {
                 return false;
             }
@@ -86,7 +88,7 @@
         {
             result = null;
             MemberAccessExpressionSyntax registerCall;
-            if (!TryGetRegisterInvocation(field, out registerCall))
+            if (!TryGetRegisterCall(field, out registerCall))
             {
                 return false;
             }
@@ -99,7 +101,7 @@
             argument = null;
             result = null;
             MemberAccessExpressionSyntax registerCall;
-            if (TryGetRegisterInvocation(field, out registerCall))
+            if (TryGetRegisterCall(field, out registerCall))
             {
                 return registerCall.TryGetRegisteredOwnerType(semanticModel, cancellationToken, out argument, out result);
             }
@@ -147,16 +149,17 @@
             return field != null;
         }
 
-        internal static bool TryGetRegisterInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
+        internal static bool TryGetRegisterCall(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax memberAccess)
         {
-            if (!TryGetInitializerCall(declaration, out invocation))
+            if (!TryGetInitializerCall(declaration, out memberAccess))
             {
                 return false;
             }
 
-            if (invocation.IsDependencyPropertyRegister() || invocation.IsDependencyPropertyRegisterReadOnly() ||
-                invocation.IsDependencyPropertyRegisterAttached() ||
-                invocation.IsDependencyPropertyRegisterAttachedReadOnly())
+            if (memberAccess.IsDependencyPropertyRegister() ||
+                memberAccess.IsDependencyPropertyRegisterReadOnly() ||
+                memberAccess.IsDependencyPropertyRegisterAttached() ||
+                memberAccess.IsDependencyPropertyRegisterAttachedReadOnly())
             {
                 return true;
             }
@@ -167,13 +170,13 @@
                 return false;
             }
 
-            if (!TryGetInitializerCall(propertyKey, out invocation))
+            if (!TryGetInitializerCall(propertyKey, out memberAccess))
             {
                 return false;
             }
 
-            if (invocation.IsDependencyPropertyRegisterReadOnly() ||
-                invocation.IsDependencyPropertyRegisterAttachedReadOnly())
+            if (memberAccess.IsDependencyPropertyRegisterReadOnly() ||
+                memberAccess.IsDependencyPropertyRegisterAttachedReadOnly())
             {
                 return true;
             }

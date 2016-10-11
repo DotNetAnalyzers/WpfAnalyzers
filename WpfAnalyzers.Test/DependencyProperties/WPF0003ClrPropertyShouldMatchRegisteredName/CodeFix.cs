@@ -6,7 +6,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class CodeFix :  CodeFixVerifier<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>
+    internal class CodeFix : CodeFixVerifier<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>
     {
         [Test]
         public async Task DependencyProperty()
@@ -86,6 +86,60 @@
         }
     }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task DependencyPropertyPartial()
+        {
+            var part1 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public partial class FooControl
+{
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Error
+    {
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
+}";
+
+            var part2 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public partial class FooControl : Control
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+}";
+
+
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
+            await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public partial class FooControl
+{
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(new[] { part1, part2 }, new[] { fixedCode, part2 }).ConfigureAwait(false);
         }
 
         [Test]

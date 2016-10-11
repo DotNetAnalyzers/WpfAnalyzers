@@ -23,7 +23,7 @@
             return symbol.IsObject();
         }
 
-        internal static bool TryGetString(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             if (argument?.Expression == null || semanticModel == null)
@@ -107,7 +107,7 @@
             FieldDeclarationSyntax field;
             if (TryGetDependencyPropertyFieldDeclaration(argument, semanticModel, cancellationToken, out field))
             {
-                return field.TryGetRegisterInvocation(out result);
+                return field.TryGetRegisterCall(out result);
             }
 
             return false;

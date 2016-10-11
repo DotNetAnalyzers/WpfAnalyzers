@@ -2,7 +2,10 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class FieldSymbolExt
     {
@@ -46,6 +49,30 @@
             }
 
             return result != null;
+        }
+
+        internal static bool TryGetAssignedValue(this IFieldSymbol field, CancellationToken cancellationToken, out ExpressionSyntax value)
+        {
+            value = null;
+            if (field == null)
+            {
+                return false;
+            }
+
+            SyntaxReference reference;
+            if (field.DeclaringSyntaxReferences.TryGetLast(out reference))
+            {
+                var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
+                if (declarator == null)
+                {
+                    return false;
+                }
+
+                value = declarator.Initializer.Value;
+                return true;
+            }
+
+            return false;
         }
 
         internal static bool IsPotentialDependencyPropertyBackingField(this IFieldSymbol field)

@@ -24,7 +24,7 @@
             return setter != null;
         }
 
-        internal static bool IsPotentialDependencyPropertyAccessor(this IPropertySymbol property)
+        internal static bool IsPotentialClrProperty(this IPropertySymbol property)
         {
             return property != null &&
                    !property.IsIndexer &&
@@ -37,7 +37,7 @@
         internal static bool TryGetMutableDependencyPropertyField(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
         {
             result = null;
-            if (!property.IsPotentialDependencyPropertyAccessor())
+            if (!property.IsPotentialClrProperty())
             {
                 return false;
             }

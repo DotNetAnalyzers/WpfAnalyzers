@@ -23,7 +23,7 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -32,35 +32,33 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "Rename property to match registered name.",
-                        _ => ApplyFixAsync(context, diagnostic),
-                        this.GetType().Name),
-                    diagnostic);
+                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                var property = semanticModel.SemanticModelFor(node)
+                                         .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
+                string registeredName;
+                if (ClrProperty.TryGetRegisteredName(
+                    property,
+                    semanticModel,
+                    context.CancellationToken,
+                    out registeredName))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            $"Rename to: {registeredName}.",
+                            _ => ApplyFixAsync(context, token, registeredName),
+                            this.GetType().Name),
+                        diagnostic);
+                }
             }
         }
 
-        private static async Task<Solution> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        private static async Task<Solution> ApplyFixAsync(CodeFixContext context, SyntaxToken token, string newName)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
-
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                        .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-
-            string registeredName;
-            if (declaration.TryGetDependencyPropertyRegisteredName(semanticModel, context.CancellationToken, out registeredName))
-            {
-                return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, registeredName, context.CancellationToken).ConfigureAwait(false);
-            }
-
-            return document.Project.Solution;
+            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, context.CancellationToken)
+                                     .ConfigureAwait(false);
         }
     }
 }

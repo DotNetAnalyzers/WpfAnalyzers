@@ -57,6 +57,40 @@
         }
 
         [Test]
+        public async Task DependencyPropertyPartial()
+        {
+            var part1 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public partial class FooControl : Control
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+}";
+
+            var part2 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public partial class FooControl
+{
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+    public int Bar
+    {
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarPropertyKey, value); }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task AttachedProperty()
         {
             var testCode = @"

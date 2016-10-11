@@ -5,7 +5,7 @@ namespace WpfAnalyzers.DependencyProperties
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class DependencyPropertyClrAccessor
+    internal static class ClrPropertyOld
     {
         internal static bool IsDependencyPropertyAccessor(this PropertyDeclarationSyntax property)
         {

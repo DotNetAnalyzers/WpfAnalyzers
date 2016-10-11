@@ -42,28 +42,26 @@
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null ||
-                fieldDeclaration.IsMissing ||
-                !fieldDeclaration.IsDependencyPropertyType())
+                fieldDeclaration.IsMissing)
             {
                 return;
             }
 
-            var fieldName = fieldDeclaration.Name();
-            if (fieldName == null)
+            var field = context.ContainingSymbol as IFieldSymbol;
+            if (field == null ||
+                field.Type.Name != Names.DependencyProperty)
             {
                 return;
             }
 
             string registeredName;
-            if (!fieldDeclaration.TryGetDependencyPropertyRegisteredName(context.SemanticModel, context.CancellationToken, out registeredName))
+            if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out registeredName))
             {
-                return;
-            }
-
-            if (!fieldName.IsParts(registeredName, "Property"))
-            {
-                var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldName, registeredName));
+                if (!field.Name.IsParts(registeredName, "Property"))
+                {
+                    var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), field.Name, registeredName));
+                }
             }
         }
     }
