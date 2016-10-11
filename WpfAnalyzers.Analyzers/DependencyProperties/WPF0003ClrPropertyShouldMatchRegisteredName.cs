@@ -1,8 +1,6 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
     using System.Collections.Immutable;
-    using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

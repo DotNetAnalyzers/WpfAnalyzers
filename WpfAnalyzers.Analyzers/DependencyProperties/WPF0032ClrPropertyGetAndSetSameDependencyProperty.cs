@@ -45,23 +45,28 @@
                 return;
             }
 
-            FieldDeclarationSyntax setter;
-            FieldDeclarationSyntax getter;
-            if (propertyDeclaration.TryGetDependencyPropertyFromGetter(out getter) &&
-                propertyDeclaration.TryGetDependencyPropertyFromSetter(out setter))
+            IFieldSymbol setter;
+            IFieldSymbol getter;
+            if (ClrProperty.TryGetBackingFields(
+                propertyDeclaration,
+                context.SemanticModel,
+                context.CancellationToken,
+                out getter,
+                out setter))
             {
-                if (getter == setter)
+                IFieldSymbol keyField;
+                if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                    getter,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out keyField))
                 {
-                    return;
+                    getter = keyField;
                 }
 
-                FieldDeclarationSyntax key;
-                if (getter.TryGetDependencyPropertyKey(out key))
+                if (ReferenceEquals(getter, setter))
                 {
-                    if (key == setter)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));

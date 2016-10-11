@@ -7,7 +7,6 @@
 
     internal static class DependencyPropertyField
     {
-
         internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
         {
             MemberAccessExpressionSyntax temp;
@@ -119,34 +118,6 @@
             }
 
             return false;
-        }
-
-        internal static bool TryGetIdentifier(this FieldDeclarationSyntax field, out SyntaxToken result)
-        {
-            var variables = field?.Declaration?.Variables;
-            if (variables?.Count != 1)
-            {
-                result = default(SyntaxToken);
-                return false;
-            }
-
-            var variable = variables.Value[0];
-            result = variable.Identifier;
-            return true;
-        }
-
-        internal static bool TryGetFieldSymbol(this FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            var variables = fieldDeclaration?.Declaration?.Variables;
-            if (variables?.Count != 1)
-            {
-                field = null;
-                return false;
-            }
-
-            field = semanticModel.SemanticModelFor(fieldDeclaration)
-                                 .GetDeclaredSymbol(variables.Value[0], cancellationToken) as IFieldSymbol;
-            return field != null;
         }
 
         internal static bool TryGetRegisterCall(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax memberAccess)

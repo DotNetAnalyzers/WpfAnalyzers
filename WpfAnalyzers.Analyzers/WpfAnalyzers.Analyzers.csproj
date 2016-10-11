@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="DependencyProperties\Helpers\ClrMethod.cs" />
     <Compile Include="DependencyProperties\Helpers\ClrProperty.cs" />
     <Compile Include="DependencyProperties\Helpers\Walkers\ClrGetterWalker.cs" />
     <Compile Include="DependencyProperties\Helpers\Walkers\ClrSetterWalker.cs" />

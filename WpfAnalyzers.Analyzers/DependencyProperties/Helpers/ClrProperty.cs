@@ -6,6 +6,9 @@ namespace WpfAnalyzers.DependencyProperties
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    /// <summary>
+    /// Exposes helper methods for working with CLR-properties for DependencyProperties
+    /// </summary>
     internal static class ClrProperty
     {
         internal static bool TryGetRegisteredName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
