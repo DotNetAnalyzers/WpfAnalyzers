@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System.Diagnostics;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;

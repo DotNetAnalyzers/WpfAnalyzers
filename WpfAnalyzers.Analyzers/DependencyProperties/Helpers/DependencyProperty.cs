@@ -116,6 +116,14 @@
                                                .GetSymbolInfo(invocation, cancellationToken)
                                                .Symbol;
                 if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
+                    invocationSymbol.Name == Names.AddOwner)
+                {
+                    var addOwner = (MemberAccessExpressionSyntax) invocation.Expression;
+                    var ownerField = semanticModel.GetSymbolInfo(addOwner.Expression, cancellationToken).Symbol as IFieldSymbol;
+                    return TryGetRegisterInvocation(ownerField, semanticModel, cancellationToken, out result);
+                }
+
+                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
                     invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
                 {
                     result = invocation;

@@ -102,6 +102,68 @@ public partial class FooControl
         }
 
         [Test]
+        public async Task DependencyPropertyAddOwner()
+        {
+            var part1 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty Error = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public int Bar
+    {
+        get { return (int) this.GetValue(Error); }
+        set { this.SetValue(Error, value); }
+    }
+}";
+
+            var part2 = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int), 
+        typeof(Foo), 
+        new FrameworkPropertyMetadata(
+            default(int), 
+            FrameworkPropertyMetadataOptions.Inherits));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int) element.GetValue(BarProperty);
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 47).WithArguments("Error", "Bar");
+            await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public int Bar
+    {
+        get { return (int) this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+            await this.VerifyCSharpFixAsync(new[] { part1, part2 }, new[] { fixedCode, part2 }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadonlyDependencyProperty()
         {
             var testCode = @"
