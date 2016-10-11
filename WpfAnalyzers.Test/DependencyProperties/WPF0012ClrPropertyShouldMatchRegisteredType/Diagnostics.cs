@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.DependencyProperties.WPF0012ClrPropertyShouldMatchRe
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class CodeFix : DiagnosticVerifier<WPF0012ClrPropertyShouldMatchRegisteredType>
+    internal class Diagnostics : DiagnosticVerifier<WPF0012ClrPropertyShouldMatchRegisteredType>
     {
         [TestCase("double")]
         [TestCase("int?")]
@@ -39,7 +39,6 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
-
         [Test]
         public async Task DependencyPropertyWithThis()
         {
@@ -64,6 +63,52 @@ public class FooControl : Control
 
             var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task DependencyPropertyAddOwner()
+        {
+            var part1 = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+    public double Bar
+    {
+        get { return (double) this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+}";
+
+            var part2 = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int), 
+        typeof(Foo), 
+        new FrameworkPropertyMetadata(
+            default(int), 
+            FrameworkPropertyMetadataOptions.Inherits));
+
+    public static void SetBar(DependencyObject element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int GetBar(DependencyObject element)
+    {
+        return (int) element.GetValue(BarProperty);
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 12).WithArguments("FooControl.Bar", "int");
+            await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
         }
 
         [Test]
