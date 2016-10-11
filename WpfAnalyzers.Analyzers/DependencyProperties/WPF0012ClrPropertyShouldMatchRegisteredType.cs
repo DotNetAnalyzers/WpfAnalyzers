@@ -45,22 +45,19 @@
                 return;
             }
 
-            var propertySymbol = context.ContainingSymbol as IPropertySymbol;
-            if (propertySymbol == null)
+            var property = context.ContainingSymbol as IPropertySymbol;
+            if (property == null || !property.IsPotentialClrProperty())
             {
                 return;
             }
 
             ITypeSymbol registeredType;
-            if (!propertyDeclaration.TryGetDependencyPropertyRegisteredType(context.SemanticModel, context.CancellationToken, out registeredType))
+            if (ClrProperty.TryGetRegisteredType(propertyDeclaration, context.SemanticModel, context.CancellationToken, out registeredType))
             {
-                return;
-            }
-
-            var actualTypeSymbol = propertySymbol.Type;
-            if (!actualTypeSymbol.IsSameType(registeredType))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Type.GetLocation(), propertySymbol, registeredType));
+                if (!registeredType.IsSameType(property.Type))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Type.GetLocation(), property, registeredType));
+                }
             }
         }
     }

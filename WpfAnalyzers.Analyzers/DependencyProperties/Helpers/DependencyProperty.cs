@@ -38,30 +38,29 @@
         internal static bool TryGetRegisteredName(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            ExpressionSyntax value;
-            if (field.TryGetAssignedValue(cancellationToken, out value))
+            InvocationExpressionSyntax invocation;
+            if (TryGetRegisterInvocation(field, semanticModel, cancellationToken, out invocation))
             {
-                var valueSymbol = ModelExtensions.GetSymbolInfo(semanticModel.SemanticModelFor(value), value, cancellationToken)
-                                               .Symbol;
-                if (valueSymbol == null)
+                ArgumentSyntax arg;
+                if (invocation.TryGetArgumentAtIndex(0, out arg))
                 {
-                    return false;
+                    return arg.TryGetStringValue(semanticModel, cancellationToken, out result);
                 }
+            }
 
-                var invocation = value as InvocationExpressionSyntax;
-                ArgumentSyntax nameArg;
-                if (invocation != null &&
-                    valueSymbol.ContainingType.Name == Names.DependencyProperty &&
-                    valueSymbol.Name.StartsWith("Register", StringComparison.Ordinal) &&
-                    invocation.TryGetArgumentAtIndex(0, out nameArg))
-                {
-                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
-                }
+            return false;
+        }
 
-                IFieldSymbol keyField;
-                if (TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out keyField))
+        internal static bool TryGetRegisteredType(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        {
+            result = null;
+            InvocationExpressionSyntax invocation;
+            if (TryGetRegisterInvocation(field, semanticModel, cancellationToken, out invocation))
+            {
+                ArgumentSyntax arg;
+                if (invocation.TryGetArgumentAtIndex(1, out arg))
                 {
-                    return TryGetRegisteredName(keyField, semanticModel, cancellationToken, out result);
+                    return arg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
                 }
             }
 
@@ -89,6 +88,38 @@
                     result = ModelExtensions.GetSymbolInfo(semanticModel.SemanticModelFor(memberAccess.Expression), memberAccess.Expression, cancellationToken)
                                                 .Symbol as IFieldSymbol;
                     return result != null;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryGetRegisterInvocation(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
+        {
+            result = null;
+            ExpressionSyntax value;
+            if (field.TryGetAssignedValue(cancellationToken, out value))
+            {
+                IFieldSymbol keyField;
+                if (TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out keyField))
+                {
+                    return TryGetRegisterInvocation(keyField, semanticModel, cancellationToken, out result);
+                }
+
+                var invocation = value as InvocationExpressionSyntax;
+                if (invocation == null)
+                {
+                    return false;
+                }
+
+                var invocationSymbol = semanticModel.SemanticModelFor(invocation)
+                                               .GetSymbolInfo(invocation, cancellationToken)
+                                               .Symbol;
+                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
+                    invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
+                {
+                    result = invocation;
+                    return true;
                 }
             }
 

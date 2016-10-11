@@ -60,7 +60,7 @@
             return false;
         }
 
-        internal static bool TryGetTypeofType(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        internal static bool TryGetTypeofValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
             if (argument?.Expression == null || semanticModel == null)

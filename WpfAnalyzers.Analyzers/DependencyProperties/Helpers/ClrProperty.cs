@@ -14,20 +14,9 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetRegisteredName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (!property.IsPotentialClrProperty())
+            PropertyDeclarationSyntax propertyDeclaration;
+            if (TryGetPropertyDeclaration(property, semanticModel, cancellationToken, out propertyDeclaration))
             {
-                return false;
-            }
-
-            SyntaxReference reference;
-            if (property.DeclaringSyntaxReferences.TryGetLast(out reference))
-            {
-                var propertyDeclaration = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
-                {
-                    return false;
-                }
-
                 return TryGetRegisteredName(
                     propertyDeclaration,
                     semanticModel,
@@ -40,29 +29,38 @@ namespace WpfAnalyzers.DependencyProperties
 
         internal static bool TryGetRegisteredName(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            IFieldSymbol getter;
-            IFieldSymbol setter;
-            if (TryGetBackingFields(
-                property,
-                semanticModel,
-                cancellationToken,
-                out getter,
-                out setter))
+            IFieldSymbol field;
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out field))
             {
-                IFieldSymbol keyField;
-                if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                    getter,
+                return DependencyProperty.TryGetRegisteredName(field, semanticModel, cancellationToken, out result);
+            }
+
+            result = null;
+            return false;
+        }
+
+        internal static bool TryGetRegisteredType(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        {
+            result = null;
+            PropertyDeclarationSyntax propertyDeclaration;
+            if (TryGetPropertyDeclaration(property, semanticModel, cancellationToken, out propertyDeclaration))
+            {
+                return TryGetRegisteredType(
+                    propertyDeclaration,
                     semanticModel,
                     cancellationToken,
-                    out keyField))
-                {
-                    getter = keyField;
-                }
+                    out result);
+            }
 
-                if (ReferenceEquals(setter, getter))
-                {
-                    return DependencyProperty.TryGetRegisteredName(getter, semanticModel, cancellationToken, out result);
-                }
+            return false;
+        }
+
+        internal static bool TryGetRegisteredType(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        {
+            IFieldSymbol field;
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out field))
+            {
+                return DependencyProperty.TryGetRegisteredType(field, semanticModel, cancellationToken, out result);
             }
 
             result = null;
@@ -73,20 +71,10 @@ namespace WpfAnalyzers.DependencyProperties
         {
             getter = null;
             setter = null;
-            if (!property.IsPotentialClrProperty())
-            {
-                return false;
-            }
 
-            SyntaxReference reference;
-            if (property.DeclaringSyntaxReferences.TryGetLast(out reference))
+            PropertyDeclarationSyntax propertyDeclaration;
+            if (TryGetPropertyDeclaration(property, semanticModel, cancellationToken, out propertyDeclaration))
             {
-                var propertyDeclaration = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
-                {
-                    return false;
-                }
-
                 return TryGetBackingFields(
                     propertyDeclaration,
                     semanticModel,
@@ -120,6 +108,56 @@ namespace WpfAnalyzers.DependencyProperties
                             return getter != null && setter != null;
                         }
                     }
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetPropertyDeclaration(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out PropertyDeclarationSyntax result)
+        {
+            result = null;
+            if (!property.IsPotentialClrProperty())
+            {
+                return false;
+            }
+
+            SyntaxReference reference;
+            if (property.DeclaringSyntaxReferences.TryGetLast(out reference))
+            {
+                result = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
+                return result != null;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetRegisterField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
+        {
+            result = null;
+            IFieldSymbol getter;
+            IFieldSymbol setter;
+            if (TryGetBackingFields(
+                property,
+                semanticModel,
+                cancellationToken,
+                out getter,
+                out setter))
+            {
+                IFieldSymbol keyField;
+                if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                    getter,
+                    semanticModel,
+                    cancellationToken,
+                    out keyField))
+                {
+                    getter = keyField;
+                }
+
+                if (ReferenceEquals(setter, getter))
+                {
+                    result = setter;
+                    return true;
                 }
             }
 

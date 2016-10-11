@@ -115,7 +115,7 @@
                 }
 
                 argument = args.Arguments[0];
-                return argument.TryGetTypeofType(semanticModel, cancellationToken, out result);
+                return argument.TryGetTypeofValue(semanticModel, cancellationToken, out result);
             }
 
             return false;

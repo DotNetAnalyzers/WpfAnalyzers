@@ -83,7 +83,7 @@
             }
 
             ITypeSymbol type;
-            if (!registerCall.ArgumentList.Arguments[1].TryGetTypeofType(context.SemanticModel, context.CancellationToken, out type))
+            if (!registerCall.ArgumentList.Arguments[1].TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out type))
             {
                 return;
             }
