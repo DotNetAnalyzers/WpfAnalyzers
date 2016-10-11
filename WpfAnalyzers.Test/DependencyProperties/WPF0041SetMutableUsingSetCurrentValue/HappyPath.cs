@@ -203,7 +203,7 @@ public static class Foo
         ""Bar"",
         typeof(bool),
         typeof(Foo),
-        new PropertyMetadata(default(bool)));
+        new PropertyMetadata(BooleanBoxes.False));
 
     public static void SetBar(FrameworkElement element, bool value)
     {
