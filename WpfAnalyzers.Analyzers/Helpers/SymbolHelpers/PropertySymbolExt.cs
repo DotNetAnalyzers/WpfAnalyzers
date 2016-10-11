@@ -64,7 +64,7 @@
             {
                 if (field.Name.IsParts(property.Name, "Property"))
                 {
-                    if (!field.IsPotentialDependencyPropertyBackingField())
+                    if (!DependencyProperty.IsPotentialBackingField(field))
                     {
                         return false;
                     }

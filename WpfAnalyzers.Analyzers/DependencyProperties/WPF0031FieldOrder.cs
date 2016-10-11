@@ -39,24 +39,40 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as FieldDeclarationSyntax;
-            if (declaration == null || declaration.IsMissing || !declaration.IsDependencyPropertyField())
+            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
+            if (fieldDeclaration == null ||
+                fieldDeclaration.IsMissing)
             {
                 return;
             }
 
-            FieldDeclarationSyntax key;
-            if (!declaration.TryGetDependencyPropertyKey(out key))
+            var field = context.ContainingSymbol as IFieldSymbol;
+            if (field == null ||
+                !DependencyProperty.IsPotentialBackingField(field))
             {
                 return;
             }
 
-            if (key.SpanStart < declaration.SpanStart)
+            IFieldSymbol keyField;
+            if (!DependencyProperty.TryGetDependencyPropertyKeyField(
+                  field,
+                  context.SemanticModel,
+                  context.CancellationToken,
+                  out keyField))
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), key.Name(), declaration.Name()));
+            SyntaxReference reference;
+            if (keyField.DeclaringSyntaxReferences.TryGetFirst(out reference))
+            {
+                var keyNode = reference.GetSyntax(context.CancellationToken);
+                if (!ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) ||
+                    fieldDeclaration.SpanStart < keyNode.SpanStart)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclaration.GetLocation(), keyField.Name, field.Name));
+                }
+            }
         }
     }
 }

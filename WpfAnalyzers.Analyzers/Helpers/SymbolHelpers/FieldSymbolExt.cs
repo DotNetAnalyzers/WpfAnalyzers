@@ -63,45 +63,11 @@
             if (field.DeclaringSyntaxReferences.TryGetLast(out reference))
             {
                 var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
-                if (declarator == null)
-                {
-                    return false;
-                }
-
-                value = declarator.Initializer.Value;
-                return true;
+                value = declarator?.Initializer?.Value;
+                return value != null;
             }
 
             return false;
-        }
-
-        internal static bool IsPotentialDependencyPropertyBackingField(this IFieldSymbol field)
-        {
-            return field != null &&
-                   field.Type.Name == Names.DependencyProperty &&
-                   field.IsReadOnly &&
-                   field.IsStatic &&
-                   field.ContainingType.IsAssignableToDependencyObject();
-        }
-
-        internal static bool IsPotentialDependencyPropertyKeyBackingField(this IFieldSymbol field)
-        {
-            return field != null &&
-                   field.Type.Name == Names.DependencyPropertyKey &&
-                   field.IsReadOnly &&
-                   field.IsStatic &&
-                   field.ContainingType.IsAssignableToDependencyObject();
-        }
-
-        internal static string ToArgumentString(this IFieldSymbol field, SemanticModel semanticModel, int position)
-        {
-            Debug.Assert(field.IsStatic, "field.IsStatic");
-            if (semanticModel.LookupStaticMembers(position).Contains(field))
-            {
-                return field.Name;
-            }
-
-            return $"{field.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat)}.{field.Name}";
         }
     }
 }

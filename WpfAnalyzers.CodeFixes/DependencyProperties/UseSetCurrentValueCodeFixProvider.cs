@@ -152,11 +152,7 @@
                 IFieldSymbol fieldSymbol;
                 if (property.TryGetMutableDependencyPropertyField(semanticModel, cancellationToken, out fieldSymbol))
                 {
-                    var minimalDisplayString = fieldSymbol.ToArgumentString(
-                        semanticModel,
-                        assignment.SpanStart);
-                    var expressionSyntax = SyntaxFactory.ParseExpression(minimalDisplayString);
-                    result = SyntaxFactory.Argument(expressionSyntax);
+                    result = DependencyProperty.CreateArgument(fieldSymbol, semanticModel, assignment.SpanStart);
                 }
 
                 return result != null;

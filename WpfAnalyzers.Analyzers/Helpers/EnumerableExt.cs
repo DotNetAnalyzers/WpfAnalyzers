@@ -40,6 +40,18 @@
             return false;
         }
 
+        internal static bool TryGetFirst<T>(this ImmutableArray<T> source, out T result)
+        {
+            if (source.Length == 0)
+            {
+                result = default(T);
+                return false;
+            }
+
+            result = source[0];
+            return true;
+        }
+
         internal static bool TryGetLast<T>(this ImmutableArray<T> source, out T result)
         {
             if (source.Length == 0)

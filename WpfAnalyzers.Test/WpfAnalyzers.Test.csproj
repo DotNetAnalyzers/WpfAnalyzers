@@ -69,6 +69,7 @@
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyShouldMatchRegisteredType\HappyPath.cs" />
+    <Compile Include="DependencyProperties\WPF0031FieldOrder\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKey\HappyPath.cs" />

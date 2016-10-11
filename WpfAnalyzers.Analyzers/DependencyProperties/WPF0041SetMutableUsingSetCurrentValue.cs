@@ -58,7 +58,8 @@
             IFieldSymbol field;
             if (property.TryGetMutableDependencyPropertyField(context.SemanticModel, context.CancellationToken, out field))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), field.ToArgumentString(context.SemanticModel, context.Node.SpanStart), assignment.Right));
+                var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
             }
         }
 
