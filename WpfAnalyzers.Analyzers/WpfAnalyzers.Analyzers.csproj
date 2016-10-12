@@ -61,13 +61,11 @@
     <Compile Include="DependencyProperties\Helpers\AttachedPropertyClrAccessor.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyField.cs" />
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue.cs" />
-    <Compile Include="Helpers\SymbolHelpers\PropertySymbolExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\MemberDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\MethodDeclarationSyntaxExt.cs" />
-    <Compile Include="DependencyProperties\Helpers\ClrPropertyOld.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\PropertyDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="DependencyProperties\WPF0010DefaultValueMustMatchRegisteredType.cs" />

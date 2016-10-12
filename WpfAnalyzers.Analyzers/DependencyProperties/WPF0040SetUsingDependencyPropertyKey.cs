@@ -53,14 +53,21 @@
                 return;
             }
 
-            FieldDeclarationSyntax field;
-            if (property.TryGetDependencyPropertyFieldDeclaration(context.SemanticModel, context.CancellationToken, out field))
+            var field = context.SemanticModel.SemanticModelFor(property.Expression)
+                               .GetSymbolInfo(property.Expression, context.CancellationToken).Symbol as IFieldSymbol;
+            if (field == null || field.Type.Name == Names.DependencyPropertyKey)
             {
-                FieldDeclarationSyntax key;
-                if (field.TryGetDependencyPropertyKey(out key))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, property.GetLocation(), property, key.Name()));
-                }
+                return;
+            }
+
+            IFieldSymbol keyField;
+            if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                field,
+                context.SemanticModel,
+                context.CancellationToken,
+                out keyField))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, property.GetLocation(), property, DependencyProperty.CreateArgument(keyField, context.SemanticModel, property.SpanStart)));
             }
         }
     }

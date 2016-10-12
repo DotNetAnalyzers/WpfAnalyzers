@@ -5,13 +5,6 @@ namespace WpfAnalyzers
 
     internal static class AccessorDeclarationSyntaxExt
     {
-        internal static TypeDeclarationSyntax DeclaringType(this AccessorDeclarationSyntax accessor)
-        {
-            var accessors = (AccessorListSyntax)accessor?.Parent;
-            var property = (PropertyDeclarationSyntax)accessors?.Parent;
-            return property.DeclaringType();
-        }
-
         internal static bool TryGetControlFlow(this AccessorDeclarationSyntax accessor, SemanticModel semanticModel, out ControlFlowAnalysis result)
         {
             if (accessor?.Body == null)
