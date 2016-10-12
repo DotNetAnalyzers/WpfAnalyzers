@@ -19,87 +19,150 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(WPF0041SetMutableUsingSetCurrentValue.DiagnosticId);
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
-        {
-            foreach (var diagnostic in context.Diagnostics)
-            {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "SetCurrentValue()",
-                        _ => ApplyFixAsync(context, diagnostic),
-                        nameof(MakeFieldStaticReadonlyCodeFixProvider)),
-                    diagnostic);
-            }
-
-            return FinishedTasks.Task;
-        }
-
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
+
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (string.IsNullOrEmpty(token.ValueText))
+                {
+                    continue;
+                }
+
+                var fix = await GetFixAsync(context, diagnostic).ConfigureAwait(false);
+                if (!fix.IsEmpty)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            fix.SetCurrentValueCall.ToString(),
+                            c => ApplyFixAsync(c, context.Document, fix),
+                            nameof(UseSetCurrentValueCodeFixProvider)),
+                        diagnostic);
+                }
+            }
+        }
+
+        private static async Task<Fix> GetFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                          .ConfigureAwait(false);
+
             var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                        .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
             if (assignment != null && assignment.IsKind(SyntaxKind.SimpleAssignmentExpression))
             {
-                return await ApplyFixAsync(context, syntaxRoot, assignment).ConfigureAwait(false);
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                                 .ConfigureAwait(false);
+                InvocationExpressionSyntax setCurrentValueCall;
+                if (TryGetFix(semanticModel, context.CancellationToken, assignment, out setCurrentValueCall))
+                {
+                    return new Fix(assignment, setCurrentValueCall);
+                }
             }
 
             var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                        .FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (invocation != null)
             {
-                return await ApplyFixAsync(context, syntaxRoot, invocation).ConfigureAwait(false);
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                                 .ConfigureAwait(false);
+                InvocationExpressionSyntax setCurrentValueCall;
+                if (TryGetFix(semanticModel, context.CancellationToken, invocation, out setCurrentValueCall))
+                {
+                    return new Fix(invocation, setCurrentValueCall);
+                }
             }
 
-            return context.Document;
+            return Fix.Empty;
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, AssignmentExpressionSyntax assignment)
+        private static bool TryGetFix(
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            AssignmentExpressionSyntax assignment,
+            out InvocationExpressionSyntax setCurrentValueInvocation)
         {
+            setCurrentValueInvocation = null;
             ExpressionSyntax setCurrentValue;
             if (!SetCurrentValueExpression.TryCreate(assignment, out setCurrentValue))
             {
-                return context.Document;
+                return false;
             }
 
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             ArgumentSyntax property;
-            if (!Arguments.TryCreateProperty(assignment, semanticModel, context.CancellationToken, out property))
+            if (!Arguments.TryCreateProperty(assignment, semanticModel, cancellationToken, out property))
             {
-                return context.Document;
+                return false;
             }
 
             ArgumentSyntax value;
-            if (!Arguments.TryCreateValue(assignment, semanticModel, context.CancellationToken, out value))
+            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out value))
             {
-                return context.Document;
+                return false;
             }
 
-            var setCurrentValueInvocation = SyntaxFactory.InvocationExpression(setCurrentValue, SyntaxFactory.ArgumentList().AddArguments(property, value));
-            var updated = syntaxRoot.ReplaceNode(assignment, setCurrentValueInvocation);
-            return context.Document.WithSyntaxRoot(updated);
+            setCurrentValueInvocation = SyntaxFactory.InvocationExpression(
+                                                         setCurrentValue,
+                                                         SyntaxFactory.ArgumentList()
+                                                                      .AddArguments(property, value));
+            return true;
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, InvocationExpressionSyntax invocation)
+        private static bool TryGetFix(
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            InvocationExpressionSyntax setValue,
+            out InvocationExpressionSyntax setCurrentValueInvocation)
         {
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                             .ConfigureAwait(false);
+            setCurrentValueInvocation = null;
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (!invocation.TryGetSetValueArguments(semanticModel, context.CancellationToken, out property, out value))
+            if (!DependencyObject.TryGetSetValueArguments(
+                    setValue,
+                    semanticModel,
+                    cancellationToken,
+                    out property,
+                    out value))
             {
-                return context.Document;
+                return false;
             }
 
             ExpressionSyntax setCurrentValue;
-            if (SetCurrentValueExpression.TryCreate(invocation, out setCurrentValue))
+            if (SetCurrentValueExpression.TryCreate(setValue, out setCurrentValue))
             {
-                var updated = syntaxRoot.ReplaceNode(invocation.Expression, setCurrentValue);
-                return context.Document.WithSyntaxRoot(updated);
+                setCurrentValueInvocation = setValue.WithExpression(setCurrentValue);
+                return true;
             }
 
-            return context.Document;
+            return false;
+        }
+
+        private static async Task<Document> ApplyFixAsync(
+            CancellationToken cancellationToken,
+            Document document,
+            Fix fix)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(syntaxRoot.ReplaceNode(fix.OldNode, fix.SetCurrentValueCall));
+        }
+
+        private struct Fix
+        {
+            public static readonly Fix Empty = new Fix(null, null);
+
+            public readonly ExpressionSyntax OldNode;
+            public readonly InvocationExpressionSyntax SetCurrentValueCall;
+
+            public Fix(ExpressionSyntax oldNode, InvocationExpressionSyntax setCurrentValueCall)
+            {
+                this.OldNode = oldNode;
+                this.SetCurrentValueCall = setCurrentValueCall;
+            }
+
+            public bool IsEmpty => this.SetCurrentValueCall == null;
         }
 
         private static class SetCurrentValueExpression
