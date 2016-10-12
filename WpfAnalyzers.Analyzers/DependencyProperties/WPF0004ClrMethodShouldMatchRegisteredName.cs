@@ -39,33 +39,54 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var method = context.Node as MethodDeclarationSyntax;
-            if (method == null || method.IsMissing)
+            var methodDeclaration = context.Node as MethodDeclarationSyntax;
+            if (methodDeclaration == null || methodDeclaration.IsMissing)
             {
                 return;
             }
 
-            var methodName = method.Name();
-            if (methodName == null)
+            var method = context.ContainingSymbol as IMethodSymbol;
+            if (method == null)
             {
                 return;
             }
 
+            IFieldSymbol setField;
+            if (ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out setField))
+            {
+                CheckName(context, setField, method, methodDeclaration, "Set");
+            }
+
+            IFieldSymbol getField;
+            if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out getField))
+            {
+                CheckName(context, getField, method, methodDeclaration, "Get");
+            }
+        }
+
+        private static void CheckName(
+            SyntaxNodeAnalysisContext context,
+            IFieldSymbol dependencyProperty,
+            IMethodSymbol method,
+            MethodDeclarationSyntax methodDeclaration,
+            string prefix)
+        {
             string registeredName;
-            if (method.TryGetDependencyPropertyRegisteredNameFromAttachedGet(context.SemanticModel, context.CancellationToken, out registeredName))
+            if (DependencyProperty.TryGetRegisteredName(
+                dependencyProperty,
+                context.SemanticModel,
+                context.CancellationToken,
+                                                        out registeredName))
             {
-                if (!methodName.IsParts("Get", registeredName))
+                if (!method.Name.IsParts(prefix, registeredName))
                 {
-                    var identifier = method.Identifier;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Get" + registeredName));
-                }
-            }
-            else if (method.TryGetDependencyPropertyRegisteredNameFromAttachedSet(context.SemanticModel, context.CancellationToken, out registeredName))
-            {
-                if (!methodName.IsParts("Set", registeredName))
-                {
-                    var identifier = method.Identifier;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), methodName, "Set" + registeredName));
+                    var identifier = methodDeclaration.Identifier;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            identifier.GetLocation(),
+                            method.Name,
+                            prefix + registeredName));
                 }
             }
         }

@@ -26,7 +26,7 @@
 
         public ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
 
-        public static ClrGetterWalker Create(SemanticModel semanticModel, CancellationToken cancellationToken, AccessorDeclarationSyntax getter)
+        public static ClrGetterWalker Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
         {
             ClrGetterWalker walker;
             if (!Cache.TryDequeue(out walker))
