@@ -32,7 +32,8 @@
                 return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name));
             }
 
-            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{field.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat)}.{field.Name}"));
+            var typeName = field.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat);
+            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{typeName}.{field.Name}"));
         }
 
         internal static bool TryGetRegisteredName(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
@@ -115,46 +116,6 @@
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
                     result = semanticModel.GetSymbolInfo(addOwner.Expression, cancellationToken).Symbol as IFieldSymbol;
                     return result != null;
-                }
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetRegisterField(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
-        {
-            result = null;
-            ExpressionSyntax value;
-            if (field.TryGetAssignedValue(cancellationToken, out value))
-            {
-                IFieldSymbol keyField;
-                if (TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out keyField))
-                {
-                    return TryGetRegisterField(keyField, semanticModel, cancellationToken, out result);
-                }
-
-                var invocation = value as InvocationExpressionSyntax;
-                if (invocation == null)
-                {
-                    return false;
-                }
-
-                var invocationSymbol = semanticModel.SemanticModelFor(invocation)
-                                               .GetSymbolInfo(invocation, cancellationToken)
-                                               .Symbol;
-                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
-                    invocationSymbol.Name == Names.AddOwner)
-                {
-                    var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                    var ownerField = semanticModel.GetSymbolInfo(addOwner.Expression, cancellationToken).Symbol as IFieldSymbol;
-                    return TryGetRegisterField(ownerField, semanticModel, cancellationToken, out result);
-                }
-
-                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
-                    invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
-                {
-                    result = field;
-                    return true;
                 }
             }
 

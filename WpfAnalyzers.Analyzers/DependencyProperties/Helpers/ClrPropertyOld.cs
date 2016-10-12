@@ -1,8 +1,5 @@
 namespace WpfAnalyzers.DependencyProperties
 {
-    using System.Threading;
-
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class ClrPropertyOld
@@ -13,36 +10,6 @@ namespace WpfAnalyzers.DependencyProperties
             FieldDeclarationSyntax setter;
             return TryGetDependencyPropertyFromGetter(property, out getter) &&
                    TryGetDependencyPropertyFromSetter(property, out setter);
-        }
-
-        internal static bool TryGetDependencyProperty(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)
-        {
-            dependencyProperty = null;
-            FieldDeclarationSyntax getter;
-            FieldDeclarationSyntax setter;
-            if (TryGetDependencyPropertyFromGetter(property, out getter) &&
-                TryGetDependencyPropertyFromSetter(property, out setter))
-            {
-                if (getter == setter)
-                {
-                    dependencyProperty = getter;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetDependencyPropertyRegisteredType(this PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
-        {
-            result = null;
-            FieldDeclarationSyntax dependencyProperty;
-            if (property.TryGetDependencyProperty(out dependencyProperty))
-            {
-                return dependencyProperty.TryGetDependencyPropertyRegisteredType(semanticModel, cancellationToken, out result);
-            }
-
-            return false;
         }
 
         internal static bool TryGetDependencyPropertyFromGetter(this PropertyDeclarationSyntax property, out FieldDeclarationSyntax dependencyProperty)

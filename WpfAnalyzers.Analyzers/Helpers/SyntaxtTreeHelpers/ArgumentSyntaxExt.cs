@@ -23,6 +23,16 @@
             return symbol.IsObject();
         }
 
+        internal static bool TryGetSymbol<T>(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out T result)
+            where T : class, ISymbol
+        {
+            result = semanticModel.SemanticModelFor(argument.Expression)
+                                  .GetSymbolInfo(argument.Expression, cancellationToken)
+                                  .Symbol as T;
+
+            return result != null;
+        }
+
         internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;

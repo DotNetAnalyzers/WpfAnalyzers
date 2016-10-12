@@ -13,13 +13,14 @@
 
         private SemanticModel semanticModel;
         private CancellationToken cancellationToken;
-        private bool hasError;
 
         private ClrGetterWalker()
         {
         }
 
-        public bool IsSuccess => !this.hasError && this.Property != null;
+        public bool IsSuccess => !this.HasError && this.Property != null;
+
+        public bool HasError { get; private set; }
 
         public ArgumentSyntax Property { get; private set; }
 
@@ -31,7 +32,7 @@
                 walker = new ClrGetterWalker();
             }
 
-            walker.hasError = false;
+            walker.HasError = false;
             walker.Property = null;
             walker.semanticModel = semanticModel;
             walker.cancellationToken = cancellationToken;
@@ -46,7 +47,7 @@
             {
                 if (this.Property != null)
                 {
-                    this.hasError = true;
+                    this.HasError = true;
                     this.Property = null;
                 }
                 else
@@ -60,7 +61,7 @@
 
         public void Dispose()
         {
-            this.hasError = false;
+            this.HasError = false;
             this.Property = null;
             this.semanticModel = null;
             this.cancellationToken = CancellationToken.None;

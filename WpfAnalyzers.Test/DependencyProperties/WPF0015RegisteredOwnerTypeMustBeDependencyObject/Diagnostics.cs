@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0015RegisteredOwnerTypeMustBeDependencyObject
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
     using WpfAnalyzers.DependencyProperties;

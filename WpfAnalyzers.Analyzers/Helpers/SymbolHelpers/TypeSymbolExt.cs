@@ -8,6 +8,28 @@
 
     internal static class TypeSymbolExt
     {
+        internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
+        {
+            field = null;
+            if (type == null || string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            foreach (var member in type.GetMembers(name))
+            {
+                if (field != null)
+                {
+                    field = null;
+                    return false;
+                }
+
+                field = member as IFieldSymbol;
+            }
+
+            return field != null;
+        }
+
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
             if (first == null || other == null)

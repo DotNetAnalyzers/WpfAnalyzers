@@ -56,7 +56,7 @@
             var property = context.SemanticModel.GetSymbolInfo(assignment.Left, context.CancellationToken).Symbol as IPropertySymbol;
 
             IFieldSymbol field;
-            if (property.TryGetMutableDependencyPropertyField(context.SemanticModel, context.CancellationToken, out field))
+            if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out field))
             {
                 var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
