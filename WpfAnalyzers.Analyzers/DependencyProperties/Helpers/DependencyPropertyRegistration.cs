@@ -54,24 +54,6 @@
             return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
         }
 
-        internal static bool TryGetRegisteredType(this MemberAccessExpressionSyntax registration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
-        {
-            result = null;
-            var args = (registration.Parent as InvocationExpressionSyntax)?.ArgumentList;
-            if (args == null || args.Arguments.Count < 2)
-            {
-                return false;
-            }
-
-            var typeArg = args.Arguments[1];
-            if (typeArg == null)
-            {
-                return false;
-            }
-
-            return typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
-        }
-
         private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)
         {
             if (memberAccess == null || memberAccess.IsMissing)

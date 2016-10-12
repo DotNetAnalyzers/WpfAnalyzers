@@ -83,18 +83,6 @@
             return registerCall.TryGetRegisteredName(semanticModel, cancellationToken, out result);
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredType(this FieldDeclarationSyntax field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
-        {
-            result = null;
-            MemberAccessExpressionSyntax registerCall;
-            if (!TryGetRegisterCall(field, out registerCall))
-            {
-                return false;
-            }
-
-            return registerCall.TryGetRegisteredType(semanticModel, cancellationToken, out result);
-        }
-
         internal static bool TryGetRegisterCall(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax memberAccess)
         {
             if (!TryGetInitializerCall(declaration, out memberAccess))

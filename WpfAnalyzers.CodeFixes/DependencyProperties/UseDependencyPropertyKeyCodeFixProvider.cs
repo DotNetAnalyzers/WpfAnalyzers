@@ -18,38 +18,101 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0040SetUsingDependencyPropertyKey.DiagnosticId);
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var document = context.Document;
+            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
+                .ConfigureAwait(false);
+
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                          "Use DependencyPropertyKey when setting a readonly property.",
-                        _ => ApplyFixAsync(context, diagnostic),
-                        nameof(MakeFieldStaticReadonlyCodeFixProvider)),
-                    diagnostic);
-            }
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (string.IsNullOrEmpty(token.ValueText))
+                {
+                    continue;
+                }
 
-            return FinishedTasks.Task;
+                var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+                ArgumentSyntax property;
+                IFieldSymbol setField;
+                ArgumentSyntax value;
+                if (DependencyObject.TryGetSetValueArguments(
+                      invocation,
+                      semanticModel,
+                      context.CancellationToken,
+                      out property,
+                      out setField,
+                      out value))
+                {
+                    IFieldSymbol keyField;
+                    if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                        setField,
+                        semanticModel,
+                        context.CancellationToken,
+                        out keyField))
+                    {
+                        var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
+                        var setValue = invocation.ReplaceNode(property, keyArg);
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                invocation.ToString(),
+                                cancellationToken => ApplyFixAsync(
+                                    context,
+                                    cancellationToken,
+                                    invocation,
+                                    setValue),
+                                nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                            diagnostic);
+                    }
+
+                    continue;
+                }
+
+                if (DependencyObject.TryGetSetCurrentValueArguments(
+                      invocation,
+                      semanticModel,
+                      context.CancellationToken,
+                      out property,
+                      out setField,
+                      out value))
+                {
+                    IFieldSymbol keyField;
+                    if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                        setField,
+                        semanticModel,
+                        context.CancellationToken,
+                        out keyField))
+                    {
+                        var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
+                        var setValue = invocation.WithExpression(SetValueExpression(invocation.Expression))
+                                                 .ReplaceNode(property, keyArg);
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                invocation.ToString(),
+                                cancellationToken => ApplyFixAsync(
+                                    context,
+                                    cancellationToken,
+                                    invocation,
+                                    setValue),
+                                nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                            diagnostic);
+                    }
+                }
+            }
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        private static async Task<Document> ApplyFixAsync(
+            CodeFixContext context,
+            CancellationToken cancellationToken,
+            SyntaxNode oldNode,
+            SyntaxNode newNode)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                              .ConfigureAwait(false);
-            var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                       .FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (invocation == null || invocation.IsMissing)
-            {
-                return context.Document;
-            }
-
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
-            SyntaxNode updated = invocation.WithExpression(SetValueExpression(invocation.Expression))
-                                           .WithArgumentList(UpdateArgumentList(invocation.ArgumentList, semanticModel, context.CancellationToken));
-
-            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(invocation, updated));
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(cancellationToken)
+                                          .ConfigureAwait(false);
+            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(oldNode, newNode));
         }
 
         private static ExpressionSyntax SetValueExpression(ExpressionSyntax old)
@@ -70,33 +133,6 @@
             }
 
             return old;
-        }
-
-        private static ArgumentListSyntax UpdateArgumentList(ArgumentListSyntax argumentList, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            var argument = argumentList.Arguments[0];
-            var dp = semanticModel.GetSymbolInfo(argument.Expression, cancellationToken);
-            if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
-            {
-                return argumentList;
-            }
-
-            var declarator = dp.Symbol
-                               .DeclaringSyntaxReferences[0]
-                               .GetSyntax() as VariableDeclaratorSyntax;
-            if (declarator == null)
-            {
-                return argumentList;
-            }
-
-            var member = declarator.Initializer.Value as MemberAccessExpressionSyntax;
-            if (member?.Expression != null && member.IsDependencyPropertyKeyProperty())
-            {
-                var updated = argument.WithExpression(member.Expression);
-                return argumentList.WithArguments(argumentList.Arguments.Replace(argument, updated));
-            }
-
-            return argumentList;
         }
     }
 }
