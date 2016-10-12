@@ -1,5 +1,5 @@
 ﻿type file
-version 0.2.0.10-dev
+version 0.2.1.0-dev
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
