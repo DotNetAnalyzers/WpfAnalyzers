@@ -55,6 +55,7 @@
             if (ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out setField))
             {
                 CheckName(context, setField, method, methodDeclaration, "Set");
+                return;
             }
 
             IFieldSymbol getField;

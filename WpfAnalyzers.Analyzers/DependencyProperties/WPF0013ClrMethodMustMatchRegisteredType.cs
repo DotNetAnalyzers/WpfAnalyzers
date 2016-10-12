@@ -39,31 +39,56 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var method = context.Node as MethodDeclarationSyntax;
-            if (method == null || method.IsMissing)
+            var methodDeclaration = context.Node as MethodDeclarationSyntax;
+            if (methodDeclaration == null || methodDeclaration.IsMissing)
             {
                 return;
             }
 
-            var methodSymbol = context.ContainingSymbol as IMethodSymbol;
-            if (methodSymbol == null)
+            var method = context.ContainingSymbol as IMethodSymbol;
+            if (method == null)
             {
                 return;
             }
 
-            ITypeSymbol registeredType;
-            if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedGet(context.SemanticModel, context.CancellationToken, out registeredType))
+            IFieldSymbol getField;
+            if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out getField))
             {
-                if (!methodSymbol.ReturnType.IsSameType(registeredType))
+                ITypeSymbol registeredType;
+                if (DependencyProperty.TryGetRegisteredType(getField, context.SemanticModel, context.CancellationToken, out registeredType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ReturnType.GetLocation(), "Return type", registeredType));
+                    if (!method.ReturnType.IsSameType(registeredType))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ReturnType.GetLocation(), "Return type", registeredType));
+                    }
                 }
+
+                return;
             }
-            else if (method.TryGetDependencyPropertyRegisteredTypeFromAttachedSet(context.SemanticModel, context.CancellationToken, out registeredType))
+
+            IFieldSymbol setField;
+            if (ClrMethod.IsAttachedSetMethod(
+                methodDeclaration,
+                context.SemanticModel,
+                context.CancellationToken,
+                out setField))
             {
-                if (!methodSymbol.Parameters[1].Type.IsSameType(registeredType))
+                ITypeSymbol registeredType;
+                if (DependencyProperty.TryGetRegisteredType(
+                    setField,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out registeredType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, method.ParameterList.Parameters[1].GetLocation(), "Value type", registeredType));
+                    if (!method.Parameters[1].Type.IsSameType(registeredType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                methodDeclaration.ParameterList.Parameters[1].GetLocation(),
+                                "Value type",
+                                registeredType));
+                    }
                 }
             }
         }
