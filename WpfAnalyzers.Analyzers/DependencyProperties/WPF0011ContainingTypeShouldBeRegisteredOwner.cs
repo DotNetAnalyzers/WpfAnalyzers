@@ -87,6 +87,7 @@
             {
                 return;
             }
+
             if (!field.ContainingType.IsSameType(ownerType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), field, field.ContainingType));

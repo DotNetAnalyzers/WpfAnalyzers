@@ -32,7 +32,7 @@
 
         public ArgumentSyntax Value => this.Arguments?.Arguments[1];
 
-        public static ClrSetterWalker Create(SemanticModel semanticModel, CancellationToken cancellationToken, AccessorDeclarationSyntax setter)
+        public static ClrSetterWalker Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
         {
             ClrSetterWalker walker;
             if (!Cache.TryDequeue(out walker))

@@ -1,8 +1,6 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
     using System.Collections.Immutable;
-    using System.Linq;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -96,10 +94,8 @@
                 return;
             }
 
-            var clrMethod = invocation.Ancestors()
-                                      .OfType<MethodDeclarationSyntax>()
-                                      .FirstOrDefault();
-            if (clrMethod.IsAttachedSetAccessor(context.SemanticModel, context.CancellationToken))
+            var clrMethod = context.ContainingSymbol as IMethodSymbol;
+            if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken))
             {
                 return;
             }

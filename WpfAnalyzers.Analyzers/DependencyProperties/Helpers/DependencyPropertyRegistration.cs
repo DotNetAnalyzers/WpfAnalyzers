@@ -56,21 +56,6 @@
             return memberAccess.Name?.Identifier.ValueText == Names.DependencyProperty;
         }
 
-        private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)
-        {
-            if (memberAccess == null || memberAccess.IsMissing)
-            {
-                return false;
-            }
-
-            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
-            {
-                return false;
-            }
-
-            return memberAccess.Name?.Identifier.ValueText == name;
-        }
-
         internal static bool TryGetRegisteredName(this MemberAccessExpressionSyntax registration, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             Debug.Assert(registration.IsAnyDependencyPropertyRegister(), "Must be a register call");
@@ -111,6 +96,21 @@
 
             argument = args.Arguments[2];
             return argument.TryGetTypeofValue(semanticModel, cancellationToken, out result);
+        }
+
+        private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)
+        {
+            if (memberAccess == null || memberAccess.IsMissing)
+            {
+                return false;
+            }
+
+            if ((memberAccess.Expression as IdentifierNameSyntax)?.Identifier.ValueText != Names.DependencyProperty)
+            {
+                return false;
+            }
+
+            return memberAccess.Name?.Identifier.ValueText == name;
         }
     }
 }

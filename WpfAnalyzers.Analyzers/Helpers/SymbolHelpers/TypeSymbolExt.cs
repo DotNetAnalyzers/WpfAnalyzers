@@ -97,6 +97,12 @@
             return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
         }
 
+        internal static bool IsDependencyPropertyOrDependencyPropertyKey(this ITypeSymbol type)
+        {
+            return type.Name == Names.DependencyProperty ||
+                   type.Name == Names.DependencyPropertyKey;
+        }
+
         internal static bool IsAssignableToDependencyObject(this ITypeSymbol type)
         {
             while (type?.BaseType != null)

@@ -91,38 +91,6 @@
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyFieldDeclaration(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out FieldDeclarationSyntax result)
-        {
-            result = null;
-            var dp = semanticModel.SemanticModelFor(argument.Expression)
-                                  .GetSymbolInfo(argument.Expression, cancellationToken);
-            if (dp.Symbol.DeclaringSyntaxReferences.Length != 1)
-            {
-                return false;
-            }
-
-            var declarator = dp.Symbol.DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
-            if (declarator == null)
-            {
-                return false;
-            }
-
-            result = declarator.Parent?.Parent as FieldDeclarationSyntax;
-            return result != null;
-        }
-
-        internal static bool TryGetDependencyPropertyRegistration(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out MemberAccessExpressionSyntax result)
-        {
-            result = null;
-            FieldDeclarationSyntax field;
-            if (TryGetDependencyPropertyFieldDeclaration(argument, semanticModel, cancellationToken, out field))
-            {
-                return field.TryGetRegisterCall(out result);
-            }
-
-            return false;
-        }
-
         private static bool IsNameOf(this ExpressionSyntax expression)
         {
             return (expression as InvocationExpressionSyntax)?.IsNameOf() == true;
