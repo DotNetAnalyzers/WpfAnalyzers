@@ -36,7 +36,7 @@
             var descriptor = descriptorInfo.DiagnosticDescriptor;
             var id = descriptor.Id;
             DumpIfDebug(CreateStub(descriptorInfo));
-            // File.WriteAllText(descriptorInfo.DocFileName + ".generated", CreateStub(descriptorInfo));
+            File.WriteAllText(descriptorInfo.DocFileName + ".generated", CreateStub(descriptorInfo));
             Assert.Fail($"Documentation is missing for {id}");
         }
 

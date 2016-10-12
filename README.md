@@ -46,6 +46,10 @@ Roslyn analyzers for WPF.
   <td>SetValue must use registered type.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md">WPF0015</a></td>
+  <td>Registered owner type must inherit DependencyObject.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
   <td>Backing field for a DependencyProperty should be static and readonly.</td>
 </tr>

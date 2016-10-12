@@ -49,6 +49,7 @@
     <Compile Include="DependencyProperties\Helpers\DependencyProperty.cs" />
     <Compile Include="DependencyProperties\Helpers\DependencyPropertyRegistration.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
+    <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject.cs" />
     <Compile Include="Helpers\EnumerableExt.cs" />
     <Compile Include="Helpers\SemanticModelExt.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
