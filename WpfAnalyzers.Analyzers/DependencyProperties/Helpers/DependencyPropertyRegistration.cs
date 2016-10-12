@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System.Diagnostics;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -8,14 +7,6 @@
 
     internal static class DependencyPropertyRegistration
     {
-        internal static bool IsAnyDependencyPropertyRegister(this MemberAccessExpressionSyntax memberAccess)
-        {
-            return memberAccess.IsDependencyPropertyRegister() ||
-                   memberAccess.IsDependencyPropertyRegisterReadOnly() ||
-                   memberAccess.IsDependencyPropertyRegisterAttached() ||
-                   memberAccess.IsDependencyPropertyRegisterAttachedReadOnly();
-        }
-
         internal static bool IsDependencyPropertyRegister(this MemberAccessExpressionSyntax memberAccess)
         {
             return memberAccess.IsDependencyPropertyCall(Names.Register);
@@ -58,7 +49,6 @@
 
         internal static bool TryGetRegisteredName(this MemberAccessExpressionSyntax registration, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            Debug.Assert(registration.IsAnyDependencyPropertyRegister(), "Must be a register call");
             var args = (registration.Parent as InvocationExpressionSyntax)?.ArgumentList;
             var nameArg = args?.Arguments.FirstOrDefault();
             return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
@@ -66,7 +56,6 @@
 
         internal static bool TryGetRegisteredType(this MemberAccessExpressionSyntax registration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
-            Debug.Assert(registration.IsAnyDependencyPropertyRegister(), "Must be a register call");
             result = null;
             var args = (registration.Parent as InvocationExpressionSyntax)?.ArgumentList;
             if (args == null || args.Arguments.Count < 2)
@@ -81,21 +70,6 @@
             }
 
             return typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
-        }
-
-        internal static bool TryGetRegisteredOwnerType(this MemberAccessExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax argument, out ITypeSymbol result)
-        {
-            Debug.Assert(registerCall.IsAnyDependencyPropertyRegister(), "Must be a register call");
-            result = null;
-            var args = (registerCall.Parent as InvocationExpressionSyntax)?.ArgumentList;
-            if (args == null || args.Arguments.Count < 3)
-            {
-                argument = null;
-                return false;
-            }
-
-            argument = args.Arguments[2];
-            return argument.TryGetTypeofValue(semanticModel, cancellationToken, out result);
         }
 
         private static bool IsDependencyPropertyCall(this MemberAccessExpressionSyntax memberAccess, string name)

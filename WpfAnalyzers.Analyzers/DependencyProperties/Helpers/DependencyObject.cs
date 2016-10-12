@@ -7,13 +7,6 @@
 
     internal static class DependencyObject
     {
-        internal static bool IsGetValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            ArgumentSyntax _;
-            IFieldSymbol __;
-            return TryGetGetValueArgument(invocation, semanticModel, cancellationToken, out _, out __);
-        }
-
         /// <summary>
         /// Check if <paramref name="invocation"/> is a call to dependencyObject.GetValue(FooProperty, value)
         /// </summary>
@@ -42,12 +35,6 @@
                                  .GetSymbolInfo(property.Expression, cancellationToken)
                                  .Symbol as IFieldSymbol;
             return true;
-        }
-
-        internal static bool IsSetValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            ArgumentListSyntax _;
-            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _);
         }
 
         /// <summary>
@@ -96,12 +83,6 @@
             value = null;
             field = null;
             return false;
-        }
-
-        internal static bool IsSetSetCurrentValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            ArgumentListSyntax _;
-            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _);
         }
 
         /// <summary>

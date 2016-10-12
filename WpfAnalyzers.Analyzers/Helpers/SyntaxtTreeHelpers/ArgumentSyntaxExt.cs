@@ -6,8 +6,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    using WpfAnalyzers.DependencyProperties;
-
     internal static class ArgumentSyntaxExt
     {
         internal static bool IsObject(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken)

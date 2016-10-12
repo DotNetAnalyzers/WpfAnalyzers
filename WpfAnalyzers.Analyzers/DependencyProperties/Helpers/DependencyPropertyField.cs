@@ -95,31 +95,6 @@
             return registerCall.TryGetRegisteredType(semanticModel, cancellationToken, out result);
         }
 
-        internal static bool TryGetDependencyPropertyRegisteredOwnerType(this FieldDeclarationSyntax field, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax argument, out ITypeSymbol result)
-        {
-            argument = null;
-            result = null;
-            MemberAccessExpressionSyntax registerCall;
-            if (TryGetRegisterCall(field, out registerCall))
-            {
-                return registerCall.TryGetRegisteredOwnerType(semanticModel, cancellationToken, out argument, out result);
-            }
-
-            if (TryGetAddOwnerInvocation(field, out registerCall))
-            {
-                var args = (registerCall.Parent as InvocationExpressionSyntax)?.ArgumentList;
-                if (args == null || args.Arguments.Count < 1)
-                {
-                    return false;
-                }
-
-                argument = args.Arguments[0];
-                return argument.TryGetTypeofValue(semanticModel, cancellationToken, out result);
-            }
-
-            return false;
-        }
-
         internal static bool TryGetRegisterCall(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax memberAccess)
         {
             if (!TryGetInitializerCall(declaration, out memberAccess))

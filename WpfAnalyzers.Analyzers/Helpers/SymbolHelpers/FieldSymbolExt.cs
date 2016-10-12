@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
