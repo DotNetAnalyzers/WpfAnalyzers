@@ -227,7 +227,7 @@ namespace WpfAnalyzers.Test
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult expected, CancellationToken cancellationToken, string[] filenames = null)
         {
-            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(),new[] { expected}, cancellationToken, filenames);
+            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), new[] { expected }, cancellationToken, filenames);
         }
 
         /// <summary>
@@ -372,15 +372,17 @@ namespace WpfAnalyzers.Test
         {
             var actualSpan = actual.GetLineSpan();
 
-            var message = "Diagnostic not found in expected file.\r\n" +
-                          $"Expected: \"{expected.Path}\"\r\n" +
-                          $"Actual:   \"{actualSpan.Path}\"\r\n" +
-                           "\r\n" +
-                          $"Diagnostic:\r\n" +
-                          $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
-            Assert.True(
-                actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
-                message);
+            if (!(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test."))))
+            {
+                var message = "Diagnostic not found in expected file.\r\n" +
+              $"Expected: \"{expected.Path}\"\r\n" +
+              $"Actual:   \"{actualSpan.Path}\"\r\n" +
+               "\r\n" +
+              $"Diagnostic:\r\n" +
+              $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
+                Assert.Fail(message);
+            }
+
 
             VerifyLinePosition(analyzers, diagnostic, actualSpan.StartLinePosition, expected.StartLinePosition, "start");
             if (expected.StartLinePosition < expected.EndLinePosition)

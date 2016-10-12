@@ -51,12 +51,13 @@
 
             var constructor = context.SemanticModel.GetSymbolInfo(objectCreation)
                                       .Symbol as IMethodSymbol;
-            if (constructor == null || constructor.Parameters.Length == 0)
+            IParameterSymbol parameter;
+            if (constructor == null || !constructor.Parameters.TryGetFirst(out parameter))
             {
                 return;
             }
 
-            if (!constructor.Parameters[0].Type.IsObject())
+            if (!parameter.Type.IsObject())
             {
                 return;
             }

@@ -25,6 +25,8 @@
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                 .ConfigureAwait(false);
 
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -33,40 +35,37 @@
                     continue;
                 }
 
+                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                         .FirstAncestorOrSelf<ArgumentSyntax>();
+                if (argument == null || argument.Expression?.IsKind(SyntaxKind.TypeOfExpression) != true)
+                {
+                    continue;
+                }
+
+                var field = semanticModel.GetEnclosingSymbol(argument.SpanStart, context.CancellationToken) as IFieldSymbol;
+                if (field == null)
+                {
+                    continue;
+                }
+
+                var containingTypeName = field.ContainingType.ToMinimalDisplayString(semanticModel, argument.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
+                var typeSyntax = SyntaxFactory.ParseTypeName(containingTypeName);
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Register containing type as owner.",
-                        _ => ApplyFixAsync(context, diagnostic),
+                        $"Use containing type: {containingTypeName}.",
+                        _ => ApplyFixAsync(context, (TypeOfExpressionSyntax) argument.Expression, typeSyntax),
                         this.GetType().Name),
                     diagnostic);
             }
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        private static async Task<Document> ApplyFixAsync(CodeFixContext context, TypeOfExpressionSyntax typeOfExpression, TypeSyntax containingType)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
 
-            var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                     .FirstAncestorOrSelf<ArgumentSyntax>();
-
-            if (argument == null)
-            {
-                return document;
-            }
-
-            var typeOfExpression = argument.Expression as TypeOfExpressionSyntax;
-            var containingType = argument.Ancestors()
-                             .OfType<TypeDeclarationSyntax>()
-                             .FirstOrDefault();
-
-            if (containingType == null || typeOfExpression == null)
-            {
-                return document;
-            }
-
-            var updated = typeOfExpression.WithType(SyntaxFactory.IdentifierName(containingType.Identifier.ValueText));
+            var updated = typeOfExpression.WithType(containingType);
             return document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeOfExpression, updated));
         }
     }
