@@ -6,16 +6,15 @@
 
     internal static class FieldDeclarationSyntaxExt
     {
-        [Obsolete("Remove")]
         internal static string Name(this FieldDeclarationSyntax declaration)
         {
-            var variables = declaration?.Declaration?.Variables;
-            if (variables?.Count != 1)
+            VariableDeclaratorSyntax variable = null;
+            if (declaration?.Declaration?.Variables.TryGetSingle(out variable) == true)
             {
-                return null;
+                return variable.Identifier.ValueText;
             }
 
-            return variables.Value[0].Identifier.ValueText;
+            throw new InvalidOperationException($"Could not get name of field {declaration}");
         }
     }
 }
