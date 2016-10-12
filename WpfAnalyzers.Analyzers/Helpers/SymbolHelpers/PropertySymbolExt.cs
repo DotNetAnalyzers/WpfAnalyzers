@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Linq;
     using System.Threading;
 
@@ -24,16 +25,7 @@
             return setter != null;
         }
 
-        internal static bool IsPotentialClrProperty(this IPropertySymbol property)
-        {
-            return property != null &&
-                   !property.IsIndexer &&
-                   !property.IsReadOnly &&
-                   !property.IsWriteOnly &&
-                   !property.IsStatic && 
-                   property.ContainingType.IsAssignableToDependencyObject();
-        }
-
+        [Obsolete]
         internal static bool TryGetMutableDependencyPropertyField(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
         {
             result = null;

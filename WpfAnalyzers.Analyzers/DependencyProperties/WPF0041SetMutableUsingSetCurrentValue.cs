@@ -84,10 +84,8 @@
                 return;
             }
 
-            var clrProperty = invocation.Ancestors()
-                                        .OfType<PropertyDeclarationSyntax>()
-                                        .FirstOrDefault();
-            if (clrProperty.IsDependencyPropertyAccessor())
+            var clrProperty = context.ContainingProperty();
+            if (ClrProperty.IsDependencyPropertyAccessor(clrProperty, context.SemanticModel, context.CancellationToken))
             {
                 return;
             }
