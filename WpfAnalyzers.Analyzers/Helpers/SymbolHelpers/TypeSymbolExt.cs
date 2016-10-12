@@ -10,24 +10,35 @@
     {
         internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
-            field = null;
+            return type.TryGetSingleMember(name, out field);
+        }
+
+        internal static bool TryGetProperty(this ITypeSymbol type, string name, out IPropertySymbol property)
+        {
+            return type.TryGetSingleMember(name, out property);
+        }
+
+        internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, string name, out TMember member)
+            where TMember : class, ISymbol
+        {
+            member = null;
             if (type == null || string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
-            foreach (var member in type.GetMembers(name))
+            foreach (var symbol in type.GetMembers(name))
             {
-                if (field != null)
+                if (member != null)
                 {
-                    field = null;
+                    member = null;
                     return false;
                 }
 
-                field = member as IFieldSymbol;
+                member = symbol as TMember;
             }
 
-            return field != null;
+            return member != null;
         }
 
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)

@@ -243,7 +243,7 @@ namespace WpfAnalyzers.DependencyProperties
             {
                 if (field.Name.IsParts(property.Name, "Property"))
                 {
-                    if (!DependencyProperty.IsPotentialBackingField(field))
+                    if (!DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
                     {
                         getter = null;
                         setter = null;
@@ -255,7 +255,7 @@ namespace WpfAnalyzers.DependencyProperties
 
                 if (field.Name.IsParts(property.Name, "PropertyKey"))
                 {
-                    if (!DependencyProperty.IsPotentialBackingKeyField(field))
+                    if (!DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(field))
                     {
                         getter = null;
                         setter = null;

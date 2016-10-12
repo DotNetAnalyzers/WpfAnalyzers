@@ -50,36 +50,22 @@
 
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out value) ||
-                DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out value))
+            IFieldSymbol setField;
+            if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) ||
+                DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
                 if (value.IsObject(context.SemanticModel, context.CancellationToken))
                 {
                     return;
                 }
 
-                MemberAccessExpressionSyntax registration;
-                if (property.TryGetDependencyPropertyRegistration(context.SemanticModel, context.CancellationToken, out registration))
+                ITypeSymbol registeredType;
+                if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out registeredType))
                 {
-                    ITypeSymbol registeredType;
-                    if (registration.TryGetRegisteredType(context.SemanticModel, context.CancellationToken, out registeredType))
+                    if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
                     {
-                        if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), invocation.Name(), registeredType));
-                        }
-                    }
-                }
-                else
-                {
-                    var field = context.SemanticModel.GetSymbolInfo(property.Expression, context.CancellationToken).Symbol as IFieldSymbol;
-                    ITypeSymbol registeredType;
-                    if (field.TryGetRegisteredType(out registeredType))
-                    {
-                        if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), invocation.Name(), registeredType));
-                        }
+                        var setCall = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol;
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
                     }
                 }
             }

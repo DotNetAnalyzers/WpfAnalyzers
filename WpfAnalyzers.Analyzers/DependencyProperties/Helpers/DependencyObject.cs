@@ -10,12 +10,19 @@
         internal static bool IsGetValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             ArgumentSyntax _;
-            return TryGetGetValueArgument(invocation, semanticModel, cancellationToken, out _);
+            IFieldSymbol __;
+            return TryGetGetValueArgument(invocation, semanticModel, cancellationToken, out _, out __);
         }
 
-        internal static bool TryGetGetValueArgument(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax result)
+        /// <summary>
+        /// Check if <paramref name="invocation"/> is a call to dependencyObject.GetValue(FooProperty, value)
+        /// </summary>
+        /// <param name="property">The DependencyProperty used as argument</param>
+        /// <param name="field">The field symbol for <paramref name="property"/></param>
+        internal static bool TryGetGetValueArgument(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field)
         {
-            result = null;
+            property = null;
+            field = null;
             if (invocation == null)
             {
                 return false;
@@ -30,20 +37,25 @@
                 return false;
             }
 
-            result = invocation.ArgumentList.Arguments[0];
+            property = invocation.ArgumentList.Arguments[0];
+            field = semanticModel.SemanticModelFor(property.Expression)
+                                 .GetSymbolInfo(property.Expression, cancellationToken)
+                                 .Symbol as IFieldSymbol;
             return true;
         }
 
         internal static bool IsSetValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            ArgumentSyntax _;
-            ArgumentSyntax __;
-            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _, out __);
+            ArgumentListSyntax _;
+            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _);
         }
 
-        internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
+        /// <summary>
+        /// Check if <paramref name="invocation"/> is a call to dependencyObject.SetValue(FooProperty, value)
+        /// </summary>
+        internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax arguments)
         {
-            result = null;
+            arguments = null;
             if (invocation == null)
             {
                 return false;
@@ -58,32 +70,43 @@
                 return false;
             }
 
-            result = invocation.ArgumentList;
+            arguments = invocation.ArgumentList;
             return true;
         }
 
-        internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out ArgumentSyntax value)
+        /// <summary>
+        /// Check if <paramref name="invocation"/> is a call to dependencyObject.SetValue(FooProperty, value)
+        /// </summary>
+        /// <param name="property">The DependencyProperty used as argument</param>
+        /// <param name="field">The field symbol for <paramref name="property"/></param>
+        /// <param name="value">The value argument</param>
+        internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
             ArgumentListSyntax argumentList;
             if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
+                field = semanticModel.SemanticModelFor(property.Expression)
+                   .GetSymbolInfo(property.Expression, cancellationToken).Symbol as IFieldSymbol;
                 return true;
             }
 
             property = null;
             value = null;
+            field = null;
             return false;
         }
 
         internal static bool IsSetSetCurrentValue(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            ArgumentSyntax _;
-            ArgumentSyntax __;
-            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _, out __);
+            ArgumentListSyntax _;
+            return TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out _);
         }
 
+        /// <summary>
+        /// Check if <paramref name="invocation"/> is a call to dependencyObject.SetCurrentValue(FooProperty, value)
+        /// </summary>
         internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
         {
             result = null;
@@ -105,18 +128,28 @@
             return true;
         }
 
-        internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out ArgumentSyntax value)
+        /// <summary>
+        /// Check if <paramref name="invocation"/> is a call to dependencyObject.SetCurrentValue(FooProperty, value)
+        /// </summary>
+        /// <param name="property">The DependencyProperty used as argument</param>
+        /// <param name="field">The field symbol for <paramref name="property"/></param>
+        /// <param name="value">The value argument</param>
+        internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
             ArgumentListSyntax argumentList;
             if (TryGetSetCurrentValueArguments(invocation, semanticModel, cancellationToken, out argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
+                field = semanticModel.SemanticModelFor(property.Expression)
+                                     .GetSymbolInfo(property.Expression, cancellationToken)
+                                     .Symbol as IFieldSymbol;
                 return true;
             }
 
             property = null;
             value = null;
+            field = null;
             return false;
         }
     }

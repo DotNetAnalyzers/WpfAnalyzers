@@ -48,7 +48,7 @@
 
             var field = context.ContainingSymbol as IFieldSymbol;
             if (field == null ||
-                !DependencyProperty.IsPotentialBackingField(field))
+                !DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
             {
                 return;
             }

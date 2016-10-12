@@ -45,7 +45,8 @@
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
             ArgumentSyntax property;
-            if (DependencyObject.TryGetGetValueArgument(invocation, this.semanticModel, this.cancellationToken, out property))
+            IFieldSymbol getField;
+            if (DependencyObject.TryGetGetValueArgument(invocation, this.semanticModel, this.cancellationToken, out property, out getField))
             {
                 if (this.Property != null)
                 {

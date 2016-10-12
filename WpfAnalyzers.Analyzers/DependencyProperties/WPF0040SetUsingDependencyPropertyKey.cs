@@ -47,22 +47,21 @@
             var invocation = context.Node as InvocationExpressionSyntax;
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out value) &&
-                !DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out value))
+            IFieldSymbol setField;
+            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) &&
+                !DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
                 return;
             }
 
-            var field = context.SemanticModel.SemanticModelFor(property.Expression)
-                               .GetSymbolInfo(property.Expression, context.CancellationToken).Symbol as IFieldSymbol;
-            if (field == null || field.Type.Name == Names.DependencyPropertyKey)
+            if (setField == null || setField.Type.Name == Names.DependencyPropertyKey)
             {
                 return;
             }
 
             IFieldSymbol keyField;
             if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                field,
+                setField,
                 context.SemanticModel,
                 context.CancellationToken,
                 out keyField))

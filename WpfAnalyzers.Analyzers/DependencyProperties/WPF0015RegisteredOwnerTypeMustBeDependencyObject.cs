@@ -81,8 +81,8 @@
 
             var field = context.ContainingSymbol as IFieldSymbol;
             if (field == null ||
-                !(DependencyProperty.IsPotentialBackingField(field) ||
-                  DependencyProperty.IsPotentialBackingKeyField(field)))
+                !(DependencyProperty.IsPotentialDependencyPropertyBackingField(field) ||
+                  DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(field)))
             {
                 return;
             }

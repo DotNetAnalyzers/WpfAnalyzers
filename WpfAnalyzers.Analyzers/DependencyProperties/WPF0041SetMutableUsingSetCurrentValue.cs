@@ -79,7 +79,13 @@
 
             ArgumentSyntax property;
             ArgumentSyntax value;
-            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out value))
+            IFieldSymbol setField;
+            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
+            {
+                return;
+            }
+
+            if (setField.Type.Name == Names.DependencyPropertyKey)
             {
                 return;
             }
@@ -98,11 +104,7 @@
                 return;
             }
 
-            var typeInfo = context.SemanticModel.GetTypeInfo(property.Expression, context.CancellationToken);
-            if (typeInfo.Type?.Name == Names.DependencyProperty)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
-            }
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
         }
 
         private static bool IsInObjectInitializer(SyntaxNode node)

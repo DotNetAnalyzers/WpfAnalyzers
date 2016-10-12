@@ -9,7 +9,7 @@
 
     internal static class DependencyProperty
     {
-        internal static bool IsPotentialBackingField(IFieldSymbol field)
+        internal static bool IsPotentialDependencyPropertyBackingField(IFieldSymbol field)
         {
             return field != null &&
                    field.Type.Name == Names.DependencyProperty &&
@@ -17,7 +17,7 @@
                    field.IsStatic;
         }
 
-        internal static bool IsPotentialBackingKeyField(IFieldSymbol field)
+        internal static bool IsPotentialDependencyPropertyKeyBackingField(IFieldSymbol field)
         {
             return field != null &&
                    field.Type.Name == Names.DependencyPropertyKey &&
@@ -47,6 +47,15 @@
                 {
                     return arg.TryGetStringValue(semanticModel, cancellationToken, out result);
                 }
+
+                return false;
+            }
+
+            IPropertySymbol property;
+            if (TryGetPropertyByName(field, out property))
+            {
+                result = property.Name;
+                return true;
             }
 
             return false;
@@ -63,6 +72,15 @@
                 {
                     return arg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
                 }
+
+                return false;
+            }
+
+            IPropertySymbol property;
+            if (TryGetPropertyByName(field, out property))
+            {
+                result = property.Type;
+                return true;
             }
 
             return false;
@@ -165,6 +183,42 @@
             }
 
             return TryGetRegisterInvocation(field, semanticModel, cancellationToken, out result);
+        }
+
+        private static bool TryGetPropertyByName(IFieldSymbol field, out IPropertySymbol property)
+        {
+            property = null;
+
+            if (IsPotentialDependencyPropertyBackingField(field) || IsPotentialDependencyPropertyKeyBackingField(field))
+            {
+                var suffix = IsPotentialDependencyPropertyBackingField(field)
+                                 ? "Property"
+                                 : "PropertyKey";
+
+                foreach (var symbol in field.ContainingType.GetMembers())
+                {
+                    var candidate = symbol as IPropertySymbol;
+                    if (candidate == null)
+                    {
+                        continue;
+                    }
+
+                    if (!field.Name.IsParts(candidate.Name, suffix))
+                    {
+                        continue;
+                    }
+
+                    if (property != null)
+                    {
+                        property = null;
+                        return false;
+                    }
+
+                    property = symbol as IPropertySymbol;
+                }
+            }
+
+            return property != null;
         }
     }
 }
