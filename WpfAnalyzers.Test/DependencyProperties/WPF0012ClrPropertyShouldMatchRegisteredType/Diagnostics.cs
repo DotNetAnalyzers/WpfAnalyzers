@@ -107,7 +107,7 @@ public static class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 12).WithArguments("FooControl.Bar", "int");
+            var expected = this.CSharpDiagnostic().WithLocation(9, 12).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
         }
 

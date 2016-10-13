@@ -61,7 +61,7 @@ namespace WpfAnalyzers.Test
                     }
                     else
                     {
-                        for (int i = 0; i < documents.Length; i++)
+                        for (var i = 0; i < documents.Length; i++)
                         {
                             var document = documents[i];
                             var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace WpfAnalyzers.Test
         {
             var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 
-            Solution solution = new AdhocWorkspace()
+            var solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
@@ -128,7 +128,7 @@ namespace WpfAnalyzers.Test
                 .WithChangedOption(FormattingOptions.TabSize, language, this.TabSize)
                 .WithChangedOption(FormattingOptions.UseTabs, language, this.UseTabs);
 
-            ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
+            var parseOptions = solution.GetProject(projectId).ParseOptions;
             return solution.WithProjectParseOptions(projectId, parseOptions.WithDocumentationMode(DocumentationMode.Diagnose));
         }
 
@@ -184,7 +184,7 @@ namespace WpfAnalyzers.Test
         /// strings.</returns>
         protected Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
         {
-            Project project = this.CreateProjectImpl(sources, language, filenames);
+            var project = this.CreateProjectImpl(sources, language, filenames);
             return this.ApplyCompilationOptions(project);
         }
 
@@ -199,16 +199,16 @@ namespace WpfAnalyzers.Test
         /// strings.</returns>
         protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
         {
-            string fileNamePrefix = DefaultFilePathPrefix;
-            string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
+            var fileNamePrefix = DefaultFilePathPrefix;
+            var fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
             var solution = this.CreateSolution(projectId, language);
 
-            int count = 0;
-            for (int i = 0; i < sources.Length; i++)
+            var count = 0;
+            for (var i = 0; i < sources.Length; i++)
             {
-                string source = sources[i];
+                var source = sources[i];
                 var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
@@ -255,7 +255,7 @@ namespace WpfAnalyzers.Test
             var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
             var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
 
-            Solution solution = project.Solution.WithProjectCompilationOptions(project.Id, modifiedCompilationOptions);
+            var solution = project.Solution.WithProjectCompilationOptions(project.Id, modifiedCompilationOptions);
             return solution.GetProject(project.Id);
         }
 

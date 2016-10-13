@@ -18,8 +18,8 @@ namespace WpfAnalyzers.Test
         [Test]
         public void TestAllTypesAreInternal()
         {
-            StringBuilder publicTypes = new StringBuilder();
-            foreach (Type type in typeof(AnalyzerCategory).Assembly.ExportedTypes)
+            var publicTypes = new StringBuilder();
+            foreach (var type in typeof(AnalyzerCategory).Assembly.ExportedTypes)
             {
                 if (publicTypes.Length > 0)
                 {

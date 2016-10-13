@@ -27,7 +27,7 @@
         }
     }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -67,7 +67,7 @@
         }
     }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -121,7 +121,7 @@ public partial class FooControl : Control
 
 
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -184,7 +184,7 @@ public static class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -228,7 +228,7 @@ public class FooControl : Control
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"

@@ -47,7 +47,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(1)", metadata);
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(16, 30).WithArguments("ValueProperty", typeName);
+            var expected = this.CSharpDiagnostic().WithLocation(16, 30).WithArguments("ValueProperty", typeName);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -77,7 +77,7 @@ public class FooControl : Control
         set { this.SetValue(ValuePropertyKey, value); }
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 30).WithArguments("ValuePropertyKey", "double");
+            var expected = this.CSharpDiagnostic().WithLocation(14, 30).WithArguments("ValuePropertyKey", "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -100,7 +100,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarProperty", "int");
+            var expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarProperty", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -125,7 +125,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarPropertyKey", "int");
+            var expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarPropertyKey", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

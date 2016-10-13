@@ -76,21 +76,21 @@ namespace WpfAnalyzers.Test
 
         public DiagnosticResult WithArguments(params object[] arguments)
         {
-            DiagnosticResult result = this;
+            var result = this;
             result.MessageArguments = arguments;
             return result;
         }
 
         public DiagnosticResult WithMessage(string message)
         {
-            DiagnosticResult result = this;
+            var result = this;
             result.Message = message;
             return result;
         }
 
         public DiagnosticResult WithMessageFormat(LocalizableString messageFormat)
         {
-            DiagnosticResult result = this;
+            var result = this;
             result.MessageFormat = messageFormat;
             return result;
         }
@@ -119,9 +119,9 @@ namespace WpfAnalyzers.Test
 
         public DiagnosticResult WithLineOffset(int offset)
         {
-            DiagnosticResult result = this;
+            var result = this;
             Array.Resize(ref result.spans, result.spans?.Length ?? 0);
-            for (int i = 0; i < result.spans.Length; i++)
+            for (var i = 0; i < result.spans.Length; i++)
             {
                 var newStartLinePosition = new LinePosition(result.spans[i].StartLinePosition.Line + offset, result.spans[i].StartLinePosition.Character);
                 var newEndLinePosition = new LinePosition(result.spans[i].EndLinePosition.Line + offset, result.spans[i].EndLinePosition.Character);

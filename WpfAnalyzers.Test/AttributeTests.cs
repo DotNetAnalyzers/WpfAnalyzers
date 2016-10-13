@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test
         [Test]
         public void TestNoCodeFixAttributeReason()
         {
-            string reason = "Reason";
+            var reason = "Reason";
             var attribute = new NoCodeFixAttribute(reason);
             Assert.AreSame(reason, attribute.Reason);
         }
@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test
         [Test]
         public void TestNoDiagnosticAttributeReason()
         {
-            string reason = "Reason";
+            var reason = "Reason";
             var attribute = new NoDiagnosticAttribute(reason);
             Assert.AreSame(reason, attribute.Reason);
         }

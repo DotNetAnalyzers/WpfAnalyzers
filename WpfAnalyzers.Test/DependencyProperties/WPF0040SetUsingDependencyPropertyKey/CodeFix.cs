@@ -36,7 +36,7 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            int column = 16 + method.Length;
+            var column = 16 + method.Length;
             var expected = this.CSharpDiagnostic().WithLocation(18, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -92,7 +92,7 @@ public static class Foo
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            int column = 18 + method.Length;
+            var column = 18 + method.Length;
             var expected = this.CSharpDiagnostic().WithLocation(16, column).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
