@@ -417,5 +417,70 @@ public class FooControl : Control
 }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [TestCase("textBox.Visibility = Visibility.Hidden;")]
+        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+        public async Task IgnoredWhenCreatedInScope(string setCall)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public static class Foo
+    {
+        public static void MethodName()
+        {
+            var textBox = new TextBox();
+            textBox.Visibility = Visibility.Hidden;
+        }
+    }";
+            testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("textBox.Visibility = Visibility.Hidden;")]
+        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+        public async Task IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public static class Foo
+    {
+        public static void MethodName()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            textBox.Visibility = Visibility.Hidden;
+            textBox.EndInit();
+        }
+    }";
+            testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("textBox.Visibility = Visibility.Hidden;")]
+        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+        public async Task IgnoredWhenCreatedInScopeWithIf(string setCall)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public static class Foo
+{
+    public static void MethodName()
+    {
+        var textBox = new TextBox();
+        if (true)
+        {
+            textBox.Visibility = Visibility.Hidden;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }

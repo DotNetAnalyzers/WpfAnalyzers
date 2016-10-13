@@ -1,6 +1,11 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -56,6 +61,11 @@
             IFieldSymbol field;
             if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out field))
             {
+                if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                {
+                    return;
+                }
+
                 var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
             }
@@ -100,7 +110,49 @@
                 return;
             }
 
+            if (IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+            {
+                return;
+            }
+
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
+        }
+
+        private static bool IsCalleePotentiallyCreatedInScope(MemberAccessExpressionSyntax memberAccess, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (memberAccess == null ||
+                !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) ||
+                memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
+            {
+                return false;
+            }
+
+            var callee = memberAccess.Expression as IdentifierNameSyntax;
+            if (callee == null)
+            {
+                return false;
+            }
+
+            var symbol = semanticModel.GetSymbolInfo(callee, cancellationToken).Symbol;
+            if (symbol.Kind != SymbolKind.Local)
+            {
+                return false;
+            }
+
+            SyntaxReference reference;
+            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out reference))
+            {
+                return false;
+            }
+
+            var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
+            var objectCreation = declarator?.Initializer?.Value as ObjectCreationExpressionSyntax;
+            if (objectCreation == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool IsInObjectInitializer(SyntaxNode node)
