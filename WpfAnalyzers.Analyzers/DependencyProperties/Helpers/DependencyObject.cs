@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers.DependencyProperties
+﻿#pragma warning disable 1573
+namespace WpfAnalyzers.DependencyProperties
 {
     using System.Threading;
 

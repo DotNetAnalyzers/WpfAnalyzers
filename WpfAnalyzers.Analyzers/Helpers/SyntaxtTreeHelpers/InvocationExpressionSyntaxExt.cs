@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -26,7 +25,6 @@
             return true;
         }
 
-        [Obsolete("Use symbols")]
         internal static string Name(this InvocationExpressionSyntax invocation)
         {
             if (invocation == null)
