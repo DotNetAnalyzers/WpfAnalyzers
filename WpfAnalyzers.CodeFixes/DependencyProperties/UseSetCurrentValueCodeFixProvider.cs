@@ -203,6 +203,13 @@
                     return true;
                 }
 
+                var memberBinding = expression as MemberBindingExpressionSyntax;
+                if (memberBinding != null)
+                {
+                    result = memberBinding.WithName(SetCurrentValueIdentifier);
+                    return true;
+                }
+
                 if (expression.IsKind(SyntaxKind.IdentifierName))
                 {
                     result = SetCurrentValueIdentifier;

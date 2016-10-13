@@ -83,7 +83,7 @@ public class FooControl : Control
         [TestCase("Bar = CreateValue();", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateValue());", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateObjectValue());", "SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
-        public async Task ClrPropertyFromOutside(string before, string after)
+        public async Task FromOutside(string before, string after)
         {
             var fooControlCode = @"
 using System.Windows;
@@ -144,6 +144,61 @@ public static class Foo
 }";
             fixedCode = fixedCode.AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
             await this.VerifyCSharpFixAsync(new[] { testCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
+        }
+
+        [TestCase("this.fooControl?.SetValue(FooControl.BarProperty, 1);", 29)]
+        public async Task DependencyPropertyFromOutsideConditional(string setExpression, int column)
+        {
+            var fooCode = @"
+    public class Foo
+    {
+        private readonly FooControl fooControl = new FooControl();
+
+        public void Meh()
+        {
+            this.fooControl.Bar = 1;
+        }
+    }";
+            var fooControlCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void Meh()
+        {
+            this.SetCurrentValue(BarProperty, 1);
+        }
+    }";
+            fooCode = fooCode.AssertReplace(
+                "this.fooControl.Bar = 1;",
+                setExpression);
+            var expected = this.CSharpDiagnostic().WithLocation(8, column).WithArguments("FooControl.BarProperty", "1");
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode }, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+    public class Foo
+    {
+        private readonly FooControl fooControl = new FooControl();
+
+        public void Meh()
+        {
+            this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);
+        }
+    }";
+            await this.VerifyCSharpFixAsync(new[] { fooCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
         }
 
         [Test]
