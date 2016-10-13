@@ -9,6 +9,79 @@ namespace WpfAnalyzers.Test.DependencyProperties.WPF0041SetMutableUsingSetCurren
     internal class HappyPath : HappyPathVerifier<WPF0041SetMutableUsingSetCurrentValue>
     {
         [Test]
+        public async Task DependencyProperty()
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void Meh()
+        {
+            this.SetCurrentValue(BarProperty, 1);
+        }
+    }";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
+        public async Task DependencyPropertyFromOutside(string setExpression)
+        {
+            var fooCode = @"
+    public class Foo
+    {
+        private readonly FooControl fooControl = new FooControl();
+
+        public void Meh()
+        {
+            this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);
+        }
+    }";
+            var fooControlCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void Meh()
+        {
+            this.SetCurrentValue(BarProperty, 1);
+        }
+    }";
+            fooCode = fooCode.AssertReplace(
+                "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);",
+                setExpression);
+            await this.VerifyHappyPathAsync(new []{fooCode, fooControlCode}).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"
