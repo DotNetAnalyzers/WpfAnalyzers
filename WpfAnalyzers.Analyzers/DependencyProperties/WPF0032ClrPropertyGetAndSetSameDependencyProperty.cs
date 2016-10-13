@@ -69,7 +69,11 @@
                     return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), propertyDeclaration.Name()));
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        propertyDeclaration.GetLocation(),
+                        context.ContainingSymbol.Name));
             }
         }
     }
