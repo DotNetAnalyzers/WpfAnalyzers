@@ -248,7 +248,7 @@ namespace WpfAnalyzers.Test
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
-        public static LinePosition GetErrorPosition(string testCode, out string validCode)
+        public static LinePosition GetErrorPosition(ref string testCode)
         {
             Assert.NotNull(testCode);
             int line = 0;
@@ -268,7 +268,7 @@ namespace WpfAnalyzers.Test
             }
 
             Assert.AreNotEqual(-1, column, "Expected to find one error");
-            validCode = testCode.Replace(new string(errorPositionIndicator, 1), "");
+            testCode = testCode.Replace(new string(errorPositionIndicator, 1), "");
             return new LinePosition(line, column);
         }
 

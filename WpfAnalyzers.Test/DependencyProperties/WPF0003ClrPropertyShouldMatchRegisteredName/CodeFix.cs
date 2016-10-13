@@ -20,14 +20,16 @@
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
-        public int Error
+        public int ↓Error
         {
             get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
     }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -60,14 +62,16 @@
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
-        public int Error
+        public int ↓Error
         {
             get { return (int)this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }
         }
     }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"

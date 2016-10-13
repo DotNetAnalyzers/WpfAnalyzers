@@ -32,7 +32,6 @@
 
         internal static bool TryGetLast<TCollection, TItem>(this TCollection source, out TItem result)
             where TCollection : IReadOnlyList<TItem>
-
         {
             if (source.Count == 0)
             {

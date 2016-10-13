@@ -3,7 +3,6 @@
 
 namespace WpfAnalyzers.Test
 {
-    using System;
     using System.Text;
     using NUnit.Framework;
 
