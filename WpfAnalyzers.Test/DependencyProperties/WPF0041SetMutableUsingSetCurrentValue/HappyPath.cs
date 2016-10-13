@@ -242,6 +242,29 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task IgnoredDependencyPropertyInClrPropertyWithAsCast()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(string),
+        typeof(FooControl));
+
+    public string Value
+    {
+        get { return this.GetValue(ValueProperty) as string; }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task IgnoredDependencyPropertyInClrPropertyBoxed()
         {
             var boolBoxesCode = @"
