@@ -45,13 +45,12 @@
                 return;
             }
 
-            if (!fieldDeclaration.IsDependencyPropertyField() &&
-                !fieldDeclaration.IsDependencyPropertyKeyField())
+            var field = (IFieldSymbol)context.ContainingSymbol;
+            if (field?.Type.IsDependencyPropertyOrDependencyPropertyKey() != true)
             {
                 return;
             }
 
-            var field = (IFieldSymbol)context.ContainingSymbol;
             InvocationExpressionSyntax _;
             if (DependencyProperty.TryGetRegisterInvocationRecursive(
                 field,

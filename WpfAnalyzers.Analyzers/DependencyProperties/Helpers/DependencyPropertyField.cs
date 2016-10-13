@@ -7,31 +7,10 @@
 
     internal static class DependencyPropertyField
     {
-        internal static bool IsDependencyPropertyField(this FieldDeclarationSyntax declaration)
-        {
-            MemberAccessExpressionSyntax temp;
-            return declaration.IsDependencyPropertyType() &&
-                   (declaration.TryGetRegisterCall(out temp) ||
-                    declaration.TryGetAddOwnerInvocation(out temp));
-        }
-
-        internal static bool IsDependencyPropertyKeyField(this FieldDeclarationSyntax declaration)
-        {
-            MemberAccessExpressionSyntax temp;
-            return declaration.IsDependencyPropertyKeyType() &&
-                   declaration.TryGetRegisterCall(out temp);
-        }
-
         internal static bool IsDependencyPropertyType(this FieldDeclarationSyntax declaration)
         {
             var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
             return type?.Identifier.ValueText == Names.DependencyProperty;
-        }
-
-        internal static bool IsDependencyPropertyKeyType(this FieldDeclarationSyntax declaration)
-        {
-            var type = declaration?.Declaration?.Type as IdentifierNameSyntax;
-            return type?.Identifier.ValueText == Names.DependencyPropertyKey;
         }
 
         internal static bool TryGetDependencyPropertyKey(this FieldDeclarationSyntax field, out FieldDeclarationSyntax result)
@@ -116,16 +95,6 @@
             }
 
             return false;
-        }
-
-        private static bool TryGetAddOwnerInvocation(this FieldDeclarationSyntax declaration, out MemberAccessExpressionSyntax invocation)
-        {
-            if (!TryGetInitializerCall(declaration, out invocation))
-            {
-                return false;
-            }
-
-            return invocation.IsDependencyPropertyAddOwner();
         }
 
         private static bool TryGetInitializerCall(FieldDeclarationSyntax field, out MemberAccessExpressionSyntax result)
