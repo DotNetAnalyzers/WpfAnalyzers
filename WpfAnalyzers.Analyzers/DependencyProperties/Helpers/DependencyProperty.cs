@@ -169,7 +169,6 @@
 
         internal static bool TryGetRegisterInvocationRecursive(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
-            result = null;
             IFieldSymbol keyField;
             if (TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out keyField))
             {

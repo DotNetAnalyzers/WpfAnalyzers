@@ -51,10 +51,23 @@
                 return;
             }
 
-            var fieldSymbol = (IFieldSymbol)context.ContainingSymbol;
-            if (!fieldSymbol.IsReadOnly || !fieldSymbol.IsStatic)
+            var field = (IFieldSymbol)context.ContainingSymbol;
+            InvocationExpressionSyntax _;
+            if (DependencyProperty.TryGetRegisterInvocationRecursive(
+                field,
+                context.SemanticModel,
+                context.CancellationToken,
+                out _))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), fieldSymbol.Name, fieldSymbol.Type.Name));
+                if (!field.IsReadOnly || !field.IsStatic)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            field.Name,
+                            field.Type.Name));
+                }
             }
         }
     }
