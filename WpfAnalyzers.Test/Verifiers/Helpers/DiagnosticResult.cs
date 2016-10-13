@@ -98,12 +98,13 @@ namespace WpfAnalyzers.Test
         public DiagnosticResult WithLocationIndicated(ref string testCode)
         {
             var pos = DiagnosticVerifier.GetErrorPosition(ref testCode);
-            return this.WithLocation(pos);
+            return this.AppendSpan(pos);
         }
 
-        public DiagnosticResult WithLocation(LinePosition position)
+        public DiagnosticResult WithLocationIndicated(string[] testCode)
         {
-            return this.WithLocation(position.Line, position.Character);
+            var pos = DiagnosticVerifier.GetErrorPosition(testCode);
+            return this.AppendSpan(pos);
         }
 
         public DiagnosticResult WithLocation(int line, int column)
@@ -114,7 +115,6 @@ namespace WpfAnalyzers.Test
         public DiagnosticResult WithLocation(string path, int line, int column)
         {
             var linePosition = new LinePosition(line, column);
-
             return this.AppendSpan(new FileLinePositionSpan(path, linePosition, linePosition));
         }
 

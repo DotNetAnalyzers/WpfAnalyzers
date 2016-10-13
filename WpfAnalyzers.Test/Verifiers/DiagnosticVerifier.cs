@@ -248,28 +248,45 @@ namespace WpfAnalyzers.Test
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
-        public static LinePosition GetErrorPosition(ref string testCode)
+        public static FileLinePositionSpan GetErrorPosition(string[] testCode)
         {
-            Assert.NotNull(testCode);
-            int line = 0;
-            int column = -1;
-            int lineCount = 0;
+            var fileNames = CreateFileNamesFromSources(testCode, "cs");
+            var line = 0;
+            var column = -1;
+            var fileName = "";
+
             const char errorPositionIndicator = '↓';
-            foreach (var codeLine in testCode.Lines())
+            for (var i = 0; i < testCode.Length; i++)
             {
-                lineCount++;
-                var col = codeLine.IndexOf(errorPositionIndicator);
-                if (col >= 0)
+                var source = testCode[i];
+                var lineCount = 0;
+                foreach (var codeLine in source.Lines())
                 {
-                    Assert.AreEqual(-1, column, "Expected to find only one error indicator");
-                    column = col + 1;
-                    line = lineCount;
+                    lineCount++;
+                    var col = codeLine.IndexOf(errorPositionIndicator);
+                    if (col >= 0)
+                    {
+                        Assert.AreEqual(-1, column, "Expected to find only one error indicator");
+                        testCode[i] = testCode[i].Replace(new string(errorPositionIndicator, 1), "");
+                        column = col + 1;
+                        line = lineCount;
+                        fileName = fileNames[i];
+                    }
                 }
             }
 
+
             Assert.AreNotEqual(-1, column, "Expected to find one error");
-            testCode = testCode.Replace(new string(errorPositionIndicator, 1), "");
-            return new LinePosition(line, column);
+            var pos = new LinePosition(line, column);
+            return new FileLinePositionSpan(fileName, pos, pos);
+        }
+
+        public static FileLinePositionSpan GetErrorPosition(ref string testCode)
+        {
+            var sources = new []{testCode};
+            var result = GetErrorPosition(sources);
+            testCode = sources[0];
+            return result;
         }
 
         [Conditional("DEBUG")]
@@ -395,7 +412,6 @@ namespace WpfAnalyzers.Test
         private static void VerifyDiagnosticLocation(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, Location actual, FileLinePositionSpan expected)
         {
             var actualSpan = actual.GetLineSpan();
-
             if (!(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test."))))
             {
                 var message = "Diagnostic not found in expected file.\r\n" +
@@ -406,7 +422,6 @@ namespace WpfAnalyzers.Test
               $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
                 Assert.Fail(message);
             }
-
 
             VerifyLinePosition(analyzers, diagnostic, actualSpan.StartLinePosition, expected.StartLinePosition, "start");
             if (expected.StartLinePosition < expected.EndLinePosition)

@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+#pragma warning disable 169
 namespace WpfAnalyzers.Test
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -14,6 +16,7 @@ namespace WpfAnalyzers.Test
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
+    using NUnit.Framework;
 
     /// <summary>
     /// Class for turning strings into documents and getting the diagnostics on them.
@@ -199,23 +202,60 @@ namespace WpfAnalyzers.Test
         /// strings.</returns>
         protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
         {
-            var fileNamePrefix = DefaultFilePathPrefix;
             var fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
             var solution = this.CreateSolution(projectId, language);
 
-            var count = 0;
+            if (filenames == null)
+            {
+                filenames = CreateFileNamesFromSources(sources, fileExt);
+            }
+
             for (var i = 0; i < sources.Length; i++)
             {
                 var source = sources[i];
-                var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
+                var newFileName = filenames[i];
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
-                count++;
             }
 
             return solution.GetProject(projectId);
+        }
+
+        internal static string[] CreateFileNamesFromSources(string[] sources, string extension)
+        {
+            var filenames = new string[sources.Length];
+            for (var i = 0; i < sources.Length; i++)
+            {
+                var source = sources[i];
+                string name;
+                if (source == string.Empty)
+                {
+                    name = "Test";
+                }
+                else
+                {
+                    var matches = Regex.Matches(source, @"(class|struct|enum) (?<name>\w+)", RegexOptions.ExplicitCapture);
+                    Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
+                    name = matches[0].Groups["name"].Value;
+                }
+
+                var suffixCount = 0;
+                while (true)
+                {
+                    var fileName = $"{name}{new string('_', suffixCount)}.{extension}";
+                    if (filenames.Contains(fileName))
+                    {
+                        suffixCount++;
+                        continue;
+                    }
+
+                    filenames[i] = fileName;
+                    break;
+                }
+            }
+            return filenames;
         }
 
         /// <summary>

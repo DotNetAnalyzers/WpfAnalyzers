@@ -52,7 +52,6 @@
         [Test]
         public async Task DependencyPropertyPartial()
         {
-
             var part1 = @"
 using System.Windows;
 using System.Windows.Controls;
@@ -81,11 +80,11 @@ public partial class FooControl : Control
         new PropertyMetadata(default(int)));
 }";
 
-
+            var sources = new[] { part1, part2 };
             var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref part1)
+                               .WithLocationIndicated(sources)
                                .WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(sources, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -101,7 +100,7 @@ public partial class FooControl
         set { SetValue(BarPropertyKey, value); }
     }
 }";
-            await this.VerifyCSharpFixAsync(new[] { part1, part2 }, new[] { fixedCode, part2 }).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(sources, new[] { fixedCode, part2 }).ConfigureAwait(false);
         }
 
         [Test]
