@@ -1,8 +1,11 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
+    using System;
+    using System.Collections.Concurrent;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class ClrMethod
@@ -19,7 +22,8 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 2 ||
-                !method.Parameters[0].Type.IsAssignableToDependencyObject())
+                !method.Parameters[0].Type.IsAssignableToDependencyObject() ||
+                !method.ReturnsVoid)
             {
                 return false;
             }
@@ -48,15 +52,41 @@
         internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
         {
             setField = null;
-            if (method == null)
+            if (method == null || method.ParameterList.Parameters.Count != 2)
             {
                 return false;
             }
 
-            using (var setWalker = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
             {
-                return setWalker.IsSuccess &&
-                       setWalker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
+                if (!walker.IsSuccess)
+                {
+                    return false;
+                }
+
+                var memberAccess = (walker.SetValue?.Expression ?? walker.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
+                var member = memberAccess?.Expression as IdentifierNameSyntax;
+                if (memberAccess == null ||
+                    member == null ||
+                    !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+                {
+                    return false;
+                }
+
+                if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
+                {
+                    return false;
+                }
+
+                using (var valueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
+                {
+                    if (!valueWalker.UsesValue)
+                    {
+                        return false;
+                    }
+                }
+
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
             }
         }
 
@@ -72,7 +102,8 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 1 ||
-                !method.Parameters[0].Type.IsAssignableToDependencyObject())
+                !method.Parameters[0].Type.IsAssignableToDependencyObject() ||
+                method.ReturnsVoid)
             {
                 return false;
             }
@@ -106,10 +137,73 @@
                 return false;
             }
 
-            using (var setWalker = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
             {
-                return setWalker.IsSuccess &&
-                       setWalker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
+                var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
+                var member = memberAccess?.Expression as IdentifierNameSyntax;
+                if (memberAccess == null ||
+                    member == null ||
+                    !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+                {
+                    return false;
+                }
+
+                if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
+                {
+                    return false;
+                }
+
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
+            }
+        }
+
+        private class ValueWalker : CSharpSyntaxWalker, IDisposable
+        {
+            private static readonly ConcurrentQueue<ValueWalker> Cache = new ConcurrentQueue<ValueWalker>();
+
+            private SyntaxToken value;
+
+            public bool UsesValue { get; private set; }
+
+            public static ValueWalker Create(SyntaxToken value, SyntaxNode expression)
+            {
+                ValueWalker walker;
+                if (!Cache.TryDequeue(out walker))
+                {
+                    walker = new ValueWalker();
+                }
+
+                walker.UsesValue = false;
+                walker.value = value;
+                if (expression != null)
+                {
+                    walker.Visit(expression);
+                }
+
+                return walker;
+            }
+
+            public override void Visit(SyntaxNode node)
+            {
+                if (this.UsesValue)
+                {
+                    return;
+                }
+
+                base.Visit(node);
+            }
+
+            public override void VisitIdentifierName(IdentifierNameSyntax node)
+            {
+                this.UsesValue |= this.value.ValueText == node.Identifier.ValueText;
+                base.VisitIdentifierName(node);
+            }
+
+            public void Dispose()
+            {
+                this.value = default(SyntaxToken);
+                this.UsesValue = false;
+                Cache.Enqueue(this);
             }
         }
     }
