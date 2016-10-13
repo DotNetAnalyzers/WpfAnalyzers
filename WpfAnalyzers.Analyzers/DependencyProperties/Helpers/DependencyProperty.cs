@@ -132,7 +132,9 @@
                     invocationSymbol.Name == Names.AddOwner)
                 {
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                    result = semanticModel.GetSymbolInfo(addOwner.Expression, cancellationToken).Symbol as IFieldSymbol;
+                    result = semanticModel.SemanticModelFor(addOwner.Expression)
+                                          .GetSymbolInfo(addOwner.Expression, cancellationToken)
+                                          .Symbol as IFieldSymbol;
                     return result != null;
                 }
             }

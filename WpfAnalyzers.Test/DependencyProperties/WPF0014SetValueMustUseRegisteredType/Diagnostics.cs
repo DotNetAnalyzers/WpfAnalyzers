@@ -8,7 +8,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class CodeFix : DiagnosticVerifier<WPF0014SetValueMustUseRegisteredType>
+    internal class Diagnostics : DiagnosticVerifier<WPF0014SetValueMustUseRegisteredType>
     {
         [TestCase("SetValue(BarProperty, 1.0)")]
         [TestCase("SetCurrentValue(BarProperty, 1.0)")]
@@ -49,6 +49,127 @@ public class FooControl : Control
                              ? "SetValue"
                              : "SetCurrentValue";
             var expected = this.CSharpDiagnostic().WithLocation(21, col).WithArguments(method, "int");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+        public async Task DependencyPropertyAddOwner(string setValueCall)
+        {
+            var fooCode = @"
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(bool),
+            typeof(Foo),
+            new PropertyMetadata(default(bool)));
+
+        public static void SetBar(FrameworkElement element, bool value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static bool GetBar(FrameworkElement element)
+        {
+            return (bool)element.GetValue(BarProperty);
+        }
+    }";
+
+            var fooControlPart1 = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(
+                true,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                OnVolumeChanged,
+                OnVolumeCoerce));
+
+        public bool Bar
+        {
+            get { return (bool)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        {
+            return basevalue;
+        }
+
+        private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }";
+
+            var fooControlPart2 = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class FooControl
+    {
+        public FooControl()
+        {
+            this.SetValue(BarProperty, 1);
+        }
+    }";
+            fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+            var col = Regex.Match(fooControlPart2.Line(9), "BarProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
+            var method = setValueCall.Contains("SetValue")
+                             ? "SetValue"
+                             : "SetCurrentValue";
+            var expected = this.CSharpDiagnostic().WithLocation("FooControl2.cs", 9, col).WithArguments(method, "bool");
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }, expected, CancellationToken.None, new[] { "Foo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
+        }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task DependencyPropertyAddOwnerMediaElementVolume(string methodName)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class MediaElementWrapper : Control
+    {
+        public static readonly DependencyProperty VolumeProperty = MediaElement.VolumeProperty.AddOwner(
+            typeof(MediaElementWrapper),
+            new FrameworkPropertyMetadata(
+                MediaElement.VolumeProperty.DefaultMetadata.DefaultValue,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                OnVolumeChanged,
+                OnVolumeCoerce));
+
+        public MediaElementWrapper()
+        {
+            this.SetValue(VolumeProperty, 1);
+        }
+
+        public double Volume
+        {
+            get { return (double)this.GetValue(VolumeProperty); }
+            set { this.SetValue(VolumeProperty, value); }
+        }
+
+        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        {
+            return basevalue;
+        }
+
+        private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }";
+            testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, 1);", $"this.{methodName}(VolumeProperty, 1);");
+            var expected = this.CSharpDiagnostic().WithLocation(17, 35 + methodName.Length).WithArguments(methodName, "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -118,7 +239,7 @@ public static class Foo
         element.SetValue(BarProperty, 1.0);
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(26,39).WithArguments("SetValue", "int");
+            var expected = this.CSharpDiagnostic().WithLocation(26, 39).WithArguments("SetValue", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

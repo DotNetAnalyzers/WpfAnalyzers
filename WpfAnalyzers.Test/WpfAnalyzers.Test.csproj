@@ -60,7 +60,7 @@
     <Compile Include="DependencyProperties\WPF0011ContainingTypeShouldBeRegisteredOwner\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyShouldMatchRegisteredType\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType\HappyPath.cs" />
-    <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject\HappyPath.cs" />

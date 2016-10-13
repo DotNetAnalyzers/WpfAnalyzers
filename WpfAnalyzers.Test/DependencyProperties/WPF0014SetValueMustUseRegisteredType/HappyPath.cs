@@ -137,6 +137,121 @@ public class FooControl : Control
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
+        [TestCase("this.SetValue(BarProperty, true);")]
+        [TestCase("this.SetCurrentValue(BarProperty, true);")]
+        public async Task DependencyPropertyAddOwner(string setValueCall)
+        {
+            var fooCode = @"
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(bool),
+            typeof(Foo),
+            new PropertyMetadata(default(bool)));
+
+        public static void SetBar(FrameworkElement element, bool value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static bool GetBar(FrameworkElement element)
+        {
+            return (bool)element.GetValue(BarProperty);
+        }
+    }";
+
+            var fooControlPart1 = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(
+                true,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                OnVolumeChanged,
+                OnVolumeCoerce));
+
+        public bool Bar
+        {
+            get { return (bool)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        {
+            return basevalue;
+        }
+
+        private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }";
+
+            var fooControlPart2 = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class FooControl
+    {
+        public FooControl()
+        {
+            this.SetValue(BarProperty, false);
+        }
+    }";
+            fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
+            await this.VerifyHappyPathAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(VolumeProperty, 1.0);")]
+        [TestCase("this.SetCurrentValue(VolumeProperty, 1.0);")]
+        public async Task DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class MediaElementWrapper : Control
+    {
+        public static readonly DependencyProperty VolumeProperty = MediaElement.VolumeProperty.AddOwner(
+            typeof(MediaElementWrapper),
+            new FrameworkPropertyMetadata(
+                MediaElement.VolumeProperty.DefaultMetadata.DefaultValue,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                OnVolumeChanged,
+                OnVolumeCoerce));
+
+        public MediaElementWrapper()
+        {
+            this.SetValue(VolumeProperty, 2.0);
+        }
+
+        public double Volume
+        {
+            get { return (double)this.GetValue(VolumeProperty); }
+            set { this.SetValue(VolumeProperty, value); }
+        }
+
+        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        {
+            return basevalue;
+        }
+
+        private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }";
+            testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, 2.0);", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
         [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
         [TestCase("textBox.SetCurrentValue(TextBox.TextProperty, \"abc\");")]
         public async Task TextBoxText(string setValueCall)
