@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
+    <Compile Include="DependencyProperties\HappyPathWithAll.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyShouldMatchRegisteredName\HappyPath.cs" />

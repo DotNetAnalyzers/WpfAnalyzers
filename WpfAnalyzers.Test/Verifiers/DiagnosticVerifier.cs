@@ -85,7 +85,7 @@ namespace WpfAnalyzers.Test
         }
 
         [Test]
-        public void IdMatches()
+        public virtual void IdMatches()
         {
             foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
             {
