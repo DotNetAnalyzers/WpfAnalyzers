@@ -95,6 +95,17 @@ namespace WpfAnalyzers.Test
             return result;
         }
 
+        public DiagnosticResult WithLocationIndicated(string testCode, out string validCode)
+        {
+            var pos = DiagnosticVerifier.GetErrorPosition(testCode, out validCode);
+            return this.WithLocation(pos);
+        }
+
+        public DiagnosticResult WithLocation(LinePosition position)
+        {
+            return this.WithLocation(position.Line, position.Character);
+        }
+
         public DiagnosticResult WithLocation(int line, int column)
         {
             return this.WithLocation(DefaultPath, line, column);

@@ -248,6 +248,30 @@ namespace WpfAnalyzers.Test
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
+        public static LinePosition GetErrorPosition(string testCode, out string validCode)
+        {
+            Assert.NotNull(testCode);
+            int line = 0;
+            int column = -1;
+            int lineCount = 0;
+            const char errorPositionIndicator = '↓';
+            foreach (var codeLine in testCode.Lines())
+            {
+                lineCount++;
+                var col = codeLine.IndexOf(errorPositionIndicator);
+                if (col >= 0)
+                {
+                    Assert.AreEqual(-1, column, "Expected to find only one error indicator");
+                    column = col + 1;
+                    line = lineCount;
+                }
+            }
+
+            Assert.AreNotEqual(-1, column, "Expected to find one error");
+            validCode = testCode.Replace(new string(errorPositionIndicator, 1), "");
+            return new LinePosition(line, column);
+        }
+
         [Conditional("DEBUG")]
         // ReSharper disable once UnusedMember.Local
         private static void DumpIfDebug(string text)

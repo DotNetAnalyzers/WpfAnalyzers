@@ -17,7 +17,7 @@
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty Error = DependencyProperty.Register(
+        public static readonly DependencyProperty ↓Error = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -26,9 +26,8 @@
             set { SetValue(Error, value); }
         }
     }";
-
             var expected = this.CSharpDiagnostic()
-                               .WithLocation(7, 51)
+                               .WithLocationIndicated(testCode, out testCode)
                                .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
