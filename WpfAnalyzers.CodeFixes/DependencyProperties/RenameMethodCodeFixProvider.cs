@@ -36,6 +36,11 @@
                 var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                   .FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
+                if (methodDeclaration == null || methodDeclaration.IsMissing)
+                {
+                    continue;
+                }
+
                 IFieldSymbol backingField;
                 if (ClrMethod.IsAttachedSetMethod(
                     methodDeclaration,

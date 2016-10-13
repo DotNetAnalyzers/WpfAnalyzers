@@ -36,6 +36,12 @@
 
                 var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                            .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+
+                if (invocation == null || invocation.IsMissing)
+                {
+                    continue;
+                }
+
                 ArgumentSyntax property;
                 IFieldSymbol setField;
                 ArgumentSyntax value;

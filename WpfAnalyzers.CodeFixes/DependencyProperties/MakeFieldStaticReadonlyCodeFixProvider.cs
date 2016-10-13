@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -16,31 +17,38 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                          .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (string.IsNullOrEmpty(token.ValueText))
+                {
+                    continue;
+                }
+
+                var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                     .FirstAncestorOrSelf<FieldDeclarationSyntax>();
+                if (fieldDeclaration == null || fieldDeclaration.IsMissing)
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         "Make static readonly",
-                        _ => ApplyFixAsync(context, diagnostic),
+                        cancellationToken => ApplyFixAsync(cancellationToken, context, fieldDeclaration),
                         nameof(MakeFieldStaticReadonlyCodeFixProvider)),
                     diagnostic);
             }
-
-            return FinishedTasks.Task;
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        private static async Task<Document> ApplyFixAsync(CancellationToken cancellationToken, CodeFixContext context, FieldDeclarationSyntax fieldDeclaration)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(cancellationToken)
                               .ConfigureAwait(false);
-            var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                             .FirstAncestorOrSelf<FieldDeclarationSyntax>();
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing)
-            {
-                return context.Document;
-            }
 
             var updatedModifiers = fieldDeclaration.Modifiers
                                                    .WithStatic()

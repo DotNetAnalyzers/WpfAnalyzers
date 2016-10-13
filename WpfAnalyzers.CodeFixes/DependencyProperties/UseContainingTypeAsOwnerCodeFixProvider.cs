@@ -36,7 +36,9 @@
 
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                          .FirstAncestorOrSelf<ArgumentSyntax>();
-                if (argument == null || argument.Expression?.IsKind(SyntaxKind.TypeOfExpression) != true)
+                if (argument == null ||
+                    argument.IsMissing ||
+                    argument.Expression?.IsKind(SyntaxKind.TypeOfExpression) != true)
                 {
                     continue;
                 }

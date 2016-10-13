@@ -32,6 +32,12 @@
                     continue;
                 }
 
+                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                if (node == null || node.IsMissing)
+                {
+                    continue;
+                }
+
                 var fix = await GetFixAsync(context, diagnostic).ConfigureAwait(false);
                 if (!fix.IsEmpty)
                 {

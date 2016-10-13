@@ -32,6 +32,11 @@
                 }
 
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                if (node == null || node.IsMissing)
+                {
+                    continue;
+                }
+
                 var property = semanticModel.SemanticModelFor(node)
                                          .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
                 string registeredName;
