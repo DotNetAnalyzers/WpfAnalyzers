@@ -38,6 +38,43 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task ReadOnlyDependencyPropertyRepro()
+        {
+            var statusCode = @"
+    public enum Status
+    {
+        Idle,
+        Updating
+    }";
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        internal static readonly DependencyPropertyKey StatusPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Status"",
+            typeof(Status),
+            typeof(FooControl),
+            new PropertyMetadata(Status.Idle, OnStatusChanged));
+
+        internal static readonly DependencyProperty StatusProperty = StatusPropertyKey.DependencyProperty;
+
+        internal Status Status
+        {
+            get { return (Status)this.GetValue(StatusProperty); }
+            set { this.SetValue(StatusProperty, value); }
+        }
+
+        private static void OnStatusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }";
+            await this.VerifyHappyPathAsync(new[] { statusCode, testCode }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadOnlyAttachedProperty()
         {
             var testCode = @"
