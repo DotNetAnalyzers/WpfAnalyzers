@@ -103,7 +103,7 @@ public partial class FooControl
 {
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    public int Error
+    public int ↓Error
     {
         get { return (int)GetValue(BarProperty); }
         set { SetValue(BarPropertyKey, value); }
@@ -123,9 +123,9 @@ public partial class FooControl : Control
         new PropertyMetadata(default(int)));
 }";
 
-
-
-            var expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref part1)
+                               .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -157,7 +157,7 @@ public class FooControl : Control
 {
     public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
-    public int Error
+    public int ↓Error
     {
         get { return (int) this.GetValue(BarProperty); }
         set { this.SetValue(BarProperty, value); }
@@ -188,7 +188,9 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref part1)
+                               .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -225,14 +227,16 @@ public class FooControl : Control
 
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    public int Error
+    public int ↓Error
     {
         get { return (int)this.GetValue(BarProperty); }
         protected set { this.SetValue(BarPropertyKey, value); }
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"

@@ -6,15 +6,15 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class CodeFix : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
+    internal class Diagnostics : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
     {
-        [TestCase("int", "new PropertyMetadata(default(double))")]
-        [TestCase("int", "new PropertyMetadata(0.0)")]
-        [TestCase("double", "new PropertyMetadata(1)")]
+        [TestCase("int", "new PropertyMetadata(↓default(double))")]
+        [TestCase("int", "new PropertyMetadata(↓0.0)")]
+        [TestCase("double", "new PropertyMetadata(↓1)")]
         //[TestCase("double", "new PropertyMetadata(null)")]
-        [TestCase("double?", "new PropertyMetadata(1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<double>())")]
+        [TestCase("double?", "new PropertyMetadata(↓1)")]
+        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
+        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<double>())")]
         public async Task DependencyProperty(string typeName, string metadata)
         {
             var testCode = @"
@@ -32,7 +32,7 @@ public class FooControl : Control
         nameof(Value),
         typeof(double),
         typeof(FooControl),
-        new PropertyMetadata(1));
+        new PropertyMetadata(↓1));
 
     public double Value
     {
@@ -46,8 +46,8 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.AssertReplace("double", typeName)
-                               .AssertReplace("new PropertyMetadata(1)", metadata);
-            var expected = this.CSharpDiagnostic().WithLocation(16, 30).WithArguments("ValueProperty", typeName);
+                               .AssertReplace("new PropertyMetadata(↓1)", metadata);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", typeName);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -67,7 +67,7 @@ public class FooControl : Control
         nameof(Value),
         typeof(double),
         typeof(FooControl),
-        new PropertyMetadata(""1.0""));
+        new PropertyMetadata(↓""1.0""));
 
     public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -77,7 +77,7 @@ public class FooControl : Control
         set { this.SetValue(ValuePropertyKey, value); }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(14, 30).WithArguments("ValuePropertyKey", "double");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValuePropertyKey", "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -93,14 +93,14 @@ public static class Foo
         ""Bar"",
         typeof(int),
         typeof(Foo),
-        new PropertyMetadata(1.0));
+        new PropertyMetadata(↓1.0));
 
     public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarProperty", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -116,7 +116,7 @@ public static class Foo
         ""Bar"",
         typeof(int),
         typeof(Foo),
-        new PropertyMetadata(default(double)));
+        new PropertyMetadata(↓default(double)));
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -125,7 +125,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("BarPropertyKey", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

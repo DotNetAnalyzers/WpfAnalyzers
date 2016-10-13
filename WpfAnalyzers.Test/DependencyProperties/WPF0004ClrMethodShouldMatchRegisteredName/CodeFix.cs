@@ -27,13 +27,13 @@ public static class Foo
         element.SetValue(BarProperty, value);
     }
 
-    public static int GetError(this FrameworkElement element)
+    public static int ↓GetError(this FrameworkElement element)
     {
         return (int)element.GetValue(BarProperty);
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(17, 23).WithArguments("GetError", "GetBar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("GetError", "GetBar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -76,10 +76,10 @@ public static class Foo
 
     public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
-    public static int GetError(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    public static int ↓GetError(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("GetError", "GetBar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("GetError", "GetBar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -114,7 +114,7 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static void SetError(this FrameworkElement element, int value)
+    public static void ↓SetError(this FrameworkElement element, int value)
     {
         element.SetValue(BarProperty, value);
     }
@@ -125,7 +125,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 24).WithArguments("SetError", "SetBar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetError", "SetBar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -166,12 +166,12 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static void SetError(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
+    public static void ↓SetError(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 24).WithArguments("SetError", "SetBar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetError", "SetBar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"

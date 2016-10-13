@@ -30,7 +30,7 @@ public class FooControl : Control
     public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
         nameof(Bar),
         typeof(int),
-        typeof(BarControl),
+        ↓typeof(BarControl),
         new PropertyMetadata(default(int)));
 
     public int Bar
@@ -41,7 +41,7 @@ public class FooControl : Control
 }";
             barControlCode = barControlCode.AssertReplace("class BarControl", $"class {typeName}");
             testCode = testCode.AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
-            var expected = this.CSharpDiagnostic().WithLocation(11, 9).WithArguments("FooControl.BarProperty", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, barControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -107,7 +107,7 @@ using System.Windows.Controls;
 
 public class FooControl : Control
 {
-    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(BarControl));
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(↓typeof(BarControl));
 
     public double Bar
     {
@@ -116,7 +116,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(7, 86).WithArguments("FooControl.BarProperty", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.BarProperty", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooCode, barControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -158,7 +158,7 @@ public class FooControl : Control
     private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
         ""Bar"",
         typeof(int),
-        typeof(BarControl),
+        ↓typeof(BarControl),
         new PropertyMetadata(default(int)));
 
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
@@ -170,7 +170,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(11, 9).WithArguments("FooControl.BarPropertyKey", "FooControl");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.BarPropertyKey", "FooControl");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, barControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -213,7 +213,7 @@ public static class Foo
     public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
         ""Bar"",
         typeof(int),
-        typeof(Bar),
+        ↓typeof(Bar),
         new PropertyMetadata(default(int)));
 
     public static void SetBar(DependencyObject element, int value)
@@ -227,7 +227,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("Foo.BarProperty", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarProperty", "Foo");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, barCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -271,7 +271,7 @@ public static class Foo
     private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
         ""Bar"",
         typeof(int),
-        typeof(Bar),
+        ↓typeof(Bar),
         new PropertyMetadata(default(int)));
 
     public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
@@ -287,7 +287,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("Foo.BarPropertyKey", "Foo");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "Foo");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode, barCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
