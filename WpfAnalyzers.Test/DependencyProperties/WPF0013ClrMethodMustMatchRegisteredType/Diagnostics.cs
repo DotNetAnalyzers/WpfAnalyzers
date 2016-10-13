@@ -6,7 +6,7 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class CodeFix : DiagnosticVerifier<WPF0013ClrMethodMustMatchRegisteredType>
+    internal class Diagnostics : DiagnosticVerifier<WPF0013ClrMethodMustMatchRegisteredType>
     {
         [TestCase("double")]
         [TestCase("int?")]
@@ -27,7 +27,7 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static void SetBar(FrameworkElement element, double value)
+    public static void SetBar(FrameworkElement element, ↓double value)
     {
         element.SetValue(BarProperty, value);
     }
@@ -38,7 +38,7 @@ public static class Foo
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(14, 57).WithArguments("Value type", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -56,7 +56,7 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static void SetBar(this FrameworkElement element, double value)
+    public static void SetBar(this FrameworkElement element, ↓double value)
     {
         element.SetValue(BarProperty, value);
     }
@@ -67,7 +67,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 62).WithArguments("Value type", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -87,12 +87,12 @@ public static class Foo
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    public static void SetBar(this FrameworkElement element, double value) => element.SetValue(BarPropertyKey, value);
+    public static void SetBar(this FrameworkElement element, ↓double value) => element.SetValue(BarPropertyKey, value);
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(14, 62).WithArguments("Value type", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -120,13 +120,13 @@ public static class Foo
         element.SetValue(BarProperty, value);
     }
 
-    public static double GetBar(FrameworkElement element)
+    public static ↓double GetBar(FrameworkElement element)
     {
         return (double)element.GetValue(BarProperty);
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(19, 19).WithArguments("Return type", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Return type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -149,13 +149,13 @@ public static class Foo
         element.SetValue(BarProperty, value);
     }
 
-    public static double GetBar(this FrameworkElement element)
+    public static ↓double GetBar(this FrameworkElement element)
     {
         return (double)element.GetValue(BarProperty);
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("Return type", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Return type", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

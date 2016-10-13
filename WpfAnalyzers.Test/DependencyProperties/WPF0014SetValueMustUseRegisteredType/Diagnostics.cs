@@ -10,14 +10,14 @@
 
     internal class Diagnostics : DiagnosticVerifier<WPF0014SetValueMustUseRegisteredType>
     {
-        [TestCase("SetValue(BarProperty, 1.0)")]
-        [TestCase("SetCurrentValue(BarProperty, 1.0)")]
-        [TestCase("this.SetValue(BarProperty, 1.0)")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1.0)")]
-        [TestCase("SetValue(BarProperty, null)")]
-        [TestCase("SetCurrentValue(BarProperty, null)")]
-        [TestCase("SetValue(BarProperty, \"abc\")")]
-        [TestCase("SetCurrentValue(BarProperty, \"abc\")")]
+        [TestCase("SetValue(BarProperty, ↓1.0)")]
+        [TestCase("SetCurrentValue(BarProperty, ↓1.0)")]
+        [TestCase("this.SetValue(BarProperty, ↓1.0)")]
+        [TestCase("this.SetCurrentValue(BarProperty, ↓1.0)")]
+        [TestCase("SetValue(BarProperty, ↓null)")]
+        [TestCase("SetCurrentValue(BarProperty, ↓null)")]
+        [TestCase("SetValue(BarProperty, ↓\"abc\")")]
+        [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
         public async Task DependencyProperty(string setCall)
         {
             var testCode = @"
@@ -40,15 +40,14 @@ public class FooControl : Control
 
     public void Meh()
     {
-        this.SetValue(BarProperty, 1);
+        this.SetValue(BarProperty, ↓1);
     }
 }";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1)", setCall);
-            var col = Regex.Match(testCode.Line(21), "BarProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
             var method = setCall.Contains("SetValue")
                              ? "SetValue"
                              : "SetCurrentValue";
-            var expected = this.CSharpDiagnostic().WithLocation(21, col).WithArguments(method, "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(method, "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -149,7 +148,7 @@ public class FooControl : Control
 
         public MediaElementWrapper()
         {
-            this.SetValue(VolumeProperty, 1);
+            this.SetValue(VolumeProperty, ↓1);
         }
 
         public double Volume
@@ -168,8 +167,8 @@ public class FooControl : Control
             // nop
         }
     }";
-            testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, 1);", $"this.{methodName}(VolumeProperty, 1);");
-            var expected = this.CSharpDiagnostic().WithLocation(17, 35 + methodName.Length).WithArguments(methodName, "double");
+            testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(methodName, "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -200,11 +199,11 @@ public class FooControl : Control
 
     public void Meh()
     {
-        this.SetValue(BarPropertyKey, <value>);
+        this.SetValue(BarPropertyKey, ↓<value>);
     }
 }";
             testCode = testCode.AssertReplace("<value>", value);
-            var expected = this.CSharpDiagnostic().WithLocation(23, 39).WithArguments("SetValue", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -236,10 +235,10 @@ public static class Foo
 
     public static void Meh(FrameworkElement element)
     {
-        element.SetValue(BarProperty, 1.0);
+        element.SetValue(BarProperty, ↓1.0);
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(26, 39).WithArguments("SetValue", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -256,12 +255,11 @@ public static class Foo
     public static void Bar()
     {
         var textBox = new TextBox();
-        textBox.SetValue(TextBox.TextProperty, 1);
+        textBox.SetValue(TextBox.TextProperty, ↓1);
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            var col = Regex.Match(testCode.Line(10), "TextBox.TextProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
-            var expected = this.CSharpDiagnostic().WithLocation(10, col).WithArguments(setMethod, "string");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "string");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -278,12 +276,11 @@ public static class Foo
     public static void Bar()
     {
         var textBox = new TextBox();
-        textBox.SetValue(TextElement.FontSizeProperty, 1);
+        textBox.SetValue(TextElement.FontSizeProperty, ↓1);
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            var col = Regex.Match(testCode.Line(10), "TextElement.FontSizeProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
-            var expected = this.CSharpDiagnostic().WithLocation(10, col).WithArguments(setMethod, "double");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -313,14 +310,13 @@ public class FooControl : Control
     {
         this.Loaded += (sender, args) =>
         {
-            this.SetCurrentValue(BarProperty, 1.0);
+            this.SetCurrentValue(BarProperty, ↓1.0);
         };
     }
 }";
 
             testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
-            var col = Regex.Match(testCode.Line(23), $"            this\\.{setMethod}\\(BarProperty, +(?<value>[^ )]+)\\);", RegexOptions.ExplicitCapture).Groups["value"].Index + 1;
-            var expected = this.CSharpDiagnostic().WithLocation(23, col).WithArguments(setMethod, "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

@@ -70,7 +70,7 @@
     <Compile Include="DependencyProperties\WPF0030BackingFieldShouldBeStaticReadonly\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyShouldMatchRegisteredName\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\CodeFix.cs" />
-    <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0012ClrPropertyShouldMatchRegisteredType\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrder\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0032ClrPropertyGetAndSetSameDependencyProperty\HappyPath.cs" />

@@ -43,7 +43,7 @@ internal static class BooleanBoxes
 }";
 
             var fooCode = @"
-     using System.Windows;
+    using System.Windows;
     using System.Windows.Controls;
 
     public static class Foo

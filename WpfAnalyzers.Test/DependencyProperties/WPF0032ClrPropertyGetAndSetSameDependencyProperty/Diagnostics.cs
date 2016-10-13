@@ -30,13 +30,13 @@ public class FooControl : Control
         typeof(FooControl),
         new PropertyMetadata(default(int)));
 
-    public int Bar
+    ↓public int Bar
     {
         get { return (int)this.GetValue(BarProperty); }
         set { this.SetValue(OtherProperty, value); }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(19, 5).WithArguments("Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

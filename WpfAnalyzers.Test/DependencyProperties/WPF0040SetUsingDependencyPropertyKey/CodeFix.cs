@@ -32,12 +32,11 @@ public class FooControl : Control
     public int Bar
     {
         get { return (int)GetValue(BarProperty); }
-        set { SetValue(BarProperty, value); }
+        set { SetValue(↓BarProperty, value); }
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            var column = 16 + method.Length;
-            var expected = this.CSharpDiagnostic().WithLocation(18, column).WithArguments("BarProperty", "BarPropertyKey");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -83,7 +82,7 @@ public static class Foo
 
     public static void SetBar(DependencyObject element, int value)
     {
-        element.SetValue(BarProperty, value);
+        element.SetValue(↓BarProperty, value);
     }
 
     public static int GetBar(DependencyObject element)
@@ -92,8 +91,7 @@ public static class Foo
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            var column = 18 + method.Length;
-            var expected = this.CSharpDiagnostic().WithLocation(16, column).WithArguments("BarProperty", "BarPropertyKey");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"

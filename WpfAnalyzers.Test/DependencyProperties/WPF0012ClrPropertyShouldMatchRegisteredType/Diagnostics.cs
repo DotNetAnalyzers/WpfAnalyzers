@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0012ClrPropertyShouldMatchRegisteredType
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0012ClrPropertyShouldMatchRegisteredType
 {
     using System.Threading.Tasks;
 
@@ -28,14 +28,14 @@ public class FooControl : Control
         typeof(FooControl),
         new PropertyMetadata(default(int)));
 
-    public double Bar
+    public ↓double Bar
     {
         get { return (double)GetValue(BarProperty); }
         set { SetValue(BarProperty, value); }
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(15, 12).WithArguments("FooControl.Bar", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -54,14 +54,14 @@ public class FooControl : Control
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public double Bar
+        public ↓double Bar
         {
             get { return (double)this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }
         }
     }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 16).WithArguments("FooControl.Bar", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -76,7 +76,7 @@ public class FooControl : Control
 {
     public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
-    public double Bar
+    public ↓double Bar
     {
         get { return (double) this.GetValue(BarProperty); }
         set { this.SetValue(BarProperty, value); }
@@ -107,7 +107,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(9, 12).WithArguments("FooControl.Bar", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref part1).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
         }
 
@@ -128,14 +128,14 @@ public static class Foo
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-        public double Bar
+        public ↓double Bar
         {
             get { return (double)this.GetValue(BarProperty); }
             protected set { this.SetValue(BarPropertyKey, value); }
         }
     }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(15, 16).WithArguments("FooControl.Bar", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.Bar", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

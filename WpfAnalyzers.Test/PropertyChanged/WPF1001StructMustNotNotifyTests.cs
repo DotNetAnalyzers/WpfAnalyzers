@@ -29,12 +29,12 @@ public struct Foo
             var testCode = @"
 using System.ComponentModel;
 
-public struct Foo : INotifyPropertyChanged
+public struct Foo : ↓INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Foo");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

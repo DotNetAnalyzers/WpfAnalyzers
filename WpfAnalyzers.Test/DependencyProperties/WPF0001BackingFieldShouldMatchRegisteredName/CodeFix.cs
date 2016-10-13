@@ -183,7 +183,7 @@ public class FooControl : Control
         typeof(FooControl),
         new PropertyMetadata(default(int)));
 
-    public static readonly DependencyProperty ErrorProperty = BarPropertyKey.DependencyProperty;
+    public static readonly DependencyProperty ↓ErrorProperty = BarPropertyKey.DependencyProperty;
 
     public int Bar
     {
@@ -192,7 +192,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 47).WithArguments("ErrorProperty", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ErrorProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -226,7 +226,7 @@ using System.Windows;
 
 public static class Foo
 {
-    public static readonly DependencyProperty Error = DependencyProperty.RegisterAttached(
+    public static readonly DependencyProperty ↓Error = DependencyProperty.RegisterAttached(
         ""Bar"",
         typeof(int),
         typeof(Foo),
@@ -243,7 +243,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(6, 47).WithArguments("Error", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Error", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"

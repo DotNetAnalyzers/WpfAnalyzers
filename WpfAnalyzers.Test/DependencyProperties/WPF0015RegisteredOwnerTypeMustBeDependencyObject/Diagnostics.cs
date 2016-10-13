@@ -19,7 +19,7 @@ public static class Foo
     public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
         ""Bar"",
         typeof(int),
-        typeof(Foo),
+        ↓typeof(Foo),
         new PropertyMetadata(default(int)));
 
     public static void SetBar(FrameworkElement element, int value)
@@ -37,10 +37,9 @@ public static class Foo
         element.SetValue(BarProperty, 1.0);
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(11, 9).WithArguments("RegisterAttached");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
-
 
         [Test]
         public async Task DependencyPropertyAddOwner()
@@ -51,7 +50,7 @@ using System.Windows.Controls;
 
 public class FooControl
 {
-    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+    public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(↓typeof(FooControl));
 
 }";
 
@@ -79,10 +78,9 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(7, 86).WithArguments("RegisterAttached");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref part1).WithArguments("RegisterAttached");
             await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
         }
-
 
         [Test]
         public async Task ReadOnlyAttachedProperty()
@@ -92,17 +90,17 @@ using System.Windows;
 
 public static class Foo
 {
-    private static readonly DependencyPropertyKey ErrorKey = DependencyProperty.RegisterReadOnly(
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
         ""Bar"",
         typeof(int),
-        typeof(Foo),
+        ↓typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static readonly DependencyProperty BarProperty = ErrorKey.DependencyProperty;
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
     public static void SetBar(DependencyObject element, int value)
     {
-        element.SetValue(ErrorKey, value);
+        element.SetValue(BarPropertyKey, value);
     }
 
     public static int GetBar(DependencyObject element)
@@ -111,7 +109,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("RegisterAttached");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

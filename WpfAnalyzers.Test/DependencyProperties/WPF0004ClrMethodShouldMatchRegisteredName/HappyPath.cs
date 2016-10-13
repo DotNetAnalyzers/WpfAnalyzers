@@ -8,8 +8,9 @@
 
     internal class HappyPath : HappyPathVerifier<WPF0004ClrMethodShouldMatchRegisteredName>
     {
-        [Test]
-        public async Task AttachedProperty()
+        [TestCase("public")]
+        [TestCase("private")]
+        public async Task AttachedProperty(string accessModifier)
         {
             var testCode = @"
 using System.Windows;
@@ -32,12 +33,13 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-
+            testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task AttachedPropertyExtensionMethods()
+        [TestCase("public")]
+        [TestCase("private")]
+        public async Task AttachedPropertyExtensionMethods(string accessModifier)
         {
             var testCode = @"
 using System.Windows;
@@ -60,12 +62,13 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-
+            testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task AttachedPropertyExpressionBody()
+        [TestCase("public")]
+        [TestCase("private")]
+        public async Task AttachedPropertyExpressionBody(string accessModifier)
         {
             var testCode = @"
 using System.Windows;
@@ -82,12 +85,13 @@ public static class Foo
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
-
+            testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task ReadOnlyAttachedProperty()
+        [TestCase("public")]
+        [TestCase("private")]
+        public async Task ReadOnlyAttachedProperty(string accessModifier)
         {
             var testCode = @"
 using System.Windows;
@@ -106,7 +110,7 @@ public static class Foo
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
-
+            testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 

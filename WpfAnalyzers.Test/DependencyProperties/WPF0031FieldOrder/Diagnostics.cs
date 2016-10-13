@@ -19,7 +19,7 @@ using System.Windows.Controls;
 public class FooControl : Control
 {
     // referencing field initialize below
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+    ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
     private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
         ""Bar"",
@@ -34,7 +34,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(8, 5).WithArguments("BarPropertyKey", "BarProperty");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "BarProperty");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -46,7 +46,7 @@ using System.Windows;
 
 public static class Foo
 {
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+    ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
     private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
         ""Bar"",
@@ -65,7 +65,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey", "BarProperty");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "BarProperty");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

@@ -22,7 +22,7 @@
 
     public class FooControl : Control
     {
-        public static DependencyProperty BarProperty = DependencyProperty.Register(
+        ↓public static DependencyProperty BarProperty = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -32,7 +32,7 @@
         }
     }";
             testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
-            var expected = this.CSharpDiagnostic().WithLocation(7, 9).WithArguments("BarProperty", "DependencyProperty", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "DependencyProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -86,7 +86,7 @@ public static class Foo
 
 public class FooControl : Control
 {
-    public static DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+    ↓public static DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
     public double Bar
     {
@@ -95,7 +95,7 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
-            var expected = this.CSharpDiagnostic().WithLocation(28, 5).WithArguments("BarProperty");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -146,7 +146,7 @@ using System.Windows.Controls;
 
 public class FooControl : Control
 {
-    private static DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+    ↓private static DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
         ""Bar"",
         typeof(int),
         typeof(FooControl),
@@ -161,7 +161,7 @@ public class FooControl : Control
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(7, 5).WithArguments("BarPropertyKey");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -201,7 +201,7 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+    ↓public static DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
     public static void SetBar(DependencyObject element, int value)
     {
@@ -214,7 +214,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 5).WithArguments("BarProperty", "DependencyProperty", "Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "DependencyProperty", "Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -251,7 +251,7 @@ using System.Windows;
 
 public static class Foo
 {
-    private static DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+    ↓private static DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
         ""Bar"",
         typeof(int),
         typeof(Foo),
@@ -270,7 +270,7 @@ public static class Foo
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("BarPropertyKey");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
