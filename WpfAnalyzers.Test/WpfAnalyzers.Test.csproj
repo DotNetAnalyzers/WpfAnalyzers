@@ -64,6 +64,8 @@
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject\HappyPath.cs" />
+    <Compile Include="DependencyProperties\WPF0016DefaultValueIsSharedReferenceType\Diagnostics.cs" />
+    <Compile Include="DependencyProperties\WPF0016DefaultValueIsSharedReferenceType\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0030BackingFieldShouldBeStaticReadonly\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0031FieldOrder\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\CodeFix.cs" />

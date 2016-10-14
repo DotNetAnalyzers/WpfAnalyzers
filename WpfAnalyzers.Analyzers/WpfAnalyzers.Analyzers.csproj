@@ -51,6 +51,7 @@
     <Compile Include="DependencyProperties\Helpers\DependencyProperty.cs" />
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject.cs" />
+    <Compile Include="DependencyProperties\WPF0016DefaultValueIsSharedReferenceType.cs" />
     <Compile Include="Helpers\EnumerableExt.cs" />
     <Compile Include="Helpers\SemanticModelExt.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
