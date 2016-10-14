@@ -12,7 +12,7 @@
     {
         public const string DiagnosticId = "WPF0050";
         private const string Title = "XmlnsPrefix must map to the same url as XmlnsDefinition.";
-        private const string MessageFormat = "There is no [XmlnsDefinition] mapping to '{0}'";
+        private const string MessageFormat = "There is no [{0}] mapping to '{1}'";
         private const string Description = "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
@@ -25,6 +25,11 @@
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
+
+        private const string XmlnsPrefix = "XmlnsPrefix";
+        private const string XmlnsPrefixAttribute = "System.Windows.Markup.XmlnsPrefixAttribute";
+        private const string XmlnsDefinition= "XmlnsDefinition";
+        private const string XmlnsDefinitionAttribute = "System.Windows.Markup.XmlnsDefinitionAttribute";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
@@ -46,12 +51,19 @@
                 return;
             }
 
-            if (!Attribute.TryGetAttribute(
-                attributeSyntax,
-                "System.Windows.Markup.XmlnsPrefixAttribute",
-                context.SemanticModel,
-                context.CancellationToken,
-                out attributeSyntax))
+            string correspondingType = null;
+            AttributeSyntax attribute;
+            if (Attribute.TryGetAttribute(attributeSyntax, XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out attribute))
+            {
+                correspondingType = XmlnsDefinitionAttribute;
+            }
+
+            if (attribute == null && Attribute.TryGetAttribute(attributeSyntax, XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out attribute))
+            {
+                correspondingType = XmlnsPrefixAttribute;
+            }
+
+            if (correspondingType == null || attribute == null)
             {
                 return;
             }
@@ -70,13 +82,13 @@
 
             foreach (var attributeList in compilation.AttributeLists)
             {
-                foreach (var attribute in attributeList.Attributes)
+                foreach (var candidate in attributeList.Attributes)
                 {
-                    AttributeSyntax xmlnsDefAttribute;
-                    if (Attribute.TryGetAttribute(attribute, "System.Windows.Markup.XmlnsDefinitionAttribute", context.SemanticModel, context.CancellationToken, out xmlnsDefAttribute))
+                    AttributeSyntax correspondingAttribute;
+                    if (Attribute.TryGetAttribute(candidate, correspondingType, context.SemanticModel, context.CancellationToken, out correspondingAttribute))
                     {
                         string mappedNameSpace;
-                        if (Attribute.TryGetArgumentStringValue(xmlnsDefAttribute, 0, context.SemanticModel, context.CancellationToken, out mappedNameSpace))
+                        if (Attribute.TryGetArgumentStringValue(correspondingAttribute, 0, context.SemanticModel, context.CancellationToken, out mappedNameSpace))
                         {
                             if (mappedNameSpace == xmlNamespace)
                             {
@@ -87,7 +99,10 @@
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), xmlNamespace));
+            var attributeName = correspondingType == XmlnsPrefixAttribute
+                                    ? XmlnsPrefix
+                                    : XmlnsDefinition;
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), attributeName, xmlNamespace));
         }
     }
 }
