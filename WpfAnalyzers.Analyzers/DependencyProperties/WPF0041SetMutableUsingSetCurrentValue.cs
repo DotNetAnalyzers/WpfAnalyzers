@@ -22,7 +22,7 @@
                                                                       Title,
                                                                       MessageFormat,
                                                                       AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
+                                                                      DiagnosticSeverity.Warning,
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
