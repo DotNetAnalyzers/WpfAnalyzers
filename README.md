@@ -50,6 +50,10 @@ Roslyn analyzers for WPF.
   <td>Registered owner type must inherit DependencyObject.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md">WPF0016</a></td>
+  <td>Default value is shared reference type.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
   <td>Backing field for a DependencyProperty should be static and readonly.</td>
 </tr>

@@ -412,14 +412,14 @@ namespace WpfAnalyzers.Test
         private static void VerifyDiagnosticLocation(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, Location actual, FileLinePositionSpan expected)
         {
             var actualSpan = actual.GetLineSpan();
-            if (!(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test."))))
+            if (actualSpan.Path != expected.Path)
             {
-                var message = "Diagnostic not found in expected file.\r\n" +
-              $"Expected: \"{expected.Path}\"\r\n" +
-              $"Actual:   \"{actualSpan.Path}\"\r\n" +
-               "\r\n" +
-              $"Diagnostic:\r\n" +
-              $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
+                var message = "Diagnostic not found in expected file.\r\n" + 
+                              $"Expected: \"{expected.Path}\"\r\n" +
+                              $"Actual:   \"{actualSpan.Path}\"\r\n" +
+                               "\r\n" + 
+                               "Diagnostic:\r\n" +
+                              $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
                 Assert.Fail(message);
             }
 
@@ -496,7 +496,7 @@ namespace WpfAnalyzers.Test
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                         builder.AppendFormat(
-                            "{0}({1}, {2}, {3}.{4})",
+                            "{0}@({1}, {2}, {3}.{4})",
                             resultMethodName,
                             linePosition.Line + 1,
                             linePosition.Character + 1,

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0010DefaultValueMustMatchRegisteredType
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0016DefaultValueIsSharedReferenceType
 {
     using System.Threading.Tasks;
 
@@ -6,15 +6,10 @@
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
+    internal class Diagnostics : DiagnosticVerifier<WPF0016DefaultValueIsSharedReferenceType>
     {
-        [TestCase("int", "new PropertyMetadata(↓default(double))")]
-        [TestCase("int", "new PropertyMetadata(↓0.0)")]
-        [TestCase("double", "new PropertyMetadata(↓1)")]
-        //[TestCase("double", "new PropertyMetadata(null)")]
-        [TestCase("double?", "new PropertyMetadata(↓1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<double>())")]
+        [TestCase("ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<int>())")]
+        [TestCase("int[]", "new PropertyMetadata(↓new int[1])")]
         public async Task DependencyProperty(string typeName, string metadata)
         {
             var testCode = @"
@@ -44,7 +39,9 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(↓1)", metadata);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.ValueProperty", typeName);
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Default value for 'FooControl.ValueProperty' is a reference type that will be shared among all instances.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -52,6 +49,8 @@ public class FooControl : Control
         public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -59,15 +58,15 @@ public class FooControl : Control
 {
     private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
         nameof(Value),
-        typeof(double),
+        typeof(ObservableCollection<int>),
         typeof(FooControl),
-        new PropertyMetadata(↓""1.0""));
+        new PropertyMetadata(↓new ObservableCollection<int>()));
 
     public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
-    public double Value
+    public ObservableCollection<int> Value
     {
-        get { return (double)this.GetValue(ValueProperty); }
+        get { return (ObservableCollection<int>)this.GetValue(ValueProperty); }
         set { this.SetValue(ValuePropertyKey, value); }
     }
 }";
@@ -79,19 +78,21 @@ public class FooControl : Control
         public async Task AttachedProperty()
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
 {
     public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
         ""Bar"",
-        typeof(int),
+        typeof(ObservableCollection<int>),
         typeof(Foo),
-        new PropertyMetadata(↓1.0));
+        new PropertyMetadata(↓new ObservableCollection<int>()));
 
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
+    public static void SetBar(this FrameworkElement element, ObservableCollection<int> value) => element.SetValue(BarProperty, value);
 
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    public static ObservableCollection<int> GetBar(this FrameworkElement element) => (ObservableCollection<int>)element.GetValue(BarProperty);
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarProperty", "int");
@@ -102,21 +103,23 @@ public static class Foo
         public async Task ReadOnlyAttachedProperty()
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
 {
     private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
         ""Bar"",
-        typeof(int),
+        typeof(ObservableCollection<int>),
         typeof(Foo),
-        new PropertyMetadata(↓default(double)));
+        new PropertyMetadata(↓new ObservableCollection<int>()));
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
+    public static void SetBar(this FrameworkElement element, ObservableCollection<int> value) => element.SetValue(BarPropertyKey, value);
 
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    public static ObservableCollection<int> GetBar(this FrameworkElement element) => (ObservableCollection<int>)element.GetValue(BarProperty);
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
