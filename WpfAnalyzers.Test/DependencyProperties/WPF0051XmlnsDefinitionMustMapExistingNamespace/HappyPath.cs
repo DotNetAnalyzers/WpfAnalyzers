@@ -1,15 +1,37 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0050XmlnsPrefixMustMatchXmlnsDefinition
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0051XmlnsDefinitionMustMapExistingNamespace
 {
     using System.Threading.Tasks;
+
     using NUnit.Framework;
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class HappyPath : HappyPathVerifier<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>
+    internal class HappyPath : HappyPathVerifier<WPF0051XmlnsDefinitionMustMapExistingNamespace>
     {
         [Test]
         public async Task WhenXmlnsDefinitionMatches()
         {
+            var controlCode = @"namespace Gu.Wpf.Geometry
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+    }
+}";
             var testCode = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -34,15 +56,59 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo(""Gu.Wpf.Geometry.Benchmarks"", AllInternalsVisible = true)]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
-[assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
+            await this.VerifyHappyPathAsync(new[] { testCode, controlCode }, new[] { "AssemblyInfo.cs", "FooControl.cs" }).ConfigureAwait(false);
         }
 
         [Test]
         public async Task WhenTwoXmlnsDefinitions()
         {
+
+            var controlCode1 = @"namespace Gu.Wpf.Geometry
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl1 : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl1),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+    }
+}";
+
+
+            var controlCode2 = @"namespace Gu.Wpf.Geometry.Balloons
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl2 : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl2),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+    }
+}";
+
             var testCode = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -68,10 +134,9 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
-[assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
+[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(new[] { testCode, controlCode1, controlCode2 }, new[] { "AssemblyInfo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
         }
     }
 }

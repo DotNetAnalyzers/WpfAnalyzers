@@ -35,7 +35,7 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo(""Gu.Wpf.Geometry.Benchmarks"", AllInternalsVisible = true)]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: ↓XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
+[assembly: XmlnsPrefix(↓""http://gu.se/Geometry"", ""geometry"")]";
             var expected = this.CSharpDiagnostic()
                                .WithLocationIndicated(ref testCode)
                                .WithMessage("There is no [XmlnsDefinition] mapping to 'http://gu.se/Geometry'");
@@ -70,7 +70,7 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo(""Gu.Wpf.Geometry.Benchmarks"", AllInternalsVisible = true)]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: ↓XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
+[assembly: XmlnsDefinition(↓""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
             var expected = this.CSharpDiagnostic()
                                .WithLocationIndicated(ref testCode)
                                .WithMessage("There is no [XmlnsPrefix] mapping to 'http://gu.se/Geometry'");
@@ -111,10 +111,10 @@ using System.Windows.Markup;
             var assemblyinfo = "AssemblyInfo.cs";
 
             var expected1 = this.CSharpDiagnostic()
-                               .WithLocation(assemblyinfo, 25, 12)
+                               .WithLocation(assemblyinfo, 25, 28)
                                .WithMessage("There is no [XmlnsPrefix] mapping to 'http://gu.se/SomewhereElse'");
             var expected2 = this.CSharpDiagnostic()
-                                .WithLocation(assemblyinfo, 26, 12)
+                                .WithLocation(assemblyinfo, 26, 24)
                                 .WithMessage("There is no [XmlnsDefinition] mapping to 'http://gu.se/Geometry'");
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode }, new[] { expected1, expected2 }, new[] { assemblyinfo }).ConfigureAwait(false);
         }

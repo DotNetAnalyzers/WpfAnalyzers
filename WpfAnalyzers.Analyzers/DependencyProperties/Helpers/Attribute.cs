@@ -30,10 +30,10 @@ namespace WpfAnalyzers.DependencyProperties
             return true;
         }
 
-        internal static bool TryGetArgumentStringValue(AttributeSyntax attribute, int argumentIndex, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetArgumentStringValue(AttributeSyntax attribute, int argumentIndex, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeArgumentSyntax arg, out string result)
         {
+            arg = null;
             result = null;
-            AttributeArgumentSyntax arg = null;
             if (attribute?.ArgumentList?.Arguments.TryGetAtIndex(argumentIndex, out arg) != true)
             {
                 return false;
