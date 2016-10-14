@@ -47,7 +47,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(↓1)", metadata);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", typeName);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.ValueProperty", typeName);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -77,7 +77,7 @@ public class FooControl : Control
         set { this.SetValue(ValuePropertyKey, value); }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValuePropertyKey", "double");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.ValuePropertyKey", "double");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -100,7 +100,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarProperty", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
@@ -125,7 +125,7 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "int");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }

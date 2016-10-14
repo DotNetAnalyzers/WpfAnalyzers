@@ -41,78 +41,44 @@
         private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = context.Node as ObjectCreationExpressionSyntax;
-            var metaDataType = context.SemanticModel.GetTypeInfo(objectCreation).Type;
-            var propertyMetadata = context.Compilation.GetTypeByMetadataName("System.Windows.PropertyMetadata");
-            if (!metaDataType.IsAssignableTo(propertyMetadata) ||
-                objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
+            if (objectCreation == null ||
+                objectCreation.IsMissing)
             {
                 return;
             }
 
-            var constructor = context.SemanticModel.GetSymbolInfo(objectCreation)
-                                      .Symbol as IMethodSymbol;
-            IParameterSymbol parameter;
-            if (constructor == null || !constructor.Parameters.TryGetFirst(out parameter))
+            ArgumentSyntax defaultValueArg;
+            if (!PropertyMetaData.TryGetDefaultValue(
+                    objectCreation,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out defaultValueArg))
             {
                 return;
             }
 
-            if (!parameter.Type.IsObject())
+            var defaultValue = defaultValueArg.Expression;
+            if (context.SemanticModel.SemanticModelFor(defaultValue).GetTypeInfo(defaultValue, context.CancellationToken).Type.IsObject())
             {
                 return;
             }
 
-            if (!propertyMetadata.ContainingNamespace.Equals(metaDataType.ContainingNamespace))
-            {
-                // don't think there is a way to handle custom subclassed.
-                // should not be common
-                return;
-            }
-
-            InvocationExpressionSyntax registerCall;
-            if (!TryGetRegisterCall(objectCreation, out registerCall))
+            IFieldSymbol dp;
+            if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out dp))
             {
                 return;
             }
 
-            var registerSymbol = context.SemanticModel.GetSymbolInfo(registerCall, context.CancellationToken).Symbol;
-            if (registerSymbol == null ||
-                !registerSymbol.Name.StartsWith(Names.Register) ||
-                registerSymbol.ContainingType.Name != Names.DependencyProperty)
+            ITypeSymbol registeredType;
+            if (!DependencyProperty.TryGetRegisteredType(dp, context.SemanticModel, context.CancellationToken, out registeredType))
             {
                 return;
             }
 
-            ITypeSymbol type;
-            if (!registerCall.ArgumentList.Arguments[1].TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out type))
+            if (!registeredType.IsRepresentationConservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
             {
-                return;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), dp, registeredType));
             }
-
-            var defaultValue = objectCreation.ArgumentList.Arguments[0].Expression;
-            if (context.SemanticModel.GetTypeInfo(defaultValue, context.CancellationToken).Type.IsObject())
-            {
-                return;
-            }
-
-            if (!type.IsRepresentationConservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValue.GetLocation(), registerCall.Ancestors().OfType<FieldDeclarationSyntax>().FirstOrDefault()?.Name(), type));
-            }
-        }
-
-        private static bool TryGetRegisterCall(ObjectCreationExpressionSyntax objectCreation, out InvocationExpressionSyntax result)
-        {
-            result = null;
-            var argumentSyntax = objectCreation?.Parent as ArgumentSyntax;
-            var argumentList = argumentSyntax?.Parent as ArgumentListSyntax;
-            if (argumentList == null)
-            {
-                return false;
-            }
-
-            result = argumentList.Parent as InvocationExpressionSyntax;
-            return result != null;
         }
     }
 }
