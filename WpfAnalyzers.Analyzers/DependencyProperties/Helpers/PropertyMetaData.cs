@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class PropertyMetaData
+    internal static class PropertyMetaData
     {
         internal static bool TryGetConstructor(
             ObjectCreationExpressionSyntax objectCreation,
