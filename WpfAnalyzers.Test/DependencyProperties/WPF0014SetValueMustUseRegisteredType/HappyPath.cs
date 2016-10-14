@@ -303,5 +303,36 @@ public class FooControl : Control
 }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task IgnoredPropertyAsParameter(string setValueCall)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void Meh(DependencyProperty property, object value)
+        {
+            this.SetCurrentValue(property, value);
+        }
+    }";
+            testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }

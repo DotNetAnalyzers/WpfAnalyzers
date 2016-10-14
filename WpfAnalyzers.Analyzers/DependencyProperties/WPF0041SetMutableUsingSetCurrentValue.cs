@@ -90,7 +90,7 @@
                 return;
             }
 
-            if (setField.Type.Name == Names.DependencyPropertyKey)
+            if (setField?.Type.Name != Names.DependencyProperty)
             {
                 return;
             }
