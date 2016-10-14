@@ -24,7 +24,7 @@
             Assert.Pass();
         }
 
-        [Explicit("Temporarily ignore")]
+        //[Explicit("Temporarily ignore")]
         [Test]
         public async Task SomewhatRealisticSample()
         {
@@ -110,13 +110,16 @@ internal static class BooleanBoxes
         private static object OnOtherCoerce(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
+#pragma warning disable WPF0041
             d.SetValue(OtherProperty, basevalue);
-            return d.GetValue(OtherProperty);
+#pragma warning restore WPF0041
+            return d.GetValue(BarProperty);
         }
 
         private static void OnOtherChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // nop
+            d.SetCurrentValue(BarProperty, true);
+            d.SetValue(ReadOnlyPropertyKey, true);
         }
     }";
 
@@ -190,19 +193,22 @@ internal static class BooleanBoxes
 
         private static void OnIntValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            d.SetCurrentValue(BarProperty, true);
+            d.SetValue(ReadOnlyValuePropertyKey, ""abc"");
         }
 
         private static object OnIntValueCoerce(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
+#pragma warning disable WPF0041
             d.SetValue(BarProperty, basevalue);
+#pragma warning restore WPF0041
             return d.GetValue(BarProperty);
         }
 
         private static bool OnIntValueValidate(object value)
         {
-            throw new System.NotImplementedException();
+            return true;
         }
     }";
             await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode, booleanBoxesCode }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
