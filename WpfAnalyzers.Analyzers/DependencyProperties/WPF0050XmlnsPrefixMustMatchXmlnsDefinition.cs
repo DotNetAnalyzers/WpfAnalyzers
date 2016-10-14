@@ -11,6 +11,10 @@
     internal class WPF0050XmlnsPrefixMustMatchXmlnsDefinition : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0050";
+        private const string XmlnsPrefix = "XmlnsPrefix";
+        private const string XmlnsPrefixAttribute = "System.Windows.Markup.XmlnsPrefixAttribute";
+        private const string XmlnsDefinition = "XmlnsDefinition";
+        private const string XmlnsDefinitionAttribute = "System.Windows.Markup.XmlnsDefinitionAttribute";
         private const string Title = "XmlnsPrefix must map to the same url as XmlnsDefinition.";
         private const string MessageFormat = "There is no [{0}] mapping to '{1}'";
         private const string Description = "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.";
@@ -25,11 +29,6 @@
                                                                       AnalyzerConstants.EnabledByDefault,
                                                                       Description,
                                                                       HelpLink);
-
-        private const string XmlnsPrefix = "XmlnsPrefix";
-        private const string XmlnsPrefixAttribute = "System.Windows.Markup.XmlnsPrefixAttribute";
-        private const string XmlnsDefinition= "XmlnsDefinition";
-        private const string XmlnsDefinitionAttribute = "System.Windows.Markup.XmlnsDefinitionAttribute";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
@@ -80,21 +79,14 @@
                 return;
             }
 
-            foreach (var attributeList in compilation.AttributeLists)
+            foreach (var corresponding in Attribute.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
             {
-                foreach (var candidate in attributeList.Attributes)
+                string mappedNameSpace;
+                if (Attribute.TryGetArgumentStringValue(corresponding, 0, context.SemanticModel, context.CancellationToken, out mappedNameSpace))
                 {
-                    AttributeSyntax correspondingAttribute;
-                    if (Attribute.TryGetAttribute(candidate, correspondingType, context.SemanticModel, context.CancellationToken, out correspondingAttribute))
+                    if (mappedNameSpace == xmlNamespace)
                     {
-                        string mappedNameSpace;
-                        if (Attribute.TryGetArgumentStringValue(correspondingAttribute, 0, context.SemanticModel, context.CancellationToken, out mappedNameSpace))
-                        {
-                            if (mappedNameSpace == xmlNamespace)
-                            {
-                                return;
-                            }
-                        }
+                        return;
                     }
                 }
             }

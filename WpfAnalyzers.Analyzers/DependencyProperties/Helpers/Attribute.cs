@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.DependencyProperties
 {
+    using System.Collections.Generic;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -29,7 +30,7 @@ namespace WpfAnalyzers.DependencyProperties
             return true;
         }
 
-        public static bool TryGetArgumentStringValue(AttributeSyntax attribute, int argumentIndex, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetArgumentStringValue(AttributeSyntax attribute, int argumentIndex, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
             AttributeArgumentSyntax arg = null;
@@ -51,6 +52,21 @@ namespace WpfAnalyzers.DependencyProperties
 
             result = (string)constantValue.Value;
             return true;
+        }
+
+        internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, string typeName, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            foreach (var attributeList in assemblyInfo.AttributeLists)
+            {
+                foreach (var candidate in attributeList.Attributes)
+                {
+                    AttributeSyntax attribute;
+                    if (TryGetAttribute(candidate, typeName, semanticModel, cancellationToken, out attribute))
+                    {
+                        yield return attribute;
+                    }
+                }
+            }
         }
     }
 }
