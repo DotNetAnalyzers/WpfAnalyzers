@@ -4,6 +4,24 @@
 
     internal static class EnumerableExt
     {
+        internal static bool TryGetAtIndex<TCollection, TItem>(this TCollection source, int index, out TItem result)
+            where TCollection : IReadOnlyList<TItem>
+        {
+            result = default(TItem);
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (source.Count <= index)
+            {
+                return false;
+            }
+
+            result = source[index];
+            return true;
+        }
+
         internal static bool TryGetSingle<TCollection, TItem>(this TCollection source, out TItem result)
             where TCollection : IReadOnlyList<TItem>
         {

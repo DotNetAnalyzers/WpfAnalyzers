@@ -11,18 +11,7 @@
             out ArgumentSyntax result)
         {
             result = null;
-            if (invocation?.ArgumentList?.Arguments == null)
-            {
-                return false;
-            }
-
-            if (invocation.ArgumentList.Arguments.Count <= index)
-            {
-                return false;
-            }
-
-            result = invocation.ArgumentList.Arguments[index];
-            return true;
+            return invocation?.ArgumentList?.Arguments.TryGetAtIndex(index, out result) == true;
         }
 
         internal static string Name(this InvocationExpressionSyntax invocation)

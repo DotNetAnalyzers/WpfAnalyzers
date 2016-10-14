@@ -21,8 +21,7 @@
                 return false;
             }
 
-            var propertyMetadataType = semanticModel.Compilation.GetTypeByMetadataName(
-                                                        "System.Windows.PropertyMetadata");
+            var propertyMetadataType = semanticModel.Compilation.GetTypeByMetadataName("System.Windows.PropertyMetadata");
             if (propertyMetadataType == null ||
                 !createdType.IsAssignableTo(propertyMetadataType) ||
                 objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
