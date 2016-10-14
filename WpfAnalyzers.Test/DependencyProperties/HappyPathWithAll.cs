@@ -126,6 +126,7 @@ internal static class BooleanBoxes
             var fooControlCode = @"
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     public class FooControl : FrameworkElement
     {
@@ -155,6 +156,12 @@ internal static class BooleanBoxes
 
         public static readonly DependencyProperty ReadOnlyValueProperty = ReadOnlyValuePropertyKey.DependencyProperty;
 
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl),
+            new PropertyMetadata(default(Brush)));
+
         public double DoubleValue
         {
             get { return (double)this.GetValue(DoubleValueProperty); }
@@ -183,6 +190,20 @@ internal static class BooleanBoxes
             {
                 this.SetValue(ReadOnlyValuePropertyKey, value);
             }
+        }
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+
+        public void UpdateBrush(Brush brush)
+        {
+            this.SetCurrentValue(BrushProperty, brush?.GetAsFrozen());
+#pragma warning disable WPF0041
+            this.SetValue(BrushProperty, brush?.GetAsFrozen());
+#pragma warning restore WPF0041
         }
 
         public void Meh(DependencyProperty property, object value)
