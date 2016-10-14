@@ -78,6 +78,10 @@ Roslyn analyzers for WPF.
   <td>XmlnsPrefix must map to the same url as XmlnsDefinition.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md">WPF0051</a></td>
+  <td>XmlnsDefinition must map to existing namespace.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>

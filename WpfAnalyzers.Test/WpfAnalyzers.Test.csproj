@@ -84,6 +84,8 @@
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\HappyPath.cs" />
+    <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace\Diagnostics.cs" />
+    <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace\HappyPath.cs" />
     <Compile Include="Documentation\Tests.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,14 +1,15 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0050XmlnsPrefixMustMatchXmlnsDefinition
+﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0051XmlnsDefinitionMustMapExistingNamespace
 {
     using System.Threading.Tasks;
+
     using NUnit.Framework;
 
     using WpfAnalyzers.DependencyProperties;
 
-    internal class HappyPath : HappyPathVerifier<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>
+    internal class Diagnostics : DiagnosticVerifier<WPF0051XmlnsDefinitionMustMapExistingNamespace>
     {
         [Test]
-        public async Task WhenXmlnsDefinitionMatches()
+        public async Task WhenNoNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -34,14 +35,16 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo(""Gu.Wpf.Geometry.Benchmarks"", AllInternalsVisible = true)]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
-[assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
+[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Test]
-        public async Task WhenTwoXmlnsDefinitions()
+        public async Task WhenMissingNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -67,11 +70,12 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo(""Gu.Wpf.Geometry.Benchmarks"", AllInternalsVisible = true)]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
-[assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
+[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }
