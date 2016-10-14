@@ -237,8 +237,15 @@ namespace WpfAnalyzers.Test
                 else
                 {
                     var matches = Regex.Matches(source, @"(class|struct|enum) (?<name>\w+)", RegexOptions.ExplicitCapture);
-                    Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
-                    name = matches[0].Groups["name"].Value;
+                    if (matches.Count == 0)
+                    {
+                        name = "AssemblyInfo";
+                    }
+                    else
+                    {
+                        Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
+                        name = matches[0].Groups["name"].Value;
+                    }
                 }
 
                 var suffixCount = 0;
