@@ -24,6 +24,7 @@
             Assert.Pass();
         }
 
+        [Explicit("Temporarily ignore")]
         [Test]
         public async Task SomewhatRealisticSample()
         {
@@ -108,7 +109,9 @@ internal static class BooleanBoxes
 
         private static object OnOtherCoerce(DependencyObject d, object basevalue)
         {
-            return basevalue;
+            // very strange stuff here, tests things.
+            d.SetValue(OtherProperty, basevalue);
+            return d.GetValue(OtherProperty);
         }
 
         private static void OnOtherChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -192,7 +195,9 @@ internal static class BooleanBoxes
 
         private static object OnIntValueCoerce(DependencyObject d, object basevalue)
         {
-            throw new System.NotImplementedException();
+            // very strange stuff here, tests things.
+            d.SetValue(BarProperty, basevalue);
+            return d.GetValue(BarProperty);
         }
 
         private static bool OnIntValueValidate(object value)

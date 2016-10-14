@@ -52,7 +52,10 @@
         internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
         {
             setField = null;
-            if (method == null || method.ParameterList.Parameters.Count != 2)
+            if (method == null ||
+                method.ParameterList.Parameters.Count != 2 ||
+                !method.ReturnType.IsVoid() ||
+                !method.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 return false;
             }
@@ -132,7 +135,10 @@
         internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField)
         {
             getField = null;
-            if (method == null)
+            if (method == null ||
+                method.ParameterList.Parameters.Count != 1 ||
+                method.ReturnType.IsVoid() ||
+                !method.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 return false;
             }

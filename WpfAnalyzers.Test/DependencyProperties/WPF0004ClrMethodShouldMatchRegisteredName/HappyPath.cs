@@ -115,7 +115,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task IgnoresWhenSetterIsNotUsingValue()
+        public async Task IgnoresWhenSetMethodIsNotUsingValue()
         {
             var testCode = @"
 using System.Windows;
@@ -128,7 +128,7 @@ public static class Foo
         typeof(Foo),
         new PropertyMetadata(default(int)));
 
-    public static void Bar(FrameworkElement element, int value)
+    public static void SomeName(FrameworkElement element, int value)
     {
         element.SetValue(BarProperty, 1);
     }
@@ -143,7 +143,176 @@ public static class Foo
         }
 
         [Test]
-        public async Task IgnoresWhenSetterIsNotSettingElement()
+        public async Task IgnoresWhenSetMethodHasTooManyArguments()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SomeName(FrameworkElement element, int value, string text)
+    {
+        element.SetValue(BarProperty, 1);
+    }
+
+    public static int GetBar(FrameworkElement element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenSetMethodIsNotVoid()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static object SomeName(FrameworkElement element, int value)
+    {
+        element.SetValue(BarProperty, value);
+        return null;
+    }
+
+    public static int GetBar(FrameworkElement element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenGetMethodIsVoid()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(this FrameworkElement element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static void SomeName(FrameworkElement element)
+    {
+        var _ = (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenGetMethodHasTooManyArguments()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(this FrameworkElement element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int SomeName(FrameworkElement element, int value)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenSetMethodIsNotStatic()
+        {
+            var testCode = @"
+using System.Windows;
+
+public class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public void SomeName(FrameworkElement element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public static int GetBar(FrameworkElement element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenGetMethodIsNotStatic()
+        {
+            var testCode = @"
+using System.Windows;
+
+public class Foo
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        ""Bar"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(default(int)));
+
+    public static void SetBar(FrameworkElement element, int value)
+    {
+        element.SetValue(BarProperty, value);
+    }
+
+    public int SomeName(FrameworkElement element)
+    {
+        return (int)element.GetValue(BarProperty);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenSetMethodIsNotSettingElement()
         {
             var testCode = @"
 using System.Windows;
@@ -173,7 +342,7 @@ public static class Foo
         }
 
         [Test]
-        public async Task IgnoresWhenGetterIsNotGettingElement()
+        public async Task IgnoresWhenGetMethodIsNotGettingElement()
         {
             var testCode = @"
 using System.Windows;
