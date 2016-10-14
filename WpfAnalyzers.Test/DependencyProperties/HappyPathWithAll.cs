@@ -121,7 +121,7 @@ internal static class BooleanBoxes
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class FooControl : FrameworkElement
     {
         public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(
             nameof(DoubleValue),
@@ -177,6 +177,12 @@ internal static class BooleanBoxes
             {
                 this.SetValue(ReadOnlyValuePropertyKey, value);
             }
+        }
+
+        public void Meh(DependencyProperty property, object value)
+        {
+            this.SetValue(property, value);
+            this.SetCurrentValue(property, value);
         }
 
         private static void OnIntValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
