@@ -11,7 +11,7 @@
     internal class WPF0032ClrPropertyGetAndSetSameDependencyProperty : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0032";
-        private const string Title = "DependencyProperty CLR property use same dependency proiperty in getter and setter.";
+        private const string Title = "Use same dependency property in get and set.";
         private const string MessageFormat = "Property '{0}' must access same dependency property in getter and setter";
         private const string Description = Title;
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);

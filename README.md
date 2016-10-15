@@ -63,7 +63,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md">WPF0032</a></td>
-  <td>DependencyProperty CLR property use same dependency proiperty in getter and setter.</td>
+  <td>Use same dependency property in get and set.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
