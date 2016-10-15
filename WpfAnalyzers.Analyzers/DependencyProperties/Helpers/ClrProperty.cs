@@ -21,7 +21,7 @@ namespace WpfAnalyzers.DependencyProperties
                    !property.IsReadOnly &&
                    !property.IsWriteOnly &&
                    !property.IsStatic &&
-                   property.ContainingType.IsAssignableToDependencyObject();
+                   property.ContainingType.Is(QualifiedType.DependencyObject);
         }
 
         /// <summary>
@@ -234,7 +234,8 @@ namespace WpfAnalyzers.DependencyProperties
         {
             getter = null;
             setter = null;
-            if (property?.ContainingType.IsAssignableToDependencyObject() != true)
+            if (property == null ||
+                !property.ContainingType.Is(QualifiedType.DependencyObject))
             {
                 return false;
             }

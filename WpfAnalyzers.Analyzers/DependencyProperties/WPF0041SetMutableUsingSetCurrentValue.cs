@@ -48,7 +48,9 @@
             }
 
             var assignment = context.Node as AssignmentExpressionSyntax;
-            if (assignment == null || context.SemanticModel == null)
+            if (assignment == null ||
+                assignment.IsMissing ||
+                context.SemanticModel == null)
             {
                 return;
             }
@@ -90,7 +92,8 @@
                 return;
             }
 
-            if (setField?.Type.Name != Names.DependencyProperty)
+            if (setField == null ||
+                setField.Type != QualifiedType.DependencyProperty)
             {
                 return;
             }

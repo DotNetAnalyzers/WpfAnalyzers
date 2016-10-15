@@ -48,7 +48,7 @@
 
             var field = context.ContainingSymbol as IFieldSymbol;
             if (field == null ||
-                field.Type.Name != Names.DependencyPropertyKey)
+                field.Type != QualifiedType.DependencyPropertyKey)
             {
                 return;
             }

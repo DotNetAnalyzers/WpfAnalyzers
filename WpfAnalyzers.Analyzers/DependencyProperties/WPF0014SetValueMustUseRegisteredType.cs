@@ -54,7 +54,7 @@
             if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) ||
                 DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
-                if (value.Expression.IsSameType(context.SemanticModel, context.CancellationToken, "System.Object"))
+                if (value.Expression.IsSameType(QualifiedType.Object, context))
                 {
                     return;
                 }
@@ -62,9 +62,8 @@
                 ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out registeredType))
                 {
-                    var freezable = context.Compilation.GetTypeByMetadataName("System.Windows.Freezable");
-                    if (registeredType.Is(freezable) &&
-                        value.Expression.IsSameType(context.SemanticModel, context.CancellationToken, freezable))
+                    if (registeredType.Is(QualifiedType.Freezable) &&
+                        value.Expression.IsSameType(QualifiedType.Freezable, context))
                     {
                         return;
                     }

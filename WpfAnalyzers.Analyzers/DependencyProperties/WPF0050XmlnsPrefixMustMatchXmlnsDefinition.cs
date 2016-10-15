@@ -12,9 +12,7 @@
     {
         public const string DiagnosticId = "WPF0050";
         private const string XmlnsPrefix = "XmlnsPrefix";
-        private const string XmlnsPrefixAttribute = "System.Windows.Markup.XmlnsPrefixAttribute";
         private const string XmlnsDefinition = "XmlnsDefinition";
-        private const string XmlnsDefinitionAttribute = "System.Windows.Markup.XmlnsDefinitionAttribute";
         private const string Title = "XmlnsPrefix must map to the same url as XmlnsDefinition.";
         private const string MessageFormat = "There is no [{0}] mapping to '{1}'";
         private const string Description = "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.";
@@ -50,16 +48,16 @@
                 return;
             }
 
-            string correspondingType = null;
+            QualifiedType correspondingType = null;
             AttributeSyntax xmlnsAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+            if (Attribute.TryGetAttribute(attributeSyntax, QualifiedType.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
             {
-                correspondingType = XmlnsDefinitionAttribute;
+                correspondingType = QualifiedType.XmlnsDefinitionAttribute;
             }
 
-            if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+            if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, QualifiedType.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
             {
-                correspondingType = XmlnsPrefixAttribute;
+                correspondingType = QualifiedType.XmlnsPrefixAttribute;
             }
 
             if (correspondingType == null || xmlnsAttribute == null)
@@ -93,7 +91,7 @@
                 }
             }
 
-            var attributeName = correspondingType == XmlnsPrefixAttribute
+            var attributeName = ReferenceEquals(correspondingType, QualifiedType.XmlnsPrefixAttribute)
                                     ? XmlnsPrefix
                                     : XmlnsDefinition;
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), attributeName, xmlNamespace));

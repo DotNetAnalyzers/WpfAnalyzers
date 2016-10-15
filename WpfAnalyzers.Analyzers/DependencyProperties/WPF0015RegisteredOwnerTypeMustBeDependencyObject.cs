@@ -48,7 +48,8 @@
 
             var methodSymbol = context.SemanticModel.GetSymbolInfo(invocation)
                                       .Symbol as IMethodSymbol;
-            if (methodSymbol == null || methodSymbol.ContainingType.Name != Names.DependencyProperty)
+            if (methodSymbol == null ||
+                methodSymbol.ContainingType == QualifiedType.DependencyObject)
             {
                 return;
             }
@@ -87,7 +88,7 @@
                 return;
             }
 
-            if (!field.ContainingType.IsAssignableToDependencyObject())
+            if (!field.ContainingType.Is(QualifiedType.DependencyObject))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), Names.RegisterAttached));
             }

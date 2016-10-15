@@ -49,7 +49,7 @@
             AttributeSyntax attribute;
             string @namespace;
             AttributeArgumentSyntax arg;
-            if (Attribute.TryGetAttribute(attributeSyntax, "System.Windows.Markup.XmlnsDefinitionAttribute", context.SemanticModel, context.CancellationToken, out attribute) &&
+            if (Attribute.TryGetAttribute(attributeSyntax, QualifiedType.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out attribute) &&
                 Attribute.TryGetArgumentStringValue(attributeSyntax, 1, context.SemanticModel, context.CancellationToken, out arg, out @namespace))
             {
                 if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)

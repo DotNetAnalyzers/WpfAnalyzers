@@ -24,7 +24,8 @@ namespace WpfAnalyzers.DependencyProperties
 
             var setter = semanticModel.SemanticModelFor(invocation)
                                             .GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol;
-            if (setter?.ContainingSymbol.Name != Names.DependencyObject ||
+            if (setter == null ||
+                setter.ContainingType != QualifiedType.DependencyObject ||
                 setter.Name != Names.GetValue ||
                 setter.Parameters.Length != 1)
             {
@@ -51,8 +52,8 @@ namespace WpfAnalyzers.DependencyProperties
 
             var setter = semanticModel.SemanticModelFor(invocation)
                                             .GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol;
-            if (setter?.ContainingSymbol.Name != Names.DependencyObject ||
-                setter.Name != Names.SetValue ||
+            if (setter?.ContainingType != QualifiedType.DependencyObject ||
+                setter?.Name != Names.SetValue ||
                 setter.Parameters.Length != 2)
             {
                 return false;
@@ -99,7 +100,8 @@ namespace WpfAnalyzers.DependencyProperties
 
             var setter = semanticModel.SemanticModelFor(invocation)
                                             .GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol;
-            if (setter?.ContainingSymbol.Name != Names.DependencyObject ||
+            if (setter == null ||
+                setter.ContainingType != QualifiedType.DependencyObject ||
                 setter.Name != Names.SetCurrentValue ||
                 setter.Parameters.Length != 2)
             {

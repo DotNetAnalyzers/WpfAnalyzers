@@ -49,7 +49,7 @@
 
             var field = context.ContainingSymbol as IFieldSymbol;
             if (field == null ||
-                field.Type.Name != Names.DependencyProperty)
+                field.Type != QualifiedType.DependencyProperty)
             {
                 return;
             }

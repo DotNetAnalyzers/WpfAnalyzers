@@ -1,11 +1,13 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal static class TypeSymbolExt
     {
         internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
@@ -107,17 +109,11 @@
             return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
         }
 
-        internal static bool IsDependencyPropertyOrDependencyPropertyKey(this ITypeSymbol type)
+        internal static bool Is(this ITypeSymbol type, QualifiedType qualifiedType)
         {
-            return type.Name == Names.DependencyProperty ||
-                   type.Name == Names.DependencyPropertyKey;
-        }
-
-        internal static bool IsAssignableToDependencyObject(this ITypeSymbol type)
-        {
-            while (type?.BaseType != null)
+            while (type != null)
             {
-                if (type.Name == Names.DependencyObject)
+                if (type == qualifiedType)
                 {
                     return true;
                 }

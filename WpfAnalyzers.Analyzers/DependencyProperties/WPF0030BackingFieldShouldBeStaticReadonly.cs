@@ -46,7 +46,9 @@
             }
 
             var field = (IFieldSymbol)context.ContainingSymbol;
-            if (field?.Type.IsDependencyPropertyOrDependencyPropertyKey() != true)
+            if (field == null ||
+                !(field.Type.Is(QualifiedType.DependencyProperty) ||
+                  field.Type.Is(QualifiedType.DependencyPropertyKey)))
             {
                 return;
             }

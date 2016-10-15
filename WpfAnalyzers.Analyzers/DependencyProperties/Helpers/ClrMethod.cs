@@ -13,7 +13,7 @@
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrSetMethod(this IMethodSymbol method)
+        internal static bool IsPotentialClrSetMethod(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (method == null)
             {
@@ -22,7 +22,7 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 2 ||
-                !method.Parameters[0].Type.IsAssignableToDependencyObject() ||
+                !method.Parameters[0].Type.Is(QualifiedType.DependencyObject) ||
                 !method.ReturnsVoid)
             {
                 return false;
@@ -34,7 +34,7 @@
         internal static bool IsAttachedSetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
         {
             setField = null;
-            if (!IsPotentialClrSetMethod(method))
+            if (!IsPotentialClrSetMethod(method, semanticModel, cancellationToken))
             {
                 return false;
             }
@@ -105,7 +105,7 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 1 ||
-                !method.Parameters[0].Type.IsAssignableToDependencyObject() ||
+                !method.Parameters[0].Type.Is(QualifiedType.DependencyObject) ||
                 method.ReturnsVoid)
             {
                 return false;

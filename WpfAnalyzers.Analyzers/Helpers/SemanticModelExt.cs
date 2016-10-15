@@ -13,12 +13,9 @@
         /// <returns>The semantic model that corresponds to <paramref name="expression"/></returns>
         internal static SemanticModel SemanticModelFor(this SemanticModel semanticModel, SyntaxNode expression)
         {
-            if (ReferenceEquals(semanticModel.SyntaxTree, expression.SyntaxTree))
-            {
-                return semanticModel;
-            }
-
-            return semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
+            return ReferenceEquals(semanticModel.SyntaxTree, expression.SyntaxTree)
+                ? semanticModel
+                : semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
         }
     }
 }

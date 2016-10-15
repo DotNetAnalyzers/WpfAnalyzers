@@ -9,10 +9,10 @@ namespace WpfAnalyzers.DependencyProperties
 
     internal static class Attribute
     {
-        internal static bool TryGetAttribute(AttributeSyntax attribute, string attributeName, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
+        internal static bool TryGetAttribute(AttributeSyntax attribute, QualifiedType attributeName, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
         {
             result = null;
-            var expectedType = semanticModel.Compilation.GetTypeByMetadataName(attributeName);
+            var expectedType = semanticModel.Compilation.GetTypeByMetadataName(attributeName.FullName);
             if (expectedType == null)
             {
                 return false;
@@ -54,7 +54,7 @@ namespace WpfAnalyzers.DependencyProperties
             return true;
         }
 
-        internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, string typeName, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, QualifiedType typeName, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             foreach (var attributeList in assemblyInfo.AttributeLists)
             {

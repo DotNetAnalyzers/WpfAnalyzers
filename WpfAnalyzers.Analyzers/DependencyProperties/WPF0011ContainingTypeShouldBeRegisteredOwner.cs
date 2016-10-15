@@ -49,7 +49,8 @@
 
             var methodSymbol = context.SemanticModel.GetSymbolInfo(invocation)
                                       .Symbol as IMethodSymbol;
-            if (methodSymbol == null || methodSymbol.ContainingType.Name != Names.DependencyProperty)
+            if (methodSymbol == null ||
+                methodSymbol.ContainingType != QualifiedType.DependencyProperty)
             {
                 return;
             }
