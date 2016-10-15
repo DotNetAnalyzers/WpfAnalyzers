@@ -71,7 +71,78 @@ public partial class FooControl
     }
 }";
             part2 = part2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(new []{part1, part2}).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+        public async Task DependencyPropertyOfTypeObject(string setValueCall)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(object),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public object Bar
+    {
+        get { return (object)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.SetValue(BarProperty, 1);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, new Foo());")]
+        [TestCase("this.SetCurrentValue(BarProperty, new Foo());")]
+        public async Task DependencyPropertyOfInterfaceType(string setValueCall)
+        {
+            var interfaceCode = @"
+public interface IFoo
+{
+}";
+
+            var fooCode = @"
+public class Foo : IFoo
+{
+}";
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(IFoo),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public IFoo Bar
+    {
+        get { return (IFoo)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.SetValue(BarProperty, new Foo());
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
+            await this.VerifyHappyPathAsync(new[] { interfaceCode, fooCode, testCode }).ConfigureAwait(false);
         }
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]

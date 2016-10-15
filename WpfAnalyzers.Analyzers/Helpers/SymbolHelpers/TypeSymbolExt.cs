@@ -66,7 +66,8 @@
 
             if (conversion.IsIdentity ||
                 conversion.IsReference ||
-                conversion.IsNullLiteral)
+                conversion.IsNullLiteral ||
+                conversion.IsBoxing)
             {
                 return true;
             }
