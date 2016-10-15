@@ -94,14 +94,6 @@
             return false;
         }
 
-        internal static bool IsObject(this ITypeSymbol type)
-        {
-            return type != null &&
-                   type.Name == "Object" &&
-                   !type.IsAbstract &&
-                   type.BaseType == null;
-        }
-
         internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var namedTypeSymbol = nullableType as INamedTypeSymbol;
@@ -136,7 +128,7 @@
             return false;
         }
 
-        internal static bool IsAssignableTo(this ITypeSymbol type, ITypeSymbol other)
+        internal static bool Is(this ITypeSymbol type, ITypeSymbol other)
         {
             var otherNamedType = other as INamedTypeSymbol;
             while (type?.BaseType != null)

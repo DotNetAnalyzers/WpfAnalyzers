@@ -8,19 +8,6 @@
 
     internal static class ArgumentSyntaxExt
     {
-        internal static bool IsObject(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (argument?.Expression == null)
-            {
-                return false;
-            }
-
-            var symbol = semanticModel.SemanticModelFor(argument.Expression)
-                                      .GetTypeInfo(argument.Expression, cancellationToken)
-                                      .Type;
-            return symbol.IsObject();
-        }
-
         internal static bool TryGetSymbol<T>(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out T result)
             where T : class, ISymbol
         {

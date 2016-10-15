@@ -57,7 +57,7 @@
             }
 
             var defaultValue = defaultValueArg.Expression;
-            if (context.SemanticModel.SemanticModelFor(defaultValue).GetTypeInfo(defaultValue, context.CancellationToken).Type.IsObject())
+            if (context.SemanticModel.SemanticModelFor(defaultValue).GetTypeInfo(defaultValue, context.CancellationToken).Type.IsSameType(context.Compilation.GetTypeByMetadataName("System.Object")))
             {
                 return;
             }

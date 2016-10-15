@@ -407,5 +407,37 @@ public class FooControl : Control
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task IgnoresFreezable(string setValueCall)
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+
+        public void UpdateBrush(Brush brush)
+        {
+            this.SetCurrentValue(BrushProperty, brush?.GetAsFrozen());
+        }
+    }";
+            testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }

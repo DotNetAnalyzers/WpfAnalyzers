@@ -24,7 +24,7 @@
             Assert.Pass();
         }
 
-        [Explicit("Temporarily ignore")]
+        //[Explicit("Temporarily ignore")]
         [Test]
         public async Task SomewhatRealisticSample()
         {

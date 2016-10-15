@@ -23,7 +23,7 @@
 
             var propertyMetadataType = semanticModel.Compilation.GetTypeByMetadataName("System.Windows.PropertyMetadata");
             if (propertyMetadataType == null ||
-                !createdType.IsAssignableTo(propertyMetadataType) ||
+                !createdType.Is(propertyMetadataType) ||
                 objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
             {
                 return false;
@@ -64,7 +64,7 @@
             IParameterSymbol parameter;
             if (constructor == null ||
                 !constructor.Parameters.TryGetFirst(out parameter) ||
-                !parameter.Type.IsObject())
+                !parameter.Type.IsSameType(semanticModel.Compilation.GetTypeByMetadataName("System.Object")))
             {
                 return false;
             }

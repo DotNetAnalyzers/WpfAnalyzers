@@ -63,6 +63,7 @@
     <Compile Include="Helpers\SyntaxNodeAnalysisContextExt.cs" />
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\ArgumentSyntaxExt.cs" />
+    <Compile Include="Helpers\SyntaxtTreeHelpers\ExpressionSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\FieldDeclarationSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\InvocationExpressionSyntaxExt.cs" />
     <Compile Include="Helpers\SyntaxtTreeHelpers\PropertyDeclarationSyntaxExt.cs" />
