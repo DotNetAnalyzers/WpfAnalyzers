@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers
+﻿#pragma warning disable 660,661 // using a hack with operator overloads
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Linq;
