@@ -22,7 +22,7 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 2 ||
-                !method.Parameters[0].Type.Is(QualifiedType.DependencyObject) ||
+                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
                 !method.ReturnsVoid)
             {
                 return false;
@@ -105,7 +105,7 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 1 ||
-                !method.Parameters[0].Type.Is(QualifiedType.DependencyObject) ||
+                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
                 method.ReturnsVoid)
             {
                 return false;

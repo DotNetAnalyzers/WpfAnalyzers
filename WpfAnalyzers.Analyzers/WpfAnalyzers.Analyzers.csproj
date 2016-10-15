@@ -55,7 +55,15 @@
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject.cs" />
     <Compile Include="DependencyProperties\WPF0016DefaultValueIsSharedReferenceType.cs" />
+    <Compile Include="Helpers\KnownSymbols\DependencyObjectType.cs" />
+    <Compile Include="Helpers\KnownSymbols\DependencyPropertyKeyType.cs" />
+    <Compile Include="Helpers\KnownSymbols\DependencyPropertyType.cs" />
     <Compile Include="Helpers\EnumerableExt.cs" />
+    <Compile Include="Helpers\KnownSymbols\KnownSymbol.cs" />
+    <Compile Include="Helpers\KnownSymbols\NamespaceParts.cs" />
+    <Compile Include="Helpers\KnownSymbols\QualifiedMember.cs" />
+    <Compile Include="Helpers\KnownSymbols\QualifiedMethod.cs" />
+    <Compile Include="Helpers\KnownSymbols\QualifiedProperty.cs" />
     <Compile Include="Helpers\SemanticModelExt.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\SymbolHelpers\FieldSymbolExt.cs" />
@@ -81,8 +89,7 @@
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKey.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType.cs" />
     <Compile Include="HelpLink.cs" />
-    <Compile Include="QualifiedType.cs" />
-    <Compile Include="Names.cs" />
+    <Compile Include="Helpers\KnownSymbols\QualifiedType.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

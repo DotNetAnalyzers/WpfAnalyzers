@@ -12,16 +12,11 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetAttribute(AttributeSyntax attribute, QualifiedType attributeName, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
         {
             result = null;
-            var expectedType = semanticModel.Compilation.GetTypeByMetadataName(attributeName.FullName);
-            if (expectedType == null)
-            {
-                return false;
-            }
 
-            var attributeType = ModelExtensions.GetTypeInfo(semanticModel.SemanticModelFor(attribute), attribute, cancellationToken)
-                               .Type;
-            if (attributeType == null ||
-                !attributeType.Equals(expectedType))
+            var attributeType = semanticModel.SemanticModelFor(attribute)
+                                             .GetTypeInfo(attribute, cancellationToken)
+                                             .Type;
+            if (attributeType != attributeName)
             {
                 return false;
             }

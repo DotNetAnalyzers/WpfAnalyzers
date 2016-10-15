@@ -21,15 +21,13 @@
                 return false;
             }
 
-            var propertyMetadataType = semanticModel.Compilation.GetTypeByMetadataName("System.Windows.PropertyMetadata");
-            if (propertyMetadataType == null ||
-                !createdType.Is(propertyMetadataType) ||
+            if (!createdType.Is(KnownSymbol.PropertyMetadata) ||
                 objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
             {
                 return false;
             }
 
-            if (!propertyMetadataType.ContainingNamespace.Equals(createdType.ContainingNamespace))
+            if (createdType.ContainingNamespace != KnownSymbol.PropertyMetadata.Namespace)
             {
                 // don't think there is a way to handle custom subclassed.
                 // should not be common

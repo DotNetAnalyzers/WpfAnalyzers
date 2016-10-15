@@ -175,7 +175,7 @@
 
         private static class SetCurrentValueExpression
         {
-            private static readonly IdentifierNameSyntax SetCurrentValueIdentifier = SyntaxFactory.IdentifierName(Names.SetCurrentValue);
+            private static readonly IdentifierNameSyntax SetCurrentValueIdentifier = SyntaxFactory.IdentifierName(KnownSymbol.DependencyObject.SetCurrentValue.Name);
 
             internal static bool TryCreate(AssignmentExpressionSyntax assignment, out ExpressionSyntax result)
             {

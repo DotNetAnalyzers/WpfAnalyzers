@@ -54,7 +54,8 @@
                 return;
             }
 
-            if (setField == null || setField.Type.Name == Names.DependencyPropertyKey)
+            if (setField == null ||
+                setField.Type == KnownSymbol.DependencyPropertyKey)
             {
                 return;
             }

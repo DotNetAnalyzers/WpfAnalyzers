@@ -21,7 +21,7 @@ namespace WpfAnalyzers.DependencyProperties
                    !property.IsReadOnly &&
                    !property.IsWriteOnly &&
                    !property.IsStatic &&
-                   property.ContainingType.Is(QualifiedType.DependencyObject);
+                   property.ContainingType.Is(KnownSymbol.DependencyObject);
         }
 
         /// <summary>
@@ -72,7 +72,8 @@ namespace WpfAnalyzers.DependencyProperties
                     out getter,
                     out setter))
                 {
-                    if (ReferenceEquals(setter, getter) && setter.Type.Name == Names.DependencyProperty)
+                    if (ReferenceEquals(setter, getter) &&
+                        setter.Type == KnownSymbol.DependencyProperty)
                     {
                         result = setter;
                         return true;
@@ -85,7 +86,7 @@ namespace WpfAnalyzers.DependencyProperties
                 if (ReferenceEquals(getter, setter))
                 {
                     result = getter;
-                    return result?.Type.Name == Names.DependencyProperty;
+                    return result?.Type == KnownSymbol.DependencyProperty;
                 }
             }
 
@@ -235,7 +236,7 @@ namespace WpfAnalyzers.DependencyProperties
             getter = null;
             setter = null;
             if (property == null ||
-                !property.ContainingType.Is(QualifiedType.DependencyObject))
+                !property.ContainingType.Is(KnownSymbol.DependencyObject))
             {
                 return false;
             }

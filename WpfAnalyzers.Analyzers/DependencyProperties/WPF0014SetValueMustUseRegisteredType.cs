@@ -54,7 +54,7 @@
             if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) ||
                 DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
-                if (value.Expression.IsSameType(QualifiedType.Object, context))
+                if (value.Expression.IsSameType(KnownSymbol.Object, context))
                 {
                     return;
                 }
@@ -62,8 +62,8 @@
                 ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out registeredType))
                 {
-                    if (registeredType.Is(QualifiedType.Freezable) &&
-                        value.Expression.IsSameType(QualifiedType.Freezable, context))
+                    if (registeredType.Is(KnownSymbol.Freezable) &&
+                        value.Expression.IsSameType(KnownSymbol.Freezable, context))
                     {
                         return;
                     }

@@ -93,7 +93,7 @@
             }
 
             if (setField == null ||
-                setField.Type != QualifiedType.DependencyProperty)
+                setField.Type != KnownSymbol.DependencyProperty)
             {
                 return;
             }

@@ -12,7 +12,7 @@
         internal static bool IsPotentialDependencyPropertyBackingField(IFieldSymbol field)
         {
             return field != null &&
-                   field.Type.Name == Names.DependencyProperty &&
+                   field.Type == KnownSymbol.DependencyProperty &&
                    field.IsReadOnly &&
                    field.IsStatic;
         }
@@ -20,7 +20,7 @@
         internal static bool IsPotentialDependencyPropertyKeyBackingField(IFieldSymbol field)
         {
             return field != null &&
-                   field.Type.Name == Names.DependencyPropertyKey &&
+                   field.Type == KnownSymbol.DependencyPropertyKey &&
                    field.IsReadOnly &&
                    field.IsStatic;
         }
@@ -92,20 +92,21 @@
             ExpressionSyntax value;
             if (field.TryGetAssignedValue(cancellationToken, out value))
             {
-                var valueSymbol = ModelExtensions.GetSymbolInfo(semanticModel.SemanticModelFor(value), value, cancellationToken)
-                               .Symbol;
-                if (valueSymbol == null)
+                var property = semanticModel.SemanticModelFor(value)
+                                            .GetSymbolInfo(value, cancellationToken)
+                                            .Symbol as IPropertySymbol;
+                if (property == null ||
+                    property != KnownSymbol.DependencyPropertyKey.DependencyProperty)
                 {
                     return false;
                 }
 
                 var memberAccess = value as MemberAccessExpressionSyntax;
-                if (memberAccess != null &&
-                    valueSymbol.ContainingType.Name == Names.DependencyPropertyKey &&
-                    valueSymbol.Name == Names.DependencyProperty)
+                if (memberAccess != null)
                 {
-                    result = ModelExtensions.GetSymbolInfo(semanticModel.SemanticModelFor(memberAccess.Expression), memberAccess.Expression, cancellationToken)
-                                                .Symbol as IFieldSymbol;
+                    result = semanticModel.SemanticModelFor(memberAccess.Expression)
+                                          .GetSymbolInfo(memberAccess.Expression, cancellationToken)
+                                          .Symbol as IFieldSymbol;
                     return result != null;
                 }
             }
@@ -126,10 +127,9 @@
                 }
 
                 var invocationSymbol = semanticModel.SemanticModelFor(invocation)
-                                               .GetSymbolInfo(invocation, cancellationToken)
-                                               .Symbol;
-                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
-                    invocationSymbol.Name == Names.AddOwner)
+                                                    .GetSymbolInfo(invocation, cancellationToken)
+                                                    .Symbol as IMethodSymbol;
+                if (invocationSymbol == KnownSymbol.DependencyProperty.AddOwner)
                 {
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
                     result = semanticModel.SemanticModelFor(addOwner.Expression)
@@ -158,7 +158,7 @@
                                                .GetSymbolInfo(invocation, cancellationToken)
                                                .Symbol;
 
-                if (invocationSymbol.ContainingType.Name == Names.DependencyProperty &&
+                if (invocationSymbol.ContainingType == KnownSymbol.DependencyProperty &&
                     invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
                 {
                     result = invocation;

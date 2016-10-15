@@ -50,14 +50,14 @@
 
             QualifiedType correspondingType = null;
             AttributeSyntax xmlnsAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, QualifiedType.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+            if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
             {
-                correspondingType = QualifiedType.XmlnsDefinitionAttribute;
+                correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
             }
 
-            if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, QualifiedType.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+            if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
             {
-                correspondingType = QualifiedType.XmlnsPrefixAttribute;
+                correspondingType = KnownSymbol.XmlnsPrefixAttribute;
             }
 
             if (correspondingType == null || xmlnsAttribute == null)
@@ -91,7 +91,7 @@
                 }
             }
 
-            var attributeName = ReferenceEquals(correspondingType, QualifiedType.XmlnsPrefixAttribute)
+            var attributeName = ReferenceEquals(correspondingType, KnownSymbol.XmlnsPrefixAttribute)
                                     ? XmlnsPrefix
                                     : XmlnsDefinition;
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), attributeName, xmlNamespace));

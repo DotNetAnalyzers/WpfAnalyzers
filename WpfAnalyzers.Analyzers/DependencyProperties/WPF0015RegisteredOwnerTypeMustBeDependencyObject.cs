@@ -49,21 +49,22 @@
             var methodSymbol = context.SemanticModel.GetSymbolInfo(invocation)
                                       .Symbol as IMethodSymbol;
             if (methodSymbol == null ||
-                methodSymbol.ContainingType == QualifiedType.DependencyObject)
+                methodSymbol.ContainingType == KnownSymbol.DependencyObject)
             {
                 return;
             }
 
             ArgumentSyntax argument;
             ITypeSymbol ownerType;
-            if (methodSymbol.Name == Names.AddOwner)
+            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner)
             {
                 if (!invocation.TryGetArgumentAtIndex(0, out argument))
                 {
                     return;
                 }
             }
-            else if (methodSymbol.Name == Names.Register || methodSymbol.Name == Names.RegisterReadOnly)
+            else if (methodSymbol == KnownSymbol.DependencyProperty.Register ||
+                     methodSymbol == KnownSymbol.DependencyProperty.RegisterReadOnly)
             {
                 if (!invocation.TryGetArgumentAtIndex(2, out argument))
                 {
@@ -88,9 +89,9 @@
                 return;
             }
 
-            if (!field.ContainingType.Is(QualifiedType.DependencyObject))
+            if (!field.ContainingType.Is(KnownSymbol.DependencyObject))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), Names.RegisterAttached));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
             }
         }
     }

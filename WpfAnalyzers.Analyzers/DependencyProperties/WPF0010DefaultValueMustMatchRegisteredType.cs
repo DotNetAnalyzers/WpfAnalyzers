@@ -57,7 +57,7 @@
             }
 
             var defaultValue = defaultValueArg.Expression;
-            if (defaultValue.IsSameType(QualifiedType.Object, context))
+            if (defaultValue.IsSameType(KnownSymbol.Object, context))
             {
                 return;
             }

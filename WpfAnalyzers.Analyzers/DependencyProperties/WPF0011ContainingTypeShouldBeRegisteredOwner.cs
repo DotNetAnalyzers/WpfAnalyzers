@@ -50,14 +50,14 @@
             var methodSymbol = context.SemanticModel.GetSymbolInfo(invocation)
                                       .Symbol as IMethodSymbol;
             if (methodSymbol == null ||
-                methodSymbol.ContainingType != QualifiedType.DependencyProperty)
+                methodSymbol.ContainingType != KnownSymbol.DependencyProperty)
             {
                 return;
             }
 
             ArgumentSyntax argument;
             ITypeSymbol ownerType;
-            if (methodSymbol.Name == Names.AddOwner)
+            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner)
             {
                 if (!invocation.TryGetArgumentAtIndex(0, out argument))
                 {
