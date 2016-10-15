@@ -51,7 +51,7 @@
             return first.Equals(other);
         }
 
-        internal static bool IsRepresentationConservingConversion(
+        internal static bool IsRepresentationPreservingConversion(
             this ITypeSymbol toType,
             ExpressionSyntax valueExpression,
             SemanticModel semanticModel,
@@ -64,10 +64,24 @@
                 return false;
             }
 
-            if (conversion.IsIdentity ||
-                conversion.IsReference ||
-                conversion.IsNullLiteral ||
-                conversion.IsBoxing)
+            if (conversion.IsIdentity)
+            {
+                return true;
+            }
+
+            if (conversion.IsReference &&
+                conversion.IsImplicit)
+            {
+                return true;
+            }
+
+            if (conversion.IsNullable && conversion.IsNullLiteral)
+            {
+                return true;
+            }
+
+            if (conversion.IsBoxing ||
+                conversion.IsUnboxing)
             {
                 return true;
             }
@@ -82,7 +96,10 @@
 
         internal static bool IsObject(this ITypeSymbol type)
         {
-            return type != null && type.BaseType == null;
+            return type != null &&
+                   type.Name == "Object" &&
+                   !type.IsAbstract &&
+                   type.BaseType == null;
         }
 
         internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)

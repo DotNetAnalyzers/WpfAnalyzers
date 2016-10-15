@@ -94,7 +94,9 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarProperty", "int");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Default value for 'Foo.BarProperty' must be of type int");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 

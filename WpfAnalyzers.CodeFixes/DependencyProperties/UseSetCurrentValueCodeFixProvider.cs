@@ -247,7 +247,7 @@
                 }
 
                 var valueExpression = assignment.Right;
-                if (assignedType.IsRepresentationConservingConversion(valueExpression, semanticModel, cancellationToken))
+                if (assignedType.IsRepresentationPreservingConversion(valueExpression, semanticModel, cancellationToken))
                 {
                     result = SyntaxFactory.Argument(valueExpression);
                 }

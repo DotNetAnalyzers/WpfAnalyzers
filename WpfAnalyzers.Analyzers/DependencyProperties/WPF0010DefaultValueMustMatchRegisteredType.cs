@@ -74,7 +74,7 @@
                 return;
             }
 
-            if (!registeredType.IsRepresentationConservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
+            if (!registeredType.IsRepresentationPreservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), dp, registeredType));
             }

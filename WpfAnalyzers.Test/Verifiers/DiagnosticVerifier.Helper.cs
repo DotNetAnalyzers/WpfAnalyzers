@@ -236,7 +236,7 @@ namespace WpfAnalyzers.Test
                 }
                 else
                 {
-                    var matches = Regex.Matches(source, @"(class|struct|enum) (?<name>\w+)", RegexOptions.ExplicitCapture);
+                    var matches = Regex.Matches(source, @"(class|struct|enum|interface) (?<name>\w+)", RegexOptions.ExplicitCapture);
                     if (matches.Count == 0)
                     {
                         name = "AssemblyInfo";

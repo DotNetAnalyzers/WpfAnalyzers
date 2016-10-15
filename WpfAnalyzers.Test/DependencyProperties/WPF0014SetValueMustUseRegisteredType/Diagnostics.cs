@@ -130,6 +130,48 @@ public class FooControl : Control
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
+        public async Task DependencyPropertyOfInterfaceType(string methodName)
+        {
+            var iFooCode = @"
+public interface IFoo
+{
+}";
+
+            var iMehCode = @"
+public interface IMeh
+{
+}";
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(IFoo),
+        typeof(FooControl));
+
+    public IFoo Bar
+    {
+        get { return (IFoo)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh(IMeh value)
+    {
+        this.SetValue(BarProperty, ↓value);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage($"{methodName} must use registered type IFoo");
+            await this.VerifyCSharpDiagnosticAsync(new[] { iFooCode, iMehCode, testCode }, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
         public async Task DependencyPropertyAddOwnerMediaElementVolume(string methodName)
         {
             var testCode = @"

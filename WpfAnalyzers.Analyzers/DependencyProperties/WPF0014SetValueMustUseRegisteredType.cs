@@ -62,7 +62,7 @@
                 ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out registeredType))
                 {
-                    if (!registeredType.IsRepresentationConservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
+                    if (!registeredType.IsRepresentationPreservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
                     {
                         var setCall = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol;
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));

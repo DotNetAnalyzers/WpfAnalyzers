@@ -75,7 +75,9 @@ public partial class FooControl
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, null);")]
         public async Task DependencyPropertyOfTypeObject(string setValueCall)
         {
             var testCode = @"
