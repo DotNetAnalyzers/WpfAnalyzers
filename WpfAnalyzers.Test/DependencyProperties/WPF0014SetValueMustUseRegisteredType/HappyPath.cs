@@ -130,7 +130,7 @@ public class FooControl : Control
         ""Bar"",
         typeof(IFoo),
         typeof(FooControl),
-        new PropertyMetadata(default(int)));
+        new PropertyMetadata(default(IFoo)));
 
     public IFoo Bar
     {
@@ -145,6 +145,44 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
             await this.VerifyHappyPathAsync(new[] { interfaceCode, fooCode, testCode }).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+        public async Task DependencyPropertyGeneric(string setValueCall)
+        {
+            var fooControlGeneric = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(T),
+        typeof(FooControl),
+        new PropertyMetadata(default(T)));
+
+    public T Bar
+    {
+        get { return (T)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+}";
+
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : FooControl<int>
+{
+    public void Meh()
+    {
+        this.SetValue(BarProperty, 1);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+            await this.VerifyHappyPathAsync(new[] { fooControlGeneric, testCode }).ConfigureAwait(false);
         }
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]

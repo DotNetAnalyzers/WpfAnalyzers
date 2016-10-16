@@ -1,7 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0014SetValueMustUseRegisteredType
 {
     using System.Text.RegularExpressions;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -48,7 +47,51 @@ public class FooControl : Control
                              ? "SetValue"
                              : "SetCurrentValue";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(method, "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, ↓1.0);")]
+        [TestCase("this.SetCurrentValue(BarProperty, ↓1.0);")]
+        public async Task DependencyPropertyGeneric(string setValueCall)
+        {
+            var fooControlGeneric = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(T),
+        typeof(FooControl<T>),
+        new PropertyMetadata(default(T)));
+
+    public T Bar
+    {
+        get { return (T)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+}";
+
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : FooControl<int>
+{
+    public void Meh()
+    {
+        this.SetValue(BarProperty, ↓1.0);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
+            var method = setValueCall.Contains("SetValue")
+                             ? "SetValue"
+                             : "SetCurrentValue";
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage($"{method} must use registered type int");
+            await this.VerifyCSharpDiagnosticAsync(new []{fooControlGeneric, testCode}, expected).ConfigureAwait(false);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -125,7 +168,7 @@ public class FooControl : Control
                              ? "SetValue"
                              : "SetCurrentValue";
             var expected = this.CSharpDiagnostic().WithLocation("FooControl2.cs", 9, col).WithArguments(method, "bool");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }, expected, CancellationToken.None, new[] { "Foo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }, expected, new[] { "Foo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
@@ -167,7 +210,7 @@ public class FooControl : Control
             var expected = this.CSharpDiagnostic()
                                .WithLocationIndicated(ref testCode)
                                .WithMessage($"{methodName} must use registered type IFoo");
-            await this.VerifyCSharpDiagnosticAsync(new[] { iFooCode, iMehCode, testCode }, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { iFooCode, iMehCode, testCode }, expected).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
@@ -211,7 +254,7 @@ public class FooControl : Control
     }";
             testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(methodName, "double");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [TestCase("1.0")]
@@ -246,7 +289,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("<value>", value);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Test]
@@ -281,7 +324,7 @@ public static class Foo
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
@@ -302,7 +345,7 @@ public static class Foo
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "string");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
@@ -323,7 +366,7 @@ public static class Foo
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "double");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [TestCase("SetValue")]
@@ -359,7 +402,7 @@ public class FooControl : Control
 
             testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

@@ -236,7 +236,7 @@ namespace WpfAnalyzers.Test
                 }
                 else
                 {
-                    var matches = Regex.Matches(source, @"(class|struct|enum|interface) (?<name>\w+)", RegexOptions.ExplicitCapture);
+                    var matches = Regex.Matches(source, @"(class|struct|enum|interface) (?<name>\w+)(<(?<typeArg>\w+)>)?", RegexOptions.ExplicitCapture);
                     if (matches.Count == 0)
                     {
                         name = "AssemblyInfo";
@@ -245,6 +245,10 @@ namespace WpfAnalyzers.Test
                     {
                         Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
                         name = matches[0].Groups["name"].Value;
+                        if (matches[0].Groups["typeArg"].Success)
+                        {
+                            name += $"{{{matches[0].Groups["typeArg"].Value}}}";
+                        }
                     }
                 }
 

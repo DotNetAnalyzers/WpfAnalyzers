@@ -49,6 +49,34 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task DependencyPropertyGeneric()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl<T> : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(T),
+        typeof(FooControl<T>),
+        new PropertyMetadata(↓1));
+
+    public T Bar
+    {
+        get { return (T)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+}";
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Default value for 'FooControl<T>.BarProperty' must be of type T");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+        }
+
+        [Test]
         public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"

@@ -70,7 +70,24 @@
                 ArgumentSyntax arg;
                 if (invocation.TryGetArgumentAtIndex(1, out arg))
                 {
-                    return arg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
+                    if (!arg.TryGetTypeofValue(semanticModel, cancellationToken, out result))
+                    {
+                        return false;
+                    }
+
+                    if (result.Kind == SymbolKind.TypeParameter)
+                    {
+                        var index = field.ContainingType.TypeParameters.IndexOf((ITypeParameterSymbol)result);
+                        if (index < 0)
+                        {
+                            result = null;
+                            return false;
+                        }
+
+                        result = field.ContainingType.TypeArguments[index];
+                    }
+
+                    return result != null;
                 }
 
                 return false;
