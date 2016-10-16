@@ -62,12 +62,45 @@
             IParameterSymbol parameter;
             if (constructor == null ||
                 !constructor.Parameters.TryGetFirst(out parameter) ||
-                !parameter.Type.IsSameType(semanticModel.Compilation.GetTypeByMetadataName("System.Object")))
+                parameter.Type != KnownSymbol.Object)
             {
                 return false;
             }
 
             return objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
+        }
+
+        internal static bool TryGetPropertyChangedCallback(
+            ObjectCreationExpressionSyntax objectCreation,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            out ArgumentSyntax propertyChangedCallbackArg)
+        {
+            propertyChangedCallbackArg = null;
+            if (objectCreation == null ||
+                objectCreation.ArgumentList == null ||
+                objectCreation.ArgumentList.Arguments.Count == 0)
+            {
+                return false;
+            }
+
+            IMethodSymbol constructor;
+            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out constructor))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < constructor.Parameters.Length; i++)
+            {
+                var parameter = constructor.Parameters[i];
+                if (parameter.Type == KnownSymbol.PropertyChangedCallback)
+                {
+                    propertyChangedCallbackArg = objectCreation.ArgumentList.Arguments[i];
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol dependencyProperty)

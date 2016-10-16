@@ -26,6 +26,10 @@ Roslyn analyzers for WPF.
   <td>CLR method for a DependencyProperty should match registered name.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md">WPF0005</a></td>
+  <td>Name of PropertyChangedCallback should match registered name.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md">WPF0010</a></td>
   <td>Default value type must match registered type.</td>
 </tr>
@@ -87,6 +91,7 @@ Roslyn analyzers for WPF.
 </tr>
 <table>
 <!-- end generated table -->
+
 
 ## Using WpfAnalyzers
 

@@ -14,8 +14,9 @@
     internal class RenameMethodCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
+            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -33,47 +34,72 @@
                     continue;
                 }
 
-                var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                  .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-
-                if (methodDeclaration == null || methodDeclaration.IsMissing)
+                if (diagnostic.Id == WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId)
                 {
-                    continue;
-                }
+                    var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                                      .FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
-                IFieldSymbol backingField;
-                if (ClrMethod.IsAttachedSetMethod(
-                    methodDeclaration,
-                    semanticModel,
-                    context.CancellationToken,
-                    out backingField))
-                {
-                    TryUpdateName(
-                        context,
-                        backingField,
+                    if (methodDeclaration == null || methodDeclaration.IsMissing)
+                    {
+                        continue;
+                    }
+
+                    IFieldSymbol backingField;
+                    if (ClrMethod.IsAttachedSetMethod(
+                        methodDeclaration,
                         semanticModel,
-                        syntaxRoot,
-                        token,
-                        "Set",
-                        diagnostic);
+                        context.CancellationToken,
+                        out backingField))
+                    {
+                        TryUpdateName(
+                            context,
+                            backingField,
+                            semanticModel,
+                            syntaxRoot,
+                            token,
+                            "Set",
+                            diagnostic);
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                if (ClrMethod.IsAttachedGetMethod(
-                    methodDeclaration,
-                    semanticModel,
-                    context.CancellationToken,
-                    out backingField))
-                {
-                    TryUpdateName(
-                        context,
-                        backingField,
+                    if (ClrMethod.IsAttachedGetMethod(
+                        methodDeclaration,
                         semanticModel,
-                        syntaxRoot,
-                        token,
-                        "Get",
-                        diagnostic);
+                        context.CancellationToken,
+                        out backingField))
+                    {
+                        TryUpdateName(
+                            context,
+                            backingField,
+                            semanticModel,
+                            syntaxRoot,
+                            token,
+                            "Get",
+                            diagnostic);
+                    }
+                }
+                else if (diagnostic.Id == WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                    var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
+                    IdentifierNameSyntax nameExpression;
+                    string registeredName;
+                    if (WPF0005PropertyChangedCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
+                        callback,
+                        semanticModel,
+                        context.CancellationToken,
+                        out nameExpression,
+                        out registeredName))
+                    {
+                        var newName = $"On{registeredName}Changed";
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                $"Rename to: {newName}",
+                                cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
+                                nameof(RenameMethodCodeFixProvider)),
+                            diagnostic);
+                    }
                 }
             }
         }

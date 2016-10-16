@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="DependencyProperties\Helpers\PropertyChangedCallback.cs" />
+    <Compile Include="DependencyProperties\WPF0005PropertyChangedCallbackShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace.cs" />
     <Compile Include="DependencyProperties\Helpers\Attribute.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition.cs" />
