@@ -7,7 +7,7 @@ owners Johan Larsson
 copyright Copyright Johan Larsson 2016
 developmentDependency true
 description Roslyn analyzers for WPF.
-tags WPF Roslyn Diagnostic Analyzer
+tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 
 projectUrl https://github.com/JohanLarsson/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
