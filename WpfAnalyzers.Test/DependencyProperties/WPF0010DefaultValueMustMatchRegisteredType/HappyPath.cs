@@ -78,6 +78,7 @@ public class FooControl : Control
         [TestCase("int", "new PropertyMetadata(CreateObjectValue())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(null)")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
+        [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
         public async Task DependencyPropertyWithMetdadata(string typeName, string metadata)
         {
