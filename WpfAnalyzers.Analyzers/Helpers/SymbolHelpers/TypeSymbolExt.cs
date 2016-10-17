@@ -104,6 +104,11 @@
                 return false;
             }
 
+            if (value.IsKind(SyntaxKind.NullLiteralExpression))
+            {
+                return true;
+            }
+
             var typeInfo = semanticModel.SemanticModelFor(value)
                                         .GetTypeInfo(value, cancellationToken);
             return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);

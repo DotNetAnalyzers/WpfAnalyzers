@@ -70,6 +70,8 @@ public class FooControl : Control
         [TestCase("int", "new PropertyMetadata(1)")]
         [TestCase("int?", "new PropertyMetadata(1)")]
         [TestCase("int?", "new PropertyMetadata(null)")]
+        [TestCase("bool?", "new PropertyMetadata(null)")]
+        [TestCase("bool?", "new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)")]
         [TestCase("int?", "new PropertyMetadata(default(int?))")]
         [TestCase("Nullable<int>", "new PropertyMetadata(default(int?))")]
         [TestCase("int", "new PropertyMetadata(CreateDefaultValue())")]
