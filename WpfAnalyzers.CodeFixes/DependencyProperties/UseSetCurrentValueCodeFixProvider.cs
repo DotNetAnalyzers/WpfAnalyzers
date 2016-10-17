@@ -113,7 +113,8 @@
             setCurrentValueInvocation = SyntaxFactory.InvocationExpression(
                                                          setCurrentValue,
                                                          SyntaxFactory.ArgumentList()
-                                                                      .AddArguments(property, value));
+                                                                      .AddArguments(property, value))
+                                                     .WithLeadingTrivia(assignment.GetLeadingTrivia());
             return true;
         }
 
@@ -141,7 +142,8 @@
             ExpressionSyntax setCurrentValue;
             if (SetCurrentValueExpression.TryCreate(setValue, out setCurrentValue))
             {
-                setCurrentValueInvocation = setValue.WithExpression(setCurrentValue);
+                setCurrentValueInvocation = setValue.WithExpression(setCurrentValue)
+                                                    .WithLeadingTrivia(setValue.GetLeadingTrivia());
                 return true;
             }
 
