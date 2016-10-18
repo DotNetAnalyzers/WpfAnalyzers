@@ -9,6 +9,8 @@ namespace WpfAnalyzers
         internal static readonly DependencyPropertyKeyType DependencyPropertyKey = new DependencyPropertyKeyType();
         internal static readonly QualifiedType PropertyMetadata = Create("System.Windows.PropertyMetadata");
 
+        internal static readonly QualifiedType PropertyChangedCallback = Create("System.Windows.PropertyChangedCallback");
+
         internal static readonly QualifiedType Freezable = Create("System.Windows.Freezable");
 
         internal static readonly QualifiedType XmlnsPrefixAttribute = Create("System.Windows.Markup.XmlnsPrefixAttribute");
