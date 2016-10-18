@@ -112,6 +112,42 @@ public static class Foo
         }
 
         [Test]
+        public async Task AttachedPropertySettingValueInCallback()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
+        ""Value"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(
+            default(int),
+            OnValueChanged));
+
+    public static void SetValue(this DependencyObject element, int value)
+    {
+        element.SetValue(ValueProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetValue(this DependencyObject element)
+    {
+        return (int)element.GetValue(ValueProperty);
+    }
+
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        d.SetValue(ValueProperty, e.NewValue);
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task ReadOnlyAttachedProperty()
         {
             var testCode = @"

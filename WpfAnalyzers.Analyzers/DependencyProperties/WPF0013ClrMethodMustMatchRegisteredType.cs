@@ -52,7 +52,7 @@
             }
 
             IFieldSymbol getField;
-            if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out getField))
+            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out getField))
             {
                 ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(getField, context.SemanticModel, context.CancellationToken, out registeredType))
@@ -67,11 +67,7 @@
             }
 
             IFieldSymbol setField;
-            if (ClrMethod.IsAttachedSetMethod(
-                methodDeclaration,
-                context.SemanticModel,
-                context.CancellationToken,
-                out setField))
+            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out setField))
             {
                 ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(

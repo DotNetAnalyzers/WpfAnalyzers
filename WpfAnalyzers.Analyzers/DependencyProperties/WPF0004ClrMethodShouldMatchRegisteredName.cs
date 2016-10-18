@@ -13,21 +13,25 @@
         public const string DiagnosticId = "WPF0004";
         private const string Title = "CLR method for a DependencyProperty should match registered name.";
         private const string MessageFormat = "Method '{0}' must be named '{1}'";
-        private const string Description = "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.";
+
+        private const string Description =
+            "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.";
+
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            DiagnosticId,
+            Title,
+            MessageFormat,
+            AnalyzerCategory.DependencyProperties,
+            DiagnosticSeverity.Warning,
+            AnalyzerConstants.EnabledByDefault,
+            Description,
+            HelpLink);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -40,7 +44,8 @@
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = context.Node as MethodDeclarationSyntax;
-            if (methodDeclaration == null || methodDeclaration.IsMissing)
+            if (methodDeclaration == null ||
+                methodDeclaration.IsMissing)
             {
                 return;
             }
@@ -52,14 +57,14 @@
             }
 
             IFieldSymbol setField;
-            if (ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out setField))
+            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out setField))
             {
                 CheckName(context, setField, method, methodDeclaration, "Set");
                 return;
             }
 
             IFieldSymbol getField;
-            if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out getField))
+            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out getField))
             {
                 CheckName(context, getField, method, methodDeclaration, "Get");
             }
@@ -77,7 +82,7 @@
                 dependencyProperty,
                 context.SemanticModel,
                 context.CancellationToken,
-                                                        out registeredName))
+                out registeredName))
             {
                 if (!method.Name.IsParts(prefix, registeredName))
                 {

@@ -779,7 +779,6 @@ public class FooControl : Control
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-
         [TestCase("SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
@@ -851,6 +850,105 @@ public class FooControl : Control
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task SetValueInCallback()
+        {
+            var testCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
+        ""Value"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(
+            default(int),
+            OnValueChanged));
+
+    public static readonly DependencyProperty SynchronizedProperty = DependencyProperty.RegisterAttached(""Synchronized"", typeof(int), typeof(Foo), new PropertyMetadata(default(int)));
+
+    public static void SetValue(this DependencyObject element, int value)
+    {
+        element.SetValue(ValueProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetValue(this DependencyObject element)
+    {
+        return (int)element.GetValue(ValueProperty);
+    }
+
+    public static void SetSynchronized(this DependencyObject element, int value)
+    {
+        element.SetValue(SynchronizedProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetSynchronized(this DependencyObject element)
+    {
+        return (int)element.GetValue(SynchronizedProperty);
+    }
+
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ↓d.SetValue(SynchronizedProperty, e.NewValue);
+    }
+}";
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Use SetCurrentValue(SynchronizedProperty, e.NewValue)");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+
+public static class Foo
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
+        ""Value"",
+        typeof(int),
+        typeof(Foo),
+        new PropertyMetadata(
+            default(int),
+            OnValueChanged));
+
+    public static readonly DependencyProperty SynchronizedProperty = DependencyProperty.RegisterAttached(""Synchronized"", typeof(int), typeof(Foo), new PropertyMetadata(default(int)));
+
+    public static void SetValue(this DependencyObject element, int value)
+    {
+        element.SetValue(ValueProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetValue(this DependencyObject element)
+    {
+        return (int)element.GetValue(ValueProperty);
+    }
+
+    public static void SetSynchronized(this DependencyObject element, int value)
+    {
+        element.SetValue(SynchronizedProperty, value);
+    }
+
+    [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+    [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+    public static int GetSynchronized(this DependencyObject element)
+    {
+        return (int)element.GetValue(SynchronizedProperty);
+    }
+
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        d.SetCurrentValue(SynchronizedProperty, e.NewValue);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
 
         [TestCase(@"Text = ""1"";")]
         [TestCase("Text = CreateValue();")]

@@ -23,6 +23,7 @@
             if (!method.IsStatic ||
                 method.Parameters.Length != 2 ||
                 !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
+                method.Parameters[1].Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
                 !method.ReturnsVoid)
             {
                 return false;
@@ -49,7 +50,46 @@
             return false;
         }
 
-        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
+        /// <summary>
+        /// Check if <paramref name="method"/> is a potential accessor for an attached property
+        /// </summary>
+        internal static bool IsPotentialClrGetMethod(this IMethodSymbol method)
+        {
+            if (method == null)
+            {
+                return false;
+            }
+
+            if (!method.IsStatic ||
+                method.Parameters.Length != 1 ||
+                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
+                method.ReturnsVoid)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        internal static bool IsAttachedGetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField)
+        {
+            getField = null;
+            if (!IsPotentialClrGetMethod(method))
+            {
+                return false;
+            }
+
+            SyntaxReference reference;
+            if (method.DeclaringSyntaxReferences.TryGetSingle(out reference))
+            {
+                var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
+                return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out getField);
+            }
+
+            return false;
+        }
+
+        private static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
         {
             setField = null;
             if (method == null ||
@@ -93,46 +133,7 @@
             }
         }
 
-        /// <summary>
-        /// Check if <paramref name="method"/> is a potential accessor for an attached property
-        /// </summary>
-        internal static bool IsPotentialClrGetMethod(this IMethodSymbol method)
-        {
-            if (method == null)
-            {
-                return false;
-            }
-
-            if (!method.IsStatic ||
-                method.Parameters.Length != 1 ||
-                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
-                method.ReturnsVoid)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        internal static bool IsAttachedGetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField)
-        {
-            getField = null;
-            if (!IsPotentialClrGetMethod(method))
-            {
-                return false;
-            }
-
-            SyntaxReference reference;
-            if (method.DeclaringSyntaxReferences.TryGetSingle(out reference))
-            {
-                var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out getField);
-            }
-
-            return false;
-        }
-
-        internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField)
+        private static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField)
         {
             getField = null;
             if (method == null ||

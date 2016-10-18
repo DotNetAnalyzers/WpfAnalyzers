@@ -47,9 +47,16 @@
                         continue;
                     }
 
+                    var method = semanticModel.GetDeclaredSymbol(methodDeclaration) as IMethodSymbol;
+
+                    if (method == null)
+                    {
+                        continue;
+                    }
+
                     IFieldSymbol backingField;
                     if (ClrMethod.IsAttachedSetMethod(
-                        methodDeclaration,
+                        method,
                         semanticModel,
                         context.CancellationToken,
                         out backingField))
@@ -67,7 +74,7 @@
                     }
 
                     if (ClrMethod.IsAttachedGetMethod(
-                        methodDeclaration,
+                        method,
                         semanticModel,
                         context.CancellationToken,
                         out backingField))
