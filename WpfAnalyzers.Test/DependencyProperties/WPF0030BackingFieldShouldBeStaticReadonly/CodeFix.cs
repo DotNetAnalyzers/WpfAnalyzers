@@ -54,7 +54,6 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
         public async Task DependencyPropertyAddOwner(string typeName)

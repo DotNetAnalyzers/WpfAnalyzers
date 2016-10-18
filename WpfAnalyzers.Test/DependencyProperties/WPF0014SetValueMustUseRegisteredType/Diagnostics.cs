@@ -91,7 +91,7 @@ public class FooControl : FooControl<int>
             var expected = this.CSharpDiagnostic()
                                .WithLocationIndicated(ref testCode)
                                .WithMessage($"{method} must use registered type int");
-            await this.VerifyCSharpDiagnosticAsync(new []{fooControlGeneric, testCode}, expected).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooControlGeneric, testCode }, expected).ConfigureAwait(false);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]

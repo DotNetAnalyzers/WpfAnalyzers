@@ -24,11 +24,11 @@
             Assert.Pass();
         }
 
-        //[Explicit("Temporarily ignore")]
+        ////[Explicit("Temporarily ignore")]
         [Test]
         public async Task SomewhatRealisticSample()
         {
-            // this test just throws some random code at all analyzers 
+            // this test just throws some random code at all analyzers
             var booleanBoxesCode = @"
 internal static class BooleanBoxes
 {

@@ -19,6 +19,7 @@
                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                     .Select(DescriptorInfo.Create)
                                     .ToArray();
+
         private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => Descriptors.Where(d => d.DocExists).ToArray();
 
         private static string SolutionDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
@@ -124,8 +125,7 @@
                 "https://github.com/DotNetAnalyzers/WpfAnalyzers",
                 AnalyzerCategory.DependencyProperties,
                 "AvoidSideEffectsInClrAccessor.",
-                "Bindings do not call accessor when updating value. Use callbacks."
-            );
+                "Bindings do not call accessor when updating value. Use callbacks.");
 
             File.WriteAllText(Path.Combine(DocumentsDirectory, "Generated.md"), stub);
             Console.Write(stub);

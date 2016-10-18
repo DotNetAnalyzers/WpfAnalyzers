@@ -6,5 +6,9 @@ Microsoft.CodeAnalysis.Workspaces.Common
 Microsoft.Composition
 System.Collections.Immutable
 
+group Analyzers
+  StyleCop.Analyzers
+  AsyncUsageAnalyzers
+
 group Test
   NUnit

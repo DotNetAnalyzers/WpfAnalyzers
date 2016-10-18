@@ -73,6 +73,46 @@ namespace WpfAnalyzers.Test
 
         protected internal static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
+        public static FileLinePositionSpan GetErrorPosition(string[] testCode)
+        {
+            var fileNames = CreateFileNamesFromSources(testCode, "cs");
+            var line = 0;
+            var column = -1;
+            var fileName = string.Empty;
+
+            const char errorPositionIndicator = '↓';
+            for (var i = 0; i < testCode.Length; i++)
+            {
+                var source = testCode[i];
+                var lineCount = 0;
+                foreach (var codeLine in source.Lines())
+                {
+                    lineCount++;
+                    var col = codeLine.IndexOf(errorPositionIndicator);
+                    if (col >= 0)
+                    {
+                        Assert.AreEqual(-1, column, "Expected to find only one error indicator");
+                        testCode[i] = testCode[i].Replace(new string(errorPositionIndicator, 1), string.Empty);
+                        column = col + 1;
+                        line = lineCount;
+                        fileName = fileNames[i];
+                    }
+                }
+            }
+
+            Assert.AreNotEqual(-1, column, "Expected to find one error");
+            var pos = new LinePosition(line, column);
+            return new FileLinePositionSpan(fileName, pos, pos);
+        }
+
+        public static FileLinePositionSpan GetErrorPosition(ref string testCode)
+        {
+            var sources = new[] { testCode };
+            var result = GetErrorPosition(sources);
+            testCode = sources[0];
+            return result;
+        }
+
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
@@ -109,6 +149,7 @@ namespace WpfAnalyzers.Test
                     if (diagnostic.DefaultSeverity == DiagnosticSeverity.Hidden && diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
                     {
                         Assert.Inconclusive(diagnostic.HelpLinkUri);
+
                         // This diagnostic will never appear in the UI.
                         continue;
                     }
@@ -117,16 +158,9 @@ namespace WpfAnalyzers.Test
                     Assert.AreEqual(expected, diagnostic.HelpLinkUri);
                 }
             }
+
             // ReSharper restore HeuristicUnreachableCode
         }
-
-        /// <summary>
-        /// Gets the C# analyzers being tested
-        /// </summary>
-        /// <returns>
-        /// New instances of all the C# analyzers being tested.
-        /// </returns>
-        internal abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -248,49 +282,16 @@ namespace WpfAnalyzers.Test
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
-        public static FileLinePositionSpan GetErrorPosition(string[] testCode)
-        {
-            var fileNames = CreateFileNamesFromSources(testCode, "cs");
-            var line = 0;
-            var column = -1;
-            var fileName = "";
-
-            const char errorPositionIndicator = '↓';
-            for (var i = 0; i < testCode.Length; i++)
-            {
-                var source = testCode[i];
-                var lineCount = 0;
-                foreach (var codeLine in source.Lines())
-                {
-                    lineCount++;
-                    var col = codeLine.IndexOf(errorPositionIndicator);
-                    if (col >= 0)
-                    {
-                        Assert.AreEqual(-1, column, "Expected to find only one error indicator");
-                        testCode[i] = testCode[i].Replace(new string(errorPositionIndicator, 1), "");
-                        column = col + 1;
-                        line = lineCount;
-                        fileName = fileNames[i];
-                    }
-                }
-            }
-
-
-            Assert.AreNotEqual(-1, column, "Expected to find one error");
-            var pos = new LinePosition(line, column);
-            return new FileLinePositionSpan(fileName, pos, pos);
-        }
-
-        public static FileLinePositionSpan GetErrorPosition(ref string testCode)
-        {
-            var sources = new []{testCode};
-            var result = GetErrorPosition(sources);
-            testCode = sources[0];
-            return result;
-        }
+        /// <summary>
+        /// Gets the C# analyzers being tested
+        /// </summary>
+        /// <returns>
+        /// New instances of all the C# analyzers being tested.
+        /// </returns>
+        internal abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
 
         [Conditional("DEBUG")]
-        // ReSharper disable once UnusedMember.Local
+        //// ReSharper disable once UnusedMember.Local
         private static void DumpIfDebug(string text)
         {
             Console.Write(text);
@@ -414,10 +415,10 @@ namespace WpfAnalyzers.Test
             var actualSpan = actual.GetLineSpan();
             if (actualSpan.Path != expected.Path)
             {
-                var message = "Diagnostic not found in expected file.\r\n" + 
+                var message = "Diagnostic not found in expected file.\r\n" +
                               $"Expected: \"{expected.Path}\"\r\n" +
                               $"Actual:   \"{actualSpan.Path}\"\r\n" +
-                               "\r\n" + 
+                               "\r\n" +
                                "Diagnostic:\r\n" +
                               $"    {FormatDiagnostics(analyzers, diagnostic)}\r\n";
                 Assert.Fail(message);

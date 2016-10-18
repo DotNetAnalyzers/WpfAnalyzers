@@ -11,7 +11,6 @@
         [TestCase("int", "new PropertyMetadata(↓default(double))")]
         [TestCase("int", "new PropertyMetadata(↓0.0)")]
         [TestCase("double", "new PropertyMetadata(↓1)")]
-        //[TestCase("double", "new PropertyMetadata(null)")]
         [TestCase("double?", "new PropertyMetadata(↓1)")]
         [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
         [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<double>())")]
@@ -73,7 +72,6 @@ public class FooControl<T> : Control
                                .WithLocationIndicated(ref testCode)
                                .WithMessage("Default value for 'FooControl<T>.BarProperty' must be of type T");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
         }
 
         [Test]

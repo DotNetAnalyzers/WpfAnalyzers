@@ -29,6 +29,53 @@ namespace WpfAnalyzers.Test
         private static readonly string VisualBasicDefaultExt = "vb";
         private static readonly string TestProjectName = "TestProject";
 
+        internal static string[] CreateFileNamesFromSources(string[] sources, string extension)
+        {
+            var filenames = new string[sources.Length];
+            for (var i = 0; i < sources.Length; i++)
+            {
+                var source = sources[i];
+                string name;
+                if (source == string.Empty)
+                {
+                    name = "Test";
+                }
+                else
+                {
+                    var matches = Regex.Matches(source, @"(class|struct|enum|interface) (?<name>\w+)(<(?<typeArg>\w+)>)?", RegexOptions.ExplicitCapture);
+                    if (matches.Count == 0)
+                    {
+                        name = "AssemblyInfo";
+                    }
+                    else
+                    {
+                        Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
+                        name = matches[0].Groups["name"].Value;
+                        if (matches[0].Groups["typeArg"].Success)
+                        {
+                            name += $"{{{matches[0].Groups["typeArg"].Value}}}";
+                        }
+                    }
+                }
+
+                var suffixCount = 0;
+                while (true)
+                {
+                    var fileName = $"{name}{new string('_', suffixCount)}.{extension}";
+                    if (filenames.Contains(fileName))
+                    {
+                        suffixCount++;
+                        continue;
+                    }
+
+                    filenames[i] = fileName;
+                    break;
+                }
+            }
+
+            return filenames;
+        }
+
         /// <summary>
         /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
         /// diagnostics found. The returned diagnostics are then ordered by location in the source documents.
@@ -221,52 +268,6 @@ namespace WpfAnalyzers.Test
             }
 
             return solution.GetProject(projectId);
-        }
-
-        internal static string[] CreateFileNamesFromSources(string[] sources, string extension)
-        {
-            var filenames = new string[sources.Length];
-            for (var i = 0; i < sources.Length; i++)
-            {
-                var source = sources[i];
-                string name;
-                if (source == string.Empty)
-                {
-                    name = "Test";
-                }
-                else
-                {
-                    var matches = Regex.Matches(source, @"(class|struct|enum|interface) (?<name>\w+)(<(?<typeArg>\w+)>)?", RegexOptions.ExplicitCapture);
-                    if (matches.Count == 0)
-                    {
-                        name = "AssemblyInfo";
-                    }
-                    else
-                    {
-                        Assert.LessOrEqual(1, matches.Count, "Use class per file, it catches more bugs");
-                        name = matches[0].Groups["name"].Value;
-                        if (matches[0].Groups["typeArg"].Success)
-                        {
-                            name += $"{{{matches[0].Groups["typeArg"].Value}}}";
-                        }
-                    }
-                }
-
-                var suffixCount = 0;
-                while (true)
-                {
-                    var fileName = $"{name}{new string('_', suffixCount)}.{extension}";
-                    if (filenames.Contains(fileName))
-                    {
-                        suffixCount++;
-                        continue;
-                    }
-
-                    filenames[i] = fileName;
-                    break;
-                }
-            }
-            return filenames;
         }
 
         /// <summary>

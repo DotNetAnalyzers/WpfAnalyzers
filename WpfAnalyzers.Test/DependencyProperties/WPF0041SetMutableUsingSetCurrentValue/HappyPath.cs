@@ -78,7 +78,7 @@ namespace WpfAnalyzers.Test.DependencyProperties.WPF0041SetMutableUsingSetCurren
             fooCode = fooCode.AssertReplace(
                 "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);",
                 setExpression);
-            await this.VerifyHappyPathAsync(new []{fooCode, fooControlCode}).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(new[] { fooCode, fooControlCode }).ConfigureAwait(false);
         }
 
         [Test]
@@ -366,7 +366,7 @@ public class FooControl : Control
         set { this.SetValue(IsTrueProperty, value ? BooleanBoxes.True : BooleanBoxes.False); }
     }
 }";
-            await this.VerifyHappyPathAsync(new []{testCode, boolBoxesCode}).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(new[] { testCode, boolBoxesCode }).ConfigureAwait(false);
         }
 
         [Test]

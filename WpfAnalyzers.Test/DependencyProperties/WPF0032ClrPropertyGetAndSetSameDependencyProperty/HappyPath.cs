@@ -84,6 +84,5 @@ public class FooControl : Control
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
-
     }
 }

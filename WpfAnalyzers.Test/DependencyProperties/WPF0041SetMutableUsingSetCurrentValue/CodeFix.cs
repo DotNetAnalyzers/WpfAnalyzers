@@ -72,7 +72,7 @@ public class FooControl : Control
 }";
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
-                                 : "";
+                                 : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
@@ -143,7 +143,7 @@ public class FooControl : Control
 }";
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
-                                 : "";
+                                 : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
@@ -774,7 +774,7 @@ public class FooControl : Control
 }";
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
-                                 : "";
+                                 : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
@@ -845,7 +845,7 @@ public class FooControl : Control
 }";
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
-                                 : "";
+                                 : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }

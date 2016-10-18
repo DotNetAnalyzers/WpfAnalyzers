@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     public class CodeFixVerifier<TAnalyzer, TCodeFix> : CodeFixVerifier
-        where TAnalyzer: DiagnosticAnalyzer, new()
+        where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
     {
         private static readonly TAnalyzer Analyzer = new TAnalyzer();
