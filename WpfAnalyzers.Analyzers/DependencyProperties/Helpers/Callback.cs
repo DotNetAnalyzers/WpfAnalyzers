@@ -35,7 +35,7 @@ namespace WpfAnalyzers.DependencyProperties
             return false;
         }
 
-        public static bool TryGetRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        internal static bool TryGetRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
         {
             registeredName = null;
             if (callback == null)

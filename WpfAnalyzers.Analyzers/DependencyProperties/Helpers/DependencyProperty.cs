@@ -172,8 +172,12 @@
                 }
 
                 var invocationSymbol = semanticModel.SemanticModelFor(invocation)
-                                               .GetSymbolInfo(invocation, cancellationToken)
-                                               .Symbol;
+                                                    .GetSymbolInfo(invocation, cancellationToken)
+                                                    .Symbol;
+                if (invocationSymbol == null)
+                {
+                    return false;
+                }
 
                 if (invocationSymbol.ContainingType == KnownSymbol.DependencyProperty &&
                     invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))

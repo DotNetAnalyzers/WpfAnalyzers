@@ -34,6 +34,10 @@ Roslyn analyzers for WPF.
   <td>Name of CoerceValueCallback should match registered name.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md">WPF0007</a></td>
+  <td>Name of ValidateValueCallback should match registered name.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md">WPF0010</a></td>
   <td>Default value type must match registered type.</td>
 </tr>
