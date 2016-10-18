@@ -5,13 +5,13 @@ namespace WpfAnalyzers.DependencyProperties
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class PropertyChangedCallback
+    internal class CoerceValueCallback
     {
         internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax nameExpression, out string name)
         {
             return Callback.TryGetName(
                 callback,
-                KnownSymbol.PropertyChangedCallback,
+                KnownSymbol.CoerceValueCallback,
                 semanticModel,
                 cancellationToken,
                 out nameExpression,

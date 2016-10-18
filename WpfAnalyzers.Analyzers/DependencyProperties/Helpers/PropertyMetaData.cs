@@ -76,7 +76,50 @@
             CancellationToken cancellationToken,
             out ArgumentSyntax propertyChangedCallbackArg)
         {
-            propertyChangedCallbackArg = null;
+            return TryGetCallback(
+                objectCreation,
+                KnownSymbol.PropertyChangedCallback,
+                semanticModel,
+                cancellationToken,
+                out propertyChangedCallbackArg);
+        }
+
+        internal static bool TryGetCoerceValueCallback(
+            ObjectCreationExpressionSyntax objectCreation,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            out ArgumentSyntax propertyChangedCallbackArg)
+        {
+            return TryGetCallback(
+                objectCreation,
+                KnownSymbol.CoerceValueCallback,
+                semanticModel,
+                cancellationToken,
+                out propertyChangedCallbackArg);
+        }
+
+        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol dependencyProperty)
+        {
+            dependencyProperty = null;
+            var declarator = objectCreation.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
+            if (declarator == null)
+            {
+                return false;
+            }
+
+            dependencyProperty = semanticModel.SemanticModelFor(declarator)
+                                              .GetDeclaredSymbol(declarator, cancellationToken) as IFieldSymbol;
+            return dependencyProperty != null;
+        }
+
+        internal static bool TryGetCallback(
+            ObjectCreationExpressionSyntax objectCreation,
+            QualifiedType callbackType,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            out ArgumentSyntax callback)
+        {
+            callback = null;
             if (objectCreation == null ||
                 objectCreation.ArgumentList == null ||
                 objectCreation.ArgumentList.Arguments.Count == 0)
@@ -93,28 +136,14 @@
             for (int i = 0; i < constructor.Parameters.Length; i++)
             {
                 var parameter = constructor.Parameters[i];
-                if (parameter.Type == KnownSymbol.PropertyChangedCallback)
+                if (parameter.Type == callbackType)
                 {
-                    propertyChangedCallbackArg = objectCreation.ArgumentList.Arguments[i];
+                    callback = objectCreation.ArgumentList.Arguments[i];
                     return true;
                 }
             }
 
             return false;
-        }
-
-        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol dependencyProperty)
-        {
-            dependencyProperty = null;
-            var declarator = objectCreation.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
-            if (declarator == null)
-            {
-                return false;
-            }
-
-            dependencyProperty = semanticModel.SemanticModelFor(declarator)
-                                              .GetDeclaredSymbol(declarator, cancellationToken) as IFieldSymbol;
-            return dependencyProperty != null;
         }
     }
 }
