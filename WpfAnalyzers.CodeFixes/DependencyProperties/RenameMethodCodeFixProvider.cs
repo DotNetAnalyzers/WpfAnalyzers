@@ -18,7 +18,8 @@
             ImmutableArray.Create(
                 WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
                 WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
-                WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId);
+                WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId,
+                WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -117,6 +118,28 @@
                         out registeredName))
                     {
                         var newName = $"Coerce{registeredName}";
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                $"Rename to: {newName}",
+                                cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
+                                nameof(RenameMethodCodeFixProvider)),
+                            diagnostic);
+                    }
+                }
+                else if (diagnostic.Id == WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                    var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
+                    IdentifierNameSyntax nameExpression;
+                    string registeredName;
+                    if (WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
+                        callback,
+                        semanticModel,
+                        context.CancellationToken,
+                        out nameExpression,
+                        out registeredName))
+                    {
+                        var newName = $"{registeredName}ValidateValue";
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",

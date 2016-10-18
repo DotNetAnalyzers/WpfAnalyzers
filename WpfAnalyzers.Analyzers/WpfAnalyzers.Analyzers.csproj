@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="DependencyProperties\Helpers\ValidateValueCallback.cs" />
+    <Compile Include="DependencyProperties\WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.cs" />
     <Compile Include="DependencyProperties\Helpers\Callback.cs" />
     <Compile Include="DependencyProperties\Helpers\CoerceValueCallback.cs" />
     <Compile Include="DependencyProperties\WPF0006CoerceValueCallbackShouldMatchRegisteredName.cs" />
