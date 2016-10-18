@@ -63,7 +63,7 @@ internal static class BooleanBoxes
                 ""abc"", 
                 FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange, 
                 OnOtherChanged, 
-                OnOtherCoerce));
+                CoerceOther));
 
         private static readonly DependencyPropertyKey ReadOnlyPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             ""ReadOnly"",
@@ -107,7 +107,7 @@ internal static class BooleanBoxes
             return (bool)element.GetValue(ReadOnlyProperty);
         }
 
-        private static object OnOtherCoerce(DependencyObject d, object basevalue)
+        private static object CoerceOther(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
 #pragma warning disable WPF0041
@@ -143,7 +143,7 @@ internal static class BooleanBoxes
                 default(int),
                 FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure,
                 OnIntValueChanged,
-                OnIntValueCoerce),
+                CoerceIntValue),
             OnIntValueValidate);
 
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
@@ -218,7 +218,7 @@ internal static class BooleanBoxes
             d.SetValue(ReadOnlyValuePropertyKey, ""abc"");
         }
 
-        private static object OnIntValueCoerce(DependencyObject d, object basevalue)
+        private static object CoerceIntValue(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
 #pragma warning disable WPF0041
