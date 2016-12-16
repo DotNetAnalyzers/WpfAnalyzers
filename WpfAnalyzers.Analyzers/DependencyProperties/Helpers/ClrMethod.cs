@@ -13,7 +13,7 @@
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrSetMethod(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsPotentialClrSetMethod(this IMethodSymbol method)
         {
             if (method == null)
             {
@@ -35,7 +35,7 @@
         internal static bool IsAttachedSetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol setField)
         {
             setField = null;
-            if (!IsPotentialClrSetMethod(method, semanticModel, cancellationToken))
+            if (!IsPotentialClrSetMethod(method))
             {
                 return false;
             }

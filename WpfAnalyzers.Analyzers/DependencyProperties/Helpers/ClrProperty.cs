@@ -27,7 +27,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// <summary>
         /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty
         /// </summary>
-        internal static bool IsDependencyPropertyAccessor(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (!property.IsPotentialClrProperty())
             {

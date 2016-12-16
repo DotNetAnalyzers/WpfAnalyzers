@@ -86,6 +86,10 @@ Roslyn analyzers for WPF.
   <td>Set mutable dependency properties using SetCurrentValue.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md">WPF0042</a></td>
+  <td>Avoid side effects in CLR accessors.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md">WPF0050</a></td>
   <td>XmlnsPrefix must map to the same url as XmlnsDefinition.</td>
 </tr>
