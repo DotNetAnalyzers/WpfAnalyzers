@@ -1,8 +1,15 @@
+// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers
 {
     internal static class KnownSymbol
     {
         internal static readonly QualifiedType Object = Create("System.Object");
+        internal static readonly QualifiedType String = Create("System.String");
+
+        internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
+        internal static readonly QualifiedType INotifyPropertyChanged = new QualifiedType("System.ComponentModel.INotifyPropertyChanged");
+        internal static readonly QualifiedType PropertyChangedEventArgs = new QualifiedType("System.ComponentModel.PropertyChangedEventArgs");
+        internal static readonly PropertyChangedEventHandlerType PropertyChangedEventHandler = new PropertyChangedEventHandlerType();
 
         internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
         internal static readonly DependencyPropertyType DependencyProperty = new DependencyPropertyType();
