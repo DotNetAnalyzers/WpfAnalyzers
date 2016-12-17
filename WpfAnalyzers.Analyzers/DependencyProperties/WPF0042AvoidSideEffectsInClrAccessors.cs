@@ -95,16 +95,16 @@
                 return;
             }
 
-            using (var getterWalker = ClrGetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
+            using (var pooled = ClrGetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
             {
-                if (getterWalker.HasError)
+                if (pooled.Item.HasError)
                 {
                     return;
                 }
 
-                if (getterWalker.IsSuccess)
+                if (pooled.Item.IsSuccess)
                 {
-                    var returnStatementSyntax = getterWalker.GetValue.FirstAncestorOrSelf<ReturnStatementSyntax>();
+                    var returnStatementSyntax = pooled.Item.GetValue.FirstAncestorOrSelf<ReturnStatementSyntax>();
                     foreach (var statement in body.Statements)
                     {
                         if (statement != returnStatementSyntax)
@@ -124,19 +124,19 @@
                 return;
             }
 
-            using (var getterWalker = ClrSetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
+            using (var pooled = ClrSetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
             {
-                if (getterWalker.HasError)
+                if (pooled.Item.HasError)
                 {
                     return;
                 }
 
-                if (getterWalker.IsSuccess)
+                if (pooled.Item.IsSuccess)
                 {
                     foreach (var statement in body.Statements)
                     {
-                        if ((statement as ExpressionStatementSyntax)?.Expression != getterWalker.SetValue &&
-                            (statement as ExpressionStatementSyntax)?.Expression != getterWalker.SetCurrentValue)
+                        if ((statement as ExpressionStatementSyntax)?.Expression != pooled.Item.SetValue &&
+                            (statement as ExpressionStatementSyntax)?.Expression != pooled.Item.SetCurrentValue)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, statement.GetLocation()));
                             return;

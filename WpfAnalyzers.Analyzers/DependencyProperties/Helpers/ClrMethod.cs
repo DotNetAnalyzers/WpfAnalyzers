@@ -1,7 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
-    using System.Collections.Concurrent;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -102,14 +100,14 @@
                 return false;
             }
 
-            using (var walker = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var pooled = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
             {
-                if (!walker.IsSuccess)
+                if (!pooled.Item.IsSuccess)
                 {
                     return false;
                 }
 
-                var memberAccess = (walker.SetValue?.Expression ?? walker.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
+                var memberAccess = (pooled.Item.SetValue?.Expression ?? pooled.Item.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -123,15 +121,15 @@
                     return false;
                 }
 
-                using (var valueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
+                using (var pooledValueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
                 {
-                    if (!valueWalker.UsesValue)
+                    if (!pooledValueWalker.Item.UsesValue)
                     {
                         return false;
                     }
                 }
 
-                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
+                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
             }
         }
 
@@ -146,9 +144,9 @@
                 return false;
             }
 
-            using (var walker = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var pooled = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
             {
-                var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
+                var memberAccess = pooled.Item.GetValue?.Expression as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -162,34 +160,34 @@
                     return false;
                 }
 
-                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
+                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
             }
         }
 
-        private class ValueWalker : CSharpSyntaxWalker, IDisposable
+        private class ValueWalker : CSharpSyntaxWalker
         {
-            private static readonly ConcurrentQueue<ValueWalker> Cache = new ConcurrentQueue<ValueWalker>();
+            private static readonly Pool<ValueWalker> Cache = new Pool<ValueWalker>(
+                () => new ValueWalker(),
+                x =>
+                {
+                    x.value = default(SyntaxToken);
+                    x.UsesValue = false;
+                });
 
             private SyntaxToken value;
 
             public bool UsesValue { get; private set; }
 
-            public static ValueWalker Create(SyntaxToken value, SyntaxNode expression)
+            public static Pool<ValueWalker>.Pooled Create(SyntaxToken value, SyntaxNode expression)
             {
-                ValueWalker walker;
-                if (!Cache.TryDequeue(out walker))
-                {
-                    walker = new ValueWalker();
-                }
-
-                walker.UsesValue = false;
-                walker.value = value;
+                var pooled = Cache.GetOrCreate();
+                pooled.Item.value = value;
                 if (expression != null)
                 {
-                    walker.Visit(expression);
+                    pooled.Item.Visit(expression);
                 }
 
-                return walker;
+                return pooled;
             }
 
             public override void Visit(SyntaxNode node)
@@ -206,13 +204,6 @@
             {
                 this.UsesValue |= this.value.ValueText == node.Identifier.ValueText;
                 base.VisitIdentifierName(node);
-            }
-
-            public void Dispose()
-            {
-                this.value = default(SyntaxToken);
-                this.UsesValue = false;
-                Cache.Enqueue(this);
             }
         }
     }

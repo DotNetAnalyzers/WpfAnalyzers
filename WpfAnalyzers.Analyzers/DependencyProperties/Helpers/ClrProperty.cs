@@ -199,20 +199,20 @@ namespace WpfAnalyzers.DependencyProperties
             if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out getAccessor) &&
                 propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out setAccessor))
             {
-                using (var getterWalker = ClrGetterWalker.Create(semanticModel, cancellationToken, getAccessor))
+                using (var pooled = ClrGetterWalker.Create(semanticModel, cancellationToken, getAccessor))
                 {
                     using (var setterWalker = ClrSetterWalker.Create(semanticModel, cancellationToken, setAccessor))
                     {
-                        if (getterWalker.HasError ||
-                            setterWalker.HasError)
+                        if (pooled.Item.HasError ||
+                            setterWalker.Item.HasError)
                         {
                             return false;
                         }
 
-                        if (getterWalker.IsSuccess &&
-                            getterWalker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField) &&
-                            setterWalker.IsSuccess &&
-                            setterWalker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField))
+                        if (pooled.Item.IsSuccess &&
+                            pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out getField) &&
+                            setterWalker.Item.IsSuccess &&
+                            setterWalker.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out setField))
                         {
                             return true;
                         }

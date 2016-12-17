@@ -1,15 +1,21 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
-    using System.Collections.Concurrent;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class ClrGetterWalker : CSharpSyntaxWalker, IDisposable
+    internal class ClrGetterWalker : CSharpSyntaxWalker
     {
-        private static readonly ConcurrentQueue<ClrGetterWalker> Cache = new ConcurrentQueue<ClrGetterWalker>();
+        private static readonly Pool<ClrGetterWalker> Cache = new Pool<ClrGetterWalker>(
+            () => new ClrGetterWalker(),
+            x =>
+                {
+                    x.semanticModel = null;
+                    x.cancellationToken = CancellationToken.None;
+                    x.HasError = false;
+                    x.GetValue = null;
+                });
 
         private SemanticModel semanticModel;
         private CancellationToken cancellationToken;
@@ -26,20 +32,13 @@
 
         public ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
 
-        public static ClrGetterWalker Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
+        public static Pool<ClrGetterWalker>.Pooled Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
         {
-            ClrGetterWalker walker;
-            if (!Cache.TryDequeue(out walker))
-            {
-                walker = new ClrGetterWalker();
-            }
-
-            walker.HasError = false;
-            walker.GetValue = null;
-            walker.semanticModel = semanticModel;
-            walker.cancellationToken = cancellationToken;
-            walker.Visit(getter);
-            return walker;
+            var pooled = Cache.GetOrCreate();
+            pooled.Item.semanticModel = semanticModel;
+            pooled.Item.cancellationToken = cancellationToken;
+            pooled.Item.Visit(getter);
+            return pooled;
         }
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
@@ -70,15 +69,6 @@
             }
 
             base.Visit(node);
-        }
-
-        public void Dispose()
-        {
-            this.HasError = false;
-            this.GetValue = null;
-            this.semanticModel = null;
-            this.cancellationToken = CancellationToken.None;
-            Cache.Enqueue(this);
         }
     }
 }
