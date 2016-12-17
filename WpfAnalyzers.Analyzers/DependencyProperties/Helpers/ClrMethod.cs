@@ -24,7 +24,8 @@
                 method.Parameters.Length != 2 ||
                 !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
                 method.Parameters[1].Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
-                !method.ReturnsVoid)
+                !method.ReturnsVoid ||
+                !method.Name.StartsWith("Set"))
             {
                 return false;
             }
@@ -63,7 +64,8 @@
             if (!method.IsStatic ||
                 method.Parameters.Length != 1 ||
                 !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
-                method.ReturnsVoid)
+                method.ReturnsVoid ||
+                !method.Name.StartsWith("Get"))
             {
                 return false;
             }

@@ -46,8 +46,7 @@
             out ArgumentSyntax defaultValueArg)
         {
             defaultValueArg = null;
-            if (objectCreation == null ||
-                objectCreation.ArgumentList == null ||
+            if (objectCreation?.ArgumentList == null ||
                 objectCreation.ArgumentList.Arguments.Count == 0)
             {
                 return false;
@@ -120,8 +119,7 @@
             out ArgumentSyntax callback)
         {
             callback = null;
-            if (objectCreation == null ||
-                objectCreation.ArgumentList == null ||
+            if (objectCreation?.ArgumentList == null ||
                 objectCreation.ArgumentList.Arguments.Count == 0)
             {
                 return false;
