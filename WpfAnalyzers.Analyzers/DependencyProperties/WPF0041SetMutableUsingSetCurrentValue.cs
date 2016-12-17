@@ -55,7 +55,7 @@
                 return;
             }
 
-            var property = context.SemanticModel.GetSymbolInfo(assignment.Left, context.CancellationToken).Symbol as IPropertySymbol;
+            var property = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IPropertySymbol;
 
             IFieldSymbol field;
             if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out field))
@@ -133,7 +133,7 @@
                 return false;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(callee, cancellationToken).Symbol;
+            var symbol = semanticModel.GetSymbolSafe(callee, cancellationToken);
             if (symbol.Kind != SymbolKind.Local)
             {
                 return false;

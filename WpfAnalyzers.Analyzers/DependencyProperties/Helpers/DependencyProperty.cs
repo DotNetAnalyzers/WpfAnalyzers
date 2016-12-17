@@ -109,9 +109,7 @@
             ExpressionSyntax value;
             if (field.TryGetAssignedValue(cancellationToken, out value))
             {
-                var property = semanticModel.SemanticModelFor(value)
-                                            .GetSymbolInfo(value, cancellationToken)
-                                            .Symbol as IPropertySymbol;
+                var property = semanticModel.GetSymbolSafe(value, cancellationToken) as IPropertySymbol;
                 if (property == null ||
                     property != KnownSymbol.DependencyPropertyKey.DependencyProperty)
                 {
@@ -121,9 +119,7 @@
                 var memberAccess = value as MemberAccessExpressionSyntax;
                 if (memberAccess != null)
                 {
-                    result = semanticModel.SemanticModelFor(memberAccess.Expression)
-                                          .GetSymbolInfo(memberAccess.Expression, cancellationToken)
-                                          .Symbol as IFieldSymbol;
+                    result = semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken) as IFieldSymbol;
                     return result != null;
                 }
             }
@@ -143,15 +139,11 @@
                     return false;
                 }
 
-                var invocationSymbol = semanticModel.SemanticModelFor(invocation)
-                                                    .GetSymbolInfo(invocation, cancellationToken)
-                                                    .Symbol as IMethodSymbol;
+                var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
                 if (invocationSymbol == KnownSymbol.DependencyProperty.AddOwner)
                 {
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                    result = semanticModel.SemanticModelFor(addOwner.Expression)
-                                          .GetSymbolInfo(addOwner.Expression, cancellationToken)
-                                          .Symbol as IFieldSymbol;
+                    result = semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken) as IFieldSymbol;
                     return result != null;
                 }
             }
@@ -171,9 +163,7 @@
                     return false;
                 }
 
-                var invocationSymbol = semanticModel.SemanticModelFor(invocation)
-                                                    .GetSymbolInfo(invocation, cancellationToken)
-                                                    .Symbol;
+                var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken);
                 if (invocationSymbol == null)
                 {
                     return false;

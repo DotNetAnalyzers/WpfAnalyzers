@@ -46,8 +46,7 @@
                 return;
             }
 
-            var methodSymbol = context.SemanticModel.GetSymbolInfo(invocation)
-                                      .Symbol as IMethodSymbol;
+            var methodSymbol = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
             if (methodSymbol == null ||
                 methodSymbol.ContainingType == KnownSymbol.DependencyObject)
             {

@@ -11,9 +11,7 @@
         internal static bool TryGetSymbol<T>(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out T result)
             where T : class, ISymbol
         {
-            result = semanticModel.SemanticModelFor(argument.Expression)
-                                  .GetSymbolInfo(argument.Expression, cancellationToken)
-                                  .Symbol as T;
+            result = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken) as T;
 
             return result != null;
         }
@@ -34,8 +32,7 @@
             if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression) ||
                 argument.Expression.IsNameOf())
             {
-                var cv = semanticModel.SemanticModelFor(argument.Expression)
-                                      .GetConstantValue(argument.Expression, cancellationToken);
+                var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
                 if (cv.HasValue && cv.Value is string)
                 {
                     result = (string)cv.Value;
@@ -43,10 +40,9 @@
                 }
             }
 
-            var symbolInfo = semanticModel.SemanticModelFor(argument.Expression)
-                                          .GetSymbolInfo(argument.Expression, cancellationToken);
-            if (symbolInfo.Symbol?.ContainingType?.Name == "String" &&
-                symbolInfo.Symbol?.Name == "Empty")
+            var symbolInfo = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken);
+            if (symbolInfo?.ContainingType?.Name == "String" &&
+                symbolInfo.Name == "Empty")
             {
                 result = string.Empty;
                 return true;

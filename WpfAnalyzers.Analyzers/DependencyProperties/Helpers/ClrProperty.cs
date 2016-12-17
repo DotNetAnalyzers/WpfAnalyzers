@@ -217,8 +217,7 @@ namespace WpfAnalyzers.DependencyProperties
                             return true;
                         }
 
-                        var property = semanticModel.GetSymbolInfo(propertyDeclaration, cancellationToken)
-                                                    .Symbol as IPropertySymbol;
+                        var property = semanticModel.GetSymbolSafe(propertyDeclaration, cancellationToken) as IPropertySymbol;
                         return TryGetBackingFieldsByName(property, out getField, out setField);
                     }
                 }

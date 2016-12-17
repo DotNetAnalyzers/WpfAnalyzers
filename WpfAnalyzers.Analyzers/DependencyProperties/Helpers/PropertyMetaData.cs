@@ -14,7 +14,7 @@
             out IMethodSymbol constructor)
         {
             constructor = null;
-            var createdType = semanticModel.GetTypeInfo(objectCreation, cancellationToken)
+            var createdType = semanticModel.GetTypeInfoSafe(objectCreation, cancellationToken)
                                            .Type;
             if (createdType == null)
             {
@@ -34,8 +34,7 @@
                 return false;
             }
 
-            constructor = semanticModel.GetSymbolInfo(objectCreation, cancellationToken)
-                                       .Symbol as IMethodSymbol;
+            constructor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
             return constructor != null;
         }
 
@@ -106,8 +105,7 @@
                 return false;
             }
 
-            dependencyProperty = semanticModel.SemanticModelFor(declarator)
-                                              .GetDeclaredSymbol(declarator, cancellationToken) as IFieldSymbol;
+            dependencyProperty = semanticModel.GetDeclaredSymbolSafe(declarator, cancellationToken) as IFieldSymbol;
             return dependencyProperty != null;
         }
 

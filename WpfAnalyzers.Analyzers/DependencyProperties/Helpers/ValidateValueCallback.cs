@@ -27,9 +27,7 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetValidateValueCallback(InvocationExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
-            var methodSymbol = semanticModel.SemanticModelFor(registerCall)
-                                            .GetSymbolInfo(registerCall, cancellationToken)
-                                            .Symbol as IMethodSymbol;
+            var methodSymbol = semanticModel.GetSymbolSafe(registerCall, cancellationToken) as IMethodSymbol;
             if (methodSymbol == null ||
                 methodSymbol.ContainingType != KnownSymbol.DependencyProperty)
             {

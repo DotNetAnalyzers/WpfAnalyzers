@@ -27,9 +27,8 @@ namespace WpfAnalyzers.DependencyProperties
 
             var semanticModel = await annotatedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var symbol = annotatedToken.Parent is IdentifierNameSyntax
-                             ? semanticModel.GetSymbolInfo(annotatedToken.Parent, cancellationToken)
-                                            .Symbol
-                             : semanticModel.GetDeclaredSymbol(annotatedToken.Parent, cancellationToken);
+                             ? semanticModel.GetSymbolSafe(annotatedToken.Parent, cancellationToken)
+                             : semanticModel.GetDeclaredSymbolSafe(annotatedToken.Parent, cancellationToken);
 
             var newSolution = await Renamer.RenameSymbolAsync(annotatedSolution, symbol, newName, null, cancellationToken).ConfigureAwait(false);
 

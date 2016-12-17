@@ -22,9 +22,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            var methodSymbol = semanticModel.SemanticModelFor(invocation)
-                                      .GetSymbolInfo(invocation, cancellationToken)
-                                      .Symbol as IMethodSymbol;
+            var methodSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (methodSymbol != KnownSymbol.DependencyObject.GetValue ||
                 methodSymbol?.Parameters.Length != 1)
             {
@@ -32,9 +30,7 @@ namespace WpfAnalyzers.DependencyProperties
             }
 
             property = invocation.ArgumentList.Arguments[0];
-            field = semanticModel.SemanticModelFor(property.Expression)
-                                 .GetSymbolInfo(property.Expression, cancellationToken)
-                                 .Symbol as IFieldSymbol;
+            field = semanticModel.GetSymbolSafe(property.Expression, cancellationToken) as IFieldSymbol;
             return true;
         }
 
@@ -49,8 +45,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            var setter = semanticModel.SemanticModelFor(invocation)
-                                            .GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol;
+            var setter = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (setter != KnownSymbol.DependencyObject.SetValue ||
                 setter?.Parameters.Length != 2)
             {
@@ -74,9 +69,7 @@ namespace WpfAnalyzers.DependencyProperties
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
-                field = semanticModel.SemanticModelFor(property.Expression)
-                                     .GetSymbolInfo(property.Expression, cancellationToken)
-                                     .Symbol as IFieldSymbol;
+                field = semanticModel.GetSymbolSafe(property.Expression, cancellationToken) as IFieldSymbol;
                 return true;
             }
 
@@ -97,9 +90,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            var methodSymbol = semanticModel.SemanticModelFor(invocation)
-                                      .GetSymbolInfo(invocation, cancellationToken)
-                                      .Symbol as IMethodSymbol;
+            var methodSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (methodSymbol != KnownSymbol.DependencyObject.SetCurrentValue ||
                 methodSymbol?.Parameters.Length != 2)
             {
@@ -123,9 +114,7 @@ namespace WpfAnalyzers.DependencyProperties
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
-                field = semanticModel.SemanticModelFor(property.Expression)
-                                     .GetSymbolInfo(property.Expression, cancellationToken)
-                                     .Symbol as IFieldSymbol;
+                field = semanticModel.GetSymbolSafe(property.Expression, cancellationToken) as IFieldSymbol;
                 return true;
             }
 

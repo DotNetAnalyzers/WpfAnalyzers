@@ -70,7 +70,7 @@
 
                     if (!registeredType.IsRepresentationPreservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
                     {
-                        var setCall = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol;
+                        var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
                     }
                 }

@@ -13,9 +13,7 @@ namespace WpfAnalyzers.DependencyProperties
         {
             result = null;
 
-            var attributeType = semanticModel.SemanticModelFor(attribute)
-                                             .GetTypeInfo(attribute, cancellationToken)
-                                             .Type;
+            var attributeType = semanticModel.GetTypeInfoSafe(attribute, cancellationToken).Type;
             if (attributeType != attributeName)
             {
                 return false;
@@ -39,7 +37,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            var constantValue = semanticModel.GetConstantValue(arg.Expression, cancellationToken);
+            var constantValue = semanticModel.GetConstantValueSafe(arg.Expression, cancellationToken);
             if (!constantValue.HasValue)
             {
                 return false;

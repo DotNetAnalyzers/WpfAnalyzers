@@ -82,7 +82,7 @@
             {
                 foreach (var size in rank.Sizes)
                 {
-                    var constantValue = context.SemanticModel.GetConstantValue(size, context.CancellationToken);
+                    var constantValue = context.SemanticModel.GetConstantValueSafe(size, context.CancellationToken);
                     if (!constantValue.HasValue)
                     {
                         return true;
@@ -102,8 +102,7 @@
                 return false;
             }
 
-            var type = context.SemanticModel.SemanticModelFor(objectCreation)
-                              .GetTypeInfo(objectCreation, context.CancellationToken)
+            var type = context.SemanticModel.GetTypeInfoSafe(objectCreation, context.CancellationToken)
                               .Type;
             if (type.IsValueType)
             {

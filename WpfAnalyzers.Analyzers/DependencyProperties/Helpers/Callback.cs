@@ -22,7 +22,7 @@ namespace WpfAnalyzers.DependencyProperties
             var creation = callback.Expression as ObjectCreationExpressionSyntax;
             if (creation != null)
             {
-                if (semanticModel.SemanticModelFor(creation).GetTypeInfo(creation, cancellationToken).Type == callbackSymbol)
+                if (semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == callbackSymbol)
                 {
                     ArgumentSyntax arg;
                     if (creation.ArgumentList.Arguments.TryGetSingle(out arg))
@@ -44,7 +44,7 @@ namespace WpfAnalyzers.DependencyProperties
             }
 
             var fieldDeclaration = callback.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
-            var dependencyProperty = semanticModel.GetDeclaredSymbol(fieldDeclaration) as IFieldSymbol;
+            var dependencyProperty = semanticModel.GetDeclaredSymbolSafe(fieldDeclaration, cancellationToken) as IFieldSymbol;
             return DependencyProperty.TryGetRegisteredName(dependencyProperty, semanticModel, cancellationToken, out registeredName);
         }
     }
