@@ -19,7 +19,8 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF1011ImplementINotifyPropertyChanged.DiagnosticId,
-            "CS0535");
+            "CS0535",
+            "CS0246");
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -87,6 +88,12 @@
             {
                 return diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                  .EndsWith("does not implement interface member 'INotifyPropertyChanged.PropertyChanged'");
+            }
+
+            if (diagnostic.Id == "CS0246")
+            {
+                return diagnostic.GetMessage(CultureInfo.InvariantCulture) ==
+                       "The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)";
             }
 
             return false;
