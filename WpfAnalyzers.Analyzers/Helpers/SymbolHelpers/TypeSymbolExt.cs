@@ -127,7 +127,7 @@
                     if (@interface == qualifiedType)
                     {
                         return true;
-                    }    
+                    }
                 }
 
                 type = type.BaseType;

@@ -197,7 +197,7 @@ namespace WpfAnalyzers.Test
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             if (diagnosticId == null)
             {
-                return this.CSharpDiagnostic(supportedDiagnostics.Single());
+                return this.CSharpDiagnostic(supportedDiagnostics.First());
             }
             else
             {

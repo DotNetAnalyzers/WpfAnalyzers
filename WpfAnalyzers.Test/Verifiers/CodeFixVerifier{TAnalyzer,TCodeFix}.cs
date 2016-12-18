@@ -12,7 +12,7 @@
         private static readonly TAnalyzer Analyzer = new TAnalyzer();
         private static readonly TCodeFix CodeFix = new TCodeFix();
 
-        internal sealed override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return Analyzer;
         }

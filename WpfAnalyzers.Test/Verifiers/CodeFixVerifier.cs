@@ -401,7 +401,18 @@ namespace WpfAnalyzers.Test
             for (var i = 0; i < updatedDocuments.Length; i++)
             {
                 var actual = await GetStringFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                Assert.AreEqual(newSources[i].NormalizeNewLine(), actual.NormalizeNewLine());
+                var expected = newSources[i].NormalizeNewLine();
+                actual = actual.NormalizeNewLine();
+                if (expected != actual)
+                {
+                    Console.WriteLine("Expected:");
+                    Console.Write(expected);
+                    Console.WriteLine();
+                    Console.WriteLine("Actual:");
+                    Console.Write(actual);
+                }
+
+                Assert.AreEqual(expected, actual);
             }
         }
 

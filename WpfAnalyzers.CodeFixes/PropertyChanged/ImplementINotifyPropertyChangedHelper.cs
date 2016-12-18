@@ -19,8 +19,8 @@
         private static readonly SeparatedSyntaxList<ParameterSyntax> InvokerParameters =
             SyntaxFactory.ParseParameterList("([CallerMemberName] string propertyName = null)").Parameters;
 
-        private static readonly UsingDirectiveSyntax UsingSystemComponentModel = SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.ComponentModel"));
-        private static readonly UsingDirectiveSyntax UsingSystemRuntimeCompilerServices = SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Runtime.CompilerServices"));
+        private static readonly UsingDirectiveSyntax UsingSystemComponentModel = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.ComponentModel"));
+        private static readonly UsingDirectiveSyntax UsingSystemRuntimeCompilerServices = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Runtime.CompilerServices"));
 
         internal static TypeDeclarationSyntax WithPropertyChangedEvent(
             this TypeDeclarationSyntax typeDeclaration,
@@ -87,6 +87,18 @@
             SyntaxGenerator syntaxGenerator,
             ITypeSymbol type)
         {
+            var baseList = typeDeclaration.BaseList;
+            if (baseList != null)
+            {
+                foreach (var baseType in baseList.Types)
+                {
+                    if ((baseType.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true)
+                    {
+                        return typeDeclaration;
+                    }
+                }
+            }
+
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return (TypeDeclarationSyntax)syntaxGenerator.AddInterfaceType(typeDeclaration, INotifyPropertyChangedInterface);
@@ -169,7 +181,15 @@
 
         private static bool HasUsing(this SyntaxList<UsingDirectiveSyntax> usings, UsingDirectiveSyntax @using)
         {
-            return usings.IndexOf(x => x.Name == @using.Name) >= 0;
+            foreach (var existing in usings)
+            {
+                if (existing.Name.IsEquivalentTo(@using.Name))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
