@@ -4,6 +4,9 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Formatting;
+
+    using WpfAnalyzers.PropertyChanged.Helpers;
 
     internal static class MakePropertyNotifyHelper
     {
@@ -43,15 +46,27 @@ namespace WpfAnalyzers
             return (TypeDeclarationSyntax)syntaxGenerator.AddMembers(typeDeclaration, field);
         }
 
-        internal static PropertyDeclarationSyntax WithGeterReturningBackingField(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, string field)
+        internal static PropertyDeclarationSyntax WithGetterReturningBackingField(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, string field)
         {
-            var returnStatement = field.StartsWith("_")
-                                      ? syntaxGenerator.ReturnStatement(SyntaxFactory.ParseExpression(field))
-                                      : syntaxGenerator.ReturnStatement(SyntaxFactory.ParseExpression($"this.{field}"));
-            return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement });
+            var fieldAccess = field.StartsWith("_")
+                                    ? field
+                                    : $"this.{field}";
+            var expressionSyntax = SyntaxFactory.ParseExpression(fieldAccess);
+            var returnStatement = syntaxGenerator.ReturnStatement(expressionSyntax);
+            return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement }).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, string field, IMethodSymbol invoker)
+        {
+            return WithNotifyingSetter(
+                property,
+                syntaxGenerator,
+                syntaxGenerator.AssignValueToBackingField(field),
+                field,
+                invoker);
+        }
+
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
         {
             var statements = new[]
                                  {
@@ -74,10 +89,7 @@ namespace WpfAnalyzers
 
                 foreach (var variable in field.Declaration.Variables)
                 {
-                    if (variable.Identifier.ValueText.StartsWith("_"))
-                    {
-                        return true;
-                    }
+                    return variable.Identifier.ValueText.StartsWith("_");
                 }
             }
 
@@ -89,29 +101,35 @@ namespace WpfAnalyzers
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName
                                   : $"this.{fieldName}";
-
-            return (IfStatementSyntax)syntaxGenerator.IfStatement(
-                SyntaxFactory.ParseExpression($"value == {fieldAccess}"),
-                new[] { SyntaxFactory.ReturnStatement() });
+            var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
+                SyntaxFactory.ParseName("value"),
+                SyntaxFactory.ParseExpression(fieldAccess));
+            return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
         }
 
-        private static StatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)
+        private static ExpressionStatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)
         {
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName
                                   : $"this.{fieldName}";
 
-            return SyntaxFactory.ParseStatement($"{fieldAccess} = value;");
+            var assignmentStatement = syntaxGenerator.AssignmentStatement(SyntaxFactory.ParseExpression(fieldAccess), SyntaxFactory.ParseName("value"));
+            return (ExpressionStatementSyntax)syntaxGenerator.ExpressionStatement(assignmentStatement);
         }
 
-        // ReSharper disable once UnusedParameter.Local
         private static StatementSyntax Invoke(this SyntaxGenerator syntaxGenerator, PropertyDeclarationSyntax property, bool usedUnderscoreNames, IMethodSymbol invoker)
         {
             var prefix = usedUnderscoreNames
                              ? string.Empty
                              : "this.";
-            var arg = $"nameof({property.Identifier.ValueText})";
-            return SyntaxFactory.ParseStatement($"{prefix}{invoker.Name}({arg});");
+            var memberAccess = SyntaxFactory.ParseExpression($"{prefix}{invoker.Name}");
+            if (invoker.Parameters[0].IsCallerMemberName())
+            {
+                return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess));
+            }
+
+            var arg = SyntaxFactory.ParseExpression($"nameof({prefix}{property.Identifier.ValueText})");
+            return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess, arg));
         }
 
         private static bool HasMember(this TypeDeclarationSyntax typeDeclaration, string name)

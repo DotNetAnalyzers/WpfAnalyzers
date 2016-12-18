@@ -48,7 +48,8 @@
                 var type = (ITypeSymbol)ModelExtensions.GetDeclaredSymbol(semanticModel, typeDeclaration, context.CancellationToken);
 
                 IMethodSymbol invoker;
-                if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out invoker))
+                if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out invoker) &&
+                    invoker.Parameters[0].Type == KnownSymbol.String)
                 {
                     if (Property.IsMutableAutoProperty(propertyDeclaration))
                     {
@@ -59,8 +60,49 @@
                                 nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
                             diagnostic);
                     }
+
+                    string fieldName;
+                    ExpressionStatementSyntax assignStatement;
+                    if (IsSimpleAssignmentOnly(propertyDeclaration, semanticModel, context.CancellationToken, out assignStatement, out fieldName))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Convert to notifying property.",
+                                _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, assignStatement, fieldName, invoker),
+                                nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
+                            diagnostic);
+                    }
                 }
             }
+        }
+
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionStatementSyntax assignStatement, out string fieldName)
+        {
+            fieldName = null;
+            assignStatement = null;
+            AccessorDeclarationSyntax setter;
+            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out setter) ||
+                setter.Body == null ||
+                setter.Body.Statements.Count != 1)
+            {
+                return false;
+            }
+
+            assignStatement = setter.Body.Statements[0] as ExpressionStatementSyntax;
+            var assignment = assignStatement?.Expression as AssignmentExpressionSyntax;
+            if (assignment == null || (assignment.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
+            {
+                return false;
+            }
+
+            var fieldSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken) as IFieldSymbol;
+            if (fieldSymbol == null)
+            {
+                return false;
+            }
+
+            fieldName = fieldSymbol.Name;
+            return true;
         }
 
         private static Task<Document> ApplyConvertAutoPropertyFixAsync(
@@ -77,10 +119,28 @@
             newTypeDeclaration = newTypeDeclaration.WithBackingField(propertyDeclaration, syntaxGenerator, out fieldName);
 
             propertyDeclaration = newTypeDeclaration.GetCurrentNode(propertyDeclaration);
-            var newPropertyDeclaration = propertyDeclaration.WithGeterReturningBackingField(syntaxGenerator, fieldName)
+            var newPropertyDeclaration = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, fieldName)
                                                             .WithNotifyingSetter(syntaxGenerator, fieldName, invoker);
 
             newTypeDeclaration = newTypeDeclaration.ReplaceNode(propertyDeclaration, newPropertyDeclaration);
+            return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, newTypeDeclaration)));
+        }
+
+        private static Task<Document> ApplyConvertAutoPropertyFixAsync(
+    CodeFixContext context,
+    SyntaxNode syntaxRoot,
+    PropertyDeclarationSyntax propertyDeclaration,
+    ExpressionStatementSyntax assignStatement,
+    string fieldName,
+    IMethodSymbol invoker)
+        {
+            var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
+            var typeDeclaration = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+
+            var newPropertyDeclaration = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, fieldName)
+                                                            .WithNotifyingSetter(syntaxGenerator, fieldName, invoker);
+
+            var newTypeDeclaration = typeDeclaration.ReplaceNode(propertyDeclaration, newPropertyDeclaration);
             return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, newTypeDeclaration)));
         }
     }

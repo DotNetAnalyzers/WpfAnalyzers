@@ -149,6 +149,22 @@
             return invoker != null;
         }
 
+        internal static bool IsCallerMemberName(this IParameterSymbol parameter)
+        {
+            if (parameter.HasExplicitDefaultValue)
+            {
+                foreach (var attribute in parameter.GetAttributes())
+                {
+                    if (attribute.AttributeClass == KnownSymbol.CallerMemberNameAttribute)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private static bool IsCreatePropertyChangedEventArgsFor(this ExpressionSyntax newPropertyChangedEventArgs, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var objectCreation = newPropertyChangedEventArgs as ObjectCreationExpressionSyntax;
@@ -221,25 +237,19 @@
                         continue;
                     }
 
-                    if (parameter.HasExplicitDefaultValue)
+                    if (parameter.IsCallerMemberName())
                     {
-                        foreach (var attribute in parameter.GetAttributes())
+                        switch (Invokes(method, method.Parameters[i], semanticModel, cancellationToken))
                         {
-                            if (attribute.AttributeClass == KnownSymbol.CallerMemberNameAttribute)
-                            {
-                                switch (Invokes(method, method.Parameters[i], semanticModel, cancellationToken))
-                                {
-                                    case InvokesPropertyChanged.No:
-                                        continue;
-                                    case InvokesPropertyChanged.Yes:
-                                        return InvokesPropertyChanged.Yes;
-                                    case InvokesPropertyChanged.Maybe:
-                                        invokes = InvokesPropertyChanged.Maybe;
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
-                            }
+                            case InvokesPropertyChanged.No:
+                                continue;
+                            case InvokesPropertyChanged.Yes:
+                                return InvokesPropertyChanged.Yes;
+                            case InvokesPropertyChanged.Maybe:
+                                invokes = InvokesPropertyChanged.Maybe;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
                     }
                 }
