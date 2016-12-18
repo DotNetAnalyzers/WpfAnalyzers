@@ -13,10 +13,19 @@
         [TestCase("public int Bar { get; private set; }")]
         public async Task WhenNotNotifyingAutoProperty(string property)
         {
-            var testCode = @"
-public class Foo
+            var testCode = @"using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
 {
+     public event PropertyChangedEventHandler PropertyChanged;
+
     ↓public int Bar { get; set; }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
 
             testCode = testCode.AssertReplace("public int Bar { get; set; }", property);
@@ -27,10 +36,14 @@ public class Foo
         [Test]
         public async Task WhenNotNotifyingWithBackingField()
         {
-            var testCode = @"
-public class Foo
+            var testCode = @"using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
 {
     private int value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     ↓public int Value
     {
@@ -42,6 +55,11 @@ public class Foo
         {
             this.value = value;
         }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
 

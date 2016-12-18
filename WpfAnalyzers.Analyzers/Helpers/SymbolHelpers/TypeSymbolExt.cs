@@ -122,6 +122,14 @@
                     return true;
                 }
 
+                foreach (var @interface in type.AllInterfaces)
+                {
+                    if (@interface == qualifiedType)
+                    {
+                        return true;
+                    }    
+                }
+
                 type = type.BaseType;
             }
 

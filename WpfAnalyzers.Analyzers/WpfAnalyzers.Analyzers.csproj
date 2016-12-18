@@ -109,9 +109,11 @@
     <Compile Include="PropertyChanged\Helpers\InvocationWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
+    <Compile Include="PropertyChanged\Helpers\Property.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />
     <Compile Include="DependencyProperties\WPF0042AvoidSideEffectsInClrAccessors.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotify.cs" />
+    <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChanged.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

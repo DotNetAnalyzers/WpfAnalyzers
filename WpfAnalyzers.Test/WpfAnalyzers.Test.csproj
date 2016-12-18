@@ -102,6 +102,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChangedTests\CodeFix.cs" />
+    <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChangedTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFix.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotifyTests.cs" />
