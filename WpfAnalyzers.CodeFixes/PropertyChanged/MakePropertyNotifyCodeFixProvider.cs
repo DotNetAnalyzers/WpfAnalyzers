@@ -104,7 +104,6 @@
             return true;
         }
 
-
         private static Task<Document> ApplyConvertAutoPropertyFixAsync(
             CodeFixContext context,
             SyntaxNode syntaxRoot,
