@@ -29,6 +29,40 @@ namespace WpfAnalyzers
             MemberDeclarationSyntax existsingMember;
             if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out existsingMember))
             {
+                FieldDeclarationSyntax before = null;
+                FieldDeclarationSyntax after = null;
+                foreach (var member in typeDeclaration.Members)
+                {
+                    var otherProperty = member as PropertyDeclarationSyntax;
+                    if (otherProperty == null || otherProperty == property)
+                    {
+                        continue;
+                    }
+
+                    FieldDeclarationSyntax otherField;
+                    if (Property.TryGetBackingField(otherProperty, out otherField))
+                    {
+                        if (otherProperty.SpanStart < property.SpanStart)
+                        {
+                            before = otherField;
+                        }
+                        else
+                        {
+                            after = otherField;
+                        }
+                    }
+                }
+
+                if (before != null)
+                {
+                    return typeDeclaration.InsertNodesAfter(before, new[] { field });
+                }
+
+                if (after != null)
+                {
+                    return typeDeclaration.InsertNodesBefore(after, new[] { field });
+                }
+
                 return typeDeclaration.InsertNodesAfter(existsingMember, new[] { field });
             }
 
@@ -71,13 +105,13 @@ namespace WpfAnalyzers
             var statements = new[]
                                  {
                                      syntaxGenerator.IfValueEqualsBackingFieldReturn(field),
-                                     syntaxGenerator.AssignValueToBackingField(field),
+                                     assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
                                      syntaxGenerator.Invoke(property, field.StartsWith("_"), invoker),
                                  };
-            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(property, statements);
+            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(property, statements).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
+        private static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
         {
             foreach (var member in type.Members)
             {
@@ -157,8 +191,6 @@ namespace WpfAnalyzers
                     {
                         return true;
                     }
-
-                    continue;
                 }
             }
 

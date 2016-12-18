@@ -62,6 +62,54 @@
             return true;
         }
 
+        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out FieldDeclarationSyntax field)
+        {
+            field = null;
+
+            AccessorDeclarationSyntax setter;
+            if (property.TryGetSetAccessorDeclaration(out setter) &&
+                setter.Body != null)
+            {
+                using (var pooled = AssignmentWalker.Create(setter))
+                {
+                    if (pooled.Item.Assignments.Count != 1)
+                    {
+                        return false;
+                    }
+
+                    var left = pooled.Item.Assignments[0].Left;
+                    var name = (left as IdentifierNameSyntax)?.Identifier.ValueText ??
+                               ((left as MemberAccessExpressionSyntax)?.Name as IdentifierNameSyntax)?.Identifier
+                                                                                                     .ValueText;
+
+                    if (name == null)
+                    {
+                        return false;
+                    }
+
+                    var typeDeclaration = property.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                    foreach (var member in typeDeclaration.Members)
+                    {
+                        field = member as FieldDeclarationSyntax;
+                        if (field == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (var variable in field.Declaration.Variables)
+                        {
+                            if (variable.Identifier.ValueText == name)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter)
         {
             using (var pooled = AssignmentWalker.Create(setter))

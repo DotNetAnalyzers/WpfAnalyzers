@@ -1,7 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0041SetMutableUsingSetCurrentValue
 {
     using System.Text.RegularExpressions;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;

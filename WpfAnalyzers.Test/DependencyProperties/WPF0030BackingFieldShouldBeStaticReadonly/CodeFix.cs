@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0030BackingFieldShouldBeStaticReadonly
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;

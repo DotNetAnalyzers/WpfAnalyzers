@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -105,6 +104,7 @@
             return true;
         }
 
+
         private static Task<Document> ApplyConvertAutoPropertyFixAsync(
             CodeFixContext context,
             SyntaxNode syntaxRoot,
@@ -127,18 +127,18 @@
         }
 
         private static Task<Document> ApplyConvertAutoPropertyFixAsync(
-    CodeFixContext context,
-    SyntaxNode syntaxRoot,
-    PropertyDeclarationSyntax propertyDeclaration,
-    ExpressionStatementSyntax assignStatement,
-    string fieldName,
-    IMethodSymbol invoker)
+            CodeFixContext context,
+            SyntaxNode syntaxRoot,
+            PropertyDeclarationSyntax propertyDeclaration,
+            ExpressionStatementSyntax assignStatement,
+            string fieldName,
+            IMethodSymbol invoker)
         {
             var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
             var typeDeclaration = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
             var newPropertyDeclaration = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, fieldName)
-                                                            .WithNotifyingSetter(syntaxGenerator, fieldName, invoker);
+                                                            .WithNotifyingSetter(syntaxGenerator, assignStatement, fieldName, invoker);
 
             var newTypeDeclaration = typeDeclaration.ReplaceNode(propertyDeclaration, newPropertyDeclaration);
             return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, newTypeDeclaration)));

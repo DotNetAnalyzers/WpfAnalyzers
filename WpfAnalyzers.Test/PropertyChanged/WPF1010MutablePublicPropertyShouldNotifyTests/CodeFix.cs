@@ -316,6 +316,145 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task AutoPropertyInsertCreatedFieldSorted()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class Foo : INotifyPropertyChanged
+{
+    private int a;
+    private int c;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int A
+    {
+        get
+        {
+            return this.a;
+        }
+
+        set
+        {
+            if (value == this.a)
+            {
+                return;
+            }
+
+            this.a = value;
+            this.OnPropertyChanged(nameof(this.A));
+        }
+    }
+
+    ↓public int B { get; set; }
+
+    public int C
+    {
+        get
+        {
+            return this.c;
+        }
+
+        set
+        {
+            if (value == this.c)
+            {
+                return;
+            }
+
+            this.c = value;
+            this.OnPropertyChanged(nameof(this.C));
+        }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("B");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class Foo : INotifyPropertyChanged
+{
+    private int a;
+    private int b;
+    private int c;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int A
+    {
+        get
+        {
+            return this.a;
+        }
+
+        set
+        {
+            if (value == this.a)
+            {
+                return;
+            }
+
+            this.a = value;
+            this.OnPropertyChanged(nameof(this.A));
+        }
+    }
+
+    public int B
+    {
+        get
+        {
+            return this.b;
+        }
+
+        set
+        {
+            if (value == this.b)
+            {
+                return;
+            }
+
+            this.b = value;
+            this.OnPropertyChanged(nameof(this.B));
+        }
+    }
+
+    public int C
+    {
+        get
+        {
+            return this.c;
+        }
+
+        set
+        {
+            if (value == this.c)
+            {
+                return;
+            }
+
+            this.c = value;
+            this.OnPropertyChanged(nameof(this.C));
+        }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task AutoPropertyWhenFieldExists()
         {
             var testCode = @"
