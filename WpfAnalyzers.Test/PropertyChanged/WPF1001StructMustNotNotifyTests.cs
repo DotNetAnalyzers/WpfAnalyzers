@@ -35,7 +35,7 @@ public struct Foo : ↓INotifyPropertyChanged
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

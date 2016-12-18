@@ -43,7 +43,7 @@ public class FooControl : Control
             var right = setExpression.Split('=')[1].Trim(' ', ';');
             testCode = testCode.AssertReplace("Bar = 1;", setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -112,7 +112,7 @@ public class FooControl : Control
             var right = setExpression.Split('=')[1].Trim(' ', ';');
             testCode = testCode.AssertReplace("Bar = 1;", setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -195,7 +195,7 @@ public static class Foo
             var value = Regex.Match(after, @"SetCurrentValue\(FooControl\.BarProperty, (\(double\))?(?<value>.+)\);", RegexOptions.ExplicitCapture)
                              .Groups["value"].Value;
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, new[] { expected }).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -257,7 +257,7 @@ public static class Foo
                 "this.fooControl.↓Bar = 1;",
                 setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref fooCode).WithArguments("FooControl.BarProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode }, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode }, new[] { expected }).ConfigureAwait(false);
 
             var fixedCode = @"
     public class Foo
@@ -301,7 +301,7 @@ public class FooControl : Control
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -356,7 +356,7 @@ public class FooControl : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -410,7 +410,7 @@ public class FooControl : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -464,7 +464,7 @@ public class FooControl<T> : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -525,7 +525,7 @@ public class BarControl : FooControl<int>
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -576,7 +576,7 @@ public class Foo
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl<int>.ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -621,7 +621,7 @@ public class FooControl : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -663,7 +663,7 @@ public class FooControl : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", "\"abc\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -695,7 +695,7 @@ public class FooControl : TextBox
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", "\"abc\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -745,7 +745,7 @@ public class FooControl : Control
             var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
             testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -814,7 +814,7 @@ public class FooControl : Control
             var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
             testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -900,7 +900,7 @@ public static class Foo
             var expected = this.CSharpDiagnostic()
                                .WithLocationIndicated(ref testCode)
                                .WithMessage("Use SetCurrentValue(SynchronizedProperty, e.NewValue)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -971,7 +971,7 @@ public class FooControl : TextBox
             var right = setExpression.Split('=')[1].Trim(' ', ';');
             testCode = testCode.AssertReplace("Text = \"1\";", setExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -1010,7 +1010,7 @@ public class Foo
 
             testCode = testCode.AssertReplace("this.", thisExpression);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextBox.TextProperty", "\"1\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -1059,7 +1059,7 @@ public class FooControl : Control
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;

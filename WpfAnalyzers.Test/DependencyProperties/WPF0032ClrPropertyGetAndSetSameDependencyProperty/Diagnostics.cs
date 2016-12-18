@@ -37,7 +37,7 @@ public class FooControl : Control
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

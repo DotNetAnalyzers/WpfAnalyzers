@@ -33,7 +33,7 @@
     }";
             testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "DependencyProperty", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
     using System.Windows;
@@ -95,7 +95,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -161,7 +161,7 @@ public class FooControl : Control
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -214,7 +214,7 @@ public static class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "DependencyProperty", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -270,7 +270,7 @@ public static class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;

@@ -77,6 +77,78 @@
             return invokes;
         }
 
+        internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        {
+            invoker = null;
+
+            foreach (var member in type.GetMembers())
+            {
+                var method = member as IMethodSymbol;
+
+                if (method?.Parameters.Length != 1)
+                {
+                    continue;
+                }
+
+                var parameter = method.Parameters[0];
+
+                if (method.DeclaringSyntaxReferences.Length == 0)
+                {
+                    if (parameter.Type == KnownSymbol.String &&
+                        method.Name.Contains("PropertyChnaged"))
+                    {
+                        // A bit speculative here
+                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
+                        invoker = method;
+                    }
+
+                    continue;
+                }
+
+                foreach (var declaration in method.Declarations(cancellationToken))
+                {
+                    using (var pooled = InvocationWalker.Create(declaration))
+                    {
+                        foreach (var invocation in pooled.Item.Invocations)
+                        {
+                            var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                            if (invokedMethod == null)
+                            {
+                                continue;
+                            }
+
+                            if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                            {
+                                ArgumentSyntax argument;
+                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
+                                {
+                                    var identifier = argument.Expression as IdentifierNameSyntax;
+                                    if (identifier?.Identifier.ValueText == parameter.Name)
+                                    {
+                                        invoker = method;
+                                        return true;
+                                    }
+
+                                    var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
+                                    if (objectCreation != null)
+                                    {
+                                        var nameArgument = objectCreation.ArgumentList.Arguments[0];
+                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                        {
+                                            invoker = method;
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return invoker != null;
+        }
+
         private static bool IsCreatePropertyChangedEventArgsFor(this ExpressionSyntax newPropertyChangedEventArgs, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var objectCreation = newPropertyChangedEventArgs as ObjectCreationExpressionSyntax;

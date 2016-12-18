@@ -43,7 +43,7 @@
             return false;
         }
 
-        private static bool IsMutableAutoProperty(PropertyDeclarationSyntax property)
+        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property)
         {
             var accessors = property?.AccessorList?.Accessors;
             if (accessors?.Count != 2)
@@ -62,7 +62,7 @@
             return true;
         }
 
-        private static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter)
+        internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter)
         {
             using (var pooled = AssignmentWalker.Create(setter))
             {

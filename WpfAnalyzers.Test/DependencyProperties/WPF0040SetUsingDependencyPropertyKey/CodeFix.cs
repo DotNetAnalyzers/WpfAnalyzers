@@ -37,7 +37,7 @@ public class FooControl : Control
 }";
             testCode = testCode.AssertReplace("SetValue", method);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;
@@ -92,7 +92,7 @@ public static class Foo
 }";
             testCode = testCode.AssertReplace("SetValue", method);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Windows;

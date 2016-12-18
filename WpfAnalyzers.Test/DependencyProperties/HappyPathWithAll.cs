@@ -232,7 +232,7 @@ internal static class BooleanBoxes
             return true;
         }
     }";
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode, booleanBoxesCode }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode, booleanBoxesCode }, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -78,6 +78,8 @@
     <Compile Include="Helpers\SemanticModelExt.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\SymbolHelpers\FieldSymbolExt.cs" />
+    <Compile Include="Helpers\SymbolHelpers\MethodSymbolExt.cs" />
+    <Compile Include="Helpers\SymbolHelpers\SymbolExt.cs" />
     <Compile Include="Helpers\SymbolHelpers\TypeSymbolExt.cs" />
     <Compile Include="Helpers\SyntaxNodeAnalysisContextExt.cs" />
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue.cs" />
