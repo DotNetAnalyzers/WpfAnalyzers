@@ -90,25 +90,26 @@ namespace WpfAnalyzers
             return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement }).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, SyntaxGenerator syntaxGenerator, IPropertySymbol property, string field, IMethodSymbol invoker)
         {
             return WithNotifyingSetter(
-                property,
+                propertyDeclaration,
                 syntaxGenerator,
+                property,
                 syntaxGenerator.AssignValueToBackingField(field),
                 field,
                 invoker);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, SyntaxGenerator syntaxGenerator, IPropertySymbol property, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
         {
             var statements = new[]
                                  {
-                                     syntaxGenerator.IfValueEqualsBackingFieldReturn(field),
+                                     syntaxGenerator.IfValueEqualsBackingFieldReturn(field, property),
                                      assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
-                                     syntaxGenerator.Invoke(property, field.StartsWith("_"), invoker),
+                                     syntaxGenerator.Invoke(propertyDeclaration, field.StartsWith("_"), invoker),
                                  };
-            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(property, statements).WithAdditionalAnnotations(Formatter.Annotation);
+            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
@@ -130,15 +131,23 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName)
+        private static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property)
         {
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName
                                   : $"this.{fieldName}";
-            var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
+            if (property.Type.IsValueType || property.Type == KnownSymbol.String)
+            {
+                var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
+                    SyntaxFactory.ParseName("value"),
+                    SyntaxFactory.ParseExpression(fieldAccess));
+                return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+            }
+
+            var referenceEqualsExpression = syntaxGenerator.ReferenceEqualsExpression(
                 SyntaxFactory.ParseName("value"),
                 SyntaxFactory.ParseExpression(fieldAccess));
-            return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+            return (IfStatementSyntax)syntaxGenerator.IfStatement(referenceEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
         }
 
         private static ExpressionStatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)

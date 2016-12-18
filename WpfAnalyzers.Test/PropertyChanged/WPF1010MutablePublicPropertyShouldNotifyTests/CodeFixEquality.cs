@@ -262,11 +262,17 @@ public class Foo : INotifyPropertyChanged
         {
             Assert.Fail("How do we want this?");
             var equatableStruct = @"
-public struct EquatableStruct : IEquatable<EquatableStrutct>
+using System;
+public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+    public EquatableStruct(int value)
+    {
+        this.Value = value;
+    }
+
+    public bool Equals(EquatableStruct other)
     {
         return this.Value == other.Value;
     }
@@ -274,17 +280,12 @@ public struct EquatableStruct : IEquatable<EquatableStrutct>
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        return obj is EquatableStrutct && Equals((EquatableStrutct)obj);
+        return obj is EquatableStruct && Equals((EquatableStruct)obj);
     }
 
     public override int GetHashCode()
     {
         return this.Value;
-    }
-
-    public EquatableStrutct(int value)
-    {
-        this.Value = value;
     }
 }
 ";
@@ -351,11 +352,17 @@ public class Foo : INotifyPropertyChanged
         {
             Assert.Fail("How do we want this?");
             var equatableStruct = @"
-public struct EquatableStruct : IEquatable<EquatableStrutct>
+using System;
+public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+    public EquatableStruct(int value)
+    {
+        this.Value = value;
+    }
+
+    public bool Equals(EquatableStruct other)
     {
         return this.Value == other.Value;
     }
@@ -363,17 +370,12 @@ public struct EquatableStruct : IEquatable<EquatableStrutct>
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        return obj is EquatableStrutct && Equals((EquatableStrutct)obj);
+        return obj is EquatableStruct && Equals((EquatableStruct)obj);
     }
 
     public override int GetHashCode()
     {
         return this.Value;
-    }
-
-    public EquatableStrutct(int value)
-    {
-        this.Value = value;
     }
 }
 ";
@@ -440,39 +442,40 @@ public class Foo : INotifyPropertyChanged
         {
             Assert.Fail("How do we want this?");
             var equatableStruct = @"
-public struct EquatableStruct : IEquatable<EquatableStrutct>
+public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+
+    public EquatableStruct(int value)
     {
-        return this.Value == other.Value;
+        this.Value = value;
     }
 
-    public static bool operator ==(EquatableStrutct left, EquatableStrutct right)
+    public static bool operator ==(EquatableStruct left, EquatableStruct right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(EquatableStrutct left, EquatableStrutct right)
+    public static bool operator !=(EquatableStruct left, EquatableStruct right)
     {
         return !left.Equals(right);
+    }
+
+    public bool Equals(EquatableStruct other)
+    {
+        return this.Value == other.Value;
     }
 
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        return obj is EquatableStrutct && Equals((EquatableStrutct)obj);
+        return obj is EquatableStruct && Equals((EquatableStruct)obj);
     }
 
     public override int GetHashCode()
     {
         return this.Value;
-    }
-
-    public EquatableStrutct(int value)
-    {
-        this.Value = value;
     }
 }
 ";
@@ -539,39 +542,39 @@ public class Foo : INotifyPropertyChanged
         {
             Assert.Fail("How do we want this?");
             var equatableStruct = @"
-public struct EquatableStruct : IEquatable<EquatableStrutct>
+public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+    public EquatableStruct(int value)
     {
-        return this.Value == other.Value;
+        this.Value = value;
     }
 
-    public static bool operator ==(EquatableStrutct left, EquatableStrutct right)
+    public static bool operator ==(EquatableStruct left, EquatableStruct right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(EquatableStrutct left, EquatableStrutct right)
+    public static bool operator !=(EquatableStruct left, EquatableStruct right)
     {
         return !left.Equals(right);
+    }
+
+    public bool Equals(EquatableStruct other)
+    {
+        return this.Value == other.Value;
     }
 
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        return obj is EquatableStrutct && Equals((EquatableStrutct)obj);
+        return obj is EquatableStruct && Equals((EquatableStruct)obj);
     }
 
     public override int GetHashCode()
     {
         return this.Value;
-    }
-
-    public EquatableStrutct(int value)
-    {
-        this.Value = value;
     }
 }
 ";
@@ -642,7 +645,7 @@ public struct NotEquatableStruct
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+    public bool Equals(EquatableStruct other)
     {
         return this.Value == other.Value;
     }
@@ -710,7 +713,7 @@ public struct NotEquatableStruct
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStrutct other)
+    public bool Equals(EquatableStruct other)
     {
         return this.Value == other.Value;
     }

@@ -44,7 +44,8 @@
                     continue;
                 }
 
-                var type = (ITypeSymbol)ModelExtensions.GetDeclaredSymbol(semanticModel, typeDeclaration, context.CancellationToken);
+                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
+                var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
 
                 IMethodSymbol invoker;
                 if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out invoker) &&
@@ -55,7 +56,7 @@
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 "Convert to notifying property.",
-                                _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, invoker),
+                                _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, property, invoker),
                                 nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
                             diagnostic);
                     }
@@ -67,7 +68,7 @@
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 "Convert to notifying property.",
-                                _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, assignStatement, fieldName, invoker),
+                                _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, property, assignStatement, fieldName, invoker),
                                 nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
                             diagnostic);
                     }
@@ -108,6 +109,7 @@
             CodeFixContext context,
             SyntaxNode syntaxRoot,
             PropertyDeclarationSyntax propertyDeclaration,
+            IPropertySymbol property,
             IMethodSymbol invoker)
         {
             var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
@@ -119,7 +121,7 @@
 
             propertyDeclaration = newTypeDeclaration.GetCurrentNode(propertyDeclaration);
             var newPropertyDeclaration = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, fieldName)
-                                                            .WithNotifyingSetter(syntaxGenerator, fieldName, invoker);
+                                                            .WithNotifyingSetter(syntaxGenerator, property, fieldName, invoker);
 
             newTypeDeclaration = newTypeDeclaration.ReplaceNode(propertyDeclaration, newPropertyDeclaration);
             return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, newTypeDeclaration)));
@@ -129,6 +131,7 @@
             CodeFixContext context,
             SyntaxNode syntaxRoot,
             PropertyDeclarationSyntax propertyDeclaration,
+            IPropertySymbol property,
             ExpressionStatementSyntax assignStatement,
             string fieldName,
             IMethodSymbol invoker)
@@ -137,7 +140,7 @@
             var typeDeclaration = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
             var newPropertyDeclaration = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, fieldName)
-                                                            .WithNotifyingSetter(syntaxGenerator, assignStatement, fieldName, invoker);
+                                                            .WithNotifyingSetter(syntaxGenerator, property, assignStatement, fieldName, invoker);
 
             var newTypeDeclaration = typeDeclaration.ReplaceNode(propertyDeclaration, newPropertyDeclaration);
             return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, newTypeDeclaration)));
