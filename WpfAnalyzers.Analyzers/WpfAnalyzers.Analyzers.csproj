@@ -117,7 +117,7 @@
     <Compile Include="DependencyProperties\WPF0042AvoidSideEffectsInClrAccessors.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotify.cs" />
     <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChanged.cs" />
-    <Compile Include="PropertyChanged\WPF1012NotifyCalculated.cs" />
+    <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChanges.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

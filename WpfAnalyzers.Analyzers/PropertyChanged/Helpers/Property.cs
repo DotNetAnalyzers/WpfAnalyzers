@@ -27,12 +27,13 @@
             AccessorDeclarationSyntax setter;
             if (declaration.TryGetSetAccessorDeclaration(out setter))
             {
-                if (!AssignsValueToBackingField(setter))
+                AssignmentExpressionSyntax assignment;
+                if (!AssignsValueToBackingField(setter, out assignment))
                 {
                     return false;
                 }
 
-                if (setter.InvokesPropertyChangedFor(propertySymbol, semanticModel, cancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
+                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, semanticModel, cancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
                 {
                     return false;
                 }
@@ -66,17 +67,29 @@
         {
             foreach (var declaration in property.Declarations(cancellationToken))
             {
-                SemanticModel fieldDeclaration;
-                if (TryGetBackingField(declaration, out fieldDeclaration))
+                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
+                if (propertyDeclaration == null)
                 {
-                    
+                    continue;
+                }
+
+                IdentifierNameSyntax fieldIdentifier;
+                FieldDeclarationSyntax fieldDeclaration;
+                if (TryGetBackingField(propertyDeclaration, out fieldIdentifier, out fieldDeclaration))
+                {
+                    field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
+                    return field != null;
                 }
             }
+
+            field = null;
+            return false;
         }
 
-        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out IdentifierNameSyntax field)
+        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out IdentifierNameSyntax field, out FieldDeclarationSyntax fieldDeclaration)
         {
             field = null;
+            fieldDeclaration = null;
 
             AccessorDeclarationSyntax setter;
             if (property.TryGetSetAccessorDeclaration(out setter) &&
@@ -107,20 +120,17 @@
                         return false;
                     }
 
-                    var typeDeclaration = property.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                    foreach (var member in typeDeclaration.Members)
+                    foreach (var member in property.FirstAncestorOrSelf<TypeDeclarationSyntax>().Members)
                     {
-                        field = member as FieldDeclarationSyntax;
-                        if (field == null)
+                        fieldDeclaration = member as FieldDeclarationSyntax;
+                        if (fieldDeclaration != null)
                         {
-                            continue;
-                        }
-
-                        foreach (var variable in field.Declaration.Variables)
-                        {
-                            if (variable.Identifier.ValueText == name)
+                            foreach (var variable in fieldDeclaration.Declaration.Variables)
                             {
-                                return true;
+                                if (variable.Identifier.ValueText == field.Identifier.ValueText)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -130,31 +140,34 @@
             return false;
         }
 
-        internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter)
+        internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             using (var pooled = AssignmentWalker.Create(setter))
             {
-                foreach (var assignment in pooled.Item.Assignments)
+                foreach (var a in pooled.Item.Assignments)
                 {
-                    if ((assignment.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
+                    if ((a.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
                     {
                         continue;
                     }
 
-                    if (assignment.Left is IdentifierNameSyntax)
+                    if (a.Left is IdentifierNameSyntax)
                     {
+                        assignment = a;
                         return true;
                     }
 
-                    var memberAccess = assignment.Left as MemberAccessExpressionSyntax;
+                    var memberAccess = a.Left as MemberAccessExpressionSyntax;
                     if (memberAccess?.Expression is ThisExpressionSyntax &&
                         memberAccess.Name is IdentifierNameSyntax)
                     {
+                        assignment = a;
                         return true;
                     }
                 }
             }
 
+            assignment = null;
             return false;
         }
     }

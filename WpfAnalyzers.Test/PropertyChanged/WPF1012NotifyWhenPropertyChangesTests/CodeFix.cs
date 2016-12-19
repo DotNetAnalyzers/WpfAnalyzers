@@ -1,12 +1,10 @@
-﻿namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyCalculatedTests
+﻿namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
     using WpfAnalyzers.PropertyChanged;
 
-    internal class CodeFix : CodeFixVerifier<WPF1012NotifyCalculated, ImplementINotifyPropertyChangedCodeFixProvider>
+    internal class CodeFix : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
     {
         [Test]
         public async Task WhenUsingPropertiesExpressionBody()
@@ -59,7 +57,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.lastName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
@@ -69,7 +67,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FullName");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -101,7 +99,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.firstName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
@@ -121,7 +119,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.lastName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
@@ -186,7 +184,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.lastName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
@@ -196,7 +194,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FullName");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
@@ -210,7 +208,7 @@ public class ViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public string FullName => $""{this.FirstName} {this.LastName}"";
+    public string FullName => $""{this.firstName} {this.lastName}"";
 
     public string FirstName
     {
@@ -228,7 +226,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.firstName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
@@ -248,7 +246,7 @@ public class ViewModel : INotifyPropertyChanged
 
             this.lastName = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(FullName));
+            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 

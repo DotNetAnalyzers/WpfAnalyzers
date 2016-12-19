@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.PropertyChanged
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;
@@ -10,12 +11,12 @@
     using WpfAnalyzers.PropertyChanged.Helpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1012NotifyCalculated : DiagnosticAnalyzer
+    internal class WPF1012NotifyWhenPropertyChanges : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1012";
-        private const string Title = "Notify when calculated property changes.";
-        private const string MessageFormat = "Notify when calculated property changes.";
-        private const string Description = "Notify when calculated property changes.";
+        private const string Title = "Notify when property changes.";
+        private const string MessageFormat = "Notify that property {0} changes.";
+        private const string Description = "Notify when property changes.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -27,6 +28,8 @@
             AnalyzerConstants.EnabledByDefault,
             Description,
             HelpLink);
+
+        public static readonly string PropertyNameKey = "PropertyName";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
@@ -43,9 +46,8 @@
         {
             var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
             var declaration = (PropertyDeclarationSyntax)context.Node;
-            AccessorDeclarationSyntax _;
-            if (declaration.TryGetSetAccessorDeclaration(out _) ||
-                !propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+
+            if (!propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return;
             }
@@ -108,9 +110,23 @@
                     {
                         foreach (var assignment in pooledAssignments.Item.Assignments)
                         {
-                            if (IsAssigning(assignment, name))
+                            if (assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null ||
+                                assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
                             {
+                                continue;
+                            }
 
+                            if (IsAssigning(assignment, field))
+                            {
+                                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
+                                {
+                                    var properties =
+                                        ImmutableDictionary.CreateRange(new[]
+                                                                        {
+                                                                            new KeyValuePair<string, string>(PropertyNameKey, propertySymbol.Name),
+                                                                        });
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, propertySymbol.Name));
+                                }
                             }
                         }
                     }
@@ -123,18 +139,18 @@
             }
         }
 
-        private static bool IsAssigning(AssignmentExpressionSyntax assignment, IdentifierNameSyntax identifier)
+        private static bool IsAssigning(AssignmentExpressionSyntax assignment, IFieldSymbol field)
         {
             var left = assignment.Left;
             var leftIdentifier = left as IdentifierNameSyntax;
             if (leftIdentifier != null)
             {
-                return leftIdentifier.IsEquivalentTo(identifier) == true;
+                return leftIdentifier.Identifier.ValueText == field.Name;
             }
 
             var memberAccess = left as MemberAccessExpressionSyntax;
             if (memberAccess?.Expression is ThisExpressionSyntax &&
-                memberAccess.Name.IsEquivalentTo(identifier))
+               (memberAccess.Name as IdentifierNameSyntax)?.Identifier.ValueText == field.Name)
             {
                 return true;
             }

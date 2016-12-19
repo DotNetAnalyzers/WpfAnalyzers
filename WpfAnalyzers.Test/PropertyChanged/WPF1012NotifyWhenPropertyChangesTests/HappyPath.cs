@@ -1,12 +1,10 @@
-namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyCalculatedTests
+namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
     using WpfAnalyzers.PropertyChanged;
 
-    internal class HappyPath : HappyPathVerifier<WPF1012NotifyCalculated>
+    internal class HappyPath : HappyPathVerifier<WPF1012NotifyWhenPropertyChanges>
     {
         [TestCase("null")]
         [TestCase("string.Empty")]
