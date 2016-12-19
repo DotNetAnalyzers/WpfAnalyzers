@@ -54,6 +54,7 @@
     <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedCodeFixProvider.cs" />
     <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedHelper.cs" />
     <Compile Include="PropertyChanged\MakePropertyNotifyCodeFixProvider.cs" />
+    <Compile Include="PropertyChanged\MakePropertyNotifyHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

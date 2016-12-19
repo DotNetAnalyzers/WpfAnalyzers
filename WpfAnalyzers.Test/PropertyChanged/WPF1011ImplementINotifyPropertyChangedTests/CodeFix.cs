@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
@@ -24,7 +23,7 @@ public class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Implement INotifyPropertyChanged.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -66,7 +65,7 @@ public class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Implement INotifyPropertyChanged.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -107,7 +106,7 @@ public class Foo : ↓INotifyPropertyChanged
 }";
 
             var expected = this.CSharpDiagnostic("CS0246").WithLocationIndicated(ref testCode).WithMessage("The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -137,7 +136,7 @@ namespace TestCode
 }";
 
             var expected = this.CSharpDiagnostic("CS0246").WithLocationIndicated(ref testCode).WithMessage("The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace TestCode
@@ -173,7 +172,7 @@ namespace TestCode
 }";
 
             var expected = this.CSharpDiagnostic("CS0246").WithLocationIndicated(ref testCode).WithMessage("The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace TestCode
@@ -210,7 +209,7 @@ namespace TestCode
 }";
 
             var expected = this.CSharpDiagnostic("CS0246").WithLocationIndicated(ref testCode).WithMessage("The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System;
@@ -245,7 +244,7 @@ public class Foo : ↓INotifyPropertyChanged
 }";
 
             var expected = this.CSharpDiagnostic("CS0535").WithLocationIndicated(ref testCode).WithMessage("'Foo' does not implement interface member 'INotifyPropertyChanged.PropertyChanged'");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.ComponentModel;

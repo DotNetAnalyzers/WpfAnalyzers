@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0032ClrPropertyGetAndSetSameDependencyProperty
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -37,7 +36,7 @@ public class FooControl : Control
     }
 }";
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }
