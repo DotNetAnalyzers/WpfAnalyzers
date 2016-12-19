@@ -8,10 +8,14 @@
 
     internal class CodeFixEquality : CodeFixVerifier<WPF1010MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>
     {
-        [Test]
-        public async Task Integer()
+        [TestCase("int")]
+        [TestCase("int?")]
+        [TestCase("Nullable<int>")]
+        [TestCase("string")]
+        public async Task OpEqualsFor(string typeCode)
         {
             var testCode = @"
+using System;
 using System.ComponentModel;
 
 public class Foo : INotifyPropertyChanged
@@ -25,11 +29,12 @@ public class Foo : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-
+            testCode = testCode.AssertReplace("int", typeCode);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
+using System;
 using System.ComponentModel;
 
 public class Foo : INotifyPropertyChanged
@@ -62,6 +67,7 @@ public class Foo : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
+            fixedCode = fixedCode.AssertReplace("int", typeCode);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
                     .ConfigureAwait(false);
         }
@@ -645,9 +651,9 @@ public struct NotEquatableStruct
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStruct other)
+    public NotEquatableStruct(int value)
     {
-        return this.Value == other.Value;
+        this.Value = value;
     }
 }
 ";
@@ -713,9 +719,9 @@ public struct NotEquatableStruct
 {
     public readonly int Value;
 
-    public bool Equals(EquatableStruct other)
+    public NotEquatableStruct(int value)
     {
-        return this.Value == other.Value;
+        this.Value = value;
     }
 }
 ";
