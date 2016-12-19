@@ -219,7 +219,23 @@ namespace WpfAnalyzers
                     return true;
             }
 
-            return type.GetMembers("op_Equality").Length == 1 || type.TypeKind == TypeKind.Enum;
+            if (type.TypeKind == TypeKind.Enum)
+            {
+                return true;
+            }
+
+            foreach (var op in type.GetMembers("op_Equality"))
+            {
+                var opMethod = op as IMethodSymbol;
+                if (opMethod?.Parameters.Length == 2 &&
+                    type.Equals(opMethod.Parameters[0].Type) &&
+                    type.Equals(opMethod.Parameters[1].Type))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static ExpressionStatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)
