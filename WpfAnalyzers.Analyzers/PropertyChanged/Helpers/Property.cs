@@ -62,7 +62,19 @@
             return true;
         }
 
-        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out FieldDeclarationSyntax field)
+        internal static bool TryGetBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            foreach (var declaration in property.Declarations(cancellationToken))
+            {
+                SemanticModel fieldDeclaration;
+                if (TryGetBackingField(declaration, out fieldDeclaration))
+                {
+                    
+                }
+            }
+        }
+
+        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out IdentifierNameSyntax field)
         {
             field = null;
 
@@ -78,11 +90,19 @@
                     }
 
                     var left = pooled.Item.Assignments[0].Left;
-                    var name = (left as IdentifierNameSyntax)?.Identifier.ValueText ??
-                               ((left as MemberAccessExpressionSyntax)?.Name as IdentifierNameSyntax)?.Identifier
-                                                                                                     .ValueText;
+                    field = left as IdentifierNameSyntax;
+                    if (field == null)
+                    {
+                        var memberAccess = left as MemberAccessExpressionSyntax;
+                        if (!(memberAccess?.Expression is ThisExpressionSyntax))
+                        {
+                            return false;
+                        }
 
-                    if (name == null)
+                        field = memberAccess.Name as IdentifierNameSyntax;
+                    }
+
+                    if (field == null)
                     {
                         return false;
                     }

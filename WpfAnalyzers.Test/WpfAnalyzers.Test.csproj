@@ -103,6 +103,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixEquality.cs" />
+    <Compile Include="PropertyChanged\WPF1012NotifyCalculatedTests\CodeFix.cs" />
+    <Compile Include="PropertyChanged\WPF1012NotifyCalculatedTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChangedTests\CodeFix.cs" />
     <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChangedTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFix.cs" />
