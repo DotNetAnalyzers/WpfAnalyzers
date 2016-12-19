@@ -12,6 +12,7 @@
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("string")]
+        [TestCase("StringComparison")]
         public async Task OpEqualsFor(string typeCode)
         {
             var testCode = @"
@@ -72,135 +73,9 @@ public class Foo : INotifyPropertyChanged
                     .ConfigureAwait(false);
         }
 
-        [TestCase("int?")]
-        [TestCase("Nullable<int>")]
-        public async Task NullableInteger(string intCode)
-        {
-            var testCode = @"
-using System;
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int? Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-            testCode = testCode.AssertReplace("int?", intCode);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            var fixedCode = @"
-using System;
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
-{
-    private int? bar;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int? Bar
-    {
-        get
-        {
-            return this.bar;
-        }
-
-        set
-        {
-            if (value == this.bar)
-            {
-                return;
-            }
-
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
-        }
-    }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-            fixedCode = fixedCode.AssertReplace("int?", intCode);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task String()
-        {
-            var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public string Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected)
-                      .ConfigureAwait(false);
-
-            var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
-{
-    private string bar;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Bar
-    {
-        get
-        {
-            return this.bar;
-        }
-
-        set
-        {
-            if (value == this.bar)
-            {
-                return;
-            }
-
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
-        }
-    }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
-        }
-
         [Test]
         public async Task ReferenceType()
         {
-            Assert.Fail("How do we want this?");
             var refTypeCode = @"
 public class ReferenceType
 {
@@ -266,7 +141,6 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task EquatableStruct()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
 using System;
 public struct EquatableStruct : IEquatable<EquatableStruct>
@@ -356,7 +230,6 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task NullableEquatableStruct()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
 using System;
 public struct EquatableStruct : IEquatable<EquatableStruct>
@@ -424,7 +297,7 @@ public class Foo : INotifyPropertyChanged
 
         set
         {
-            if (value == this.bar)
+            if (System.Nullable.Equals(value, this.bar))
             {
                 return;
             }
@@ -446,8 +319,9 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task EquatableStructWithOpEquals()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
+using System;
+
 public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
@@ -546,8 +420,9 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task NullableEquatableStructOpEquals()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
+using System;
+
 public struct EquatableStruct : IEquatable<EquatableStruct>
 {
     public readonly int Value;
@@ -645,7 +520,6 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task NotEquatableStruct()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
 public struct NotEquatableStruct
 {
@@ -696,6 +570,11 @@ public class Foo : INotifyPropertyChanged
 
         set
         {
+            if (System.Collections.Generic.EqualityComparer<NotEquatableStruct>.Default.Equals(value, this.bar))
+            {
+                return;
+            }
+
             this.bar = value;
             this.OnPropertyChanged(nameof(this.Bar));
         }
@@ -713,7 +592,6 @@ public class Foo : INotifyPropertyChanged
         [Test]
         public async Task NullableNotEquatableStruct()
         {
-            Assert.Fail("How do we want this?");
             var equatableStruct = @"
 public struct NotEquatableStruct
 {
@@ -764,6 +642,11 @@ public class Foo : INotifyPropertyChanged
 
         set
         {
+            if (System.Nullable.Equals(value, this.bar))
+            {
+                return;
+            }
+
             this.bar = value;
             this.OnPropertyChanged(nameof(this.Bar));
         }

@@ -1,10 +1,13 @@
 namespace WpfAnalyzers
 {
+    using System;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Simplification;
 
     using WpfAnalyzers.PropertyChanged.Helpers;
 
@@ -136,18 +139,89 @@ namespace WpfAnalyzers
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName
                                   : $"this.{fieldName}";
+
             if (property.Type.IsValueType || property.Type == KnownSymbol.String)
             {
-                var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
-                    SyntaxFactory.ParseName("value"),
-                    SyntaxFactory.ParseExpression(fieldAccess));
-                return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                if (HasEqualityOperator(property.Type))
+                {
+                    var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
+                        SyntaxFactory.ParseName("value"),
+                        SyntaxFactory.ParseExpression(fieldAccess));
+                    return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                }
+
+                foreach (var equals in property.Type.GetMembers("Equals"))
+                {
+                    var method = equals as IMethodSymbol;
+                    if (method?.Parameters.Length == 1 && ReferenceEquals(method.Parameters[0].Type, property.Type))
+                    {
+                        var equalsExpression = syntaxGenerator.InvocationExpression(
+                                SyntaxFactory.ParseExpression("value.Equals"),
+                                SyntaxFactory.ParseExpression(fieldAccess));
+                        return (IfStatementSyntax)syntaxGenerator.IfStatement(equalsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                    }
+                }
+
+                if (property.Type.Name == "Nullable")
+                {
+                    if (HasEqualityOperator(((INamedTypeSymbol)property.Type).TypeArguments[0]))
+                    {
+                        var valueEqualsExpression =
+                            syntaxGenerator.ValueEqualsExpression(
+                                SyntaxFactory.ParseName("value"),
+                                SyntaxFactory.ParseExpression(fieldAccess));
+                        return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                    }
+
+                    var nullableEquals =
+                        syntaxGenerator.InvocationExpression(
+                            SyntaxFactory.ParseExpression("System.Nullable.Equals").WithAdditionalAnnotations(Simplifier.Annotation),
+                            SyntaxFactory.ParseName("value"),
+                            SyntaxFactory.ParseExpression(fieldAccess));
+                    return (IfStatementSyntax)syntaxGenerator.IfStatement(nullableEquals, new[] { SyntaxFactory.ReturnStatement() });
+                }
+
+                var comparerEquals =
+                    syntaxGenerator.InvocationExpression(
+                        SyntaxFactory.ParseExpression($"System.Collections.Generic.EqualityComparer<{property.Type.ToDisplayString()}>.Default.Equals").WithAdditionalAnnotations(Simplifier.Annotation),
+                        SyntaxFactory.ParseName("value"),
+                        SyntaxFactory.ParseExpression(fieldAccess));
+                return (IfStatementSyntax)syntaxGenerator.IfStatement(comparerEquals, new[] { SyntaxFactory.ReturnStatement() });
             }
 
-            var referenceEqualsExpression = syntaxGenerator.ReferenceEqualsExpression(
+            var referenceEqualsExpression = syntaxGenerator.InvocationExpression(
+                SyntaxFactory.ParseExpression("ReferenceEquals"),
                 SyntaxFactory.ParseName("value"),
                 SyntaxFactory.ParseExpression(fieldAccess));
             return (IfStatementSyntax)syntaxGenerator.IfStatement(referenceEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+        }
+
+        private static bool HasEqualityOperator(ITypeSymbol type)
+        {
+            switch (type.SpecialType)
+            {
+                case SpecialType.System_Enum:
+                case SpecialType.System_Boolean:
+                case SpecialType.System_Char:
+                case SpecialType.System_SByte:
+                case SpecialType.System_Byte:
+                case SpecialType.System_Int16:
+                case SpecialType.System_UInt16:
+                case SpecialType.System_Int32:
+                case SpecialType.System_UInt32:
+                case SpecialType.System_Int64:
+                case SpecialType.System_UInt64:
+                case SpecialType.System_Decimal:
+                case SpecialType.System_Single:
+                case SpecialType.System_Double:
+                case SpecialType.System_String:
+                case SpecialType.System_IntPtr:
+                case SpecialType.System_UIntPtr:
+                case SpecialType.System_DateTime:
+                    return true;
+            }
+
+            return type.GetMembers("op_Equality").Length == 1 || type.TypeKind == TypeKind.Enum;
         }
 
         private static ExpressionStatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)
