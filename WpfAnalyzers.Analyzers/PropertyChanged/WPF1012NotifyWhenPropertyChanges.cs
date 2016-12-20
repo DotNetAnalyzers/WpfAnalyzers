@@ -81,7 +81,7 @@
 
                 var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
                 var getter = Getter(propertyDeclaration);
-                if (getter == null || property == null)
+                if (getter == null || property == null || property.DeclaredAccessibility != Accessibility.Public)
                 {
                     continue;
                 }
