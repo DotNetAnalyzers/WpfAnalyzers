@@ -46,7 +46,7 @@
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Implement IDisposable.",
+                        "Implement INotifyPropertyChanged.",
                         cancellationToken =>
                             ApplyImplementINotifyPropertyChangedFixAsync(
                                 context,
