@@ -39,122 +39,102 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandleAssignment, SyntaxKind.SimpleAssignmentExpression);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
-            var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
-            var declaration = (PropertyDeclarationSyntax)context.Node;
-
-            if (!propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            var assignment = (AssignmentExpressionSyntax)context.Node;
+            if (assignment?.IsMissing != false ||
+                assignment.FirstAncestorOrSelf<ConstructorConstraintSyntax>() != null ||
+                assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
             {
                 return;
             }
 
-            SyntaxNode body;
-            AccessorDeclarationSyntax getter;
-            if (declaration.TryGetGetAccessorDeclaration(out getter))
-            {
-                body = getter.Body;
-            }
-            else
-            {
-                body = declaration.ExpressionBody;
-            }
-
-            if (body == null)
+            var block = assignment.FirstAncestorOrSelf<BlockSyntax>();
+            if (block == null)
             {
                 return;
             }
 
-            using (var pooled = IdentifierNameWalker.Create(body))
+            var typeDeclaration = assignment.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            var typeSymbol = context.SemanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+            if (!typeSymbol.Is(KnownSymbol.INotifyPropertyChanged))
             {
-                foreach (var name in pooled.Item.IdentifierNames)
+                return;
+            }
+
+            var field = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IFieldSymbol;
+            if (field == null || !typeSymbol.Equals(field.ContainingType))
+            {
+                return;
+            }
+
+            foreach (var member in typeDeclaration.Members)
+            {
+                var propertyDeclaration = member as PropertyDeclarationSyntax;
+                if (propertyDeclaration == null)
                 {
-                    var symbol = context.SemanticModel.GetSymbolSafe(name, context.CancellationToken);
-                    var field = symbol as IFieldSymbol;
-                    if (field?.IsConst == true ||
-                        field?.IsReadOnly == true ||
-                        field?.IsStatic == true)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (field == null)
+                var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
+                var getter = Getter(propertyDeclaration);
+                if (getter == null || property == null)
+                {
+                    continue;
+                }
+
+                using (var pooled = IdentifierNameWalker.Create(getter))
+                {
+                    foreach (var identifierName in pooled.Item.IdentifierNames)
                     {
-                        var property = symbol as IPropertySymbol;
-                        if (property?.IsReadOnly == true ||
-                            property?.IsStatic == true)
+                        var component = context.SemanticModel.GetSymbolSafe(identifierName, context.CancellationToken);
+                        var componentField = component as IFieldSymbol;
+                        if (componentField == null)
                         {
-                            continue;
-                        }
-
-                        if (property == null)
-                        {
-                            continue;
-                        }
-
-                        if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out field))
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (field == null)
-                    {
-                        continue;
-                    }
-
-                    if (symbol.ContainingType != context.ContainingSymbol.ContainingType)
-                    {
-                        continue;
-                    }
-
-                    using (var pooledAssignments = AssignmentWalker.Create(declaration.FirstAncestorOrSelf<TypeDeclarationSyntax>()))
-                    {
-                        foreach (var assignment in pooledAssignments.Item.Assignments)
-                        {
-                            if (assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null ||
-                                assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
+                            var propertySymbol = component as IPropertySymbol;
+                            if (propertySymbol == null)
                             {
                                 continue;
                             }
 
-                            if (IsAssigning(assignment, field))
+                            if (!Property.TryGetBackingField(propertySymbol, context.SemanticModel, context.CancellationToken, out componentField))
                             {
-                                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
-                                {
-                                    var properties = ImmutableDictionary.CreateRange(new[]
-                                                                        {
-                                                                            new KeyValuePair<string, string>(PropertyNameKey, propertySymbol.Name),
-                                                                        });
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, propertySymbol.Name));
-                                }
+                                continue;
                             }
+                        }
+
+                        if (!field.Equals(componentField))
+                        {
+                            continue;
+                        }
+
+                        if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
+                        {
+                            var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, property.Name));
                         }
                     }
                 }
             }
         }
 
-        private static bool IsAssigning(AssignmentExpressionSyntax assignment, IFieldSymbol field)
+        private static SyntaxNode Getter(PropertyDeclarationSyntax property)
         {
-            var left = assignment.Left;
-            var leftIdentifier = left as IdentifierNameSyntax;
-            if (leftIdentifier != null)
+            if (property.ExpressionBody != null)
             {
-                return leftIdentifier.Identifier.ValueText == field.Name;
+                return property.ExpressionBody.Expression;
             }
 
-            var memberAccess = left as MemberAccessExpressionSyntax;
-            if (memberAccess?.Expression is ThisExpressionSyntax &&
-               (memberAccess.Name as IdentifierNameSyntax)?.Identifier.ValueText == field.Name)
+            AccessorDeclarationSyntax getter;
+            if (property.TryGetGetAccessorDeclaration(out getter))
             {
-                return true;
+                return getter.Body;
             }
 
-            return false;
+            return null;
         }
     }
 }
