@@ -90,6 +90,8 @@
     <Compile Include="DependencyProperties\WPF0004ClrMethodShouldMatchRegisteredName\CodeFix.cs" />
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0041SetMutableUsingSetCurrentValue\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0043DontUseSetCurrentValueForDataContextTests\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0043DontUseSetCurrentValueForDataContextTests\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace\Diagnostics.cs" />
