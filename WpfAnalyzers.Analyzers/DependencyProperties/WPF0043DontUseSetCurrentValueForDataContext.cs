@@ -59,9 +59,7 @@
                 return;
             }
 
-            if (setField == null ||
-                setField.Type != KnownSymbol.DependencyProperty ||
-                setField != KnownSymbol.FrameworkElement.DataContextProperty)
+            if (setField != KnownSymbol.FrameworkElement.DataContextProperty)
             {
                 return;
             }
