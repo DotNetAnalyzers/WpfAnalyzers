@@ -66,9 +66,11 @@
     <Compile Include="Helpers\KnownSymbols\DependencyPropertyKeyType.cs" />
     <Compile Include="Helpers\KnownSymbols\DependencyPropertyType.cs" />
     <Compile Include="Helpers\EnumerableExt.cs" />
+    <Compile Include="Helpers\KnownSymbols\FrameworkElementType.cs" />
     <Compile Include="Helpers\KnownSymbols\KnownSymbol.cs" />
     <Compile Include="Helpers\KnownSymbols\NamespaceParts.cs" />
     <Compile Include="Helpers\KnownSymbols\PropertyChangedEventHandlerType.cs" />
+    <Compile Include="Helpers\KnownSymbols\QualifiedField.cs" />
     <Compile Include="Helpers\KnownSymbols\QualifiedMember.cs" />
     <Compile Include="Helpers\KnownSymbols\QualifiedMethod.cs" />
     <Compile Include="Helpers\KnownSymbols\QualifiedProperty.cs" />

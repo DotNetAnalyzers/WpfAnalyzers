@@ -56,6 +56,10 @@
             }
 
             var property = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IPropertySymbol;
+            if (property == KnownSymbol.FrameworkElement.DataContext)
+            {
+                return;
+            }
 
             IFieldSymbol field;
             if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out field))
@@ -93,7 +97,8 @@
             }
 
             if (setField == null ||
-                setField.Type != KnownSymbol.DependencyProperty)
+                setField.Type != KnownSymbol.DependencyProperty ||
+                setField == KnownSymbol.FrameworkElement.DataContextProperty)
             {
                 return;
             }
