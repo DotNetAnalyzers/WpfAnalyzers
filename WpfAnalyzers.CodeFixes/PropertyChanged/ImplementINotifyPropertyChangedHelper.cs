@@ -22,10 +22,25 @@
         private static readonly UsingDirectiveSyntax UsingSystemComponentModel = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.ComponentModel"));
         private static readonly UsingDirectiveSyntax UsingSystemRuntimeCompilerServices = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Runtime.CompilerServices"));
 
-        internal static TypeDeclarationSyntax WithPropertyChangedEvent(
-            this TypeDeclarationSyntax typeDeclaration,
-            SyntaxGenerator syntaxGenerator)
+        internal static TypeDeclarationSyntax WithPropertyChangedEvent(this TypeDeclarationSyntax typeDeclaration, SyntaxGenerator syntaxGenerator)
         {
+            foreach (var member in typeDeclaration.Members)
+            {
+                var eventFieldDeclaration = member as EventFieldDeclarationSyntax;
+                if (eventFieldDeclaration == null)
+                {
+                    continue;
+                }
+
+                foreach (var variable in eventFieldDeclaration.Declaration.Variables)
+                {
+                    if (variable.Identifier.ValueText == "PropertyChanged")
+                    {
+                        return typeDeclaration;
+                    }
+                }
+            }
+
             var propertyChangedEvent = (EventFieldDeclarationSyntax)syntaxGenerator.EventDeclaration(
                 "PropertyChanged",
                 SyntaxFactory.ParseTypeName("PropertyChangedEventHandler"),

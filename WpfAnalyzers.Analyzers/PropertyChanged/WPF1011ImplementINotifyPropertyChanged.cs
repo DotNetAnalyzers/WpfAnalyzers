@@ -34,10 +34,11 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
             if (propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
@@ -49,6 +50,15 @@
             if (Property.ShouldNotify(declaration, propertySymbol, context.SemanticModel, context.CancellationToken))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), context.ContainingSymbol.Name));
+            }
+        }
+
+        private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var eventSymbol = (IEventSymbol)context.ContainingSymbol;
+            if (!eventSymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.FirstAncestorOrSelf<EventFieldDeclarationSyntax>().GetLocation(), context.ContainingSymbol.Name));
             }
         }
     }

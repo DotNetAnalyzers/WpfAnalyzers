@@ -263,6 +263,37 @@ public class Foo : INotifyPropertyChanged
                     .ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task WhenEventOnly()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class Foo
+{
+    ↓public event PropertyChangedEventHandler PropertyChanged;
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Implement INotifyPropertyChanged.");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
         internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             return base.GetCSharpDiagnosticAnalyzers()
