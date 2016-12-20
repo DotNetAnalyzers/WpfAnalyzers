@@ -40,16 +40,17 @@ namespace WpfAnalyzers
                         continue;
                     }
 
-                    FieldDeclarationSyntax otherField;
-                    if (Property.TryGetBackingField(otherProperty, out otherField))
+                    IdentifierNameSyntax otherField;
+                    FieldDeclarationSyntax fieldDeclaration;
+                    if (Property.TryGetBackingField(otherProperty, out otherField, out fieldDeclaration))
                     {
                         if (otherProperty.SpanStart < property.SpanStart)
                         {
-                            before = otherField;
+                            before = fieldDeclaration;
                         }
                         else
                         {
-                            after = otherField;
+                            after = fieldDeclaration;
                         }
                     }
                 }
@@ -104,16 +105,40 @@ namespace WpfAnalyzers
 
         internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, SyntaxGenerator syntaxGenerator, IPropertySymbol property, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
         {
+            var propertyName = propertyDeclaration.Identifier.ValueText;
             var statements = new[]
                                  {
                                      syntaxGenerator.IfValueEqualsBackingFieldReturn(field, property),
                                      assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
-                                     syntaxGenerator.Invoke(propertyDeclaration, field.StartsWith("_"), invoker),
+                                     syntaxGenerator.OnPropertyChanged(propertyName, true, field.StartsWith("_"), invoker),
                                  };
             return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        private static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
+        internal static StatementSyntax OnPropertyChanged(this SyntaxGenerator syntaxGenerator, string propertyName, bool useCallerMemberName, bool usedUnderscoreNames, IMethodSymbol invoker)
+        {
+            var prefix = usedUnderscoreNames
+                             ? string.Empty
+                             : "this.";
+            if (invoker == null)
+            {
+                var eventAccess = SyntaxFactory.ParseExpression($"{prefix}PropertyChanged?.Invoke(new PropertyChangedEventArgs(nameof({propertyName}))");
+                return (StatementSyntax)syntaxGenerator.ExpressionStatement(eventAccess.WithAdditionalAnnotations(Formatter.Annotation))
+                                                       .WithAdditionalAnnotations(Formatter.Annotation);
+            }
+
+            var memberAccess = SyntaxFactory.ParseExpression($"{prefix}{invoker.Name}");
+            if (useCallerMemberName && invoker.Parameters[0].IsCallerMemberName())
+            {
+                return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess));
+            }
+
+            var arg = SyntaxFactory.ParseExpression($"nameof({prefix}{propertyName})").WithAdditionalAnnotations(Formatter.Annotation);
+            return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess, arg))
+                                                   .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        internal static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
         {
             foreach (var member in type.Members)
             {
@@ -246,21 +271,6 @@ namespace WpfAnalyzers
 
             var assignmentStatement = syntaxGenerator.AssignmentStatement(SyntaxFactory.ParseExpression(fieldAccess), SyntaxFactory.ParseName("value"));
             return (ExpressionStatementSyntax)syntaxGenerator.ExpressionStatement(assignmentStatement);
-        }
-
-        private static StatementSyntax Invoke(this SyntaxGenerator syntaxGenerator, PropertyDeclarationSyntax property, bool usedUnderscoreNames, IMethodSymbol invoker)
-        {
-            var prefix = usedUnderscoreNames
-                             ? string.Empty
-                             : "this.";
-            var memberAccess = SyntaxFactory.ParseExpression($"{prefix}{invoker.Name}");
-            if (invoker.Parameters[0].IsCallerMemberName())
-            {
-                return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess));
-            }
-
-            var arg = SyntaxFactory.ParseExpression($"nameof({prefix}{property.Identifier.ValueText})");
-            return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess, arg));
         }
 
         private static bool HasMember(this TypeDeclarationSyntax typeDeclaration, string name)

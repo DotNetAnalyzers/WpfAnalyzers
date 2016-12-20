@@ -15,13 +15,24 @@
             Maybe
         }
 
-        internal static InvokesPropertyChanged InvokesPropertyChangedFor(this AccessorDeclarationSyntax setter, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static InvokesPropertyChanged InvokesPropertyChangedFor(this AssignmentExpressionSyntax assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var invokes = InvokesPropertyChanged.No;
-            using (var pooled = InvocationWalker.Create(setter))
+            var block = assignment.FirstAncestorOrSelf<BlockSyntax>();
+            if (block == null)
+            {
+                return InvokesPropertyChanged.No;
+            }
+
+            using (var pooled = InvocationWalker.Create(block))
             {
                 foreach (var invocation in pooled.Item.Invocations)
                 {
+                    if (invocation.SpanStart < assignment.SpanStart)
+                    {
+                        continue;
+                    }
+
                     var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
                     if (method == null)
                     {
@@ -239,6 +250,13 @@
 
                     if (parameter.IsCallerMemberName())
                     {
+                        var propertyDeclaration = invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+                        var propertySymbol = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                        if (propertySymbol.Name != property.Name)
+                        {
+                            continue;
+                        }
+
                         switch (Invokes(method, method.Parameters[i], semanticModel, cancellationToken))
                         {
                             case InvokesPropertyChanged.No:
