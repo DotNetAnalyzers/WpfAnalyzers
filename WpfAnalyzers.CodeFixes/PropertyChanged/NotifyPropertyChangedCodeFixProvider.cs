@@ -59,7 +59,7 @@
                         CodeAction.Create(
                             "Notify property change.",
                             _ => ApplyNotifyPropertyChangeFixAsync(context, syntaxRoot, assignment, property, invoker),
-                            nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
+                            this.GetType().Name),
                         diagnostic);
                 }
             }

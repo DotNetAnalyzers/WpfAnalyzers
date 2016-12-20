@@ -57,7 +57,7 @@
                             CodeAction.Create(
                                 "Convert to notifying property.",
                                 _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, property, invoker),
-                                nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
+                                 this.GetType().FullName),
                             diagnostic);
                     }
 
@@ -69,7 +69,7 @@
                             CodeAction.Create(
                                 "Convert to notifying property.",
                                 _ => ApplyConvertAutoPropertyFixAsync(context, syntaxRoot, propertyDeclaration, property, assignStatement, fieldName, invoker),
-                                nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
+                                 this.GetType().FullName),
                             diagnostic);
                     }
                 }

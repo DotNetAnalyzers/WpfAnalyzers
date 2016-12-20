@@ -50,7 +50,7 @@
                         CodeAction.Create(
                             $"Rename to: {registeredName}.",
                             _ => ApplyFixAsync(context, token, registeredName),
-                            this.GetType().Name),
+                            this.GetType().FullName),
                         diagnostic);
                 }
             }

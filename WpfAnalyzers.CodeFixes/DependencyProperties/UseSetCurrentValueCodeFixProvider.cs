@@ -45,7 +45,7 @@
                         CodeAction.Create(
                             fix.SetCurrentValueCall.ToString(),
                             c => ApplyFixAsync(c, context.Document, fix),
-                            nameof(UseSetCurrentValueCodeFixProvider)),
+                            this.GetType().FullName),
                         diagnostic);
                 }
             }

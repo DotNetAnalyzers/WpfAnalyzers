@@ -107,7 +107,7 @@
                             CodeAction.Create(
                                 $"Rename to: {newName}",
                                 cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
-                                nameof(RenameMethodCodeFixProvider)),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }
@@ -129,7 +129,7 @@
                             CodeAction.Create(
                                 $"Rename to: {newName}",
                                 cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
-                                nameof(RenameMethodCodeFixProvider)),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }
@@ -151,7 +151,7 @@
                             CodeAction.Create(
                                 $"Rename to: {newName}",
                                 cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
-                                nameof(RenameMethodCodeFixProvider)),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }

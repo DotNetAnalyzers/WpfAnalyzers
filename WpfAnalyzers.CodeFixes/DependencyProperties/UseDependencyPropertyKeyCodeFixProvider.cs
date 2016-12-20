@@ -70,7 +70,7 @@
                                     cancellationToken,
                                     invocation,
                                     setValue),
-                                nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                                this.GetType().FullName),
                             diagnostic);
                     }
 
@@ -103,7 +103,7 @@
                                     cancellationToken,
                                     invocation,
                                     setValue),
-                                nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }

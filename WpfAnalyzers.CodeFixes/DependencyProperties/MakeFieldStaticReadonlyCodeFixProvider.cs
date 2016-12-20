@@ -40,7 +40,7 @@
                     CodeAction.Create(
                         "Make static readonly",
                         cancellationToken => ApplyFixAsync(cancellationToken, context, fieldDeclaration),
-                        nameof(MakeFieldStaticReadonlyCodeFixProvider)),
+                        this.GetType().FullName),
                     diagnostic);
             }
         }

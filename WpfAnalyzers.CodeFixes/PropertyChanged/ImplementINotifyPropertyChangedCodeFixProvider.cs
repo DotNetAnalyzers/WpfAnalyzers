@@ -54,7 +54,7 @@
                                 cancellationToken,
                                 (CompilationUnitSyntax)syntaxRoot,
                                 typeDeclaration),
-                        nameof(ImplementINotifyPropertyChangedCodeFixProvider)),
+                        this.GetType().FullName),
                     diagnostic);
             }
         }

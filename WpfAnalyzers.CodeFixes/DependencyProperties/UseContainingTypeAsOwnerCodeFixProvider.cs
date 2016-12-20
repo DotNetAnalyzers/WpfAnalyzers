@@ -55,7 +55,7 @@
                     CodeAction.Create(
                         $"Use containing type: {containingTypeName}.",
                         _ => ApplyFixAsync(context, (TypeOfExpressionSyntax)argument.Expression, typeSyntax),
-                        this.GetType().Name),
+                        this.GetType().FullName),
                     diagnostic);
             }
         }
