@@ -65,6 +65,12 @@
 
         internal static bool TryGetBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
+            field = null;
+            if (property == null)
+            {
+                return false;
+            }
+
             foreach (var declaration in property.Declarations(cancellationToken))
             {
                 var propertyDeclaration = declaration as PropertyDeclarationSyntax;
@@ -82,7 +88,6 @@
                 }
             }
 
-            field = null;
             return false;
         }
 
@@ -90,6 +95,10 @@
         {
             field = null;
             fieldDeclaration = null;
+            if (property == null)
+            {
+                return false;
+            }
 
             AccessorDeclarationSyntax setter;
             if (property.TryGetSetAccessorDeclaration(out setter) &&
