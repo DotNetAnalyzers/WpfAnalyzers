@@ -54,7 +54,9 @@
         private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = context.Node as ObjectCreationExpressionSyntax;
-            if (objectCreation == null || objectCreation.IsMissing)
+            if (context.SemanticModel == null ||
+                objectCreation == null ||
+                objectCreation.IsMissing)
             {
                 return;
             }

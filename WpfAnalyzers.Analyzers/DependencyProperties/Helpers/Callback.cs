@@ -11,6 +11,12 @@ namespace WpfAnalyzers.DependencyProperties
         {
             nameExpression = null;
             name = null;
+
+            if (callback == null)
+            {
+                return false;
+            }
+
             var identifierNameSyntax = callback.Expression as IdentifierNameSyntax;
             if (identifierNameSyntax != null)
             {
