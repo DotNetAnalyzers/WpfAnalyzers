@@ -17,7 +17,7 @@
         public static readonly string PropertyNameKey = "PropertyName";
 
         private const string Title = "Notify when property changes.";
-        private const string MessageFormat = "Notify that property {0} changes.";
+        private const string MessageFormat = "Notify that property '{0}' changes.";
         private const string Description = "Notify when property changes.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
