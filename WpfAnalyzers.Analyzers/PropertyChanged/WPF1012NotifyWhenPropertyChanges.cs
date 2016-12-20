@@ -137,11 +137,6 @@
                     }
                 }
             }
-
-            if (Property.ShouldNotify(declaration, propertySymbol, context.SemanticModel, context.CancellationToken))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), context.ContainingSymbol.Name));
-            }
         }
 
         private static bool IsAssigning(AssignmentExpressionSyntax assignment, IFieldSymbol field)
