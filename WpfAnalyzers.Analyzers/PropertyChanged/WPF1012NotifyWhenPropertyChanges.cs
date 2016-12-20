@@ -25,7 +25,7 @@
             DiagnosticId,
             Title,
             MessageFormat,
-            AnalyzerCategory.DependencyProperties,
+            AnalyzerCategory.PropertyChanged,
             DiagnosticSeverity.Warning,
             AnalyzerConstants.EnabledByDefault,
             Description,
@@ -125,8 +125,7 @@
                             {
                                 if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
                                 {
-                                    var properties =
-                                        ImmutableDictionary.CreateRange(new[]
+                                    var properties = ImmutableDictionary.CreateRange(new[]
                                                                         {
                                                                             new KeyValuePair<string, string>(PropertyNameKey, propertySymbol.Name),
                                                                         });
