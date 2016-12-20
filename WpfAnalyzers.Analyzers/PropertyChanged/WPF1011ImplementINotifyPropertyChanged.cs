@@ -53,7 +53,7 @@
             }
         }
 
-        private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventSymbol = (IEventSymbol)context.ContainingSymbol;
             if (!eventSymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))

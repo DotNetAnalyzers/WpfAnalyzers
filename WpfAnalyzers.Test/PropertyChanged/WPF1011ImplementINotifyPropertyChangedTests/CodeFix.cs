@@ -301,7 +301,7 @@ public class Foo : INotifyPropertyChanged
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        // ReSharper disable once InconsistentNaming
+        //// ReSharper disable once InconsistentNaming
         private class CS0535Analyzer : DiagnosticAnalyzer
         {
             public static readonly CS0535Analyzer Default = new CS0535Analyzer();
@@ -326,7 +326,7 @@ public class Foo : INotifyPropertyChanged
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        // ReSharper disable once InconsistentNaming
+        //// ReSharper disable once InconsistentNaming
         private class CS0246Analyzer : DiagnosticAnalyzer
         {
             public static readonly CS0246Analyzer Default = new CS0246Analyzer();
