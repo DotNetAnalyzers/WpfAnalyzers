@@ -14,6 +14,8 @@
     internal class WPF1012NotifyWhenPropertyChanges : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1012";
+        public static readonly string PropertyNameKey = "PropertyName";
+
         private const string Title = "Notify when property changes.";
         private const string MessageFormat = "Notify that property {0} changes.";
         private const string Description = "Notify when property changes.";
@@ -28,8 +30,6 @@
             AnalyzerConstants.EnabledByDefault,
             Description,
             HelpLink);
-
-        public static readonly string PropertyNameKey = "PropertyName";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
@@ -90,6 +90,11 @@
                             continue;
                         }
 
+                        if (property == null)
+                        {
+                            continue;
+                        }
+
                         if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out field))
                         {
                             continue;
@@ -101,7 +106,7 @@
                         continue;
                     }
 
-                    if (symbol?.ContainingType != context.ContainingSymbol.ContainingType)
+                    if (symbol.ContainingType != context.ContainingSymbol.ContainingType)
                     {
                         continue;
                     }
