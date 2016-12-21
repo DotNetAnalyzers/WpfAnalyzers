@@ -91,63 +91,65 @@
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
             invoker = null;
-
-            foreach (var member in type.GetMembers())
+            while (type != KnownSymbol.Object)
             {
-                var method = member as IMethodSymbol;
-
-                if (method?.Parameters.Length != 1)
+                foreach (var member in type.GetMembers())
                 {
-                    continue;
-                }
+                    var method = member as IMethodSymbol;
 
-                var parameter = method.Parameters[0];
-
-                if (method.DeclaringSyntaxReferences.Length == 0)
-                {
-                    if (parameter.Type == KnownSymbol.String &&
-                        method.Name.Contains("PropertyChnaged"))
+                    if (method?.Parameters.Length != 1)
                     {
-                        // A bit speculative here
-                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                        invoker = method;
+                        continue;
                     }
 
-                    continue;
-                }
+                    var parameter = method.Parameters[0];
 
-                foreach (var declaration in method.Declarations(cancellationToken))
-                {
-                    using (var pooled = InvocationWalker.Create(declaration))
+                    if (method.DeclaringSyntaxReferences.Length == 0)
                     {
-                        foreach (var invocation in pooled.Item.Invocations)
+                        if (parameter.Type == KnownSymbol.String &&
+                            method.Name.Contains("PropertyChnaged"))
                         {
-                            var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                            if (invokedMethod == null)
-                            {
-                                continue;
-                            }
+                            // A bit speculative here
+                            // for handling the case when inheriting a ViewModelBase class from a binary reference.
+                            invoker = method;
+                        }
 
-                            if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                        continue;
+                    }
+
+                    foreach (var declaration in method.Declarations(cancellationToken))
+                    {
+                        using (var pooled = InvocationWalker.Create(declaration))
+                        {
+                            foreach (var invocation in pooled.Item.Invocations)
                             {
-                                ArgumentSyntax argument;
-                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
+                                var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                                if (invokedMethod == null)
                                 {
-                                    var identifier = argument.Expression as IdentifierNameSyntax;
-                                    if (identifier?.Identifier.ValueText == parameter.Name)
-                                    {
-                                        invoker = method;
-                                        return true;
-                                    }
+                                    continue;
+                                }
 
-                                    var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
-                                    if (objectCreation != null)
+                                if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                                {
+                                    ArgumentSyntax argument;
+                                    if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
                                     {
-                                        var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                        var identifier = argument.Expression as IdentifierNameSyntax;
+                                        if (identifier?.Identifier.ValueText == parameter.Name)
                                         {
                                             invoker = method;
                                             return true;
+                                        }
+
+                                        var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
+                                        if (objectCreation != null)
+                                        {
+                                            var nameArgument = objectCreation.ArgumentList.Arguments[0];
+                                            if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                            {
+                                                invoker = method;
+                                                return true;
+                                            }
                                         }
                                     }
                                 }
@@ -155,6 +157,8 @@
                         }
                     }
                 }
+
+                type = type.BaseType;
             }
 
             return invoker != null;

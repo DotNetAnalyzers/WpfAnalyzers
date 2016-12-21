@@ -817,24 +817,15 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
-        public async Task ExpressionBodyReturningFieldUpdatedInMethod()
+        public async Task FieldUpdatedInMethodWithInvokerInBaseClass()
         {
-            var testCode = @"
+            var viewModelBaseCode = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    private string text;
-
     public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Text => this.text;
-
-    public void Update(string text)
-    {
-        ↓this.text = text;
-    }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
@@ -842,18 +833,32 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : ViewModelBase
+{
+    private string text;
+
+    public string Text => this.text;
+
+    public void Update(string text)
+    {
+        ↓this.text = text;
+    }
+}";
+
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Text");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(new[] { viewModelBaseCode, testCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public class ViewModel : ViewModelBase
 {
     private string text;
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public string Text => this.text;
 
@@ -862,14 +867,9 @@ public class ViewModel : INotifyPropertyChanged
         this.text = text;
         this.OnPropertyChanged(nameof(this.Text));
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+            await this.VerifyCSharpFixAsync(new[] { viewModelBaseCode, testCode }, new[] { viewModelBaseCode, fixedCode }, allowNewCompilerDiagnostics: true)
                       .ConfigureAwait(false);
         }
     }
