@@ -1,15 +1,14 @@
 source http://www.nuget.org/api/v2/
-framework: net452
+framework: portable-net45+win8, net452
 
 nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1
-nuget Microsoft.CodeAnalysis.Analyzers
+// below should not be needed
 nuget System.Collections.Immutable 1.1.37
 nuget System.Reflection.Metadata 1.2.0
 nuget Microsoft.Composition 1.0.27
 
 group Analyzers
   source http://www.nuget.org/api/v2/
-  framework: net452
   nuget StyleCop.Analyzers
   nuget AsyncUsageAnalyzers
   nuget JetBrains.Annotations
