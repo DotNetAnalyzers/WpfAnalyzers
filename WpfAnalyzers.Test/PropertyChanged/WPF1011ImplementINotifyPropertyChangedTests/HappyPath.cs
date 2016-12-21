@@ -370,5 +370,54 @@ public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter
 }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoresDataTemplateSelector()
+        {
+            var testCode = @"
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Controls;
+
+[SuppressMessage(""ReSharper"", ""MemberCanBePrivate.Global"", Justification = ""Used from xaml"")]
+public class DialogButtonTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate OKTemplate { get; set; }
+
+    public DataTemplate CancelTemplate { get; set; }
+
+    public DataTemplate YesTemplate { get; set; }
+
+    public DataTemplate NoTemplate { get; set; }
+
+    /// <inheritdoc />
+    public override DataTemplate SelectTemplate(object item, DependencyObject container)
+    {
+        var result = item as MessageBoxResult?;
+        if (!result.HasValue)
+        {
+            return base.SelectTemplate(item, container);
+        }
+
+        switch (result.Value)
+        {
+            case MessageBoxResult.None:
+                return base.SelectTemplate(item, container);
+            case MessageBoxResult.OK:
+                return this.OKTemplate;
+            case MessageBoxResult.Cancel:
+                return this.CancelTemplate;
+            case MessageBoxResult.Yes:
+                return this.YesTemplate;
+            case MessageBoxResult.No:
+                return this.NoTemplate;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
