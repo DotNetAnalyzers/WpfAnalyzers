@@ -114,7 +114,23 @@
             ExpressionSyntax value;
             if (field.TryGetAssignedValue(cancellationToken, out value))
             {
-                var property = semanticModel.GetSymbolSafe(value, cancellationToken) as IPropertySymbol;
+                var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
+                var method = symbol as IMethodSymbol;
+                if (method != null)
+                {
+                    if (method != KnownSymbol.DependencyProperty.AddOwner)
+                    {
+                        return false;
+                    }
+
+                    var invocation = (InvocationExpressionSyntax)value;
+                    var member = invocation.Expression as MemberAccessExpressionSyntax;
+
+                    field = semanticModel.GetSymbolSafe(member?.Expression, cancellationToken) as IFieldSymbol;
+                    return TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out result);
+                }
+
+                var property = symbol as IPropertySymbol;
                 if (property == null ||
                     property != KnownSymbol.DependencyPropertyKey.DependencyProperty)
                 {
