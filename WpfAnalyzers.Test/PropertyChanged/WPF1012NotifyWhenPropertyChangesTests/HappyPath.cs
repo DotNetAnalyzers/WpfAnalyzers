@@ -137,5 +137,34 @@ public class ViewModel : INotifyPropertyChanged
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoreInInitializer()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    public ViewModel Create(string name)
+    {
+        return new ViewModel { name = name };
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
