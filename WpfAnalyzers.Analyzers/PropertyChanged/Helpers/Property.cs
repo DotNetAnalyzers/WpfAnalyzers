@@ -95,7 +95,7 @@
                 return false;
             }
 
-            var propertySymbol = semanticModel.GetSymbolSafe(property, cancellationToken);
+            var propertySymbol = semanticModel.GetDeclaredSymbolSafe(property, cancellationToken);
             return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
         }
 
