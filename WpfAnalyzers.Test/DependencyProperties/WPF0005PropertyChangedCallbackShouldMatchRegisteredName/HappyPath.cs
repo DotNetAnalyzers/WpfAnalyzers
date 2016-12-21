@@ -151,5 +151,29 @@ public static class Foo
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task OverrideMetadata()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : UserControl
+{
+    static FooControl()
+    {
+        BackgroundProperty.OverrideMetadata(typeof(FooControl),
+            new FrameworkPropertyMetadata(null, OnBackgroundChanged));
+    }
+
+    private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
