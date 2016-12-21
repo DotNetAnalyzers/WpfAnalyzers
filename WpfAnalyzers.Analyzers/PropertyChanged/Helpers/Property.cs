@@ -63,6 +63,42 @@
             return true;
         }
 
+        internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            AccessorDeclarationSyntax getter;
+            AccessorDeclarationSyntax setter;
+            if (!(property.TryGetGetAccessorDeclaration(out getter) &&
+                  property.TryGetSetAccessorDeclaration(out setter)))
+            {
+                return false;
+            }
+
+            if (getter.Body?.Statements.Count != 1 ||
+                setter.Body?.Statements.Count != 1)
+            {
+                return false;
+            }
+
+            var returnStatement = getter.Body.Statements[0] as ReturnStatementSyntax;
+            var assignment = (setter.Body.Statements[0] as ExpressionStatementSyntax)?.Expression as AssignmentExpressionSyntax;
+            if (returnStatement == null ||
+                assignment == null)
+            {
+                return false;
+            }
+
+            var returnedField = semanticModel.GetSymbolSafe(returnStatement.Expression, cancellationToken) as IFieldSymbol;
+            var assignedField = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken) as IFieldSymbol;
+            if (assignedField == null ||
+                returnedField == null)
+            {
+                return false;
+            }
+
+            var propertySymbol = semanticModel.GetSymbolSafe(property, cancellationToken);
+            return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
+        }
+
         internal static bool TryGetBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;

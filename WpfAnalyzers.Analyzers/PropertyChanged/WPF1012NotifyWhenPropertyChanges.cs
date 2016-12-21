@@ -71,6 +71,18 @@
                 return;
             }
 
+            var inProperty = assignment.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            if (inProperty != null)
+            {
+                if (Property.IsSimplePropertyWithBackingField(
+                    inProperty,
+                    context.SemanticModel,
+                    context.CancellationToken))
+                {
+                    return;
+                }
+            }
+
             foreach (var member in typeDeclaration.Members)
             {
                 var propertyDeclaration = member as PropertyDeclarationSyntax;

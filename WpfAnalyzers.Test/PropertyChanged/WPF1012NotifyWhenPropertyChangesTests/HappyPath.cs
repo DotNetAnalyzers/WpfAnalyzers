@@ -166,5 +166,33 @@ public class ViewModel : INotifyPropertyChanged
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test(Description = "We let WPF1010 nag about this.")]
+        public async Task IgnoreSimplePropertyWithBackingField()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value
+    {
+        get { return this.value; }
+        set { this.value = value; }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
