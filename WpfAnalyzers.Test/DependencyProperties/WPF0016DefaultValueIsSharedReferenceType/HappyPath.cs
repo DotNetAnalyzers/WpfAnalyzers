@@ -15,9 +15,6 @@ namespace WpfAnalyzers.Test.DependencyProperties.WPF0016DefaultValueIsSharedRefe
 using System.Windows;
 using System.Windows.Controls;
 
-using System.Windows;
-using System.Windows.Controls;
-
 public class FooControl : Control
 {
     public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
@@ -269,6 +266,55 @@ public static class Foo
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 }";
 
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoreFontFamily()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+public class FooControl : FrameworkElement
+{
+    public static readonly DependencyProperty FontFamilyProperty = DependencyProperty.Register(
+        ""FontFamily"", 
+        typeof(FontFamily), 
+        typeof(FooControl), 
+        new PropertyMetadata(new FontFamily(""Verdana"")));
+
+    public FontFamily FontFamily
+    {
+        get { return (FontFamily)this.GetValue(FontFamilyProperty); }
+        set { this.SetValue(FontFamilyProperty, value); }
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoreFontFamilyAddOwner()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+
+public class FooControl : FrameworkElement
+{
+    public static readonly DependencyProperty FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(
+        typeof(FooControl), 
+        new PropertyMetadata(new FontFamily(""Verdana"")));
+
+    public FontFamily FontFamily
+    {
+        get { return (FontFamily)this.GetValue(FontFamilyProperty); }
+        set { this.SetValue(FontFamilyProperty, value); }
+    }
+}";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
     }

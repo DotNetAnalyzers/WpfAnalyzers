@@ -57,10 +57,15 @@
             }
 
             var defaultValue = defaultValueArg.Expression;
-
             if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
                 IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))
             {
+                var type = context.SemanticModel.GetSymbolSafe(defaultValue, context.CancellationToken)?.ContainingType;
+                if (type == KnownSymbol.FontFamily)
+                {
+                    return;
+                }
+
                 IFieldSymbol dp;
                 if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out dp))
                 {
