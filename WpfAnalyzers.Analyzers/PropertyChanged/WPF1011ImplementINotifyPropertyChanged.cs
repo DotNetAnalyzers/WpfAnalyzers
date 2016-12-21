@@ -56,7 +56,8 @@
         private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventSymbol = (IEventSymbol)context.ContainingSymbol;
-            if (eventSymbol != KnownSymbol.INotifyPropertyChanged.PropertyChanged)
+            if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
+                eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler)
             {
                 return;
             }
