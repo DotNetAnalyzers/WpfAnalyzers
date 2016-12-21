@@ -237,5 +237,97 @@ public static class Foo
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task OverrideMetadata()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : UserControl
+{
+    static FooControl()
+    {
+        BackgroundProperty.OverrideMetadata(typeof(FooControl),
+            new FrameworkPropertyMetadata(null, ↓WrongName));
+    }
+
+    private static void WrongName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Method 'WrongName' should be named 'OnBackgroundChanged'");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : UserControl
+{
+    static FooControl()
+    {
+        BackgroundProperty.OverrideMetadata(typeof(FooControl),
+            new FrameworkPropertyMetadata(null, OnBackgroundChanged));
+    }
+
+    private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AddOwner()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+public class FooControl : FrameworkElement
+{
+    static FooControl()
+    {
+        TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, ↓WrongName));
+    }
+
+    private static void WrongName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Method 'WrongName' should be named 'OnFontSizeChanged'");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+public class FooControl : FrameworkElement
+{
+    static FooControl()
+    {
+        TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnFontSizeChanged));
+    }
+
+    private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // nop
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
     }
 }

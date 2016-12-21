@@ -39,6 +39,11 @@
         internal static bool TryGetRegisteredName(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
+            if (field == null)
+            {
+                return false;
+            }
+
             InvocationExpressionSyntax invocation;
             if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out invocation))
             {

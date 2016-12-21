@@ -8,6 +8,7 @@
         internal readonly QualifiedMethod RegisterAttachedReadOnly;
 
         internal readonly QualifiedMethod AddOwner;
+        internal readonly QualifiedMethod OverrideMetadata;
 
         internal DependencyPropertyType()
             : base("System.Windows.DependencyProperty")
@@ -18,6 +19,7 @@
             this.RegisterAttachedReadOnly = new QualifiedMethod(this, "RegisterAttachedReadOnly");
 
             this.AddOwner = new QualifiedMethod(this, "AddOwner");
+            this.OverrideMetadata = new QualifiedMethod(this, "OverrideMetadata");
         }
     }
 }

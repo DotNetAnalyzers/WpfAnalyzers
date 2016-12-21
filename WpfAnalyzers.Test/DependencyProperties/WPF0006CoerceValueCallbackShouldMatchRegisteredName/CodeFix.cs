@@ -239,5 +239,97 @@ public static class Foo
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task OverrideMetadata()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : UserControl
+{
+    static FooControl()
+    {
+        BackgroundProperty.OverrideMetadata(typeof(FooControl),
+            new FrameworkPropertyMetadata(null, null, ↓WrongName));
+    }
+
+    private static object WrongName(DependencyObject d, object baseValue)
+    {
+        return baseValue;
+    }
+}";
+
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Method 'WrongName' should be named 'CoerceBackground'");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : UserControl
+{
+    static FooControl()
+    {
+        BackgroundProperty.OverrideMetadata(typeof(FooControl),
+            new FrameworkPropertyMetadata(null, null, CoerceBackground));
+    }
+
+    private static object CoerceBackground(DependencyObject d, object baseValue)
+    {
+        return baseValue;
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AddOwner()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+public class FooControl : FrameworkElement
+{
+    static FooControl()
+    {
+        TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, null, ↓WrongName));
+    }
+
+    private static object WrongName(DependencyObject d, object baseValue)
+    {
+        return baseValue;
+    }
+}";
+
+            var expected = this.CSharpDiagnostic()
+                               .WithLocationIndicated(ref testCode)
+                               .WithMessage("Method 'WrongName' should be named 'CoerceFontSize'");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+public class FooControl : FrameworkElement
+{
+    static FooControl()
+    {
+        TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, null, CoerceFontSize));
+    }
+
+    private static object CoerceFontSize(DependencyObject d, object baseValue)
+    {
+        return baseValue;
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
     }
 }
