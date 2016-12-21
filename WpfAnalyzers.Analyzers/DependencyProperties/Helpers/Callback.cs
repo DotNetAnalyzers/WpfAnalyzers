@@ -50,7 +50,17 @@ namespace WpfAnalyzers.DependencyProperties
             }
 
             var fieldDeclaration = callback.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
+            if (fieldDeclaration == null)
+            {
+                return false;
+            }
+
             var dependencyProperty = semanticModel.GetDeclaredSymbolSafe(fieldDeclaration, cancellationToken) as IFieldSymbol;
+            if (dependencyProperty == null)
+            {
+                return false;
+            }
+
             return DependencyProperty.TryGetRegisteredName(dependencyProperty, semanticModel, cancellationToken, out registeredName);
         }
     }
