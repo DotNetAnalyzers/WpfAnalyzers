@@ -303,5 +303,18 @@ public class FooControl : Control
 }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoresEvent()
+        {
+            var testCode = @"
+using System;
+
+public class Foo
+{
+    public event EventHandler foo;
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }

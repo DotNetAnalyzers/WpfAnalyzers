@@ -7,7 +7,7 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType String = Create("System.String");
 
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
-        internal static readonly QualifiedType INotifyPropertyChanged = new QualifiedType("System.ComponentModel.INotifyPropertyChanged");
+        internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();
         internal static readonly QualifiedType PropertyChangedEventArgs = new QualifiedType("System.ComponentModel.PropertyChangedEventArgs");
         internal static readonly PropertyChangedEventHandlerType PropertyChangedEventHandler = new PropertyChangedEventHandlerType();
 

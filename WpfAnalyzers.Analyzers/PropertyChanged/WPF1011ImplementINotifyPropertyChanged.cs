@@ -56,6 +56,11 @@
         private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventSymbol = (IEventSymbol)context.ContainingSymbol;
+            if (eventSymbol != KnownSymbol.INotifyPropertyChanged.PropertyChanged)
+            {
+                return;
+            }
+
             if (!eventSymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.FirstAncestorOrSelf<EventFieldDeclarationSyntax>().GetLocation(), context.ContainingSymbol.Name));
