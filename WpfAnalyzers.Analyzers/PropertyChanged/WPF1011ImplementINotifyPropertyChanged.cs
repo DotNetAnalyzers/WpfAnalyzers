@@ -41,7 +41,12 @@
         private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
-            if (propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            if (propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) ||
+                propertySymbol.ContainingType.Is(KnownSymbol.MarkupExtension) ||
+                propertySymbol.ContainingType.Is(KnownSymbol.IValueConverter) ||
+                propertySymbol.ContainingType.Is(KnownSymbol.IMultiValueConverter) ||
+                propertySymbol.ContainingType.Is(KnownSymbol.DataTemplateSelector) ||
+                propertySymbol.ContainingType.Is(KnownSymbol.DependencyObject))
             {
                 return;
             }

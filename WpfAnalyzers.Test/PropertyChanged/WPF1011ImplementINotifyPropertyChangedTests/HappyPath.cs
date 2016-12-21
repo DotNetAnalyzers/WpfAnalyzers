@@ -316,5 +316,59 @@ public class Foo
 }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoresMarkupExtension()
+        {
+            var testCode = @"
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Markup;
+
+public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter
+{
+    public Visibility WhenTrue { get; set; } = Visibility.Visible;
+
+    public Visibility WhenFalse { get; set; } = Visibility.Collapsed;
+
+    public Visibility WhenNull { get; set; } = Visibility.Collapsed;
+
+    /// <inheritdoc/>
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
+
+    /// <inheritdoc/>
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value == null)
+        {
+            return this.WhenNull;
+        }
+
+        if (Equals(value, true))
+        {
+            return this.WhenTrue;
+        }
+
+        if (Equals(value, false))
+        {
+            return this.WhenFalse;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(value), value, ""Expected value to be of type bool or Nullable<bool>"");
+    }
+
+    /// <inheritdoc/>
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotSupportedException($""{nameof(BooleanToVisibilityConverter)} is only for OneWay bindings"");
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
