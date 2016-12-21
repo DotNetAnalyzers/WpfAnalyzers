@@ -46,7 +46,7 @@
         {
             var assignment = (AssignmentExpressionSyntax)context.Node;
             if (assignment?.IsMissing != false ||
-                assignment.FirstAncestorOrSelf<ConstructorConstraintSyntax>() != null ||
+                assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null ||
                 assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
             {
                 return;
