@@ -62,5 +62,53 @@ public static class Foo
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task PropertyKeyInOtherClass()
+        {
+            var linkCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+
+public class Link : ButtonBase
+{
+}";
+
+            var modernLinksCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class ModernLinks : ItemsControl
+{
+    /// <summary>
+    /// Identifies the SelectedSource dependency property.
+    /// </summary>
+    internal static readonly DependencyPropertyKey SelectedLinkPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""SelectedLink"",
+        typeof(Link),
+        typeof(ModernLinks),
+        new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty SelectedLinkProperty = SelectedLinkPropertyKey.DependencyProperty;
+}";
+
+            var linkGroupCode = @"
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+
+public class LinkGroup : ButtonBase
+{
+    public static readonly DependencyProperty SelectedLinkProperty = ModernLinks.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
+
+    public Link SelectedLink
+    {
+        get { return (Link)this.GetValue(SelectedLinkProperty); }
+        protected set { this.SetValue(ModernLinks.SelectedLinkPropertyKey, value); }
+    }
+}";
+            await this.VerifyHappyPathAsync(new[] { linkCode, modernLinksCode, linkGroupCode }).ConfigureAwait(false);
+        }
     }
 }

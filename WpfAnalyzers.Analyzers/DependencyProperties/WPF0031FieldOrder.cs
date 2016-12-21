@@ -63,6 +63,11 @@
                 return;
             }
 
+            if (field.ContainingType != keyField.ContainingType)
+            {
+                return;
+            }
+
             SyntaxReference reference;
             if (keyField.DeclaringSyntaxReferences.TryGetFirst(out reference))
             {
