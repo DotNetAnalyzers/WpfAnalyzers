@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Threading;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -98,31 +99,10 @@
                         continue;
                     }
 
-                    using (var pooled = IdentifierNameWalker.Create(getter))
+                    using (var pooled = TouchedFieldsWalker.Create(getter, context.SemanticModel, context.CancellationToken))
                     {
-                        foreach (var identifierName in pooled.Item.IdentifierNames)
+                        if (pooled.Item.Contains(field))
                         {
-                            var component = context.SemanticModel.GetSymbolSafe(identifierName, context.CancellationToken);
-                            var componentField = component as IFieldSymbol;
-                            if (componentField == null)
-                            {
-                                var propertySymbol = component as IPropertySymbol;
-                                if (propertySymbol == null)
-                                {
-                                    continue;
-                                }
-
-                                if (!Property.TryGetBackingField(propertySymbol, context.SemanticModel, context.CancellationToken, out componentField))
-                                {
-                                    continue;
-                                }
-                            }
-
-                            if (!field.Equals(componentField))
-                            {
-                                continue;
-                            }
-
                             if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
                             {
                                 if (pooledSet.Item.Add(property))
@@ -171,6 +151,82 @@
             }
 
             return null;
+        }
+
+        private sealed class TouchedFieldsWalker : CSharpSyntaxWalker
+        {
+            private static readonly Pool<TouchedFieldsWalker> Cache = new Pool<TouchedFieldsWalker>(
+                () => new TouchedFieldsWalker(),
+                x =>
+                {
+                    x.fields.Clear();
+                    x.visited.Clear();
+                    x.semanticModel = null;
+                    x.cancellationToken = CancellationToken.None;
+                });
+
+            private readonly HashSet<IFieldSymbol> fields = new HashSet<IFieldSymbol>();
+            private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
+
+            private SemanticModel semanticModel;
+            private CancellationToken cancellationToken;
+
+            private TouchedFieldsWalker()
+            {
+            }
+
+            public static Pool<TouchedFieldsWalker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                var pooled = Cache.GetOrCreate();
+                pooled.Item.semanticModel = semanticModel;
+                pooled.Item.cancellationToken = cancellationToken;
+                pooled.Item.Visit(node);
+                return pooled;
+            }
+
+            public bool Contains(IFieldSymbol field) => this.fields.Contains(field);
+
+            public override void Visit(SyntaxNode node)
+            {
+                if (this.visited.Add(node))
+                {
+                    base.Visit(node);
+                }
+            }
+
+            public override void VisitIdentifierName(IdentifierNameSyntax node)
+            {
+                var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
+                var field = symbol as IFieldSymbol;
+                if (field != null)
+                {
+                    this.fields.Add(field);
+                }
+
+                var property = symbol as IPropertySymbol;
+                if (property != null)
+                {
+                    foreach (var declaration in property.Declarations(this.cancellationToken))
+                    {
+                        AccessorDeclarationSyntax getter;
+                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out getter))
+                        {
+                            this.Visit(getter);
+                        }
+                    }
+                }
+
+                var method = symbol as IMethodSymbol;
+                if (method != null)
+                {
+                    foreach (var declaration in method.Declarations(this.cancellationToken))
+                    {
+                        this.Visit(declaration);
+                    }
+                }
+
+                base.VisitIdentifierName(node);
+            }
         }
     }
 }
