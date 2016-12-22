@@ -40,37 +40,105 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleAssignment, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandlePrefixUnaryExpression, SyntaxKind.PreIncrementExpression);
+            context.RegisterSyntaxNodeAction(HandlePrefixUnaryExpression, SyntaxKind.PreDecrementExpression);
+
+            context.RegisterSyntaxNodeAction(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression);
+            context.RegisterSyntaxNodeAction(HandlePostfixUnaryExpression, SyntaxKind.PostDecrementExpression);
+
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AndAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression);
+
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AddAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.DivideAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.ModuloAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.MultiplyAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SubtractAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
         }
 
-        private static void HandleAssignment(SyntaxNodeAnalysisContext context)
+        private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            var assignment = (AssignmentExpressionSyntax)context.Node;
-            if (assignment?.IsMissing != false || IsInIgnoredScope(assignment))
+            var expression = (PostfixUnaryExpressionSyntax)context.Node;
+            IFieldSymbol field;
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
+            {
+                Handle(context, field);
+            }
+        }
+
+        private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
+        {
+            var expression = (PrefixUnaryExpressionSyntax)context.Node;
+            IFieldSymbol field;
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
+            {
+                Handle(context, field);
+            }
+        }
+
+        private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
+        {
+            var expression = (AssignmentExpressionSyntax)context.Node;
+            IFieldSymbol field;
+            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out field))
+            {
+                Handle(context, field);
+            }
+        }
+
+        private static bool TryGetAssignedField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            field = null;
+            if (node.IsMissing)
+            {
+                return false;
+            }
+
+            var identifierName = node as IdentifierNameSyntax;
+            if (identifierName != null)
+            {
+                field = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IFieldSymbol;
+                return field != null;
+            }
+
+            var memberAccess = node as MemberAccessExpressionSyntax;
+            if (memberAccess != null)
+            {
+                if (memberAccess.Expression is ThisExpressionSyntax)
+                {
+                    field = semanticModel.GetSymbolSafe(memberAccess.Name, cancellationToken) as IFieldSymbol;
+                }
+
+                return field != null;
+            }
+
+            return false;
+        }
+
+        private static void Handle(SyntaxNodeAnalysisContext context, IFieldSymbol assignedField)
+        {
+            if (IsInIgnoredScope(context.Node))
             {
                 return;
             }
 
-            var block = assignment.FirstAncestorOrSelf<BlockSyntax>();
-            if (block == null)
-            {
-                return;
-            }
-
-            var typeDeclaration = assignment.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             var typeSymbol = context.SemanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
             if (!typeSymbol.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return;
             }
 
-            var field = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IFieldSymbol;
-            if (field == null || !typeSymbol.Equals(field.ContainingType))
+            if (!typeSymbol.Equals(assignedField.ContainingType))
             {
                 return;
             }
 
-            var inProperty = assignment.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            var inProperty = context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
             if (inProperty != null)
             {
                 if (Property.IsSimplePropertyWithBackingField(
@@ -93,22 +161,29 @@
                     }
 
                     var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
-                    var getter = Getter(propertyDeclaration);
+                    var getter = GetterBody(propertyDeclaration);
                     if (getter == null || property == null || property.DeclaredAccessibility != Accessibility.Public)
+                    {
+                        continue;
+                    }
+
+                    var accessor = context.Node.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
+                    if (accessor?.IsKind(SyntaxKind.GetAccessorDeclaration) == true &&
+                        accessor.FirstAncestorOrSelf<PropertyDeclarationSyntax>() == propertyDeclaration)
                     {
                         continue;
                     }
 
                     using (var pooled = TouchedFieldsWalker.Create(getter, context.SemanticModel, context.CancellationToken))
                     {
-                        if (pooled.Item.Contains(field))
+                        if (pooled.Item.Contains(assignedField))
                         {
-                            if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
+                            if (PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
                             {
                                 if (pooledSet.Item.Add(property))
                                 {
                                     var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, property.Name));
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
                                 }
                             }
                         }
@@ -117,16 +192,16 @@
             }
         }
 
-        private static bool IsInIgnoredScope(AssignmentExpressionSyntax assignment)
+        private static bool IsInIgnoredScope(SyntaxNode node)
         {
-            if (assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
+            if (node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
             {
                 return true;
             }
 
-            if (assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            if (node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
             {
-                if (assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                if (node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
                 {
                     return false;
                 }
@@ -137,7 +212,7 @@
             return false;
         }
 
-        private static SyntaxNode Getter(PropertyDeclarationSyntax property)
+        private static SyntaxNode GetterBody(PropertyDeclarationSyntax property)
         {
             if (property.ExpressionBody != null)
             {

@@ -36,7 +36,7 @@
                 }
 
                 var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                           .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
+                                           .FirstAncestorOrSelf<ExpressionSyntax>();
                 var typeDeclaration = assignment?.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                 if (typeDeclaration == null)
                 {
@@ -65,7 +65,7 @@
             }
         }
 
-        private static Task<Document> ApplyNotifyPropertyChangeFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, AssignmentExpressionSyntax assignment, string property, IMethodSymbol invoker)
+        private static Task<Document> ApplyNotifyPropertyChangeFixAsync(CodeFixContext context, SyntaxNode syntaxRoot, ExpressionSyntax assignment, string property, IMethodSymbol invoker)
         {
             var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
             var usesUnderscoreNames = assignment.FirstAncestorOrSelf<TypeDeclarationSyntax>().UsesUnderscoreNames();

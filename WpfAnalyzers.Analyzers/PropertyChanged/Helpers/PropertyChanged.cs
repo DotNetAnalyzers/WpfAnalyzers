@@ -15,7 +15,7 @@
             Maybe
         }
 
-        internal static InvokesPropertyChanged InvokesPropertyChangedFor(this AssignmentExpressionSyntax assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static InvokesPropertyChanged InvokesPropertyChangedFor(this SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var invokes = InvokesPropertyChanged.No;
             var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??

@@ -1,11 +1,207 @@
 ﻿namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
 {
+    using System;
+    using System.Linq;
     using System.Threading.Tasks;
+
+    using Microsoft.CodeAnalysis.CSharp;
+
     using NUnit.Framework;
     using WpfAnalyzers.PropertyChanged;
 
     internal class CodeFix : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
     {
+        [TestCase("this.value = value;")]
+        [TestCase("this.value += value;")]
+        [TestCase("this.value -= value;")]
+        [TestCase("this.value *= value;")]
+        [TestCase("this.value /= value;")]
+        [TestCase("this.value %= value;")]
+        [TestCase("this.value++;")]
+        [TestCase("this.value--;")]
+        [TestCase("--this.value;")]
+        [TestCase("++this.value;")]
+        public async Task IntFieldUpdatedInMethod(string update)
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value => this.value;
+
+    public void Update(int value)
+    {
+        ↓this.value = value;
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            testCode = testCode.AssertReplace("this.value = value;", update);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value => this.value;
+
+    public void Update(int value)
+    {
+        this.value = value;
+        this.OnPropertyChanged(nameof(this.Value));
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("this.value = value;", update);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [TestCase("_value = value;")]
+        [TestCase("_value += value;")]
+        [TestCase("_value -= value;")]
+        [TestCase("_value *= value;")]
+        [TestCase("_value /= value;")]
+        [TestCase("_value %= value;")]
+        [TestCase("_value++;")]
+        [TestCase("_value--;")]
+        [TestCase("--_value;")]
+        [TestCase("++_value;")]
+        public async Task IntFieldUpdatedInMethodUnderscoreNames(string update)
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int _value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value => _value;
+
+    public void Update(int value)
+    {
+        ↓_value = value;
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            testCode = testCode.AssertReplace("_value = value;", update);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int _value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value => _value;
+
+    public void Update(int value)
+    {
+        _value = value;
+        OnPropertyChanged(nameof(Value));
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("_value = value;", update);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [TestCase("this.value |= value;")]
+        [TestCase("this.value ^= value;")]
+        [TestCase("this.value &= value;")]
+        public async Task BoolFieldUpdatedInMethod(string update)
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private bool value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public bool Value => this.value;
+
+    public void Update(bool value)
+    {
+        ↓this.value = value;
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            testCode = testCode.AssertReplace("this.value = value;", update);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private bool value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public bool Value => this.value;
+
+    public void Update(bool value)
+    {
+        this.value = value;
+        this.OnPropertyChanged(nameof(this.Value));
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("this.value = value;", update);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
         [Test]
         public async Task WhenUsingPropertiesExpressionBody()
         {
@@ -1604,6 +1800,78 @@ public class ViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
     public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AssigningFieldsInGetter()
+        {
+            foreach (var name in Enum.GetNames(typeof(SyntaxKind)).Where(x => x.Contains("Expression")))
+            {
+                Console.WriteLine(name);
+            }
+
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+    private int getCount;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int GetCount => this.getCount;
+
+    public string Name
+    {
+        get
+        {
+            ↓this.getCount++;
+            return this.name;
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("GetCount");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+    private int getCount;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int GetCount => this.getCount;
+
+    public string Name
+    {
+        get
+        {
+            this.getCount++;
+            this.OnPropertyChanged(nameof(this.GetCount));
+            return this.name;
+        }
+    }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
