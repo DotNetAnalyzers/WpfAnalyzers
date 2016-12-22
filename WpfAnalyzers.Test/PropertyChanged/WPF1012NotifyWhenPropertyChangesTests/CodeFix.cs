@@ -872,5 +872,128 @@ public class ViewModel : ViewModelBase
             await this.VerifyCSharpFixAsync(new[] { viewModelBaseCode, testCode }, new[] { viewModelBaseCode, fixedCode }, allowNewCompilerDiagnostics: true)
                       .ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task InLambda1()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += (o, e) => ↓this.name = this.name + ""meh"";
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Name");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += (o, e) =>
+        {
+            this.name = this.name + ""meh"";
+            this.OnPropertyChanged(nameof(this.Name));
+        };
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task InLambda2()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += (o, e) =>
+            {
+                ↓this.name = this.name + ""meh"";
+            };
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Name");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += (o, e) =>
+            {
+                this.name = this.name + ""meh"";
+                this.OnPropertyChanged(nameof(this.Name));
+            };
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
     }
 }

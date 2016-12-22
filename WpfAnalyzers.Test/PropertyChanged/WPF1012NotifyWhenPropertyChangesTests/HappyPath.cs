@@ -110,6 +110,71 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenNotifyingSettingFieldInMethod()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void UpdateName(string name)
+    {
+        this.name = name;
+        this.OnPropertyChanged(nameof(Name));
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotifyingSettingFieldInMethodOutsideLock()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private readonly object gate = new object();
+    private string name;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void UpdateName(string name)
+    {
+        lock (this.gate)
+        {
+            this.name = name;
+        }
+
+        this.OnPropertyChanged(nameof(Name));
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task IgnoreInCtor()
         {
             var testCode = @"
@@ -194,5 +259,39 @@ public class ViewModel : INotifyPropertyChanged
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task NotifyingInLambda()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string name;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += (o, e) =>
+            {
+                this.name = this.name + ""meh"";
+                this.OnPropertyChanged(nameof(this.Name));
+            };
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name => this.name;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
     }
 }

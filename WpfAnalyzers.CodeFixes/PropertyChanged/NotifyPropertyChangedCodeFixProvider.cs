@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using WpfAnalyzers.PropertyChanged;
@@ -70,9 +71,38 @@
             var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
             var usesUnderscoreNames = assignment.FirstAncestorOrSelf<TypeDeclarationSyntax>().UsesUnderscoreNames();
             var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, false, usesUnderscoreNames, invoker);
-            var previousStatement = assignment.FirstAncestorOrSelf<StatementSyntax>();
-            var block = previousStatement.FirstAncestorOrSelf<BlockSyntax>();
-            var index = block.Statements.IndexOf(previousStatement);
+            var assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+            var anonymousFunction = assignment.Parent as AnonymousFunctionExpressionSyntax;
+            if (anonymousFunction != null)
+            {
+                var block = anonymousFunction.Body as BlockSyntax;
+                if (block != null)
+                {
+                    var previousStatement = InsertAfter(block, assignStatement, invoker);
+                    return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.InsertNodesAfter(previousStatement, new[] { onPropertyChanged })));
+                }
+
+                var expressionStatement = (ExpressionStatementSyntax)syntaxGenerator.ExpressionStatement(anonymousFunction.Body);
+                var withStatements = syntaxGenerator.WithStatements(anonymousFunction, new[] { expressionStatement, onPropertyChanged });
+                return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(anonymousFunction,  withStatements)));
+            }
+            else
+            {
+                var block = assignStatement?.Parent as BlockSyntax;
+                if (block == null)
+                {
+                    return Task.FromResult(context.Document);
+                }
+
+                var previousStatement = InsertAfter(block, assignStatement, invoker);
+                return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.InsertNodesAfter(previousStatement, new[] { onPropertyChanged })));
+            }
+        }
+
+        private static StatementSyntax InsertAfter(BlockSyntax block, ExpressionStatementSyntax assignStatement, IMethodSymbol invoker)
+        {
+            var index = block.Statements.IndexOf(assignStatement);
+            StatementSyntax previousStatement = assignStatement;
             for (var i = index + 1; i < block.Statements.Count; i++)
             {
                 var statement = block.Statements[i] as ExpressionStatementSyntax;
@@ -105,7 +135,7 @@
                 }
             }
 
-            return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.InsertNodesAfter(previousStatement, new[] { onPropertyChanged })));
+            return previousStatement;
         }
     }
 }

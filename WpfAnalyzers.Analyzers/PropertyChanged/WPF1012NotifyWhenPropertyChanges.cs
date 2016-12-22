@@ -45,9 +45,7 @@
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
             var assignment = (AssignmentExpressionSyntax)context.Node;
-            if (assignment?.IsMissing != false ||
-                assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null ||
-                assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
+            if (assignment?.IsMissing != false || IsInIgnoredScope(assignment))
             {
                 return;
             }
@@ -131,6 +129,26 @@
                     }
                 }
             }
+        }
+
+        private static bool IsInIgnoredScope(AssignmentExpressionSyntax assignment)
+        {
+            if (assignment.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
+            {
+                return true;
+            }
+
+            if (assignment.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            {
+                if (assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private static SyntaxNode Getter(PropertyDeclarationSyntax property)
