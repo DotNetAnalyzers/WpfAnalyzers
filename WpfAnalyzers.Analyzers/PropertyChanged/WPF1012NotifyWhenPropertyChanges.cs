@@ -81,50 +81,56 @@
                 }
             }
 
-            foreach (var member in typeDeclaration.Members)
+            using (var pooledSet = SetPool<IPropertySymbol>.Create())
             {
-                var propertyDeclaration = member as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
+                foreach (var member in typeDeclaration.Members)
                 {
-                    continue;
-                }
-
-                var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
-                var getter = Getter(propertyDeclaration);
-                if (getter == null || property == null || property.DeclaredAccessibility != Accessibility.Public)
-                {
-                    continue;
-                }
-
-                using (var pooled = IdentifierNameWalker.Create(getter))
-                {
-                    foreach (var identifierName in pooled.Item.IdentifierNames)
+                    var propertyDeclaration = member as PropertyDeclarationSyntax;
+                    if (propertyDeclaration == null)
                     {
-                        var component = context.SemanticModel.GetSymbolSafe(identifierName, context.CancellationToken);
-                        var componentField = component as IFieldSymbol;
-                        if (componentField == null)
+                        continue;
+                    }
+
+                    var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
+                    var getter = Getter(propertyDeclaration);
+                    if (getter == null || property == null || property.DeclaredAccessibility != Accessibility.Public)
+                    {
+                        continue;
+                    }
+
+                    using (var pooled = IdentifierNameWalker.Create(getter))
+                    {
+                        foreach (var identifierName in pooled.Item.IdentifierNames)
                         {
-                            var propertySymbol = component as IPropertySymbol;
-                            if (propertySymbol == null)
+                            var component = context.SemanticModel.GetSymbolSafe(identifierName, context.CancellationToken);
+                            var componentField = component as IFieldSymbol;
+                            if (componentField == null)
+                            {
+                                var propertySymbol = component as IPropertySymbol;
+                                if (propertySymbol == null)
+                                {
+                                    continue;
+                                }
+
+                                if (!Property.TryGetBackingField(propertySymbol, context.SemanticModel, context.CancellationToken, out componentField))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if (!field.Equals(componentField))
                             {
                                 continue;
                             }
 
-                            if (!Property.TryGetBackingField(propertySymbol, context.SemanticModel, context.CancellationToken, out componentField))
+                            if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
                             {
-                                continue;
+                                if (pooledSet.Item.Add(property))
+                                {
+                                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, property.Name));
+                                }
                             }
-                        }
-
-                        if (!field.Equals(componentField))
-                        {
-                            continue;
-                        }
-
-                        if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
-                        {
-                            var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), properties, property.Name));
                         }
                     }
                 }
