@@ -95,6 +95,7 @@ using System.Runtime.CompilerServices;
 
 public class ViewModel : INotifyPropertyChanged
 {
+    private static readonly int Meh = 2;
     private int _value;
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -121,6 +122,7 @@ using System.Runtime.CompilerServices;
 
 public class ViewModel : INotifyPropertyChanged
 {
+    private static readonly int Meh = 2;
     private int _value;
 
     public event PropertyChangedEventHandler PropertyChanged;

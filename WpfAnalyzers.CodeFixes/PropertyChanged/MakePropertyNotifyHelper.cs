@@ -138,25 +138,6 @@ namespace WpfAnalyzers
                                                    .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static bool UsesUnderscoreNames(this TypeDeclarationSyntax type)
-        {
-            foreach (var member in type.Members)
-            {
-                var field = member as FieldDeclarationSyntax;
-                if (field == null)
-                {
-                    continue;
-                }
-
-                foreach (var variable in field.Declaration.Variables)
-                {
-                    return variable.Identifier.ValueText.StartsWith("_");
-                }
-            }
-
-            return false;
-        }
-
         private static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property)
         {
             var fieldAccess = fieldName.StartsWith("_")
