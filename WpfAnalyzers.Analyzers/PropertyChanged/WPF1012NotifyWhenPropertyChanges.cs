@@ -174,6 +174,12 @@
                         continue;
                     }
 
+                    var expressionBody = context.Node.FirstAncestorOrSelf<ArrowExpressionClauseSyntax>();
+                    if (expressionBody?.FirstAncestorOrSelf<PropertyDeclarationSyntax>() == propertyDeclaration)
+                    {
+                        continue;
+                    }
+
                     using (var pooled = TouchedFieldsWalker.Create(getter, context.SemanticModel, context.CancellationToken))
                     {
                         if (pooled.Item.Contains(assignedField))
