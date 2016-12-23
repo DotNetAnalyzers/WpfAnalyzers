@@ -80,32 +80,32 @@
 
             public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
             {
-                if (node.Left is ThisExpressionSyntax)
-                {
-                    this.usesThis = true;
-                }
-
-                if (node.Left is IdentifierNameSyntax)
-                {
-                    this.noThis = true;
-                }
-
+                this.CheckUsesThis(node.Left);
                 base.VisitAssignmentExpression(node);
             }
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                if (node.Expression is ThisExpressionSyntax)
+                this.CheckUsesThis(node.Expression);
+                base.VisitInvocationExpression(node);
+            }
+
+            private void CheckUsesThis(ExpressionSyntax expression)
+            {
+                if (expression == null)
+                {
+                    return;
+                }
+
+                if ((expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax)
                 {
                     this.usesThis = true;
                 }
 
-                if (node.Expression is IdentifierNameSyntax)
+                if (expression is IdentifierNameSyntax)
                 {
                     this.noThis = true;
                 }
-
-                base.VisitInvocationExpression(node);
             }
         }
     }
