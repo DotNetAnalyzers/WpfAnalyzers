@@ -121,7 +121,7 @@
 
         private static void Handle(SyntaxNodeAnalysisContext context, IFieldSymbol assignedField)
         {
-            if (IsInIgnoredScope(context.Node))
+            if (IsInIgnoredScope(context))
             {
                 return;
             }
@@ -198,16 +198,22 @@
             }
         }
 
-        private static bool IsInIgnoredScope(SyntaxNode node)
+        private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
         {
-            if (node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
+            var method = context.ContainingSymbol as IMethodSymbol;
+            if (method?.Name == "Dispose")
             {
                 return true;
             }
 
-            if (node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
             {
-                if (node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                return true;
+            }
+
+            if (context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            {
+                if (context.Node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
                 {
                     return false;
                 }

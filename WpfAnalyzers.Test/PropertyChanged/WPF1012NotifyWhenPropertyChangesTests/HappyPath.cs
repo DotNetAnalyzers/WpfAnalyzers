@@ -383,5 +383,56 @@ public class ViewModel : INotifyPropertyChanged
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoreDisposeMethod()
+        {
+            var testCode = @"
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class ViewModel : INotifyPropertyChanged, IDisposable
+{
+    private string name;
+    private bool disposed;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Name
+    {
+        get
+        {
+            this.ThrowIfDisposed();
+            return this.name ?? (this.name = string.Empty);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (this.disposed)
+        {
+            return;
+        }
+
+        this.disposed = true;
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void ThrowIfDisposed()
+    {
+        if (this.disposed)
+        {
+            throw new ObjectDisposedException(GetType().FullName);
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
