@@ -1,7 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Collections.Generic;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,37 +30,82 @@
                 }
             }
 
-            using (var pooled = ThisExpressionWalker.Create(typeDeclarationSyntax))
+            using (var pooled = UsesThisWalker.Create(typeDeclarationSyntax))
             {
-                return pooled.Item.ThisExpressions.Count > 0;
+                return pooled.Item.UsesThis == false;
             }
         }
 
-        internal sealed class ThisExpressionWalker : CSharpSyntaxWalker
+        internal sealed class UsesThisWalker : CSharpSyntaxWalker
         {
-            private static readonly Pool<ThisExpressionWalker> Cache = new Pool<ThisExpressionWalker>(
-                () => new ThisExpressionWalker(),
-                x => x.thisExpressions.Clear());
+            private static readonly Pool<UsesThisWalker> Cache = new Pool<UsesThisWalker>(
+                () => new UsesThisWalker(),
+                x =>
+                {
+                    x.usesThis = false;
+                    x.noThis = false;
+                });
 
-            private readonly List<ThisExpressionSyntax> thisExpressions = new List<ThisExpressionSyntax>();
+            private bool usesThis;
+            private bool noThis;
 
-            private ThisExpressionWalker()
+            private UsesThisWalker()
             {
             }
 
-            public IReadOnlyList<ThisExpressionSyntax> ThisExpressions => this.thisExpressions;
+            public bool? UsesThis
+            {
+                get
+                {
+                    if (this.usesThis == this.noThis)
+                    {
+                        return null;
+                    }
 
-            public static Pool<ThisExpressionWalker>.Pooled Create(SyntaxNode node)
+                    if (this.usesThis && !this.noThis)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
+            public static Pool<UsesThisWalker>.Pooled Create(SyntaxNode node)
             {
                 var pooled = Cache.GetOrCreate();
                 pooled.Item.Visit(node);
                 return pooled;
             }
 
-            public override void VisitThisExpression(ThisExpressionSyntax node)
+            public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
             {
-                this.thisExpressions.Add(node);
-                base.VisitThisExpression(node);
+                if (node.Left is ThisExpressionSyntax)
+                {
+                    this.usesThis = true;
+                }
+
+                if (node.Left is IdentifierNameSyntax)
+                {
+                    this.noThis = true;
+                }
+
+                base.VisitAssignmentExpression(node);
+            }
+
+            public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+            {
+                if (node.Expression is ThisExpressionSyntax)
+                {
+                    this.usesThis = true;
+                }
+
+                if (node.Expression is IdentifierNameSyntax)
+                {
+                    this.noThis = true;
+                }
+
+                base.VisitInvocationExpression(node);
             }
         }
     }
