@@ -11,9 +11,14 @@
         // ReSharper disable once InconsistentNaming
         private static readonly TypeSyntax INotifyPropertyChangedInterface = SyntaxFactory.ParseTypeName("INotifyPropertyChanged");
 
-        private static readonly StatementSyntax[] InvokeStatements =
+        private static readonly StatementSyntax[] ThisPropertyChangedInvokeStatements =
         {
             SyntaxFactory.ParseStatement("this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));")
+        };
+
+        private static readonly StatementSyntax[] PropertyChangedInvokeStatements =
+        {
+            SyntaxFactory.ParseStatement("PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));")
         };
 
         private static readonly SeparatedSyntaxList<ParameterSyntax> InvokerParameters =
@@ -78,7 +83,7 @@
                 accessibility: Accessibility.Protected,
                 modifiers: type.IsSealed ? DeclarationModifiers.None : DeclarationModifiers.Virtual,
                 parameters: InvokerParameters,
-                statements: InvokeStatements);
+                statements: typeDeclaration.UsesUnderscoreNames() ? PropertyChangedInvokeStatements : ThisPropertyChangedInvokeStatements);
 
             MemberDeclarationSyntax existsingMember;
             if (typeDeclaration.Members.TryGetFirst(

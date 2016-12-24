@@ -127,6 +127,66 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task AutoPropertyCallerMemberNameNameUnderscoreNames()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    ↓public int Bar { get; set; }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    private int _bar;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Bar
+    {
+        get
+        {
+            return _bar;
+        }
+
+        set
+        {
+            if (value == _bar)
+            {
+                return;
+            }
+
+            _bar = value;
+            OnPropertyChanged();
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task AutoPropertyPropertyChangedEventArgs()
         {
             var testCode = @"

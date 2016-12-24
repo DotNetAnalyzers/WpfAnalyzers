@@ -90,6 +90,18 @@
                 base.VisitInvocationExpression(node);
             }
 
+            public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+            {
+                this.CheckUsesThis(node);
+                base.VisitMemberAccessExpression(node);
+            }
+
+            public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
+            {
+                this.CheckUsesThis(node.Expression);
+                base.VisitConditionalAccessExpression(node);
+            }
+
             private void CheckUsesThis(ExpressionSyntax expression)
             {
                 if (expression == null)

@@ -98,6 +98,60 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenNotNotifyingWithBackingFieldUnderscoreNames()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int _value;
+
+    ↓public int Value
+    {
+        get
+        {
+            return _value;
+        }
+        private set
+        {
+            _value = value;
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Implement INotifyPropertyChanged.");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    private int _value;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value
+    {
+        get
+        {
+            return _value;
+        }
+        private set
+        {
+            _value = value;
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenInterfaceOnly()
         {
             var testCode = @"
