@@ -117,6 +117,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1012.md">WPF1012</a></td>
   <td>Notify when property changes.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1013.md">WPF1013</a></td>
+  <td>Use [CallerMemberName]</td>
+</tr>
 <table>
 <!-- end generated table -->
 
