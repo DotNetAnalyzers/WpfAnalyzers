@@ -19,7 +19,7 @@
             ImmutableArray.Create(WPF1012NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
-        //public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
