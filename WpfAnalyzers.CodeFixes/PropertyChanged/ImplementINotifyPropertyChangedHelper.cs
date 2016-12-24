@@ -8,6 +8,8 @@
 
     internal static class ImplementINotifyPropertyChangedHelper
     {
+        private const string OnPropertyChanged = "OnPropertyChanged";
+
         // ReSharper disable once InconsistentNaming
         private static readonly TypeSyntax INotifyPropertyChangedInterface = SyntaxFactory.ParseTypeName("INotifyPropertyChanged");
 
@@ -78,8 +80,25 @@
             SyntaxGenerator syntaxGenerator,
             ITypeSymbol type)
         {
+            foreach (var member in typeDeclaration.Members)
+            {
+                var method = member as MethodDeclarationSyntax;
+                if (method?.Identifier.ValueText == OnPropertyChanged)
+                {
+                    if (method.ParameterList.Parameters.Count != 1)
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals((method.ParameterList.Parameters[0].Type as PredefinedTypeSyntax)?.Keyword.ValueText, "string", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return typeDeclaration;
+                    }
+                }
+            }
+
             var invoker = (MethodDeclarationSyntax)syntaxGenerator.MethodDeclaration(
-                "OnPropertyChanged",
+                OnPropertyChanged,
                 accessibility: Accessibility.Protected,
                 modifiers: type.IsSealed ? DeclarationModifiers.None : DeclarationModifiers.Virtual,
                 parameters: InvokerParameters,
