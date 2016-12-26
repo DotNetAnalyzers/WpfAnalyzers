@@ -29,8 +29,8 @@ namespace WpfAnalyzers
         internal static TypeDeclarationSyntax WithBackingField(
             this TypeDeclarationSyntax typeDeclaration,
             SyntaxGenerator syntaxGenerator,
-            PropertyDeclarationSyntax property,
-            FieldDeclarationSyntax field)
+            FieldDeclarationSyntax field,
+            PropertyDeclarationSyntax forProperty)
         {
             if (field == null)
             {
@@ -42,11 +42,18 @@ namespace WpfAnalyzers
             {
                 FieldDeclarationSyntax before = null;
                 FieldDeclarationSyntax after = null;
+                PropertyDeclarationSyntax property = null;
                 foreach (var member in typeDeclaration.Members)
                 {
                     var otherProperty = member as PropertyDeclarationSyntax;
-                    if (otherProperty == null || otherProperty == property)
+                    if (otherProperty == null)
                     {
+                        continue;
+                    }
+
+                    if (otherProperty.Identifier.ValueText == forProperty.Identifier.ValueText)
+                    {
+                        property = otherProperty;
                         continue;
                     }
 
@@ -54,7 +61,7 @@ namespace WpfAnalyzers
                     FieldDeclarationSyntax fieldDeclaration;
                     if (Property.TryGetBackingField(otherProperty, out otherField, out fieldDeclaration))
                     {
-                        if (otherProperty.SpanStart > property.SpanStart)
+                        if (property == null)
                         {
                             before = fieldDeclaration;
                         }

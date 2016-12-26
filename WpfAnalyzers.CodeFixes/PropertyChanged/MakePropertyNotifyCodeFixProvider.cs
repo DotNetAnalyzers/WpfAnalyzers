@@ -71,7 +71,7 @@
                     }
 
                     var updatedTypeDeclaration = typeDeclaration.ReplaceNode(propertyDeclaration, fix.NotifyingProperty)
-                                                                .WithBackingField(syntaxGenerator, propertyDeclaration, fix.BackingField);
+                                                                .WithBackingField(syntaxGenerator, fix.BackingField, fix.NotifyingProperty);
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
@@ -256,8 +256,8 @@
                     {
                         fixedTypeDeclaration = fixedTypeDeclaration.WithBackingField(
                             syntaxGenerator,
-                            fix.NotifyingProperty,
-                            fix.BackingField);
+                            fix.BackingField,
+                            fix.NotifyingProperty);
                     }
 
                     fixedTypes.Add(new FixedTypes(typeFixes.Key, fixedTypeDeclaration));
