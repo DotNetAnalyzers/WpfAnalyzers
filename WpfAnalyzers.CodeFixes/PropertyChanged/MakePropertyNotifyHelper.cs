@@ -11,22 +11,32 @@ namespace WpfAnalyzers
 
     internal static class MakePropertyNotifyHelper
     {
-        internal static TypeDeclarationSyntax WithBackingField(
-            this TypeDeclarationSyntax typeDeclaration,
-            PropertyDeclarationSyntax property,
-            SyntaxGenerator syntaxGenerator,
-            out string fieldName)
+        internal static string BackingFieldNameForAutoProperty(PropertyDeclarationSyntax property)
         {
+            var typeDeclaration = property.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             var usesUnderscoreNames = typeDeclaration.UsesUnderscoreNames();
-            fieldName = usesUnderscoreNames
-                            ? $"_{property.Identifier.ValueText.ToFirstCharLower()}"
-                            : property.Identifier.ValueText.ToFirstCharLower();
+            var fieldName = usesUnderscoreNames
+                              ? $"_{property.Identifier.ValueText.ToFirstCharLower()}"
+                              : property.Identifier.ValueText.ToFirstCharLower();
             while (typeDeclaration.HasMember(fieldName))
             {
                 fieldName += "_";
             }
 
-            var field = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(fieldName, property.Type, Accessibility.Private);
+            return fieldName;
+        }
+
+        internal static TypeDeclarationSyntax WithBackingField(
+            this TypeDeclarationSyntax typeDeclaration,
+            SyntaxGenerator syntaxGenerator,
+            PropertyDeclarationSyntax property,
+            FieldDeclarationSyntax field)
+        {
+            if (field == null)
+            {
+                return typeDeclaration;
+            }
+
             MemberDeclarationSyntax existsingMember;
             if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out existsingMember))
             {
@@ -44,7 +54,7 @@ namespace WpfAnalyzers
                     FieldDeclarationSyntax fieldDeclaration;
                     if (Property.TryGetBackingField(otherProperty, out otherField, out fieldDeclaration))
                     {
-                        if (otherProperty.SpanStart < property.SpanStart)
+                        if (otherProperty.SpanStart > property.SpanStart)
                         {
                             before = fieldDeclaration;
                         }
@@ -92,18 +102,18 @@ namespace WpfAnalyzers
             return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement }).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, SyntaxGenerator syntaxGenerator, IPropertySymbol property, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol property, SyntaxGenerator syntaxGenerator, string field, IMethodSymbol invoker)
         {
             return WithNotifyingSetter(
                 propertyDeclaration,
-                syntaxGenerator,
                 property,
+                syntaxGenerator,
                 syntaxGenerator.AssignValueToBackingField(field),
                 field,
                 invoker);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, SyntaxGenerator syntaxGenerator, IPropertySymbol property, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol property, SyntaxGenerator syntaxGenerator, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
         {
             var propertyName = propertyDeclaration.Identifier.ValueText;
             var statements = new[]

@@ -104,6 +104,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixAll.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixEquality.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberNameTests\CodeFix.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberNameTests\HappyPath.cs" />
