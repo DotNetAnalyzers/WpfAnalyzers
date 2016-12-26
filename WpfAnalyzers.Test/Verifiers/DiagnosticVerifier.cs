@@ -100,7 +100,7 @@ namespace WpfAnalyzers.Test
                 }
             }
 
-            Assert.AreNotEqual(-1, column, "Expected to find one error");
+            Assert.AreNotEqual(-1, column, $"Expected to find one error indicated by {errorPositionIndicator}");
             var pos = new LinePosition(line, column);
             return new FileLinePositionSpan(fileName, pos, pos);
         }
