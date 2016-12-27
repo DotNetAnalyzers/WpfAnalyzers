@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
@@ -10,6 +11,32 @@
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal static class TypeSymbolExt
     {
+        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type)
+        {
+            while (type != null)
+            {
+                foreach (var member in type.GetMembers())
+                {
+                    yield return member;
+                }
+
+                type = type.BaseType;
+            }
+        }
+
+        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type, string name)
+        {
+            while (type != null)
+            {
+                foreach (var member in type.GetMembers(name))
+                {
+                    yield return member;
+                }
+
+                type = type.BaseType;
+            }
+        }
+
         internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
             return type.TryGetSingleMember(name, out field);
@@ -29,7 +56,7 @@
                 return false;
             }
 
-            foreach (var symbol in type.GetMembers(name))
+            foreach (var symbol in type.RecursiveMembers(name))
             {
                 if (member != null)
                 {

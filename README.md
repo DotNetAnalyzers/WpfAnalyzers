@@ -121,6 +121,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1013.md">WPF1013</a></td>
   <td>Use [CallerMemberName]</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1014.md">WPF1014</a></td>
+  <td>Don't raise PropertyChanged for missing property.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

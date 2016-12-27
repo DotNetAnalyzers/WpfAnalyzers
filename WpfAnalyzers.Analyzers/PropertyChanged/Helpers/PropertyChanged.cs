@@ -93,77 +93,91 @@
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
             invoker = null;
-            while (type != KnownSymbol.Object)
+            foreach (var member in type.RecursiveMembers())
             {
-                foreach (var member in type.GetMembers())
+                var method = member as IMethodSymbol;
+                switch (IsInvoker(method, semanticModel, cancellationToken))
                 {
-                    var method = member as IMethodSymbol;
-
-                    if (method?.Parameters.Length != 1)
-                    {
+                    case InvokesPropertyChanged.No:
                         continue;
-                    }
+                    case InvokesPropertyChanged.Yes:
+                        invoker = method;
+                        return true;
+                    case InvokesPropertyChanged.Maybe:
+                        invoker = method;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
 
-                    var parameter = method.Parameters[0];
+            return invoker != null;
+        }
 
-                    if (method.DeclaringSyntaxReferences.Length == 0)
+        internal static InvokesPropertyChanged IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (method == null ||
+                method.IsStatic ||
+                method.Parameters.Length != 1 ||
+               (method.Parameters[0].Type != KnownSymbol.String && method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
+            {
+                return InvokesPropertyChanged.No;
+            }
+
+            var parameter = method.Parameters[0];
+
+            if (method.DeclaringSyntaxReferences.Length == 0)
+            {
+                if (parameter.Type == KnownSymbol.String &&
+                    method.Name.Contains("PropertyChnaged"))
+                {
+                    // A bit speculative here
+                    // for handling the case when inheriting a ViewModelBase class from a binary reference.
+                    return InvokesPropertyChanged.Maybe;
+                }
+
+                return InvokesPropertyChanged.No;
+            }
+
+            foreach (var declaration in method.Declarations(cancellationToken))
+            {
+                using (var pooled = InvocationWalker.Create(declaration))
+                {
+                    foreach (var invocation in pooled.Item.Invocations)
                     {
-                        if (parameter.Type == KnownSymbol.String &&
-                            method.Name.Contains("PropertyChnaged"))
+                        var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                        if (invokedMethod == null)
                         {
-                            // A bit speculative here
-                            // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                            invoker = method;
+                            continue;
                         }
 
-                        continue;
-                    }
-
-                    foreach (var declaration in method.Declarations(cancellationToken))
-                    {
-                        using (var pooled = InvocationWalker.Create(declaration))
+                        if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                         {
-                            foreach (var invocation in pooled.Item.Invocations)
+                            ArgumentSyntax argument;
+                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
                             {
-                                var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                                if (invokedMethod == null)
+                                var identifier = argument.Expression as IdentifierNameSyntax;
+                                if (identifier?.Identifier.ValueText == parameter.Name)
                                 {
-                                    continue;
+                                    return InvokesPropertyChanged.Yes;
                                 }
 
-                                if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                                var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
+                                if (objectCreation != null)
                                 {
-                                    ArgumentSyntax argument;
-                                    if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
+                                    var nameArgument = objectCreation.ArgumentList.Arguments[0];
+                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
                                     {
-                                        var identifier = argument.Expression as IdentifierNameSyntax;
-                                        if (identifier?.Identifier.ValueText == parameter.Name)
-                                        {
-                                            invoker = method;
-                                            return true;
-                                        }
-
-                                        var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
-                                        if (objectCreation != null)
-                                        {
-                                            var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                            if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
-                                            {
-                                                invoker = method;
-                                                return true;
-                                            }
-                                        }
+                                        return InvokesPropertyChanged.Yes;
                                     }
                                 }
                             }
                         }
                     }
                 }
-
-                type = type.BaseType;
             }
 
-            return invoker != null;
+            return InvokesPropertyChanged.No;
         }
 
         internal static bool IsCallerMemberName(this IParameterSymbol parameter)

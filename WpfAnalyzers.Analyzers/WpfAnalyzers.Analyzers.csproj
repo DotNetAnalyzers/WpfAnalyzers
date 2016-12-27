@@ -124,6 +124,7 @@
     <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChanged.cs" />
     <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChanges.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberName.cs" />
+    <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
