@@ -34,10 +34,10 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
             var invocation = context.Node as InvocationExpressionSyntax;
             if (invocation == null ||
@@ -54,8 +54,8 @@
             }
 
             ArgumentSyntax argument;
-            ITypeSymbol ownerType;
-            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner)
+            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner ||
+                methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
             {
                 if (!invocation.TryGetArgumentAtIndex(0, out argument))
                 {
@@ -75,20 +75,13 @@
                 return;
             }
 
+            ITypeSymbol ownerType;
             if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ownerType))
             {
                 return;
             }
 
-            var field = context.ContainingSymbol as IFieldSymbol;
-            if (field == null ||
-                !(DependencyProperty.IsPotentialDependencyPropertyBackingField(field) ||
-                  DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(field)))
-            {
-                return;
-            }
-
-            if (!field.ContainingType.Is(KnownSymbol.DependencyObject))
+            if (!ownerType.Is(KnownSymbol.DependencyObject))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
             }

@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.DependencyProperties
 {
-    using System;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;
@@ -13,7 +12,7 @@
     {
         public const string DiagnosticId = "WPF0011";
         private const string Title = "Containing type should be used as registered owner.";
-        private const string MessageFormat = "DependencyProperty '{0}' must be registered for containing type: '{1}'";
+        private const string MessageFormat = "Register containing type: '{0}' as owner.";
         private const string Description = "When registering a DependencyProperty register containing type as owner type.";
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
@@ -35,10 +34,10 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
             var invocation = context.Node as InvocationExpressionSyntax;
             if (invocation == null ||
@@ -55,15 +54,18 @@
             }
 
             ArgumentSyntax argument;
-            ITypeSymbol ownerType;
-            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner)
+            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner ||
+                methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
             {
                 if (!invocation.TryGetArgumentAtIndex(0, out argument))
                 {
                     return;
                 }
             }
-            else if (methodSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
+            else if (methodSymbol == KnownSymbol.DependencyProperty.Register ||
+                     methodSymbol == KnownSymbol.DependencyProperty.RegisterReadOnly ||
+                     methodSymbol == KnownSymbol.DependencyProperty.RegisterAttached ||
+                     methodSymbol == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
             {
                 if (!invocation.TryGetArgumentAtIndex(2, out argument))
                 {
@@ -75,22 +77,15 @@
                 return;
             }
 
+            ITypeSymbol ownerType;
             if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ownerType))
             {
                 return;
             }
 
-            var field = context.ContainingSymbol as IFieldSymbol;
-            if (field == null ||
-                !(DependencyProperty.IsPotentialDependencyPropertyBackingField(field) ||
-                  DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(field)))
+            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType))
             {
-                return;
-            }
-
-            if (!field.ContainingType.IsSameType(ownerType))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), field, field.ContainingType));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }
         }
     }

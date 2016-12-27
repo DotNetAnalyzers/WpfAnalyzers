@@ -135,6 +135,43 @@ public static class Foo
         }
 
         [Test]
+        public async Task DependencyPropertyOverrideMetadata()
+        {
+            var fooControlCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int Value
+    {
+        get { return (int)this.GetValue(ValueProperty); }
+        set { this.SetValue(ValueProperty, value); }
+    }
+}";
+
+            var barControlCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class BarControl : FooControl
+{
+    static BarControl()
+    {
+        ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(new[] { fooControlCode, barControlCode }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task AttachedProperty()
         {
             var testCode = @"

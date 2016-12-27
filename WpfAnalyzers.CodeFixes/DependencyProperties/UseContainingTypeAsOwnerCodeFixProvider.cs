@@ -43,13 +43,13 @@
                     continue;
                 }
 
-                var field = semanticModel.GetEnclosingSymbol(argument.SpanStart, context.CancellationToken) as IFieldSymbol;
-                if (field == null)
+                var type = semanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context.CancellationToken);
+                if (type == null)
                 {
                     continue;
                 }
 
-                var containingTypeName = field.ContainingType.ToMinimalDisplayString(semanticModel, argument.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
+                var containingTypeName = type.ToMinimalDisplayString(semanticModel, argument.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
                 var typeSyntax = SyntaxFactory.ParseTypeName(containingTypeName);
                 context.RegisterCodeFix(
                     CodeAction.Create(

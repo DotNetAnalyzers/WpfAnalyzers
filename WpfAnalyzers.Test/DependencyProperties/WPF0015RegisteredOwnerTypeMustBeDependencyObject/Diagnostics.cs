@@ -7,36 +7,48 @@
     internal class Diagnostics : DiagnosticVerifier<WPF0015RegisteredOwnerTypeMustBeDependencyObject>
     {
         [Test]
-        public async Task AttachedPropertyUsingRegister()
+        public async Task DependencyRegister()
         {
             var testCode = @"
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 
-public static class Foo
+public class FooControl : Control
 {
     public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
         ""Bar"",
         typeof(int),
-        ↓typeof(Foo),
+        ↓typeof(string),
         new PropertyMetadata(default(int)));
 
-    public static void SetBar(FrameworkElement element, int value)
+    public int Bar
     {
-        element.SetValue(BarProperty, value);
-    }
-
-    public static int GetBar(FrameworkElement element)
-    {
-        return (int)element.GetValue(BarProperty);
-    }
-
-    public static void Meh(FrameworkElement element)
-    {
-        element.SetValue(BarProperty, 1.0);
+        get { return (int)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
     }
 }";
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task DependencyPropertyRegisterReadOnly()
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl
+{
+    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        ""Bar"",
+        typeof(int),
+        ↓typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+}";
+
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
@@ -51,7 +63,6 @@ using System.Windows.Controls;
 public class FooControl
 {
     public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(↓typeof(FooControl));
-
 }";
 
             var part2 = @"
@@ -83,34 +94,35 @@ public static class Foo
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public async Task DependencyPropertyOverrideMetadata()
         {
-            var testCode = @"
+            var fooControlCode = @"
 using System.Windows;
+using System.Windows.Controls;
 
-public static class Foo
+public class FooControl
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        ""Value"",
         typeof(int),
-        ↓typeof(Foo),
+        typeof(Control),
         new PropertyMetadata(default(int)));
+}";
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+            var barControlCode = @"
+using System.Windows;
+using System.Windows.Controls;
 
-    public static void SetBar(DependencyObject element, int value)
+public class BarControl : FooControl
+{
+    static BarControl()
     {
-        element.SetValue(BarPropertyKey, value);
-    }
-
-    public static int GetBar(DependencyObject element)
-    {
-        return (int)element.GetValue(BarProperty);
+        ValueProperty.OverrideMetadata(↓typeof(BarControl), new PropertyMetadata(1));
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref barControlCode).WithArguments("RegisterAttached");
+            await this.VerifyCSharpDiagnosticAsync(new[] { fooControlCode, barControlCode }, expected).ConfigureAwait(false);
         }
     }
 }
