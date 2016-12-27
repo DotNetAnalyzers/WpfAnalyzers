@@ -110,6 +110,75 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task CallsOnPropertyChangedWithCachedEventArgs()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private static readonly PropertyChangedEventArgs FirstNameArgs = new PropertyChangedEventArgs(nameof(FirstName));
+    private static readonly PropertyChangedEventArgs LastNameArgs = new PropertyChangedEventArgs(nameof(LastName));
+    private static readonly PropertyChangedEventArgs FullNameArgs = new PropertyChangedEventArgs(nameof(FullName));
+
+    private string firstName;
+    private string lastName;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string FullName => $""{this.FirstName} {this.LastName}"";
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            this.firstName = value;
+            this.OnPropertyChanged(FirstNameArgs);
+            this.OnPropertyChanged(FullNameArgs);
+        }
+    }
+
+    public string LastName
+    {
+        get
+        {
+            return this.lastName;
+        }
+
+        set
+        {
+            if (value == this.lastName)
+            {
+                return;
+            }
+
+            this.lastName = value;
+            this.OnPropertyChanged(LastNameArgs);
+            this.OnPropertyChanged(FullNameArgs);
+        }
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenNotifyingSettingFieldInMethod()
         {
             var testCode = @"

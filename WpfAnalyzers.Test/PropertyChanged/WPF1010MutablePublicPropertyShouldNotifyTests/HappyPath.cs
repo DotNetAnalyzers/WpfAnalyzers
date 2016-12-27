@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.PropertyChanged.WPF1010MutablePublicPropertyShouldNotifyTests
+﻿namespace WpfAnalyzers.Test.PropertyChanged.WPF1010MutablePublicPropertyShouldNotifyTests
 {
     using System.Threading.Tasks;
 
@@ -82,6 +82,40 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1010MutablePublicPropertyShouldNo
     }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task CallsOnPropertyChangedWithCachedEventArgs()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(nameof(Bar));
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(CachedArgs);
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }";
+
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
