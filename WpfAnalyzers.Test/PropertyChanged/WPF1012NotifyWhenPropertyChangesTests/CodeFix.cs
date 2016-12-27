@@ -564,6 +564,111 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenUsingPropertiesExpressionBodyNestedSimple()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string firstName;
+    private string lastName;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Greeting => $""Hello {this.FullName}"";
+
+    public string FullName
+    {
+        get
+        {
+            return $""{this.FirstName}"";
+        }
+    }
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            ↓this.firstName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Greeting");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string firstName;
+    private string lastName;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Greeting => $""Hello {this.FullName}"";
+
+    public string FullName
+    {
+        get
+        {
+            return $""{this.FirstName}"";
+        }
+    }
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            this.firstName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+            this.OnPropertyChanged(nameof(this.Greeting));
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenUsingPropertiesExpressionCallingMethod()
         {
             var testCode = @"

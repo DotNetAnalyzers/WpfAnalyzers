@@ -23,7 +23,7 @@ namespace WpfAnalyzers.PropertyChanged
             Title,
             MessageFormat,
             AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Error,
+            DiagnosticSeverity.Warning,
             AnalyzerConstants.EnabledByDefault,
             Description,
             HelpLink);
@@ -43,78 +43,49 @@ namespace WpfAnalyzers.PropertyChanged
         {
             var invocation = (InvocationExpressionSyntax)context.Node;
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
+
+            if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
+                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
             {
-                ArgumentSyntax eventArgs;
-                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out eventArgs))
+                ArgumentSyntax nameArg;
+                string propretyName;
+                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propretyName) == PropertyChanged.InvokesPropertyChanged.Yes)
                 {
-                    var objectCreation = eventArgs.Expression as ObjectCreationExpressionSyntax;
-                    var symbol = context.SemanticModel.GetSymbolSafe(objectCreation, context.CancellationToken)?.ContainingType;
-                    if (symbol != KnownSymbol.PropertyChangedEventArgs)
+                    if (IsForExistingProperty(context, propretyName))
                     {
                         return;
                     }
 
-                    ArgumentSyntax nameArg = null;
-                    if (objectCreation?.ArgumentList.Arguments.TryGetSingle(out nameArg) == true)
+                    if (invocation.Span.Contains(nameArg.Span))
                     {
-                        if (IsForExistingProperty(context, nameArg))
-                        {
-                            return;
-                        }
-
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameArg.GetLocation()));
+                        return;
                     }
+
+                    if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.ArgumentList.Arguments[1].GetLocation()));
+                        return;
+                    }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
                 }
-
-                return;
-            }
-
-            if (invocation.ArgumentList?.Arguments.Count != 1)
-            {
-                return;
-            }
-
-            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
-            {
-                var argument = invocation.ArgumentList.Arguments[0];
-                if (IsForExistingProperty(context, argument))
-                {
-                    return;
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
             }
         }
 
-        private static bool IsForExistingProperty(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
+        private static bool IsForExistingProperty(SyntaxNodeAnalysisContext context, string name)
         {
-            string name;
-            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out name))
+            if (string.IsNullOrEmpty(name))
             {
-                if (string.IsNullOrEmpty(name))
-                {
-                    return true;
-                }
+                return true;
+            }
 
-                if (name == "Item[]")
-                {
-                    foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers())
-                    {
-                        var property = member as IPropertySymbol;
-                        if (property?.IsIndexer == true)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers(name))
+            if (name == "Item[]")
+            {
+                foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers())
                 {
                     var property = member as IPropertySymbol;
-                    if (property?.IsIndexer == false)
+                    if (property?.IsIndexer == true)
                     {
                         return true;
                     }
@@ -123,7 +94,16 @@ namespace WpfAnalyzers.PropertyChanged
                 return false;
             }
 
-            return true;
+            foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers(name))
+            {
+                var property = member as IPropertySymbol;
+                if (property?.IsIndexer == false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
