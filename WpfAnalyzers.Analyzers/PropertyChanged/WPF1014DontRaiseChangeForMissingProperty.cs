@@ -68,6 +68,12 @@ namespace WpfAnalyzers.PropertyChanged
                         return;
                     }
 
+                    if (invocation.ArgumentList.Arguments.Count == 1)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.ArgumentList.Arguments[0].GetLocation()));
+                        return;
+                    }
+
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
                 }
             }

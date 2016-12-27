@@ -81,17 +81,9 @@
                         return InvokesPropertyChanged.Yes;
                     }
 
-                    var cached = semanticModel.GetSymbolSafe(propertyChangedArg.Expression, cancellationToken);
-                    if (cached is IFieldSymbol)
+                    if (TryGetCachedArgs(propertyChangedArg, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        foreach (var syntaxReference in cached.DeclaringSyntaxReferences)
-                        {
-                            var declarator = syntaxReference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
-                            if (TryGetCreatePropertyChangedEventArgsFor(declarator?.Initializer?.Value as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
-                            {
-                                return InvokesPropertyChanged.Yes;
-                            }
-                        }
+                        return InvokesPropertyChanged.Yes;
                     }
                 }
 
@@ -149,10 +141,66 @@
                     {
                         return InvokesPropertyChanged.Yes;
                     }
+
+                    if (TryGetCachedArgs(argument, semanticModel, cancellationToken, out nameArg, out propertyName))
+                    {
+                        return InvokesPropertyChanged.Yes;
+                    }
                 }
             }
 
             return InvokesPropertyChanged.Maybe;
+        }
+
+        private static bool TryGetCachedArgs(
+            ArgumentSyntax propertyChangedArg,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            out ArgumentSyntax nameArg,
+            out string propertyName)
+        {
+            var cached = semanticModel.GetSymbolSafe(propertyChangedArg.Expression, cancellationToken);
+            if (cached is IFieldSymbol)
+            {
+                foreach (var syntaxReference in cached.DeclaringSyntaxReferences)
+                {
+                    var declarator = syntaxReference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
+                    if (TryGetCreatePropertyChangedEventArgsFor(
+                        declarator?.Initializer?.Value as ObjectCreationExpressionSyntax,
+                        semanticModel,
+                        cancellationToken,
+                        out nameArg,
+                        out propertyName))
+                    {
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (cached is IPropertySymbol)
+            {
+                foreach (var syntaxReference in cached.DeclaringSyntaxReferences)
+                {
+                    var propertyDeclaration = syntaxReference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
+                    if (TryGetCreatePropertyChangedEventArgsFor(
+                        propertyDeclaration?.Initializer?.Value as ObjectCreationExpressionSyntax,
+                        semanticModel,
+                        cancellationToken,
+                        out nameArg,
+                        out propertyName))
+                    {
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            nameArg = null;
+            propertyName = null;
+            return false;
         }
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
