@@ -188,15 +188,15 @@
                 return SupportedFixAllScopes;
             }
 
-            public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+            public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
             {
                 switch (fixAllContext.Scope)
                 {
                     case FixAllScope.Document:
-                        return CodeAction.Create(
+                        return Task.FromResult(CodeAction.Create(
                             "Notify property change.",
                             _ => FixDocumentAsync(fixAllContext),
-                            this.GetType().Name);
+                            this.GetType().Name));
                     case FixAllScope.Project:
                     case FixAllScope.Solution:
                     case FixAllScope.Custom:

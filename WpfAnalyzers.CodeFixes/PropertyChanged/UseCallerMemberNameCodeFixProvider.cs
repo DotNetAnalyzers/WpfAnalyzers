@@ -60,8 +60,8 @@ namespace WpfAnalyzers
                 {
                     var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
 
-                    if (method != null && 
-                        method.Parameters.Length == 1 && 
+                    if (method != null &&
+                        method.Parameters.Length == 1 &&
                         !method.Parameters[0].IsCallerMemberName())
                     {
                         foreach (var declaration in method.Declarations(context.CancellationToken))
