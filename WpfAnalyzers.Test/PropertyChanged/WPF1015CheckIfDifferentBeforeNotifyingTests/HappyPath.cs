@@ -70,6 +70,39 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyi
         }
 
         [Test]
+        public async Task CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.Bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task CallsRaisePropertyChangedWithEventArgsIfBody()
         {
             var testCode = @"
@@ -103,6 +136,7 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyi
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
         [Test]
         public async Task CallsRaisePropertyChangedCallerMemberName()
         {

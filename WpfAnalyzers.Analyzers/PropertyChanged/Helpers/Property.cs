@@ -33,7 +33,7 @@
                     return false;
                 }
 
-                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, semanticModel, cancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
+                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, semanticModel, cancellationToken) != AnalysisResult.No)
                 {
                     return false;
                 }

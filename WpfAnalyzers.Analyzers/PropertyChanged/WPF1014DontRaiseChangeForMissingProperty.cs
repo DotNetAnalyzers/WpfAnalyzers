@@ -45,11 +45,11 @@ namespace WpfAnalyzers.PropertyChanged
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
 
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != PropertyChanged.InvokesPropertyChanged.No)
+                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
                 ArgumentSyntax nameArg;
                 string propretyName;
-                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propretyName) == PropertyChanged.InvokesPropertyChanged.Yes)
+                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propretyName) == AnalysisResult.Yes)
                 {
                     if (IsForExistingProperty(context, propretyName))
                     {

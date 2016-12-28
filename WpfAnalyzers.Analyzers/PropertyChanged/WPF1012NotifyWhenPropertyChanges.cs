@@ -184,7 +184,7 @@
                     {
                         if (pooled.Item.Contains(assignedField))
                         {
-                            if (PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
+                            if (PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                             {
                                 if (pooledSet.Item.Add(property))
                                 {

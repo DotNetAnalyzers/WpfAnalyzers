@@ -8,33 +8,15 @@
 
     internal static class PropertyChanged
     {
-        internal enum InvokesPropertyChanged
+        internal static AnalysisResult InvokesPropertyChangedFor(this SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            /// <summary>
-            /// Analysis determined that PropertyChanged was not invoked in this path.
-            /// </summary>
-            No,
-
-            /// <summary>
-            /// Analysis determined that PropertyChanged was invoked in this path.
-            /// </summary>
-            Yes,
-
-            /// <summary>
-            /// Analysis determined that PropertyChanged is potentially invoked in this path.
-            /// </summary>
-            Maybe
-        }
-
-        internal static InvokesPropertyChanged InvokesPropertyChangedFor(this SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            var invokes = InvokesPropertyChanged.No;
+            var invokes = AnalysisResult.No;
             var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
                         assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
                         assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
             if (block == null)
             {
-                return InvokesPropertyChanged.No;
+                return AnalysisResult.No;
             }
 
             using (var pooled = InvocationWalker.Create(block))
@@ -50,18 +32,18 @@
                     string propertyName;
                     switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        case InvokesPropertyChanged.No:
+                        case AnalysisResult.No:
                             continue;
-                        case InvokesPropertyChanged.Yes:
+                        case AnalysisResult.Yes:
                             if (string.IsNullOrEmpty(propertyName) ||
                                 propertyName == property.Name)
                             {
-                                return InvokesPropertyChanged.Yes;
+                                return AnalysisResult.Yes;
                             }
 
                             continue;
-                        case InvokesPropertyChanged.Maybe:
-                            invokes = InvokesPropertyChanged.Maybe;
+                        case AnalysisResult.Maybe:
+                            invokes = AnalysisResult.Maybe;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -72,14 +54,14 @@
             return invokes;
         }
 
-        internal static InvokesPropertyChanged TryGetInvokedPropertyChangedName(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
+        internal static AnalysisResult TryGetInvokedPropertyChangedName(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
         {
             nameArg = null;
             propertyName = null;
             var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (method == null)
             {
-                return InvokesPropertyChanged.No;
+                return AnalysisResult.No;
             }
 
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
@@ -89,21 +71,21 @@
                 {
                     if (TryGetCreatePropertyChangedEventArgsFor(propertyChangedArg.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
 
                     if (TryGetCachedArgs(propertyChangedArg, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
                 }
 
-                return InvokesPropertyChanged.Maybe;
+                return AnalysisResult.Maybe;
             }
 
-            if (IsInvoker(method, semanticModel, cancellationToken) == InvokesPropertyChanged.No)
+            if (IsInvoker(method, semanticModel, cancellationToken) == AnalysisResult.No)
             {
-                return InvokesPropertyChanged.No;
+                return AnalysisResult.No;
             }
 
             if (invocation.ArgumentList.Arguments.Count == 0)
@@ -113,16 +95,16 @@
                     var member = invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>();
                     if (member == null)
                     {
-                        return InvokesPropertyChanged.Maybe;
+                        return AnalysisResult.Maybe;
                     }
 
                     propertyName = semanticModel.GetDeclaredSymbolSafe(member, cancellationToken)?.Name;
                     if (propertyName != null)
                     {
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
 
-                    return InvokesPropertyChanged.Maybe;
+                    return AnalysisResult.Maybe;
                 }
             }
 
@@ -131,7 +113,7 @@
             {
                 if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                 {
-                    return InvokesPropertyChanged.Yes;
+                    return AnalysisResult.Yes;
                 }
 
                 var symbol = semanticModel.GetTypeInfoSafe(argument.Expression, cancellationToken).Type;
@@ -140,27 +122,27 @@
                     if (argument.TryGetStringValue(semanticModel, cancellationToken, out propertyName))
                     {
                         nameArg = argument;
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
 
-                    return InvokesPropertyChanged.Maybe;
+                    return AnalysisResult.Maybe;
                 }
 
                 if (symbol == KnownSymbol.PropertyChangedEventArgs)
                 {
                     if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
 
                     if (TryGetCachedArgs(argument, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
-                        return InvokesPropertyChanged.Yes;
+                        return AnalysisResult.Yes;
                     }
                 }
             }
 
-            return InvokesPropertyChanged.Maybe;
+            return AnalysisResult.Maybe;
         }
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
@@ -171,12 +153,12 @@
                 var method = member as IMethodSymbol;
                 switch (IsInvoker(method, semanticModel, cancellationToken))
                 {
-                    case InvokesPropertyChanged.No:
+                    case AnalysisResult.No:
                         continue;
-                    case InvokesPropertyChanged.Yes:
+                    case AnalysisResult.Yes:
                         invoker = method;
                         return true;
-                    case InvokesPropertyChanged.Maybe:
+                    case AnalysisResult.Maybe:
                         invoker = method;
                         break;
                     default:
@@ -187,14 +169,14 @@
             return invoker != null;
         }
 
-        internal static InvokesPropertyChanged IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (method == null ||
                 method.IsStatic ||
                 method.Parameters.Length != 1 ||
                (method.Parameters[0].Type != KnownSymbol.String && method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
             {
-                return InvokesPropertyChanged.No;
+                return AnalysisResult.No;
             }
 
             var parameter = method.Parameters[0];
@@ -205,10 +187,10 @@
                 {
                     // A bit speculative here
                     // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                    return InvokesPropertyChanged.Maybe;
+                    return AnalysisResult.Maybe;
                 }
 
-                return InvokesPropertyChanged.No;
+                return AnalysisResult.No;
             }
 
             foreach (var declaration in method.Declarations(cancellationToken))
@@ -231,7 +213,7 @@
                                 var identifier = argument.Expression as IdentifierNameSyntax;
                                 if (identifier?.Identifier.ValueText == parameter.Name)
                                 {
-                                    return InvokesPropertyChanged.Yes;
+                                    return AnalysisResult.Yes;
                                 }
 
                                 var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
@@ -240,7 +222,7 @@
                                     var nameArgument = objectCreation.ArgumentList.Arguments[0];
                                     if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
                                     {
-                                        return InvokesPropertyChanged.Yes;
+                                        return AnalysisResult.Yes;
                                     }
                                 }
                             }
@@ -249,7 +231,7 @@
                 }
             }
 
-            return InvokesPropertyChanged.No;
+            return AnalysisResult.No;
         }
 
         internal static bool IsCallerMemberName(this IParameterSymbol parameter)

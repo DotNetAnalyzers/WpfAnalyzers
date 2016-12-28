@@ -113,10 +113,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\Helpers\AssignmentWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
+    <Compile Include="PropertyChanged\Helpers\Equality.cs" />
     <Compile Include="PropertyChanged\Helpers\IdentifierNameWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\IfStatementWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\InvocationWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
+    <Compile Include="PropertyChanged\Helpers\AnalysisResult.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="PropertyChanged\Helpers\Property.cs" />
     <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />

@@ -53,52 +53,198 @@ namespace WpfAnalyzers.PropertyChanged
                 return;
             }
 
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-
-            IdentifierNameSyntax fieldIdentifier;
+            IdentifierNameSyntax backingField;
             FieldDeclarationSyntax field;
-            if (!Property.TryGetBackingField(setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), out fieldIdentifier, out field))
+            var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            if (!Property.TryGetBackingField(propertyDeclaration, out backingField, out field))
             {
                 return;
             }
 
+            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.Yes)
+                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
-                using (var pooledIfStatements = IfStatementWalker.Create(setter))
+                IfStatementSyntax ifStatement;
+                if (HasCheck(invocation, setter, backingField, propertyDeclaration, out ifStatement))
                 {
-                    foreach (var ifStatement in pooledIfStatements.Item.IfStatements)
+                    if (ifStatement == null)
                     {
-                        if (ifStatement.SpanStart < invocation.SpanStart)
-                        {
-                            bool usesValue = false;
-                            bool usesField = false;
-                            using (var pooledIdentifierNames = IdentifierNameWalker.Create(ifStatement.Condition))
-                            {
-                                foreach (var identifierName in pooledIdentifierNames.Item.IdentifierNames)
-                                {
-                                    if (identifierName.Identifier.ValueText == "value")
-                                    {
-                                        usesValue = true;
-                                    }
+                        return;
+                    }
 
-                                    if (identifierName.Identifier.ValueText == fieldIdentifier.Identifier.ValueText)
-                                    {
-                                        usesField = true;
-                                    }
+                    var binaryExpression = ifStatement.Condition as BinaryExpressionSyntax;
+                    if (binaryExpression != null)
+                    {
+                        if ((IsValue(binaryExpression.Left) && IsPropertyOrField(binaryExpression.Right, backingField, propertyDeclaration)) ||
+                            (IsPropertyOrField(binaryExpression.Left, backingField, propertyDeclaration) && IsValue(binaryExpression.Right)))
+                        {
+                            if (binaryExpression.IsKind(SyntaxKind.EqualsExpression))
+                            {
+                                if (ifStatement.Statement.Span.Contains(invocation.Span))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
                             }
 
-                            if (usesField && usesValue)
+                            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression))
                             {
-                                return;
+                                if (!ifStatement.Statement.Span.Contains(invocation.Span))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                }
                             }
                         }
+
+                        return;
                     }
+
+                    if (IsEqualsCheck(ifStatement.Condition, backingField, propertyDeclaration))
+                    {
+                        if (ifStatement.Statement.Span.Contains(invocation.Span))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                        }
+
+                        return;
+                    }
+
+                    var unaryExpressionSyntax = ifStatement.Condition as PrefixUnaryExpressionSyntax;
+                    if (IsEqualsCheck(unaryExpressionSyntax?.Operand, backingField, propertyDeclaration))
+                    {
+                        if (!ifStatement.Statement.Span.Contains(invocation.Span))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                        }
+
+                        return;
+                    }
+
+                    return;
                 }
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
             }
+        }
+
+        private static bool IsEqualsCheck(ExpressionSyntax expression, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration)
+        {
+            var equalsInvocation = expression as InvocationExpressionSyntax;
+            if (equalsInvocation == null)
+            {
+                return false;
+            }
+
+            SimpleNameSyntax identifierName = equalsInvocation.Expression as IdentifierNameSyntax;
+            if (identifierName == null)
+            {
+                var memberAccess = equalsInvocation.Expression as MemberAccessExpressionSyntax;
+                identifierName = memberAccess?.Name;
+            }
+
+            if (identifierName == null)
+            {
+                return false;
+            }
+
+            if (identifierName.Identifier.ValueText == "Equals" || identifierName.Identifier.ValueText == "ReferenceEquals")
+            {
+                ArgumentSyntax _;
+                if ((IsValue(equalsInvocation.Expression) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsPropertyOrField(x.Expression, backingField, propertyDeclaration), out _)) ||
+                    (IsPropertyOrField(equalsInvocation.Expression, backingField, propertyDeclaration) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsValue(x.Expression), out _)) ||
+                    (equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsValue(x.Expression), out _) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsPropertyOrField(x.Expression, backingField, propertyDeclaration), out _)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsValue(SyntaxNode node)
+        {
+            var nameSyntax = node as SimpleNameSyntax;
+            if (nameSyntax == null)
+            {
+                return false;
+            }
+
+            return nameSyntax.Identifier.ValueText == "value";
+        } 
+
+        private static bool IsPropertyOrField(SyntaxNode node, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration)
+        {
+            var nameSyntax = node as SimpleNameSyntax;
+            if (nameSyntax == null)
+            {
+                var memberAccess = node as MemberAccessExpressionSyntax;
+                nameSyntax = memberAccess?.Expression as IdentifierNameSyntax;
+                if (nameSyntax == null)
+                {
+                    if (!(memberAccess?.Expression is ThisExpressionSyntax))
+                    {
+                        return false;
+                    }
+                }
+
+                nameSyntax = memberAccess.Name;
+            }
+
+            if (nameSyntax == null)
+            {
+                return false;
+            }
+
+            return nameSyntax.Identifier.ValueText == backingField.Identifier.ValueText ||
+                   nameSyntax.Identifier.ValueText == propertyDeclaration.Identifier.ValueText;
+        }
+
+        private static bool HasCheck(InvocationExpressionSyntax invocation, AccessorDeclarationSyntax setter, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration, out IfStatementSyntax ifStatement)
+        {
+            ifStatement = null;
+            bool result = false;
+            using (var pooledIfStatements = IfStatementWalker.Create(setter))
+            {
+                foreach (var statement in pooledIfStatements.Item.IfStatements)
+                {
+                    if (statement.SpanStart < invocation.SpanStart)
+                    {
+                        bool usesValue = false;
+                        bool usesField = false;
+                        using (var pooledIdentifierNames = IdentifierNameWalker.Create(statement.Condition))
+                        {
+                            foreach (var identifierName in pooledIdentifierNames.Item.IdentifierNames)
+                            {
+                                if (IsValue(identifierName))
+                                {
+                                    usesValue = true;
+                                }
+
+                                if (IsPropertyOrField(identifierName, backingField, propertyDeclaration))
+                                {
+                                    usesField = true;
+                                }
+                            }
+                        }
+
+                        if (usesField && usesValue)
+                        {
+                            if (!result)
+                            {
+                                ifStatement = statement;
+                            }
+                            else
+                            {
+                                ifStatement = null;
+                            }
+
+                            result = true;
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }
