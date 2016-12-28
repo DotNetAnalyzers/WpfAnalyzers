@@ -125,6 +125,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1014.md">WPF1014</a></td>
   <td>Don't raise PropertyChanged for missing property.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1015.md">WPF1015</a></td>
+  <td>Check if value is different before notifying.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

@@ -114,6 +114,7 @@
     <Compile Include="PropertyChanged\Helpers\AssignmentWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
     <Compile Include="PropertyChanged\Helpers\IdentifierNameWalker.cs" />
+    <Compile Include="PropertyChanged\Helpers\IfStatementWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\InvocationWalker.cs" />
     <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChanges.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberName.cs" />
     <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingProperty.cs" />
+    <Compile Include="PropertyChanged\WPF1015CheckIfDifferentBeforeNotifying.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
