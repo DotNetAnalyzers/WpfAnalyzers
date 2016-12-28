@@ -69,7 +69,9 @@
     <Compile Include="Helpers\EnumerableExt.cs" />
     <Compile Include="Helpers\KnownSymbols\FrameworkElementType.cs" />
     <Compile Include="Helpers\KnownSymbols\INotifyPropertyChangedType.cs" />
+    <Compile Include="Helpers\KnownSymbols\NullableType.cs" />
     <Compile Include="Helpers\KnownSymbols\KnownSymbol.cs" />
+    <Compile Include="Helpers\KnownSymbols\ObjectType.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\NamespaceParts.cs" />
     <Compile Include="Helpers\KnownSymbols\PropertyChangedEventHandlerType.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedEvent.cs" />

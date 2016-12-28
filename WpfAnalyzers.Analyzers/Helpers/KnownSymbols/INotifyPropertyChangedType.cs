@@ -1,6 +1,5 @@
 namespace WpfAnalyzers
 {
-    // ReSharper disable once InconsistentNaming
     internal class INotifyPropertyChangedType : QualifiedType
     {
         internal readonly QualifiedEvent PropertyChanged;

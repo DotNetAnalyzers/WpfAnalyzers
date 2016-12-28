@@ -1,7 +1,7 @@
 namespace WpfAnalyzers.PropertyChanged
 {
     using System.Collections.Immutable;
-
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,13 +13,9 @@ namespace WpfAnalyzers.PropertyChanged
     internal class WPF1015CheckIfDifferentBeforeNotifying : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1015";
-
         private const string Title = "Check if value is different before notifying.";
-
         private const string MessageFormat = "Check if value is different before notifying.";
-
         private const string Description = Title;
-
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -33,8 +29,7 @@ namespace WpfAnalyzers.PropertyChanged
             HelpLink);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -53,198 +48,130 @@ namespace WpfAnalyzers.PropertyChanged
                 return;
             }
 
-            IdentifierNameSyntax backingField;
-            FieldDeclarationSyntax field;
-            var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-            if (!Property.TryGetBackingField(propertyDeclaration, out backingField, out field))
+            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
+            if (method != KnownSymbol.PropertyChangedEventHandler.Invoke &&
+                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) !=
+                AnalysisResult.Yes)
             {
                 return;
             }
 
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
-            {
-                IfStatementSyntax ifStatement;
-                if (HasCheck(invocation, setter, backingField, propertyDeclaration, out ifStatement))
-                {
-                    if (ifStatement == null)
-                    {
-                        return;
-                    }
+            var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
 
-                    var binaryExpression = ifStatement.Condition as BinaryExpressionSyntax;
-                    if (binaryExpression != null)
+            IFieldSymbol backingField;
+            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out backingField))
+            {
+                return;
+            }
+
+            IParameterSymbol value;
+            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out value))
+            {
+                using (var pooledIfStatements = IfStatementWalker.Create(setter))
+                {
+                    foreach (var ifStatement in pooledIfStatements.Item.IfStatements)
                     {
-                        if ((IsValue(binaryExpression.Left) && IsPropertyOrField(binaryExpression.Right, backingField, propertyDeclaration)) ||
-                            (IsPropertyOrField(binaryExpression.Left, backingField, propertyDeclaration) && IsValue(binaryExpression.Right)))
+                        if (ifStatement.SpanStart >= invocation.SpanStart)
                         {
-                            if (binaryExpression.IsKind(SyntaxKind.EqualsExpression))
+                            continue;
+                        }
+
+                        foreach (var member in new ISymbol[] { backingField, property })
+                        {
+                            if (Equality.IsOperatorEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
+                               IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
                             {
                                 if (ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
                                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
+
+                                return;
                             }
 
-                            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression))
+                            if (Equality.IsOperatorNotEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
+                                IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
                             {
                                 if (!ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
                                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
+
+                                return;
+                            }
+
+                            if (UsesValueAndMember(ifStatement, context.SemanticModel, context.CancellationToken, value, member))
+                            {
+                                return;
                             }
                         }
-
-                        return;
                     }
-
-                    if (IsEqualsCheck(ifStatement.Condition, backingField, propertyDeclaration))
-                    {
-                        if (ifStatement.Statement.Span.Contains(invocation.Span))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
-                        }
-
-                        return;
-                    }
-
-                    var unaryExpressionSyntax = ifStatement.Condition as PrefixUnaryExpressionSyntax;
-                    if (IsEqualsCheck(unaryExpressionSyntax?.Operand, backingField, propertyDeclaration))
-                    {
-                        if (!ifStatement.Statement.Span.Contains(invocation.Span))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
-                        }
-
-                        return;
-                    }
-
-                    return;
                 }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
             }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
         }
 
-        private static bool IsEqualsCheck(ExpressionSyntax expression, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration)
+        private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            var equalsInvocation = expression as InvocationExpressionSyntax;
-            if (equalsInvocation == null)
+            var unaryExpression = expression as PrefixUnaryExpressionSyntax;
+            if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
             {
-                return false;
-            }
-
-            SimpleNameSyntax identifierName = equalsInvocation.Expression as IdentifierNameSyntax;
-            if (identifierName == null)
-            {
-                var memberAccess = equalsInvocation.Expression as MemberAccessExpressionSyntax;
-                identifierName = memberAccess?.Name;
-            }
-
-            if (identifierName == null)
-            {
-                return false;
-            }
-
-            if (identifierName.Identifier.ValueText == "Equals" || identifierName.Identifier.ValueText == "ReferenceEquals")
-            {
-                ArgumentSyntax _;
-                if ((IsValue(equalsInvocation.Expression) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsPropertyOrField(x.Expression, backingField, propertyDeclaration), out _)) ||
-                    (IsPropertyOrField(equalsInvocation.Expression, backingField, propertyDeclaration) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsValue(x.Expression), out _)) ||
-                    (equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsValue(x.Expression), out _) && equalsInvocation.ArgumentList.Arguments.TryGetFirst(x => IsPropertyOrField(x.Expression, backingField, propertyDeclaration), out _)))
-                {
-                    return true;
-                }
+                return IsEqualsCheck(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
             }
 
             return false;
         }
 
-        private static bool IsValue(SyntaxNode node)
+        private static bool IsEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            var nameSyntax = node as SimpleNameSyntax;
-            if (nameSyntax == null)
+            var equals = expression as InvocationExpressionSyntax;
+            if (equals == null)
             {
                 return false;
             }
 
-            return nameSyntax.Identifier.ValueText == "value";
-        } 
-
-        private static bool IsPropertyOrField(SyntaxNode node, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration)
-        {
-            var nameSyntax = node as SimpleNameSyntax;
-            if (nameSyntax == null)
+            if (Equality.IsObjectEquals(equals, semanticModel, cancellationToken, value, member) ||
+                Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, value, member) ||
+                Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, member, value) ||
+                Equality.IsReferenceEquals(equals, semanticModel, cancellationToken, value, member) ||
+                Equality.IsEqualityComparerEquals(equals, semanticModel, cancellationToken, value, member) ||
+                Equality.IsNullableEquals(equals, semanticModel, cancellationToken, value, member))
             {
-                var memberAccess = node as MemberAccessExpressionSyntax;
-                nameSyntax = memberAccess?.Expression as IdentifierNameSyntax;
-                if (nameSyntax == null)
-                {
-                    if (!(memberAccess?.Expression is ThisExpressionSyntax))
-                    {
-                        return false;
-                    }
-                }
-
-                nameSyntax = memberAccess.Name;
+                return true;
             }
 
-            if (nameSyntax == null)
-            {
-                return false;
-            }
-
-            return nameSyntax.Identifier.ValueText == backingField.Identifier.ValueText ||
-                   nameSyntax.Identifier.ValueText == propertyDeclaration.Identifier.ValueText;
+            return false;
         }
 
-        private static bool HasCheck(InvocationExpressionSyntax invocation, AccessorDeclarationSyntax setter, IdentifierNameSyntax backingField, PropertyDeclarationSyntax propertyDeclaration, out IfStatementSyntax ifStatement)
+        private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            ifStatement = null;
-            bool result = false;
-            using (var pooledIfStatements = IfStatementWalker.Create(setter))
+            var usesValue = false;
+            var usesMember = false;
+            using (var pooledIdentifierNames = IdentifierNameWalker.Create(ifStatement.Condition))
             {
-                foreach (var statement in pooledIfStatements.Item.IfStatements)
+                foreach (var identifierName in pooledIdentifierNames.Item.IdentifierNames)
                 {
-                    if (statement.SpanStart < invocation.SpanStart)
+                    var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
+                    if (symbol == null)
                     {
-                        bool usesValue = false;
-                        bool usesField = false;
-                        using (var pooledIdentifierNames = IdentifierNameWalker.Create(statement.Condition))
-                        {
-                            foreach (var identifierName in pooledIdentifierNames.Item.IdentifierNames)
-                            {
-                                if (IsValue(identifierName))
-                                {
-                                    usesValue = true;
-                                }
+                        continue;
+                    }
 
-                                if (IsPropertyOrField(identifierName, backingField, propertyDeclaration))
-                                {
-                                    usesField = true;
-                                }
-                            }
-                        }
+                    if (symbol.Equals(value))
+                    {
+                        usesValue = true;
+                    }
 
-                        if (usesField && usesValue)
-                        {
-                            if (!result)
-                            {
-                                ifStatement = statement;
-                            }
-                            else
-                            {
-                                ifStatement = null;
-                            }
-
-                            result = true;
-                        }
+                    if (symbol.Equals(member))
+                    {
+                        usesMember = true;
                     }
                 }
             }
 
-            return result;
+            return usesMember && usesValue;
         }
     }
 }

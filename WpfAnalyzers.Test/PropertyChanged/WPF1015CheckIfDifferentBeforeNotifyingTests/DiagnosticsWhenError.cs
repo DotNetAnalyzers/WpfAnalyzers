@@ -8,20 +8,23 @@
 
     internal class DiagnosticsWhenError : DiagnosticVerifier<WPF1015CheckIfDifferentBeforeNotifying>
     {
-        public static readonly string[] EqualsCalls =
-            {
-                "Equals(value, this.bar)",
-                "Equals(value, bar)",
-                "Equals(value, Bar)",
-                "Nullable.Equals(value, this.bar)",
-                "value.Equals(this.bar)",
-                "value.Equals(bar)",
-                "this.bar.Equals(value)",
-                "bar.Equals(value)",
-                "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)",
-                "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)",
-                "ReferenceEquals(value, this.bar)",
-            };
+        public static readonly EqualsItem[] EqualsSource =
+        {
+            new EqualsItem("string", "Equals(value, this.bar)"),
+            new EqualsItem("string", "Equals(this.bar, value)"),
+            new EqualsItem("string", "Equals(value, bar)"),
+            new EqualsItem("string", "Equals(value, Bar)"),
+            new EqualsItem("string", "Equals(Bar, value)"),
+            new EqualsItem("string", "Nullable.Equals(value, this.bar)"),
+            new EqualsItem("int?", "Nullable.Equals(value, this.bar)"),
+            new EqualsItem("string", "value.Equals(this.bar)"),
+            new EqualsItem("string", "value.Equals(bar)"),
+            new EqualsItem("string", "this.bar.Equals(value)"),
+            new EqualsItem("string", "bar.Equals(value)"),
+            //new EqualsItem("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
+            new EqualsItem("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
+            new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
+        };
 
         [Test]
         public async Task OperatorNotEquals()
@@ -97,8 +100,8 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
-        [TestCaseSource(nameof(EqualsCalls))]
-        public async Task Check(string check)
+        [TestCaseSource(nameof(EqualsSource))]
+        public async Task Check(EqualsItem check)
         {
             var testCode = @"
     using System;
@@ -129,13 +132,13 @@
             this.PropertyChanged?.Invoke(this, e);
         }
     }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check);
+            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
-        [TestCaseSource(nameof(EqualsCalls))]
-        public async Task NegatedCheck(string check)
+        [TestCaseSource(nameof(EqualsSource))]
+        public async Task NegatedCheck(EqualsItem check)
         {
             var testCode = @"
     using System;
@@ -168,9 +171,26 @@
             this.PropertyChanged?.Invoke(this, e);
         }
     }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check);
+            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        }
+
+        public class EqualsItem
+        {
+            internal readonly string Type;
+            internal readonly string Call;
+
+            public EqualsItem(string type, string call)
+            {
+                this.Type = type;
+                this.Call = call;
+            }
+
+            public override string ToString()
+            {
+                return $"{nameof(this.Type)}: {this.Type}, {nameof(this.Call)}: {this.Call}";
+            }
         }
     }
 }

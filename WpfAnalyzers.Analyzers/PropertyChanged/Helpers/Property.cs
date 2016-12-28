@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.PropertyChanged.Helpers
 {
+    using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -213,6 +214,27 @@
             }
 
             assignment = null;
+            return false;
+        }
+
+        internal static bool TryFindValue(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol value)
+        {
+            using (var pooled = IdentifierNameWalker.Create(setter))
+            {
+                foreach (var identifierName in pooled.Item.IdentifierNames)
+                {
+                    if (identifierName.Identifier.ValueText == "value")
+                    {
+                        value = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IParameterSymbol;
+                        if (value != null)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            value = null;
             return false;
         }
     }
