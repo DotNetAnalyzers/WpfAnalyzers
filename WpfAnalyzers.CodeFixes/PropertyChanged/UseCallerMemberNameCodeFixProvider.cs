@@ -10,6 +10,7 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Simplification;
     using WpfAnalyzers.PropertyChanged;
+    using WpfAnalyzers.PropertyChanged.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameCodeFixProvider))]
     [Shared]
@@ -21,11 +22,17 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF1013UseCallerMemberName.DiagnosticId);
 
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
+
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                 .ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -38,21 +45,44 @@ namespace WpfAnalyzers
                                                  .FirstAncestorOrSelf<ParameterSyntax>();
                 if (parameter != null)
                 {
-                    var updated = parameter.AddAttributeLists(CallerMemberName)
-                                           .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression("null")));
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             "Use [CallerMemberName]",
-                            cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(parameter, updated))),
+                            cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(parameter, AsCallerMemberName(parameter)))),
                             this.GetType().FullName),
                         diagnostic);
+                    continue;
                 }
 
                 var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                 .FirstAncestorOrSelf<InvocationExpressionSyntax>();
-
+                                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
                 if (invocation != null)
                 {
+                    var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
+
+                    if (method != null && 
+                        method.Parameters.Length == 1 && 
+                        !method.Parameters[0].IsCallerMemberName())
+                    {
+                        foreach (var declaration in method.Declarations(context.CancellationToken))
+                        {
+                            var methodDeclaration = declaration as MethodDeclarationSyntax;
+                            if (methodDeclaration == null)
+                            {
+                                continue;
+                            }
+
+                            var nameParameter = methodDeclaration.ParameterList.Parameters[0];
+
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    "Use [CallerMemberName]",
+                                    cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(nameParameter, AsCallerMemberName(nameParameter)))),
+                                    this.GetType().FullName),
+                                diagnostic);
+                        }
+                    }
+
                     var updated = invocation.RemoveNode(invocation.ArgumentList.Arguments[0], SyntaxRemoveOptions.AddElasticMarker);
                     context.RegisterCodeFix(
                         CodeAction.Create(
@@ -62,6 +92,12 @@ namespace WpfAnalyzers
                         diagnostic);
                 }
             }
+        }
+
+        private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter)
+        {
+            return parameter.AddAttributeLists(CallerMemberName)
+                            .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression("null")));
         }
     }
 }

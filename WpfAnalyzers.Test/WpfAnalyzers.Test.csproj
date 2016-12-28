@@ -106,6 +106,8 @@
     </Compile>
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixAll.cs" />
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixEquality.cs" />
+    <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChangesTests\CodeFixAll.cs" />
+    <Compile Include="PropertyChanged\WPF1013UseCallerMemberNameTests\CodeFixAll.cs" />
     <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingPropertyTests\Diagnostics.cs" />
     <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingPropertyTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberNameTests\CodeFix.cs" />

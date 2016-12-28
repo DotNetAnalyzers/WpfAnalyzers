@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.PropertyChanged.WPF1013UseCallerMemberNameTests
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
     using WpfAnalyzers.PropertyChanged;
@@ -37,14 +38,15 @@ public class ViewModel : INotifyPropertyChanged
         }
     }
 
-    protected virtual void OnPropertyChanged(↓string propertyName)
+    protected virtual void OnPropertyChanged(string propertyName)
     {
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Use [CallerMemberName]");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected1 = this.CSharpDiagnostic().WithLocation("ViewModel.cs", 25, 36).WithMessage("Use [CallerMemberName]");
+            var expected2 = this.CSharpDiagnostic().WithLocation("ViewModel.cs", 29, 46).WithMessage("Use [CallerMemberName]");
+            await this.VerifyCSharpDiagnosticAsync(testCode, new[] { expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.ComponentModel;
@@ -79,7 +81,7 @@ public class ViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 1)
                     .ConfigureAwait(false);
         }
 

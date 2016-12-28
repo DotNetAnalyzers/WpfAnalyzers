@@ -51,6 +51,7 @@
     <Compile Include="FinishedTasks.cs" />
     <Compile Include="DependencyProperties\MakeFieldStaticReadonlyCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\RenameFieldCodeFixProvider.cs" />
+    <Compile Include="FixAll\FixedTypes.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedCodeFixProvider.cs" />

@@ -11,7 +11,10 @@
             var typeDeclarationSyntax = node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             if (typeDeclarationSyntax == null)
             {
-                return false;
+                using (var pooled = UsesThisWalker.Create(node))
+                {
+                    return pooled.Item.UsesThis == false;
+                }
             }
 
             foreach (var member in typeDeclarationSyntax.Members)
@@ -43,11 +46,11 @@
                 x =>
                 {
                     x.usesThis = false;
-                    x.noThis = false;
+                    x.useUnderScore = false;
                 });
 
             private bool usesThis;
-            private bool noThis;
+            private bool useUnderScore;
 
             private UsesThisWalker()
             {
@@ -57,12 +60,12 @@
             {
                 get
                 {
-                    if (this.usesThis == this.noThis)
+                    if (this.usesThis == this.useUnderScore)
                     {
                         return null;
                     }
 
-                    if (this.usesThis && !this.noThis)
+                    if (this.usesThis && !this.useUnderScore)
                     {
                         return true;
                     }
@@ -88,6 +91,27 @@
             {
                 this.CheckUsesThis(node.Expression);
                 base.VisitInvocationExpression(node);
+            }
+
+            public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+            {
+                if (!node.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                     node.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    foreach (var variable in node.Declaration.Variables)
+                    {
+                        if (variable.Identifier.ValueText.StartsWith("_"))
+                        {
+                            this.useUnderScore = true;
+                        }
+                        else
+                        {
+                            this.usesThis = true;
+                        }
+                    }
+                }
+
+                base.VisitFieldDeclaration(node);
             }
 
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
@@ -116,7 +140,7 @@
 
                 if (expression is IdentifierNameSyntax)
                 {
-                    this.noThis = true;
+                    this.useUnderScore = true;
                 }
             }
         }

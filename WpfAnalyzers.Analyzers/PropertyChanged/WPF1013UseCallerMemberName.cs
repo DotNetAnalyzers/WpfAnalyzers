@@ -75,23 +75,17 @@ namespace WpfAnalyzers.PropertyChanged
             }
 
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method == null ||
-                method.IsStatic ||
-                method.Parameters.Length != 1 ||
-                method.Parameters[0].Type != KnownSymbol.String)
+            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == PropertyChanged.InvokesPropertyChanged.No)
             {
                 return;
             }
 
-            if (PropertyChanged.IsCallerMemberName(method.Parameters[0]))
+            string text;
+            var argument = invocation.ArgumentList.Arguments[0];
+            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out text) &&
+                text == property.Name)
             {
-                var argument = invocation.ArgumentList.Arguments[0];
-                string text;
-                if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out text) &&
-                    text == property.Name)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
             }
         }
     }

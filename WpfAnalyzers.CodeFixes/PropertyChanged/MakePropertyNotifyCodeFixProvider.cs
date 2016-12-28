@@ -155,18 +155,6 @@
             }
         }
 
-        private struct FixedTypes
-        {
-            internal readonly TypeDeclarationSyntax OldType;
-            internal readonly TypeDeclarationSyntax FixedType;
-
-            public FixedTypes(TypeDeclarationSyntax oldType, TypeDeclarationSyntax fixedType)
-            {
-                this.OldType = oldType;
-                this.FixedType = fixedType;
-            }
-        }
-
         private class BacthFixer : FixAllProvider
         {
             public static readonly BacthFixer Default = new BacthFixer();
