@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -95,7 +96,7 @@
             if (Property.IsMutableAutoProperty(propertyDeclaration))
             {
                 backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration);
-                var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(backingFieldName, propertyDeclaration.Type, Accessibility.Private, DeclarationModifiers.None, null);
+                var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(backingFieldName, propertyDeclaration.Type, Accessibility.Private, DeclarationModifiers.None);
                 var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, backingFieldName)
                                                                    .WithNotifyingSetter(property, syntaxGenerator, backingFieldName, invoker);
                 return new Fix(propertyDeclaration, notifyingProperty, backingField);
@@ -169,6 +170,7 @@
                 return SupportedFixAllScopes;
             }
 
+            [SuppressMessage("ReSharper", "RedundantCaseLabel")]
             public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
             {
                 switch (fixAllContext.Scope)

@@ -2,8 +2,8 @@ namespace WpfAnalyzers
 {
     internal class ObjectType : QualifiedType
     {
-        internal readonly QualifiedMethod Equals;
-        internal readonly QualifiedMethod ReferenceEquals;
+        internal new readonly QualifiedMethod Equals;
+        internal new readonly QualifiedMethod ReferenceEquals;
 
         internal ObjectType()
             : base("System.Object")

@@ -146,10 +146,8 @@ namespace WpfAnalyzers.Test
             {
                 if (diagnostic.DefaultSeverity == DiagnosticSeverity.Hidden && diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
                 {
-                    Assert.Inconclusive(diagnostic.HelpLinkUri);
-
                     // This diagnostic will never appear in the UI.
-                    continue;
+                    Assert.Inconclusive(diagnostic.HelpLinkUri);
                 }
 
                 string expected = $"https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{diagnostic.Id}.md";

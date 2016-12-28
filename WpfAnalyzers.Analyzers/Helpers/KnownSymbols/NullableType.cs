@@ -2,7 +2,7 @@ namespace WpfAnalyzers
 {
     internal class NullableType : QualifiedType
     {
-        internal readonly QualifiedMethod Equals;
+        internal new readonly QualifiedMethod Equals;
 
         internal NullableType()
             : base("System.Nullable")

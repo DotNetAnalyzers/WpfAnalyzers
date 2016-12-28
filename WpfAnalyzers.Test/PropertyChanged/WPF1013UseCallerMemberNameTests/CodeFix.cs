@@ -81,7 +81,7 @@ public class ViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 1)
+            await this.VerifyCSharpFixAsync(testCode, fixedCode)
                     .ConfigureAwait(false);
         }
 
