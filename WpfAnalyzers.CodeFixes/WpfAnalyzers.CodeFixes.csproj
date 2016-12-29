@@ -61,6 +61,7 @@
     <Compile Include="PropertyChanged\MakePropertyNotifyHelper.cs" />
     <Compile Include="PropertyChanged\NotifyPropertyChangedCodeFixProvider.cs" />
     <Compile Include="PropertyChanged\UseCallerMemberNameCodeFixProvider.cs" />
+    <Compile Include="PropertyChanged\UseReferenceEqualsCodeFixProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

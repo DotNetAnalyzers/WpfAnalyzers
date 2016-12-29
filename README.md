@@ -129,6 +129,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1015.md">WPF1015</a></td>
   <td>Check if value is different before notifying.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1016.md">WPF1016</a></td>
+  <td>Check if value is different using ReferenceEquals before notifying.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
