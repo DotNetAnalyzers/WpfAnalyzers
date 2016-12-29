@@ -21,7 +21,6 @@
             new EqualsItem("string", "value.Equals(bar)"),
             new EqualsItem("string", "this.bar.Equals(value)"),
             new EqualsItem("string", "bar.Equals(value)"),
-            //new EqualsItem("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
             new EqualsItem("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
             new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
         };
@@ -178,8 +177,10 @@
 
         public class EqualsItem
         {
+#pragma warning disable SA1401 // Fields must be private
             internal readonly string Type;
             internal readonly string Call;
+#pragma warning restore SA1401 // Fields must be private
 
             public EqualsItem(string type, string call)
             {

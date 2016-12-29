@@ -247,7 +247,6 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyi
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-
         [TestCaseSource(nameof(EqualsSource))]
         public async Task Check(EqualsItem check)
         {
@@ -324,8 +323,10 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyi
 
         public class EqualsItem
         {
+#pragma warning disable SA1401 // Fields must be private
             internal readonly string Type;
             internal readonly string Call;
+#pragma warning restore SA1401 // Fields must be private
 
             public EqualsItem(string type, string call)
             {

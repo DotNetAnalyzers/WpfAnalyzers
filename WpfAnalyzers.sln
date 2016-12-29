@@ -60,6 +60,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF1011.md = documentation\WPF1011.md
 		documentation\WPF1012.md = documentation\WPF1012.md
 		documentation\WPF1013.md = documentation\WPF1013.md
+		documentation\WPF1014.md = documentation\WPF1014.md
+		documentation\WPF1015.md = documentation\WPF1015.md
 	EndProjectSection
 EndProject
 Global

@@ -170,7 +170,7 @@
                 return SupportedFixAllScopes;
             }
 
-            [SuppressMessage("ReSharper", "RedundantCaseLabel")]
+            [SuppressMessage("ReSharper", "RedundantCaseLabel", Justification = "Mute R#")]
             public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
             {
                 switch (fixAllContext.Scope)
