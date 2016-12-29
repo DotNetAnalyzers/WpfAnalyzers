@@ -4,7 +4,6 @@ namespace WpfAnalyzers.DependencyProperties
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class Attribute

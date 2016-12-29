@@ -78,9 +78,7 @@ namespace WpfAnalyzers
                                           ? backingField.Name
                                           : $"this.{backingField.Name}";
 
-                    var referenceEqualsExpression =
-                        (ExpressionSyntax)
-                        syntaxGenerator.InvocationExpression(
+                    var referenceEqualsExpression = (ExpressionSyntax)syntaxGenerator.InvocationExpression(
                             SyntaxFactory.ParseExpression("ReferenceEquals"),
                             SyntaxFactory.ParseName("value"),
                             SyntaxFactory.ParseExpression(fieldAccess));
