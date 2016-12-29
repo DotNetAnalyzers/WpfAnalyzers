@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependencyProperties\AddXmlnsDefinitionCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\UseSetCurrentValueCodeFixProvider.cs" />
     <Compile Include="DependencyProperties\Helpers\RenameHelper.cs" />
     <Compile Include="DependencyProperties\Helpers\SyntaxTokenListExt.cs" />
