@@ -6,7 +6,7 @@
 
     using WpfAnalyzers.PropertyChanged;
 
-    internal class DiagnosticsWhenError : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
+    internal class CodFixWhenError : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
     {
         public static readonly EqualsItem[] EqualsSource =
         {

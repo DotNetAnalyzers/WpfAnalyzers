@@ -6,7 +6,7 @@
 
     using WpfAnalyzers.PropertyChanged;
 
-    internal class DiagnosticsWhenNoCheck : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
+    internal class CodeFixWhenNoCheck : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
     {
         [Test]
         public async Task CallsOnPropertyChanged()
