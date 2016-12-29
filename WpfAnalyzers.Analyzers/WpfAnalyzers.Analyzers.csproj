@@ -80,6 +80,8 @@
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedMember.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedMethod.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedProperty.cs" />
+    <Compile Include="Helpers\KnownSymbols\XmlnsDefinitionAttributeType.cs" />
+    <Compile Include="Helpers\KnownSymbols\XmlnsPrefixAttributeType.cs" />
     <Compile Include="Helpers\Pools\ListPool.cs" />
     <Compile Include="Helpers\Pools\Pool.cs" />
     <Compile Include="Helpers\Pools\SetPool.cs" />

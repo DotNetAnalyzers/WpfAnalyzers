@@ -57,12 +57,17 @@
         private static AttributeListSyntax CreateAttribute(string @namespace, AttributeSyntax attribute)
         {
             var list = attribute.FirstAncestorOrSelf<AttributeListSyntax>();
-            if (list?.Attributes.Count != 1 || attribute.ArgumentList.Arguments.Count != 2)
+            if (list?.Attributes.Count != 1)
             {
                 return null;
             }
 
-            var oldArgument = attribute.ArgumentList.Arguments[1];
+            AttributeArgumentSyntax oldArgument;
+            if (!Attribute.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out oldArgument))
+            {
+                return null;
+            }
+
             var newArgument = oldArgument.WithExpression(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(@namespace)));
             return list.WithAttributes(SyntaxFactory.SingletonSeparatedList(attribute.ReplaceNode(oldArgument, newArgument))).WithAdditionalAnnotations(Formatter.Annotation);
         }

@@ -65,9 +65,14 @@
                 return;
             }
 
-            string xmlNamespace;
             AttributeArgumentSyntax arg;
-            if (!Attribute.TryGetArgumentStringValue(xmlnsAttribute, 0, context.SemanticModel, context.CancellationToken, out arg, out xmlNamespace))
+            if (!Attribute.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out arg))
+            {
+                return;
+            }
+
+            string xmlNamespace;
+            if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out xmlNamespace))
             {
                 return;
             }
@@ -80,10 +85,15 @@
 
             foreach (var correspondingAttribute in Attribute.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
             {
-                string mappedNameSpace;
                 AttributeArgumentSyntax correspondingArg;
-                if (Attribute.TryGetArgumentStringValue(correspondingAttribute, 0, context.SemanticModel, context.CancellationToken, out correspondingArg, out mappedNameSpace))
+                if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out correspondingArg))
                 {
+                    string mappedNameSpace;
+                    if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out mappedNameSpace))
+                    {
+                        return;
+                    }
+
                     if (mappedNameSpace == xmlNamespace)
                     {
                         return;

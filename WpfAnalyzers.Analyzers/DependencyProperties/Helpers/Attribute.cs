@@ -22,28 +22,31 @@ namespace WpfAnalyzers.DependencyProperties
             return true;
         }
 
-        internal static bool TryGetArgumentStringValue(AttributeSyntax attribute, int argumentIndex, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeArgumentSyntax arg, out string result)
+        internal static bool TryGetArgument(AttributeSyntax attribute, int argumentIndex, string argumentName, out AttributeArgumentSyntax arg)
         {
             arg = null;
-            result = null;
-            if (attribute?.ArgumentList?.Arguments.TryGetAtIndex(argumentIndex, out arg) != true)
+            if (attribute?.ArgumentList == null)
             {
                 return false;
             }
 
-            if (!arg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+            if (argumentName != null)
             {
-                return false;
+                foreach (var argument in attribute.ArgumentList.Arguments)
+                {
+                    if (argument.NameColon?.Name.Identifier.ValueText == argumentName)
+                    {
+                        arg = argument;
+                    }
+                }
             }
 
-            var constantValue = semanticModel.GetConstantValueSafe(arg.Expression, cancellationToken);
-            if (!constantValue.HasValue)
+            if (arg != null)
             {
-                return false;
+                return true;
             }
 
-            result = (string)constantValue.Value;
-            return true;
+            return attribute.ArgumentList.Arguments.TryGetAtIndex(argumentIndex, out arg);
         }
 
         internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, QualifiedType typeName, SemanticModel semanticModel, CancellationToken cancellationToken)

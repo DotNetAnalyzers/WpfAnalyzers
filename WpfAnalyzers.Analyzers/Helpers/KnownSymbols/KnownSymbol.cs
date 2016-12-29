@@ -30,8 +30,8 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType IValueConverter = Create("System.Windows.Data.IValueConverter");
         internal static readonly QualifiedType IMultiValueConverter = Create("System.Windows.Data.IMultiValueConverter");
 
-        internal static readonly QualifiedType XmlnsPrefixAttribute = Create("System.Windows.Markup.XmlnsPrefixAttribute");
-        internal static readonly QualifiedType XmlnsDefinitionAttribute = Create("System.Windows.Markup.XmlnsDefinitionAttribute");
+        internal static readonly XmlnsPrefixAttributeType XmlnsPrefixAttribute = new XmlnsPrefixAttributeType();
+        internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
 
         private static QualifiedType Create(string qualifiedName)
         {

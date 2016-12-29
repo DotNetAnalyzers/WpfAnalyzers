@@ -47,15 +47,19 @@
             }
 
             AttributeSyntax attribute;
-            string @namespace;
             AttributeArgumentSyntax arg;
-            if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out attribute) &&
-                Attribute.TryGetArgumentStringValue(attributeSyntax, 1, context.SemanticModel, context.CancellationToken, out arg, out @namespace))
+            var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
+            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out attribute) &&
+                Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out arg))
             {
-                if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
-                            .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                string @namespace;
+                if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out @namespace))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
+                    if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
+            .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
+                    }
                 }
             }
         }

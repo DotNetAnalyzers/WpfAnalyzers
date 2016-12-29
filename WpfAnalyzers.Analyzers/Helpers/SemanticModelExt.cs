@@ -83,6 +83,19 @@
             return semanticModel?.GetConstantValue(node, cancellationToken) ?? default(Optional<object>);
         }
 
+        internal static bool TryGetConstantValue<T>(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken, out T value)
+        {
+            var optional = GetConstantValueSafe(semanticModel, node, cancellationToken);
+            if (optional.HasValue)
+            {
+                value = (T)optional.Value;
+                return true;
+            }
+
+            value = default(T);
+            return false;
+        }
+
         internal static TypeInfo GetTypeInfoSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
             if (node == null)

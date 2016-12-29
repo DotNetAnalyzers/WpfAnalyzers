@@ -126,12 +126,17 @@
             public override void VisitAttribute(AttributeSyntax node)
             {
                 AttributeSyntax attribute;
-                string @namespace;
-                AttributeArgumentSyntax arg;
-                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out attribute) &&
-                    Attribute.TryGetArgumentStringValue(node, 1, this.semanticModel, this.cancellationToken, out arg, out @namespace))
+                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out attribute))
                 {
-                    this.mappedNamespaces.Add(@namespace);
+                    AttributeArgumentSyntax arg;
+                    if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out arg))
+                    {
+                        string @namespace;
+                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out @namespace))
+                        {
+                            this.mappedNamespaces.Add(@namespace);
+                        }
+                    }
                 }
             }
 
