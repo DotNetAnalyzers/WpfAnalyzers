@@ -94,6 +94,8 @@
     <Compile Include="DependencyProperties\WPF0043DontUseSetCurrentValueForDataContextTests\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0050XmlnsPrefixMustMatchXmlnsDefinition\HappyPath.cs" />
+    <Compile Include="DependencyProperties\WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests\CodeFix.cs" />
+    <Compile Include="DependencyProperties\WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace\Diagnostics.cs" />
     <Compile Include="DependencyProperties\WPF0051XmlnsDefinitionMustMapExistingNamespace\HappyPath.cs" />
     <Compile Include="Documentation\Tests.cs" />

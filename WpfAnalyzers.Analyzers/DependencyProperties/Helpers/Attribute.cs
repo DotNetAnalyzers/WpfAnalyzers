@@ -12,7 +12,6 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetAttribute(AttributeSyntax attribute, QualifiedType attributeName, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
         {
             result = null;
-
             var attributeType = semanticModel.GetTypeInfoSafe(attribute, cancellationToken).Type;
             if (attributeType != attributeName)
             {

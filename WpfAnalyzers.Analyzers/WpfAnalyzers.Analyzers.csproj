@@ -63,6 +63,7 @@
     <Compile Include="DependencyProperties\WPF0014SetValueMustUseRegisteredType.cs" />
     <Compile Include="DependencyProperties\WPF0015RegisteredOwnerTypeMustBeDependencyObject.cs" />
     <Compile Include="DependencyProperties\WPF0016DefaultValueIsSharedReferenceType.cs" />
+    <Compile Include="DependencyProperties\WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.cs" />
     <Compile Include="Helpers\KnownSymbols\DependencyObjectType.cs" />
     <Compile Include="Helpers\KnownSymbols\DependencyPropertyKeyType.cs" />
     <Compile Include="Helpers\KnownSymbols\DependencyPropertyType.cs" />

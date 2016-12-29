@@ -102,6 +102,10 @@ Roslyn analyzers for WPF.
   <td>XmlnsDefinition must map to existing namespace.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md">WPF0052</a></td>
+  <td>XmlnsDefinitions does not map all namespaces with public types.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>
