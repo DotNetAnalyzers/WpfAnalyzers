@@ -250,6 +250,36 @@
             return false;
         }
 
+        internal static bool IsNotifyPropertyChanged(StatementSyntax statement, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var expressionStatement = statement as ExpressionStatementSyntax;
+            var expression = expressionStatement?.Expression;
+            if (expression == null)
+            {
+                return false;
+            }
+
+            var conditionalAccess = expression as ConditionalAccessExpressionSyntax;
+            if (conditionalAccess != null)
+            {
+                return IsNotifyPropertyChanged(conditionalAccess.WhenNotNull as InvocationExpressionSyntax, semanticModel, cancellationToken);
+            }
+
+            return IsNotifyPropertyChanged(expression as InvocationExpressionSyntax, semanticModel, cancellationToken);
+        }
+
+        internal static bool IsNotifyPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            return method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
+                   IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
+        }
+
         private static bool TryGetCachedArgs(
             ArgumentSyntax propertyChangedArg,
             SemanticModel semanticModel,

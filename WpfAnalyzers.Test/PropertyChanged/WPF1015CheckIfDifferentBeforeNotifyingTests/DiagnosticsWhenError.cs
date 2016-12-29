@@ -6,7 +6,7 @@
 
     using WpfAnalyzers.PropertyChanged;
 
-    internal class DiagnosticsWhenError : DiagnosticVerifier<WPF1015CheckIfDifferentBeforeNotifying>
+    internal class DiagnosticsWhenError : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
     {
         public static readonly EqualsItem[] EqualsSource =
         {
@@ -61,6 +61,7 @@
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         [Test]
@@ -97,6 +98,7 @@
 
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
@@ -134,6 +136,7 @@
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
@@ -173,6 +176,7 @@
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         public class EqualsItem

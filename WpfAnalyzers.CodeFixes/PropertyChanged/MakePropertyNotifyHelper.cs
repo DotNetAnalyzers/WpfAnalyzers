@@ -155,7 +155,7 @@ namespace WpfAnalyzers
                                                    .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        private static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property)
+        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property)
         {
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName

@@ -48,10 +48,7 @@ namespace WpfAnalyzers.PropertyChanged
                 return;
             }
 
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method != KnownSymbol.PropertyChangedEventHandler.Invoke &&
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) !=
-                AnalysisResult.Yes)
+            if (!IsFirstNotifyPropertyChange(invocation, context.SemanticModel, context.CancellationToken))
             {
                 return;
             }
@@ -111,6 +108,30 @@ namespace WpfAnalyzers.PropertyChanged
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+        }
+
+        private static bool IsFirstNotifyPropertyChange(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (!PropertyChanged.IsNotifyPropertyChanged(invocation, semanticModel, cancellationToken))
+            {
+                return false;
+            }
+
+            var statement = invocation.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+            var block = statement?.FirstAncestorOrSelf<BlockSyntax>();
+
+            if (block == null)
+            {
+                return false;
+            }
+
+            var index = block.Statements.IndexOf(statement);
+            if (index <= 0)
+            {
+                return false;
+            }
+
+            return !PropertyChanged.IsNotifyPropertyChanged(block.Statements[index - 1], semanticModel, cancellationToken);
         }
 
         private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)

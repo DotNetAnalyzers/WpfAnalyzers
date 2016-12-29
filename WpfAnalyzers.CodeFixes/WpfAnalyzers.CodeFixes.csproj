@@ -54,6 +54,7 @@
     <Compile Include="FixAll\FixedTypes.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyChanged\CheckIfDifferentBeforeNotifyFixProvider.cs" />
     <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedCodeFixProvider.cs" />
     <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedHelper.cs" />
     <Compile Include="PropertyChanged\MakePropertyNotifyCodeFixProvider.cs" />
