@@ -53,6 +53,11 @@
 
         private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var objectCreation = context.Node as ObjectCreationExpressionSyntax;
             if (context.SemanticModel == null ||
                 objectCreation == null ||

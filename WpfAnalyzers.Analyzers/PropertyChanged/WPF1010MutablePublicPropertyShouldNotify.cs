@@ -39,6 +39,11 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
             if (!propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {

@@ -40,6 +40,11 @@ namespace WpfAnalyzers.PropertyChanged
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var method = (IMethodSymbol)context.ContainingSymbol;
             if (method.Parameters.Length != 1 ||
                 method.Parameters[0].Type != KnownSymbol.String)
@@ -62,6 +67,11 @@ namespace WpfAnalyzers.PropertyChanged
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var property = (context.ContainingSymbol as IMethodSymbol)?.AssociatedSymbol as IPropertySymbol;
             if (property == null)
             {

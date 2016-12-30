@@ -41,6 +41,11 @@ namespace WpfAnalyzers.PropertyChanged
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var invocation = (InvocationExpressionSyntax)context.Node;
             var setter = invocation.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
             if (setter?.IsKind(SyntaxKind.SetAccessorDeclaration) != true)

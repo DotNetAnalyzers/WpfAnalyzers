@@ -44,6 +44,11 @@
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var invocation = context.Node as InvocationExpressionSyntax;
             ArgumentSyntax property;
             ArgumentSyntax value;

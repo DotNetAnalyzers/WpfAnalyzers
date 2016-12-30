@@ -53,6 +53,11 @@
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var invocation = context.Node as InvocationExpressionSyntax;
             if (invocation == null || invocation.IsMissing)
             {

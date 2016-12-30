@@ -39,6 +39,11 @@
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null || fieldDeclaration.IsMissing)
             {

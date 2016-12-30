@@ -40,6 +40,11 @@
 
         private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
             if (propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) ||
                 propertySymbol.ContainingType.Is(KnownSymbol.MarkupExtension) ||
@@ -60,6 +65,11 @@
 
         private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var eventSymbol = (IEventSymbol)context.ContainingSymbol;
             if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
                 eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler)

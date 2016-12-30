@@ -42,6 +42,11 @@
 
         private static void HandleMethod(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var method = (IMethodSymbol)context.ContainingSymbol;
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             if (methodDeclaration.Body == null)
@@ -62,6 +67,11 @@
 
         private static void HandleGetter(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var getter = (AccessorDeclarationSyntax)context.Node;
             var property = (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
             if (getter.Body == null ||
@@ -76,6 +86,11 @@
 
         private static void HandleSetter(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var setter = (AccessorDeclarationSyntax)context.Node;
             var property = (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
             if (setter.Body == null ||

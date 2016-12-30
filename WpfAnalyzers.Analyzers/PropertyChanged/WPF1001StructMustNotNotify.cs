@@ -42,6 +42,11 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var structDeclaration = (StructDeclarationSyntax)context.Node;
             if (structDeclaration.ImplementsINotifyPropertyChanged())
             {

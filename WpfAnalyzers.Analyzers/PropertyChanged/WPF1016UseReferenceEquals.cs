@@ -42,6 +42,11 @@ namespace WpfAnalyzers.PropertyChanged
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var ifStatement = (IfStatementSyntax)context.Node;
             if (ifStatement?.Condition == null)
             {

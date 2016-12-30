@@ -38,6 +38,11 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
             if (propertyDeclaration == null || propertyDeclaration.IsMissing)
             {

@@ -43,6 +43,11 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var methodDeclaration = context.Node as MethodDeclarationSyntax;
             if (methodDeclaration == null ||
                 methodDeclaration.IsMissing)

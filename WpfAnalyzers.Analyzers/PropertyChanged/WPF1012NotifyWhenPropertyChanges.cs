@@ -62,6 +62,11 @@
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var expression = (PostfixUnaryExpressionSyntax)context.Node;
             IFieldSymbol field;
             if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
@@ -72,6 +77,11 @@
 
         private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var expression = (PrefixUnaryExpressionSyntax)context.Node;
             IFieldSymbol field;
             if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
@@ -82,6 +92,11 @@
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var expression = (AssignmentExpressionSyntax)context.Node;
             IFieldSymbol field;
             if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out field))
@@ -121,6 +136,11 @@
 
         private static void Handle(SyntaxNodeAnalysisContext context, IFieldSymbol assignedField)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             if (IsInIgnoredScope(context))
             {
                 return;

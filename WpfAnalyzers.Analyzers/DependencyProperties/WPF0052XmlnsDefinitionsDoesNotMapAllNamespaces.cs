@@ -43,6 +43,11 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var attributeSyntax = context.Node as AttributeSyntax;
             if (attributeSyntax == null ||
                 attributeSyntax.IsMissing)

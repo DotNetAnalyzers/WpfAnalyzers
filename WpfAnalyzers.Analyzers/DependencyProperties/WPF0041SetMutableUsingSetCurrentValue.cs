@@ -41,6 +41,11 @@
 
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             if (IsInObjectInitializer(context.Node) ||
                 IsInConstructor(context.Node))
             {
@@ -76,6 +81,11 @@
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
             var invocation = context.Node as InvocationExpressionSyntax;
             if (invocation == null || context.SemanticModel == null)
             {
