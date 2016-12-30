@@ -21,7 +21,7 @@ namespace WpfAnalyzers.PropertyChanged
             Title,
             MessageFormat,
             AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Error,
+            DiagnosticSeverity.Warning,
             AnalyzerConstants.EnabledByDefault,
             Description,
             HelpLink);
