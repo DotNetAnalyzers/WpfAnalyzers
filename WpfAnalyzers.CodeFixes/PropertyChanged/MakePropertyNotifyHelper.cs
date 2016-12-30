@@ -1,5 +1,7 @@
 namespace WpfAnalyzers
 {
+    using System.Collections.Immutable;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -109,7 +111,13 @@ namespace WpfAnalyzers
             return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement }).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol property, SyntaxGenerator syntaxGenerator, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(
+            this PropertyDeclarationSyntax propertyDeclaration,
+            IPropertySymbol property,
+            SyntaxGenerator syntaxGenerator,
+            string field,
+            IMethodSymbol invoker,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             return WithNotifyingSetter(
                 propertyDeclaration,
@@ -117,19 +125,32 @@ namespace WpfAnalyzers
                 syntaxGenerator,
                 syntaxGenerator.AssignValueToBackingField(field),
                 field,
-                invoker);
+                invoker,
+                diagnosticOptions);
         }
 
-        internal static PropertyDeclarationSyntax WithNotifyingSetter(this PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol property, SyntaxGenerator syntaxGenerator, ExpressionStatementSyntax assign, string field, IMethodSymbol invoker)
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(
+            this PropertyDeclarationSyntax propertyDeclaration,
+            IPropertySymbol property,
+            SyntaxGenerator syntaxGenerator,
+            ExpressionStatementSyntax assign,
+            string field,
+            IMethodSymbol invoker,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             var propertyName = propertyDeclaration.Identifier.ValueText;
             var statements = new[]
                                  {
-                                     syntaxGenerator.IfValueEqualsBackingFieldReturn(field, property),
+                                     syntaxGenerator.IfValueEqualsBackingFieldReturn(field, property, diagnosticOptions),
                                      assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
-                                     syntaxGenerator.OnPropertyChanged(propertyName, true, field.StartsWith("_"), invoker),
+                                     syntaxGenerator.OnPropertyChanged(
+                                         propertyName,
+                                         true,
+                                         field.StartsWith("_"),
+                                         invoker),
                                  };
-            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements).WithAdditionalAnnotations(Formatter.Annotation);
+            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements)
+                                                             .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         internal static StatementSyntax OnPropertyChanged(this SyntaxGenerator syntaxGenerator, string propertyName, bool useCallerMemberName, bool usedUnderscoreNames, IMethodSymbol invoker)
@@ -155,7 +176,7 @@ namespace WpfAnalyzers
                                                    .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property)
+        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             var fieldAccess = fieldName.StartsWith("_")
                                   ? fieldName
@@ -211,10 +232,23 @@ namespace WpfAnalyzers
             }
 
             var referenceEqualsExpression = syntaxGenerator.InvocationExpression(
-                SyntaxFactory.ParseExpression("ReferenceEquals"),
-                SyntaxFactory.ParseName("value"),
+               ReferenceTypeEquality(diagnosticOptions),
+               SyntaxFactory.ParseName("value"),
                 SyntaxFactory.ParseExpression(fieldAccess));
             return (IfStatementSyntax)syntaxGenerator.IfStatement(referenceEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+        }
+
+        internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
+        {
+            ReportDiagnostic setting;
+            if (!diagnosticOptions.TryGetValue(PropertyChanged.WPF1016UseReferenceEquals.DiagnosticId, out setting))
+            {
+                return SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
+            }
+
+            return setting == ReportDiagnostic.Suppress
+                       ? SyntaxFactory.ParseExpression(nameof(Equals))
+                       : SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
         }
 
         private static bool HasEqualityOperator(ITypeSymbol type)

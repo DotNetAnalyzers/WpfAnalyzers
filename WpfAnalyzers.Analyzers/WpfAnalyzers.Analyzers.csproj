@@ -135,6 +135,7 @@
     <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingProperty.cs" />
     <Compile Include="PropertyChanged\WPF1015CheckIfDifferentBeforeNotifying.cs" />
     <Compile Include="PropertyChanged\WPF1016UseReferenceEquals.cs" />
+    <Compile Include="PropertyChanged\WPF1017UseObjectEqualsForReferenceTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

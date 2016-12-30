@@ -40,7 +40,7 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator);
+                var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator, context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
                 if (fix.IfReturn != null)
                 {
                     context.RegisterCodeFix(
@@ -53,7 +53,13 @@ namespace WpfAnalyzers
             }
         }
 
-        private static Fix CreateFix(Diagnostic diagnostic, SyntaxNode syntaxRoot, SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxGenerator syntaxGenerator)
+        private static Fix CreateFix(
+            Diagnostic diagnostic,
+            SyntaxNode syntaxRoot,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            SyntaxGenerator syntaxGenerator,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             if (string.IsNullOrEmpty(token.ValueText))
@@ -62,7 +68,7 @@ namespace WpfAnalyzers
             }
 
             var invocationStatement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                       .FirstAncestorOrSelf<StatementSyntax>();
+                                                .FirstAncestorOrSelf<StatementSyntax>();
             var setter = invocationStatement?.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
             if (setter?.IsKind(SyntaxKind.SetAccessorDeclaration) != true)
             {
@@ -90,7 +96,10 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                if (PropertyChanged.Helpers.PropertyChanged.IsNotifyPropertyChanged(expressionStatement, semanticModel, cancellationToken))
+                if (PropertyChanged.Helpers.PropertyChanged.IsNotifyPropertyChanged(
+                    expressionStatement,
+                    semanticModel,
+                    cancellationToken))
                 {
                     continue;
                 }
@@ -98,11 +107,17 @@ namespace WpfAnalyzers
                 return default(Fix);
             }
 
-            var property = semanticModel.GetDeclaredSymbolSafe(setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
+            var property = semanticModel.GetDeclaredSymbolSafe(
+                setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(),
+                cancellationToken);
             IFieldSymbol backingField;
-            if (PropertyChanged.Helpers.Property.TryGetBackingField(property, semanticModel, cancellationToken, out backingField))
+            if (PropertyChanged.Helpers.Property.TryGetBackingField(
+                property,
+                semanticModel,
+                cancellationToken,
+                out backingField))
             {
-                var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(backingField.Name, property);
+                var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(backingField.Name, property, diagnosticOptions);
                 return new Fix(assignment, ifReturn);
             }
 
@@ -171,7 +186,7 @@ namespace WpfAnalyzers
                 var fixes = new List<Fix>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator);
+                    var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator, context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
                     if (fix.IfReturn != null)
                     {
                         fixes.Add(fix);

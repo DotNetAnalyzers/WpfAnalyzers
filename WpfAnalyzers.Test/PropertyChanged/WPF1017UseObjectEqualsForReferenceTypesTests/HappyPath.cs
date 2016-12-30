@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.PropertyChanged.WPF1016UseReferenceEqualsTests
+namespace WpfAnalyzers.Test.PropertyChanged.WPF1017UseObjectEqualsForReferenceTypesTests
 {
     using System.Threading.Tasks;
 
@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1016UseReferenceEqualsTests
 
     using WpfAnalyzers.PropertyChanged;
 
-    internal class HappyPath : HappyPathVerifier<WPF1016UseReferenceEquals>
+    internal class HappyPath : HappyPathVerifier<WPF1017UseObjectEqualsForReferenceTypes>
     {
         public static readonly EqualsItem[] EqualsSource =
         {
@@ -77,7 +77,7 @@ public class Foo
             get { return this.bar; }
             set
             {
-                if (ReferenceEquals(value, this.bar)) return;
+                if (Equals(value, this.bar)) return;
                 this.bar = value;
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
             }

@@ -110,6 +110,8 @@
     <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotifyTests\CodeFixEquality.cs" />
     <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChangesTests\CodeFixAll.cs" />
     <Compile Include="PropertyChanged\WPF1013UseCallerMemberNameTests\CodeFixAll.cs" />
+    <Compile Include="PropertyChanged\WPF1017UseObjectEqualsForReferenceTypesTests\CodeFix.cs" />
+    <Compile Include="PropertyChanged\WPF1017UseObjectEqualsForReferenceTypesTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1016UseReferenceEqualsTests\CodeFix.cs" />
     <Compile Include="PropertyChanged\WPF1016UseReferenceEqualsTests\HappyPath.cs" />
     <Compile Include="PropertyChanged\WPF1015CheckIfDifferentBeforeNotifyingTests\CodFixWhenError.cs" />

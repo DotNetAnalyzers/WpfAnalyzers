@@ -15,13 +15,14 @@ namespace WpfAnalyzers
     using WpfAnalyzers.PropertyChanged;
     using WpfAnalyzers.PropertyChanged.Helpers;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseReferenceEqualsCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCorrectEqualityCodeFixProvider))]
     [Shared]
-    internal class UseReferenceEqualsCodeFixProvider : CodeFixProvider
+    internal class UseCorrectEqualityCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF1016UseReferenceEquals.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF1016UseReferenceEquals.DiagnosticId,
+            WPF1017UseObjectEqualsForReferenceTypes.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -78,15 +79,16 @@ namespace WpfAnalyzers
                                           ? backingField.Name
                                           : $"this.{backingField.Name}";
 
-                    var referenceEqualsExpression = (ExpressionSyntax)syntaxGenerator.InvocationExpression(
-                            SyntaxFactory.ParseExpression("ReferenceEquals"),
+                    var referenceTypeEquality = MakePropertyNotifyHelper.ReferenceTypeEquality(context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
+                    var equalsExpression = (ExpressionSyntax)syntaxGenerator.InvocationExpression(
+                            referenceTypeEquality,
                             SyntaxFactory.ParseName("value"),
                             SyntaxFactory.ParseExpression(fieldAccess));
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            "Use ReferenceEquals",
-                            cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, referenceEqualsExpression))),
+                            $"Use {referenceTypeEquality}",
+                            cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, equalsExpression))),
                             this.GetType().FullName),
                         diagnostic);
                 }
@@ -115,6 +117,7 @@ namespace WpfAnalyzers
             {
                 if (Equality.IsOperatorEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsObjectEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsReferenceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, member, value))
                 {

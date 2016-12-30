@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.PropertyChanged.Helpers
 {
+    using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -107,6 +108,25 @@
             }
 
             return false;
+        }
+
+        internal static bool UsesObjectOrNone(ExpressionSyntax condition)
+        {
+            var unary = condition as PrefixUnaryExpressionSyntax;
+            if (unary != null)
+            {
+                return UsesObjectOrNone(unary.Operand);
+            }
+
+            var memberAccess = (condition as InvocationExpressionSyntax)?.Expression as MemberAccessExpressionSyntax;
+            var identifierName = memberAccess?.Expression as IdentifierNameSyntax;
+            if (identifierName != null &&
+                !string.Equals(identifierName.Identifier.ValueText, "object", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool IsArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)

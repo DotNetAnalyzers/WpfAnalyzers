@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.PropertyChanged
 {
+    using System;
     using System.Collections.Immutable;
     using System.Threading;
 
@@ -11,11 +12,11 @@ namespace WpfAnalyzers.PropertyChanged
     using WpfAnalyzers.PropertyChanged.Helpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1016UseReferenceEquals : DiagnosticAnalyzer
+    internal class WPF1017UseObjectEqualsForReferenceTypes : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF1016";
-        private const string Title = "Check if value is different using ReferenceEquals before notifying.";
-        private const string MessageFormat = "Check if value is different using ReferenceEquals before notifying.";
+        public const string DiagnosticId = "WPF1017";
+        private const string Title = "Check if value is different using object.Equals before notifying.";
+        private const string MessageFormat = "Check if value is different using object.Equals before notifying.";
         private const string Description = Title;
         private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
@@ -25,7 +26,7 @@ namespace WpfAnalyzers.PropertyChanged
             MessageFormat,
             AnalyzerCategory.PropertyChanged,
             DiagnosticSeverity.Hidden,
-            AnalyzerConstants.EnabledByDefault,
+            AnalyzerConstants.DisabledByDefault,
             Description,
             HelpLink);
 
@@ -85,8 +86,8 @@ namespace WpfAnalyzers.PropertyChanged
             {
                 foreach (var member in new ISymbol[] { backingField, property })
                 {
-                    if (Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                        IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
+                    if (Equality.IsObjectEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
+                        IsNegatedObjectEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
                     {
                         if (Equality.UsesObjectOrNone(ifStatement.Condition))
                         {
@@ -115,12 +116,12 @@ namespace WpfAnalyzers.PropertyChanged
             return false;
         }
 
-        private static bool IsNegatedReferenceEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        private static bool IsNegatedObjectEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
             var unaryExpression = expression as PrefixUnaryExpressionSyntax;
             if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
             {
-                return Equality.IsReferenceEquals(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
+                return Equality.IsObjectEquals(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
             }
 
             return false;

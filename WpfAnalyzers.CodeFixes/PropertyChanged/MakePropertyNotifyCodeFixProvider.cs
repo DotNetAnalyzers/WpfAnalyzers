@@ -64,7 +64,8 @@
                         property,
                         invoker,
                         semanticModel,
-                        context.CancellationToken);
+                        context.CancellationToken,
+                        context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
 
                     if (fix.NotifyingProperty == propertyDeclaration)
                     {
@@ -90,23 +91,48 @@
             IPropertySymbol property,
             IMethodSymbol invoker,
             SemanticModel semanticModel,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             string backingFieldName;
             if (Property.IsMutableAutoProperty(propertyDeclaration))
             {
                 backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration);
-                var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(backingFieldName, propertyDeclaration.Type, Accessibility.Private, DeclarationModifiers.None);
-                var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, backingFieldName)
-                                                                   .WithNotifyingSetter(property, syntaxGenerator, backingFieldName, invoker);
+                var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(
+                        backingFieldName,
+                        propertyDeclaration.Type,
+                        Accessibility.Private,
+                        DeclarationModifiers.None);
+                var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(
+                                                               syntaxGenerator,
+                                                               backingFieldName)
+                                                           .WithNotifyingSetter(
+                                                               property,
+                                                               syntaxGenerator,
+                                                               backingFieldName,
+                                                               invoker,
+                                                               diagnosticOptions);
                 return new Fix(propertyDeclaration, notifyingProperty, backingField);
             }
 
             ExpressionStatementSyntax assignStatement;
-            if (IsSimpleAssignmentOnly(propertyDeclaration, semanticModel, cancellationToken, out assignStatement, out backingFieldName))
+            if (IsSimpleAssignmentOnly(
+                propertyDeclaration,
+                semanticModel,
+                cancellationToken,
+                out assignStatement,
+                out backingFieldName))
             {
-                var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(syntaxGenerator, backingFieldName)
-                                                                   .WithNotifyingSetter(property, syntaxGenerator, assignStatement, backingFieldName, invoker);
+                var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(
+                                                               syntaxGenerator,
+                                                               backingFieldName)
+                                                           .WithNotifyingSetter(
+                                                               property,
+                                                               syntaxGenerator,
+                                                               assignStatement,
+                                                               backingFieldName,
+                                                               invoker,
+                                                               diagnosticOptions);
                 return new Fix(propertyDeclaration, notifyingProperty, null);
             }
 
@@ -223,7 +249,8 @@
                             property,
                             invoker,
                             semanticModel,
-                            context.CancellationToken);
+                            context.CancellationToken,
+                            context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
 
                         if (fix.NotifyingProperty == propertyDeclaration)
                         {
