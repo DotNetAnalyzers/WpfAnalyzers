@@ -115,22 +115,6 @@
             Assert.AreEqual(expected, actual);
         }
 
-        ////[Test, Explicit] // commenting this out so that it does not show up as excluded.
-        public void DumpStub()
-        {
-            var stub = CreateStub(
-                "WPF0041",
-                "Avoid side effects in CLR accessor.",
-                DiagnosticSeverity.Warning,
-                "https://github.com/DotNetAnalyzers/WpfAnalyzers",
-                AnalyzerCategory.DependencyProperties,
-                "AvoidSideEffectsInClrAccessor.",
-                "Bindings do not call accessor when updating value. Use callbacks.");
-
-            File.WriteAllText(Path.Combine(DocumentsDirectory, "Generated.md"), stub);
-            Console.Write(stub);
-        }
-
         private static string CreateStub(DescriptorInfo descriptorInfo)
         {
             var descriptor = descriptorInfo.DiagnosticDescriptor;
@@ -138,6 +122,7 @@
                 descriptor.Id,
                 descriptor.Title.ToString(),
                 descriptor.DefaultSeverity,
+                descriptor.IsEnabledByDefault,
                 descriptorInfo.CodeFileUri,
                 descriptor.Category,
                 descriptorInfo.DiagnosticAnalyzer.GetType().Name,
@@ -148,6 +133,7 @@
             string id,
             string title,
             DiagnosticSeverity severity,
+            bool enabled,
             string codeFileUrl,
             string category,
             string typeName,
@@ -156,6 +142,7 @@
             return Properties.Resources.DiagnosticDocTemplate.Replace("{ID}", id)
                              .Replace("## ADD TITLE HERE", $"## {title}")
                              .Replace("{SEVERITY}", severity.ToString())
+                             .Replace("{ENABLED}", enabled ? "true" : "false")
                              .Replace("{CATEGORY}", category)
                              .Replace("{URL}", codeFileUrl ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers")
                              .Replace("{TYPENAME}", typeName)
