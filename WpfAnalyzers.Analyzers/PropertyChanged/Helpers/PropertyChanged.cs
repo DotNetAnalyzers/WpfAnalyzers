@@ -183,7 +183,7 @@
             if (method.DeclaringSyntaxReferences.Length == 0)
             {
                 if (parameter.Type == KnownSymbol.String &&
-                    method.Name.Contains("PropertyChnaged"))
+                    method.Name.Contains("PropertyChanged"))
                 {
                     // A bit speculative here
                     // for handling the case when inheriting a ViewModelBase class from a binary reference.

@@ -48,6 +48,38 @@
 
         [TestCase("null")]
         [TestCase("string.Empty")]
+        [TestCase(@"""Bar""")]
+        [TestCase(@"nameof(Bar)")]
+        [TestCase(@"nameof(this.Bar)")]
+        public async Task CallsOnPropertyChangedMvvmFramework(string propertyName)
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MvvmFramework;
+
+public class ViewModel : ViewModelBase
+{
+    private int bar;
+
+    public int Bar
+    {
+        get { return this.bar; }
+        set
+        {
+            if (value == this.bar) return;
+            this.bar = value;
+            this.OnPropertyChanged(nameof(Bar));
+        }
+    }
+}";
+
+            testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("null")]
+        [TestCase("string.Empty")]
         [TestCase(@"""""")]
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]

@@ -22,5 +22,6 @@ namespace WpfAnalyzers.Test
         internal static readonly MetadataReference SystemXamlReference = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlLanguage).Assembly.Location);
         internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         internal static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        internal static readonly MetadataReference MvvmFrameworkReference = MetadataReference.CreateFromFile(typeof(MvvmFramework.ViewModelBase).Assembly.Location);
     }
 }
