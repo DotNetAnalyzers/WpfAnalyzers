@@ -127,6 +127,54 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task AutoPropertyMvvmFramework()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MvvmFramework;
+
+public class Foo : ViewModelBase
+{
+    ↓public int Bar { get; set; }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MvvmFramework;
+
+public class Foo : ViewModelBase
+{
+    private int bar;
+
+    public int Bar
+    {
+        get
+        {
+            return this.bar;
+        }
+
+        set
+        {
+            if (value == this.bar)
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.OnPropertyChanged();
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task AutoPropertyCallerMemberNameNameUnderscoreNames()
         {
             var testCode = @"

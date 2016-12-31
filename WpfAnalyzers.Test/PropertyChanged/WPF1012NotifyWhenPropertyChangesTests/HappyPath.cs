@@ -110,6 +110,65 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenNotifyingMvvmFramework()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MvvmFramework;
+
+public class ViewModel : ViewModelBase
+{
+    private string firstName;
+    private string lastName;
+
+    public string FullName => $""{this.FirstName} {this.LastName}"";
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            this.firstName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    public string LastName
+    {
+        get
+        {
+            return this.lastName;
+        }
+
+        set
+        {
+            if (value == this.lastName)
+            {
+                return;
+            }
+
+            this.lastName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task CallsOnPropertyChangedWithCachedEventArgs()
         {
             var testCode = @"
