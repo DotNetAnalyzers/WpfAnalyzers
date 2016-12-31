@@ -1,6 +1,5 @@
 namespace WpfAnalyzers.PropertyChanged
 {
-    using System;
     using System.Collections.Immutable;
     using System.Threading;
 

@@ -123,7 +123,8 @@
             var memberAccess = node as MemberAccessExpressionSyntax;
             if (memberAccess != null)
             {
-                if (memberAccess.Expression is ThisExpressionSyntax)
+                if (memberAccess.Expression is ThisExpressionSyntax &&
+                    memberAccess.Name is IdentifierNameSyntax)
                 {
                     field = semanticModel.GetSymbolSafe(memberAccess.Name, cancellationToken) as IFieldSymbol;
                 }
