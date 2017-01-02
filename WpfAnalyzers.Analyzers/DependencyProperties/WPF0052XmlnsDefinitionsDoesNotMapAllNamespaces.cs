@@ -84,6 +84,8 @@
                         x.cancellationToken = CancellationToken.None;
                     });
 
+            private static readonly IReadOnlyList<string> Ignored = new[] { "Annotations", "Properties", "XamlGeneratedNamespace" };
+
             private readonly HashSet<NameSyntax> namespaces = new HashSet<NameSyntax>(NameSyntaxComparer.Default);
             private readonly List<string> mappedNamespaces = new List<string>();
 
@@ -94,8 +96,26 @@
             {
             }
 
-            public IReadOnlyList<string> NotMapped => this.namespaces.Select(x => x.ToString()).Except(this.mappedNamespaces)
-                                                                           .ToArray();
+            public IReadOnlyList<string> NotMapped
+            {
+                get
+                {
+                    var notMapped = new List<string>();
+                    foreach (var nameSyntax in this.namespaces)
+                    {
+                        var @namespace = nameSyntax.ToString();
+                        if (this.mappedNamespaces.Contains(@namespace) ||
+                            Ignored.Contains(@namespace))
+                        {
+                            continue;
+                        }
+
+                        notMapped.Add(@namespace);
+                    }
+
+                    return notMapped;
+                }
+            }
 
             public static Pool<Walker>.Pooled Create(Compilation compilation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
@@ -104,6 +124,11 @@
                 pooled.Item.cancellationToken = cancellationToken;
                 foreach (var tree in compilation.SyntaxTrees)
                 {
+                    if (tree.FilePath.EndsWith(".g.cs"))
+                    {
+                        continue;
+                    }
+
                     SyntaxNode root;
                     if (tree.TryGetRoot(out root))
                     {
