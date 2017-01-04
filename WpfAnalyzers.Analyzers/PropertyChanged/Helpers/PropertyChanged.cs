@@ -1,6 +1,7 @@
 ﻿namespace WpfAnalyzers.PropertyChanged.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -169,11 +170,17 @@
             return invoker != null;
         }
 
-        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, HashSet<IMethodSymbol> @checked = null)
         {
+            if (@checked?.Add(method) == false)
+            {
+                return AnalysisResult.No;
+            }
+
             if (method == null ||
                 method.IsStatic ||
                 method.Parameters.Length != 1 ||
+                method.AssociatedSymbol != null ||
                (method.Parameters[0].Type != KnownSymbol.String && method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
             {
                 return AnalysisResult.No;
@@ -226,7 +233,19 @@
                                     }
                                 }
                             }
+
+                            return AnalysisResult.No;
                         }
+
+                        if (@checked == null)
+                        {
+                            using (var pooledSet = SetPool<IMethodSymbol>.Create())
+                            {
+                                return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet.Item);
+                            }
+                        }
+
+                        return IsInvoker(invokedMethod, semanticModel, cancellationToken, @checked);
                     }
                 }
             }

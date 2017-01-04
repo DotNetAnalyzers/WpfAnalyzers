@@ -46,6 +46,36 @@
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task CallsOnPropertyChangedExpressionBody()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(nameof(Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""Bar""")]
@@ -180,6 +210,52 @@ public class ViewModel : ViewModelBase
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task CallsChainedOnPropertyChanged()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    private string meh;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Meh
+    {
+        get
+        {
+            return this.meh;
+        }
+
+        set
+        {
+            if (value == this.meh)
+            {
+                return;
+            }
+
+            this.meh = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+}";
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }

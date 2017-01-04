@@ -238,6 +238,52 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task CallsChainedOnPropertyChanged()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class Foo : INotifyPropertyChanged
+{
+    private string meh;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string Meh
+    {
+        get
+        {
+            return this.meh;
+        }
+
+        set
+        {
+            if (value == this.meh)
+            {
+                return;
+            }
+
+            this.meh = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenNotifyingSettingFieldInMethod()
         {
             var testCode = @"
