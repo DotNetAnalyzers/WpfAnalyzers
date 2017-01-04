@@ -30,6 +30,63 @@ public class Foo
 }";
 
         [Test]
+        public async Task ConstrainedGeneric()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : class
+{
+    private T bar;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public T Bar
+    {
+        get { return this.bar; }
+        set
+        {
+            ↓if (Equals(value, this.bar))
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
+        }
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different using ReferenceEquals before notifying.");
+            await this.VerifyCSharpDiagnosticAsync(new[] { FooCode, testCode }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : class
+{
+    private T bar;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public T Bar
+    {
+        get { return this.bar; }
+        set
+        {
+            if (ReferenceEquals(value, this.bar))
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(new[] { FooCode, testCode }, new[] { FooCode, fixedCode }).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task OperatorEquals()
         {
             var testCode = @"

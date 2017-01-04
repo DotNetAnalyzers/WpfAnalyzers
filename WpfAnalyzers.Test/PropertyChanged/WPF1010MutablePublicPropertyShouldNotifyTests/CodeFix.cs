@@ -255,39 +255,39 @@ public class Foo : INotifyPropertyChanged
             var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
-////            var fixedCode = @"
-////using System.ComponentModel;
+            ////            var fixedCode = @"
+            ////using System.ComponentModel;
 
-////public class Foo : INotifyPropertyChanged
-////{
-////    private int bar;
+            ////public class Foo : INotifyPropertyChanged
+            ////{
+            ////    private int bar;
 
-////    public event PropertyChangedEventHandler PropertyChanged;
+            ////    public event PropertyChangedEventHandler PropertyChanged;
 
-////    public int Bar
-////    {
-////        get
-////        {
-////            return this.bar;
-////        }
+            ////    public int Bar
+            ////    {
+            ////        get
+            ////        {
+            ////            return this.bar;
+            ////        }
 
-////        set
-////        {
-////            if (value == this.bar)
-////            {
-////                return;
-////            }
+            ////        set
+            ////        {
+            ////            if (value == this.bar)
+            ////            {
+            ////                return;
+            ////            }
 
-////            this.bar = value;
-////            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
-////        }
-////    }
+            ////            this.bar = value;
+            ////            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
+            ////        }
+            ////    }
 
-////    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-////    {
-////        this.PropertyChanged?.Invoke(this, e);
-////    }
-////}";
+            ////    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+            ////    {
+            ////        this.PropertyChanged?.Invoke(this, e);
+            ////    }
+            ////}";
 
             // Not sure how we want this, asserting no fix for now
             await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
@@ -421,6 +421,160 @@ public class Foo : INotifyPropertyChanged
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
                     .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AutoPropertyGeneric()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    ↓public T Bar { get; set; }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+{
+    private T bar;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public T Bar
+    {
+        get
+        {
+            return this.bar;
+        }
+
+        set
+        {
+            if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.OnPropertyChanged(nameof(this.Bar));
+        }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AutoPropertyConstrainedGenericReferenceType()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : class
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    ↓public T Bar { get; set; }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : class
+{
+    private T bar;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public T Bar
+    {
+        get
+        {
+            return this.bar;
+        }
+
+        set
+        {
+            if (ReferenceEquals(value, this.bar))
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.OnPropertyChanged(nameof(this.Bar));
+        }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task AutoPropertyConstrainedGenericValueType()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : struct
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    ↓public T Bar { get; set; }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel<T> : INotifyPropertyChanged
+    where T : struct
+{
+    private T bar;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public T Bar
+    {
+        get
+        {
+            return this.bar;
+        }
+
+        set
+        {
+            if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+            {
+                return;
+            }
+
+            this.bar = value;
+            this.OnPropertyChanged(nameof(this.Bar));
+        }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Test]

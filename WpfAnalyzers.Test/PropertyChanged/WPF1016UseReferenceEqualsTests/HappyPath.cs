@@ -326,6 +326,35 @@ public class Foo
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task IgnoreGeneric()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+
+    public class ViewModel<T> : INotifyPropertyChanged
+    {
+        private T bar;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public T Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
+            }
+        }
+    }";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
         public class EqualsItem
         {
 #pragma warning disable SA1401 // Fields must be private

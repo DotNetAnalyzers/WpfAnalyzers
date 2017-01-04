@@ -68,7 +68,7 @@ namespace WpfAnalyzers.PropertyChanged
             var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
 
             if (property == null ||
-                property.Type.IsValueType ||
+                !property.Type.IsReferenceType ||
                 property.Type == KnownSymbol.String)
             {
                 return;

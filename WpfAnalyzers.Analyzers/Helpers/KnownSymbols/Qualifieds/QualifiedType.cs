@@ -3,6 +3,7 @@ namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
+    // ReSharper disable once UseNameofExpression
     [System.Diagnostics.DebuggerDisplay("{FullName}")]
     internal class QualifiedType
     {

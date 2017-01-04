@@ -182,7 +182,7 @@ namespace WpfAnalyzers
                                   ? fieldName
                                   : $"this.{fieldName}";
 
-            if (property.Type.IsValueType || property.Type == KnownSymbol.String)
+            if (!property.Type.IsReferenceType || property.Type == KnownSymbol.String)
             {
                 if (HasEqualityOperator(property.Type))
                 {
