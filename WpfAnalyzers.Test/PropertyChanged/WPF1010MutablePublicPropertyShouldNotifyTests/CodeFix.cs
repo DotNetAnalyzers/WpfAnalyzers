@@ -982,5 +982,35 @@ public class Foo : INotifyPropertyChanged
             await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
                     .ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task AutoPropertyExplicitNameHandlesRecursion()
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class Foo : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    ↓public int Bar { get; set; }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        this.OnPropertyChanged(propertyName);
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
     }
 }
