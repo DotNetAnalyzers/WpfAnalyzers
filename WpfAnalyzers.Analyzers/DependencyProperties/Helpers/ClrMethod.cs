@@ -20,6 +20,7 @@
 
             if (!method.IsStatic ||
                 method.Parameters.Length != 2 ||
+                method.AssociatedSymbol != null ||
                 !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
                 method.Parameters[1].Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
                 !method.ReturnsVoid ||
