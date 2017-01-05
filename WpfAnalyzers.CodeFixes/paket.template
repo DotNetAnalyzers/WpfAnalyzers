@@ -9,7 +9,7 @@ developmentDependency true
 description Roslyn analyzers for WPF.
 tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 
-projectUrl https://github.com/JohanLarsson/WpfAnalyzers
+projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 files
