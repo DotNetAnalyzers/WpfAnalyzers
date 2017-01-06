@@ -179,6 +179,33 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenInterfaceOnlySealed()
+        {
+            var testCode = @"
+public sealed class Foo : ↓INotifyPropertyChanged
+{
+}";
+
+            var expected = this.CSharpDiagnostic("CS0246").WithLocationIndicated(ref testCode).WithMessage("The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class Foo : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenInterfaceOnlyAndNameSpace()
         {
             var testCode = @"

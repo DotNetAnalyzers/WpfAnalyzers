@@ -99,7 +99,7 @@
 
             var invoker = (MethodDeclarationSyntax)syntaxGenerator.MethodDeclaration(
                 OnPropertyChanged,
-                accessibility: Accessibility.Protected,
+                accessibility: type.IsSealed ? Accessibility.Private : Accessibility.Protected,
                 modifiers: type.IsSealed ? DeclarationModifiers.None : DeclarationModifiers.Virtual,
                 parameters: InvokerParameters,
                 statements: typeDeclaration.UsesUnderscoreNames() ? PropertyChangedInvokeStatements : ThisPropertyChangedInvokeStatements);
