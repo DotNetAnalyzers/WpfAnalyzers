@@ -142,5 +142,54 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1013UseCallerMemberNameTests
     }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task UpdateMethod()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string text;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Text
+        {
+            get
+            {
+                return this.text;
+            }
+
+            set
+            {
+                if (value == this.text)
+                {
+                    return;
+                }
+
+                this.text = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void Update(string newText)
+        {
+            this.text = newText;
+            this.OnPropertyChanged(nameof(this.Text));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }

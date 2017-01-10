@@ -5,6 +5,7 @@
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class PropertyChanged
@@ -206,6 +207,12 @@
                 {
                     foreach (var invocation in pooled.Item.Invocations)
                     {
+                        if (invocation.ArgumentList == null ||
+                            invocation.ArgumentList.Arguments.Count == 0)
+                        {
+                            continue;
+                        }
+
                         var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
                         if (invokedMethod == null)
                         {
@@ -237,15 +244,21 @@
                             return AnalysisResult.No;
                         }
 
-                        if (@checked == null)
+                        using (var argsWalker = ArgumentsWalker.Create(invocation.ArgumentList))
                         {
-                            using (var pooledSet = SetPool<IMethodSymbol>.Create())
+                            if (argsWalker.Item.Contains(parameter, semanticModel, cancellationToken))
                             {
-                                return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet.Item);
+                                if (@checked == null)
+                                {
+                                    using (var pooledSet = SetPool<IMethodSymbol>.Create())
+                                    {
+                                        return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet.Item);
+                                    }
+                                }
+
+                                return IsInvoker(invokedMethod, semanticModel, cancellationToken, @checked);
                             }
                         }
-
-                        return IsInvoker(invokedMethod, semanticModel, cancellationToken, @checked);
                     }
                 }
             }
@@ -366,6 +379,48 @@
             }
 
             return false;
+        }
+
+        private sealed class ArgumentsWalker : CSharpSyntaxWalker
+        {
+            private static readonly Pool<ArgumentsWalker> Cache = new Pool<ArgumentsWalker>(
+                () => new ArgumentsWalker(),
+                x => x.identifierNames.Clear());
+
+            private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
+
+            private ArgumentsWalker()
+            {
+            }
+
+            public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
+
+            public static Pool<ArgumentsWalker>.Pooled Create(ArgumentListSyntax arguments)
+            {
+                var pooled = Cache.GetOrCreate();
+                pooled.Item.Visit(arguments);
+                return pooled;
+            }
+
+            public override void VisitIdentifierName(IdentifierNameSyntax node)
+            {
+                this.identifierNames.Add(node);
+                base.VisitIdentifierName(node);
+            }
+
+            public bool Contains(IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                foreach (var identifierName in this.IdentifierNames)
+                {
+                    var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
+                    if (parameter.Equals(symbol))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }
