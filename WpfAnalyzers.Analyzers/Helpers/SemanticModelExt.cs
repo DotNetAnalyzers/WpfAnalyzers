@@ -121,14 +121,36 @@
         /// <returns>The semantic model that corresponds to <paramref name="expression"/></returns>
         internal static SemanticModel SemanticModelFor(this SemanticModel semanticModel, SyntaxNode expression)
         {
-            if (semanticModel == null || expression == null)
+            if (semanticModel == null ||
+                expression == null ||
+                expression.IsMissing)
             {
                 return null;
             }
 
-            return ReferenceEquals(semanticModel.SyntaxTree, expression.SyntaxTree)
-                ? semanticModel
-                : semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
+            if (ReferenceEquals(semanticModel.SyntaxTree, expression.SyntaxTree))
+            {
+                return semanticModel;
+            }
+
+            if (semanticModel.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
+            {
+                return semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
+            }
+
+            foreach (var metadataReference in semanticModel.Compilation.References)
+            {
+                var compilationReference = metadataReference as CompilationReference;
+                if (compilationReference != null)
+                {
+                    if (compilationReference.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
+                    {
+                        return compilationReference.Compilation.GetSemanticModel(expression.SyntaxTree);
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
