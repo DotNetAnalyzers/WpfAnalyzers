@@ -29,6 +29,20 @@ namespace WpfAnalyzers.Test
         private static readonly string VisualBasicDefaultExt = "vb";
         private static readonly string TestProjectName = "TestProject";
 
+        public DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
+        {
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
+            if (diagnosticId == null)
+            {
+                return this.CSharpDiagnostic(supportedDiagnostics.First());
+            }
+            else
+            {
+                return this.CSharpDiagnostic(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+            }
+        }
+
         internal static string[] CreateFileNamesFromSources(string[] sources, string extension)
         {
             var filenames = new string[sources.Length];
@@ -190,20 +204,6 @@ namespace WpfAnalyzers.Test
         protected virtual IEnumerable<string> GetDisabledDiagnostics()
         {
             return Enumerable.Empty<string>();
-        }
-
-        protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
-        {
-            var analyzers = this.GetCSharpDiagnosticAnalyzers();
-            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
-            if (diagnosticId == null)
-            {
-                return this.CSharpDiagnostic(supportedDiagnostics.First());
-            }
-            else
-            {
-                return this.CSharpDiagnostic(supportedDiagnostics.Single(i => i.Id == diagnosticId));
-            }
         }
 
         protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)

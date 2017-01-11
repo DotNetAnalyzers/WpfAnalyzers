@@ -145,6 +145,9 @@
     <Compile Include="Verifiers\Helpers\MetadataReferences.cs" />
     <Compile Include="Verifiers\Helpers\TestDiagnosticProvider.cs" />
     <Compile Include="Verifiers\Helpers\TestXmlReferenceResolver.cs" />
+    <Compile Include="Verifiers\IHappyPathVerifier.cs" />
+    <Compile Include="Verifiers\NestedCodeFixVerifier.cs" />
+    <Compile Include="Verifiers\NestedHappyPathVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test
 
     using NUnit.Framework;
 
-    internal abstract class HappyPathVerifier<TAnalyzer>
+    internal abstract class HappyPathVerifier<TAnalyzer> : IHappyPathVerifier
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
         private static readonly DiagnosticVerifier<TAnalyzer> DiagnosticVerifier = new DiagnosticVerifier<TAnalyzer>();
@@ -33,7 +33,7 @@ namespace WpfAnalyzers.Test
             await DiagnosticVerifier.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2 }, Test.DiagnosticVerifier.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected async Task VerifyHappyPathAsync(string[] testCode)
+        public async Task VerifyHappyPathAsync(string[] testCode)
         {
             await DiagnosticVerifier.VerifyCSharpDiagnosticAsync(testCode, Test.DiagnosticVerifier.EmptyDiagnosticResults).ConfigureAwait(false);
         }
