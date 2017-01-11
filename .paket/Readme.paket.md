@@ -4,6 +4,7 @@
 2.b. PM> `.paket/paket.exe auto-restore on` restore packages on build.
 3. PM> `.paket/paket.exe update` update packages.
 4. PM> `.paket/paket.exe install` install packages.
+4. PM> `.paket/paket.exe install -f --createnewbindingfiles` install packages and create app.configs with redirects.
 
 ## To create packages:
 1. Build in release

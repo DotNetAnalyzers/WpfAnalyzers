@@ -7,6 +7,8 @@ namespace WpfAnalyzers.PropertyChanged
     using Microsoft.CodeAnalysis.Diagnostics;
     using WpfAnalyzers.PropertyChanged.Helpers;
 
+    using AnalysisResult = WpfAnalyzers.PropertyChanged.Helpers.AnalysisResult;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF1013UseCallerMemberName : DiagnosticAnalyzer
     {

@@ -11,6 +11,8 @@
 
     using WpfAnalyzers.PropertyChanged.Helpers;
 
+    using AnalysisResult = WpfAnalyzers.PropertyChanged.Helpers.AnalysisResult;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF1012NotifyWhenPropertyChanges : DiagnosticAnalyzer
     {

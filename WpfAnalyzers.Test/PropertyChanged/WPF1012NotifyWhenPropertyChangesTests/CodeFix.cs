@@ -331,7 +331,6 @@ public class ViewModel : INotifyPropertyChanged
                       .ConfigureAwait(false);
         }
 
-
         [Test]
         public async Task WhenUsingPropertiesExpressionBodyMvvmFramework()
         {

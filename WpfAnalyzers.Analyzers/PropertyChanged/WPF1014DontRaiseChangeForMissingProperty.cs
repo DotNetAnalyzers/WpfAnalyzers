@@ -9,6 +9,8 @@ namespace WpfAnalyzers.PropertyChanged
 
     using WpfAnalyzers.PropertyChanged.Helpers;
 
+    using AnalysisResult = WpfAnalyzers.PropertyChanged.Helpers.AnalysisResult;
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF1014DontRaiseChangeForMissingProperty : DiagnosticAnalyzer
     {
