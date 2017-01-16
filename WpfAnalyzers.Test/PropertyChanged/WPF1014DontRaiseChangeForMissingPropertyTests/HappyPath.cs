@@ -171,5 +171,68 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1014DontRaiseChangeForMissingProp
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoresWhenNotInvokingReproIssue122()
+        {
+            var extCode = @"
+using System.ComponentModel;
+public static class PropertyChangedEventArgsExt
+{
+    public static bool HasPropertyChanged(this PropertyChangedEventArgs e, string propertyName)
+    {
+        return string.Equals(e.PropertyName, propertyName);
+    }
+}";
+
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int value;
+
+    public ViewModel()
+    {
+        this.PropertyChanged += OnPropertyChanged;
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+
+        set
+        {
+            if (value == this.value)
+            {
+                return;
+            }
+
+            this.value = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.HasPropertyChanged(""SomeProperty""))
+        {
+            // do something
+        }
+    }
+}";
+            await this.VerifyHappyPathAsync(extCode, testCode).ConfigureAwait(false);
+        }
     }
 }
