@@ -17,5 +17,5 @@ group Analyzers
 group Test
   source http://www.nuget.org/api/v2/
   framework: net452
-  nuget NUnit 3.4.1
+  nuget NUnit
   
