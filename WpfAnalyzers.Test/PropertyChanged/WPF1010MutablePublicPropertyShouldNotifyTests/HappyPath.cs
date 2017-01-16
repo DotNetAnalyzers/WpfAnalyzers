@@ -260,6 +260,106 @@ public class Foo : INotifyPropertyChanged
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
+        [Test]
+        public async Task CallsChainedOnPropertyChangedInBase()
+        {
+            var baseCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModelBase : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var testCode = @"
+public class Foo : ViewModelBase
+{
+    private string meh;
+
+    public string Meh
+    {
+        get
+        {
+            return this.meh;
+        }
+
+        set
+        {
+            if (value == this.meh)
+            {
+                return;
+            }
+
+            this.meh = value;
+            this.OnPropertyChanged();
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(baseCode, testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task CallsChainedOnPropertyChangedInGenericBase()
+        {
+            var baseCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModelBase<T> : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            var testCode = @"
+public class Foo<T> : ViewModelBase<T>
+{
+    private T meh;
+
+    public T Meh
+    {
+        get
+        {
+            return this.meh;
+        }
+
+        set
+        {
+            if (Equals(value, this.meh))
+            {
+                return;
+            }
+
+            this.meh = value;
+            this.OnPropertyChanged();
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(baseCode, testCode).ConfigureAwait(false);
+        }
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]

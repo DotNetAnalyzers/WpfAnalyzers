@@ -412,8 +412,8 @@
             {
                 foreach (var identifierName in this.IdentifierNames)
                 {
-                    var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
-                    if (parameter.Equals(symbol))
+                    var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IParameterSymbol;
+                    if (parameter.MetadataName == symbol?.MetadataName)
                     {
                         return true;
                     }
