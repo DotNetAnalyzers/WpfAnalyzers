@@ -234,5 +234,51 @@ public class ViewModel : INotifyPropertyChanged
 }";
             await this.VerifyHappyPathAsync(extCode, testCode).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task RaiseForOtherInstance()
+        {
+            var testCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void RaiseForChild(string propertyName)
+        {
+            var vm = new ViewModel();
+            vm.OnPropertyChanged(propertyName);
+        }
+    }";
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
