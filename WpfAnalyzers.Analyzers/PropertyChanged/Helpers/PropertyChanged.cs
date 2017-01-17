@@ -219,29 +219,39 @@
                             continue;
                         }
 
-                        if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                        if ((memberAccess != null && !(memberAccess.Expression is ThisExpressionSyntax)) ||
+                            (invocation.Expression is MemberBindingExpressionSyntax))
                         {
-                            ArgumentSyntax argument;
-                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
+                            if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                             {
-                                var identifier = argument.Expression as IdentifierNameSyntax;
-                                if (identifier?.Identifier.ValueText == parameter.Name)
+                                ArgumentSyntax argument;
+                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
                                 {
-                                    return AnalysisResult.Yes;
-                                }
-
-                                var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
-                                if (objectCreation != null)
-                                {
-                                    var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                    var identifier = argument.Expression as IdentifierNameSyntax;
+                                    if (identifier?.Identifier.ValueText == parameter.Name)
                                     {
                                         return AnalysisResult.Yes;
+                                    }
+
+                                    var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
+                                    if (objectCreation != null)
+                                    {
+                                        var nameArgument = objectCreation.ArgumentList.Arguments[0];
+                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                        {
+                                            return AnalysisResult.Yes;
+                                        }
                                     }
                                 }
                             }
 
                             return AnalysisResult.No;
+                        }
+
+                        if (!invokedMethod.ContainingType.Is(method.ContainingType))
+                        {
+                            continue;
                         }
 
                         using (var argsWalker = ArgumentsWalker.Create(invocation.ArgumentList))

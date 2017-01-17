@@ -49,20 +49,16 @@ namespace WpfAnalyzers.PropertyChanged
 
             var method = (IMethodSymbol)context.ContainingSymbol;
             if (method.Parameters.Length != 1 ||
-                method.Parameters[0].Type != KnownSymbol.String)
+                method.Parameters[0].Type != KnownSymbol.String ||
+                method.Parameters[0].IsCallerMemberName())
             {
                 return;
             }
 
-            IMethodSymbol invoker;
-            if (PropertyChanged.TryGetInvoker(method.ContainingType, context.SemanticModel, context.CancellationToken, out invoker))
+            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
-                if (invoker.Equals(method) &&
-                    !method.Parameters[0].IsCallerMemberName())
-                {
-                    var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));
-                }
+                var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));
             }
         }
 

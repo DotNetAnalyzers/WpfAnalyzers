@@ -193,7 +193,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public async Task RaiseForOtherInstance()
+        public async Task IgnoreWhenRaiseForOtherInstance()
         {
             var testCode = @"
     using System.ComponentModel;
@@ -236,6 +236,56 @@ namespace RoslynSandBox
         }
     }";
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoreWhenRaiseForOtherInstanceOfOtherType()
+        {
+            var viewModelCode = @"
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }";
+
+            var testCode = @"
+    public class Foo
+    {
+        public void RaiseForChild(string propertyName)
+        {
+            var vm = new ViewModel();
+            vm.OnPropertyChanged(propertyName);
+        }
+    }";
+            await this.VerifyHappyPathAsync(viewModelCode, testCode).ConfigureAwait(false);
         }
     }
 }

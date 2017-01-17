@@ -167,5 +167,93 @@ public class ViewModel : INotifyPropertyChanged
             await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
                     .ConfigureAwait(false);
         }
+
+        [TestCase("this.PropertyChanged")]
+        [TestCase("PropertyChanged")]
+        public async Task Invoker(string member)
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(↓string propertyName)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            testCode = testCode.AssertReplace("this.PropertyChanged", member);
+            var expected = this.CSharpDiagnostic()
+                                .WithLocationIndicated(ref testCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected , CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("this.PropertyChanged", member);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode)
+                    .ConfigureAwait(false);
+        }
+
+        [TestCase("this.OnPropertyChanged")]
+        [TestCase("OnPropertyChanged")]
+        public async Task ChainedInvoker(string member)
+        {
+            var testCode = @"
+using System.ComponentModel;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(↓string propertyName)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+}";
+
+            testCode = testCode.AssertReplace("this.OnPropertyChanged", member);
+            var expected = this.CSharpDiagnostic()
+                                .WithLocationIndicated(ref testCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System.ComponentModel;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+    {
+        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        this.PropertyChanged?.Invoke(this, e);
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("this.OnPropertyChanged", member);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode)
+                    .ConfigureAwait(false);
+        }
     }
 }
