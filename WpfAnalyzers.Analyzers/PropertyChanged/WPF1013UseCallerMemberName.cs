@@ -55,7 +55,6 @@ namespace WpfAnalyzers.PropertyChanged
             }
 
             IMethodSymbol invoker;
-
             if (PropertyChanged.TryGetInvoker(method.ContainingType, context.SemanticModel, context.CancellationToken, out invoker))
             {
                 if (invoker.Equals(method) &&

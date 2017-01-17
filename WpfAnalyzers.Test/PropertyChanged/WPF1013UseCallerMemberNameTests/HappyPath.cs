@@ -192,7 +192,6 @@ namespace RoslynSandBox
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-
         [Test]
         public async Task RaiseForOtherInstance()
         {
