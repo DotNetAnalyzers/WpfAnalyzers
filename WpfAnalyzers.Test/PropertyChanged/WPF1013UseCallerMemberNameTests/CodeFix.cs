@@ -188,7 +188,7 @@ public class ViewModel : INotifyPropertyChanged
             testCode = testCode.AssertReplace("this.PropertyChanged", member);
             var expected = this.CSharpDiagnostic()
                                 .WithLocationIndicated(ref testCode);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected , CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.ComponentModel;
