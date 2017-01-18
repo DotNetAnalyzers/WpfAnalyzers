@@ -249,7 +249,7 @@
                             return AnalysisResult.No;
                         }
 
-                        if (!invokedMethod.ContainingType.Is(method.ContainingType))
+                        if (!method.ContainingType.Is(invokedMethod.ContainingType))
                         {
                             continue;
                         }

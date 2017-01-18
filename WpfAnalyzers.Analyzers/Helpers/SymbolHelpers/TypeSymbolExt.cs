@@ -51,7 +51,8 @@
             where TMember : class, ISymbol
         {
             member = null;
-            if (type == null || string.IsNullOrEmpty(name))
+            if (type == null ||
+                string.IsNullOrEmpty(name))
             {
                 return false;
             }
@@ -72,9 +73,15 @@
 
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
-            if (first == null || other == null)
+            if (first == null ||
+                other == null)
             {
                 return false;
+            }
+
+            if (first.IsDefinition ^ other.IsDefinition)
+            {
+                return IsSameType(first.OriginalDefinition, other.OriginalDefinition);
             }
 
             return first.Equals(other);
@@ -104,7 +111,8 @@
                 return true;
             }
 
-            if (conversion.IsNullable && conversion.IsNullLiteral)
+            if (conversion.IsNullable &&
+                conversion.IsNullLiteral)
             {
                 return true;
             }
@@ -123,10 +131,17 @@
             return false;
         }
 
-        internal static bool IsNullable(this ITypeSymbol nullableType, ExpressionSyntax value, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsNullable(
+            this ITypeSymbol nullableType,
+            ExpressionSyntax value,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             var namedTypeSymbol = nullableType as INamedTypeSymbol;
-            if (namedTypeSymbol == null || !namedTypeSymbol.IsGenericType || namedTypeSymbol.Name != "Nullable" || namedTypeSymbol.TypeParameters.Length != 1)
+            if (namedTypeSymbol == null ||
+                !namedTypeSymbol.IsGenericType ||
+                namedTypeSymbol.Name != "Nullable" ||
+                namedTypeSymbol.TypeParameters.Length != 1)
             {
                 return false;
             }
@@ -165,18 +180,21 @@
 
         internal static bool Is(this ITypeSymbol type, ITypeSymbol other)
         {
-            var otherNamedType = other as INamedTypeSymbol;
-            while (type?.BaseType != null)
+            if (other.IsInterface())
             {
-                var namedType = type as INamedTypeSymbol;
-                if (namedType?.IsGenericType == true)
+                foreach (var @interface in type.AllInterfaces)
                 {
-                    if (IsSameType(namedType.OriginalDefinition, otherNamedType))
+                    if (IsSameType(@interface, other))
                     {
                         return true;
                     }
                 }
 
+                return false;
+            }
+
+            while (type?.BaseType != null)
+            {
                 if (IsSameType(type, other))
                 {
                     return true;
@@ -186,6 +204,11 @@
             }
 
             return false;
+        }
+
+        internal static bool IsInterface(this ITypeSymbol type)
+        {
+            return type != KnownSymbol.Object && type.BaseType == null;
         }
     }
 }
