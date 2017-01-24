@@ -12,6 +12,7 @@
                 propertySymbol.DeclaredAccessibility != Accessibility.Public ||
                 propertySymbol.IsStatic ||
                 propertySymbol.IsReadOnly ||
+                propertySymbol.GetMethod == null ||
                 propertySymbol.IsAbstract ||
                 propertySymbol.ContainingType.IsValueType ||
                 propertySymbol.ContainingType.DeclaredAccessibility != Accessibility.Public)

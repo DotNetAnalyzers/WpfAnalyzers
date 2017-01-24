@@ -450,6 +450,36 @@ public class Foo
         }
 
         [Test]
+        public async Task IgnoreSetOnly()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private int writeOnly;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public int WriteOnly
+    {
+        set
+        {
+            this.writeOnly = value;
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task IgnoreExpressionBody()
         {
             var testCode = @"
