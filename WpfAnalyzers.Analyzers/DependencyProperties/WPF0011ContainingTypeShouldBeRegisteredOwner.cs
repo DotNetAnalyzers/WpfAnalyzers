@@ -66,6 +66,22 @@
                 {
                     return;
                 }
+
+                if (methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
+                {
+                    var containingType = context.ContainingSymbol.ContainingType;
+                    var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                    if (memberAccess == null)
+                    {
+                        return;
+                    }
+
+                    var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as IFieldSymbol;
+                    if (!containingType.Is(dp?.ContainingType))
+                    {
+                        return;
+                    }
+                }
             }
             else if (methodSymbol == KnownSymbol.DependencyProperty.Register ||
                      methodSymbol == KnownSymbol.DependencyProperty.RegisterReadOnly ||

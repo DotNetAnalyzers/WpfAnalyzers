@@ -204,5 +204,30 @@ public class BarControl : FooControl
 
             await this.VerifyHappyPathAsync(new[] { fooControlCode, barControlCode }).ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoreDependencyPropertyOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
+        {
+            var testCode = @"
+namespace Meya
+{
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public partial class App : Application
+    {
+        static App()
+        {
+            // Ensure that we are using the right culture
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
     }
 }
