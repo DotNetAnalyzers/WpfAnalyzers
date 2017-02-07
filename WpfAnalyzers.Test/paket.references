@@ -7,6 +7,7 @@ System.Collections.Immutable
 
 group Analyzers
   StyleCop.Analyzers
+  Gu.Analyzers
   AsyncUsageAnalyzers
   Microsoft.CodeAnalysis.Analyzers
 

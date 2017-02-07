@@ -10,6 +10,7 @@ group Analyzers
   source http://www.nuget.org/api/v2/
   framework: net452
   nuget StyleCop.Analyzers
+  nuget Gu.Analyzers
   nuget AsyncUsageAnalyzers
   nuget JetBrains.Annotations
   nuget Microsoft.CodeAnalysis.Analyzers

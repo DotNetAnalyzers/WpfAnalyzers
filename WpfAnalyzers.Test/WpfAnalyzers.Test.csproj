@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
-    <Compile Include="DependencyProperties\HappyPathWithAll.cs" />
+    <Compile Include="HappyPathWithAll.cs" />
     <Compile Include="DependencyProperties\WPF0001BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0002BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="DependencyProperties\WPF0003ClrPropertyShouldMatchRegisteredName\HappyPath.cs" />
@@ -183,6 +183,14 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\analyzers\AsyncUsageAnalyzers\analyzers\dotnet\AsyncUsageAnalyzers.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\analyzers\Gu.Analyzers\analyzers\dotnet\cs\Gu.Analyzers.Analyzers.dll">
+      <Paket>True</Paket>
+    </Analyzer>
+    <Analyzer Include="..\packages\analyzers\Gu.Analyzers\analyzers\dotnet\cs\Gu.Analyzers.CodeFixes.dll">
       <Paket>True</Paket>
     </Analyzer>
   </ItemGroup>

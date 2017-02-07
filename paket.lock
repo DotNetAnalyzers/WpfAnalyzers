@@ -66,6 +66,7 @@ FRAMEWORK: NET452
 NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
+    Gu.Analyzers (0.1.11.14-dev)
     JetBrains.Annotations (10.2.1)
     Microsoft.CodeAnalysis.Analyzers (1.1)
     StyleCop.Analyzers (1.0)
