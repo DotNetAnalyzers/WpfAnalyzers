@@ -45,7 +45,7 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTest
         }
 
         [Test]
-        public async Task WhenNotifying()
+        public async Task WhenNotifyingCallerMemberName()
         {
             var testCode = @"
 using System.ComponentModel;
@@ -107,6 +107,124 @@ public class ViewModel : INotifyPropertyChanged
 }";
 
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotifyingCallerMemberNameExpressionBody()
+        {
+            var testCode = @"
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string firstName;
+    private string lastName;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string FullName => $""{this.FirstName} {this.LastName}"";
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            this.firstName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    public string LastName
+    {
+        get
+        {
+            return this.lastName;
+        }
+
+        set
+        {
+            if (value == this.lastName)
+            {
+                return;
+            }
+
+            this.lastName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenNotifyingHoshRepro()
+        {
+            var commandCode = @"
+using System;
+public class DelegateCommand
+{
+    public DelegateCommand(Func<object, bool> func)
+    {
+        throw new NotImplementedException();
+    }
+}";
+            var testCode = @"
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class FooClass : INotifyPropertyChanged
+{
+    private bool _foo;
+    public bool Foo
+    {
+        get { return _foo; }
+        set
+        {
+            if (_foo != value)
+            {
+                _foo = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private DelegateCommand _fooCommand;
+    public DelegateCommand FooCommand
+    {
+        get
+        {
+            if (_fooCommand != null)
+            {
+                return _fooCommand;
+            }
+
+            _fooCommand = new DelegateCommand(param => Foo = true);
+            return _fooCommand;
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}";
+
+            await this.VerifyHappyPathAsync(commandCode, testCode).ConfigureAwait(false);
         }
 
         [Test]

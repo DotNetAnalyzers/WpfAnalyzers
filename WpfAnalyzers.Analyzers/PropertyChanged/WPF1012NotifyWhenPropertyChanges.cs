@@ -306,6 +306,12 @@
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
+                if (node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null ||
+                    node.FirstAncestorOrSelf<ObjectCreationExpressionSyntax>() != null)
+                {
+                    return;
+                }
+
                 var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
                 var field = symbol as IFieldSymbol;
                 if (field != null)
