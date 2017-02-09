@@ -306,8 +306,7 @@
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if (node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null ||
-                    node.FirstAncestorOrSelf<ObjectCreationExpressionSyntax>() != null)
+                if (node.FirstAncestorOrSelf<ObjectCreationExpressionSyntax>() != null)
                 {
                     return;
                 }
