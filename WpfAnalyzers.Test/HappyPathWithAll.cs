@@ -11,6 +11,11 @@
 
     public class HappyPathWithAll : DiagnosticVerifier
     {
+        private static readonly IEnumerable<DiagnosticAnalyzer> AllAnalyzers = typeof(
+                WpfAnalyzers.DependencyProperties.WPF0041SetMutableUsingSetCurrentValue).Assembly.GetTypes()
+                                                                                        .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
+                                                                                        .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t));
+
         [Test]
         public void NotEmpty()
         {
@@ -236,9 +241,7 @@ internal static class BooleanBoxes
 
         internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return typeof(WpfAnalyzers.DependencyProperties.WPF0041SetMutableUsingSetCurrentValue).Assembly.GetTypes()
-                                                                                               .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                               .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t));
+            return AllAnalyzers;
         }
     }
 }
