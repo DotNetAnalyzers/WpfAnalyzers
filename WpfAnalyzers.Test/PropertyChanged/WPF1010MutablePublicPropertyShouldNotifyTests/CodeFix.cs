@@ -1012,5 +1012,26 @@ public class Foo : INotifyPropertyChanged
             await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
                     .ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.Windows.Input;
+
+    public class CustomGesture : MouseGesture
+    {
+        ↓public int Foo { get; set; }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
+                    .ConfigureAwait(false);
+        }
     }
 }

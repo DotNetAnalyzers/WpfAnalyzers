@@ -59,6 +59,11 @@
             var declaration = (PropertyDeclarationSyntax)context.Node;
             if (Property.ShouldNotify(declaration, propertySymbol, context.SemanticModel, context.CancellationToken))
             {
+                if (HasMemberNamedPropertyChanged(propertySymbol.ContainingType))
+                {
+                    return;
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), context.ContainingSymbol.Name));
             }
         }
@@ -81,6 +86,22 @@
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.FirstAncestorOrSelf<EventFieldDeclarationSyntax>().GetLocation(), context.ContainingSymbol.Name));
             }
+        }
+
+        private static bool HasMemberNamedPropertyChanged(ITypeSymbol type)
+        {
+            while (type != null)
+            {
+                if (type.GetMembers("PropertyChanged")
+                        .Length != 0)
+                {
+                    return true;
+                }
+
+                type = type.BaseType;
+            }
+
+            return false;
         }
     }
 }

@@ -41,7 +41,8 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChang
     }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [TestCase("null")]
@@ -80,7 +81,8 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChang
     }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -113,7 +115,8 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChang
         }
     }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [TestCase("null")]
@@ -148,7 +151,8 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChang
         }
     }";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -178,7 +182,8 @@ namespace WpfAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChang
             }
         }
     }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -190,7 +195,8 @@ public struct Foo
     public int Bar { get; set; }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -202,7 +208,8 @@ public class Foo
     public int Bar { get; } = 1;
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -214,7 +221,8 @@ public class Foo
     public int Bar => 1;
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -229,7 +237,8 @@ public class Foo
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -241,7 +250,8 @@ public abstract class Foo
     public abstract int Bar { get; set; }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -254,7 +264,8 @@ public class Foo
     public static int Bar { get; set; }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -267,7 +278,8 @@ internal class Foo
     public int Bar { get; set; }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -280,7 +292,8 @@ public class Foo
     internal int Bar { get; set; }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -301,7 +314,8 @@ public class FooControl : Control
         set { this.SetValue(BarProperty, value); }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -314,7 +328,8 @@ public class Foo
 {
     public event EventHandler foo;
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -368,7 +383,8 @@ public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter
         throw new NotSupportedException($""{nameof(BooleanToVisibilityConverter)} is only for OneWay bindings"");
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
 
         [Test]
@@ -417,7 +433,26 @@ public class DialogButtonTemplateSelector : DataTemplateSelector
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.Windows.Input;
+
+    public class CustomGesture : MouseGesture
+    {
+        public int Foo { get; set; }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
         }
     }
 }
