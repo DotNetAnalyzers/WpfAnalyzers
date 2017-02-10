@@ -1594,6 +1594,247 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WhenUsingBackingFieldExpressionBodyStringToUpper()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CapsName => this.name.ToUpper();
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                ↓this.name = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("CapsName");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CapsName => this.name.ToUpper();
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.CapsName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
+        {
+            var personCode = @"
+namespace RoslynSandBox
+{
+    public class Person
+    {
+        public Person(string firstName, string lastName)
+        {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+        }
+
+        public string FirstName { get; }
+
+        public string LastName { get; }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Person Person => new Person(this.firstName, this.lastName);
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                ↓this.firstName = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Person));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Person");
+            await this.VerifyCSharpDiagnosticAsync(new[] { personCode, testCode }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Person Person => new Person(this.firstName, this.lastName);
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Person));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Person));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(new[] { personCode, testCode }, new[] { personCode, fixedCode }, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenUsingBackingFieldsExpressionBodyReturningArray()
         {
             var testCode = @"
@@ -1713,6 +1954,155 @@ public class ViewModel : INotifyPropertyChanged
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WhenUsingBackingFieldsYieldReturning()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public IEnumerable<string> Names
+        {
+            get
+            {
+                yield return this.firstName;
+                yield return this.lastName;
+            }
+        }
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                ↓this.firstName = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Names));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Names");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+
+            var fixedCode = @"
+namespace RoslynSandBox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public IEnumerable<string> Names
+        {
+            get
+            {
+                yield return this.firstName;
+                yield return this.lastName;
+            }
+        }
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Names));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Names));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
