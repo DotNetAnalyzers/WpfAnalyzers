@@ -90,18 +90,8 @@
 
         private static bool HasMemberNamedPropertyChanged(ITypeSymbol type)
         {
-            while (type != null)
-            {
-                if (type.GetMembers("PropertyChanged")
-                        .Length != 0)
-                {
-                    return true;
-                }
-
-                type = type.BaseType;
-            }
-
-            return false;
+            ISymbol member;
+            return type.TryGetSingleMember("PropertyChanged", out member);
         }
     }
 }
