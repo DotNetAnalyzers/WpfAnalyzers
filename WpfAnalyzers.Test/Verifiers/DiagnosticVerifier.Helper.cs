@@ -176,16 +176,16 @@ namespace WpfAnalyzers.Test
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
-                .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.PresentationCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.PresentationFrameworkReference)
-                .AddMetadataReference(projectId, MetadataReferences.WindowsBaseReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemXamlReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
-                .AddMetadataReference(projectId, MetadataReferences.MvvmFrameworkReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
+                .AddMetadataReference(projectId, MetadataReferences.Corlib)
+                .AddMetadataReference(projectId, MetadataReferences.System)
+                .AddMetadataReference(projectId, MetadataReferences.SystemCore)
+                .AddMetadataReference(projectId, MetadataReferences.PresentationCore)
+                .AddMetadataReference(projectId, MetadataReferences.PresentationFramework)
+                .AddMetadataReference(projectId, MetadataReferences.WindowsBase)
+                .AddMetadataReference(projectId, MetadataReferences.SystemXaml)
+                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbols)
+                .AddMetadataReference(projectId, MetadataReferences.MvvmFramework)
+                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysis);
 
             solution.Workspace.Options =
                 solution.Workspace.Options

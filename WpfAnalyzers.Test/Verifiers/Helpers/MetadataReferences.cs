@@ -13,15 +13,30 @@ namespace WpfAnalyzers.Test
     /// </summary>
     internal static class MetadataReferences
     {
-        internal static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
-        internal static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
-        internal static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
-        internal static readonly MetadataReference PresentationCoreReference = MetadataReference.CreateFromFile(typeof(System.Windows.Media.Brush).Assembly.Location);
-        internal static readonly MetadataReference PresentationFrameworkReference = MetadataReference.CreateFromFile(typeof(System.Windows.Controls.Control).Assembly.Location);
-        internal static readonly MetadataReference WindowsBaseReference = MetadataReference.CreateFromFile(typeof(System.Windows.Media.Matrix).Assembly.Location);
-        internal static readonly MetadataReference SystemXamlReference = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlLanguage).Assembly.Location);
-        internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
-        internal static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
-        internal static readonly MetadataReference MvvmFrameworkReference = MetadataReference.CreateFromFile(typeof(MvvmFramework.ViewModelBase).Assembly.Location);
+        internal static readonly MetadataReference Corlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
+        internal static readonly MetadataReference System = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
+        internal static readonly MetadataReference SystemCore = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
+        internal static readonly MetadataReference PresentationCore = MetadataReference.CreateFromFile(typeof(System.Windows.Media.Brush).Assembly.Location);
+        internal static readonly MetadataReference PresentationFramework = MetadataReference.CreateFromFile(typeof(System.Windows.Controls.Control).Assembly.Location);
+        internal static readonly MetadataReference WindowsBase = MetadataReference.CreateFromFile(typeof(System.Windows.Media.Matrix).Assembly.Location);
+        internal static readonly MetadataReference SystemXaml = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlLanguage).Assembly.Location);
+        internal static readonly MetadataReference CSharpSymbols = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        internal static readonly MetadataReference CodeAnalysis = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        internal static readonly MetadataReference MvvmFramework = MetadataReference.CreateFromFile(typeof(MvvmFramework.ViewModelBase).Assembly.Location);
+
+        internal static MetadataReference[] All =>
+            new[]
+            {
+                Corlib,
+                System,
+                SystemCore,
+                PresentationCore,
+                PresentationFramework,
+                WindowsBase,
+                SystemXaml,
+                CSharpSymbols,
+                CodeAnalysis,
+                MvvmFramework,
+            };
     }
 }

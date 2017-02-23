@@ -1,19 +1,11 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class PropertyDeclarationSyntaxExt
     {
-        [Obsolete("Remove")]
-        internal static string Name(this PropertyDeclarationSyntax property)
-        {
-            return property?.Identifier.ValueText;
-        }
-
         internal static bool TryGetGetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
         {
             return TryGetAccessorDeclaration(property, SyntaxKind.GetAccessorDeclaration, out result);

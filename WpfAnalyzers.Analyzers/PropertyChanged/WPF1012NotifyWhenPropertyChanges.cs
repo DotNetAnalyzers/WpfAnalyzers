@@ -164,10 +164,7 @@
             var inProperty = context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
             if (inProperty != null)
             {
-                if (Property.IsSimplePropertyWithBackingField(
-                    inProperty,
-                    context.SemanticModel,
-                    context.CancellationToken))
+                if (Property.IsSimplePropertyWithBackingField(inProperty, context.SemanticModel, context.CancellationToken))
                 {
                     return;
                 }
@@ -178,7 +175,8 @@
                 foreach (var member in typeDeclaration.Members)
                 {
                     var propertyDeclaration = member as PropertyDeclarationSyntax;
-                    if (propertyDeclaration == null)
+                    if (propertyDeclaration == null ||
+                        Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
                     {
                         continue;
                     }

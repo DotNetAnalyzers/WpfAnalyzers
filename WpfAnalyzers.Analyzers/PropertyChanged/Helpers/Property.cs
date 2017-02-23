@@ -2,10 +2,68 @@
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class Property
     {
+        internal static bool IsLazy(this PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            AccessorDeclarationSyntax setter;
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
+            {
+                return false;
+            }
+
+            IFieldSymbol returnedField = null;
+            AccessorDeclarationSyntax getter;
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out getter))
+            {
+                if (getter.Body == null)
+                {
+                    return false;
+                }
+
+                using (var pooledReturns = ReturnExpressionsWalker.Create(getter.Body))
+                {
+                    if (pooledReturns.Item.ReturnValues.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var returnValue in pooledReturns.Item.ReturnValues)
+                    {
+                        var returnedSymbol = returnValue?.IsKind(SyntaxKind.CoalesceExpression) == true
+                            ? semanticModel.GetSymbolSafe((returnValue as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol
+                            : semanticModel.GetSymbolSafe(returnValue, cancellationToken) as IFieldSymbol;
+                        if (returnedSymbol == null)
+                        {
+                            return false;
+                        }
+
+                        if (returnedField != null &&
+                            !ReferenceEquals(returnedSymbol, returnedField))
+                        {
+                            return false;
+                        }
+
+                        returnedField = returnedSymbol;
+                    }
+                }
+
+                return AssignmentWalker.Assigns(returnedField, getter.Body, semanticModel, cancellationToken);
+            }
+
+            var arrow = propertyDeclaration.ExpressionBody;
+            if (arrow?.Expression?.IsKind(SyntaxKind.CoalesceExpression) != true)
+            {
+                return false;
+            }
+
+            returnedField = semanticModel.GetSymbolSafe((arrow.Expression as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol;
+            return AssignmentWalker.Assigns(returnedField, arrow.Expression, semanticModel, cancellationToken);
+        }
+
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol propertySymbol, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertySymbol.IsIndexer ||

@@ -1,7 +1,6 @@
 ﻿namespace WpfAnalyzers.Test
 {
     using System.Collections.Generic;
-
     using NUnit.Framework;
 
     internal static class StringHelpers
