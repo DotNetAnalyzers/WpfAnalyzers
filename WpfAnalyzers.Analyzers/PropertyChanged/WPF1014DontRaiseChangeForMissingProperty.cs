@@ -50,15 +50,21 @@ namespace WpfAnalyzers.PropertyChanged
 
             var invocation = (InvocationExpressionSyntax)context.Node;
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
                 PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
                 ArgumentSyntax nameArg;
-                string propretyName;
-                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propretyName) == AnalysisResult.Yes)
+                string propertyName;
+                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propertyName) == AnalysisResult.Yes)
                 {
-                    if (IsForExistingProperty(context, propretyName))
+                    var type = invocation.Expression is IdentifierNameSyntax ||
+                               (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax ||
+                               (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is BaseExpressionSyntax ||
+                               context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol == KnownSymbol.PropertyChangedEventHandler.Invoke
+                        ? context.ContainingSymbol.ContainingType
+                        : context.SemanticModel.GetTypeInfoSafe((invocation.Expression as MemberAccessExpressionSyntax)?.Expression, context.CancellationToken)
+                                 .Type;
+                    if (IsForExistingProperty(type, propertyName))
                     {
                         return;
                     }
@@ -86,7 +92,7 @@ namespace WpfAnalyzers.PropertyChanged
             }
         }
 
-        private static bool IsForExistingProperty(SyntaxNodeAnalysisContext context, string name)
+        private static bool IsForExistingProperty(ITypeSymbol type, string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -95,7 +101,7 @@ namespace WpfAnalyzers.PropertyChanged
 
             if (name == "Item[]")
             {
-                foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers())
+                foreach (var member in type.RecursiveMembers())
                 {
                     var property = member as IPropertySymbol;
                     if (property?.IsIndexer == true)
@@ -107,7 +113,7 @@ namespace WpfAnalyzers.PropertyChanged
                 return false;
             }
 
-            foreach (var member in context.ContainingSymbol.ContainingType.RecursiveMembers(name))
+            foreach (var member in type.RecursiveMembers(name))
             {
                 var property = member as IPropertySymbol;
                 if (property?.IsIndexer == false)
