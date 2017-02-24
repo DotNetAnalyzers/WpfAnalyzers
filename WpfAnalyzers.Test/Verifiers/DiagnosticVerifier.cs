@@ -7,8 +7,10 @@ namespace WpfAnalyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -20,11 +22,14 @@ namespace WpfAnalyzers.Test
     /// <summary>
     /// Superclass of all unit tests for <see cref="DiagnosticAnalyzer"/>s.
     /// </summary>
-    public abstract partial class DiagnosticVerifier
+    public abstract partial class DiagnosticVerifier : INotifyPropertyChanged
     {
         private const int DefaultIndentationSize = 4;
         private const int DefaultTabSize = 4;
         private const bool DefaultUseTabs = false;
+        private int indentationSize;
+        private bool useTabs;
+        private int tabSize;
 
         public DiagnosticVerifier()
         {
@@ -32,6 +37,8 @@ namespace WpfAnalyzers.Test
             this.TabSize = DefaultTabSize;
             this.UseTabs = DefaultUseTabs;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the value of the <see cref="Microsoft.CodeAnalysis.Formatting.FormattingOptions.IndentationSize"/> to apply to the test
@@ -42,8 +49,21 @@ namespace WpfAnalyzers.Test
         /// </value>
         public int IndentationSize
         {
-            get;
-            protected set;
+            get
+            {
+                return this.indentationSize;
+            }
+
+            protected set
+            {
+                if (value == this.indentationSize)
+                {
+                    return;
+                }
+
+                this.indentationSize = value;
+                this.OnPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -55,8 +75,21 @@ namespace WpfAnalyzers.Test
         /// </value>
         public bool UseTabs
         {
-            get;
-            protected set;
+            get
+            {
+                return this.useTabs;
+            }
+
+            protected set
+            {
+                if (value == this.useTabs)
+                {
+                    return;
+                }
+
+                this.useTabs = value;
+                this.OnPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -67,8 +100,21 @@ namespace WpfAnalyzers.Test
         /// </value>
         public int TabSize
         {
-            get;
-            protected set;
+            get
+            {
+                return this.tabSize;
+            }
+
+            protected set
+            {
+                if (value == this.tabSize)
+                {
+                    return;
+                }
+
+                this.tabSize = value;
+                this.OnPropertyChanged();
+            }
         }
 
         protected internal static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
@@ -282,6 +328,11 @@ namespace WpfAnalyzers.Test
         /// New instances of all the C# analyzers being tested.
         /// </returns>
         internal abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         [Conditional("DEBUG")]
         //// ReSharper disable once UnusedMember.Local

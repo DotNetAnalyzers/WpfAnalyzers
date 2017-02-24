@@ -6,6 +6,7 @@ System.Collections.Immutable
 group Analyzers
   StyleCop.Analyzers
   Gu.Analyzers
+  WpfAnalyzers
   AsyncUsageAnalyzers
   JetBrains.Annotations
   Microsoft.CodeAnalysis.Analyzers

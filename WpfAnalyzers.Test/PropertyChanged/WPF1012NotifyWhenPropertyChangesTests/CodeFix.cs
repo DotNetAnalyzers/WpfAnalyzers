@@ -688,7 +688,6 @@ using System.Runtime.CompilerServices;
 public class ViewModel : INotifyPropertyChanged
 {
     private string firstName;
-    private string lastName;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -738,7 +737,6 @@ using System.Runtime.CompilerServices;
 public class ViewModel : INotifyPropertyChanged
 {
     private string firstName;
-    private string lastName;
 
     public event PropertyChangedEventHandler PropertyChanged;
 

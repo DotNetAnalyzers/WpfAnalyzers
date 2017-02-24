@@ -185,37 +185,72 @@
             UsingDirectiveSyntax usingDirective)
             where T : SyntaxNode
         {
-            var insertName = (usingDirective.Name as IdentifierNameSyntax)?.Identifier.ValueText;
-            if (insertName == null)
+            string first;
+            if (!TryGetPart(usingDirective.Name, 1, out first))
             {
                 return add(node, usingDirective);
             }
 
             var usings = selector(node);
-            if (!usings.Any())
-            {
-                return add(node, usingDirective);
-            }
-
             foreach (var @using in usings)
             {
-                var identifierNameSyntax = @using.Name as IdentifierNameSyntax;
-                if (identifierNameSyntax != null)
+                string fst;
+                if (!TryGetPart(@using.Name, 0, out fst) ||
+                    fst != "System")
                 {
-                    var name = identifierNameSyntax.Identifier.ValueText;
-                    if (!name.StartsWith("System"))
-                    {
-                        return node.InsertNodesBefore(@using, new[] { usingDirective });
-                    }
+                    return add(node, usingDirective);
+                }
 
-                    if (string.Compare(insertName, name, StringComparison.Ordinal) < 0)
-                    {
-                        return node.InsertNodesBefore(@using, new[] { usingDirective });
-                    }
+                string other;
+                if (!TryGetPart(@using.Name, 1, out other))
+                {
+                    continue;
+                }
+
+                if (string.Compare(first, other, StringComparison.Ordinal) < 0)
+                {
+                    return node.InsertNodesBefore(@using, new[] { usingDirective });
                 }
             }
 
             return add(node, usingDirective);
+        }
+
+        private static bool TryGetPart(NameSyntax name, int index, out string part)
+        {
+            part = null;
+            var identifierName = name as IdentifierNameSyntax;
+            if (identifierName != null)
+            {
+                if (index == 0)
+                {
+                    part = identifierName.Identifier.ValueText;
+                }
+
+                return part != null;
+            }
+
+            var qualifiedName = name as QualifiedNameSyntax;
+            if (qualifiedName != null)
+            {
+                var left = qualifiedName;
+                while (left.Left is QualifiedNameSyntax)
+                {
+                    left = (QualifiedNameSyntax)left.Left;
+                }
+
+                if (index == 0)
+                {
+                    return TryGetPart(left.Left, 0, out part);
+                }
+
+                if (index == 1)
+                {
+                    part = left.Right.Identifier.ValueText;
+                }
+            }
+
+            return part != null;
         }
 
         private static bool HasUsing(this SyntaxList<UsingDirectiveSyntax> usings, UsingDirectiveSyntax @using)

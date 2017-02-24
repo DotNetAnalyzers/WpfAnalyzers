@@ -11,6 +11,7 @@ group Analyzers
   framework: net452
   nuget StyleCop.Analyzers
   nuget Gu.Analyzers
+  nuget WpfAnalyzers
   nuget AsyncUsageAnalyzers
   nuget JetBrains.Annotations
   nuget Microsoft.CodeAnalysis.Analyzers

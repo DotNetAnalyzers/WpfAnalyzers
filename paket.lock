@@ -70,9 +70,10 @@ NUGET
     JetBrains.Annotations (10.2.1)
     Microsoft.CodeAnalysis.Analyzers (1.1)
     StyleCop.Analyzers (1.0)
+    WpfAnalyzers (0.2.7.8)
 
 GROUP Test
 FRAMEWORK: NET452
 NUGET
   remote: http://www.nuget.org/api/v2
-    NUnit (3.4.1)
+    NUnit (3.6)

@@ -240,12 +240,21 @@ namespace TestCode
         }
 
         [Test]
-        public async Task WhenInterfaceOnlyAndNameSpaceAndUsingInside()
+        public async Task WhenInterfaceOnlyAndNamespaceAndUsingsInside()
         {
             var testCode = @"
 namespace TestCode
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     public class Foo : ↓INotifyPropertyChanged
     {
@@ -259,8 +268,17 @@ namespace TestCode
 namespace TestCode
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     public class Foo : INotifyPropertyChanged
     {
@@ -277,10 +295,19 @@ namespace TestCode
         }
 
         [Test]
-        public async Task WhenInterfaceOnlyAndNameSpaceAndUsingOutside()
+        public async Task WhenInterfaceOnlyAndNamespaceAndUsingsOutside()
         {
             var testCode = @"
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 namespace TestCode
 {
@@ -294,8 +321,17 @@ namespace TestCode
 
             var fixedCode = @"
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 namespace TestCode
 {
