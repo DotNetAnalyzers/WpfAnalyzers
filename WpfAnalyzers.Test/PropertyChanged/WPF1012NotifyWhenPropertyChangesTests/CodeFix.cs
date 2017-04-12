@@ -9,7 +9,7 @@
     using NUnit.Framework;
     using WpfAnalyzers.PropertyChanged;
 
-    internal class CodeFix : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
+    internal partial class CodeFix : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
     {
         [TestCase("this.value = value;")]
         [TestCase("this.value += value;")]
