@@ -78,6 +78,39 @@ public partial class FooControl
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, null);")]
+        public async Task DependencyPropertyOfTypeNullableInt(string setValueCall)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int?),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
+
+    public int? Bar
+    {
+        get { return (int?)GetValue(BarProperty); }
+        set { SetValue(BarProperty, value); }
+    }
+
+    public void Meh()
+    {
+        this.SetValue(BarProperty, 1);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, 1);")]
+        [TestCase("this.SetValue(BarProperty, null);")]
+        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, null);")]
         public async Task DependencyPropertyOfTypeObject(string setValueCall)
         {
             var testCode = @"
