@@ -90,7 +90,7 @@ public class FooControl : Control
         ""Bar"",
         typeof(int?),
         typeof(FooControl),
-        new PropertyMetadata(default(int)));
+        new PropertyMetadata(default(int?)));
 
     public int? Bar
     {
@@ -104,6 +104,37 @@ public class FooControl : Control
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [TestCase("this.SetValue(BarProperty, meh);")]
+        [TestCase("this.SetCurrentValue(BarProperty, meh);")]
+        public async Task DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
+        {
+            var testCode = @"
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
+{
+    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        ""Bar"",
+        typeof(int?),
+        typeof(FooControl),
+        new PropertyMetadata(default(int?)));
+
+    public int? Bar
+    {
+        get { return (int?)this.GetValue(BarProperty); }
+        set { this.SetValue(BarProperty, value); }
+    }
+
+    public void Meh(int meh)
+    {
+        this.SetValue(BarProperty, meh);
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, meh);", setValueCall);
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
