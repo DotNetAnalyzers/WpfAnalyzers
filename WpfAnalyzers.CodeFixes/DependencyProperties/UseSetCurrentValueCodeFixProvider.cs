@@ -62,8 +62,7 @@
             {
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                  .ConfigureAwait(false);
-                InvocationExpressionSyntax setCurrentValueCall;
-                if (TryGetFix(semanticModel, context.CancellationToken, assignment, out setCurrentValueCall))
+                if (TryGetFix(semanticModel, context.CancellationToken, assignment, out InvocationExpressionSyntax setCurrentValueCall))
                 {
                     return new Fix(assignment, setCurrentValueCall);
                 }
@@ -75,8 +74,7 @@
             {
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                  .ConfigureAwait(false);
-                InvocationExpressionSyntax setCurrentValueCall;
-                if (TryGetFix(semanticModel, context.CancellationToken, invocation, out setCurrentValueCall))
+                if (TryGetFix(semanticModel, context.CancellationToken, invocation, out InvocationExpressionSyntax setCurrentValueCall))
                 {
                     return new Fix(invocation, setCurrentValueCall);
                 }
@@ -92,20 +90,17 @@
             out InvocationExpressionSyntax setCurrentValueInvocation)
         {
             setCurrentValueInvocation = null;
-            ExpressionSyntax setCurrentValue;
-            if (!SetCurrentValueExpression.TryCreate(assignment, out setCurrentValue))
+            if (!SetCurrentValueExpression.TryCreate(assignment, out ExpressionSyntax setCurrentValue))
             {
                 return false;
             }
 
-            ArgumentSyntax property;
-            if (!Arguments.TryCreateProperty(assignment, semanticModel, cancellationToken, out property))
+            if (!Arguments.TryCreateProperty(assignment, semanticModel, cancellationToken, out ArgumentSyntax property))
             {
                 return false;
             }
 
-            ArgumentSyntax value;
-            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out value))
+            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out ArgumentSyntax value))
             {
                 return false;
             }
@@ -125,22 +120,18 @@
             out InvocationExpressionSyntax setCurrentValueInvocation)
         {
             setCurrentValueInvocation = null;
-            ArgumentSyntax property;
-            ArgumentSyntax value;
-            IFieldSymbol setField;
             if (!DependencyObject.TryGetSetValueArguments(
-                    setValue,
-                    semanticModel,
-                    cancellationToken,
-                    out property,
-                    out setField,
-                    out value))
+setValue,
+semanticModel,
+cancellationToken,
+out ArgumentSyntax property,
+out IFieldSymbol setField,
+out ArgumentSyntax value))
             {
                 return false;
             }
 
-            ExpressionSyntax setCurrentValue;
-            if (SetCurrentValueExpression.TryCreate(setValue, out setCurrentValue))
+            if (SetCurrentValueExpression.TryCreate(setValue, out ExpressionSyntax setCurrentValue))
             {
                 setCurrentValueInvocation = setValue.WithExpression(setCurrentValue)
                                                     .WithLeadingTrivia(setValue.GetLeadingTrivia());
@@ -192,8 +183,7 @@
             private static bool TryCreate(ExpressionSyntax expression, out ExpressionSyntax result)
             {
                 result = null;
-                var memberAccess = expression as MemberAccessExpressionSyntax;
-                if (memberAccess != null)
+                if (expression is MemberAccessExpressionSyntax memberAccess)
                 {
                     if (memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
                     {
@@ -205,8 +195,7 @@
                     return true;
                 }
 
-                var memberBinding = expression as MemberBindingExpressionSyntax;
-                if (memberBinding != null)
+                if (expression is MemberBindingExpressionSyntax memberBinding)
                 {
                     result = memberBinding.WithName(SetCurrentValueIdentifier);
                     return true;
@@ -229,8 +218,7 @@
                 result = null;
                 var property = semanticModel.GetSymbolInfo(assignment.Left, cancellationToken).Symbol as IPropertySymbol;
 
-                IFieldSymbol fieldSymbol;
-                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out fieldSymbol))
+                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out IFieldSymbol fieldSymbol))
                 {
                     result = DependencyProperty.CreateArgument(fieldSymbol, semanticModel, assignment.SpanStart);
                 }

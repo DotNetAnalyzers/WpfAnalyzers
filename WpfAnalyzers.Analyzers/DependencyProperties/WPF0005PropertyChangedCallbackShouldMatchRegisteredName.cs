@@ -42,8 +42,7 @@
         internal static bool TryGetIdentifierAndRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string registeredName)
         {
             registeredName = null;
-            string name;
-            if (!PropertyChangedCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out name))
+            if (!PropertyChangedCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string name))
             {
                 return false;
             }
@@ -66,24 +65,21 @@
                 return;
             }
 
-            ArgumentSyntax callback;
             if (!PropertyMetaData.TryGetPropertyChangedCallback(
-                    objectCreation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out callback))
+        objectCreation,
+        context.SemanticModel,
+        context.CancellationToken,
+        out ArgumentSyntax callback))
             {
                 return;
             }
 
-            IdentifierNameSyntax nameExpression;
-            string registeredName;
             if (TryGetIdentifierAndRegisteredName(
-                callback,
-                context.SemanticModel,
-                context.CancellationToken,
-                out nameExpression,
-                out registeredName))
+callback,
+context.SemanticModel,
+context.CancellationToken,
+out IdentifierNameSyntax nameExpression,
+out string registeredName))
             {
                 if (!nameExpression.Identifier.ValueText.IsParts("On", registeredName, "Changed"))
                 {

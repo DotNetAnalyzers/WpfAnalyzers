@@ -34,8 +34,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            PropertyDeclarationSyntax propertyDeclaration;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 return IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
             }
@@ -48,9 +47,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            IFieldSymbol getField;
-            IFieldSymbol setField;
-            return TryGetBackingFields(property, semanticModel, cancellationToken, out getField, out setField);
+            return TryGetBackingFields(property, semanticModel, cancellationToken, out IFieldSymbol getField, out IFieldSymbol setField);
         }
 
         /// <summary>
@@ -62,8 +59,7 @@ namespace WpfAnalyzers.DependencyProperties
             result = null;
             IFieldSymbol getter;
             IFieldSymbol setter;
-            PropertyDeclarationSyntax propertyDeclaration;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 if (TryGetBackingFields(
                     property,
@@ -99,8 +95,7 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetRegisteredName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            PropertyDeclarationSyntax propertyDeclaration;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 return TryGetRegisteredName(
                     propertyDeclaration,
@@ -117,8 +112,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// </summary>
         internal static bool TryGetRegisteredName(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            IFieldSymbol field;
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out field))
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out IFieldSymbol field))
             {
                 return DependencyProperty.TryGetRegisteredName(field, semanticModel, cancellationToken, out result);
             }
@@ -133,8 +127,7 @@ namespace WpfAnalyzers.DependencyProperties
         internal static bool TryGetRegisteredType(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
-            PropertyDeclarationSyntax propertyDeclaration;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 return TryGetRegisteredType(
                     propertyDeclaration,
@@ -151,8 +144,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// </summary>
         internal static bool TryGetRegisteredType(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
-            IFieldSymbol field;
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out field))
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out IFieldSymbol field))
             {
                 return DependencyProperty.TryGetRegisteredType(field, semanticModel, cancellationToken, out result);
             }
@@ -169,8 +161,7 @@ namespace WpfAnalyzers.DependencyProperties
             getField = null;
             setField = null;
 
-            PropertyDeclarationSyntax propertyDeclaration;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 if (TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
                 {
@@ -194,10 +185,8 @@ namespace WpfAnalyzers.DependencyProperties
         {
             getField = null;
             setField = null;
-            AccessorDeclarationSyntax getAccessor;
-            AccessorDeclarationSyntax setAccessor;
-            if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out getAccessor) &&
-                propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out setAccessor))
+            if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out AccessorDeclarationSyntax getAccessor) &&
+propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out AccessorDeclarationSyntax setAccessor))
             {
                 using (var pooled = ClrGetterWalker.Create(semanticModel, cancellationToken, getAccessor))
                 {
@@ -283,8 +272,7 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            SyntaxReference reference;
-            if (property.DeclaringSyntaxReferences.TryGetLast(out reference))
+            if (property.DeclaringSyntaxReferences.TryGetLast(out SyntaxReference reference))
             {
                 result = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
                 return result != null;
@@ -296,21 +284,18 @@ namespace WpfAnalyzers.DependencyProperties
         private static bool TryGetRegisterField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
         {
             result = null;
-            IFieldSymbol getter;
-            IFieldSymbol setter;
             if (TryGetBackingFields(
-                property,
-                semanticModel,
-                cancellationToken,
-                out getter,
-                out setter))
+property,
+semanticModel,
+cancellationToken,
+out IFieldSymbol getter,
+out IFieldSymbol setter))
             {
-                IFieldSymbol keyField;
                 if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                    getter,
-                    semanticModel,
-                    cancellationToken,
-                    out keyField))
+    getter,
+    semanticModel,
+    cancellationToken,
+    out IFieldSymbol keyField))
                 {
                     getter = keyField;
                 }

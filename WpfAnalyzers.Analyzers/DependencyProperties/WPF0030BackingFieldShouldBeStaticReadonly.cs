@@ -58,12 +58,11 @@
                 return;
             }
 
-            InvocationExpressionSyntax _;
             if (DependencyProperty.TryGetRegisterInvocationRecursive(
-                field,
-                context.SemanticModel,
-                context.CancellationToken,
-                out _))
+    field,
+    context.SemanticModel,
+    context.CancellationToken,
+    out InvocationExpressionSyntax _))
             {
                 if (!field.IsReadOnly || !field.IsStatic)
                 {

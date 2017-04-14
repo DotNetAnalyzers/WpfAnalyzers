@@ -110,12 +110,11 @@ namespace WpfAnalyzers
             var property = semanticModel.GetDeclaredSymbolSafe(
                 setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(),
                 cancellationToken);
-            IFieldSymbol backingField;
             if (PropertyChanged.Helpers.Property.TryGetBackingField(
-                property,
-                semanticModel,
-                cancellationToken,
-                out backingField))
+    property,
+    semanticModel,
+    cancellationToken,
+    out IFieldSymbol backingField))
             {
                 var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(backingField.Name, property, diagnosticOptions);
                 return new Fix(assignment, ifReturn);

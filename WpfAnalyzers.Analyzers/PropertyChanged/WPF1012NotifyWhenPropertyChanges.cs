@@ -70,8 +70,7 @@
             }
 
             var expression = (PostfixUnaryExpressionSyntax)context.Node;
-            IFieldSymbol field;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
             {
                 Handle(context, field);
             }
@@ -85,8 +84,7 @@
             }
 
             var expression = (PrefixUnaryExpressionSyntax)context.Node;
-            IFieldSymbol field;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out field))
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
             {
                 Handle(context, field);
             }
@@ -100,8 +98,7 @@
             }
 
             var expression = (AssignmentExpressionSyntax)context.Node;
-            IFieldSymbol field;
-            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out field))
+            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
             {
                 Handle(context, field);
             }
@@ -115,15 +112,13 @@
                 return false;
             }
 
-            var identifierName = node as IdentifierNameSyntax;
-            if (identifierName != null)
+            if (node is IdentifierNameSyntax identifierName)
             {
                 field = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IFieldSymbol;
                 return field != null;
             }
 
-            var memberAccess = node as MemberAccessExpressionSyntax;
-            if (memberAccess != null)
+            if (node is MemberAccessExpressionSyntax memberAccess)
             {
                 if (memberAccess.Expression is ThisExpressionSyntax &&
                     memberAccess.Name is IdentifierNameSyntax)
@@ -252,8 +247,7 @@
                 return property.ExpressionBody.Expression;
             }
 
-            AccessorDeclarationSyntax getter;
-            if (property.TryGetGetAccessorDeclaration(out getter))
+            if (property.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
             {
                 return getter.Body;
             }
@@ -305,27 +299,23 @@
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
                 var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
-                var field = symbol as IFieldSymbol;
-                if (field != null)
+                if (symbol is IFieldSymbol field)
                 {
                     this.fields.Add(field);
                 }
 
-                var property = symbol as IPropertySymbol;
-                if (property != null)
+                if (symbol is IPropertySymbol property)
                 {
                     foreach (var declaration in property.Declarations(this.cancellationToken))
                     {
-                        AccessorDeclarationSyntax getter;
-                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out getter))
+                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
                         {
                             this.Visit(getter);
                         }
                     }
                 }
 
-                var method = symbol as IMethodSymbol;
-                if (method != null)
+                if (symbol is IMethodSymbol method)
                 {
                     foreach (var declaration in method.Declarations(this.cancellationToken))
                     {

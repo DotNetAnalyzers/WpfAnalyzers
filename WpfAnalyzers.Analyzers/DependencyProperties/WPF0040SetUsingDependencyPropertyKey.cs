@@ -50,11 +50,8 @@
             }
 
             var invocation = context.Node as InvocationExpressionSyntax;
-            ArgumentSyntax property;
-            ArgumentSyntax value;
-            IFieldSymbol setField;
-            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) &&
-                !DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
+            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value) &&
+!DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
                 return;
             }
@@ -65,12 +62,11 @@
                 return;
             }
 
-            IFieldSymbol keyField;
             if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                setField,
-                context.SemanticModel,
-                context.CancellationToken,
-                out keyField))
+    setField,
+    context.SemanticModel,
+    context.CancellationToken,
+    out IFieldSymbol keyField))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, property.GetLocation(), property, DependencyProperty.CreateArgument(keyField, context.SemanticModel, property.SpanStart)));
             }

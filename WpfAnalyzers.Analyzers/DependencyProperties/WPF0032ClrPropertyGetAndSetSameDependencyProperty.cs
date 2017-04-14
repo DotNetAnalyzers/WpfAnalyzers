@@ -50,21 +50,18 @@
                 return;
             }
 
-            IFieldSymbol setter;
-            IFieldSymbol getter;
             if (ClrProperty.TryGetBackingFields(
-                propertyDeclaration,
-                context.SemanticModel,
-                context.CancellationToken,
-                out getter,
-                out setter))
+propertyDeclaration,
+context.SemanticModel,
+context.CancellationToken,
+out IFieldSymbol getter,
+out IFieldSymbol setter))
             {
-                IFieldSymbol keyField;
                 if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                    getter,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out keyField))
+    getter,
+    context.SemanticModel,
+    context.CancellationToken,
+    out IFieldSymbol keyField))
                 {
                     getter = keyField;
                 }

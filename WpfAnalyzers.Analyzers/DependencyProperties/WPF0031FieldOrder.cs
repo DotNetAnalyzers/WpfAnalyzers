@@ -58,12 +58,11 @@
                 return;
             }
 
-            IFieldSymbol keyField;
             if (!DependencyProperty.TryGetDependencyPropertyKeyField(
-                  field,
-                  context.SemanticModel,
-                  context.CancellationToken,
-                  out keyField))
+      field,
+      context.SemanticModel,
+      context.CancellationToken,
+      out IFieldSymbol keyField))
             {
                 return;
             }
@@ -73,8 +72,7 @@
                 return;
             }
 
-            SyntaxReference reference;
-            if (keyField.DeclaringSyntaxReferences.TryGetFirst(out reference))
+            if (keyField.DeclaringSyntaxReferences.TryGetFirst(out SyntaxReference reference))
             {
                 var keyNode = reference.GetSyntax(context.CancellationToken);
                 if (!ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) ||

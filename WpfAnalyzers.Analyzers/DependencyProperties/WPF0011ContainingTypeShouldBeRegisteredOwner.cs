@@ -98,8 +98,7 @@
                 return;
             }
 
-            ITypeSymbol ownerType;
-            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ownerType))
+            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
             {
                 return;
             }

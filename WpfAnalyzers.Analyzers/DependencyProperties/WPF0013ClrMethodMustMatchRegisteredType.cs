@@ -56,11 +56,9 @@
                 return;
             }
 
-            IFieldSymbol getField;
-            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out getField))
+            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol getField))
             {
-                ITypeSymbol registeredType;
-                if (DependencyProperty.TryGetRegisteredType(getField, context.SemanticModel, context.CancellationToken, out registeredType))
+                if (DependencyProperty.TryGetRegisteredType(getField, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
                 {
                     if (!method.ReturnType.IsSameType(registeredType))
                     {
@@ -71,15 +69,13 @@
                 return;
             }
 
-            IFieldSymbol setField;
-            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out setField))
+            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol setField))
             {
-                ITypeSymbol registeredType;
                 if (DependencyProperty.TryGetRegisteredType(
-                    setField,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out registeredType))
+    setField,
+    context.SemanticModel,
+    context.CancellationToken,
+    out ITypeSymbol registeredType))
                 {
                     if (!method.Parameters[1].Type.IsSameType(registeredType))
                     {

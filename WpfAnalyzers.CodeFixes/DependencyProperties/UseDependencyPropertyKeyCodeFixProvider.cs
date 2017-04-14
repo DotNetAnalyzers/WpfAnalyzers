@@ -42,23 +42,19 @@
                     continue;
                 }
 
-                ArgumentSyntax property;
-                IFieldSymbol setField;
-                ArgumentSyntax value;
                 if (DependencyObject.TryGetSetValueArguments(
-                      invocation,
-                      semanticModel,
-                      context.CancellationToken,
-                      out property,
-                      out setField,
-                      out value))
+                    invocation,
+                    semanticModel,
+                    context.CancellationToken,
+                    out ArgumentSyntax property,
+                    out IFieldSymbol setField,
+                    out ArgumentSyntax value))
                 {
-                    IFieldSymbol keyField;
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
                         setField,
                         semanticModel,
                         context.CancellationToken,
-                        out keyField))
+                        out IFieldSymbol keyField))
                     {
                         var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
                         var setValue = invocation.ReplaceNode(property, keyArg);
@@ -70,7 +66,7 @@
                                     cancellationToken,
                                     invocation,
                                     setValue),
-                                this.GetType().FullName),
+                                 this.GetType().FullName),
                             diagnostic);
                     }
 
@@ -85,12 +81,11 @@
                       out setField,
                       out value))
                 {
-                    IFieldSymbol keyField;
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
                         setField,
                         semanticModel,
                         context.CancellationToken,
-                        out keyField))
+                        out IFieldSymbol keyField))
                     {
                         var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
                         var setValue = invocation.WithExpression(SetValueExpression(invocation.Expression))
@@ -103,7 +98,8 @@
                                     cancellationToken,
                                     invocation,
                                     setValue),
-                                this.GetType().FullName),
+                                this.GetType()
+                                    .FullName),
                             diagnostic);
                     }
                 }
@@ -123,16 +119,14 @@
 
         private static ExpressionSyntax SetValueExpression(ExpressionSyntax old)
         {
-            var identifierNameSyntax = old as IdentifierNameSyntax;
-            if (identifierNameSyntax != null)
+            if (old is IdentifierNameSyntax identifierNameSyntax)
             {
                 return identifierNameSyntax.Identifier.ValueText == "SetCurrentValue"
                            ? identifierNameSyntax.WithIdentifier(SyntaxFactory.Identifier("SetValue"))
                            : identifierNameSyntax;
             }
 
-            var memberAccessExpressionSyntax = old as MemberAccessExpressionSyntax;
-            if (memberAccessExpressionSyntax != null)
+            if (old is MemberAccessExpressionSyntax memberAccessExpressionSyntax)
             {
                 var newName = SetValueExpression(memberAccessExpressionSyntax.Name) as SimpleNameSyntax;
                 return memberAccessExpressionSyntax.WithName(newName);

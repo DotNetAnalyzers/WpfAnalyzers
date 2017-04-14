@@ -53,9 +53,7 @@ namespace WpfAnalyzers.PropertyChanged
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
                 PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
-                ArgumentSyntax nameArg;
-                string propertyName;
-                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out nameArg, out propertyName) == AnalysisResult.Yes)
+                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax nameArg, out string propertyName) == AnalysisResult.Yes)
                 {
                     var type = invocation.Expression is IdentifierNameSyntax ||
                                (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax ||

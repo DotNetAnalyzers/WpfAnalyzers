@@ -15,8 +15,7 @@
                 return false;
             }
 
-            SyntaxReference reference;
-            if (field.DeclaringSyntaxReferences.TryGetLast(out reference))
+            if (field.DeclaringSyntaxReferences.TryGetLast(out SyntaxReference reference))
             {
                 var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
                 value = declarator?.Initializer?.Value;

@@ -112,16 +112,14 @@
 
         internal static bool UsesObjectOrNone(ExpressionSyntax condition)
         {
-            var unary = condition as PrefixUnaryExpressionSyntax;
-            if (unary != null)
+            if (condition is PrefixUnaryExpressionSyntax unary)
             {
                 return UsesObjectOrNone(unary.Operand);
             }
 
             var memberAccess = (condition as InvocationExpressionSyntax)?.Expression as MemberAccessExpressionSyntax;
-            var identifierName = memberAccess?.Expression as IdentifierNameSyntax;
-            if (identifierName != null &&
-                !string.Equals(identifierName.Identifier.ValueText, "object", StringComparison.OrdinalIgnoreCase))
+            if (memberAccess?.Expression is IdentifierNameSyntax identifierName &&
+    !string.Equals(identifierName.Identifier.ValueText, "object", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

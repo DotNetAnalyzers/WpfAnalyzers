@@ -20,8 +20,7 @@
         internal static IPropertySymbol ContainingProperty(this SyntaxNodeAnalysisContext context)
         {
             var containingSymbol = context.ContainingSymbol;
-            var propertySymbol = containingSymbol as IPropertySymbol;
-            if (propertySymbol != null)
+            if (containingSymbol is IPropertySymbol propertySymbol)
             {
                 return propertySymbol;
             }

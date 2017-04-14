@@ -16,8 +16,7 @@
                 return false;
             }
 
-            SyntaxReference syntaxReference;
-            if (symbol.DeclaringSyntaxReferences.TryGetSingle(out syntaxReference))
+            if (symbol.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference syntaxReference))
             {
                 declaration = syntaxReference.GetSyntax(cancellationToken) as T;
                 return declaration != null;

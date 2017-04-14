@@ -40,8 +40,7 @@
                 return false;
             }
 
-            SyntaxReference reference;
-            if (method.DeclaringSyntaxReferences.TryGetSingle(out reference))
+            if (method.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
                 return IsAttachedSetMethod(methodDeclaration, semanticModel, cancellationToken, out setField);
@@ -80,8 +79,7 @@
                 return false;
             }
 
-            SyntaxReference reference;
-            if (method.DeclaringSyntaxReferences.TryGetSingle(out reference))
+            if (method.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
                 return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out getField);

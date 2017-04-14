@@ -9,15 +9,13 @@
     {
         internal static bool IsLazy(this PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            AccessorDeclarationSyntax setter;
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
             {
                 return false;
             }
 
             IFieldSymbol returnedField = null;
-            AccessorDeclarationSyntax getter;
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out getter))
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
             {
                 if (getter.Body == null)
                 {
@@ -83,11 +81,9 @@
                 return true;
             }
 
-            AccessorDeclarationSyntax setter;
-            if (declaration.TryGetSetAccessorDeclaration(out setter))
+            if (declaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
             {
-                AssignmentExpressionSyntax assignment;
-                if (!AssignsValueToBackingField(setter, out assignment))
+                if (!AssignsValueToBackingField(setter, out AssignmentExpressionSyntax assignment))
                 {
                     return false;
                 }
@@ -124,10 +120,8 @@
 
         internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            AccessorDeclarationSyntax getter;
-            AccessorDeclarationSyntax setter;
-            if (!(property.TryGetGetAccessorDeclaration(out getter) &&
-                  property.TryGetSetAccessorDeclaration(out setter)))
+            if (!(property.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter) &&
+property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
             {
                 return false;
             }
@@ -174,9 +168,7 @@
                     continue;
                 }
 
-                IdentifierNameSyntax fieldIdentifier;
-                FieldDeclarationSyntax fieldDeclaration;
-                if (TryGetBackingField(propertyDeclaration, out fieldIdentifier, out fieldDeclaration))
+                if (TryGetBackingField(propertyDeclaration, out IdentifierNameSyntax fieldIdentifier, out FieldDeclarationSyntax fieldDeclaration))
                 {
                     field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
                     return field != null;
@@ -195,9 +187,8 @@
                 return false;
             }
 
-            AccessorDeclarationSyntax setter;
-            if (property.TryGetSetAccessorDeclaration(out setter) &&
-                setter.Body != null)
+            if (property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) &&
+    setter.Body != null)
             {
                 using (var pooled = AssignmentWalker.Create(setter))
                 {

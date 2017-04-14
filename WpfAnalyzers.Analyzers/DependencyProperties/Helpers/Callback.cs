@@ -17,21 +17,18 @@ namespace WpfAnalyzers.DependencyProperties
                 return false;
             }
 
-            var identifierNameSyntax = callback.Expression as IdentifierNameSyntax;
-            if (identifierNameSyntax != null)
+            if (callback.Expression is IdentifierNameSyntax identifierNameSyntax)
             {
                 nameExpression = identifierNameSyntax;
                 name = identifierNameSyntax.Identifier.ValueText;
                 return true;
             }
 
-            var creation = callback.Expression as ObjectCreationExpressionSyntax;
-            if (creation != null)
+            if (callback.Expression is ObjectCreationExpressionSyntax creation)
             {
                 if (semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == callbackSymbol)
                 {
-                    ArgumentSyntax arg;
-                    if (creation.ArgumentList.Arguments.TryGetSingle(out arg))
+                    if (creation.ArgumentList.Arguments.TryGetSingle(out ArgumentSyntax arg))
                     {
                         return TryGetName(arg, callbackSymbol, semanticModel, cancellationToken, out nameExpression, out name);
                     }

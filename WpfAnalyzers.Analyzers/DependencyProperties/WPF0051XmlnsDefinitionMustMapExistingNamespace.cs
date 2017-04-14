@@ -51,14 +51,11 @@
                 return;
             }
 
-            AttributeSyntax attribute;
-            AttributeArgumentSyntax arg;
             var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out attribute) &&
-                Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out arg))
+            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax attribute) &&
+                Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
             {
-                string @namespace;
-                if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out @namespace))
+                if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
                 {
                     if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
             .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))

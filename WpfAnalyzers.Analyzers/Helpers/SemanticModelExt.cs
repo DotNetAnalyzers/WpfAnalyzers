@@ -140,8 +140,7 @@
 
             foreach (var metadataReference in semanticModel.Compilation.References)
             {
-                var compilationReference = metadataReference as CompilationReference;
-                if (compilationReference != null)
+                if (metadataReference is CompilationReference compilationReference)
                 {
                     if (compilationReference.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
                     {

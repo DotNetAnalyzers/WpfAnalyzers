@@ -54,12 +54,11 @@
                         continue;
                     }
 
-                    IFieldSymbol backingField;
                     if (ClrMethod.IsAttachedSetMethod(
-                        method,
-                        semanticModel,
-                        context.CancellationToken,
-                        out backingField))
+    method,
+    semanticModel,
+    context.CancellationToken,
+    out IFieldSymbol backingField))
                     {
                         TryUpdateName(
                             context,
@@ -93,14 +92,12 @@
                 {
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    IdentifierNameSyntax nameExpression;
-                    string registeredName;
                     if (WPF0005PropertyChangedCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out nameExpression,
-                        out registeredName))
+callback,
+semanticModel,
+context.CancellationToken,
+out IdentifierNameSyntax nameExpression,
+out string registeredName))
                     {
                         var newName = $"On{registeredName}Changed";
                         context.RegisterCodeFix(
@@ -115,14 +112,12 @@
                 {
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    IdentifierNameSyntax nameExpression;
-                    string registeredName;
                     if (WPF0006CoerceValueCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out nameExpression,
-                        out registeredName))
+callback,
+semanticModel,
+context.CancellationToken,
+out IdentifierNameSyntax nameExpression,
+out string registeredName))
                     {
                         var newName = $"Coerce{registeredName}";
                         context.RegisterCodeFix(
@@ -137,14 +132,12 @@
                 {
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    IdentifierNameSyntax nameExpression;
-                    string registeredName;
                     if (WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out nameExpression,
-                        out registeredName))
+callback,
+semanticModel,
+context.CancellationToken,
+out IdentifierNameSyntax nameExpression,
+out string registeredName))
                     {
                         var newName = $"{registeredName}ValidateValue";
                         context.RegisterCodeFix(
@@ -167,12 +160,11 @@
             string prefix,
             Diagnostic diagnostic)
         {
-            string registeredName;
             if (DependencyProperty.TryGetRegisteredName(
-                setField,
-                semanticModel,
-                context.CancellationToken,
-                out registeredName))
+    setField,
+    semanticModel,
+    context.CancellationToken,
+    out string registeredName))
             {
                 var newName = $"{prefix}{registeredName}";
                 context.RegisterCodeFix(

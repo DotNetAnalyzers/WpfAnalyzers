@@ -90,8 +90,7 @@
 
         private static bool HasMemberNamedPropertyChanged(ITypeSymbol type)
         {
-            ISymbol member;
-            return type.TryGetSingleMember("PropertyChanged", out member);
+            return type.TryGetSingleMember("PropertyChanged", out ISymbol member);
         }
     }
 }

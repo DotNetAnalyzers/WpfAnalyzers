@@ -61,14 +61,12 @@ namespace WpfAnalyzers.PropertyChanged
             var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
             var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
 
-            IFieldSymbol backingField;
-            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out backingField))
+            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out IFieldSymbol backingField))
             {
                 return;
             }
 
-            IParameterSymbol value;
-            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out value))
+            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out IParameterSymbol value))
             {
                 using (var pooledIfStatements = IfStatementWalker.Create(setter))
                 {

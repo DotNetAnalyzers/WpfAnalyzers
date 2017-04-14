@@ -62,8 +62,7 @@
                 return null;
             }
 
-            AttributeArgumentSyntax oldArgument;
-            if (!Attribute.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out oldArgument))
+            if (!Attribute.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
             {
                 return null;
             }

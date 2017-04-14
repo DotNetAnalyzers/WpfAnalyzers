@@ -54,8 +54,7 @@ namespace WpfAnalyzers.DependencyProperties
             {
                 foreach (var candidate in attributeList.Attributes)
                 {
-                    AttributeSyntax attribute;
-                    if (TryGetAttribute(candidate, typeName, semanticModel, cancellationToken, out attribute))
+                    if (TryGetAttribute(candidate, typeName, semanticModel, cancellationToken, out AttributeSyntax attribute))
                     {
                         yield return attribute;
                     }

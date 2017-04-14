@@ -39,8 +39,7 @@ namespace WpfAnalyzers
                 return typeDeclaration;
             }
 
-            MemberDeclarationSyntax existsingMember;
-            if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out existsingMember))
+            if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out MemberDeclarationSyntax existsingMember))
             {
                 FieldDeclarationSyntax before = null;
                 FieldDeclarationSyntax after = null;
@@ -59,9 +58,7 @@ namespace WpfAnalyzers
                         continue;
                     }
 
-                    IdentifierNameSyntax otherField;
-                    FieldDeclarationSyntax fieldDeclaration;
-                    if (Property.TryGetBackingField(otherProperty, out otherField, out fieldDeclaration))
+                    if (Property.TryGetBackingField(otherProperty, out IdentifierNameSyntax otherField, out FieldDeclarationSyntax fieldDeclaration))
                     {
                         if (property == null)
                         {
@@ -240,8 +237,7 @@ namespace WpfAnalyzers
 
         internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
-            ReportDiagnostic setting;
-            if (!diagnosticOptions.TryGetValue(PropertyChanged.WPF1016UseReferenceEquals.DiagnosticId, out setting))
+            if (!diagnosticOptions.TryGetValue(PropertyChanged.WPF1016UseReferenceEquals.DiagnosticId, out ReportDiagnostic setting))
             {
                 return SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
             }
@@ -309,8 +305,7 @@ namespace WpfAnalyzers
         {
             foreach (var member in typeDeclaration.Members)
             {
-                var fieldDeclaration = member as BaseFieldDeclarationSyntax;
-                if (fieldDeclaration != null)
+                if (member is BaseFieldDeclarationSyntax fieldDeclaration)
                 {
                     foreach (var variable in fieldDeclaration.Declaration.Variables)
                     {
@@ -323,8 +318,7 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                var property = member as PropertyDeclarationSyntax;
-                if (property != null)
+                if (member is PropertyDeclarationSyntax property)
                 {
                     if (property.Identifier.ValueText == name)
                     {

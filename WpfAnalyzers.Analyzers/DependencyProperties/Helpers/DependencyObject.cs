@@ -64,8 +64,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// <param name="value">The value argument</param>
         internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
-            ArgumentListSyntax argumentList;
-            if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out argumentList))
+            if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out ArgumentListSyntax argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
@@ -109,8 +108,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// <param name="value">The value argument</param>
         internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
-            ArgumentListSyntax argumentList;
-            if (TryGetSetCurrentValueArguments(invocation, semanticModel, cancellationToken, out argumentList))
+            if (TryGetSetCurrentValueArguments(invocation, semanticModel, cancellationToken, out ArgumentListSyntax argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];

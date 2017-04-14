@@ -53,13 +53,12 @@
                 SyntaxFactory.ParseTypeName("PropertyChangedEventHandler"),
                 Accessibility.Public);
 
-            MemberDeclarationSyntax existsingMember;
 
             if (typeDeclaration.Members.TryGetFirst(
                                    x => x.IsKind(SyntaxKind.EventDeclaration) ||
                                         x.IsKind(SyntaxKind.PropertyDeclaration) ||
                                         x.IsKind(SyntaxKind.MethodDeclaration),
-                                   out existsingMember))
+                                   out MemberDeclarationSyntax existsingMember))
             {
                 return typeDeclaration.InsertNodesBefore(existsingMember, new[] { propertyChangedEvent });
             }
@@ -104,16 +103,15 @@
                 parameters: InvokerParameters,
                 statements: typeDeclaration.UsesUnderscoreNames() ? PropertyChangedInvokeStatements : ThisPropertyChangedInvokeStatements);
 
-            MemberDeclarationSyntax existsingMember;
             if (typeDeclaration.Members.TryGetFirst(
-                                   x =>
-                                   {
-                                       var methodDeclarationSyntax = x as MethodDeclarationSyntax;
-                                       return methodDeclarationSyntax != null &&
-                                              (methodDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
-                                               methodDeclarationSyntax.Modifiers.Any(SyntaxKind.ProtectedKeyword));
-                                   },
-                                   out existsingMember))
+                       x =>
+                       {
+                           var methodDeclarationSyntax = x as MethodDeclarationSyntax;
+                           return methodDeclarationSyntax != null &&
+                                  (methodDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
+                                   methodDeclarationSyntax.Modifiers.Any(SyntaxKind.ProtectedKeyword));
+                       },
+                       out MemberDeclarationSyntax existsingMember))
             {
                 return typeDeclaration.InsertNodesBefore(existsingMember, new[] { invoker });
             }
@@ -185,8 +183,7 @@
             UsingDirectiveSyntax usingDirective)
             where T : SyntaxNode
         {
-            string first;
-            if (!TryGetPart(usingDirective.Name, 1, out first))
+            if (!TryGetPart(usingDirective.Name, 1, out string first))
             {
                 return add(node, usingDirective);
             }
@@ -194,15 +191,13 @@
             var usings = selector(node);
             foreach (var @using in usings)
             {
-                string fst;
-                if (!TryGetPart(@using.Name, 0, out fst) ||
-                    fst != "System")
+                if (!TryGetPart(@using.Name, 0, out string fst) ||
+    fst != "System")
                 {
                     return add(node, usingDirective);
                 }
 
-                string other;
-                if (!TryGetPart(@using.Name, 1, out other))
+                if (!TryGetPart(@using.Name, 1, out string other))
                 {
                     continue;
                 }
@@ -219,8 +214,7 @@
         private static bool TryGetPart(NameSyntax name, int index, out string part)
         {
             part = null;
-            var identifierName = name as IdentifierNameSyntax;
-            if (identifierName != null)
+            if (name is IdentifierNameSyntax identifierName)
             {
                 if (index == 0)
                 {
@@ -230,8 +224,7 @@
                 return part != null;
             }
 
-            var qualifiedName = name as QualifiedNameSyntax;
-            if (qualifiedName != null)
+            if (name is QualifiedNameSyntax qualifiedName)
             {
                 var left = qualifiedName;
                 while (left.Left is QualifiedNameSyntax)

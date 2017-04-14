@@ -51,12 +51,11 @@
                 return;
             }
 
-            ArgumentSyntax defaultValueArg;
             if (!PropertyMetaData.TryGetDefaultValue(
-                    objectCreation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out defaultValueArg))
+        objectCreation,
+        context.SemanticModel,
+        context.CancellationToken,
+        out ArgumentSyntax defaultValueArg))
             {
                 return;
             }
@@ -71,8 +70,7 @@
                     return;
                 }
 
-                IFieldSymbol dp;
-                if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out dp))
+                if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out IFieldSymbol dp))
                 {
                     return;
                 }

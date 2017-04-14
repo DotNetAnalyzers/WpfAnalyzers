@@ -55,8 +55,7 @@
                 return;
             }
 
-            string registeredName;
-            if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out registeredName))
+            if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out string registeredName))
             {
                 if (registeredName != property.Name)
                 {

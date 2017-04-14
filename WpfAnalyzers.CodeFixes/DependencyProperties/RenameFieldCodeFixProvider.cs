@@ -40,12 +40,11 @@
 
                 var field = semanticModel.SemanticModelFor(node)
                                          .GetDeclaredSymbol(node, context.CancellationToken) as IFieldSymbol;
-                string registeredName;
                 if (DependencyProperty.TryGetRegisteredName(
-                    field,
-                    semanticModel,
-                    context.CancellationToken,
-                    out registeredName))
+    field,
+    semanticModel,
+    context.CancellationToken,
+    out string registeredName))
                 {
                     var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
                                       ? registeredName + "Property"

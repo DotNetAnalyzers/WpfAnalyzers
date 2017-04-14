@@ -39,12 +39,11 @@
 
                 var property = semanticModel.SemanticModelFor(node)
                                          .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
-                string registeredName;
                 if (ClrProperty.TryGetRegisteredName(
-                    property,
-                    semanticModel,
-                    context.CancellationToken,
-                    out registeredName))
+    property,
+    semanticModel,
+    context.CancellationToken,
+    out string registeredName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

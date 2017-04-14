@@ -58,8 +58,7 @@
                 return;
             }
 
-            string registeredName;
-            if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out registeredName))
+            if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out string registeredName))
             {
                 if (!field.Name.IsParts(registeredName, "PropertyKey"))
                 {

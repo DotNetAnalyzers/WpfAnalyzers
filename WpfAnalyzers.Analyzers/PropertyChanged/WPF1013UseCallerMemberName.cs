@@ -87,9 +87,8 @@ namespace WpfAnalyzers.PropertyChanged
                 return;
             }
 
-            string text;
             var argument = invocation.ArgumentList.Arguments[0];
-            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out text) &&
+            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out string text) &&
                 text == property.Name)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));

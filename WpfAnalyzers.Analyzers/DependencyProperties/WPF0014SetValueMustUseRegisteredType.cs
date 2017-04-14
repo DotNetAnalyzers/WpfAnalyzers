@@ -53,19 +53,15 @@
                 return;
             }
 
-            ArgumentSyntax property;
-            ArgumentSyntax value;
-            IFieldSymbol setField;
-            if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value) ||
-                DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
+            if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value) ||
+DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
             {
                 if (value.Expression.IsSameType(KnownSymbol.Object, context))
                 {
                     return;
                 }
 
-                ITypeSymbol registeredType;
-                if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out registeredType))
+                if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
                 {
                     if (registeredType.Is(KnownSymbol.Freezable) &&
                         value.Expression.IsSameType(KnownSymbol.Freezable, context))

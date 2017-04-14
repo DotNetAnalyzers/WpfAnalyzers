@@ -54,8 +54,7 @@
             }
 
             QualifiedType correspondingType = null;
-            AttributeSyntax xmlnsAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+            if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out AttributeSyntax xmlnsAttribute))
             {
                 correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
             }
@@ -70,14 +69,12 @@
                 return;
             }
 
-            AttributeArgumentSyntax arg;
-            if (!Attribute.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out arg))
+            if (!Attribute.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out AttributeArgumentSyntax arg))
             {
                 return;
             }
 
-            string xmlNamespace;
-            if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out xmlNamespace))
+            if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string xmlNamespace))
             {
                 return;
             }
@@ -90,11 +87,9 @@
 
             foreach (var correspondingAttribute in Attribute.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
             {
-                AttributeArgumentSyntax correspondingArg;
-                if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out correspondingArg))
+                if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out AttributeArgumentSyntax correspondingArg))
                 {
-                    string mappedNameSpace;
-                    if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out mappedNameSpace))
+                    if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
                     {
                         return;
                     }

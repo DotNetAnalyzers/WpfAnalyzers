@@ -67,17 +67,15 @@
                 return default(Fix);
             }
 
-            string property;
-            if (!diagnostic.Properties.TryGetValue(WPF1012NotifyWhenPropertyChanges.PropertyNameKey, out property))
+            if (!diagnostic.Properties.TryGetValue(WPF1012NotifyWhenPropertyChanges.PropertyNameKey, out string property))
             {
                 return default(Fix);
             }
 
             var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, cancellationToken);
 
-            IMethodSymbol invoker;
-            if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out invoker) &&
-                invoker.Parameters[0].Type == KnownSymbol.String)
+            if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out IMethodSymbol invoker) &&
+    invoker.Parameters[0].Type == KnownSymbol.String)
             {
                 var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, false, usesUnderscoreNames, invoker);
                 return new Fix(assignment, onPropertyChanged, invoker);
@@ -95,11 +93,9 @@
             }
 
             var assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
-            var anonymousFunction = assignment.Parent as AnonymousFunctionExpressionSyntax;
-            if (anonymousFunction != null)
+            if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
             {
-                var block = anonymousFunction.Body as BlockSyntax;
-                if (block != null)
+                if (anonymousFunction.Body is BlockSyntax block)
                 {
                     var previousStatement = InsertAfter(block, assignStatement, fix.Invoker);
                     return syntaxRoot.InsertNodesAfter(previousStatement, new[] { fix.OnPropertyChanged });

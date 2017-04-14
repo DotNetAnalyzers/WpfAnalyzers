@@ -129,8 +129,7 @@
                         continue;
                     }
 
-                    SyntaxNode root;
-                    if (tree.TryGetRoot(out root))
+                    if (tree.TryGetRoot(out SyntaxNode root))
                     {
                         pooled.Item.Visit(root);
                     }
@@ -155,14 +154,11 @@
 
             public override void VisitAttribute(AttributeSyntax node)
             {
-                AttributeSyntax attribute;
-                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out attribute))
+                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out AttributeSyntax attribute))
                 {
-                    AttributeArgumentSyntax arg;
-                    if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out arg))
+                    if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
                     {
-                        string @namespace;
-                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out @namespace))
+                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
                         {
                             this.mappedNamespaces.Add(@namespace);
                         }

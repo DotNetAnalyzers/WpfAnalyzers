@@ -66,8 +66,7 @@
                 return;
             }
 
-            IFieldSymbol field;
-            if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out field))
+            if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
             {
                 if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
                 {
@@ -98,10 +97,7 @@
                 return;
             }
 
-            ArgumentSyntax property;
-            ArgumentSyntax value;
-            IFieldSymbol setField;
-            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
+            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value))
             {
                 return;
             }
@@ -154,8 +150,7 @@
                 return false;
             }
 
-            SyntaxReference reference;
-            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out reference))
+            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference reference))
             {
                 return false;
             }

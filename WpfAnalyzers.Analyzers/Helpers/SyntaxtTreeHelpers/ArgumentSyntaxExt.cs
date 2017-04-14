@@ -59,8 +59,7 @@
                 return false;
             }
 
-            var typeOf = argument.Expression as TypeOfExpressionSyntax;
-            if (typeOf != null)
+            if (argument.Expression is TypeOfExpressionSyntax typeOf)
             {
                 var typeSyntax = typeOf.Type;
                 var typeInfo = semanticModel.SemanticModelFor(typeSyntax)

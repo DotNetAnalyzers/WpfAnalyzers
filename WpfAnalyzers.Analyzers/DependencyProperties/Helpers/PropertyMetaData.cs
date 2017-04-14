@@ -51,16 +51,14 @@
                 return false;
             }
 
-            IMethodSymbol constructor;
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out constructor))
+            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
             {
                 return false;
             }
 
-            IParameterSymbol parameter;
             if (constructor == null ||
-                !constructor.Parameters.TryGetFirst(out parameter) ||
-                parameter.Type != KnownSymbol.Object)
+    !constructor.Parameters.TryGetFirst(out IParameterSymbol parameter) ||
+    parameter.Type != KnownSymbol.Object)
             {
                 return false;
             }
@@ -123,8 +121,7 @@
                 return false;
             }
 
-            IMethodSymbol constructor;
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out constructor))
+            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
             {
                 return false;
             }

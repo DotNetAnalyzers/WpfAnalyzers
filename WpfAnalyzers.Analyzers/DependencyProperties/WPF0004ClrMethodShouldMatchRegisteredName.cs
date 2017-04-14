@@ -61,15 +61,13 @@
                 return;
             }
 
-            IFieldSymbol setField;
-            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out setField))
+            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol setField))
             {
                 CheckName(context, setField, method, methodDeclaration, "Set");
                 return;
             }
 
-            IFieldSymbol getField;
-            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out getField))
+            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol getField))
             {
                 CheckName(context, getField, method, methodDeclaration, "Get");
             }
@@ -82,12 +80,11 @@
             MethodDeclarationSyntax methodDeclaration,
             string prefix)
         {
-            string registeredName;
             if (DependencyProperty.TryGetRegisteredName(
-                dependencyProperty,
-                context.SemanticModel,
-                context.CancellationToken,
-                out registeredName))
+    dependencyProperty,
+    context.SemanticModel,
+    context.CancellationToken,
+    out string registeredName))
             {
                 if (!method.Name.IsParts(prefix, registeredName))
                 {

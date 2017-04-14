@@ -50,8 +50,7 @@
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
-            ArgumentListSyntax arguments;
-            if (DependencyObject.TryGetSetValueArguments(invocation, this.semanticModel, this.cancellationToken, out arguments))
+            if (DependencyObject.TryGetSetValueArguments(invocation, this.semanticModel, this.cancellationToken, out ArgumentListSyntax arguments))
             {
                 if (this.SetValue != null || this.SetCurrentValue != null)
                 {

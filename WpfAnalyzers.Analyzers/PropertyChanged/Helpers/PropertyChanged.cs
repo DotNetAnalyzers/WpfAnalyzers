@@ -30,9 +30,7 @@
                         continue;
                     }
 
-                    ArgumentSyntax nameArg;
-                    string propertyName;
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out nameArg, out propertyName))
+                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax nameArg, out string propertyName))
                     {
                         case AnalysisResult.No:
                             continue;
@@ -68,8 +66,7 @@
 
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
             {
-                ArgumentSyntax propertyChangedArg;
-                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out propertyChangedArg))
+                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax propertyChangedArg))
                 {
                     if (TryGetCreatePropertyChangedEventArgsFor(propertyChangedArg.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
@@ -110,8 +107,7 @@
                 }
             }
 
-            ArgumentSyntax argument;
-            if (invocation.ArgumentList.Arguments.TryGetSingle(out argument))
+            if (invocation.ArgumentList.Arguments.TryGetSingle(out ArgumentSyntax argument))
             {
                 if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                 {
@@ -219,14 +215,12 @@
                             continue;
                         }
 
-                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                        if ((memberAccess != null && !(memberAccess.Expression is ThisExpressionSyntax)) ||
-                            (invocation.Expression is MemberBindingExpressionSyntax))
+                        if ((invocation.Expression is MemberAccessExpressionSyntax memberAccess && !(memberAccess.Expression is ThisExpressionSyntax)) ||
+    (invocation.Expression is MemberBindingExpressionSyntax))
                         {
                             if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                             {
-                                ArgumentSyntax argument;
-                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out argument))
+                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax argument))
                                 {
                                     var identifier = argument.Expression as IdentifierNameSyntax;
                                     if (identifier?.Identifier.ValueText == parameter.Name)
@@ -234,8 +228,7 @@
                                         return AnalysisResult.Yes;
                                     }
 
-                                    var objectCreation = argument.Expression as ObjectCreationExpressionSyntax;
-                                    if (objectCreation != null)
+                                    if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
                                     {
                                         var nameArgument = objectCreation.ArgumentList.Arguments[0];
                                         if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
@@ -301,8 +294,7 @@
                 return false;
             }
 
-            var conditionalAccess = expression as ConditionalAccessExpressionSyntax;
-            if (conditionalAccess != null)
+            if (expression is ConditionalAccessExpressionSyntax conditionalAccess)
             {
                 return IsNotifyPropertyChanged(conditionalAccess.WhenNotNull as InvocationExpressionSyntax, semanticModel, cancellationToken);
             }

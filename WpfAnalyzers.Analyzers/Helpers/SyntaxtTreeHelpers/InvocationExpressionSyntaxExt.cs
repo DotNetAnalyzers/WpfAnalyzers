@@ -26,8 +26,7 @@
                     var identifierName = invocation.Expression as IdentifierNameSyntax;
                     if (identifierName == null)
                     {
-                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                        if (memberAccess != null)
+                        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
                         {
                             identifierName = memberAccess.Name as IdentifierNameSyntax;
                         }
