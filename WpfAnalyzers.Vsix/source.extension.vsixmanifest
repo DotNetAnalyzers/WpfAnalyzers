@@ -20,4 +20,7 @@
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="WpfAnalyzers.CodeFixes" Path="|WpfAnalyzers.CodeFixes|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="WpfAnalyzers.CodeFixes" Path="|WpfAnalyzers.CodeFixes|"/>
   </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.Compiler" Version="[15.0.26208.0,16.0)" DisplayName="C# and Visual Basic Roslyn compilers" />
+  </Prerequisites>
 </PackageManifest>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A96555-15B1-4A0C-ADC1-059CEAA3F788}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,12 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A965
 		.paket\paket.targets = .paket\paket.targets
 		.paket\Readme.paket.md = .paket\Readme.paket.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Analyzers", "WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj", "{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.CodeFixes", "WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj", "{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6739-4830-BC74-2F8CF785A572}"
 	ProjectSection(SolutionItems) = preProject
@@ -66,6 +60,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF1016.md = documentation\WPF1016.md
 		documentation\WPF1017.md = documentation\WPF1017.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Analyzers", "WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj", "{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.CodeFixes", "WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj", "{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Vsix", "WpfAnalyzers.Vsix\WpfAnalyzers.Vsix.csproj", "{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}"
 EndProject
