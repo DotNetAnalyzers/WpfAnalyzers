@@ -104,7 +104,7 @@
                 return;
             }
 
-            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType))
+            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }

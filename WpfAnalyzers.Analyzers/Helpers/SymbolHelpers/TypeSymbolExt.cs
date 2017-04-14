@@ -73,6 +73,13 @@
 
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
+            return first is INamedTypeSymbol firstNamed &&
+                   other is INamedTypeSymbol otherNamed &&
+                   IsSameType(firstNamed, otherNamed);
+        }
+
+        internal static bool IsSameType(this INamedTypeSymbol first, INamedTypeSymbol other)
+        {
             if (first == null ||
                 other == null)
             {
@@ -84,7 +91,8 @@
                 return IsSameType(first.OriginalDefinition, other.OriginalDefinition);
             }
 
-            return first.Equals(other);
+            return first.Equals(other) ||
+                   AreEquivalent(first, other);
         }
 
         internal static bool IsRepresentationPreservingConversion(
@@ -209,6 +217,37 @@
         internal static bool IsInterface(this ITypeSymbol type)
         {
             return type != KnownSymbol.Object && type.BaseType == null;
+        }
+
+        internal static bool AreEquivalent(this INamedTypeSymbol first, INamedTypeSymbol other)
+        {
+            if (ReferenceEquals(first, other))
+            {
+                return true;
+            }
+
+            if (first == null ||
+                other == null)
+            {
+                return false;
+            }
+
+            if (first.MetadataName != other.MetadataName ||
+                first.ContainingModule.MetadataName != other.ContainingModule.MetadataName ||
+                first.Arity != other.Arity)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < first.Arity; i++)
+            {
+                if (!IsSameType(first.TypeArguments[i], other.TypeArguments[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
