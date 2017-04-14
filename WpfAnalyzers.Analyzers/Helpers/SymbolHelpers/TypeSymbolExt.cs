@@ -73,6 +73,13 @@
 
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
+            if (first is ITypeParameterSymbol firstParameter &&
+                other is ITypeParameterSymbol otherParameter)
+            {
+                return firstParameter.MetadataName == otherParameter.MetadataName &&
+                       firstParameter.ContainingSymbol.Equals(otherParameter.ContainingSymbol);
+            }
+
             return first is INamedTypeSymbol firstNamed &&
                    other is INamedTypeSymbol otherNamed &&
                    IsSameType(firstNamed, otherNamed);

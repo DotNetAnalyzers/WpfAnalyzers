@@ -65,6 +65,31 @@ public class FooControl : Control
         }
 
         [Test]
+        public async Task DependencyPropertyGeneric()
+        {
+            var testCode = @"
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl<T> : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", 
+            typeof(T), 
+            typeof(FooControl<T>),
+            new PropertyMetadata(default(T)));
+
+        public T Bar
+        {
+            get { return (T)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task DependencyPropertyAddOwner()
         {
             var part1 = @"
