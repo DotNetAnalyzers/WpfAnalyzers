@@ -93,11 +93,11 @@
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
                     if (WPF0005PropertyChangedCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-callback,
-semanticModel,
-context.CancellationToken,
-out IdentifierNameSyntax nameExpression,
-out string registeredName))
+                        callback,
+                        semanticModel,
+                        context.CancellationToken,
+                        out IdentifierNameSyntax _,
+                        out string registeredName))
                     {
                         var newName = $"On{registeredName}Changed";
                         context.RegisterCodeFix(
@@ -113,11 +113,11 @@ out string registeredName))
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
                     if (WPF0006CoerceValueCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-callback,
-semanticModel,
-context.CancellationToken,
-out IdentifierNameSyntax nameExpression,
-out string registeredName))
+                        callback,
+                        semanticModel,
+                        context.CancellationToken,
+                        out IdentifierNameSyntax _,
+                        out string registeredName))
                     {
                         var newName = $"Coerce{registeredName}";
                         context.RegisterCodeFix(
@@ -133,11 +133,11 @@ out string registeredName))
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                     var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
                     if (WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-callback,
-semanticModel,
-context.CancellationToken,
-out IdentifierNameSyntax nameExpression,
-out string registeredName))
+                        callback,
+                        semanticModel,
+                        context.CancellationToken,
+                        out IdentifierNameSyntax _,
+                        out string registeredName))
                     {
                         var newName = $"{registeredName}ValidateValue";
                         context.RegisterCodeFix(

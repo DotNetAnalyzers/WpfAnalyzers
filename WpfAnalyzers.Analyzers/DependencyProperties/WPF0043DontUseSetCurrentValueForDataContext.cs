@@ -56,7 +56,7 @@
                 return;
             }
 
-            if (!DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value))
+            if (!DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax _, out IFieldSymbol setField, out ArgumentSyntax value))
             {
                 return;
             }

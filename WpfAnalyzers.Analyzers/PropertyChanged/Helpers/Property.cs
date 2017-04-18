@@ -9,7 +9,7 @@
     {
         internal static bool IsLazy(this PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax _))
             {
                 return false;
             }
@@ -168,7 +168,7 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
                     continue;
                 }
 
-                if (TryGetBackingField(propertyDeclaration, out IdentifierNameSyntax fieldIdentifier, out FieldDeclarationSyntax fieldDeclaration))
+                if (TryGetBackingField(propertyDeclaration, out IdentifierNameSyntax fieldIdentifier, out FieldDeclarationSyntax _))
                 {
                     field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
                     return field != null;

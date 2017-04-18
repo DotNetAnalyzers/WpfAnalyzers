@@ -52,7 +52,7 @@
             }
 
             var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax attribute) &&
+            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax _) &&
                 Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
             {
                 if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))

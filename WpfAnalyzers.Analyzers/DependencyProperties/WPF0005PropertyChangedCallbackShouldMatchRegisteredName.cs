@@ -42,7 +42,7 @@
         internal static bool TryGetIdentifierAndRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string registeredName)
         {
             registeredName = null;
-            if (!PropertyChangedCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string name))
+            if (!PropertyChangedCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string _))
             {
                 return false;
             }

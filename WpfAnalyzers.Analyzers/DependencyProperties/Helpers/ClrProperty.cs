@@ -47,7 +47,7 @@ namespace WpfAnalyzers.DependencyProperties
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return TryGetBackingFields(property, semanticModel, cancellationToken, out IFieldSymbol getField, out IFieldSymbol setField);
+            return TryGetBackingFields(property, semanticModel, cancellationToken, out IFieldSymbol _, out IFieldSymbol _);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace WpfAnalyzers.DependencyProperties
             result = null;
             IFieldSymbol getter;
             IFieldSymbol setter;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax _))
             {
                 if (TryGetBackingFields(
                     property,

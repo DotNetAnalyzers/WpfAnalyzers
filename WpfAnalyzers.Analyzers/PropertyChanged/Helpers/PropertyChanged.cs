@@ -30,7 +30,7 @@
                         continue;
                     }
 
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax nameArg, out string propertyName))
+                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax _, out string propertyName))
                     {
                         case AnalysisResult.No:
                             continue;

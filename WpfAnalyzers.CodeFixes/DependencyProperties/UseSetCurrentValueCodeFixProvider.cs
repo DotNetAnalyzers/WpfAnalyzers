@@ -121,12 +121,12 @@
         {
             setCurrentValueInvocation = null;
             if (!DependencyObject.TryGetSetValueArguments(
-setValue,
-semanticModel,
-cancellationToken,
-out ArgumentSyntax property,
-out IFieldSymbol setField,
-out ArgumentSyntax value))
+                setValue,
+                semanticModel,
+                cancellationToken,
+                out ArgumentSyntax _,
+                out IFieldSymbol _,
+                out ArgumentSyntax _))
             {
                 return false;
             }

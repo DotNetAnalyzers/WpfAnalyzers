@@ -154,7 +154,7 @@
 
             public override void VisitAttribute(AttributeSyntax node)
             {
-                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out AttributeSyntax attribute))
+                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out AttributeSyntax _))
                 {
                     if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
                     {

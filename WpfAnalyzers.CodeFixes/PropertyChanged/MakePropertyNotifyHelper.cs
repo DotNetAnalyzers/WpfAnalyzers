@@ -58,7 +58,7 @@ namespace WpfAnalyzers
                         continue;
                     }
 
-                    if (Property.TryGetBackingField(otherProperty, out IdentifierNameSyntax otherField, out FieldDeclarationSyntax fieldDeclaration))
+                    if (Property.TryGetBackingField(otherProperty, out IdentifierNameSyntax _, out FieldDeclarationSyntax fieldDeclaration))
                     {
                         if (property == null)
                         {
