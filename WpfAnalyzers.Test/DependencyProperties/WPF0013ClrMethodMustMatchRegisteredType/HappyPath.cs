@@ -10,6 +10,8 @@ namespace WpfAnalyzers.Test.DependencyProperties.WPF0013ClrMethodMustMatchRegist
     {
         [TestCase("int")]
         [TestCase("int?")]
+        [TestCase("int[]")]
+        [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
         public async Task AttachedProperty(string typeName)
@@ -41,10 +43,17 @@ public static class Foo
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task AttachedPropertyExtensionMethods()
+        [TestCase("int")]
+        [TestCase("int?")]
+        [TestCase("int[]")]
+        [TestCase("int?[]")]
+        [TestCase("Nullable<int>")]
+        [TestCase("ObservableCollection<int>")]
+        public async Task AttachedPropertyExtensionMethods(string typeName)
         {
             var testCode = @"
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 public static class Foo
@@ -65,7 +74,7 @@ public static class Foo
         return (int)element.GetValue(BarProperty);
     }
 }";
-
+            testCode = testCode.AssertReplace("int", typeName);
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 

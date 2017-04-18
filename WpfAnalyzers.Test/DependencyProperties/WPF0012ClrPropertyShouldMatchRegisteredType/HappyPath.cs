@@ -136,10 +136,17 @@ public static class Foo
             await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
         }
 
-        [Test]
-        public async Task ReadOnlyDependencyProperty()
+        [TestCase("int")]
+        [TestCase("int?")]
+        [TestCase("Nullable<int>")]
+        [TestCase("int[]")]
+        [TestCase("int?[]")]
+        [TestCase("ObservableCollection<int>")]
+        public async Task ReadOnlyDependencyProperty(string typeName)
         {
             var testCode = @"
+    using System;
+    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -160,6 +167,7 @@ public static class Foo
         }
     }";
 
+            testCode = testCode.AssertReplace("int", typeName);
             await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
     }
