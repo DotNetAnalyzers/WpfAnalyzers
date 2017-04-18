@@ -11,6 +11,8 @@
         [TestCase("int")]
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
+        [TestCase("int[]")]
+        [TestCase("int?[]")]
         [TestCase("ObservableCollection<int>")]
         public async Task DependencyProperty(string typeName)
         {

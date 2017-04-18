@@ -73,6 +73,12 @@
 
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
+            if (ReferenceEquals(first, other) ||
+                first?.Equals(other) == true)
+            {
+                return true;
+            }
+
             if (first is ITypeParameterSymbol firstParameter &&
                 other is ITypeParameterSymbol otherParameter)
             {
