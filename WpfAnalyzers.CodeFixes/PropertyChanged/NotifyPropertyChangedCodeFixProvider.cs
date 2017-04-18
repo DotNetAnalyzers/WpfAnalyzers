@@ -77,7 +77,7 @@
             if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out IMethodSymbol invoker) &&
     invoker.Parameters[0].Type == KnownSymbol.String)
             {
-                var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, false, usesUnderscoreNames, invoker);
+                var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, useCallerMemberName: false, usedUnderscoreNames: usesUnderscoreNames, invoker: invoker);
                 return new Fix(assignment, onPropertyChanged, invoker);
             }
 

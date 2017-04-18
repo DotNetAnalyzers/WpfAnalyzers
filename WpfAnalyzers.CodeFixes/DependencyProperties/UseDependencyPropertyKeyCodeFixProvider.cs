@@ -98,8 +98,7 @@
                                     cancellationToken,
                                     invocation,
                                     setValue),
-                                this.GetType()
-                                    .FullName),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }

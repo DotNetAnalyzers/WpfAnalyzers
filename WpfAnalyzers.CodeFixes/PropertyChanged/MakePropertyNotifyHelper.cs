@@ -141,10 +141,10 @@ namespace WpfAnalyzers
                                      syntaxGenerator.IfValueEqualsBackingFieldReturn(field, property, diagnosticOptions),
                                      assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
                                      syntaxGenerator.OnPropertyChanged(
-                                         propertyName,
-                                         true,
-                                         field.StartsWith("_"),
-                                         invoker),
+                                         propertyName: propertyName,
+                                         useCallerMemberName: true,
+                                         usedUnderscoreNames: field.StartsWith("_"),
+                                         invoker: invoker),
                                  };
             return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements)
                                                              .WithAdditionalAnnotations(Formatter.Annotation);

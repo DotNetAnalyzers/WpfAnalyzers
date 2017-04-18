@@ -53,22 +53,21 @@
                 SyntaxFactory.ParseTypeName("PropertyChangedEventHandler"),
                 Accessibility.Public);
 
-
             if (typeDeclaration.Members.TryGetFirst(
                                    x => x.IsKind(SyntaxKind.EventDeclaration) ||
                                         x.IsKind(SyntaxKind.PropertyDeclaration) ||
                                         x.IsKind(SyntaxKind.MethodDeclaration),
-                                   out MemberDeclarationSyntax existsingMember))
+                                   out MemberDeclarationSyntax existingMember))
             {
-                return typeDeclaration.InsertNodesBefore(existsingMember, new[] { propertyChangedEvent });
+                return typeDeclaration.InsertNodesBefore(existingMember, new[] { propertyChangedEvent });
             }
 
             if (typeDeclaration.Members.TryGetLast(
                                    x => x.IsKind(SyntaxKind.FieldDeclaration) ||
                                         x.IsKind(SyntaxKind.ConstructorDeclaration),
-                                   out existsingMember))
+                                   out existingMember))
             {
-                return typeDeclaration.InsertNodesAfter(existsingMember, new[] { propertyChangedEvent });
+                return typeDeclaration.InsertNodesAfter(existingMember, new[] { propertyChangedEvent });
             }
 
             return (TypeDeclarationSyntax)syntaxGenerator.AddMembers(typeDeclaration, propertyChangedEvent);

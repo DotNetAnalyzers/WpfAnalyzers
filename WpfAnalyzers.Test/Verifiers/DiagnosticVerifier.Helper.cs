@@ -24,7 +24,6 @@ namespace WpfAnalyzers.Test
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
         private static readonly string VisualBasicDefaultExt = "vb";
         private static readonly string TestProjectName = "TestProject";

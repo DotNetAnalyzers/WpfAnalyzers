@@ -68,7 +68,6 @@ namespace WpfAnalyzers
                                            .FirstAncestorOrSelf<InvocationExpressionSyntax>();
                 if (invocation != null)
                 {
-
                     if (semanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
                         method.Parameters.Length == 1 &&
                         !method.Parameters[0].IsCallerMemberName())

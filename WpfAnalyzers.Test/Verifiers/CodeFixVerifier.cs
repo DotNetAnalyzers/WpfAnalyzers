@@ -187,7 +187,7 @@ namespace WpfAnalyzers.Test
 
                 if (--numberOfIterations < 0)
                 {
-                    Assert.True(false, "The upper limit for the number of code fix iterations was exceeded");
+                    Assert.Fail("The upper limit for the number of code fix iterations was exceeded");
                 }
 
                 previousDiagnostics = analyzerDiagnostics;
@@ -276,7 +276,7 @@ namespace WpfAnalyzers.Test
 
                 if (--numberOfIterations < 0)
                 {
-                    Assert.True(false, "The upper limit for the number of fix all iterations was exceeded");
+                    Assert.Fail("The upper limit for the number of fix all iterations was exceeded");
                 }
 
                 Diagnostic firstDiagnostic = null;
