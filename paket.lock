@@ -66,11 +66,11 @@ FRAMEWORK: NET452
 NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
-    Gu.Analyzers (0.1.11.21-dev)
+    Gu.Analyzers (0.1.11.23-dev)
     JetBrains.Annotations (10.4)
     Microsoft.CodeAnalysis.Analyzers (1.1)
     StyleCop.Analyzers (1.0)
-    WpfAnalyzers (0.2.7.8)
+    WpfAnalyzers (0.2.7.10)
 
 GROUP Test
 FRAMEWORK: NET452
