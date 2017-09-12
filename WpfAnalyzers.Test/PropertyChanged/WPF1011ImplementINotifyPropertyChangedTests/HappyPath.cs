@@ -270,6 +270,25 @@ public class Foo
         }
 
         [Test]
+        public async Task IgnoreStaticEvent()
+        {
+            // maybe this should notify?
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class KaxamlInfo
+    {
+        public static event PropertyChangedEventHandler PropertyChanged;
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task IgnoreInternalClass()
         {
             // maybe this should notify?

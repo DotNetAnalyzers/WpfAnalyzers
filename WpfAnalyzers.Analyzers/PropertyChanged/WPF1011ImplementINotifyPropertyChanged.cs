@@ -77,7 +77,8 @@
 
             var eventSymbol = (IEventSymbol)context.ContainingSymbol;
             if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
-                eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler)
+                eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||
+                eventSymbol.IsStatic)
             {
                 return;
             }
