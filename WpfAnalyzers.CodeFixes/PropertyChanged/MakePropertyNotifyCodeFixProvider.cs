@@ -54,7 +54,7 @@
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
 
                 if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out IMethodSymbol invoker) &&
-    invoker.Parameters[0].Type == KnownSymbol.String)
+                    invoker.Parameters[0].Type == KnownSymbol.String)
                 {
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
                     var fix = CreateFix(
@@ -98,11 +98,14 @@
             {
                 backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration);
                 var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(
-                        backingFieldName,
-                        propertyDeclaration.Type,
-                        Accessibility.Private,
-                        DeclarationModifiers.None);
-                var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(
+                    backingFieldName,
+                    propertyDeclaration.Type,
+                    Accessibility.Private,
+                    DeclarationModifiers.None,
+                    propertyDeclaration.Initializer?.Value);
+
+                var notifyingProperty = propertyDeclaration.WithoutInitializer()
+                                                           .WithGetterReturningBackingField(
                                                                syntaxGenerator,
                                                                backingFieldName)
                                                            .WithNotifyingSetter(
@@ -115,11 +118,11 @@
             }
 
             if (IsSimpleAssignmentOnly(
-    propertyDeclaration,
-    semanticModel,
-    cancellationToken,
-    out ExpressionStatementSyntax assignStatement,
-    out backingFieldName))
+                propertyDeclaration,
+                semanticModel,
+                cancellationToken,
+                out ExpressionStatementSyntax assignStatement,
+                out backingFieldName))
             {
                 var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(
                                                                syntaxGenerator,
@@ -142,8 +145,8 @@
             fieldName = null;
             assignStatement = null;
             if (!propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) ||
-    setter.Body == null ||
-    setter.Body.Statements.Count != 1)
+                setter.Body == null ||
+                setter.Body.Statements.Count != 1)
             {
                 return false;
             }
@@ -237,7 +240,7 @@
                     var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
 
                     if (PropertyChanged.Helpers.PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out IMethodSymbol invoker) &&
-    invoker.Parameters[0].Type == KnownSymbol.String)
+                        invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var fix = CreateFix(
                             syntaxGenerator,

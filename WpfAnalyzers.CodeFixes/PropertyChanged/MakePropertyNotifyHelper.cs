@@ -98,6 +98,26 @@ namespace WpfAnalyzers
             return (TypeDeclarationSyntax)syntaxGenerator.AddMembers(typeDeclaration, field);
         }
 
+        internal static PropertyDeclarationSyntax WithoutInitializer(this PropertyDeclarationSyntax property)
+        {
+            if (property.Initializer == null)
+            {
+                return property;
+            }
+
+            return property.WithInitializer(null)
+                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                           .WithAccessorList(
+                               property.AccessorList.WithCloseBraceToken(
+                                   property
+                                       .AccessorList
+                                       .CloseBraceToken
+                                       .WithTrailingTrivia(
+                                           property
+                                               .SemicolonToken
+                                               .TrailingTrivia)));
+        }
+
         internal static PropertyDeclarationSyntax WithGetterReturningBackingField(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, string field)
         {
             var fieldAccess = field.StartsWith("_")
