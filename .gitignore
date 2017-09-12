@@ -52,3 +52,4 @@ packages/*
 publish/*
 WpfAnalyzers.Demo/*
 .vs/*
+/paket-files/*
