@@ -82,7 +82,7 @@ namespace WpfAnalyzers.PropertyChanged
             }
 
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.Yes)
             {
                 return;
             }
