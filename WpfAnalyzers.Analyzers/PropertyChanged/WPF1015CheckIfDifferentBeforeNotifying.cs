@@ -13,20 +13,16 @@ namespace WpfAnalyzers.PropertyChanged
     internal class WPF1015CheckIfDifferentBeforeNotifying : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1015";
-        private const string Title = "Check if value is different before notifying.";
-        private const string MessageFormat = "Check if value is different before notifying.";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Check if value is different before notifying.",
+            messageFormat: "Check if value is different before notifying.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Check if value is different before notifying.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

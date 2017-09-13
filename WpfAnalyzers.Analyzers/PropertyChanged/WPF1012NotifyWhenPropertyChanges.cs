@@ -19,20 +19,15 @@
         public const string DiagnosticId = "WPF1012";
         public static readonly string PropertyNameKey = "PropertyName";
 
-        private const string Title = "Notify when property changes.";
-        private const string MessageFormat = "Notify that property '{0}' changes.";
-        private const string Description = "Notify when property changes.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
-
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Notify when property changes.",
+            messageFormat: "Notify that property '{0}' changes.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Notify when property changes.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

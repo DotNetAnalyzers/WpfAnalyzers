@@ -11,20 +11,16 @@
     internal class WPF0001BackingFieldShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0001";
-        private const string Title = "Backing field for a DependencyProperty should match registered name.";
-        private const string MessageFormat = "Field '{0}' that is backing field for the DependencyProperty registered as '{1}' must be named '{1}Property'";
-        private const string Description = "A dependency property's backing field must be named with the name it is registered with suffixed by 'Property'";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Backing field for a DependencyProperty should match registered name.",
+            messageFormat: "Field '{0}' that is backing field for the DependencyProperty registered as '{1}' must be named '{1}Property'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "A dependency property's backing field must be named with the name it is registered with suffixed by 'Property'",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

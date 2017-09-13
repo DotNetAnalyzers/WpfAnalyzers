@@ -15,20 +15,16 @@
     internal class WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0052";
-        private const string Title = "XmlnsDefinitions does not map all namespaces with public types.";
-        private const string MessageFormat = "XmlnsDefinitions does not map all namespaces with public types.";
-        private const string Description = "XmlnsDefinitions does not map all namespaces with public types.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Info,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "XmlnsDefinitions does not map all namespaces with public types.",
+            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "XmlnsDefinitions does not map all namespaces with public types.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

@@ -11,20 +11,16 @@
     internal class WPF0010DefaultValueMustMatchRegisteredType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0010";
-        private const string Title = "Default value type must match registered type.";
-        private const string MessageFormat = "Default value for '{0}' must be of type {1}";
-        private const string Description = "A DependencyProperty is registered with a type and a default value. The type of the default value must be the same as the registered type.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Error,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Default value type must match registered type.",
+            messageFormat: "Default value for '{0}' must be of type {1}",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "A DependencyProperty is registered with a type and a default value. The type of the default value must be the same as the registered type.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

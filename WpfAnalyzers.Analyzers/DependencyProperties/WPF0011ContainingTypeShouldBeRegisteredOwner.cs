@@ -11,20 +11,16 @@
     internal class WPF0011ContainingTypeShouldBeRegisteredOwner : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0011";
-        private const string Title = "Containing type should be used as registered owner.";
-        private const string MessageFormat = "Register containing type: '{0}' as owner.";
-        private const string Description = "When registering a DependencyProperty register containing type as owner type.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Containing type should be used as registered owner.",
+            messageFormat: "Register containing type: '{0}' as owner.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "When registering a DependencyProperty register containing type as owner type.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

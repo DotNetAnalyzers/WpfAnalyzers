@@ -11,20 +11,16 @@
     internal class WPF0013ClrMethodMustMatchRegisteredType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0013";
-        private const string Title = "CLR accessor for attached property must match registered type.";
-        private const string MessageFormat = "{0} must match registered type {1}";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "CLR accessor for attached property must match registered type.",
+            messageFormat: "{0} must match registered type {1}",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "CLR accessor for attached property must match registered type.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

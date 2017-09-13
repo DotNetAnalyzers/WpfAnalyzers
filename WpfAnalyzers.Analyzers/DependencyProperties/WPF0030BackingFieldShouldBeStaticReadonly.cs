@@ -11,20 +11,16 @@
     internal class WPF0030BackingFieldShouldBeStaticReadonly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0030";
-        private const string Title = "Backing field for a DependencyProperty should be static and readonly.";
-        private const string MessageFormat = "Field '{0}' is backing field for a DependencyProperty and should be static and readonly.";
-        private const string Description = "Backing field for a DependencyProperty should be static and readonly.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Backing field for a DependencyProperty should be static and readonly.",
+            messageFormat: "Field '{0}' is backing field for a DependencyProperty and should be static and readonly.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Backing field for a DependencyProperty should be static and readonly.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

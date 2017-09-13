@@ -11,20 +11,16 @@
     internal class WPF0051XmlnsDefinitionMustMapExistingNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0051";
-        private const string Title = "XmlnsDefinition must map to existing namespace.";
-        private const string MessageFormat = "[XmlnsDefinition] maps to '{0}' that does not exist.";
-        private const string Description = "XmlnsDefinition must map to existing namespace.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "XmlnsDefinition must map to existing namespace.",
+            messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "XmlnsDefinition must map to existing namespace.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

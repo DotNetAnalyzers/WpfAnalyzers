@@ -12,20 +12,16 @@
     internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0041";
-        private const string Title = "Set mutable dependency properties using SetCurrentValue.";
-        private const string MessageFormat = "Use SetCurrentValue({0}, {1})";
-        private const string Description = "Prefer setting mutable dependency properties using SetCurrentValue.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Set mutable dependency properties using SetCurrentValue.",
+            messageFormat: "Use SetCurrentValue({0}, {1})",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Prefer setting mutable dependency properties using SetCurrentValue.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

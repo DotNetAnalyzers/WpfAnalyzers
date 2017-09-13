@@ -15,20 +15,16 @@ namespace WpfAnalyzers.PropertyChanged
     internal class WPF1014DontRaiseChangeForMissingProperty : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1014";
-        private const string Title = "Don't raise PropertyChanged for missing property.";
-        private const string MessageFormat = "Don't raise PropertyChanged for missing property.";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Don't raise PropertyChanged for missing property.",
+            messageFormat: "Don't raise PropertyChanged for missing property.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Don't raise PropertyChanged for missing property.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

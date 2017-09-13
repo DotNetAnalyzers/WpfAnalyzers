@@ -11,23 +11,16 @@
     internal class WPF0004ClrMethodShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0004";
-        private const string Title = "CLR method for a DependencyProperty should match registered name.";
-        private const string MessageFormat = "Method '{0}' must be named '{1}'";
-
-        private const string Description =
-            "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.";
-
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "CLR method for a DependencyProperty should match registered name.",
+            messageFormat: "Method '{0}' must be named '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

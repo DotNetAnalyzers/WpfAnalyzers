@@ -12,20 +12,16 @@
     internal class WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0007";
-        private const string Title = "Name of ValidateValueCallback should match registered name.";
-        private const string MessageFormat = "Method '{0}' should be named '{1}'";
-        private const string Description = "Name of ValidateValueCallback should match registered name.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             DiagnosticId,
-            Title,
-            MessageFormat,
+            "Name of ValidateValueCallback should match registered name.",
+            "Method '{0}' should be named '{1}'",
             AnalyzerCategory.DependencyProperties,
             DiagnosticSeverity.Warning,
             AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            "Name of ValidateValueCallback should match registered name.",
+            HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

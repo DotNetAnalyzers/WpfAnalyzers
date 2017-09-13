@@ -11,20 +11,16 @@
     internal class WPF1010MutablePublicPropertyShouldNotify : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1010";
-        private const string Title = "Mutable public property should notify.";
-        private const string MessageFormat = "Property '{0}' must notify when value changes.";
-        private const string Description = "All mutable public properties should notify when their value changes.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Mutable public property should notify.",
+            messageFormat: "Property '{0}' must notify when value changes.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "All mutable public properties should notify when their value changes.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

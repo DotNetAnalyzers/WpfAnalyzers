@@ -11,20 +11,16 @@
     internal class WPF0031FieldOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0031";
-        private const string Title = "DependencyPropertyKey field must come before DependencyProperty field.";
-        private const string MessageFormat = "Field '{0}' must come before '{1}'";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "DependencyPropertyKey field must come before DependencyProperty field.",
+            messageFormat: "Field '{0}' must come before '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "DependencyPropertyKey field must come before DependencyProperty field.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

@@ -11,20 +11,16 @@
     internal class WPF1011ImplementINotifyPropertyChanged : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1011";
-        private const string Title = "Implement INotifyPropertyChanged.";
-        private const string MessageFormat = "Implement INotifyPropertyChanged.";
-        private const string Description = "Implement INotifyPropertyChanged.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.PropertyChanged,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Implement INotifyPropertyChanged.",
+            messageFormat: "Implement INotifyPropertyChanged.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Implement INotifyPropertyChanged.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

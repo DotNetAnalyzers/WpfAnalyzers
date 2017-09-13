@@ -11,20 +11,16 @@
     internal class WPF0016DefaultValueIsSharedReferenceType : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0016";
-        private const string Title = "Default value is shared reference type.";
-        private const string MessageFormat = "Default value for '{0}' is a reference type that will be shared among all instances.";
-        private const string Description = "When registering a new instance of a reference type as default value the value is shared for all instances of the control.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Warning,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Default value is shared reference type.",
+            messageFormat: "Default value for '{0}' is a reference type that will be shared among all instances.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "When registering a new instance of a reference type as default value the value is shared for all instances of the control.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

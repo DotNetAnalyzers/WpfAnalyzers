@@ -14,20 +14,16 @@
     internal class WPF1001StructMustNotNotify : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF1001";
-        private const string Title = "Struct must not implement INotifyPropertyChanged";
-        private const string MessageFormat = "Struct '{0}' implements INotifyPropertyChanged";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.PropertyChanged,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "Struct must not implement INotifyPropertyChanged",
+            messageFormat: "Struct '{0}' implements INotifyPropertyChanged",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Struct must not implement INotifyPropertyChanged",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

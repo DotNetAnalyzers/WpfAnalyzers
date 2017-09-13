@@ -11,20 +11,16 @@
     internal class WPF0042AvoidSideEffectsInClrAccessors : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0042";
-        private const string Title = "Avoid side effects in CLR accessors.";
-        private const string MessageFormat = "Avoid side effects in CLR accessors.";
-        private const string Description = "Avoid side effects in CLR accessors.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Avoid side effects in CLR accessors.",
+            messageFormat: "Avoid side effects in CLR accessors.",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Avoid side effects in CLR accessors.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

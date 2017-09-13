@@ -13,20 +13,16 @@
         public const string DiagnosticId = "WPF0050";
         private const string XmlnsPrefix = "XmlnsPrefix";
         private const string XmlnsDefinition = "XmlnsDefinition";
-        private const string Title = "XmlnsPrefix must map to the same url as XmlnsDefinition.";
-        private const string MessageFormat = "There is no [{0}] mapping to '{1}'";
-        private const string Description = "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
+            messageFormat: "There is no [{0}] mapping to '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

@@ -12,23 +12,15 @@
     {
         public const string DiagnosticId = "WPF0040";
 
-        private const string Title = "A readonly DependencyProperty must be set with DependencyPropertyKey.";
-
-        private const string MessageFormat = "Set '{0}' using '{1}'";
-
-        private const string Description = Title;
-
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
-
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
+            messageFormat: "Set '{0}' using '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

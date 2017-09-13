@@ -12,20 +12,16 @@
     internal class WPF0006CoerceValueCallbackShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0006";
-        private const string Title = "Name of CoerceValueCallback should match registered name.";
-        private const string MessageFormat = "Method '{0}' should be named '{1}'";
-        private const string Description = "Name of CoerceValueCallback should match registered name.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Name of CoerceValueCallback should match registered name.",
+            messageFormat: "Method '{0}' should be named '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Name of CoerceValueCallback should match registered name.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

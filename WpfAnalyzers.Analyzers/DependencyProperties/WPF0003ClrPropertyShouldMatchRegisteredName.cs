@@ -10,20 +10,16 @@
     internal class WPF0003ClrPropertyShouldMatchRegisteredName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0003";
-        private const string Title = "CLR property for a DependencyProperty should match registered name.";
-        private const string MessageFormat = "Property '{0}' must be named '{1}'";
-        private const string Description = "A CLR property accessor for a DependencyProperty must have the same name as the DependencyProperty is registered with.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "CLR property for a DependencyProperty should match registered name.",
+            messageFormat: "Property '{0}' must be named '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "A CLR property accessor for a DependencyProperty must have the same name as the DependencyProperty is registered with.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

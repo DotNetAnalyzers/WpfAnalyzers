@@ -11,23 +11,15 @@
     {
         public const string DiagnosticId = "WPF0014";
 
-        private const string Title = "SetValue must use registered type.";
-
-        private const string MessageFormat = "{0} must use registered type {1}";
-
-        private const string Description = "Use a type that matches registered type when setting the value of a DependencyProperty";
-
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
-
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            id: DiagnosticId,
+            title: "SetValue must use registered type.",
+            messageFormat: "{0} must use registered type {1}",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Use a type that matches registered type when setting the value of a DependencyProperty",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

@@ -11,20 +11,16 @@
     internal class WPF0032ClrPropertyGetAndSetSameDependencyProperty : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0032";
-        private const string Title = "Use same dependency property in get and set.";
-        private const string MessageFormat = "Property '{0}' must access same dependency property in getter and setter";
-        private const string Description = Title;
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-                                                                      DiagnosticId,
-                                                                      Title,
-                                                                      MessageFormat,
-                                                                      AnalyzerCategory.DependencyProperties,
-                                                                      DiagnosticSeverity.Error,
-                                                                      AnalyzerConstants.EnabledByDefault,
-                                                                      Description,
-                                                                      HelpLink);
+            DiagnosticId,
+            "Use same dependency property in get and set.",
+            "Property '{0}' must access same dependency property in getter and setter",
+            AnalyzerCategory.DependencyProperties,
+            DiagnosticSeverity.Error,
+            AnalyzerConstants.EnabledByDefault,
+            "Use same dependency property in get and set.",
+            HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

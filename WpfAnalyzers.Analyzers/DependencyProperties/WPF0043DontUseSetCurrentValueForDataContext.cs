@@ -11,20 +11,16 @@
     internal class WPF0043DontUseSetCurrentValueForDataContext : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0043";
-        private const string Title = "Don't set DataContext using SetCurrentValue.";
-        private const string MessageFormat = "Use SetValue({0}, {1})";
-        private const string Description = "Set DataContext using SetValue.";
-        private static readonly string HelpLink = WpfAnalyzers.HelpLink.ForId(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            MessageFormat,
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
-            Description,
-            HelpLink);
+            id: DiagnosticId,
+            title: "Don't set DataContext using SetCurrentValue.",
+            messageFormat: "Use SetValue({0}, {1})",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "Set DataContext using SetValue.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
