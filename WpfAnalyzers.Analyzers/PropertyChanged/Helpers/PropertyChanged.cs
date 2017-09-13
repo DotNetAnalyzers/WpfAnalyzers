@@ -269,6 +269,14 @@
             return AnalysisResult.No;
         }
 
+        internal static bool IsCallerMemberName(this IMethodSymbol invoker)
+        {
+            return invoker != null &&
+                   invoker.Parameters.Length == 1 &&
+                   invoker.Parameters[0].Type == KnownSymbol.String &&
+                   invoker.Parameters[0].IsCallerMemberName();
+        }
+
         internal static bool IsCallerMemberName(this IParameterSymbol parameter)
         {
             if (parameter.HasExplicitDefaultValue)

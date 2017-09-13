@@ -985,6 +985,220 @@ public class Foo : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task WithNestedBackingField()
+        {
+            var barCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Bar : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var testCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get { return this.bar.Value; }
+            private set { this.bar.Value = value; }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
+            await this.VerifyCSharpDiagnosticAsync(new[] { barCode, testCode }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.bar.Value;
+            }
+
+            private set
+            {
+                if (value == this.bar.Value)
+                {
+                    return;
+                }
+
+                this.bar.Value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(new[] { barCode, testCode }, new[] { barCode, fixedCode }, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task WithNestedBackingFieldUnderScore()
+        {
+            var barCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Bar : INotifyPropertyChanged
+    {
+        private int _value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+
+            set
+            {
+                if (value == _value)
+                {
+                    return;
+                }
+
+                _value = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var testCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar _bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get { return _bar.Value; }
+            private set { _bar.Value = value; }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
+            await this.VerifyCSharpDiagnosticAsync(new[] { barCode, testCode }, expected).ConfigureAwait(false);
+
+            var fixedCode = @"namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar _bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return _bar.Value;
+            }
+
+            private set
+            {
+                if (value == _bar.Value)
+                {
+                    return;
+                }
+
+                _bar.Value = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(new[] { barCode, testCode }, new[] { barCode, fixedCode }, allowNewCompilerDiagnostics: true)
+                      .ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WithBackingFieldCallerMemberNameAccessorsOnOneLine()
         {
             var testCode = @"

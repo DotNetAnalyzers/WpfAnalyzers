@@ -123,8 +123,12 @@ namespace WpfAnalyzers
             var fieldAccess = field.StartsWith("_")
                                     ? field
                                     : $"this.{field}";
-            var expressionSyntax = SyntaxFactory.ParseExpression(fieldAccess);
-            var returnStatement = syntaxGenerator.ReturnStatement(expressionSyntax);
+            return WithGetterReturningBackingField(property, syntaxGenerator, SyntaxFactory.ParseExpression(fieldAccess));
+        }
+
+        internal static PropertyDeclarationSyntax WithGetterReturningBackingField(this PropertyDeclarationSyntax property, SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess)
+        {
+            var returnStatement = syntaxGenerator.ReturnStatement(fieldAccess);
             return (PropertyDeclarationSyntax)syntaxGenerator.WithGetAccessorStatements(property, new[] { returnStatement }).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
@@ -162,10 +166,34 @@ namespace WpfAnalyzers
                                      assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
                                      syntaxGenerator.OnPropertyChanged(
                                          propertyName: propertyName,
-                                         useCallerMemberName: true,
+                                         useCallerMemberName: invoker.IsCallerMemberName(),
                                          usedUnderscoreNames: field.StartsWith("_"),
                                          invoker: invoker),
                                  };
+            return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements)
+                                                             .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        internal static PropertyDeclarationSyntax WithNotifyingSetter(
+            this PropertyDeclarationSyntax propertyDeclaration,
+            IPropertySymbol property,
+            SyntaxGenerator syntaxGenerator,
+            ExpressionStatementSyntax assign,
+            ExpressionSyntax fieldAccess,
+            IMethodSymbol invoker,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
+        {
+            var propertyName = propertyDeclaration.Identifier.ValueText;
+            var statements = new[]
+                             {
+                                 syntaxGenerator.IfValueEqualsBackingFieldReturn(fieldAccess, property, diagnosticOptions),
+                                 assign.WithTrailingTrivia(SyntaxFactory.ElasticMarker),
+                                 syntaxGenerator.OnPropertyChanged(
+                                     propertyName: propertyName,
+                                     useCallerMemberName: invoker.IsCallerMemberName(),
+                                     usedUnderscoreNames: fieldAccess.UsesUnderscoreNames(),
+                                     invoker: invoker),
+                             };
             return (PropertyDeclarationSyntax)syntaxGenerator.WithSetAccessorStatements(propertyDeclaration, statements)
                                                              .WithAdditionalAnnotations(Formatter.Annotation);
         }
@@ -196,16 +224,24 @@ namespace WpfAnalyzers
         internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             var fieldAccess = fieldName.StartsWith("_")
-                                  ? fieldName
-                                  : $"this.{fieldName}";
+                ? fieldName
+                : $"this.{fieldName}";
+            return IfValueEqualsBackingFieldReturn(
+                syntaxGenerator,
+                SyntaxFactory.ParseExpression(fieldAccess),
+                property,
+                diagnosticOptions);
+        }
 
+        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
+        {
             if (!property.Type.IsReferenceType || property.Type == KnownSymbol.String)
             {
                 if (HasEqualityOperator(property.Type))
                 {
                     var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
                         SyntaxFactory.ParseName("value"),
-                        SyntaxFactory.ParseExpression(fieldAccess));
+                        fieldAccess);
                     return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
                 }
 
@@ -216,7 +252,7 @@ namespace WpfAnalyzers
                     {
                         var equalsExpression = syntaxGenerator.InvocationExpression(
                                 SyntaxFactory.ParseExpression("value.Equals"),
-                                SyntaxFactory.ParseExpression(fieldAccess));
+                            fieldAccess);
                         return (IfStatementSyntax)syntaxGenerator.IfStatement(equalsExpression, new[] { SyntaxFactory.ReturnStatement() });
                     }
                 }
@@ -225,33 +261,33 @@ namespace WpfAnalyzers
                 {
                     if (HasEqualityOperator(((INamedTypeSymbol)property.Type).TypeArguments[0]))
                     {
-                        var valueEqualsExpression =
-                            syntaxGenerator.ValueEqualsExpression(
-                                SyntaxFactory.ParseName("value"),
-                                SyntaxFactory.ParseExpression(fieldAccess));
+                        var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
+                            SyntaxFactory.ParseName("value"),
+                            fieldAccess);
                         return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
                     }
 
-                    var nullableEquals =
-                        syntaxGenerator.InvocationExpression(
-                            SyntaxFactory.ParseExpression("System.Nullable.Equals").WithAdditionalAnnotations(Simplifier.Annotation),
-                            SyntaxFactory.ParseName("value"),
-                            SyntaxFactory.ParseExpression(fieldAccess));
+                    var nullableEquals = syntaxGenerator.InvocationExpression(
+                        SyntaxFactory.ParseExpression("System.Nullable.Equals")
+                                     .WithAdditionalAnnotations(Simplifier.Annotation),
+                        SyntaxFactory.ParseName("value"),
+                        fieldAccess);
                     return (IfStatementSyntax)syntaxGenerator.IfStatement(nullableEquals, new[] { SyntaxFactory.ReturnStatement() });
                 }
 
-                var comparerEquals =
-                    syntaxGenerator.InvocationExpression(
-                        SyntaxFactory.ParseExpression($"System.Collections.Generic.EqualityComparer<{property.Type.ToDisplayString()}>.Default.Equals").WithAdditionalAnnotations(Simplifier.Annotation),
-                        SyntaxFactory.ParseName("value"),
-                        SyntaxFactory.ParseExpression(fieldAccess));
+                var comparerEquals = syntaxGenerator.InvocationExpression(
+                    SyntaxFactory.ParseExpression(
+                                     $"System.Collections.Generic.EqualityComparer<{property.Type.ToDisplayString()}>.Default.Equals")
+                                 .WithAdditionalAnnotations(Simplifier.Annotation),
+                    SyntaxFactory.ParseName("value"),
+                    fieldAccess);
                 return (IfStatementSyntax)syntaxGenerator.IfStatement(comparerEquals, new[] { SyntaxFactory.ReturnStatement() });
             }
 
             var referenceEqualsExpression = syntaxGenerator.InvocationExpression(
-               ReferenceTypeEquality(diagnosticOptions),
-               SyntaxFactory.ParseName("value"),
-                SyntaxFactory.ParseExpression(fieldAccess));
+                ReferenceTypeEquality(diagnosticOptions),
+                SyntaxFactory.ParseName("value"),
+                fieldAccess);
             return (IfStatementSyntax)syntaxGenerator.IfStatement(referenceEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
         }
 

@@ -26,7 +26,7 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF1010MutablePublicPropertyShouldNotify.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => BacthFixer.Default;
+        public override FixAllProvider GetFixAllProvider() => BatchFixer.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -62,8 +62,6 @@
                         propertyDeclaration,
                         property,
                         invoker,
-                        semanticModel,
-                        context.CancellationToken,
                         context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
 
                     if (fix.NotifyingProperty == propertyDeclaration)
@@ -89,8 +87,6 @@
             PropertyDeclarationSyntax propertyDeclaration,
             IPropertySymbol property,
             IMethodSymbol invoker,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
             ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             string backingFieldName;
@@ -119,19 +115,17 @@
 
             if (IsSimpleAssignmentOnly(
                 propertyDeclaration,
-                semanticModel,
-                cancellationToken,
                 out ExpressionStatementSyntax assignStatement,
-                out backingFieldName))
+                out var fieldAccess))
             {
                 var notifyingProperty = propertyDeclaration.WithGetterReturningBackingField(
                                                                syntaxGenerator,
-                                                               backingFieldName)
+                                                               fieldAccess)
                                                            .WithNotifyingSetter(
                                                                property,
                                                                syntaxGenerator,
                                                                assignStatement,
-                                                               backingFieldName,
+                                                               fieldAccess,
                                                                invoker,
                                                                diagnosticOptions);
                 return new Fix(propertyDeclaration, notifyingProperty, null);
@@ -140,9 +134,9 @@
             return new Fix(propertyDeclaration, null, null);
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionStatementSyntax assignStatement, out string fieldName)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out ExpressionStatementSyntax assignStatement, out ExpressionSyntax fieldAccess)
         {
-            fieldName = null;
+            fieldAccess = null;
             assignStatement = null;
             if (!propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) ||
                 setter.Body == null ||
@@ -151,21 +145,14 @@
                 return false;
             }
 
-            assignStatement = setter.Body.Statements[0] as ExpressionStatementSyntax;
-            var assignment = assignStatement?.Expression as AssignmentExpressionSyntax;
-            if (assignment == null || (assignment.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
+            if (Property.AssignsValueToBackingField(setter, out var assignment))
             {
-                return false;
+                assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+                fieldAccess = assignment.Left;
+                return assignStatement != null;
             }
 
-            var fieldSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken) as IFieldSymbol;
-            if (fieldSymbol == null)
-            {
-                return false;
-            }
-
-            fieldName = fieldSymbol.Name;
-            return true;
+            return false;
         }
 
         private struct Fix
@@ -182,12 +169,12 @@
             }
         }
 
-        private class BacthFixer : FixAllProvider
+        private class BatchFixer : FixAllProvider
         {
-            public static readonly BacthFixer Default = new BacthFixer();
+            public static readonly BatchFixer Default = new BatchFixer();
             private static readonly ImmutableArray<FixAllScope> SupportedFixAllScopes = ImmutableArray.Create(FixAllScope.Document);
 
-            private BacthFixer()
+            private BatchFixer()
             {
             }
 
@@ -247,8 +234,6 @@
                             propertyDeclaration,
                             property,
                             invoker,
-                            semanticModel,
-                            context.CancellationToken,
                             context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
 
                         if (fix.NotifyingProperty == propertyDeclaration)

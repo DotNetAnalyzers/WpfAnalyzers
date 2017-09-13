@@ -252,12 +252,23 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
                         return true;
                     }
 
-                    var memberAccess = a.Left as MemberAccessExpressionSyntax;
-                    if (memberAccess?.Expression is ThisExpressionSyntax &&
+                    if (a.Left is MemberAccessExpressionSyntax memberAccess &&
                         memberAccess.Name is IdentifierNameSyntax)
                     {
-                        assignment = a;
-                        return true;
+                        if (memberAccess.Expression is ThisExpressionSyntax ||
+                            memberAccess.Expression is IdentifierNameSyntax)
+                        {
+                            assignment = a;
+                            return true;
+                        }
+
+                        if (memberAccess.Expression is MemberAccessExpressionSyntax nested &&
+                            nested.Expression is ThisExpressionSyntax &&
+                            nested.Name is IdentifierNameSyntax)
+                        {
+                            assignment = a;
+                            return true;
+                        }
                     }
                 }
             }
