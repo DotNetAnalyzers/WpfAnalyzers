@@ -110,6 +110,75 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
+        public async Task CallsOnPropertyChangedCopyLocalNullcheckInvoke()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task WhenNotifyingCallerMemberNameExpressionBody()
         {
             var testCode = @"

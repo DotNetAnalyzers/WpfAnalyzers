@@ -47,6 +47,51 @@
         }
 
         [Test]
+        public async Task CallsOnPropertyChangedCopyLocalNullcheckInvoke()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+
+        set
+        {
+            if (value == this.value)
+            {
+                return;
+            }
+
+            this.value = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Test]
         public async Task CallsOnPropertyChangedExpressionBody()
         {
             var testCode = @"

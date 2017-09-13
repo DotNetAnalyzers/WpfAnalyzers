@@ -216,7 +216,7 @@
                         }
 
                         if ((invocation.Expression is MemberAccessExpressionSyntax memberAccess && !(memberAccess.Expression is ThisExpressionSyntax)) ||
-    (invocation.Expression is MemberBindingExpressionSyntax))
+                            (invocation.Expression is MemberBindingExpressionSyntax))
                         {
                             if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                             {
@@ -235,6 +235,29 @@
                                         {
                                             return AnalysisResult.Yes;
                                         }
+                                    }
+                                }
+                            }
+
+                            return AnalysisResult.No;
+                        }
+
+                        if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                        {
+                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax argument))
+                            {
+                                var identifier = argument.Expression as IdentifierNameSyntax;
+                                if (identifier?.Identifier.ValueText == parameter.Name)
+                                {
+                                    return AnalysisResult.Yes;
+                                }
+
+                                if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
+                                {
+                                    var nameArgument = objectCreation.ArgumentList.Arguments[0];
+                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                    {
+                                        return AnalysisResult.Yes;
                                     }
                                 }
                             }
