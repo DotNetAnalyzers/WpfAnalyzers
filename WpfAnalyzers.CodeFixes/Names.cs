@@ -1,84 +1,157 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class Names
     {
-        internal static bool UsesUnderscoreNames(this SyntaxNode node)
+        internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var typeDeclarationSyntax = node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-            if (typeDeclarationSyntax == null)
+            using (var walker = Walker.Borrow(node, semanticModel, cancellationToken))
             {
-                using (var pooled = UsesThisWalker.Create(node))
+                if (walker.UsesThis == Result.Yes ||
+                    walker.UsesUnderScore == Result.No)
                 {
-                    return pooled.Item.UsesThis == false;
-                }
-            }
-
-            foreach (var member in typeDeclarationSyntax.Members)
-            {
-                var field = member as FieldDeclarationSyntax;
-                if (field == null ||
-                    field.Modifiers.Any(SyntaxKind.StaticKeyword) ||
-                    !field.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    continue;
+                    return false;
                 }
 
-                foreach (var variable in field.Declaration.Variables)
+                if (walker.UsesUnderScore == Result.Yes ||
+                    walker.UsesThis == Result.No)
                 {
-                    return variable.Identifier.ValueText.StartsWith("_");
+                    return true;
                 }
-            }
 
-            using (var pooled = UsesThisWalker.Create(typeDeclarationSyntax))
-            {
-                return pooled.Item.UsesThis == false;
-            }
-        }
-
-        internal sealed class UsesThisWalker : CSharpSyntaxWalker
-        {
-            private static readonly Pool<UsesThisWalker> Cache = new Pool<UsesThisWalker>(
-                () => new UsesThisWalker(),
-                x =>
+                foreach (var tree in semanticModel.Compilation.SyntaxTrees)
                 {
-                    x.usesThis = false;
-                    x.useUnderScore = false;
-                });
-
-            private bool usesThis;
-            private bool useUnderScore;
-
-            private UsesThisWalker()
-            {
-            }
-
-            public bool? UsesThis
-            {
-                get
-                {
-                    if (this.usesThis == this.useUnderScore)
+                    if (tree.FilePath.EndsWith(".g.i.cs"))
                     {
-                        return null;
+                        continue;
                     }
 
-                    if (this.usesThis && !this.useUnderScore)
+                    walker.Visit(tree.GetRoot(cancellationToken));
+                    if (walker.UsesThis == Result.Yes ||
+                        walker.UsesUnderScore == Result.No)
+                    {
+                        return false;
+                    }
+
+                    if (walker.UsesUnderScore == Result.Yes ||
+                        walker.UsesThis == Result.No)
                     {
                         return true;
                     }
-
-                    return false;
                 }
             }
 
-            public static Pool<UsesThisWalker>.Pooled Create(SyntaxNode node)
+            return false;
+        }
+
+        internal sealed class Walker : PooledWalker<Walker>
+        {
+            private SemanticModel semanticModel;
+            private CancellationToken cancellationToken;
+
+            private Walker()
             {
-                var pooled = Cache.GetOrCreate();
-                pooled.Item.Visit(node);
-                return pooled;
+            }
+
+            public Result UsesThis { get; private set; }
+
+            public Result UsesUnderScore { get; private set; }
+
+            public static Walker Borrow(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
+                while (node.Parent != null)
+                {
+                    node = node.Parent;
+                }
+
+                walker.Visit(node);
+                return walker;
+            }
+
+            public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+            {
+                if (node.IsMissing ||
+                    node.Modifiers.Any(SyntaxKind.StaticKeyword) ||
+                    node.Modifiers.Any(SyntaxKind.ConstKeyword) ||
+                    node.Modifiers.Any(SyntaxKind.PublicKeyword) ||
+                    node.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
+                    node.Modifiers.Any(SyntaxKind.InternalKeyword))
+                {
+                    base.VisitFieldDeclaration(node);
+                    return;
+                }
+
+                foreach (var variable in node.Declaration.Variables)
+                {
+                    var name = variable.Identifier.ValueText;
+                    if (name.StartsWith("_"))
+                    {
+                        switch (this.UsesUnderScore)
+                        {
+                            case Result.Unknown:
+                                this.UsesUnderScore = Result.Yes;
+                                break;
+                            case Result.Yes:
+                                break;
+                            case Result.No:
+                                this.UsesUnderScore = Result.Maybe;
+                                break;
+                            case Result.Maybe:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                    else
+                    {
+                        switch (this.UsesUnderScore)
+                        {
+                            case Result.Unknown:
+                                this.UsesUnderScore = Result.No;
+                                break;
+                            case Result.Yes:
+                                this.UsesUnderScore = Result.Maybe;
+                                break;
+                            case Result.No:
+                                break;
+                            case Result.Maybe:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+
+                base.VisitFieldDeclaration(node);
+            }
+
+            public override void VisitThisExpression(ThisExpressionSyntax node)
+            {
+                switch (this.UsesThis)
+                {
+                    case Result.Unknown:
+                        this.UsesThis = Result.Yes;
+                        break;
+                    case Result.Yes:
+                        break;
+                    case Result.No:
+                        this.UsesThis = Result.Maybe;
+                        break;
+                    case Result.Maybe:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                base.VisitThisExpression(node);
             }
 
             public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
@@ -93,27 +166,6 @@
                 base.VisitInvocationExpression(node);
             }
 
-            public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
-            {
-                if (!node.Modifiers.Any(SyntaxKind.StaticKeyword) &&
-                     node.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    foreach (var variable in node.Declaration.Variables)
-                    {
-                        if (variable.Identifier.ValueText.StartsWith("_"))
-                        {
-                            this.useUnderScore = true;
-                        }
-                        else
-                        {
-                            this.usesThis = true;
-                        }
-                    }
-                }
-
-                base.VisitFieldDeclaration(node);
-            }
-
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
                 this.CheckUsesThis(node);
@@ -126,6 +178,14 @@
                 base.VisitConditionalAccessExpression(node);
             }
 
+            protected override void Clear()
+            {
+                this.UsesThis = Result.Unknown;
+                this.UsesUnderScore = Result.Unknown;
+                this.semanticModel = null;
+                this.cancellationToken = CancellationToken.None;
+            }
+
             private void CheckUsesThis(ExpressionSyntax expression)
             {
                 if (expression == null)
@@ -135,12 +195,45 @@
 
                 if ((expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax)
                 {
-                    this.usesThis = true;
+                    switch (this.UsesThis)
+                    {
+                        case Result.Unknown:
+                            this.UsesThis = Result.Yes;
+                            break;
+                        case Result.Yes:
+                            break;
+                        case Result.No:
+                            this.UsesThis = Result.Maybe;
+                            break;
+                        case Result.Maybe:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
 
                 if (expression is IdentifierNameSyntax)
                 {
-                    this.useUnderScore = true;
+                    if (this.semanticModel.GetSymbolSafe(expression, this.cancellationToken)
+                            ?.IsStatic ==
+                        false)
+                    {
+                        switch (this.UsesThis)
+                        {
+                            case Result.Unknown:
+                                this.UsesThis = Result.No;
+                                break;
+                            case Result.Yes:
+                                this.UsesThis = Result.Maybe;
+                                break;
+                            case Result.No:
+                                break;
+                            case Result.Maybe:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
                 }
             }
         }

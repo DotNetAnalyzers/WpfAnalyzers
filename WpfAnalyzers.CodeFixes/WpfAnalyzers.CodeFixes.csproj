@@ -55,14 +55,7 @@
     <Compile Include="FixAll\FixedTypes.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyChanged\CheckIfDifferentBeforeNotifyFixProvider.cs" />
-    <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedCodeFixProvider.cs" />
-    <Compile Include="PropertyChanged\ImplementINotifyPropertyChangedHelper.cs" />
-    <Compile Include="PropertyChanged\MakePropertyNotifyCodeFixProvider.cs" />
-    <Compile Include="PropertyChanged\MakePropertyNotifyHelper.cs" />
-    <Compile Include="PropertyChanged\NotifyPropertyChangedCodeFixProvider.cs" />
-    <Compile Include="PropertyChanged\UseCallerMemberNameCodeFixProvider.cs" />
-    <Compile Include="PropertyChanged\UseCorrectEqualityCodeFixProvider.cs" />
+    <Compile Include="Result.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

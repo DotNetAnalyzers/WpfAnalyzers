@@ -112,6 +112,7 @@
     <Compile Include="DependencyProperties\WPF0040SetUsingDependencyPropertyKey.cs" />
     <Compile Include="DependencyProperties\WPF0013ClrMethodMustMatchRegisteredType.cs" />
     <Compile Include="Helpers\Walkers\AssignmentWalker.cs" />
+    <Compile Include="Helpers\Walkers\PooledWalker.cs" />
     <Compile Include="Helpers\Walkers\ReturnExpressionsWalker.cs" />
     <Compile Include="HelpLink.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedType.cs" />
@@ -127,16 +128,7 @@
     <Compile Include="PropertyChanged\Helpers\AnalysisResult.cs" />
     <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
     <Compile Include="PropertyChanged\Helpers\Property.cs" />
-    <Compile Include="PropertyChanged\WPF1001StructMustNotNotify.cs" />
     <Compile Include="DependencyProperties\WPF0042AvoidSideEffectsInClrAccessors.cs" />
-    <Compile Include="PropertyChanged\WPF1010MutablePublicPropertyShouldNotify.cs" />
-    <Compile Include="PropertyChanged\WPF1011ImplementINotifyPropertyChanged.cs" />
-    <Compile Include="PropertyChanged\WPF1012NotifyWhenPropertyChanges.cs" />
-    <Compile Include="PropertyChanged\WPF1013UseCallerMemberName.cs" />
-    <Compile Include="PropertyChanged\WPF1014DontRaiseChangeForMissingProperty.cs" />
-    <Compile Include="PropertyChanged\WPF1015CheckIfDifferentBeforeNotifying.cs" />
-    <Compile Include="PropertyChanged\WPF1016UseReferenceEquals.cs" />
-    <Compile Include="PropertyChanged\WPF1017UseObjectEqualsForReferenceTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

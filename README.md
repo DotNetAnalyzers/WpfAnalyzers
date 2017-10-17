@@ -105,42 +105,6 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md">WPF0052</a></td>
   <td>XmlnsDefinitions does not map all namespaces with public types.</td>
 </tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
-  <td>Struct must not implement INotifyPropertyChanged</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1010.md">WPF1010</a></td>
-  <td>Mutable public property should notify.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1011.md">WPF1011</a></td>
-  <td>Implement INotifyPropertyChanged.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1012.md">WPF1012</a></td>
-  <td>Notify when property changes.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1013.md">WPF1013</a></td>
-  <td>Use [CallerMemberName]</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1014.md">WPF1014</a></td>
-  <td>Don't raise PropertyChanged for missing property.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1015.md">WPF1015</a></td>
-  <td>Check if value is different before notifying.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1016.md">WPF1016</a></td>
-  <td>Check if value is different using ReferenceEquals before notifying.</td>
-</tr>
-<tr>
-  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF1017.md">WPF1017</a></td>
-  <td>Check if value is different using object.Equals before notifying.</td>
-</tr>
 <table>
 <!-- end generated table -->
 
