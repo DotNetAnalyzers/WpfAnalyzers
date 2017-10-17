@@ -4,13 +4,10 @@ Microsoft.CodeAnalysis.CSharp
 Microsoft.CodeAnalysis.Workspaces.Common
 Microsoft.Composition
 System.Collections.Immutable
-
 group Analyzers
-  StyleCop.Analyzers
-  Gu.Analyzers
-  WpfAnalyzers
-  AsyncUsageAnalyzers
-  Microsoft.CodeAnalysis.Analyzers
-
+StyleCop.Analyzers
+Gu.Analyzers
+AsyncUsageAnalyzers
+Microsoft.CodeAnalysis.Analyzers
 group Test
-  NUnit
+NUnit

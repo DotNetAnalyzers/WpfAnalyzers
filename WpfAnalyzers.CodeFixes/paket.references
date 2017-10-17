@@ -4,13 +4,9 @@ Microsoft.CodeAnalysis.CSharp
 Microsoft.CodeAnalysis.Workspaces.Common
 Microsoft.Composition
 System.Collections.Immutable
-
 group Analyzers
-  StyleCop.Analyzers
-  Gu.Analyzers
-  WpfAnalyzers
-  AsyncUsageAnalyzers
-  JetBrains.Annotations
-  Microsoft.CodeAnalysis.Analyzers
-
-
+StyleCop.Analyzers
+Gu.Analyzers
+AsyncUsageAnalyzers
+JetBrains.Annotations
+Microsoft.CodeAnalysis.Analyzers

@@ -1,4 +1,4 @@
-FRAMEWORK: NET452, PORTABLE-NET45+WIN8
+RESTRICTION: >= portable-net45+win8
 NUGET
   remote: http://www.nuget.org/api/v2
     Microsoft.CodeAnalysis.Analyzers (1.1)
@@ -15,8 +15,8 @@ NUGET
       Microsoft.CodeAnalysis.Common (1.2.2)
       Microsoft.Composition (>= 1.0.27)
     Microsoft.Composition (1.0.27)
-    Microsoft.NETCore.Platforms (1.1) - framework: net452
-    Microsoft.NETCore.Targets (1.1) - framework: net452
+    Microsoft.NETCore.Platforms (1.1) - restriction: == net452
+    Microsoft.NETCore.Targets (1.1) - restriction: == net452
     System.Collections (4.3)
     System.Collections.Immutable (1.1.37)
       System.Collections (>= 4.0)
@@ -32,10 +32,10 @@ NUGET
       Microsoft.NETCore.Platforms (>= 1.1)
       Microsoft.NETCore.Targets (>= 1.1)
       System.Runtime (>= 4.3)
-    System.IO (4.3) - framework: net452
+    System.IO (4.3) - restriction: == net452
     System.Linq (4.3)
-    System.Reflection (4.3) - framework: net452
-    System.Reflection.Extensions (4.3) - framework: net452
+    System.Reflection (4.3) - restriction: == net452
+    System.Reflection.Extensions (4.3) - restriction: == net452
     System.Reflection.Metadata (1.2)
       System.Collections (>= 4.0)
       System.Collections.Immutable (>= 1.1.37)
@@ -52,28 +52,27 @@ NUGET
       System.Text.Encoding (>= 4.0)
       System.Text.Encoding.Extensions (>= 4.0)
       System.Threading (>= 4.0)
-    System.Reflection.Primitives (4.3) - framework: net452
+    System.Reflection.Primitives (4.3) - restriction: == net452
     System.Resources.ResourceManager (4.3)
     System.Runtime (4.3)
     System.Runtime.Extensions (4.3)
-    System.Runtime.InteropServices (4.3) - framework: net452
-    System.Text.Encoding (4.3) - framework: net452
-    System.Text.Encoding.Extensions (4.3) - framework: net452
+    System.Runtime.InteropServices (4.3) - restriction: == net452
+    System.Text.Encoding (4.3) - restriction: == net452
+    System.Text.Encoding.Extensions (4.3) - restriction: == net452
     System.Threading (4.3)
 
 GROUP Analyzers
-FRAMEWORK: NET452
+RESTRICTION: == net452
 NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
-    Gu.Analyzers (0.1.11.24-dev)
+    Gu.Analyzers (0.1.11.25-dev)
     JetBrains.Annotations (10.4)
     Microsoft.CodeAnalysis.Analyzers (1.1)
     StyleCop.Analyzers (1.0)
-    WpfAnalyzers (0.2.7.10)
 
 GROUP Test
-FRAMEWORK: NET452
+RESTRICTION: == net452
 NUGET
   remote: http://www.nuget.org/api/v2
     NUnit (3.6.1)
