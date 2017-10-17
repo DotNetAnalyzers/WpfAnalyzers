@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.PropertyChanged.Helpers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Threading;

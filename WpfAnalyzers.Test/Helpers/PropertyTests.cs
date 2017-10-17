@@ -3,7 +3,6 @@
     using System.Threading;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
-    using WpfAnalyzers.PropertyChanged.Helpers;
 
     public class PropertyTests
     {

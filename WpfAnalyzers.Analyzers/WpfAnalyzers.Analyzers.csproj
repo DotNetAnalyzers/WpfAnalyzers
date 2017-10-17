@@ -37,7 +37,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-	<AssemblyOriginatorKeyFile>../WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -121,15 +121,15 @@
     <Compile Include="HelpLink.cs" />
     <Compile Include="Helpers\KnownSymbols\Qualifieds\QualifiedType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyChanged\Helpers\BaseTypeSyntaxExt.cs" />
-    <Compile Include="PropertyChanged\Helpers\Equality.cs" />
-    <Compile Include="PropertyChanged\Helpers\IdentifierNameWalker.cs" />
-    <Compile Include="PropertyChanged\Helpers\IfStatementWalker.cs" />
-    <Compile Include="PropertyChanged\Helpers\InvocationWalker.cs" />
-    <Compile Include="PropertyChanged\Helpers\PropertyChanged.cs" />
-    <Compile Include="PropertyChanged\Helpers\AnalysisResult.cs" />
-    <Compile Include="PropertyChanged\Helpers\TypeDeclarationSyntaxExt.cs" />
-    <Compile Include="PropertyChanged\Helpers\Property.cs" />
+    <Compile Include="Helpers\BaseTypeSyntaxExt.cs" />
+    <Compile Include="Helpers\Equality.cs" />
+    <Compile Include="Helpers\Walkers\IdentifierNameWalker.cs" />
+    <Compile Include="Helpers\Walkers\IfStatementWalker.cs" />
+    <Compile Include="Helpers\InvocationWalker.cs" />
+    <Compile Include="Helpers\PropertyChanged.cs" />
+    <Compile Include="Helpers\AnalysisResult.cs" />
+    <Compile Include="Helpers\TypeDeclarationSyntaxExt.cs" />
+    <Compile Include="Helpers\Property.cs" />
     <Compile Include="WPF0042AvoidSideEffectsInClrAccessors.cs" />
   </ItemGroup>
   <ItemGroup>
