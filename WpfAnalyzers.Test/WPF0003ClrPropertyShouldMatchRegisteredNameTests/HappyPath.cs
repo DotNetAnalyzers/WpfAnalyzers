@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredName
+namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 {
     using System.Threading.Tasks;
     using NUnit.Framework;

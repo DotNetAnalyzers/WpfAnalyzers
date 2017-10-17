@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredName
+namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 {
     using System.Threading.Tasks;
     using NUnit.Framework;
