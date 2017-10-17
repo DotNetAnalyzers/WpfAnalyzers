@@ -1,6 +1,6 @@
 storage: none
 source http://www.nuget.org/api/v2/
-nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1 strategy: min
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
 
 group Analyzers
   storage: none
@@ -20,7 +20,7 @@ group Benchmarks
 group Test
   storage: none
   source http://www.nuget.org/api/v2/
-  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1 strategy: min
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
   nuget Gu.Roslyn.Asserts
   nuget NUnit
 
