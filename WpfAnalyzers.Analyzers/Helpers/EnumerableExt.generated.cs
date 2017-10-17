@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Generic;
