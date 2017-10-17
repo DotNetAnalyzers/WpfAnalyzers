@@ -20,39 +20,23 @@
                                                                                                   .Where(typeof(AnalyzerBenchmarks).IsAssignableFrom)
                                                                                                   .ToArray();
 
-        private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarkWalkers { get; } = AllAnalyzers
+        private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmars { get; } = AllAnalyzers
             .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, x))
             .ToArray();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            foreach (var walker in AllBenchmarkWalkers)
+            foreach (var walker in AllBenchmars)
             {
                 walker.Run();
             }
         }
 
-        [TestCaseSource(nameof(AllBenchmarkWalkers))]
+        [TestCaseSource(nameof(AllBenchmars))]
         public void Run(Gu.Roslyn.Asserts.Benchmark walker)
         {
             walker.Run();
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public void AllAnalyzersHaveBenchmarks(DiagnosticAnalyzer analyzer)
-        {
-            var id = analyzer.SupportedDiagnostics.Single().Id;
-            var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
-            var match = AllBenchmarkTypes.SingleOrDefault(x => x.Name == expectedName);
-            Assert.NotNull(match, expectedName);
-        }
-
-        [Test]
-        public void ProjectFileExists()
-        {
-            var projectFile = Path.Combine(Program.ProjectDirectory, "WpfAnalyzers.Benchmarks.csproj");
-            Assert.AreEqual(true, File.Exists(projectFile), projectFile);
         }
 
         [Test]
