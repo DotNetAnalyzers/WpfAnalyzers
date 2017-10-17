@@ -1,8 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0005PropertyChangedCallbackShouldMatchRegisteredName
+﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredName
 {
     using System.Threading.Tasks;
     using NUnit.Framework;
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0005PropertyChangedCallbackShouldMatchRegisteredName = WpfAnalyzers.WPF0005PropertyChangedCallbackShouldMatchRegisteredName;
 
     internal class CodeFix : CodeFixVerifier<WPF0005PropertyChangedCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>
     {

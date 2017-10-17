@@ -1,10 +1,8 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0006CoerceValueCallbackShouldMatchRegisteredName
+namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredName
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0006CoerceValueCallbackShouldMatchRegisteredName = WpfAnalyzers.WPF0006CoerceValueCallbackShouldMatchRegisteredName;
 
     internal class HappyPath : HappyPathVerifier<WPF0006CoerceValueCallbackShouldMatchRegisteredName>
     {

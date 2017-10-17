@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0002BackingFieldShouldMatchRegisteredName
+﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredName
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0002BackingFieldShouldMatchRegisteredName = WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName;
 
     internal class CodeFix : CodeFixVerifier<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>
     {

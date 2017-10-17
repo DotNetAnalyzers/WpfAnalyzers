@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0012ClrPropertyShouldMatchRegisteredType
+﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredType
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0012ClrPropertyShouldMatchRegisteredType = WpfAnalyzers.WPF0012ClrPropertyShouldMatchRegisteredType;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0012ClrPropertyShouldMatchRegisteredType>
     {

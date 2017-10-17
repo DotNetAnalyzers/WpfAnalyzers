@@ -1,10 +1,7 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0043DontUseSetCurrentValueForDataContextTests
+namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
 
     internal class HappyPath : HappyPathVerifier<WPF0043DontUseSetCurrentValueForDataContext>
     {

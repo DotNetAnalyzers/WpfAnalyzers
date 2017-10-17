@@ -40,18 +40,18 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyProperties\AddXmlnsDefinitionCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\UseSetCurrentValueCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\Helpers\RenameHelper.cs" />
-    <Compile Include="DependencyProperties\Helpers\SyntaxTokenListExt.cs" />
-    <Compile Include="DependencyProperties\RenameMethodCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\UseContainingTypeAsOwnerCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\RenamePropertyCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\UseDependencyPropertyKeyCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\UseSetValueCodeFixProvider.cs" />
+    <Compile Include="AddXmlnsDefinitionCodeFixProvider.cs" />
+    <Compile Include="UseSetCurrentValueCodeFixProvider.cs" />
+    <Compile Include="Helpers\RenameHelper.cs" />
+    <Compile Include="Helpers\SyntaxTokenListExt.cs" />
+    <Compile Include="RenameMethodCodeFixProvider.cs" />
+    <Compile Include="UseContainingTypeAsOwnerCodeFixProvider.cs" />
+    <Compile Include="RenamePropertyCodeFixProvider.cs" />
+    <Compile Include="UseDependencyPropertyKeyCodeFixProvider.cs" />
+    <Compile Include="UseSetValueCodeFixProvider.cs" />
     <Compile Include="FinishedTasks.cs" />
-    <Compile Include="DependencyProperties\MakeFieldStaticReadonlyCodeFixProvider.cs" />
-    <Compile Include="DependencyProperties\RenameFieldCodeFixProvider.cs" />
+    <Compile Include="MakeFieldStaticReadonlyCodeFixProvider.cs" />
+    <Compile Include="RenameFieldCodeFixProvider.cs" />
     <Compile Include="FixAll\FixedTypes.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,10 +1,8 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0041SetMutableUsingSetCurrentValue
+namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValue
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0041SetMutableUsingSetCurrentValue = WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue;
 
     internal class HappyPath : HappyPathVerifier<WPF0041SetMutableUsingSetCurrentValue>
     {

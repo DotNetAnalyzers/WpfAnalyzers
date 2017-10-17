@@ -1,10 +1,8 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0030BackingFieldShouldBeStaticReadonly
+namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonly
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0030BackingFieldShouldBeStaticReadonly = WpfAnalyzers.WPF0030BackingFieldShouldBeStaticReadonly;
 
     internal class HappyPath : HappyPathVerifier<WPF0030BackingFieldShouldBeStaticReadonly>
     {

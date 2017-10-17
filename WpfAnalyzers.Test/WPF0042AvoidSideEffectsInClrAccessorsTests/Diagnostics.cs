@@ -1,9 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0042AvoidSideEffectsInClrAccessorsTests
+﻿namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 {
     using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
-    using WpfAnalyzers.DependencyProperties;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0042AvoidSideEffectsInClrAccessors>
     {

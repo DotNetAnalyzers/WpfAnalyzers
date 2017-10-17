@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0051XmlnsDefinitionMustMapExistingNamespace
+﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespace
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0051XmlnsDefinitionMustMapExistingNamespace = WpfAnalyzers.WPF0051XmlnsDefinitionMustMapExistingNamespace;
 
     internal class HappyPath : HappyPathVerifier<WPF0051XmlnsDefinitionMustMapExistingNamespace>
     {

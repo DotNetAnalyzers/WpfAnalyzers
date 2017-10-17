@@ -1,10 +1,8 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0040SetUsingDependencyPropertyKey
+namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKey
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0040SetUsingDependencyPropertyKey = WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey;
 
     internal class HappyPath : HappyPathVerifier<WPF0040SetUsingDependencyPropertyKey>
     {

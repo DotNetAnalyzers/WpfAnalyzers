@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0050XmlnsPrefixMustMatchXmlnsDefinition
+﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinition
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0050XmlnsPrefixMustMatchXmlnsDefinition = WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>
     {

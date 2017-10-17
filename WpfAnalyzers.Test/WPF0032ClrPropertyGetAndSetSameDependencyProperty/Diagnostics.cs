@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0032ClrPropertyGetAndSetSameDependencyProperty
+﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyProperty
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0032ClrPropertyGetAndSetSameDependencyProperty = WpfAnalyzers.WPF0032ClrPropertyGetAndSetSameDependencyProperty;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0032ClrPropertyGetAndSetSameDependencyProperty>
     {

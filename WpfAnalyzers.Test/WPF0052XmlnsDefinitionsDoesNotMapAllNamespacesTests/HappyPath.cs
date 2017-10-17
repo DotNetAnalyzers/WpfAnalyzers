@@ -1,10 +1,7 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
+﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
 
     internal class HappyPath : HappyPathVerifier<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>
     {

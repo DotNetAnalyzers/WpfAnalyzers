@@ -51,7 +51,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeTests.cs" />
     <Compile Include="HappyPathWithAll.cs" />
     <Compile Include="WPF0001BackingFieldShouldMatchRegisteredName\HappyPath.cs" />
     <Compile Include="WPF0002BackingFieldShouldMatchRegisteredName\HappyPath.cs" />

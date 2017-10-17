@@ -1,8 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0031FieldOrder
+﻿namespace WpfAnalyzers.Test.WPF0031FieldOrder
 {
     using System.Threading.Tasks;
     using NUnit.Framework;
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0031FieldOrder = WpfAnalyzers.WPF0031FieldOrder;
 
     internal class HappyPath : HappyPathVerifier<WPF0031FieldOrder>
     {

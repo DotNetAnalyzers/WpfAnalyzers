@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0010DefaultValueMustMatchRegisteredType
+﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredType
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0010DefaultValueMustMatchRegisteredType = WpfAnalyzers.WPF0010DefaultValueMustMatchRegisteredType;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0010DefaultValueMustMatchRegisteredType>
     {

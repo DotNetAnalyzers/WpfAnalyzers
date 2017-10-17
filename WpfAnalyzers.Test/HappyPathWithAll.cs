@@ -12,7 +12,7 @@
     public class HappyPathWithAll : DiagnosticVerifier
     {
         private static readonly IEnumerable<DiagnosticAnalyzer> AllAnalyzers = typeof(
-                WpfAnalyzers.DependencyProperties.WPF0041SetMutableUsingSetCurrentValue).Assembly.GetTypes()
+                WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue).Assembly.GetTypes()
                                                                                         .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
                                                                                         .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t));
 

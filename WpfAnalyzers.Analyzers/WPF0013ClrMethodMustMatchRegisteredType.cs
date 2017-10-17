@@ -1,0 +1,88 @@
+﻿namespace WpfAnalyzers
+{
+    using System.Collections.Immutable;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    internal class WPF0013ClrMethodMustMatchRegisteredType : DiagnosticAnalyzer
+    {
+        public const string DiagnosticId = "WPF0013";
+
+        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+            id: DiagnosticId,
+            title: "CLR accessor for attached property must match registered type.",
+            messageFormat: "{0} must match registered type {1}",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            description: "CLR accessor for attached property must match registered type.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
+
+        /// <inheritdoc/>
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+
+        /// <inheritdoc/>
+        public override void Initialize(AnalysisContext context)
+        {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.MethodDeclaration);
+        }
+
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
+            var methodDeclaration = context.Node as MethodDeclarationSyntax;
+            if (methodDeclaration == null || methodDeclaration.IsMissing)
+            {
+                return;
+            }
+
+            var method = context.ContainingSymbol as IMethodSymbol;
+            if (method == null)
+            {
+                return;
+            }
+
+            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol getField))
+            {
+                if (DependencyProperty.TryGetRegisteredType(getField, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
+                {
+                    if (!method.ReturnType.IsSameType(registeredType))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ReturnType.GetLocation(), "Return type", registeredType));
+                    }
+                }
+
+                return;
+            }
+
+            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol setField))
+            {
+                if (DependencyProperty.TryGetRegisteredType(
+    setField,
+    context.SemanticModel,
+    context.CancellationToken,
+    out ITypeSymbol registeredType))
+                {
+                    if (!method.Parameters[1].Type.IsSameType(registeredType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                methodDeclaration.ParameterList.Parameters[1].GetLocation(),
+                                "Value type",
+                                registeredType));
+                    }
+                }
+            }
+        }
+    }
+}

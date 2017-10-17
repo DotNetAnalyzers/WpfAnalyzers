@@ -1,11 +1,9 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0014SetValueMustUseRegisteredType
+﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredType
 {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0014SetValueMustUseRegisteredType = WpfAnalyzers.WPF0014SetValueMustUseRegisteredType;
 
     internal class Diagnostics : DiagnosticVerifier<WPF0014SetValueMustUseRegisteredType>
     {

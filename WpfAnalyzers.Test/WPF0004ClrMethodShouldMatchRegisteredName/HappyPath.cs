@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0004ClrMethodShouldMatchRegisteredName
+﻿namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredName
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0004ClrMethodShouldMatchRegisteredName = WpfAnalyzers.WPF0004ClrMethodShouldMatchRegisteredName;
 
     internal class HappyPath : HappyPathVerifier<WPF0004ClrMethodShouldMatchRegisteredName>
     {

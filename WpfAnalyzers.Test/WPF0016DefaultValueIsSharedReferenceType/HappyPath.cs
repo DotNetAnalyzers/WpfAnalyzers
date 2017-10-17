@@ -1,10 +1,8 @@
-namespace WpfAnalyzers.Test.DependencyProperties.WPF0016DefaultValueIsSharedReferenceType
+namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceType
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0016DefaultValueIsSharedReferenceType = WpfAnalyzers.WPF0016DefaultValueIsSharedReferenceType;
 
     internal class HappyPath : HappyPathVerifier<WPF0016DefaultValueIsSharedReferenceType>
     {

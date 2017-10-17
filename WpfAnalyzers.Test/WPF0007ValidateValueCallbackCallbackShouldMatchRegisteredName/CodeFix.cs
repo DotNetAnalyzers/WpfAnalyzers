@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName
+﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName = WpfAnalyzers.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName;
 
     internal class CodeFix : CodeFixVerifier<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>
     {

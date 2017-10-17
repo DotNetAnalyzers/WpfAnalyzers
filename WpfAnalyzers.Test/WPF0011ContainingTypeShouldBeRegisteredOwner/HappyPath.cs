@@ -1,10 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0011ContainingTypeShouldBeRegisteredOwner
+﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwner
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
-
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0011ContainingTypeShouldBeRegisteredOwner = WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner;
 
     internal class HappyPath : HappyPathVerifier<WPF0011ContainingTypeShouldBeRegisteredOwner>
     {

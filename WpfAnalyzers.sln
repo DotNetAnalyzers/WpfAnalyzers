@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A96555-15B1-4A0C-ADC1-059CEAA3F788}"
 	ProjectSection(SolutionItems) = preProject
@@ -50,15 +50,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF0050.md = documentation\WPF0050.md
 		documentation\WPF0051.md = documentation\WPF0051.md
 		documentation\WPF0052.md = documentation\WPF0052.md
-		documentation\WPF1001.md = documentation\WPF1001.md
-		documentation\WPF1010.md = documentation\WPF1010.md
-		documentation\WPF1011.md = documentation\WPF1011.md
-		documentation\WPF1012.md = documentation\WPF1012.md
-		documentation\WPF1013.md = documentation\WPF1013.md
-		documentation\WPF1014.md = documentation\WPF1014.md
-		documentation\WPF1015.md = documentation\WPF1015.md
-		documentation\WPF1016.md = documentation\WPF1016.md
-		documentation\WPF1017.md = documentation\WPF1017.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
@@ -98,5 +89,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{AB970A83-4723-44EA-95EC-D591AF6EC75D} = {A1A96555-15B1-4A0C-ADC1-059CEAA3F788}
 		{700F1916-2704-452C-9FD4-8EA6247E6589} = {BAD2A4EE-6739-4830-BC74-2F8CF785A572}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B745FC73-0642-441C-8DEE-F8CDAB85A8E2}
 	EndGlobalSection
 EndGlobal

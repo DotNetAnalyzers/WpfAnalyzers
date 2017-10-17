@@ -1,8 +1,8 @@
-﻿namespace WpfAnalyzers.Test.DependencyProperties.WPF0015RegisteredOwnerTypeMustBeDependencyObject
+﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObject
 {
     using System.Threading.Tasks;
     using NUnit.Framework;
-    using WpfAnalyzers.DependencyProperties;
+    using WPF0015RegisteredOwnerTypeMustBeDependencyObject = WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject;
 
     internal class HappyPath : HappyPathVerifier<WPF0015RegisteredOwnerTypeMustBeDependencyObject>
     {
