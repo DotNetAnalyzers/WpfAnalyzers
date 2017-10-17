@@ -183,7 +183,6 @@ namespace WpfAnalyzers.Test
                 .AddMetadataReference(projectId, MetadataReferences.WindowsBase)
                 .AddMetadataReference(projectId, MetadataReferences.SystemXaml)
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbols)
-                .AddMetadataReference(projectId, MetadataReferences.MvvmFramework)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysis);
 
             solution.Workspace.Options =
