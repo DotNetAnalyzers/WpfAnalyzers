@@ -1,6 +1,7 @@
 ﻿namespace WpfAnalyzers.Test
 {
     using System.Threading;
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
@@ -95,7 +96,7 @@ namespace RoslynSandBox
 }");
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.All);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var property = syntaxTree.PropertyDeclarationSyntax(code);
+            var property = syntaxTree.FindPropertyDeclaration(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
         }
     }
