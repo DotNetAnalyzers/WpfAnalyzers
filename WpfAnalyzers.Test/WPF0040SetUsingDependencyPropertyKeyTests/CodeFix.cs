@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
-    using System.Threading.Tasks;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 

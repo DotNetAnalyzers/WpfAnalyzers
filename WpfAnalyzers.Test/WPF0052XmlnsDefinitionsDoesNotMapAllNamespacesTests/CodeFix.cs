@@ -1,12 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>
+    internal class CodeFix
     {
         [Test]
-        public async Task WhenMissingNamespace()
+        public void WhenMissingNamespace()
         {
             var control1Code = @"
 namespace Gu.Wpf.Geometry
@@ -80,12 +80,6 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: ↓XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
 
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("XmlnsDefinitions does not map all namespaces with public types.");
-
-            await this.VerifyCSharpDiagnosticAsync(new[] { control1Code, control2Code, testCode }, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -113,11 +107,13 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Meh"")]";
 
-            await this.VerifyCSharpFixAsync(new[] { control1Code, control2Code, testCode }, new[] { control1Code, control2Code, fixedCode }).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("XmlnsDefinitions does not map all namespaces with public types.");
+            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expected, control1Code, control2Code, testCode);
+            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(new[] { control1Code, control2Code, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task WhenMissingNamespaceWithNameColon()
+        public void WhenMissingNamespaceWithNameColon()
         {
             var control1Code = @"
 namespace Gu.Wpf.Geometry
@@ -191,12 +187,6 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: ↓XmlnsDefinition(""http://gu.se/Geometry"", clrNamespace: ""Gu.Wpf.Geometry"")]";
 
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("XmlnsDefinitions does not map all namespaces with public types.");
-
-            await this.VerifyCSharpDiagnosticAsync(new[] { control1Code, control2Code, testCode }, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -224,7 +214,9 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", clrNamespace: ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", clrNamespace: ""Gu.Wpf.Geometry.Meh"")]";
 
-            await this.VerifyCSharpFixAsync(new[] { control1Code, control2Code, testCode }, new[] { control1Code, control2Code, fixedCode }).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("XmlnsDefinitions does not map all namespaces with public types.");
+            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expected, control1Code, control2Code, testCode);
+            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(new[] { control1Code, control2Code, testCode }, fixedCode);
         }
     }
 }

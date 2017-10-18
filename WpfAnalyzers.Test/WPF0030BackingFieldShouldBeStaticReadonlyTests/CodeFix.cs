@@ -88,6 +88,9 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
+    using System.Windows;
+    using System.Windows.Controls;
+
     public class FooControl : Control
     {
         ↓public static DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
@@ -103,6 +106,9 @@ namespace RoslynSandbox
             var fixedCode = @"
 namespace RoslynSandbox
 {
+    using System.Windows;
+    using System.Windows.Controls;
+
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));

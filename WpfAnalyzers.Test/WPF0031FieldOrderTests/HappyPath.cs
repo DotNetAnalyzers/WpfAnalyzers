@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
-    using System.Threading.Tasks;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
