@@ -94,7 +94,7 @@ namespace RoslynSandBox
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.All);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var property = syntaxTree.FindPropertyDeclaration(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
