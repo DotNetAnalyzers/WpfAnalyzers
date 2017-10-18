@@ -1,13 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredName
+namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0005PropertyChangedCallbackShouldMatchRegisteredName = WpfAnalyzers.WPF0005PropertyChangedCallbackShouldMatchRegisteredName;
 
-    internal class HappyPath : HappyPathVerifier<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyPropertyNoMetadata()
+        public void DependencyPropertyNoMetadata()
         {
             var testCode = @"
 using System.Windows;
@@ -29,14 +28,14 @@ public class FooControl : Control
         set { this.SetValue(ValueProperty, value); }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
 
-        [TestCase("new PropertyMetadata(OnBarChanged)")]
-        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
-        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
-        public async Task DependencyPropertyWithMetadata(string metadata)
+        [TestCase("new PropertyMetadata(null, null, CoerceBar)")]
+        [TestCase("new PropertyMetadata(new CoerceValueCallback(CoerceBar))")]
+        [TestCase("new PropertyMetadata(default(int), null, CoerceBar)")]
+        [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
+        public void DependencyWithPropertyMetadata(string metadata)
         {
             var testCode = @"
     using System.Windows;
@@ -48,7 +47,7 @@ public class FooControl : Control
             nameof(Bar),
             typeof(int),
             typeof(FooControl),
-            new PropertyMetadata(default(int), OnBarChanged));
+            new PropertyMetadata(default(int), null, CoerceBar));
 
         public int Bar
         {
@@ -56,17 +55,17 @@ public class FooControl : Control
             set { this.SetValue(BarProperty, value); }
         }
 
-        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static object CoerceBar(DependencyObject d, object baseValue)
         {
-            // nop
+            return baseValue;
         }
     }";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
+            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 using System.Windows;
@@ -78,7 +77,7 @@ public class FooControl : Control
         nameof(Value),
         typeof(double),
         typeof(FooControl),
-        new PropertyMetadata(1.0, OnValueChanged));
+        new PropertyMetadata(1.0, null, CoerceValue));
 
     public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -88,16 +87,16 @@ public class FooControl : Control
         set { this.SetValue(ValuePropertyKey, value); }
     }
 
-    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static object CoerceValue(DependencyObject d, object baseValue)
     {
-        // nop
+        return baseValue;
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void AttachedProperty()
         {
             var testCode = @"
 using System.Windows;
@@ -108,23 +107,23 @@ public static class Foo
         ""Bar"",
         typeof(int),
         typeof(Foo),
-        new PropertyMetadata(default(int), OnBarChanged));
+        new PropertyMetadata(default(int), null, CoerceBar));
 
     public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
     public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-    private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static object CoerceBar(DependencyObject d, object baseValue)
     {
-        // nop
+        return baseValue;
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
 using System.Windows;
@@ -135,7 +134,7 @@ public static class Foo
         ""Bar"",
         typeof(int),
         typeof(Foo),
-        new PropertyMetadata(default(int), OnBarChanged));
+        new PropertyMetadata(default(int), OnBarChanged, CoerceBar));
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -147,33 +146,14 @@ public static class Foo
     {
         // nop
     }
-}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task OverrideMetadata()
-        {
-            var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : UserControl
-{
-    static FooControl()
+    private static object CoerceBar(DependencyObject d, object baseValue)
     {
-        BackgroundProperty.OverrideMetadata(typeof(FooControl),
-            new FrameworkPropertyMetadata(null, OnBackgroundChanged));
-    }
-
-    private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        // nop
+        return baseValue;
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
     }
 }
