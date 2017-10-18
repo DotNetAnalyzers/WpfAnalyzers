@@ -1,10 +1,13 @@
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
-    public class WPF0041Benchmarks : AnalyzerBenchmarks
+    public class WPF0041Benchmarks
     {
-        public WPF0041Benchmarks()
-            : base(new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }

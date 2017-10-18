@@ -1,10 +1,13 @@
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
-    public class WPF0050Benchmarks : AnalyzerBenchmarks
+    public class WPF0050Benchmarks
     {
-        public WPF0050Benchmarks()
-            : base(new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }

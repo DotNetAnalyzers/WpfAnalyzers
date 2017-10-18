@@ -1,10 +1,13 @@
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
-    public class WPF0001Benchmarks : AnalyzerBenchmarks
+    public class WPF0001Benchmarks
     {
-        public WPF0001Benchmarks()
-            : base(new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }

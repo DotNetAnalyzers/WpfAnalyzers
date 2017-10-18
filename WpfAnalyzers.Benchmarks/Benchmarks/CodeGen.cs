@@ -15,19 +15,23 @@
                                                                                                     .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
                                                                                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                                                     .ToArray();
+
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)
         {
             var id = analyzer.SupportedDiagnostics.Single().Id;
             var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
             var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
-            var code = new StringBuilder().AppendLine("namespace WpfAnalyzers.Benchmarks.Benchmarks")
+            var code = new StringBuilder().AppendLine($"namespace {this.GetType().Namespace}")
                                           .AppendLine("{")
-                                          .AppendLine($"    public class {expectedName} : AnalyzerBenchmarks")
+                                          .AppendLine($"    public class {expectedName}")
                                           .AppendLine("    {")
-                                          .AppendLine($"        public {expectedName}()")
-                                          .AppendLine($"            : base(new {analyzer.GetType().FullName}())")
+                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                                          .AppendLine()
+                                          .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
+                                          .AppendLine("        public void RunOnPropertyChangedAnalyzers()")
                                           .AppendLine("        {")
+                                          .AppendLine("            Benchmark.Run();")
                                           .AppendLine("        }")
                                           .AppendLine("    }")
                                           .AppendLine("}")
@@ -45,14 +49,14 @@
         {
             var fileName = Path.Combine(Program.BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
-            builder.AppendLine("namespace WpfAnalyzers.Benchmarks.Benchmarks")
+            builder.AppendLine($"namespace {this.GetType().Namespace}")
                    .AppendLine("{")
                    .AppendLine("    public class AllBenchmarks")
                    .AppendLine("    {");
             foreach (var analyzer in AllAnalyzers)
             {
                 builder.AppendLine(
-                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.SupportedDiagnostics[0].Id} = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)} = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
                        .AppendLine();
             }
 
@@ -61,7 +65,7 @@
                 builder.AppendLine($"        [BenchmarkDotNet.Attributes.Benchmark]")
                        .AppendLine($"        public void {analyzer.GetType().Name}()")
                        .AppendLine("        {")
-                       .AppendLine($"            {analyzer.SupportedDiagnostics[0].Id}.Run();")
+                       .AppendLine($"            {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)}.Run();")
                        .AppendLine("        }");
                 if (!ReferenceEquals(analyzer, AllAnalyzers.Last()))
                 {

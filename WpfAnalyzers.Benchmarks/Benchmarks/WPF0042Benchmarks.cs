@@ -1,10 +1,13 @@
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
-    public class WPF0042Benchmarks : AnalyzerBenchmarks
+    public class WPF0042Benchmarks
     {
-        public WPF0042Benchmarks()
-            : base(new WpfAnalyzers.WPF0042AvoidSideEffectsInClrAccessors())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0042AvoidSideEffectsInClrAccessors());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }
