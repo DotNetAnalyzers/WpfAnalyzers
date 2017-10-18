@@ -8,29 +8,29 @@ Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
 
 
 ```
- |                                                        Method |        Mean |      Error |     StdDev |      Median |   Gen 0 | Allocated |
- |-------------------------------------------------------------- |------------:|-----------:|-----------:|------------:|--------:|----------:|
- |                  WPF0001BackingFieldShouldMatchRegisteredName |   187.21 us |   4.197 us |  12.244 us |   185.40 us |       - |      42 B |
- |                  WPF0002BackingFieldShouldMatchRegisteredName |   185.97 us |   3.688 us |  10.757 us |   183.77 us |       - |      42 B |
- |                   WPF0003ClrPropertyShouldMatchRegisteredName |    75.54 us |   1.710 us |   5.041 us |    75.13 us |       - |      41 B |
- |                     WPF0004ClrMethodShouldMatchRegisteredName |   371.20 us |   7.359 us |  20.875 us |   367.84 us |       - |      44 B |
- |       WPF0005PropertyChangedCallbackShouldMatchRegisteredName |   246.67 us |   5.227 us |  15.329 us |   246.79 us |       - |      42 B |
- |           WPF0006CoerceValueCallbackShouldMatchRegisteredName |   246.69 us |   5.035 us |  14.766 us |   246.59 us |       - |      44 B |
- | WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName | 3,644.09 us |  89.603 us | 264.196 us | 3,631.48 us | 42.9688 |  280579 B |
- |                    WPF0010DefaultValueMustMatchRegisteredType |   239.84 us |   5.097 us |  14.623 us |   238.25 us |       - |      42 B |
- |                  WPF0011ContainingTypeShouldBeRegisteredOwner | 3,449.01 us |  90.753 us | 252.982 us | 3,395.98 us | 42.9688 |  280579 B |
- |                   WPF0012ClrPropertyShouldMatchRegisteredType |    74.54 us |   1.647 us |   4.751 us |    74.53 us |       - |      41 B |
- |                       WPF0013ClrMethodMustMatchRegisteredType |   391.63 us |   8.216 us |  24.226 us |   389.32 us |       - |      44 B |
- |                          WPF0014SetValueMustUseRegisteredType | 7,310.86 us |  40.342 us |  35.762 us | 7,312.99 us | 85.9375 |  561157 B |
- |              WPF0015RegisteredOwnerTypeMustBeDependencyObject | 3,558.50 us |  95.986 us | 278.474 us | 3,479.29 us | 42.9688 |  280579 B |
- |                      WPF0016DefaultValueIsSharedReferenceType |   254.31 us |   6.086 us |  17.849 us |   253.98 us |       - |      42 B |
- |                     WPF0030BackingFieldShouldBeStaticReadonly |   221.58 us |   4.951 us |  14.442 us |   218.99 us |       - |      42 B |
- |                                             WPF0031FieldOrder |   181.79 us |   3.616 us |   8.452 us |   180.61 us |       - |      42 B |
- |             WPF0032ClrPropertyGetAndSetSameDependencyProperty |    74.93 us |   1.481 us |   3.402 us |    75.24 us |       - |     664 B |
- |                          WPF0040SetUsingDependencyPropertyKey | 5,261.37 us | 140.051 us | 408.536 us | 5,240.65 us | 85.9375 |  561157 B |
- |                         WPF0041SetMutableUsingSetCurrentValue | 4,618.44 us | 129.103 us | 374.551 us | 4,562.20 us | 46.8750 |  312644 B |
- |                         WPF0042AvoidSideEffectsInClrAccessors |   444.77 us |   8.848 us |  23.617 us |   445.87 us |       - |      44 B |
- |                   WPF0043DontUseSetCurrentValueForDataContext | 3,527.66 us |  81.269 us | 239.623 us | 3,501.57 us | 42.9688 |  280579 B |
- |                    WPF0050XmlnsPrefixMustMatchXmlnsDefinition |   158.28 us |   3.534 us |  10.252 us |   157.10 us |       - |      42 B |
- |                WPF0051XmlnsDefinitionMustMapExistingNamespace |   118.32 us |   2.459 us |   7.174 us |   117.61 us |  0.4883 |    3568 B |
- |                WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces |   119.94 us |   2.365 us |   5.711 us |   119.66 us |       - |      42 B |
+ |                                                        Method |        Mean |      Error |     StdDev |   Gen 0 | Allocated |
+ |-------------------------------------------------------------- |------------:|-----------:|-----------:|--------:|----------:|
+ |                  WPF0001BackingFieldShouldMatchRegisteredName |   181.51 us |   3.623 us |   9.156 us |       - |      42 B |
+ |                  WPF0002BackingFieldShouldMatchRegisteredName |   181.69 us |   3.609 us |   9.758 us |       - |      42 B |
+ |                   WPF0003ClrPropertyShouldMatchRegisteredName |    73.74 us |   1.684 us |   4.885 us |       - |      41 B |
+ |                     WPF0004ClrMethodShouldMatchRegisteredName |   394.68 us |   9.475 us |  27.640 us |       - |      44 B |
+ |       WPF0005PropertyChangedCallbackShouldMatchRegisteredName |   245.37 us |   5.502 us |  16.049 us |       - |      42 B |
+ |           WPF0006CoerceValueCallbackShouldMatchRegisteredName |   244.98 us |   4.981 us |  14.451 us |       - |      44 B |
+ | WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName | 3,611.21 us |  74.409 us | 217.055 us | 42.9688 |  280579 B |
+ |                    WPF0010DefaultValueMustMatchRegisteredType |   254.42 us |   6.819 us |  19.890 us |       - |      44 B |
+ |                  WPF0011ContainingTypeShouldBeRegisteredOwner | 3,384.02 us |  95.683 us | 279.112 us | 42.9688 |  280579 B |
+ |                   WPF0012ClrPropertyShouldMatchRegisteredType |    76.65 us |   1.743 us |   5.141 us |       - |      41 B |
+ |                       WPF0013ClrMethodMustMatchRegisteredType |   392.50 us |   9.201 us |  26.548 us |       - |      44 B |
+ |                          WPF0014SetValueMustUseRegisteredType | 5,529.51 us | 145.885 us | 427.854 us | 85.9375 |  561157 B |
+ |              WPF0015RegisteredOwnerTypeMustBeDependencyObject | 3,481.04 us |  88.500 us | 259.554 us | 42.9688 |  280579 B |
+ |                      WPF0016DefaultValueIsSharedReferenceType |   252.75 us |   7.413 us |  21.508 us |       - |      44 B |
+ |                     WPF0030BackingFieldShouldBeStaticReadonly |   223.63 us |   4.885 us |  11.984 us |       - |      42 B |
+ |                                             WPF0031FieldOrder |   187.50 us |   3.852 us |  11.114 us |       - |      42 B |
+ |             WPF0032ClrPropertyGetAndSetSameDependencyProperty |    76.25 us |   1.744 us |   5.088 us |       - |     664 B |
+ |                          WPF0040SetUsingDependencyPropertyKey | 5,571.08 us | 145.482 us | 422.070 us | 85.9375 |  561157 B |
+ |                         WPF0041SetMutableUsingSetCurrentValue | 4,769.86 us | 130.537 us | 378.710 us | 46.8750 |  312579 B |
+ |                         WPF0042AvoidSideEffectsInClrAccessors |   447.50 us |   8.937 us |  21.066 us |       - |      44 B |
+ |                   WPF0043DontUseSetCurrentValueForDataContext | 3,608.78 us | 123.561 us | 364.322 us | 39.0625 |  276259 B |
+ |                    WPF0050XmlnsPrefixMustMatchXmlnsDefinition |   159.47 us |   3.200 us |   8.868 us |       - |      42 B |
+ |                WPF0051XmlnsDefinitionMustMapExistingNamespace |   123.63 us |   2.457 us |   7.089 us |  0.4883 |    3568 B |
+ |                WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces |   117.46 us |   2.632 us |   7.759 us |       - |      42 B |
