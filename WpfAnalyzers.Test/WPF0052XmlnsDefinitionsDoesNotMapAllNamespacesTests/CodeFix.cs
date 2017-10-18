@@ -5,6 +5,7 @@
 
     internal class CodeFix
     {
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [Test]
         public void WhenMissingNamespace()
         {
@@ -112,6 +113,7 @@ using System.Windows.Markup;
             AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(new[] { control1Code, control2Code, testCode }, fixedCode);
         }
 
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [Test]
         public void WhenMissingNamespaceWithNameColon()
         {
