@@ -1,13 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0041SetMutableUsingSetCurrentValue = WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue;
 
-    internal class HappyPath : HappyPathVerifier<WPF0041SetMutableUsingSetCurrentValue>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,12 +35,12 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
         [TestCase("this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
-        public async Task DependencyPropertyFromOutside(string setExpression)
+        public void DependencyPropertyFromOutside(string setExpression)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -82,11 +81,11 @@ namespace RoslynSandbox
             fooCode = fooCode.AssertReplace(
                 "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);",
                 setExpression);
-            await this.VerifyHappyPathAsync(new[] { fooCode, fooControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(fooCode, fooControlCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -125,11 +124,11 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyPropertyFromOutside()
+        public void ReadOnlyDependencyPropertyFromOutside()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -177,11 +176,11 @@ namespace RoslynSandbox
         private static object CreateObjectValue() => 4;
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, fooControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(fooControlCode, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyPropertyThis()
+        public void ReadOnlyDependencyPropertyThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -220,11 +219,11 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void AttachedProperty()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -268,11 +267,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(booleanBoxesCode, testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWhenBoxed()
+        public void AttachedPropertyWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -316,11 +315,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(booleanBoxesCode, testCode);
         }
 
         [Test]
-        public async Task IgnoredDependencyPropertyInClrProperty()
+        public void IgnoredDependencyPropertyInClrProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -342,11 +341,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoredDependencyPropertyInClrPropertyWithAsCast()
+        public void IgnoredDependencyPropertyInClrPropertyWithAsCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -368,11 +367,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoredDependencyPropertyInClrPropertyBoxed()
+        public void IgnoredDependencyPropertyInClrPropertyBoxed()
         {
             var boolBoxesCode = @"
 namespace RoslynSandbox
@@ -405,11 +404,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, boolBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(boolBoxesCode, testCode);
         }
 
         [Test]
-        public async Task IgnoredAttachedPropertyInClrSetMethod()
+        public void IgnoredAttachedPropertyInClrSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -437,11 +436,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoredAttachedPropertyInClrSetMethodWhenBoxed()
+        public void IgnoredAttachedPropertyInClrSetMethodWhenBoxed()
         {
             var boolBoxesCode = @"
 namespace RoslynSandbox
@@ -479,11 +478,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, boolBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(boolBoxesCode, testCode);
         }
 
         [Test]
-        public async Task IgnoredClrPropertyInObjectInitializer()
+        public void IgnoredClrPropertyInObjectInitializer()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -504,11 +503,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoredClrPropertyInConstructor()
+        public void IgnoredClrPropertyInConstructor()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -535,11 +534,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoredSetValueInConstructor()
+        public void IgnoredSetValueInConstructor()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -567,12 +566,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public async Task IgnoredWhenCreatedInScope(string setCall)
+        public void IgnoredWhenCreatedInScope(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -590,12 +589,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public async Task IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
+        public void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -615,12 +614,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public async Task IgnoredWhenCreatedInScopeWithIf(string setCall)
+        public void IgnoredWhenCreatedInScopeWithIf(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -641,12 +640,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task IgnoredPropertyAsParameter(string setValueCall)
+        public void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -675,11 +674,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
 
         [Test]
-        public async Task IgnoreSetDataContext()
+        public void IgnoreSetDataContext()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -704,7 +703,7 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
         }
     }
 }

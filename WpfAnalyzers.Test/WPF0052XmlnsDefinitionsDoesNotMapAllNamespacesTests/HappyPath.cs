@@ -1,12 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>
+    internal class HappyPath
     {
         [Test]
-        public async Task WhenXmlnsDefinitionMatches()
+        public void WhenXmlnsDefinitionMatches()
         {
             var controlCode = @"
 namespace Gu.Wpf.Geometry
@@ -55,11 +55,11 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            await this.VerifyHappyPathAsync(new[] { testCode, controlCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(controlCode, testCode);
         }
 
         [Test]
-        public async Task WhenTwoPublicTypesInSameNamespace()
+        public void WhenTwoPublicTypesInSameNamespace()
         {
             var control1Code = @"
 namespace Gu.Wpf.Geometry
@@ -132,11 +132,11 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            await this.VerifyHappyPathAsync(new[] { testCode, control1Code, control2Code }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(testCode, control1Code, control2Code);
         }
 
         [Test]
-        public async Task WhenTwoXmlnsDefinitions()
+        public void WhenTwoXmlnsDefinitions()
         {
             var controlCode1 = @"
 namespace Gu.Wpf.Geometry
@@ -211,11 +211,11 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            await this.VerifyHappyPathAsync(new[] { testCode, controlCode1, controlCode2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(controlCode1, controlCode2, testCode);
         }
 
         [Test]
-        public async Task WhenNoNamespace()
+        public void WhenNoNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -242,7 +242,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(testCode);
         }
     }
 }

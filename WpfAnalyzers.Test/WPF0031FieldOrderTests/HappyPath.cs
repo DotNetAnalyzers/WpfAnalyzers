@@ -1,13 +1,13 @@
 ﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
     using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0031FieldOrder = WpfAnalyzers.WPF0031FieldOrder;
 
-    internal class HappyPath : HappyPathVerifier<WPF0031FieldOrder>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,11 +33,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0031FieldOrder>(testCode);
         }
 
         [Test]
-        public async Task Attached()
+        public void Attached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -66,11 +66,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0031FieldOrder>(testCode);
         }
 
         [Test]
-        public async Task PropertyKeyInOtherClass()
+        public void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox
@@ -123,7 +123,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { linkCode, modernLinksCode, linkGroupCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0031FieldOrder>(linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }

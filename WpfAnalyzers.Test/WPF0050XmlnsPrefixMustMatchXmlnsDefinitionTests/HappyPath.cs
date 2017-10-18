@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0050XmlnsPrefixMustMatchXmlnsDefinition = WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition;
 
-    internal class HappyPath : HappyPathVerifier<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>
+    internal class HappyPath
     {
         [Test]
-        public async Task WhenXmlnsDefinitionMatches()
+        public void WhenXmlnsDefinitionMatches()
         {
             var testCode = @"
 using System.Reflection;
@@ -36,11 +35,11 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(testCode);
         }
 
         [Test]
-        public async Task WhenTwoXmlnsDefinitions()
+        public void WhenTwoXmlnsDefinitions()
         {
             var testCode = @"
 using System.Reflection;
@@ -70,7 +69,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(testCode);
         }
     }
 }

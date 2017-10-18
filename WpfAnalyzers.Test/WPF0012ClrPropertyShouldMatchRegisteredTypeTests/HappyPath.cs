@@ -1,10 +1,10 @@
 ﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
 {
     using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0012ClrPropertyShouldMatchRegisteredType = WpfAnalyzers.WPF0012ClrPropertyShouldMatchRegisteredType;
 
-    internal class HappyPath : HappyPathVerifier<WPF0012ClrPropertyShouldMatchRegisteredType>
+    internal class HappyPath
     {
         [TestCase("int")]
         [TestCase("int?")]
@@ -12,7 +12,7 @@
         [TestCase("int[]")]
         [TestCase("int?[]")]
         [TestCase("ObservableCollection<int>")]
-        public async Task DependencyProperty(string typeName)
+        public void DependencyProperty(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,11 +39,11 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("int", typeName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyWithThis()
+        public void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -67,11 +67,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyGeneric()
+        public void DependencyPropertyGeneric()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -95,11 +95,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyAddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -146,7 +146,7 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(part1, part2);
         }
 
         [TestCase("int")]
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         [TestCase("int[]")]
         [TestCase("int?[]")]
         [TestCase("ObservableCollection<int>")]
-        public async Task ReadOnlyDependencyProperty(string typeName)
+        public void ReadOnlyDependencyProperty(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -184,7 +184,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("int", typeName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
         }
     }
 }

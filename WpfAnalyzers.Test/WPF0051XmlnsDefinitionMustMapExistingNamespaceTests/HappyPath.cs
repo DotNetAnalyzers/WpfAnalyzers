@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0051XmlnsDefinitionMustMapExistingNamespace = WpfAnalyzers.WPF0051XmlnsDefinitionMustMapExistingNamespace;
 
-    internal class HappyPath : HappyPathVerifier<WPF0051XmlnsDefinitionMustMapExistingNamespace>
+    internal class HappyPath
     {
         [Test]
-        public async Task WhenXmlnsDefinitionMatches()
+        public void WhenXmlnsDefinitionMatches()
         {
             var controlCode = @"namespace Gu.Wpf.Geometry
 {
@@ -55,13 +54,14 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            await this.VerifyHappyPathAsync(new[] { testCode, controlCode }, new[] { "AssemblyInfo.cs", "FooControl.cs" }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0051XmlnsDefinitionMustMapExistingNamespace>(controlCode, testCode);
         }
 
         [Test]
-        public async Task WhenTwoXmlnsDefinitions()
+        public void WhenTwoXmlnsDefinitions()
         {
-            var controlCode1 = @"namespace Gu.Wpf.Geometry
+            var controlCode1 = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -83,7 +83,8 @@ using System.Windows.Markup;
     }
 }";
 
-            var controlCode2 = @"namespace Gu.Wpf.Geometry.Balloons
+            var controlCode2 = @"
+namespace Gu.Wpf.Geometry.Balloons
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -132,7 +133,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            await this.VerifyHappyPathAsync(new[] { testCode, controlCode1, controlCode2 }, new[] { "AssemblyInfo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0051XmlnsDefinitionMustMapExistingNamespace>(controlCode1, controlCode2, testCode);
         }
     }
 }

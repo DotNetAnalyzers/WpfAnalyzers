@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF0042AvoidSideEffectsInClrAccessors>
+    internal class HappyPath
     {
         [Test]
         public void DependencyProperty()

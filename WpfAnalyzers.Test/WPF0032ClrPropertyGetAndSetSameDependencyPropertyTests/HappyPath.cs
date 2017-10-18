@@ -1,13 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0032ClrPropertyGetAndSetSameDependencyProperty = WpfAnalyzers.WPF0032ClrPropertyGetAndSetSameDependencyProperty;
 
-    internal class HappyPath : HappyPathVerifier<WPF0032ClrPropertyGetAndSetSameDependencyProperty>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -31,11 +30,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyWithThis()
+        public void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -59,11 +58,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,11 +88,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
         }
 
         [Test]
-        public async Task PropertyKeyInOtherClass()
+        public void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox
@@ -146,7 +145,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { linkCode, modernLinksCode, linkGroupCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }

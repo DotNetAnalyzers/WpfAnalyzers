@@ -1,16 +1,15 @@
 namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0040SetUsingDependencyPropertyKey = WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey;
 
-    internal class HappyPath : HappyPathVerifier<WPF0040SetUsingDependencyPropertyKey>
+    internal class HappyPath
     {
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
         [TestCase("this.SetCurrentValue")]
-        public async Task DependencyProperty(string method)
+        public void DependencyProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -35,11 +34,11 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("SetValue", method);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -64,12 +63,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task AttachedProperty(string method)
+        public void AttachedProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,11 +95,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -128,7 +127,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
         }
     }
 }
