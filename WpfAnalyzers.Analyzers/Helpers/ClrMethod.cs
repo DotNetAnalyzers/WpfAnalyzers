@@ -119,9 +119,9 @@
                     return false;
                 }
 
-                using (var pooledValueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
+                using (var valueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
                 {
-                    if (!pooledValueWalker.Item.UsesValue)
+                    if (!valueWalker.UsesValue)
                     {
                         return false;
                     }
@@ -162,30 +162,22 @@
             }
         }
 
-        private class ValueWalker : CSharpSyntaxWalker
+        private class ValueWalker : PooledWalker<ValueWalker>
         {
-            private static readonly Pool<ValueWalker> Cache = new Pool<ValueWalker>(
-                () => new ValueWalker(),
-                x =>
-                {
-                    x.value = default(SyntaxToken);
-                    x.UsesValue = false;
-                });
-
             private SyntaxToken value;
 
             public bool UsesValue { get; private set; }
 
-            public static Pool<ValueWalker>.Pooled Create(SyntaxToken value, SyntaxNode expression)
+            public static ValueWalker Create(SyntaxToken value, SyntaxNode expression)
             {
-                var pooled = Cache.GetOrCreate();
-                pooled.Item.value = value;
+                var walker = Borrow(() => new ValueWalker());
+                walker.value = value;
                 if (expression != null)
                 {
-                    pooled.Item.Visit(expression);
+                    walker.Visit(expression);
                 }
 
-                return pooled;
+                return walker;
             }
 
             public override void Visit(SyntaxNode node)
@@ -202,6 +194,12 @@
             {
                 this.UsesValue |= this.value.ValueText == node.Identifier.ValueText;
                 base.VisitIdentifierName(node);
+            }
+
+            protected override void Clear()
+            {
+                this.value = default(SyntaxToken);
+                this.UsesValue = false;
             }
         }
     }
