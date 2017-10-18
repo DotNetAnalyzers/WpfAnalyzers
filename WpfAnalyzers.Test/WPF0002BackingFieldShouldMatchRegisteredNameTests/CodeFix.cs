@@ -1,118 +1,120 @@
 ﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix : CodeFixVerifier<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>
     {
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
-
-    public int Bar
+    public class FooControl : Control
     {
-        get { return (int)GetValue(BarProperty); }
-        set { SetValue(Error, value); }
+        private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(Error, value); }
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public int Bar
+    public class FooControl : Control
     {
-        get { return (int)GetValue(BarProperty); }
-        set { SetValue(BarPropertyKey, value); }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarPropertyKey, value); }
+        }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
-
-    public static void SetBar(DependencyObject element, int value)
+    public static class Foo
     {
-        element.SetValue(Error, value);
-    }
+        private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(DependencyObject element)
-    {
-        return (int)element.GetValue(BarProperty);
+        public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(Error, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithArguments("Error", "Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(DependencyObject element, int value)
+    public static class Foo
     {
-        element.SetValue(BarPropertyKey, value);
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(DependencyObject element)
-    {
-        return (int)element.GetValue(BarProperty);
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

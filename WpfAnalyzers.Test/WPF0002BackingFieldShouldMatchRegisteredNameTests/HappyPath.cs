@@ -1,50 +1,57 @@
 namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0002BackingFieldShouldMatchRegisteredName = WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName;
 
-    internal class HappyPath : HappyPathVerifier<WPF0002BackingFieldShouldMatchRegisteredName>
+    internal class HappyPath
     {
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public async Task ReadOnlyDependencyProperty(string nameof)
+        public void ReadOnlyDependencyProperty(string nameof)
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        nameof(Bar),
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-    
-    public int Bar
+    public class FooControl : Control
     {
-        get { return (int)GetValue(BarProperty); }
-        set { SetValue(BarProperty, value); }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+    
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
     }
 }";
             testCode = testCode.AssertReplace("nameof(Bar)", nameof);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyPropertyRepro()
+        public void ReadOnlyDependencyPropertyRepro()
         {
             var statusCode = @"
+namespace RoslynSandbox
+{
     public enum Status
     {
         Idle,
         Updating
-    }";
+    }
+}";
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.Windows;
     using System.Windows.Controls;
 
@@ -68,90 +75,100 @@ public class FooControl : Control
         {
             // nop
         }
-    }";
-            await this.VerifyHappyPathAsync(new[] { statusCode, testCode }).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(statusCode, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(DependencyObject element, int value)
+    public static class Foo
     {
-        element.SetValue(BarPropertyKey, value);
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(DependencyObject element)
-    {
-        return (int)element.GetValue(BarProperty);
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task IgnoresDependencyProperty()
+        public void IgnoresDependencyProperty()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty ErrorProperty = DependencyProperty.Register(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public int Bar
+    public class FooControl : Control
     {
-        get { return (int)GetValue(ErrorProperty); }
-        set { SetValue(ErrorProperty, value); }
+        public static readonly DependencyProperty ErrorProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(ErrorProperty); }
+            set { SetValue(ErrorProperty, value); }
+        }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
         }
 
         [Test]
-        public async Task IgnoresAttachedProperty()
+        public void IgnoresAttachedProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty ErrorProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static void SetBar(DependencyObject element, int value)
+    public static class Foo
     {
-        element.SetValue(ErrorProperty, value);
-    }
+        public static readonly DependencyProperty ErrorProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(DependencyObject element)
-    {
-        return (int)element.GetValue(ErrorProperty);
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(ErrorProperty, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(ErrorProperty);
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
         }
     }
 }
