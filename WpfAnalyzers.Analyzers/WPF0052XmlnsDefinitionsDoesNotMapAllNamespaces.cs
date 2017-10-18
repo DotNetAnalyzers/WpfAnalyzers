@@ -58,27 +58,17 @@
 
             using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
             {
-                if (walker.Item.NotMapped.Count != 0)
+                if (walker.NotMapped.Count != 0)
                 {
                     var missing = ImmutableDictionary.CreateRange(
-                        walker.Item.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
+                        walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), missing));
                 }
             }
         }
 
-        private sealed class Walker : CSharpSyntaxWalker
+        private sealed class Walker : PooledWalker<Walker>
         {
-            private static readonly Pool<Walker> Pool = new Pool<Walker>(
-                () => new Walker(),
-                x =>
-                    {
-                        x.namespaces.Clear();
-                        x.mappedNamespaces.Clear();
-                        x.semanticModel = null;
-                        x.cancellationToken = CancellationToken.None;
-                    });
-
             private static readonly IReadOnlyList<string> Ignored = new[] { "Annotations", "Properties", "XamlGeneratedNamespace" };
 
             private readonly HashSet<NameSyntax> namespaces = new HashSet<NameSyntax>(NameSyntaxComparer.Default);
@@ -112,11 +102,11 @@
                 }
             }
 
-            public static Pool<Walker>.Pooled Create(Compilation compilation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static Walker Create(Compilation compilation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                var pooled = Pool.GetOrCreate();
-                pooled.Item.semanticModel = semanticModel;
-                pooled.Item.cancellationToken = cancellationToken;
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
                 foreach (var tree in compilation.SyntaxTrees)
                 {
                     if (tree.FilePath.EndsWith(".g.cs"))
@@ -126,11 +116,11 @@
 
                     if (tree.TryGetRoot(out SyntaxNode root))
                     {
-                        pooled.Item.Visit(root);
+                        walker.Visit(root);
                     }
                 }
 
-                return pooled;
+                return walker;
             }
 
             public override void VisitClassDeclaration(ClassDeclarationSyntax node)
@@ -159,6 +149,14 @@
                         }
                     }
                 }
+            }
+
+            protected override void Clear()
+            {
+                this.namespaces.Clear();
+                this.mappedNamespaces.Clear();
+                this.semanticModel = null;
+                this.cancellationToken = CancellationToken.None;
             }
 
             private class NameSyntaxComparer : IEqualityComparer<NameSyntax>
