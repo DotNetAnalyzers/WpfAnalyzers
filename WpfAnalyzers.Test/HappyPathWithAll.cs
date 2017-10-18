@@ -30,6 +30,13 @@
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
+        public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
+        {
+            AnalyzerAssert.Valid(analyzer, CodeFactory.FindProjectFile("WpfAnalyzers.Analyzers.csproj"));
+        }
+
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
+        [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
         {
             AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("WpfAnalyzers.sln"));

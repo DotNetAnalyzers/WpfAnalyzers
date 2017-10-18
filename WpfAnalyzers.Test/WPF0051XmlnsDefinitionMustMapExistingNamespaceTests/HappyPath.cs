@@ -57,6 +57,7 @@ using System.Windows.Markup;
             AnalyzerAssert.Valid<WPF0051XmlnsDefinitionMustMapExistingNamespace>(controlCode, testCode);
         }
 
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [Test]
         public void WhenTwoXmlnsDefinitions()
         {
