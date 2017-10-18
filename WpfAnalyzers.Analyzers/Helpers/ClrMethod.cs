@@ -98,14 +98,14 @@
                 return false;
             }
 
-            using (var pooled = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrSetterWalker.Borrow(semanticModel, cancellationToken, method))
             {
-                if (!pooled.Item.IsSuccess)
+                if (!walker.IsSuccess)
                 {
                     return false;
                 }
 
-                var memberAccess = (pooled.Item.SetValue?.Expression ?? pooled.Item.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
+                var memberAccess = (walker.SetValue?.Expression ?? walker.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -127,7 +127,7 @@
                     }
                 }
 
-                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
             }
         }
 
@@ -142,9 +142,9 @@
                 return false;
             }
 
-            using (var pooled = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, method))
             {
-                var memberAccess = pooled.Item.GetValue?.Expression as MemberAccessExpressionSyntax;
+                var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -158,7 +158,7 @@
                     return false;
                 }
 
-                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
             }
         }
 
