@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>
+    internal class CodeFix
     {
         [Test]
         public void ReadOnlyDependencyProperty()
