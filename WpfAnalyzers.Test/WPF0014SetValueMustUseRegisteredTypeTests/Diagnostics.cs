@@ -1,11 +1,9 @@
 ﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0014SetValueMustUseRegisteredType = WpfAnalyzers.WPF0014SetValueMustUseRegisteredType;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0014SetValueMustUseRegisteredType>
+    internal class Diagnostics
     {
         [TestCase("SetValue(BarProperty, ↓1.0)")]
         [TestCase("SetCurrentValue(BarProperty, ↓1.0)")]
@@ -15,7 +13,7 @@
         [TestCase("SetCurrentValue(BarProperty, ↓null)")]
         [TestCase("SetValue(BarProperty, ↓\"abc\")")]
         [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
-        public async Task DependencyProperty(string setCall)
+        public void DependencyProperty(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -44,16 +42,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
-            var method = setCall.Contains("SetValue")
-                             ? "SetValue"
-                             : "SetCurrentValue";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(method, "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1.0);")]
         [TestCase("this.SetCurrentValue(BarProperty, ↓1.0);")]
-        public async Task DependencyPropertyGeneric(string setValueCall)
+        public void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
 namespace RoslynSandbox
@@ -92,18 +86,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
-            var method = setValueCall.Contains("SetValue")
-                             ? "SetValue"
-                             : "SetCurrentValue";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage($"{method} must use registered type int");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooControlGeneric, testCode }, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(fooControlGeneric, testCode);
         }
 
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public async Task DependencyPropertyAddOwner(string setValueCall)
+        [TestCase("this.SetValue(BarProperty, ↓1);")]
+        [TestCase("this.SetCurrentValue(BarProperty, ↓1);")]
+        public void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -179,17 +167,12 @@ namespace RoslynSandbox
     }
 }";
             fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            var col = Regex.Match(fooControlPart2.Line(9), "BarProperty, +(?<value>[^ )])").Groups["value"].Index + 1;
-            var method = setValueCall.Contains("SetValue")
-                             ? "SetValue"
-                             : "SetCurrentValue";
-            var expected = this.CSharpDiagnostic().WithLocation("FooControl2.cs", 11, col).WithArguments(method, "bool");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }, expected, new[] { "Foo.cs", "FooControl1.cs", "FooControl2.cs" }).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(fooCode, fooControlPart1, fooControlPart2);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task DependencyPropertyOfInterfaceType(string methodName)
+        public void DependencyPropertyOfInterfaceType(string methodName)
         {
             var iFooCode = @"
 namespace RoslynSandbox
@@ -231,15 +214,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage($"{methodName} must use registered type IFoo");
-            await this.VerifyCSharpDiagnosticAsync(new[] { iFooCode, iMehCode, testCode }, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(iFooCode, iMehCode, testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task DependencyPropertyAddOwnerMediaElementVolume(string methodName)
+        public void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -280,14 +260,13 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(methodName, "double");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("1.0")]
         [TestCase("null")]
         [TestCase("\"abc\"")]
-        public async Task ReadOnlyDependencyProperty(string value)
+        public void ReadOnlyDependencyProperty(string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -318,12 +297,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("<value>", value);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void AttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -356,13 +334,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("SetValue", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task TextBoxTextProperty(string setMethod)
+        public void TextBoxTextProperty(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -380,13 +357,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "string");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task TextElementFontSizeProperty(string setMethod)
+        public void TextElementFontSizeProperty(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -405,13 +381,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "double");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task SetCurrentValueInLambda(string setMethod)
+        public void SetCurrentValueInLambda(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -444,8 +419,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments(setMethod, "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
     }
 }

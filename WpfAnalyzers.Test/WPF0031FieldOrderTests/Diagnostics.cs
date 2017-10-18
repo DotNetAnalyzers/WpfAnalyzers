@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0031FieldOrder = WpfAnalyzers.WPF0031FieldOrder;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0031FieldOrder>
+    internal class Diagnostics
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -34,12 +33,11 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "BarProperty");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0031FieldOrder>(testCode);
         }
 
         [Test]
-        public async Task Attached()
+        public void Attached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -68,8 +66,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarPropertyKey", "BarProperty");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0031FieldOrder>(testCode);
         }
     }
 }

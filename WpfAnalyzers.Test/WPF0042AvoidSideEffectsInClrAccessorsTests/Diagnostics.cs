@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 {
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0042AvoidSideEffectsInClrAccessors>
+    internal class Diagnostics
     {
         [Test]
-        public async Task DependencyPropertySideEffectInGetter()
+        public void DependencyPropertySideEffectInGetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -44,15 +43,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task DependencyPropertySideEffectInSetter()
+        public void DependencyPropertySideEffectInSetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -92,15 +88,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -133,15 +126,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWithSideEffectInSetMethod()
+        public void AttachedPropertyWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -173,14 +163,12 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWithSideEffectInGetMethod()
+        public void AttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -212,14 +200,12 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
+        public void ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,12 +239,11 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
+        public void ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -293,8 +278,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0015RegisteredOwnerTypeMustBeDependencyObject = WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0015RegisteredOwnerTypeMustBeDependencyObject>
+    internal class Diagnostics
     {
         [Test]
-        public async Task DependencyRegister()
+        public void DependencyRegister()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -30,12 +29,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyRegisterReadOnly()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,12 +53,11 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("RegisterAttached");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyAddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -101,12 +98,11 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref part1).WithArguments("RegisterAttached");
-            await this.VerifyCSharpDiagnosticAsync(new[] { part1, part2 }, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
         }
 
         [Test]
-        public async Task DependencyPropertyOverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -139,8 +135,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref barControlCode).WithArguments("RegisterAttached");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooControlCode, barControlCode }, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(fooControlCode, barControlCode);
         }
     }
 }

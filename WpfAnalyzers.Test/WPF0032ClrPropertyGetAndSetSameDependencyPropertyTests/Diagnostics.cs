@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0032ClrPropertyGetAndSetSameDependencyProperty = WpfAnalyzers.WPF0032ClrPropertyGetAndSetSameDependencyProperty;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0032ClrPropertyGetAndSetSameDependencyProperty>
+    internal class Diagnostics
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,8 +35,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0051XmlnsDefinitionMustMapExistingNamespace = WpfAnalyzers.WPF0051XmlnsDefinitionMustMapExistingNamespace;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0051XmlnsDefinitionMustMapExistingNamespace>
+    internal class Diagnostics
     {
         [Test]
-        public async Task WhenNoNamespace()
+        public void WhenNoNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -34,15 +33,12 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
+            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expected, testCode);
         }
 
         [Test]
-        public async Task WhenMissingNamespace()
+        public void WhenMissingNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -69,11 +65,8 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            var expected = ExpectedMessage.Create("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
+            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expected, testCode);
         }
     }
 }

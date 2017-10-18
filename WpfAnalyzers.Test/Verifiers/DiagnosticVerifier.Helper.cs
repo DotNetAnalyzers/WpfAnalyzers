@@ -22,6 +22,7 @@ namespace WpfAnalyzers.Test
     /// Class for turning strings into documents and getting the diagnostics on them.
     /// All methods are static.
     /// </summary>
+    [Obsolete("Don't use this")]
     public abstract partial class DiagnosticVerifier
     {
         private static readonly string CSharpDefaultFileExt = "cs";
