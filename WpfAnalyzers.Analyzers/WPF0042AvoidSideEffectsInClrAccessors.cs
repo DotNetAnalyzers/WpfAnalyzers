@@ -105,16 +105,16 @@
                 return;
             }
 
-            using (var pooled = ClrGetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
+            using (var walker = ClrGetterWalker.Borrow(context.SemanticModel, context.CancellationToken, context.Node))
             {
-                if (pooled.Item.HasError)
+                if (walker.HasError)
                 {
                     return;
                 }
 
-                if (pooled.Item.IsSuccess)
+                if (walker.IsSuccess)
                 {
-                    var returnStatementSyntax = pooled.Item.GetValue.FirstAncestorOrSelf<ReturnStatementSyntax>();
+                    var returnStatementSyntax = walker.GetValue.FirstAncestorOrSelf<ReturnStatementSyntax>();
                     foreach (var statement in body.Statements)
                     {
                         if (statement != returnStatementSyntax)
@@ -134,19 +134,19 @@
                 return;
             }
 
-            using (var pooled = ClrSetterWalker.Create(context.SemanticModel, context.CancellationToken, context.Node))
+            using (var walker = ClrSetterWalker.Borrow(context.SemanticModel, context.CancellationToken, context.Node))
             {
-                if (pooled.Item.HasError)
+                if (walker.HasError)
                 {
                     return;
                 }
 
-                if (pooled.Item.IsSuccess)
+                if (walker.IsSuccess)
                 {
                     foreach (var statement in body.Statements)
                     {
-                        if ((statement as ExpressionStatementSyntax)?.Expression != pooled.Item.SetValue &&
-                            (statement as ExpressionStatementSyntax)?.Expression != pooled.Item.SetCurrentValue)
+                        if ((statement as ExpressionStatementSyntax)?.Expression != walker.SetValue &&
+                            (statement as ExpressionStatementSyntax)?.Expression != walker.SetCurrentValue)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, statement.GetLocation()));
                             return;

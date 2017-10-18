@@ -1,279 +1,284 @@
 ﻿namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 {
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0042AvoidSideEffectsInClrAccessors>
+    internal class Diagnostics
     {
         [Test]
-        public async Task DependencyPropertySideEffectInGetter()
+        public void DependencyPropertySideEffectInGetter()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-        nameof(Bar),
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-        ""Other"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public int Bar
+    public class FooControl : Control
     {
-        get
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get
+            {
+                ↓SideEffect(); 
+                return (int)this.GetValue(BarProperty); 
+            }
+            set { this.SetValue(OtherProperty, value); }
+        }
+
+        private void SideEffect()
+        {
+        }
+    }
+}";
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+        }
+
+        [Test]
+        public void DependencyPropertySideEffectInSetter()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get
+            {
+                return (int)this.GetValue(BarProperty); 
+            }
+            set 
+            {
+                this.SetValue(OtherProperty, value);
+                ↓SideEffect(); 
+            }
+        }
+
+        private static void SideEffect()
+        {
+        }
+    }
+}";
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+        }
+
+        [Test]
+        public void ReadOnlyDependencyProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set 
+            { 
+                this.SetValue(BarPropertyKey, value); 
+                ↓SideEffect(); 
+            }
+        }
+
+        private void SideEffect()
+        {
+        }
+    }
+}";
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+        }
+
+        [Test]
+        public void AttachedPropertyWithSideEffectInSetMethod()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
+
+        public static void SetBar(this FrameworkElement element, int value)
         {
             ↓SideEffect(); 
-            return (int)this.GetValue(BarProperty); 
+            element.SetValue(BarProperty, value);
         }
-        set { this.SetValue(OtherProperty, value); }
-    }
 
-    private void SideEffect()
-    {
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task DependencyPropertySideEffectInSetter()
+        public void AttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-        nameof(Bar),
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-        ""Other"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public int Bar
+    public static class Foo
     {
-        get
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
+
+        public static void SetBar(this FrameworkElement element, int value)
         {
-            return (int)this.GetValue(BarProperty); 
+            element.SetValue(BarProperty, value);
         }
-        set 
+
+        public static int GetBar(this FrameworkElement element)
         {
-            this.SetValue(OtherProperty, value);
             ↓SideEffect(); 
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
         }
     }
-
-    private static void SideEffect()
-    {
-    }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+
+            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public int Bar
+    public static class Foo
     {
-        get { return (int)this.GetValue(BarProperty); }
-        protected set 
-        { 
-            this.SetValue(BarPropertyKey, value); 
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(this FrameworkElement element, int value)
+        {
             ↓SideEffect(); 
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
         }
     }
-
-    private void SideEffect()
-    {
-    }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None)
-                      .ConfigureAwait(false);
+
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWithSideEffectInSetMethod()
+        public void ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
+    using System.Windows;
 
-    public static void SetBar(this FrameworkElement element, int value)
+    public static class Foo
     {
-        ↓SideEffect(); 
-        element.SetValue(BarProperty, value);
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    private static void SideEffect()
-    {
-    }
-}";
 
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
         }
 
-        [Test]
-        public async Task AttachedPropertyWithSideEffectInGetMethod()
+        public static int GetBar(this FrameworkElement element)
         {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
-
-    public static void SetBar(this FrameworkElement element, int value)
-    {
-        element.SetValue(BarProperty, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        ↓SideEffect(); 
-        return (int) element.GetValue(BarProperty);
-    }
-
-    private static void SideEffect()
-    {
-    }
-}";
-
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Avoid side effects in CLR accessors.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            ↓SideEffect(); 
+            return (int) element.GetValue(BarProperty);
         }
 
-        [Test]
-        public async Task ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
+        private static void SideEffect()
         {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(this FrameworkElement element, int value)
-    {
-        ↓SideEffect(); 
-        element.SetValue(BarPropertyKey, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
-
-    private static void SideEffect()
-    {
-    }
-}";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
-
-        [Test]
-        public async Task ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-
-    public static void SetBar(this FrameworkElement element, int value)
-    {
-        element.SetValue(BarPropertyKey, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        ↓SideEffect(); 
-        return (int) element.GetValue(BarProperty);
-    }
-
-    private static void SideEffect()
-    {
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo.BarPropertyKey", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
     }
 }

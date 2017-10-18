@@ -22,14 +22,14 @@
                     return false;
                 }
 
-                using (var pooledReturns = ReturnExpressionsWalker.Create(getter.Body))
+                using (var walker = ReturnExpressionsWalker.Create(getter.Body))
                 {
-                    if (pooledReturns.Item.ReturnValues.Count == 0)
+                    if (walker.ReturnValues.Count == 0)
                     {
                         return false;
                     }
 
-                    foreach (var returnValue in pooledReturns.Item.ReturnValues)
+                    foreach (var returnValue in walker.ReturnValues)
                     {
                         var returnedSymbol = returnValue?.IsKind(SyntaxKind.CoalesceExpression) == true
                             ? semanticModel.GetSymbolSafe((returnValue as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol
@@ -190,14 +190,14 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
             if (property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) &&
     setter.Body != null)
             {
-                using (var pooled = AssignmentWalker.Create(setter))
+                using (var walker = AssignmentWalker.Borrow(setter))
                 {
-                    if (pooled.Item.Assignments.Count != 1)
+                    if (walker.Assignments.Count != 1)
                     {
                         return false;
                     }
 
-                    var left = pooled.Item.Assignments[0].Left;
+                    var left = walker.Assignments[0].Left;
                     field = left as IdentifierNameSyntax;
                     if (field == null)
                     {
@@ -237,9 +237,9 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
 
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
-            using (var pooled = AssignmentWalker.Create(setter))
+            using (var pooled = AssignmentWalker.Borrow(setter))
             {
-                foreach (var a in pooled.Item.Assignments)
+                foreach (var a in pooled.Assignments)
                 {
                     if ((a.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
                     {
@@ -279,9 +279,9 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
 
         internal static bool TryFindValue(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol value)
         {
-            using (var pooled = IdentifierNameWalker.Create(setter))
+            using (var walker = IdentifierNameWalker.Borrow(setter))
             {
-                foreach (var identifierName in pooled.Item.IdentifierNames)
+                foreach (var identifierName in walker.IdentifierNames)
                 {
                     if (identifierName.Identifier.ValueText == "value")
                     {

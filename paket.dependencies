@@ -1,22 +1,31 @@
+storage: none
 source http://www.nuget.org/api/v2/
-framework: net452, portable-net45+win8
-
-nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.2
-nuget System.Collections.Immutable 1.1.37
-nuget System.Reflection.Metadata 1.2.0
-nuget Microsoft.Composition 1.0.27
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
 
 group Analyzers
+  storage: none
   source http://www.nuget.org/api/v2/
-  framework: net452
   nuget StyleCop.Analyzers
   nuget Gu.Analyzers
   nuget AsyncUsageAnalyzers
-  nuget JetBrains.Annotations
-  nuget Microsoft.CodeAnalysis.Analyzers
+
+group Benchmarks
+  storage: none
+  source http://www.nuget.org/api/v2/
+  nuget BenchmarkDotNet.Diagnostics.Windows
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
+  nuget Gu.Roslyn.Asserts
+  nuget NUnit
 
 group Test
+  storage: none
   source http://www.nuget.org/api/v2/
-  framework: net452
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
+  nuget Gu.Roslyn.Asserts
   nuget NUnit
+
+group Build
+  storage: none
+  source http://www.nuget.org/api/v2/
+  nuget Microsoft.VSSDK.BuildTools
   

@@ -1,80 +1,88 @@
 ﻿namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<WPF0043DontUseSetCurrentValueForDataContext, UseSetValueCodeFixProvider>
+    internal class CodeFix
     {
         [TestCase("this.SetCurrentValue(DataContextProperty, 1);", "this.SetValue(DataContextProperty, 1);")]
         [TestCase("this.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "this.SetValue(FrameworkElement.DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(DataContextProperty, 1);", "SetValue(DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public async Task ThisSetCurrentValue(string before, string after)
+        public void ThisSetCurrentValue(string before, string after)
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public FooControl()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        ↓this.SetCurrentValue(DataContextProperty, 1);
+        public FooControl()
+        {
+            ↓this.SetCurrentValue(DataContextProperty, 1);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public FooControl()
+        {
+            this.SetValue(DataContextProperty, 1);
+        }
     }
 }";
             testCode = testCode.AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("DataContextProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    public FooControl()
-    {
-        this.SetValue(DataContextProperty, 1);
-    }
-}";
             fixedCode = fixedCode.AssertReplace("this.SetValue(DataContextProperty, 1);", after);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0043DontUseSetCurrentValueForDataContext, UseSetValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
         [TestCase("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "control.SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public async Task ControlSetCurrentValue(string before, string after)
+        public void ControlSetCurrentValue(string before, string after)
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static void Meh()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        var control = new Control();
-        ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
+        public static void Meh()
+        {
+            var control = new Control();
+            ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static void Meh()
+        {
+            var control = new Control();
+            control.SetValue(FrameworkElement.DataContextProperty, 1);
+        }
     }
 }";
             testCode = testCode.AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("DataContextProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    public static void Meh()
-    {
-        var control = new Control();
-        control.SetValue(FrameworkElement.DataContextProperty, 1);
-    }
-}";
             fixedCode = fixedCode.AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0043DontUseSetCurrentValueForDataContext, UseSetValueCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

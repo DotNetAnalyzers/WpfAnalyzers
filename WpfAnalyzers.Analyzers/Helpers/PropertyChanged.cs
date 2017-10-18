@@ -20,9 +20,9 @@
                 return AnalysisResult.No;
             }
 
-            using (var pooled = InvocationWalker.Create(block))
+            using (var walker = InvocationWalker.Borrow(block))
             {
-                foreach (var invocation in pooled.Item.Invocations)
+                foreach (var invocation in walker.Invocations)
                 {
                     if (invocation.SpanStart < assignment.SpanStart)
                     {
@@ -166,7 +166,7 @@
             return invoker != null;
         }
 
-        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, HashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             if (@checked?.Add(method) == false)
             {
@@ -198,9 +198,9 @@
 
             foreach (var declaration in method.Declarations(cancellationToken))
             {
-                using (var pooled = InvocationWalker.Create(declaration))
+                using (var walker = InvocationWalker.Borrow(declaration))
                 {
-                    foreach (var invocation in pooled.Item.Invocations)
+                    foreach (var invocation in walker.Invocations)
                     {
                         if (invocation.ArgumentList == null ||
                             invocation.ArgumentList.Arguments.Count == 0)
@@ -269,19 +269,14 @@
                             continue;
                         }
 
-                        using (var argsWalker = ArgumentsWalker.Create(invocation.ArgumentList))
+                        using (var argumentsWalker = ArgumentsWalker.Create(invocation.ArgumentList))
                         {
-                            if (argsWalker.Item.Contains(parameter, semanticModel, cancellationToken))
+                            if (argumentsWalker.Contains(parameter, semanticModel, cancellationToken))
                             {
-                                if (@checked == null)
+                                using (var pooledSet = PooledHashSet<IMethodSymbol>.Borrow(@checked))
                                 {
-                                    using (var pooledSet = SetPool<IMethodSymbol>.Create())
-                                    {
-                                        return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet.Item);
-                                    }
+                                    return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet);
                                 }
-
-                                return IsInvoker(invokedMethod, semanticModel, cancellationToken, @checked);
                             }
                         }
                     }
@@ -413,12 +408,8 @@
             return false;
         }
 
-        private sealed class ArgumentsWalker : CSharpSyntaxWalker
+        private sealed class ArgumentsWalker : PooledWalker<ArgumentsWalker>
         {
-            private static readonly Pool<ArgumentsWalker> Cache = new Pool<ArgumentsWalker>(
-                () => new ArgumentsWalker(),
-                x => x.identifierNames.Clear());
-
             private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
 
             private ArgumentsWalker()
@@ -427,12 +418,7 @@
 
             public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
-            public static Pool<ArgumentsWalker>.Pooled Create(ArgumentListSyntax arguments)
-            {
-                var pooled = Cache.GetOrCreate();
-                pooled.Item.Visit(arguments);
-                return pooled;
-            }
+            public static ArgumentsWalker Create(ArgumentListSyntax arguments) => BorrowAndVisit(arguments, () => new ArgumentsWalker());
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
@@ -452,6 +438,11 @@
                 }
 
                 return false;
+            }
+
+            protected override void Clear()
+            {
+                this.identifierNames.Clear();
             }
         }
     }
