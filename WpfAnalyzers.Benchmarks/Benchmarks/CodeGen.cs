@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
@@ -37,7 +38,7 @@
                                           .AppendLine("}")
                                           .ToString();
             if (!File.Exists(fileName) ||
-                File.ReadAllText(fileName) != code)
+               !CodeReader.AreEqual(File.ReadAllText(fileName), code))
             {
                 File.WriteAllText(fileName, code);
                 Assert.Fail();
@@ -76,10 +77,11 @@
             builder.AppendLine("    }")
                    .AppendLine("}");
 
+            var code = builder.ToString();
             if (!File.Exists(fileName) ||
-                File.ReadAllText(fileName) != builder.ToString())
+                !CodeReader.AreEqual(File.ReadAllText(fileName), code))
             {
-                File.WriteAllText(fileName, builder.ToString());
+                File.WriteAllText(fileName, code);
                 Assert.Fail();
             }
         }
