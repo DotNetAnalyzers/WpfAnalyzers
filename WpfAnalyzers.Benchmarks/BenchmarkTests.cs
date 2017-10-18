@@ -16,27 +16,23 @@
                                                                                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                                                     .ToArray();
 
-        private static IReadOnlyList<Type> AllBenchmarkTypes { get; } = typeof(AnalyzerBenchmarks).Assembly.GetTypes()
-                                                                                                  .Where(typeof(AnalyzerBenchmarks).IsAssignableFrom)
-                                                                                                  .ToArray();
-
-        private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmars { get; } = AllAnalyzers
+        private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarks { get; } = AllAnalyzers
             .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, x))
             .ToArray();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            foreach (var walker in AllBenchmars)
+            foreach (var benchmark in AllBenchmarks)
             {
-                walker.Run();
+                benchmark.Run();
             }
         }
 
-        [TestCaseSource(nameof(AllBenchmars))]
-        public void Run(Gu.Roslyn.Asserts.Benchmark walker)
+        [TestCaseSource(nameof(AllBenchmarks))]
+        public void Run(Gu.Roslyn.Asserts.Benchmark benchmark)
         {
-            walker.Run();
+            benchmark.Run();
         }
 
         [Test]
