@@ -1,10 +1,9 @@
 namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0013ClrMethodMustMatchRegisteredType = WpfAnalyzers.WPF0013ClrMethodMustMatchRegisteredType;
 
-    internal class HappyPath : HappyPathVerifier<WPF0013ClrMethodMustMatchRegisteredType>
+    internal class HappyPath
     {
         [TestCase("int")]
         [TestCase("int?")]
@@ -12,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public async Task AttachedProperty(string typeName)
+        public void AttachedProperty(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +40,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("int", typeName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [TestCase("int")]
@@ -50,7 +49,7 @@ namespace RoslynSandbox
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public async Task AttachedPropertyExtensionMethods(string typeName)
+        public void AttachedPropertyExtensionMethods(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,11 +78,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("int", typeName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWhenBoxed()
+        public void AttachedPropertyWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -127,11 +126,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0013ClrMethodMustMatchRegisteredType>(booleanBoxesCode, testCode);
         }
 
         [Test]
-        public async Task AttachedPropertySettingValueInCallback()
+        public void AttachedPropertySettingValueInCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -166,11 +165,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -193,7 +192,7 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
     }
 }

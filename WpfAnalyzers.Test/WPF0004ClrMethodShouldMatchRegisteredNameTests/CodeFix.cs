@@ -6,6 +6,38 @@
     internal class CodeFix
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int ↓GetError(this FrameworkElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var expectedMessage = ExpectedMessage.Create("Method 'GetError' must be named 'GetBar'");
+            AnalyzerAssert.Diagnostics<WPF0004ClrMethodShouldMatchRegisteredName>(expectedMessage, testCode);
+        }
+
+        [Test]
         public void AttachedPropertyGetMethod()
         {
             var testCode = @"

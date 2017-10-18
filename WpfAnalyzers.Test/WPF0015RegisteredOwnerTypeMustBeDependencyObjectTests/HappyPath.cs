@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0015RegisteredOwnerTypeMustBeDependencyObject = WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject;
 
-    internal class HappyPath : HappyPathVerifier<WPF0015RegisteredOwnerTypeMustBeDependencyObject>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -30,11 +29,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyFormatted()
+        public void DependencyPropertyFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,11 +57,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyPartial()
+        public void DependencyPropertyPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -98,11 +97,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
         }
 
         [Test]
-        public async Task DependencyPropertyAddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -149,11 +148,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
         }
 
         [Test]
-        public async Task DependencyPropertyOverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -192,11 +191,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(new[] { fooControlCode, barControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(fooControlCode, barControlCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void AttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -223,11 +222,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task ReadonlyDependencyProperty()
+        public void ReadonlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,11 +252,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -286,7 +285,7 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
         }
     }
 }

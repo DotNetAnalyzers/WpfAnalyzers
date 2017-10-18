@@ -1,13 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0016DefaultValueIsSharedReferenceType = WpfAnalyzers.WPF0016DefaultValueIsSharedReferenceType;
 
-    internal class HappyPath : HappyPathVerifier<WPF0016DefaultValueIsSharedReferenceType>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyPropertyNoMetadata()
+        public void DependencyPropertyNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -29,11 +28,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyMetadataWithCallbackOnly()
+        public void DependencyPropertyMetadataWithCallbackOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -61,7 +60,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [TestCase("int", "new PropertyMetadata()")]
@@ -78,7 +77,7 @@ namespace RoslynSandbox
         [TestCase("int[]", "new PropertyMetadata(new int[0])")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(null)")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
-        public async Task DependencyPropertyWithMetdadata(string typeName, string metadata)
+        public void DependencyPropertyWithMetadata(string typeName, string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -118,11 +117,11 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata)
                                .AssertReplace("double", typeName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyWhenBoxed()
+        public void DependencyPropertyWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -162,11 +161,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(booleanBoxesCode, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyDependencyProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -194,11 +193,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void AttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -219,11 +218,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyWhenBoxed()
+        public void AttachedPropertyWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -267,11 +266,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { testCode, booleanBoxesCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(booleanBoxesCode, testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedProperty()
+        public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -294,11 +293,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task IgnoreFontFamily()
+        public void IgnoreFontFamily()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -322,11 +321,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
 
         [Test]
-        public async Task IgnoreFontFamilyAddOwner()
+        public void IgnoreFontFamilyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -349,7 +348,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
         }
     }
 }

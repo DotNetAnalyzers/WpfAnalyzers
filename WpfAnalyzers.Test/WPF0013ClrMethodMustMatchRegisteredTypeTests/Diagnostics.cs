@@ -1,16 +1,43 @@
 ﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0013ClrMethodMustMatchRegisteredType = WpfAnalyzers.WPF0013ClrMethodMustMatchRegisteredType;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF0013ClrMethodMustMatchRegisteredType>
+    internal class Diagnostics
     {
+        [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+            public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(this FrameworkElement element, ↓double value) => element.SetValue(BarPropertyKey, value);
+
+        public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    }
+}";
+
+            var expectedMessage = ExpectedMessage.Create("Value type must match registered type int");
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(expectedMessage, testCode);
+        }
+
         [TestCase("double")]
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public async Task AttachedPropertySetMethod(string typeName)
+        public void AttachedPropertySetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,12 +66,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task AttachedPropertySetMethodAsExtensionMethod()
+        public void AttachedPropertySetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,12 +97,11 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task ReadOnlyAttachedPropertySetMethod()
+        public void ReadOnlyAttachedPropertySetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,15 +124,14 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value type", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [TestCase("double")]
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public async Task AttachedPropertyGetMethod(string typeName)
+        public void AttachedPropertyGetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -136,12 +160,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Return type", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task AttachedPropertyGetMethodAsExtensionMethod()
+        public void AttachedPropertyGetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -168,8 +191,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Return type", "int");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
         }
     }
 }

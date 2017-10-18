@@ -1,14 +1,13 @@
 ﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0014SetValueMustUseRegisteredType = WpfAnalyzers.WPF0014SetValueMustUseRegisteredType;
 
-    internal class HappyPath : HappyPathVerifier<WPF0014SetValueMustUseRegisteredType>
+    internal class HappyPath
     {
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public async Task DependencyProperty(string setValueCall)
+        public void DependencyProperty(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -37,12 +36,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public async Task DependencyPropertyPartial(string setValueCall)
+        public void DependencyPropertyPartial(string setValueCall)
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -78,14 +77,14 @@ namespace RoslynSandbox
     }
 }";
             part2 = part2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(new[] { part1, part2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(part1, part2);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public async Task DependencyPropertyOfTypeNullableInt(string setValueCall)
+        public void DependencyPropertyOfTypeNullableInt(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -114,14 +113,14 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);")]
         [TestCase("fooControl.SetValue(FooControl.BarProperty, null);")]
         [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
         [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, null);")]
-        public async Task DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
+        public void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -161,12 +160,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("fooControl.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(fooControlCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooControlCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, meh);")]
         [TestCase("this.SetCurrentValue(BarProperty, meh);")]
-        public async Task DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
+        public void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -195,14 +194,14 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, meh);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public async Task DependencyPropertyOfTypeObject(string setValueCall)
+        public void DependencyPropertyOfTypeObject(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -231,12 +230,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, new Foo());")]
         [TestCase("this.SetCurrentValue(BarProperty, new Foo());")]
-        public async Task DependencyPropertyOfInterfaceType(string setValueCall)
+        public void DependencyPropertyOfInterfaceType(string setValueCall)
         {
             var interfaceCode = @"
 namespace RoslynSandbox
@@ -280,12 +279,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
-            await this.VerifyHappyPathAsync(new[] { interfaceCode, fooCode, testCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(interfaceCode, fooCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public async Task DependencyPropertyGeneric(string setValueCall)
+        public void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
 namespace RoslynSandbox
@@ -324,12 +323,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            await this.VerifyHappyPathAsync(new[] { fooControlGeneric, testCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooControlGeneric, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]
         [TestCase("this.SetCurrentValue(BarProperty, (object)1);")]
-        public async Task DependencyPropertySetValueOfTypeObject(string setValueCall)
+        public void DependencyPropertySetValueOfTypeObject(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -358,12 +357,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, (object)1);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, value);")]
         [TestCase("this.SetCurrentValue(BarProperty, value);")]
-        public async Task DependencyPropertySetValueOfTypeObject2(string setValueCall)
+        public void DependencyPropertySetValueOfTypeObject2(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -393,12 +392,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, value);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, true);")]
         [TestCase("this.SetCurrentValue(BarProperty, true);")]
-        public async Task DependencyPropertyAddOwner(string setValueCall)
+        public void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -474,12 +473,12 @@ namespace RoslynSandbox
     }
 }";
             fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
-            await this.VerifyHappyPathAsync(new[] { fooCode, fooControlPart1, fooControlPart2 }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooCode, fooControlPart1, fooControlPart2);
         }
 
         [TestCase("this.SetValue(VolumeProperty, 1.0);")]
         [TestCase("this.SetCurrentValue(VolumeProperty, 1.0);")]
-        public async Task DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
+        public void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -520,12 +519,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, 2.0);", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
         [TestCase("textBox.SetCurrentValue(TextBox.TextProperty, \"abc\");")]
-        public async Task TextBoxText(string setValueCall)
+        public void TextBoxText(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -543,11 +542,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue(TextBox.TextProperty, \"abc\");", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task SetCurrentValueInLambda()
+        public void SetCurrentValueInLambda()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -578,12 +577,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task IgnoredPropertyAsParameter(string setValueCall)
+        public void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -612,12 +611,12 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task IgnoresFreezable(string setValueCall)
+        public void IgnoresFreezable(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -647,11 +646,11 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
         }
 
         [Test]
-        public async Task PropertyKeyInOtherClass()
+        public void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox
@@ -704,7 +703,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { linkCode, modernLinksCode, linkGroupCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }
