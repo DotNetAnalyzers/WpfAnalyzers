@@ -3,15 +3,10 @@
     using System.Collections.Generic;
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class AssignmentWalker : CSharpSyntaxWalker
+    internal sealed class AssignmentWalker : PooledWalker<AssignmentWalker>
     {
-        private static readonly Pool<AssignmentWalker> Cache = new Pool<AssignmentWalker>(
-            () => new AssignmentWalker(),
-            x => x.assignments.Clear());
-
         private readonly List<AssignmentExpressionSyntax> assignments = new List<AssignmentExpressionSyntax>();
 
         private AssignmentWalker()
@@ -29,12 +24,7 @@
             base.VisitAssignmentExpression(node);
         }
 
-        internal static Pool<AssignmentWalker>.Pooled Create(SyntaxNode node)
-        {
-            var pooled = Cache.GetOrCreate();
-            pooled.Item.Visit(node);
-            return pooled;
-        }
+        internal static AssignmentWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new AssignmentWalker());
 
         internal static bool Assigns(IFieldSymbol field, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
@@ -44,9 +34,9 @@
                 return false;
             }
 
-            using (var pooledAssignments = Create(scope))
+            using (var pooledAssignments = Borrow(scope))
             {
-                foreach (var assignment in pooledAssignments.Item.Assignments)
+                foreach (var assignment in pooledAssignments.Assignments)
                 {
                     var assignedSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken);
                     if (field.Equals(assignedSymbol))
@@ -57,6 +47,11 @@
             }
 
             return false;
+        }
+
+        protected override void Clear()
+        {
+            this.assignments.Clear();
         }
     }
 }

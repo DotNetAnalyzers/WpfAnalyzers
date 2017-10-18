@@ -3,34 +3,47 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
 
-    public class HappyPathWithAll : DiagnosticVerifier
+    public class HappyPathWithAll
     {
-        private static readonly IEnumerable<DiagnosticAnalyzer> AllAnalyzers = typeof(
-                WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue).Assembly.GetTypes()
-                                                                                        .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                        .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t));
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(WpfAnalyzers.KnownSymbol)
+            .Assembly.GetTypes()
+            .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+            .ToArray();
 
         [Test]
         public void NotEmpty()
         {
-            CollectionAssert.IsNotEmpty(this.GetCSharpDiagnosticAnalyzers());
-            Assert.Pass($"Count: {this.GetCSharpDiagnosticAnalyzers().Count()}");
+            CollectionAssert.IsNotEmpty(AllAnalyzers);
+            Assert.Pass($"Count: {AllAnalyzers.Count()}");
         }
 
-        public override void IdMatches()
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void IdMatches(DiagnosticAnalyzer analyzer)
         {
-            Assert.Pass();
+            StringAssert.StartsWith(analyzer.SupportedDiagnostics[0].Id, analyzer.GetType().Name);
         }
 
-        ////[Explicit("Temporarily ignore")]
-        [Test]
-        public async Task SomewhatRealisticSample()
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
+        {
+            AnalyzerAssert.Valid(analyzer, CodeFactory.FindProjectFile("WpfAnalyzers.Analyzers.csproj"));
+        }
+
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
+        {
+            AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("WpfAnalyzers.sln"));
+        }
+
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
         {
             // this test just throws some random code at all analyzers
             var booleanBoxesCode = @"
@@ -236,12 +249,7 @@ internal static class BooleanBoxes
             return true;
         }
     }";
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode, booleanBoxesCode }, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            return AllAnalyzers;
+            AnalyzerAssert.Valid(analyzer, fooCode, fooControlCode, booleanBoxesCode);
         }
     }
 }

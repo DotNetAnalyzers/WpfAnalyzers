@@ -1,14 +1,16 @@
 namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF0042AvoidSideEffectsInClrAccessors>
+    internal class HappyPath
     {
         [Test]
-        public async Task DependencyProperty()
+        public void DependencyProperty()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.Windows;
     using System.Windows.Controls;
 
@@ -25,15 +27,18 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
             get { return (int)GetValue(BarProperty); }
             set { SetValue(BarProperty, value); }
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
-        public async Task DependencyPropertyWithThis()
+        public void DependencyPropertyWithThis()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.Windows;
     using System.Windows.Controls;
 
@@ -50,140 +55,156 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
             get { return (int)this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }
         }
-    }";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task ReadOnlyDependencyProperty()
-        {
-            var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public int Bar
-    {
-        get { return (int)this.GetValue(BarProperty); }
-        protected set { this.SetValue(BarPropertyKey, value); }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
-        public async Task AttachedProperty()
+        public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static void SetBar(this FrameworkElement element, int value)
+    public class FooControl : Control
     {
-        element.SetValue(BarProperty, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
-}";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task AttachedPropertyExpressionBodies()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
-
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
-}";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task ReadOnlyAttachedProperty()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
-
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(this FrameworkElement element, int value)
-    {
-        element.SetValue(BarPropertyKey, value);
-    }
-
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
-}";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task ReadOnlyAttachedPropertyExpressionBodies()
-        {
-            var testCode = @"
-using System.Windows;
-
-public static class Foo
-{
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set { this.SetValue(BarPropertyKey, value); }
+        }
+    }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+        }
+
+        [Test]
+        public void AttachedProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
+
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+        }
+
+        [Test]
+        public void AttachedPropertyExpressionBodies()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
+
+        public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
+
+        public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    }
+}";
+
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+        }
+
+        [Test]
+        public void ReadOnlyAttachedProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+        }
+
+        [Test]
+        public void ReadOnlyAttachedPropertyExpressionBodies()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+            public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
+
+        public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+    }
+}";
+
+            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
     }
 }

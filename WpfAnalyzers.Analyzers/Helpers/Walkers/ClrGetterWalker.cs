@@ -2,21 +2,10 @@ namespace WpfAnalyzers
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class ClrGetterWalker : CSharpSyntaxWalker
+    internal class ClrGetterWalker : PooledWalker<ClrGetterWalker>
     {
-        private static readonly Pool<ClrGetterWalker> Cache = new Pool<ClrGetterWalker>(
-            () => new ClrGetterWalker(),
-            x =>
-                {
-                    x.semanticModel = null;
-                    x.cancellationToken = CancellationToken.None;
-                    x.HasError = false;
-                    x.GetValue = null;
-                });
-
         private SemanticModel semanticModel;
         private CancellationToken cancellationToken;
 
@@ -32,13 +21,13 @@ namespace WpfAnalyzers
 
         public ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
 
-        public static Pool<ClrGetterWalker>.Pooled Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
+        public static ClrGetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
         {
-            var pooled = Cache.GetOrCreate();
-            pooled.Item.semanticModel = semanticModel;
-            pooled.Item.cancellationToken = cancellationToken;
-            pooled.Item.Visit(getter);
-            return pooled;
+            var walker = Borrow(() => new ClrGetterWalker());
+            walker.semanticModel = semanticModel;
+            walker.cancellationToken = cancellationToken;
+            walker.Visit(getter);
+            return walker;
         }
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
@@ -67,6 +56,14 @@ namespace WpfAnalyzers
             }
 
             base.Visit(node);
+        }
+
+        protected override void Clear()
+        {
+            this.semanticModel = null;
+            this.cancellationToken = CancellationToken.None;
+            this.HasError = false;
+            this.GetValue = null;
         }
     }
 }

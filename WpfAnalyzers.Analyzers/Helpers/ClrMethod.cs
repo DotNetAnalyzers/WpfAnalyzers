@@ -98,14 +98,14 @@
                 return false;
             }
 
-            using (var pooled = ClrSetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrSetterWalker.Borrow(semanticModel, cancellationToken, method))
             {
-                if (!pooled.Item.IsSuccess)
+                if (!walker.IsSuccess)
                 {
                     return false;
                 }
 
-                var memberAccess = (pooled.Item.SetValue?.Expression ?? pooled.Item.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
+                var memberAccess = (walker.SetValue?.Expression ?? walker.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -119,15 +119,15 @@
                     return false;
                 }
 
-                using (var pooledValueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
+                using (var valueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
                 {
-                    if (!pooledValueWalker.Item.UsesValue)
+                    if (!valueWalker.UsesValue)
                     {
                         return false;
                     }
                 }
 
-                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField);
             }
         }
 
@@ -142,9 +142,9 @@
                 return false;
             }
 
-            using (var pooled = ClrGetterWalker.Create(semanticModel, cancellationToken, method))
+            using (var walker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, method))
             {
-                var memberAccess = pooled.Item.GetValue?.Expression as MemberAccessExpressionSyntax;
+                var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -158,34 +158,26 @@
                     return false;
                 }
 
-                return pooled.Item.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
+                return walker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField);
             }
         }
 
-        private class ValueWalker : CSharpSyntaxWalker
+        private class ValueWalker : PooledWalker<ValueWalker>
         {
-            private static readonly Pool<ValueWalker> Cache = new Pool<ValueWalker>(
-                () => new ValueWalker(),
-                x =>
-                {
-                    x.value = default(SyntaxToken);
-                    x.UsesValue = false;
-                });
-
             private SyntaxToken value;
 
             public bool UsesValue { get; private set; }
 
-            public static Pool<ValueWalker>.Pooled Create(SyntaxToken value, SyntaxNode expression)
+            public static ValueWalker Create(SyntaxToken value, SyntaxNode expression)
             {
-                var pooled = Cache.GetOrCreate();
-                pooled.Item.value = value;
+                var walker = Borrow(() => new ValueWalker());
+                walker.value = value;
                 if (expression != null)
                 {
-                    pooled.Item.Visit(expression);
+                    walker.Visit(expression);
                 }
 
-                return pooled;
+                return walker;
             }
 
             public override void Visit(SyntaxNode node)
@@ -202,6 +194,12 @@
             {
                 this.UsesValue |= this.value.ValueText == node.Identifier.ValueText;
                 base.VisitIdentifierName(node);
+            }
+
+            protected override void Clear()
+            {
+                this.value = default(SyntaxToken);
+                this.UsesValue = false;
             }
         }
     }

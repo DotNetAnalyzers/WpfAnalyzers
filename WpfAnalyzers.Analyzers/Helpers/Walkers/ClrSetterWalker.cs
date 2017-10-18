@@ -2,22 +2,10 @@
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class ClrSetterWalker : CSharpSyntaxWalker
+    internal class ClrSetterWalker : PooledWalker<ClrSetterWalker>
     {
-        private static readonly Pool<ClrSetterWalker> Cache = new Pool<ClrSetterWalker>(
-            () => new ClrSetterWalker(),
-            x =>
-            {
-                x.semanticModel = null;
-                x.cancellationToken = CancellationToken.None;
-                x.HasError = false;
-                x.SetValue = null;
-                x.SetCurrentValue = null;
-            });
-
         private SemanticModel semanticModel;
         private CancellationToken cancellationToken;
 
@@ -39,13 +27,13 @@
 
         public ArgumentSyntax Value => this.Arguments?.Arguments[1];
 
-        public static Pool<ClrSetterWalker>.Pooled Create(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
+        public static ClrSetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
         {
-            var pooled = Cache.GetOrCreate();
-            pooled.Item.semanticModel = semanticModel;
-            pooled.Item.cancellationToken = cancellationToken;
-            pooled.Item.Visit(setter);
-            return pooled;
+            var walker = Borrow(() => new ClrSetterWalker());
+            walker.semanticModel = semanticModel;
+            walker.cancellationToken = cancellationToken;
+            walker.Visit(setter);
+            return walker;
         }
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
@@ -89,6 +77,15 @@
             }
 
             base.Visit(node);
+        }
+
+        protected override void Clear()
+        {
+            this.semanticModel = null;
+            this.cancellationToken = CancellationToken.None;
+            this.HasError = false;
+            this.SetValue = null;
+            this.SetCurrentValue = null;
         }
     }
 }

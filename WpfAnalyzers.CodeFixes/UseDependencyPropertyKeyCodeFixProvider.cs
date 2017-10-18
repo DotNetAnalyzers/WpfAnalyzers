@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseDependencyPropertyKeyCodeFixProvider))]
     [Shared]
@@ -45,26 +46,25 @@
                     invocation,
                     semanticModel,
                     context.CancellationToken,
-                    out ArgumentSyntax property,
-                    out IFieldSymbol setField,
-                    out ArgumentSyntax value))
+                    out _,
+                    out var setField,
+                    out _))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
                         setField,
                         semanticModel,
                         context.CancellationToken,
-                        out IFieldSymbol keyField))
+                        out var keyField))
                     {
-                        var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
-                        var setValue = invocation.ReplaceNode(property, keyArg);
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 invocation.ToString(),
                                 cancellationToken => ApplyFixAsync(
-                                    context,
-                                    cancellationToken,
+                                    context.Document,
                                     invocation,
-                                    setValue),
+                                    null,
+                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    cancellationToken),
                                  this.GetType().FullName),
                             diagnostic);
                     }
@@ -76,27 +76,25 @@
                       invocation,
                       semanticModel,
                       context.CancellationToken,
-                      out property,
+                      out _,
                       out setField,
-                      out value))
+                      out _))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
                         setField,
                         semanticModel,
                         context.CancellationToken,
-                        out IFieldSymbol keyField))
+                        out var keyField))
                     {
-                        var keyArg = DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart);
-                        var setValue = invocation.WithExpression(SetValueExpression(invocation.Expression))
-                                                 .ReplaceNode(property, keyArg);
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 invocation.ToString(),
                                 cancellationToken => ApplyFixAsync(
-                                    context,
-                                    cancellationToken,
+                                    context.Document,
                                     invocation,
-                                    setValue),
+                                    SetValueExpression(invocation.Expression),
+                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);
                     }
@@ -104,15 +102,16 @@
             }
         }
 
-        private static async Task<Document> ApplyFixAsync(
-            CodeFixContext context,
-            CancellationToken cancellationToken,
-            SyntaxNode oldNode,
-            SyntaxNode newNode)
+        private static async Task<Document> ApplyFixAsync(Document document, InvocationExpressionSyntax oldNode, ExpressionSyntax expression, ArgumentSyntax argument, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(cancellationToken)
-                                          .ConfigureAwait(false);
-            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(oldNode, newNode));
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            if (expression != null)
+            {
+                editor.ReplaceNode(oldNode.Expression, expression);
+            }
+
+            editor.ReplaceNode(oldNode.ArgumentList.Arguments[0], argument);
+            return editor.GetChangedDocument();
         }
 
         private static ExpressionSyntax SetValueExpression(ExpressionSyntax old)
