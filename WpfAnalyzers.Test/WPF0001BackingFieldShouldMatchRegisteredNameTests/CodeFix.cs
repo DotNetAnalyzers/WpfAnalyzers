@@ -6,6 +6,32 @@
     internal class CodeFix
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ↓Error = DependencyProperty.Register(
+            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(Error); }
+            set { SetValue(Error, value); }
+        }
+    }
+}";
+
+            var expectedMessage = ExpectedMessage.Create("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' must be named 'BarProperty'");
+            AnalyzerAssert.Diagnostics<WPF0001BackingFieldShouldMatchRegisteredName>(expectedMessage, testCode);
+        }
+
+        [Test]
         public void DependencyProperty()
         {
             var testCode = @"

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -11,100 +11,104 @@
             var testCode = @"
 namespace RoslynSandbox
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Value),
             typeof(double),
             typeof(FooControl),
-            new PropertyMetadata(1, null, ↓WrongName));
+            new PropertyMetadata(1.0, null, CoerceValue),
+            ↓WrongName);
+
+        public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
         public double Value
         {
             get { return (double)this.GetValue(ValueProperty); }
-            set { this.SetValue(ValueProperty, value); }
-        }
-
-        private static object WrongName(DependencyObject d, object baseValue)
-        {
-            return baseValue;
-        }
-    }
-}";
-
-            var expectedMessage = ExpectedMessage.Create("Method 'WrongName' should be named 'CoerceValue'");
-            AnalyzerAssert.Diagnostics<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(expectedMessage, testCode);
-        }
-
-        [TestCase("new PropertyMetadata(1, null, ↓WrongName)")]
-        [TestCase("new PropertyMetadata(1, null, new CoerceValueCallback(↓WrongName))")]
-        public void DependencyProperty(string metadata)
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(double),
-            typeof(FooControl),
-            new PropertyMetadata(1, null, ↓WrongName));
-
-        public double Value
-        {
-            get { return (double)this.GetValue(ValueProperty); }
-            set { this.SetValue(ValueProperty, value); }
-        }
-
-        private static object WrongName(DependencyObject d, object baseValue)
-        {
-            return baseValue;
-        }
-    }
-}";
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(double),
-            typeof(FooControl),
-            new PropertyMetadata(1, null, CoerceValue));
-
-        public double Value
-        {
-            get { return (double)this.GetValue(ValueProperty); }
-            set { this.SetValue(ValueProperty, value); }
+            set { this.SetValue(ValuePropertyKey, value); }
         }
 
         private static object CoerceValue(DependencyObject d, object baseValue)
         {
             return baseValue;
         }
+
+        private static bool WrongName(object value)
+        {
+            return (int)value >= 0;
+        }
     }
 }";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+
+            var expectedMessage = ExpectedMessage.Create("Method 'WrongName' should be named 'ValueValidateValue'");
+            AnalyzerAssert.Diagnostics<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(expectedMessage, testCode);
+        }
+
+        [TestCase("↓WrongName")]
+        [TestCase("new ValidateValueCallback(↓WrongName)")]
+        public void DependencyPropertyWithCallback(string callback)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)),
+            ↓WrongName);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static bool WrongName(object value)
+        {
+            return (int)value >= 0;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)),
+            ValueValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static bool ValueValidateValue(object value)
+        {
+            return (int)value >= 0;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("↓WrongName", callback);
+            fixedCode = fixedCode.AssertReplace("ValueValidateValue);", callback.AssertReplace("↓WrongName", "ValueValidateValue") + ");");
+            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -122,7 +126,8 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(double),
             typeof(FooControl),
-            new PropertyMetadata(1.0, null, ↓WrongName));
+            new PropertyMetadata(1.0, null, CoerceValue),
+            ↓WrongName);
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -132,9 +137,14 @@ namespace RoslynSandbox
             set { this.SetValue(ValuePropertyKey, value); }
         }
 
-        private static object WrongName(DependencyObject d, object baseValue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             return baseValue;
+        }
+
+        private static bool WrongName(object value)
+        {
+            return (int)value >= 0;
         }
     }
 }";
@@ -151,7 +161,8 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(double),
             typeof(FooControl),
-            new PropertyMetadata(1.0, null, CoerceValue));
+            new PropertyMetadata(1.0, null, CoerceValue),
+            ValueValidateValue);
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -165,9 +176,14 @@ namespace RoslynSandbox
         {
             return baseValue;
         }
+
+        private static bool ValueValidateValue(object value)
+        {
+            return (int)value >= 0;
+        }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -184,15 +200,16 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(1, null, ↓WrongName));
+            new PropertyMetadata(1, null, null),
+            ↓WrongName);
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static object WrongName(DependencyObject d, object baseValue)
+        private static bool WrongName(object value)
         {
-            return baseValue;
+            return (int)value >= 0;
         }
     }
 }";
@@ -208,19 +225,20 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(1, null, CoerceBar));
+            new PropertyMetadata(1, null, null),
+            BarValidateValue);
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static bool BarValidateValue(object value)
         {
-            return baseValue;
+            return (int)value >= 0;
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -237,7 +255,8 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(default(int), null, ↓WrongName));
+            new PropertyMetadata(default(int), null, CoerceBar),
+            ↓WrongName);
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -245,9 +264,14 @@ namespace RoslynSandbox
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static object WrongName(DependencyObject d, object baseValue)
+        private static object CoerceBar(DependencyObject d, object baseValue)
         {
             return baseValue;
+        }
+
+        private static bool WrongName(object value)
+        {
+            return (int)value >= 0;
         }
     }
 }";
@@ -263,7 +287,8 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(default(int), null, CoerceBar));
+            new PropertyMetadata(default(int), null, CoerceBar),
+            BarValidateValue);
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -275,103 +300,14 @@ namespace RoslynSandbox
         {
             return baseValue;
         }
-    }
-}";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
-        }
 
-        [Test]
-        public void OverrideMetadata()
+        private static bool BarValidateValue(object value)
         {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : UserControl
-    {
-        static FooControl()
-        {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, null, ↓WrongName));
-        }
-
-        private static object WrongName(DependencyObject d, object baseValue)
-        {
-            return baseValue;
+            return (int)value >= 0;
         }
     }
 }";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : UserControl
-    {
-        static FooControl()
-        {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, null, CoerceBackground));
-        }
-
-        private static object CoerceBackground(DependencyObject d, object baseValue)
-        {
-            return baseValue;
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
-        }
-
-        [Test]
-        public void AddOwner()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-
-    public class FooControl : FrameworkElement
-    {
-        static FooControl()
-        {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, null, ↓WrongName));
-        }
-
-        private static object WrongName(DependencyObject d, object baseValue)
-        {
-            return baseValue;
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-
-    public class FooControl : FrameworkElement
-    {
-        static FooControl()
-        {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, null, CoerceFontSize));
-        }
-
-        private static object CoerceFontSize(DependencyObject d, object baseValue)
-        {
-            return baseValue;
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

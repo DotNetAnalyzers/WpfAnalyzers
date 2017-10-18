@@ -6,6 +6,32 @@
     internal class CodeFix
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int ↓Error
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            var expectedMessage = ExpectedMessage.Create("Property 'Error' must be named 'Bar'");
+            AnalyzerAssert.Diagnostics<WPF0003ClrPropertyShouldMatchRegisteredName>(expectedMessage, testCode);
+        }
+
+        [Test]
         public void DependencyProperty()
         {
             var testCode = @"

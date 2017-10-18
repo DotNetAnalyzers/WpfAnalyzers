@@ -8,7 +8,8 @@
         [Test]
         public async Task WhenXmlnsDefinitionMatches()
         {
-            var controlCode = @"namespace Gu.Wpf.Geometry
+            var controlCode = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -60,7 +61,8 @@ using System.Windows.Markup;
         [Test]
         public async Task WhenTwoPublicTypesInSameNamespace()
         {
-            var control1Code = @"namespace Gu.Wpf.Geometry
+            var control1Code = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -82,7 +84,8 @@ using System.Windows.Markup;
     }
 }";
 
-            var control2Code = @"namespace Gu.Wpf.Geometry
+            var control2Code = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -135,7 +138,8 @@ using System.Windows.Markup;
         [Test]
         public async Task WhenTwoXmlnsDefinitions()
         {
-            var controlCode1 = @"namespace Gu.Wpf.Geometry
+            var controlCode1 = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -157,7 +161,8 @@ using System.Windows.Markup;
     }
 }";
 
-            var controlCode2 = @"namespace Gu.Wpf.Geometry.Balloons
+            var controlCode2 = @"
+namespace Gu.Wpf.Geometry.Balloons
 {
     using System.Windows;
     using System.Windows.Controls;

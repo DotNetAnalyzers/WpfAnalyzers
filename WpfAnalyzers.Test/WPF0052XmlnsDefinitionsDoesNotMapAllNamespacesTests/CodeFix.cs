@@ -8,7 +8,8 @@
         [Test]
         public async Task WhenMissingNamespace()
         {
-            var control1Code = @"namespace Gu.Wpf.Geometry
+            var control1Code = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -30,7 +31,8 @@
     }
 }";
 
-            var control2Code = @"namespace Gu.Wpf.Geometry.Meh
+            var control2Code = @"
+namespace Gu.Wpf.Geometry.Meh
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -117,7 +119,8 @@ using System.Windows.Markup;
         [Test]
         public async Task WhenMissingNamespaceWithNameColon()
         {
-            var control1Code = @"namespace Gu.Wpf.Geometry
+            var control1Code = @"
+namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -139,7 +142,8 @@ using System.Windows.Markup;
     }
 }";
 
-            var control2Code = @"namespace Gu.Wpf.Geometry.Meh
+            var control2Code = @"
+namespace Gu.Wpf.Geometry.Meh
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -12,14 +12,17 @@
         public async Task ThisSetCurrentValue(string before, string after)
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public FooControl()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        ↓this.SetCurrentValue(DataContextProperty, 1);
+        public FooControl()
+        {
+            ↓this.SetCurrentValue(DataContextProperty, 1);
+        }
     }
 }";
             testCode = testCode.AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
@@ -27,14 +30,17 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public FooControl()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        this.SetValue(DataContextProperty, 1);
+        public FooControl()
+        {
+            this.SetValue(DataContextProperty, 1);
+        }
     }
 }";
             fixedCode = fixedCode.AssertReplace("this.SetValue(DataContextProperty, 1);", after);
@@ -46,15 +52,18 @@ public class FooControl : Control
         public async Task ControlSetCurrentValue(string before, string after)
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static void Meh()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        var control = new Control();
-        ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
+        public static void Meh()
+        {
+            var control = new Control();
+            ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
+        }
     }
 }";
             testCode = testCode.AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
@@ -62,15 +71,18 @@ public class FooControl : Control
             await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static void Meh()
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        var control = new Control();
-        control.SetValue(FrameworkElement.DataContextProperty, 1);
+        public static void Meh()
+        {
+            var control = new Control();
+            control.SetValue(FrameworkElement.DataContextProperty, 1);
+        }
     }
 }";
             fixedCode = fixedCode.AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);

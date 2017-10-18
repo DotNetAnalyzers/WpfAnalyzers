@@ -5,6 +5,42 @@
 
     internal class CodeFix
     {
+        [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(1, ↓WrongName));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void WrongName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }
+}";
+
+            var expectedMessage = ExpectedMessage.Create("Method 'WrongName' should be named 'OnValueChanged'");
+            AnalyzerAssert.Diagnostics<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(expectedMessage, testCode);
+        }
+
         [TestCase("new PropertyMetadata(1, ↓WrongName)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(↓WrongName))")]
         public void DependencyProperty(string metadata)
@@ -68,8 +104,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1, ↓WrongName)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata.AssertReplace("↓WrongName", "OnValueChanged"));
-            var expectedMessage = ExpectedMessage.Create("Method 'WrongName' should be named 'OnValueChanged'");
-            AnalyzerAssert.Diagnostics<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(expectedMessage, testCode);
+
             AnalyzerAssert.CodeFix<WPF0005PropertyChangedCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
         }
 

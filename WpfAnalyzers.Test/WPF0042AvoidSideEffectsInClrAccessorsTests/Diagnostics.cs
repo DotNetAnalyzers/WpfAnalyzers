@@ -10,35 +10,38 @@
         public async Task DependencyPropertySideEffectInGetter()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-        nameof(Bar),
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-        ""Other"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public int Bar
+    public class FooControl : Control
     {
-        get
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
         {
-            ↓SideEffect(); 
-            return (int)this.GetValue(BarProperty); 
+            get
+            {
+                ↓SideEffect(); 
+                return (int)this.GetValue(BarProperty); 
+            }
+            set { this.SetValue(OtherProperty, value); }
         }
-        set { this.SetValue(OtherProperty, value); }
-    }
 
-    private void SideEffect()
-    {
+        private void SideEffect()
+        {
+        }
     }
 }";
             var expected = this.CSharpDiagnostic()
@@ -52,38 +55,41 @@ public class FooControl : Control
         public async Task DependencyPropertySideEffectInSetter()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-        nameof(Bar),
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-        ""Other"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
-
-    public int Bar
+    public class FooControl : Control
     {
-        get
-        {
-            return (int)this.GetValue(BarProperty); 
-        }
-        set 
-        {
-            this.SetValue(OtherProperty, value);
-            ↓SideEffect(); 
-        }
-    }
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
 
-    private static void SideEffect()
-    {
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get
+            {
+                return (int)this.GetValue(BarProperty); 
+            }
+            set 
+            {
+                this.SetValue(OtherProperty, value);
+                ↓SideEffect(); 
+            }
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
             var expected = this.CSharpDiagnostic()
@@ -97,31 +103,34 @@ public class FooControl : Control
         public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(FooControl),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public int Bar
+    public class FooControl : Control
     {
-        get { return (int)this.GetValue(BarProperty); }
-        protected set 
-        { 
-            this.SetValue(BarPropertyKey, value); 
-            ↓SideEffect(); 
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set 
+            { 
+                this.SetValue(BarPropertyKey, value); 
+                ↓SideEffect(); 
+            }
         }
-    }
 
-    private void SideEffect()
-    {
+        private void SideEffect()
+        {
+        }
     }
 }";
             var expected = this.CSharpDiagnostic()
@@ -135,29 +144,32 @@ public class FooControl : Control
         public async Task AttachedPropertyWithSideEffectInSetMethod()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
+    using System.Windows;
 
-    public static void SetBar(this FrameworkElement element, int value)
+    public static class Foo
     {
-        ↓SideEffect(); 
-        element.SetValue(BarProperty, value);
-    }
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
 
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            ↓SideEffect(); 
+            element.SetValue(BarProperty, value);
+        }
 
-    private static void SideEffect()
-    {
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
 
@@ -171,29 +183,32 @@ public static class Foo
         public async Task AttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(1));
+    using System.Windows;
 
-    public static void SetBar(this FrameworkElement element, int value)
+    public static class Foo
     {
-        element.SetValue(BarProperty, value);
-    }
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(1));
 
-    public static int GetBar(this FrameworkElement element)
-    {
-        ↓SideEffect(); 
-        return (int) element.GetValue(BarProperty);
-    }
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
 
-    private static void SideEffect()
-    {
+        public static int GetBar(this FrameworkElement element)
+        {
+            ↓SideEffect(); 
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
 
@@ -207,31 +222,34 @@ public static class Foo
         public async Task ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(this FrameworkElement element, int value)
+    public static class Foo
     {
-        ↓SideEffect(); 
-        element.SetValue(BarPropertyKey, value);
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(this FrameworkElement element)
-    {
-        return (int) element.GetValue(BarProperty);
-    }
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    private static void SideEffect()
-    {
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            ↓SideEffect(); 
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(this FrameworkElement element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
 
@@ -243,32 +261,35 @@ public static class Foo
         public async Task ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int)));
+    using System.Windows;
 
-    public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-
-    public static void SetBar(this FrameworkElement element, int value)
+    public static class Foo
     {
-        element.SetValue(BarPropertyKey, value);
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
 
-    public static int GetBar(this FrameworkElement element)
-    {
-        ↓SideEffect(); 
-        return (int) element.GetValue(BarProperty);
-    }
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-    private static void SideEffect()
-    {
+
+        public static void SetBar(this FrameworkElement element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(this FrameworkElement element)
+        {
+            ↓SideEffect(); 
+            return (int) element.GetValue(BarProperty);
+        }
+
+        private static void SideEffect()
+        {
+        }
     }
 }";
 

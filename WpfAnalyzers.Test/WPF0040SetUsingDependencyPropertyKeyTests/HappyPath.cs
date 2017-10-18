@@ -1,12 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
+namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
-    using Gu.Roslyn.Asserts;
+    using System.Threading.Tasks;
     using NUnit.Framework;
+    using WPF0040SetUsingDependencyPropertyKey = WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey;
 
-    internal class CodeFix
+    internal class HappyPath : HappyPathVerifier<WPF0040SetUsingDependencyPropertyKey>
     {
-        [Test]
-        public void Message()
+        [TestCase("SetValue")]
+        [TestCase("this.SetValue")]
+        [TestCase("SetCurrentValue")]
+        [TestCase("this.SetCurrentValue")]
+        public async Task DependencyProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -16,54 +20,28 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
-            typeof(int),
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", 
+            typeof(int), 
             typeof(FooControl),
             new PropertyMetadata(default(int)));
-
-        public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
 
         public int Bar
         {
             get { return (int)GetValue(BarProperty); }
-            set { SetValue(Error, value); }
+            set { SetValue(BarProperty, value); }
         }
     }
 }";
 
-            var expectedMessage = ExpectedMessage.Create("Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'");
-            AnalyzerAssert.Diagnostics<WPF0002BackingFieldShouldMatchRegisteredName>(expectedMessage, testCode);
+            testCode = testCode.AssertReplace("SetValue", method);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public async Task ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(Error, value); }
-        }
-    }
-}";
-
-            var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -86,11 +64,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
 
-        [Test]
-        public void ReadOnlyAttachedProperty()
+        [TestCase("SetValue")]
+        [TestCase("SetCurrentValue")]
+        public async Task AttachedProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,17 +78,15 @@ namespace RoslynSandbox
 
     public static class Foo
     {
-        private static readonly DependencyPropertyKey ↓Error = DependencyProperty.RegisterAttachedReadOnly(
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-        public static readonly DependencyProperty BarProperty = Error.DependencyProperty;
-
         public static void SetBar(DependencyObject element, int value)
         {
-            element.SetValue(Error, value);
+            element.SetValue(BarProperty, value);
         }
 
         public static int GetBar(DependencyObject element)
@@ -118,8 +95,14 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("SetValue", method);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+        }
 
-            var fixedCode = @"
+        [Test]
+        public async Task ReadOnlyAttachedProperty()
+        {
+            var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -145,7 +128,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
         }
     }
 }
