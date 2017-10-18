@@ -9,23 +9,26 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
         public void DependencyPropertyNoMetadata()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-        nameof(Value),
-        typeof(double),
-        typeof(FooControl));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public double Value
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
     {
-        get { return (double)this.GetValue(ValueProperty); }
-        set { this.SetValue(ValueProperty, value); }
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
     }
 }";
             AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
@@ -38,6 +41,8 @@ public class FooControl : Control
         public void DependencyWithPropertyMetadata(string metadata)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.Windows;
     using System.Windows.Controls;
 
@@ -59,7 +64,8 @@ public class FooControl : Control
         {
             return baseValue;
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
             AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
         }
@@ -68,28 +74,31 @@ public class FooControl : Control
         public void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-using System.Windows;
-using System.Windows.Controls;
-
-public class FooControl : Control
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
-        nameof(Value),
-        typeof(double),
-        typeof(FooControl),
-        new PropertyMetadata(1.0, null, CoerceValue));
+    using System.Windows;
+    using System.Windows.Controls;
 
-    public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
-
-    public double Value
+    public class FooControl : Control
     {
-        get { return (double)this.GetValue(ValueProperty); }
-        set { this.SetValue(ValuePropertyKey, value); }
-    }
+        private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(1.0, null, CoerceValue));
 
-    private static object CoerceValue(DependencyObject d, object baseValue)
-    {
-        return baseValue;
+        public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValuePropertyKey, value); }
+        }
+
+        private static object CoerceValue(DependencyObject d, object baseValue)
+        {
+            return baseValue;
+        }
     }
 }";
             AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
@@ -99,23 +108,26 @@ public class FooControl : Control
         public void AttachedProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int), null, CoerceBar));
+    using System.Windows;
 
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
-
-    private static object CoerceBar(DependencyObject d, object baseValue)
+    public static class Foo
     {
-        return baseValue;
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int), null, CoerceBar));
+
+        public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
+
+        public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            return baseValue;
+        }
     }
 }";
 
@@ -126,30 +138,33 @@ public static class Foo
         public void ReadOnlyAttachedProperty()
         {
             var testCode = @"
-using System.Windows;
-
-public static class Foo
+namespace RoslynSandbox
 {
-    private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-        ""Bar"",
-        typeof(int),
-        typeof(Foo),
-        new PropertyMetadata(default(int), OnBarChanged, CoerceBar));
+    using System.Windows;
 
-        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-    public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
-
-    public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
-
-    private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    public static class Foo
     {
-        // nop
-    }
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int), OnBarChanged, CoerceBar));
 
-    private static object CoerceBar(DependencyObject d, object baseValue)
-    {
-        return baseValue;
+            public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
+
+        public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            return baseValue;
+        }
     }
 }";
 
