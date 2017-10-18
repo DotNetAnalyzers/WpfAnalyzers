@@ -1,16 +1,15 @@
 ﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0041SetMutableUsingSetCurrentValue = WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue;
 
-    internal class CodeFix : CodeFixVerifier<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>
+    internal class CodeFix
     {
         [TestCase("Bar = 1;")]
         [TestCase("this.Bar = 1;")]
         [TestCase("this.Bar = this.CreateValue();")]
-        public async Task ClrProperty(string setExpression)
+        public void ClrProperty(string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,10 +39,6 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -73,17 +68,19 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
+            var right = setExpression.Split('=')[1].Trim(' ', ';');
+            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("Bar = 1;")]
         [TestCase("this.Bar = 1;")]
         [TestCase("this.Bar = this.CreateValue();")]
-        public async Task ClrPropertyWithTrivia(string setExpression)
+        public void ClrPropertyWithTrivia(string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -115,10 +112,6 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -150,11 +143,13 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
+            var right = setExpression.Split('=')[1].Trim(' ', ';');
+            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("Bar = 1;", "SetCurrentValue(FooControl.BarProperty, (double)1);")]
@@ -163,7 +158,7 @@ namespace RoslynSandbox
         [TestCase("Bar = CreateValue();", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateValue());", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateObjectValue());", "SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
-        public async Task FromOutside(string before, string after)
+        public void FromOutside(string before, string after)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -206,11 +201,6 @@ namespace RoslynSandbox
         private static object CreateObjectValue() => 4;
     }
 }";
-            testCode = testCode.AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
-            var value = Regex.Match(after, @"SetCurrentValue\(FooControl\.BarProperty, (\(double\))?(?<value>.+)\);", RegexOptions.ExplicitCapture)
-                             .Groups["value"].Value;
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl.BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, new[] { expected }).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -231,12 +221,13 @@ namespace RoslynSandbox
         private static object CreateObjectValue() => 4;
     }
 }";
+            testCode = testCode.AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
             fixedCode = fixedCode.AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
-            await this.VerifyCSharpFixAsync(new[] { testCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { testCode, fooControlCode }, fixedCode);
         }
 
         [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);")]
-        public async Task DependencyPropertyFromOutsideConditional(string setExpression)
+        public void DependencyPropertyFromOutsideConditional(string setExpression)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -277,11 +268,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            fooCode = fooCode.AssertReplace(
-                "this.fooControl.↓Bar = 1;",
-                setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref fooCode).WithArguments("FooControl.BarProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(new[] { fooCode, fooControlCode }, new[] { expected }).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -296,11 +282,12 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(new[] { fooCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
+            fooCode = fooCode.AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooCode, fooControlCode }, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyObject()
+        public void ClrPropertyObject()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -330,9 +317,6 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -360,11 +344,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyWhenFieldNameIsNotMatching()
+        public void ClrPropertyWhenFieldNameIsNotMatching()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -391,8 +375,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -420,11 +402,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task InternalClrProperty()
+        public void InternalClrProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -451,8 +433,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -480,11 +460,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertySetInGenericClass()
+        public void ClrPropertySetInGenericClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -511,8 +491,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -540,11 +518,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyWithGenericBaseClass()
+        public void ClrPropertyWithGenericBaseClass()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -581,8 +559,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -598,12 +574,11 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            await this.VerifyCSharpFixAsync(new[] { testCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooControlCode, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyOnGenericClass()
+        public void ClrPropertyOnGenericClass()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -641,8 +616,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("FooControl<int>.ValueProperty", "1.0");
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode, fooControlCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -660,12 +633,11 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            await this.VerifyCSharpFixAsync(new[] { testCode, fooControlCode }, new[] { fixedCode, fooControlCode }).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooControlCode, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyWithImplicitCastInt()
+        public void ClrPropertyWithImplicitCastInt()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -692,8 +664,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("ValueProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -720,11 +690,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task ClrPropertyInBaseclass()
+        public void ClrPropertyInBaseclass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -740,8 +710,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", "\"abc\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -758,11 +726,11 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task SetValueInBaseclass()
+        public void SetValueInBaseclass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -778,8 +746,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", "\"abc\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -796,13 +762,13 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
-        public async Task SetValue(string setExpression)
+        public void SetValue(string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -832,10 +798,6 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
-            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -865,17 +827,19 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
+            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
+            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
-        public async Task SetValueWithTrivia(string setExpression)
+        public void SetValueWithTrivia(string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -907,10 +871,6 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
-            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", value);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -942,15 +902,17 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
+            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
+            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
             var thisPrefix = setExpression.StartsWith("this.")
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task SetValueInCallback()
+        public void SetValueInCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -999,10 +961,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic()
-                               .WithLocationIndicated(ref testCode)
-                               .WithMessage("Use SetCurrentValue(SynchronizedProperty, e.NewValue)");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1052,13 +1010,13 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase(@"Text = ""1"";")]
         [TestCase("Text = CreateValue();")]
         [TestCase("Text = this.CreateValue();")]
-        public async Task InheritedTextBoxTexUsingClrProperty(string setExpression)
+        public void InheritedTextBoxTexUsingClrProperty(string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1076,10 +1034,6 @@ namespace RoslynSandbox
         private string CreateValue() => ""2"";
     }
 }";
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            testCode = testCode.AssertReplace("Text = \"1\";", setExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextProperty", right);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1097,13 +1051,15 @@ namespace RoslynSandbox
         private string CreateValue() => ""2"";
     }
 }";
+            testCode = testCode.AssertReplace("Text = \"1\";", setExpression);
+            var right = setExpression.Split('=')[1].Trim(' ', ';');
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(TextProperty, \"1\");", $"this.SetCurrentValue(TextProperty, {right});");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("this.")]
         [TestCase("")]
-        public async Task TextBoxFieldTexUsingClrProperty(string thisExpression)
+        public void TextBoxFieldTexUsingClrProperty(string thisExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1122,10 +1078,6 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace("this.", thisExpression);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("TextBox.TextProperty", "\"1\"");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -1142,12 +1094,13 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("this.", thisExpression);
             fixedCode = fixedCode.AssertReplace("this.", thisExpression);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task SetValueInLambda()
+        public void SetValueInLambda()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1178,8 +1131,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "1");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1210,7 +1161,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

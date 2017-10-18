@@ -1,10 +1,12 @@
 ﻿namespace WpfAnalyzers.Test
 {
+    using System;
     using System.Collections.Generic;
 
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
 
+    [Obsolete("Don't use this")]
     public class CodeFixVerifier<TAnalyzer, TCodeFix> : CodeFixVerifier
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()

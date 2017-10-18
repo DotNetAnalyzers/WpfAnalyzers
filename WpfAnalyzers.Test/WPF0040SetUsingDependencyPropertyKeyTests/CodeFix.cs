@@ -1,16 +1,16 @@
 ﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
     using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using WPF0040SetUsingDependencyPropertyKey = WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey;
 
-    internal class CodeFix : CodeFixVerifier<WPF0040SetUsingDependencyPropertyKey, UseDependencyPropertyKeyCodeFixProvider>
+    internal class CodeFix
     {
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
         [TestCase("this.SetCurrentValue")]
-        public async Task ReadOnlyDependencyProperty(string method)
+        public void ReadOnlyDependencyProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -35,9 +35,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("SetValue", method);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -62,13 +59,14 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("SetValue", method);
             fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<WPF0040SetUsingDependencyPropertyKey, UseDependencyPropertyKeyCodeFixProvider>(testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public async Task ReadOnlyAttachedProperty(string method)
+        public void ReadOnlyAttachedProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,10 +94,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("SetValue", method);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("BarProperty", "BarPropertyKey");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -126,7 +120,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            testCode = testCode.AssertReplace("SetValue", method);
+            AnalyzerAssert.CodeFix<WPF0040SetUsingDependencyPropertyKey, UseDependencyPropertyKeyCodeFixProvider>(testCode, fixedCode);
         }
     }
 }
