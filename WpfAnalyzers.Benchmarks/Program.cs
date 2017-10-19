@@ -34,11 +34,11 @@ namespace WpfAnalyzers.Benchmarks
 
         public static void Main()
         {
-            if (false)
+            if (true)
             {
                 var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
                     Code.AnalyzersProject,
-                    new WPF0001BackingFieldShouldMatchRegisteredName());
+                    new WPF0014SetValueMustUseRegisteredType());
 
                 // Warmup
                 benchmark.Run();

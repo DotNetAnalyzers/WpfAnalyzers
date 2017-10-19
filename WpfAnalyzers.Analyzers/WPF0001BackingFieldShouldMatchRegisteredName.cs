@@ -40,26 +40,17 @@ namespace WpfAnalyzers
                 return;
             }
 
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null ||
-                fieldDeclaration.IsMissing)
+            if (context.ContainingSymbol is IFieldSymbol field &&
+                field.Type == KnownSymbol.DependencyProperty)
             {
-                return;
-            }
-
-            var field = context.ContainingSymbol as IFieldSymbol;
-            if (field == null ||
-                field.Type != KnownSymbol.DependencyProperty)
-            {
-                return;
-            }
-
-            if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out string registeredName))
-            {
-                if (!field.Name.IsParts(registeredName, "Property"))
+                if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out string registeredName))
                 {
-                    var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), field.Name, registeredName));
+                    if (!field.Name.IsParts(registeredName, "Property"))
+                    {
+                        var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
+                        var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), field.Name, registeredName));
+                    }
                 }
             }
         }
