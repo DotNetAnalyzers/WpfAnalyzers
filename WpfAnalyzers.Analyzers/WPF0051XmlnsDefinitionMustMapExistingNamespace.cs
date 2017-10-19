@@ -54,7 +54,7 @@
                 if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
                 {
                     if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
-            .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
                     }
