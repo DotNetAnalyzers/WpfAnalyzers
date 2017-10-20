@@ -38,7 +38,7 @@
                                           .AppendLine("}")
                                           .ToString();
             if (!File.Exists(fileName) ||
-               !CodeReader.AreEqual(File.ReadAllText(fileName), code))
+               !CodeComparer.Equals(File.ReadAllText(fileName), code))
             {
                 File.WriteAllText(fileName, code);
                 Assert.Fail();
@@ -79,7 +79,7 @@
 
             var code = builder.ToString();
             if (!File.Exists(fileName) ||
-                !CodeReader.AreEqual(File.ReadAllText(fileName), code))
+                !CodeComparer.Equals(File.ReadAllText(fileName), code))
             {
                 File.WriteAllText(fileName, code);
                 Assert.Fail();
