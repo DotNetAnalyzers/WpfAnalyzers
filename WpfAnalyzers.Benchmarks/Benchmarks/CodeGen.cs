@@ -30,7 +30,7 @@
                                           .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
                                           .AppendLine()
                                           .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
-                                          .AppendLine("        public void RunOnPropertyChangedAnalyzers()")
+                                          .AppendLine("        public void RunOnWpfAnalyzersProject()")
                                           .AppendLine("        {")
                                           .AppendLine("            Benchmark.Run();")
                                           .AppendLine("        }")

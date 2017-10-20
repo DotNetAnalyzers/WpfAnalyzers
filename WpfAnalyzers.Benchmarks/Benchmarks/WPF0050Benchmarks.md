@@ -9,7 +9,7 @@ Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
 ```
  |                        Method | Mean | Error | Allocated |
  |------------------------------ |-----:|------:|----------:|
- | RunOnPropertyChangedAnalyzers |   NA |    NA |       N/A |
+ | RunOnWpfAnalyzersProject |   NA |    NA |       N/A |
 
 Benchmarks with issues:
-  WPF0050Benchmarks.RunOnPropertyChangedAnalyzers: DefaultJob
+  WPF0050Benchmarks.RunOnWpfAnalyzersProject: DefaultJob
