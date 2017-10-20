@@ -16,19 +16,7 @@ namespace WpfAnalyzers.Benchmarks
     {
         public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
 
-        public static string ProjectDirectory
-        {
-            get
-            {
-                var directoryInfo = new DirectoryInfo(Path.GetDirectoryName(new Uri(typeof(Program).Assembly.CodeBase, UriKind.Absolute).LocalPath));
-                if (CodeFactory.TryFindFileInParentDirectory(directoryInfo, "WpfAnalyzers.Benchmarks.csproj", out var projectfile))
-                {
-                    return projectfile.Directory.FullName;
-                }
-
-                throw new FileNotFoundException();
-            }
-        }
+        public static string ProjectDirectory => CodeFactory.FindProjectFile("WpfAnalyzers.Benchmarks.csproj").DirectoryName;
 
         private static string ArtifactsDirectory { get; } = Path.Combine(ProjectDirectory, "BenchmarkDotNet.Artifacts", "results");
 
