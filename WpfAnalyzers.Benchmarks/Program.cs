@@ -22,7 +22,7 @@ namespace WpfAnalyzers.Benchmarks
 
         public static void Main()
         {
-            if (true)
+            if (false)
             {
                 var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
                     Code.AnalyzersProject,
@@ -34,9 +34,9 @@ namespace WpfAnalyzers.Benchmarks
                 Console.ReadKey();
                 benchmark.Run();
             }
-            else if (false)
+            else if (true)
             {
-                foreach (var summary in RunSingle<AllBenchmarks>())
+                foreach (var summary in RunSingle<WPF0003Benchmarks>())
                 {
                     CopyResult(summary.Title);
                 }
