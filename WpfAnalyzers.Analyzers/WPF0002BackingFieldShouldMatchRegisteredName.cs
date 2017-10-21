@@ -29,10 +29,10 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.FieldDeclaration);
         }
 
-        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {

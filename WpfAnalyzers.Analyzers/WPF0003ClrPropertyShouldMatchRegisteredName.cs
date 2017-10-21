@@ -29,34 +29,27 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.PropertyDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
-            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
+            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                context.ContainingSymbol is IPropertySymbol property &&
+                property.ContainingType.Is(KnownSymbol.DependencyObject))
             {
-                return;
-            }
-
-            var property = context.ContainingSymbol as IPropertySymbol;
-            if (property == null || !property.IsPotentialClrProperty())
-            {
-                return;
-            }
-
-            if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out string registeredName))
-            {
-                if (registeredName != property.Name)
+                if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredName))
                 {
-                    var identifier = propertyDeclaration.Identifier;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), property.Name, registeredName));
+                    if (registeredName != property.Name)
+                    {
+                        var identifier = propertyDeclaration.Identifier;
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), property.Name, registeredName));
+                    }
                 }
             }
         }
