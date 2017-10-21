@@ -29,51 +29,49 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.ObjectCreationExpression);
         }
 
-        private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            var objectCreation = context.Node as ObjectCreationExpressionSyntax;
-            if (objectCreation == null ||
-                objectCreation.IsMissing)
+            if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
+                context.ContainingSymbol.IsStatic)
             {
-                return;
-            }
+                if (!PropertyMetaData.TryGetDefaultValue(
+                    objectCreation,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out var defaultValueArg))
+                {
+                    return;
+                }
 
-            if (!PropertyMetaData.TryGetDefaultValue(
-        objectCreation,
-        context.SemanticModel,
-        context.CancellationToken,
-        out ArgumentSyntax defaultValueArg))
-            {
-                return;
-            }
+                var defaultValue = defaultValueArg.Expression;
+                if (defaultValue.IsSameType(KnownSymbol.Object, context))
+                {
+                    return;
+                }
 
-            var defaultValue = defaultValueArg.Expression;
-            if (defaultValue.IsSameType(KnownSymbol.Object, context))
-            {
-                return;
-            }
+                if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var dp))
+                {
+                    return;
+                }
 
-            if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out IFieldSymbol dp))
-            {
-                return;
-            }
+                if (!DependencyProperty.TryGetRegisteredType(dp, context.SemanticModel, context.CancellationToken, out var registeredType))
+                {
+                    return;
+                }
 
-            if (!DependencyProperty.TryGetRegisteredType(dp, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
-            {
-                return;
-            }
-
-            if (!registeredType.IsRepresentationPreservingConversion(defaultValue, context.SemanticModel, context.CancellationToken))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), dp, registeredType));
+                if (!registeredType.IsRepresentationPreservingConversion(
+                    defaultValue, context.SemanticModel, context.CancellationToken))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), dp, registeredType));
+                }
             }
         }
     }
