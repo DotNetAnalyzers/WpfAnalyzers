@@ -10,7 +10,7 @@
         [TestCase("SetValue(BarProperty, value)")]
         [TestCase("this.SetValue(BarProperty, value)")]
         [TestCase("base.SetValue(BarProperty, value)")]
-        public void IsPotentialSetValueCall(string setCall)
+        public void IsPotentialSetValueCall(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,13 +33,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, value)", setCall);
+            testCode = testCode.AssertReplace("this.SetValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
             Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
 
-            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
             Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
         }
 
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         [TestCase("SetCurrentValue(BarProperty, value)")]
         [TestCase("this.SetCurrentValue(BarProperty, value)")]
         [TestCase("base.SetCurrentValue(BarProperty, value)")]
-        public void IsPotentialSetCurrentValue(string setCall)
+        public void IsPotentialSetCurrentValue(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -103,13 +103,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("this.SetCurrentValue(BarProperty, value)", setCall);
+            testCode = testCode.AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetCurrentValue");
             Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
 
-            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
             Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
         }
 
@@ -146,7 +146,7 @@ namespace RoslynSandbox
         [TestCase("GetValue(BarProperty)")]
         [TestCase("this.GetValue(BarProperty)")]
         [TestCase("base.GetValue(BarProperty)")]
-        public void IsPotentialGetValueCall(string setCall)
+        public void IsPotentialGetValueCall(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -169,13 +169,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("this.GetValue(BarProperty)", setCall);
+            testCode = testCode.AssertReplace("this.GetValue(BarProperty)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
             Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
 
-            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
             Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
         }
 
