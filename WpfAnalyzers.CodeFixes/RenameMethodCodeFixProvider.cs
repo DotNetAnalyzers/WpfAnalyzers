@@ -159,8 +159,7 @@
                                     token,
                                     newName,
                                     cancellationToken),
-                                this.GetType()
-                                    .FullName),
+                                this.GetType().FullName),
                             diagnostic);
                     }
                 }

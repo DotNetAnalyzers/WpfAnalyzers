@@ -8,6 +8,29 @@
 
     internal static class DependencyProperty
     {
+        internal static bool IsPotentialStaticMethodCall(InvocationExpressionSyntax invocation)
+        {
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
+            {
+                if (memberAccess.Expression is IdentifierNameSyntax identifier)
+                {
+                    return identifier.Identifier.ValueText == "DependencyProperty";
+                }
+
+                if (memberAccess.Expression is MemberAccessExpressionSyntax nested)
+                {
+                    return nested.Name.Identifier.ValueText == "DependencyProperty";
+                }
+            }
+
+            return false;
+        }
+
         internal static bool IsPotentialDependencyPropertyBackingField(IFieldSymbol field)
         {
             return field != null &&
