@@ -22,7 +22,8 @@
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -39,34 +40,25 @@
                 return;
             }
 
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null || fieldDeclaration.IsMissing)
+            if (context.ContainingSymbol is IFieldSymbol field &&
+                field.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
             {
-                return;
-            }
-
-            var field = (IFieldSymbol)context.ContainingSymbol;
-            if (field == null ||
-                !(field.Type.Is(KnownSymbol.DependencyProperty) ||
-                  field.Type.Is(KnownSymbol.DependencyPropertyKey)))
-            {
-                return;
-            }
-
-            if (DependencyProperty.TryGetRegisterInvocationRecursive(
-    field,
-    context.SemanticModel,
-    context.CancellationToken,
-    out InvocationExpressionSyntax _))
-            {
-                if (!field.IsReadOnly || !field.IsStatic)
+                if (DependencyProperty.TryGetRegisterInvocationRecursive(
+                    field,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out InvocationExpressionSyntax _))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptor,
-                            context.Node.GetLocation(),
-                            field.Name,
-                            field.Type.Name));
+                    if (!field.IsReadOnly ||
+                        !field.IsStatic)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                context.Node.GetLocation(),
+                                field.Name,
+                                field.Type.Name));
+                    }
                 }
             }
         }

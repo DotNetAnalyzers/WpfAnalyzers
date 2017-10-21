@@ -176,6 +176,11 @@
             return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
         }
 
+        internal static bool IsEither(this ITypeSymbol type, QualifiedType qualifiedType1, QualifiedType qualifiedType2)
+        {
+            return type.Is(qualifiedType1) || type.Is(qualifiedType2);
+        }
+
         internal static bool Is(this ITypeSymbol type, QualifiedType qualifiedType)
         {
             while (type != null)
