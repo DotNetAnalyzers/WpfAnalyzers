@@ -40,13 +40,13 @@
             }
 
             if (context.ContainingSymbol is IFieldSymbol field &&
+                context.Node is FieldDeclarationSyntax fieldDeclaration &&
                 field.Type == KnownSymbol.DependencyPropertyKey)
             {
                 if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out string registeredName))
                 {
                     if (!field.Name.IsParts(registeredName, "PropertyKey"))
                     {
-                        var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
                         var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), field.Name, registeredName));
                     }

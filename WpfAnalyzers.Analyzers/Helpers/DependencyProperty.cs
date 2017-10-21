@@ -164,14 +164,9 @@
         internal static bool TryGetRegisterInvocation(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
             result = null;
-            if (field.TryGetAssignedValue(cancellationToken, out var value))
+            if (field.TryGetAssignedValue(cancellationToken, out var value) &&
+                value is InvocationExpressionSyntax invocation)
             {
-                var invocation = value as InvocationExpressionSyntax;
-                if (invocation == null)
-                {
-                    return false;
-                }
-
                 var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken);
                 if (invocationSymbol == null)
                 {
