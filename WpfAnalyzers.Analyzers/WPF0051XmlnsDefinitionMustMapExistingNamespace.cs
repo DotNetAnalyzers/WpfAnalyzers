@@ -40,23 +40,19 @@
                 return;
             }
 
-            var attributeSyntax = context.Node as AttributeSyntax;
-            if (attributeSyntax == null ||
-                attributeSyntax.IsMissing)
+            if (context.Node is AttributeSyntax attributeSyntax)
             {
-                return;
-            }
-
-            var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
-            if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax _) &&
-                Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
-            {
-                if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
+                var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
+                if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax _) &&
+                    Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
                 {
-                    if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
-                                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                    if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
+                        if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
+                                   .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
+                        }
                     }
                 }
             }

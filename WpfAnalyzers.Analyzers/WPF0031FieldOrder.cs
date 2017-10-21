@@ -39,41 +39,33 @@
                 return;
             }
 
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null ||
-                fieldDeclaration.IsMissing)
+            if (context.Node is FieldDeclarationSyntax fieldDeclaration &&
+                context.ContainingSymbol is IFieldSymbol field &&
+                DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
             {
-                return;
-            }
-
-            var field = context.ContainingSymbol as IFieldSymbol;
-            if (field == null ||
-                !DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
-            {
-                return;
-            }
-
-            if (!DependencyProperty.TryGetDependencyPropertyKeyField(
-      field,
-      context.SemanticModel,
-      context.CancellationToken,
-      out IFieldSymbol keyField))
-            {
-                return;
-            }
-
-            if (field.ContainingType != keyField.ContainingType)
-            {
-                return;
-            }
-
-            if (keyField.DeclaringSyntaxReferences.TryGetFirst(out SyntaxReference reference))
-            {
-                var keyNode = reference.GetSyntax(context.CancellationToken);
-                if (!ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) ||
-                    fieldDeclaration.SpanStart < keyNode.SpanStart)
+                if (!DependencyProperty.TryGetDependencyPropertyKeyField(
+                    field,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out var keyField))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclaration.GetLocation(), keyField.Name, field.Name));
+                    return;
+                }
+
+                if (field.ContainingType != keyField.ContainingType)
+                {
+                    return;
+                }
+
+                if (keyField.DeclaringSyntaxReferences.TryGetFirst(out SyntaxReference reference))
+                {
+                    var keyNode = reference.GetSyntax(context.CancellationToken);
+                    if (!ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) ||
+                        fieldDeclaration.SpanStart < keyNode.SpanStart)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(Descriptor, fieldDeclaration.GetLocation(), keyField.Name, field.Name));
+                    }
                 }
             }
         }

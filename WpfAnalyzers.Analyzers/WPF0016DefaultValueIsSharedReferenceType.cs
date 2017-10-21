@@ -66,7 +66,7 @@
                         objectCreation,
                         context.SemanticModel,
                         context.CancellationToken,
-                        out IFieldSymbol dp))
+                        out var dp))
                     {
                         return;
                     }

@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0001BackingFieldShouldMatchRegisteredName Analyzer = new WPF0001BackingFieldShouldMatchRegisteredName();
+
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
@@ -28,7 +30,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("nameof(Bar)", nameof);
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -56,7 +58,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -96,7 +98,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [Test]
@@ -147,7 +149,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [Test]
@@ -178,7 +180,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -208,7 +210,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -240,7 +242,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0001BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
