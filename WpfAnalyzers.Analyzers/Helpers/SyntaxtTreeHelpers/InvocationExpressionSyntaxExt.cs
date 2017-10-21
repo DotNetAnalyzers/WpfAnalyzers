@@ -11,11 +11,12 @@
             return invocation?.ArgumentList?.Arguments.TryGetAtIndex(index, out result) == true;
         }
 
-        internal static string InvokedMethodName(this InvocationExpressionSyntax invocation)
+        internal static bool TryGetInvokedMethodName(this InvocationExpressionSyntax invocation, out string name)
         {
+            name = null;
             if (invocation == null)
             {
-                return null;
+                return false;
             }
 
             switch (invocation.Kind())
@@ -25,30 +26,34 @@
                 case SyntaxKind.TypeOfExpression:
                     if (invocation.Expression is IdentifierNameSyntax simple)
                     {
-                        return simple.Identifier.ValueText;
+                        name = simple.Identifier.ValueText;
+                        return true;
                     }
 
                     if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                         memberAccess.Name is IdentifierNameSyntax member)
                     {
-                        return member.Identifier.ValueText;
+                        name = member.Identifier.ValueText;
+                        return true;
                     }
 
                     if (invocation.Expression is MemberBindingExpressionSyntax memberBinding &&
                         memberBinding.Name is IdentifierNameSyntax bound)
                     {
-                        return bound.Identifier.ValueText;
+                        name = bound.Identifier.ValueText;
+                        return true;
                     }
 
-                    return null;
+                    return false;
                 default:
-                    return null;
+                    return false;
             }
         }
 
         internal static bool IsNameOf(this InvocationExpressionSyntax invocation)
         {
-            return invocation.InvokedMethodName() == "nameof";
+            return invocation.TryGetInvokedMethodName(out var name) &&
+                    name == "nameof";
         }
     }
 }

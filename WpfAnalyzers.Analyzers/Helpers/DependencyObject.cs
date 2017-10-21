@@ -9,17 +9,32 @@ namespace WpfAnalyzers
     {
         internal static bool IsPotentialSetValueCall(InvocationExpressionSyntax invocation)
         {
-            return invocation.InvokedMethodName() == "SetValue";
+            if (invocation.TryGetInvokedMethodName(out var name))
+            {
+                return name == "SetValue";
+            }
+
+            return true;
         }
 
         internal static bool IsPotentialSetCurrentValueCall(InvocationExpressionSyntax invocation)
         {
-            return invocation.InvokedMethodName() == "SetCurrentValue";
+            if (invocation.TryGetInvokedMethodName(out var name))
+            {
+                return name == "SetCurrentValue";
+            }
+
+            return true;
         }
 
         internal static bool IsPotentialGetValueCall(InvocationExpressionSyntax invocation)
         {
-            return invocation.InvokedMethodName() == "GetValue";
+            if (invocation.TryGetInvokedMethodName(out var name))
+            {
+                return name == "GetValue";
+            }
+
+            return true;
         }
 
         /// <summary>
