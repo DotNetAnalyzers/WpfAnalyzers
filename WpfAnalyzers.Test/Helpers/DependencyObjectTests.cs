@@ -107,10 +107,10 @@ namespace RoslynSandbox
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetCurrentValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
         }
 
         [Test]
@@ -173,10 +173,10 @@ namespace RoslynSandbox
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.IsPotentialGetValueCall(invocation));
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.IsPotentialGetValueCall(invocation));
         }
 
         [Test]
