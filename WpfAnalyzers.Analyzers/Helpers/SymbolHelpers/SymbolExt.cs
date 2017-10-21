@@ -7,6 +7,13 @@
 
     internal static class SymbolExt
     {
+        internal static bool IsEither<T1, T2>(this ISymbol symbol)
+            where T1 : ISymbol
+            where T2 : ISymbol
+        {
+            return symbol is T1 || symbol is T2;
+        }
+
         internal static bool TryGetSingleDeclaration<T>(this ISymbol symbol, CancellationToken cancellationToken, out T declaration)
             where T : SyntaxNode
         {

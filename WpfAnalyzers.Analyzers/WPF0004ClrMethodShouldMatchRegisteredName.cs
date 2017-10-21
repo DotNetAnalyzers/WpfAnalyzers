@@ -30,38 +30,29 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.MethodDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            var methodDeclaration = context.Node as MethodDeclarationSyntax;
-            if (methodDeclaration == null ||
-                methodDeclaration.IsMissing)
+            if (context.Node is MethodDeclarationSyntax methodDeclaration &&
+                context.ContainingSymbol is IMethodSymbol method)
             {
-                return;
-            }
+                if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out var setField))
+                {
+                    CheckName(context, setField, method, methodDeclaration, "Set");
+                    return;
+                }
 
-            var method = context.ContainingSymbol as IMethodSymbol;
-            if (method == null)
-            {
-                return;
-            }
-
-            if (ClrMethod.IsAttachedSetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol setField))
-            {
-                CheckName(context, setField, method, methodDeclaration, "Set");
-                return;
-            }
-
-            if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out IFieldSymbol getField))
-            {
-                CheckName(context, getField, method, methodDeclaration, "Get");
+                if (ClrMethod.IsAttachedGetMethod(method, context.SemanticModel, context.CancellationToken, out var getField))
+                {
+                    CheckName(context, getField, method, methodDeclaration, "Get");
+                }
             }
         }
 
@@ -73,10 +64,10 @@
             string prefix)
         {
             if (DependencyProperty.TryGetRegisteredName(
-    dependencyProperty,
-    context.SemanticModel,
-    context.CancellationToken,
-    out string registeredName))
+                dependencyProperty,
+                context.SemanticModel,
+                context.CancellationToken,
+                out var registeredName))
             {
                 if (!method.Name.IsParts(prefix, registeredName))
                 {
