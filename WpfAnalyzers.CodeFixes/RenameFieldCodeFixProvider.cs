@@ -44,7 +44,7 @@
                     field,
                     semanticModel,
                     context.CancellationToken,
-                    out string registeredName))
+                    out var registeredName))
                 {
                     var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
                         ? registeredName + "Property"
