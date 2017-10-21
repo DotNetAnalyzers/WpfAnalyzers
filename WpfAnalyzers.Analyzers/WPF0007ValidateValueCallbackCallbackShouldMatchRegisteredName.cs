@@ -31,52 +31,51 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.InvocationExpression);
         }
 
         internal static bool TryGetIdentifierAndRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string registeredName)
         {
             registeredName = null;
-            if (!ValidateValueCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string _))
-            {
-                return false;
-            }
-
-            return ValidateValueCallback.TryGetRegisteredName(callback, semanticModel, cancellationToken, out registeredName);
+            return ValidateValueCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string _) &&
+                   ValidateValueCallback.TryGetRegisteredName(callback, semanticModel, cancellationToken, out registeredName);
         }
 
-        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null || invocation.IsMissing)
+            if (context.Node is InvocationExpressionSyntax invocation &&
+                context.ContainingSymbol.IsStatic)
             {
-                return;
-            }
-
-            if (!ValidateValueCallback.TryGetValidateValueCallback(
-        invocation,
-        context.SemanticModel,
-        context.CancellationToken,
-        out ArgumentSyntax callback))
-            {
-                return;
-            }
-
-            if (TryGetIdentifierAndRegisteredName(
-callback,
-context.SemanticModel,
-context.CancellationToken,
-out IdentifierNameSyntax nameExpression,
-out string registeredName))
-            {
-                if (!nameExpression.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
+                if (!ValidateValueCallback.TryGetValidateValueCallback(
+                    invocation,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out var callback))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation(), nameExpression, $"{registeredName}ValidateValue"));
+                    return;
+                }
+
+                if (TryGetIdentifierAndRegisteredName(
+                    callback,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out var nameExpression,
+                    out var registeredName))
+                {
+                    if (!nameExpression.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                nameExpression.GetLocation(),
+                                nameExpression,
+                                $"{registeredName}ValidateValue"));
+                    }
                 }
             }
         }
