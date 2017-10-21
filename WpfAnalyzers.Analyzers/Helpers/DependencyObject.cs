@@ -7,6 +7,21 @@ namespace WpfAnalyzers
 
     internal static class DependencyObject
     {
+        internal static bool IsPotentialSetValueCall(InvocationExpressionSyntax invocation)
+        {
+            return invocation.InvokedMethodName() == "SetValue";
+        }
+
+        internal static bool IsPotentialSetCurrentValueCall(InvocationExpressionSyntax invocation)
+        {
+            return invocation.InvokedMethodName() == "SetCurrentValue";
+        }
+
+        internal static bool IsPotentialGetValueCall(InvocationExpressionSyntax invocation)
+        {
+            return invocation.InvokedMethodName() == "GetValue";
+        }
+
         /// <summary>
         /// Check if <paramref name="invocation"/> is a call to dependencyObject.GetValue(FooProperty, value)
         /// </summary>
@@ -16,7 +31,7 @@ namespace WpfAnalyzers
         {
             property = null;
             field = null;
-            if (invocation == null)
+            if (!IsPotentialGetValueCall(invocation))
             {
                 return false;
             }
@@ -39,7 +54,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax arguments)
         {
             arguments = null;
-            if (invocation == null)
+            if (!IsPotentialSetValueCall(invocation))
             {
                 return false;
             }
@@ -83,7 +98,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentListSyntax result)
         {
             result = null;
-            if (invocation == null)
+            if (!IsPotentialSetCurrentValueCall(invocation))
             {
                 return false;
             }
