@@ -36,7 +36,7 @@ namespace WpfAnalyzers.Benchmarks
             }
             else if (true)
             {
-                foreach (var summary in RunSingle<WPF0003Benchmarks>())
+                foreach (var summary in RunSingle<WPF0011Benchmarks>())
                 {
                     CopyResult(summary.Title);
                 }

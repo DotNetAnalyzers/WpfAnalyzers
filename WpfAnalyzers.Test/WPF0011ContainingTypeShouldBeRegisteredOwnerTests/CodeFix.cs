@@ -244,6 +244,65 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyRegisterAttachedQualifiedTypeNames()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public static class Foo
+    {
+        public static readonly System.Windows.DependencyProperty BarProperty = System.Windows.DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            ↓typeof(Bar),
+            new System.Windows.PropertyMetadata(default(int)));
+
+        public static void SetBar(System.Windows.DependencyObject element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(System.Windows.DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public static class Foo
+    {
+        public static readonly System.Windows.DependencyProperty BarProperty = System.Windows.DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new System.Windows.PropertyMetadata(default(int)));
+
+        public static void SetBar(System.Windows.DependencyObject element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(System.Windows.DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var barCode = @"

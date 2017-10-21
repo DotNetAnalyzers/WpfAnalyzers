@@ -39,68 +39,60 @@
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null ||
-                invocation.IsMissing)
+            if (context.Node is InvocationExpressionSyntax invocation &&
+                context.ContainingSymbol.IsStatic &&
+                context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
+                method.ContainingType == KnownSymbol.DependencyProperty)
             {
-                return;
-            }
-
-            var methodSymbol = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (methodSymbol == null ||
-                methodSymbol.ContainingType != KnownSymbol.DependencyProperty)
-            {
-                return;
-            }
-
-            ArgumentSyntax argument;
-            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner ||
-                methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
-            {
-                if (!invocation.TryGetArgumentAtIndex(0, out argument))
+                ArgumentSyntax argument;
+                if (method == KnownSymbol.DependencyProperty.AddOwner ||
+                    method == KnownSymbol.DependencyProperty.OverrideMetadata)
                 {
-                    return;
-                }
-
-                if (methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
-                {
-                    var containingType = context.ContainingSymbol.ContainingType;
-                    var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                    if (memberAccess == null)
+                    if (!invocation.TryGetArgumentAtIndex(0, out argument))
                     {
                         return;
                     }
 
-                    var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as IFieldSymbol;
-                    if (!containingType.Is(dp?.ContainingType))
+                    if (method == KnownSymbol.DependencyProperty.OverrideMetadata)
+                    {
+                        var containingType = context.ContainingSymbol.ContainingType;
+                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                        if (memberAccess == null)
+                        {
+                            return;
+                        }
+
+                        var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as IFieldSymbol;
+                        if (!containingType.Is(dp?.ContainingType))
+                        {
+                            return;
+                        }
+                    }
+                }
+                else if (method == KnownSymbol.DependencyProperty.Register ||
+                         method == KnownSymbol.DependencyProperty.RegisterReadOnly ||
+                         method == KnownSymbol.DependencyProperty.RegisterAttached ||
+                         method == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
+                {
+                    if (!invocation.TryGetArgumentAtIndex(2, out argument))
                     {
                         return;
                     }
                 }
-            }
-            else if (methodSymbol == KnownSymbol.DependencyProperty.Register ||
-                     methodSymbol == KnownSymbol.DependencyProperty.RegisterReadOnly ||
-                     methodSymbol == KnownSymbol.DependencyProperty.RegisterAttached ||
-                     methodSymbol == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
-            {
-                if (!invocation.TryGetArgumentAtIndex(2, out argument))
+                else
                 {
                     return;
                 }
-            }
-            else
-            {
-                return;
-            }
 
-            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
-            {
-                return;
-            }
+                if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
+                {
+                    return;
+                }
 
-            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
+                if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
+                }
             }
         }
     }
