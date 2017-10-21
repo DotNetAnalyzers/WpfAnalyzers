@@ -43,10 +43,11 @@ namespace RoslynSandbox
             Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
         }
 
-        [Test]
-        public void IsPotentialSetValueCallInstance()
+        [TestCase(".SetValue")]
+        [TestCase("?.SetValue")]
+        public void IsPotentialSetValueCallInstance(string call)
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+            var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -69,7 +70,9 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}");
+}";
+            testCode = testCode.AssertReplace(".SetValue", call);
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
             Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
 

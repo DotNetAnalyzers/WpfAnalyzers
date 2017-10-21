@@ -23,16 +23,24 @@
                 case SyntaxKind.InvocationExpression:
                 case SyntaxKind.SimpleMemberAccessExpression:
                 case SyntaxKind.TypeOfExpression:
-                    var identifierName = invocation.Expression as IdentifierNameSyntax;
-                    if (identifierName == null)
+                    if (invocation.Expression is IdentifierNameSyntax simple)
                     {
-                        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
-                        {
-                            identifierName = memberAccess.Name as IdentifierNameSyntax;
-                        }
+                        return simple.Identifier.ValueText;
                     }
 
-                    return identifierName?.Identifier.ValueText;
+                    if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Name is IdentifierNameSyntax member)
+                    {
+                        return member.Identifier.ValueText;
+                    }
+
+                    if (invocation.Expression is MemberBindingExpressionSyntax memberBinding &&
+                        memberBinding.Name is IdentifierNameSyntax bound)
+                    {
+                        return bound.Identifier.ValueText;
+                    }
+
+                    return null;
                 default:
                     return null;
             }
