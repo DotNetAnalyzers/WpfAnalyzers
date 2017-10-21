@@ -21,7 +21,8 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -31,24 +32,26 @@
                 }
 
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                if (node == null || node.IsMissing)
+                if (node == null ||
+                    node.IsMissing)
                 {
                     continue;
                 }
 
                 var property = semanticModel.SemanticModelFor(node)
-                                         .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
+                                            .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
                 if (ClrProperty.TryGetRegisteredName(
-    property,
-    semanticModel,
-    context.CancellationToken,
-    out string registeredName))
+                    property,
+                    semanticModel,
+                    context.CancellationToken,
+                    out string registeredName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             $"Rename to: {registeredName}.",
                             _ => ApplyFixAsync(context, token, registeredName),
-                            this.GetType().FullName),
+                            this.GetType()
+                                .FullName),
                         diagnostic);
                 }
             }

@@ -27,7 +27,7 @@
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                             .ConfigureAwait(false);
+                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -41,7 +41,8 @@
                     var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                       .FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
-                    if (methodDeclaration == null || methodDeclaration.IsMissing)
+                    if (methodDeclaration == null ||
+                        methodDeclaration.IsMissing)
                     {
                         continue;
                     }
@@ -54,10 +55,10 @@
                     }
 
                     if (ClrMethod.IsAttachedSetMethod(
-    method,
-    semanticModel,
-    context.CancellationToken,
-    out IFieldSymbol backingField))
+                        method,
+                        semanticModel,
+                        context.CancellationToken,
+                        out var backingField))
                     {
                         TryUpdateName(
                             context,
@@ -96,13 +97,18 @@
                         semanticModel,
                         context.CancellationToken,
                         out IdentifierNameSyntax _,
-                        out string registeredName))
+                        out var registeredName))
                     {
                         var newName = $"On{registeredName}Changed";
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
+                                cancellationToken => RenameHelper.RenameSymbolAsync(
+                                    context.Document,
+                                    syntaxRoot,
+                                    token,
+                                    newName,
+                                    cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);
                     }
@@ -116,13 +122,18 @@
                         semanticModel,
                         context.CancellationToken,
                         out IdentifierNameSyntax _,
-                        out string registeredName))
+                        out var registeredName))
                     {
                         var newName = $"Coerce{registeredName}";
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
+                                cancellationToken => RenameHelper.RenameSymbolAsync(
+                                    context.Document,
+                                    syntaxRoot,
+                                    token,
+                                    newName,
+                                    cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);
                     }
@@ -136,14 +147,20 @@
                         semanticModel,
                         context.CancellationToken,
                         out IdentifierNameSyntax _,
-                        out string registeredName))
+                        out var registeredName))
                     {
                         var newName = $"{registeredName}ValidateValue";
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
-                                this.GetType().FullName),
+                                cancellationToken => RenameHelper.RenameSymbolAsync(
+                                    context.Document,
+                                    syntaxRoot,
+                                    token,
+                                    newName,
+                                    cancellationToken),
+                                this.GetType()
+                                    .FullName),
                             diagnostic);
                     }
                 }
@@ -160,16 +177,21 @@
             Diagnostic diagnostic)
         {
             if (DependencyProperty.TryGetRegisteredName(
-    setField,
-    semanticModel,
-    context.CancellationToken,
-    out string registeredName))
+                setField,
+                semanticModel,
+                context.CancellationToken,
+                out var registeredName))
             {
                 var newName = $"{prefix}{registeredName}";
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         $"Rename to: {newName}",
-                        cancellationToken => RenameHelper.RenameSymbolAsync(context.Document, syntaxRoot, token, newName, cancellationToken),
+                        cancellationToken => RenameHelper.RenameSymbolAsync(
+                            context.Document,
+                            syntaxRoot,
+                            token,
+                            newName,
+                            cancellationToken),
                         nameof(RenameMethodCodeFixProvider)),
                     diagnostic);
             }
