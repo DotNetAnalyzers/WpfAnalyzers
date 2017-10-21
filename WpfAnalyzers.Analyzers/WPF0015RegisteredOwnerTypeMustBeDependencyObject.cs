@@ -39,50 +39,41 @@
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null ||
-                invocation.IsMissing)
+            if (context.Node is InvocationExpressionSyntax invocation &&
+                context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
+                method.ContainingType != KnownSymbol.DependencyObject)
             {
-                return;
-            }
-
-            var methodSymbol = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (methodSymbol == null ||
-                methodSymbol.ContainingType == KnownSymbol.DependencyObject)
-            {
-                return;
-            }
-
-            ArgumentSyntax argument;
-            if (methodSymbol == KnownSymbol.DependencyProperty.AddOwner ||
-                methodSymbol == KnownSymbol.DependencyProperty.OverrideMetadata)
-            {
-                if (!invocation.TryGetArgumentAtIndex(0, out argument))
+                ArgumentSyntax argument;
+                if (method == KnownSymbol.DependencyProperty.AddOwner ||
+                    method == KnownSymbol.DependencyProperty.OverrideMetadata)
+                {
+                    if (!invocation.TryGetArgumentAtIndex(0, out argument))
+                    {
+                        return;
+                    }
+                }
+                else if (method == KnownSymbol.DependencyProperty.Register ||
+                         method == KnownSymbol.DependencyProperty.RegisterReadOnly)
+                {
+                    if (!invocation.TryGetArgumentAtIndex(2, out argument))
+                    {
+                        return;
+                    }
+                }
+                else
                 {
                     return;
                 }
-            }
-            else if (methodSymbol == KnownSymbol.DependencyProperty.Register ||
-                     methodSymbol == KnownSymbol.DependencyProperty.RegisterReadOnly)
-            {
-                if (!invocation.TryGetArgumentAtIndex(2, out argument))
+
+                if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
                 {
                     return;
                 }
-            }
-            else
-            {
-                return;
-            }
 
-            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
-            {
-                return;
-            }
-
-            if (!ownerType.Is(KnownSymbol.DependencyObject))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
+                if (!ownerType.Is(KnownSymbol.DependencyObject))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
+                }
             }
         }
     }

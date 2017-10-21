@@ -43,26 +43,22 @@
                 return;
             }
 
-            var attributeSyntax = context.Node as AttributeSyntax;
-            if (attributeSyntax == null ||
-                attributeSyntax.IsMissing)
+            if (context.Node is AttributeSyntax attributeSyntax)
             {
-                return;
-            }
-
-            var type = context.SemanticModel.GetTypeInfoSafe(attributeSyntax, context.CancellationToken).Type;
-            if (type != KnownSymbol.XmlnsDefinitionAttribute)
-            {
-                return;
-            }
-
-            using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
-            {
-                if (walker.NotMapped.Count != 0)
+                var type = context.SemanticModel.GetTypeInfoSafe(attributeSyntax, context.CancellationToken).Type;
+                if (type != KnownSymbol.XmlnsDefinitionAttribute)
                 {
-                    var missing = ImmutableDictionary.CreateRange(
-                        walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), missing));
+                    return;
+                }
+
+                using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
+                {
+                    if (walker.NotMapped.Count != 0)
+                    {
+                        var missing = ImmutableDictionary.CreateRange(
+                            walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), missing));
+                    }
                 }
             }
         }

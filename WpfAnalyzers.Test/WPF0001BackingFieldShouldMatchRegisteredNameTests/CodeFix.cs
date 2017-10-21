@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly WPF0001BackingFieldShouldMatchRegisteredName Analyzer = new WPF0001BackingFieldShouldMatchRegisteredName();
+
         [Test]
         public void Message()
         {
@@ -28,7 +30,7 @@ namespace RoslynSandbox
 }";
 
             var expectedMessage = ExpectedMessage.Create("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' must be named 'BarProperty'");
-            AnalyzerAssert.Diagnostics<WPF0001BackingFieldShouldMatchRegisteredName>(expectedMessage, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedMessage, testCode);
         }
 
         [Test]

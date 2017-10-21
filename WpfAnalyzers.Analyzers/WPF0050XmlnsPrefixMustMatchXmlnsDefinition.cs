@@ -41,65 +41,61 @@
                 return;
             }
 
-            var attributeSyntax = context.Node as AttributeSyntax;
-            if (attributeSyntax == null ||
-                attributeSyntax.IsMissing)
+            if (context.Node is AttributeSyntax attributeSyntax)
             {
-                return;
-            }
-
-            QualifiedType correspondingType = null;
-            if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out AttributeSyntax xmlnsAttribute))
-            {
-                correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
-            }
-
-            if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
-            {
-                correspondingType = KnownSymbol.XmlnsPrefixAttribute;
-            }
-
-            if (correspondingType == null || xmlnsAttribute == null)
-            {
-                return;
-            }
-
-            if (!Attribute.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out AttributeArgumentSyntax arg))
-            {
-                return;
-            }
-
-            if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string xmlNamespace))
-            {
-                return;
-            }
-
-            var compilation = xmlnsAttribute.FirstAncestorOrSelf<CompilationUnitSyntax>();
-            if (compilation == null)
-            {
-                return;
-            }
-
-            foreach (var correspondingAttribute in Attribute.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
-            {
-                if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out AttributeArgumentSyntax correspondingArg))
+                QualifiedType correspondingType = null;
+                if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out var xmlnsAttribute))
                 {
-                    if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
-                    {
-                        return;
-                    }
+                    correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
+                }
 
-                    if (mappedNameSpace == xmlNamespace)
+                if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+                {
+                    correspondingType = KnownSymbol.XmlnsPrefixAttribute;
+                }
+
+                if (correspondingType == null || xmlnsAttribute == null)
+                {
+                    return;
+                }
+
+                if (!Attribute.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var arg))
+                {
+                    return;
+                }
+
+                if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string xmlNamespace))
+                {
+                    return;
+                }
+
+                var compilation = xmlnsAttribute.FirstAncestorOrSelf<CompilationUnitSyntax>();
+                if (compilation == null)
+                {
+                    return;
+                }
+
+                foreach (var correspondingAttribute in Attribute.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
+                {
+                    if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
                     {
-                        return;
+                        if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
+                        {
+                            return;
+                        }
+
+                        if (mappedNameSpace == xmlNamespace)
+                        {
+                            return;
+                        }
                     }
                 }
-            }
 
-            var attributeName = ReferenceEquals(correspondingType, KnownSymbol.XmlnsPrefixAttribute)
-                                    ? XmlnsPrefix
-                                    : XmlnsDefinition;
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), attributeName, xmlNamespace));
+                var attributeName = ReferenceEquals(correspondingType, KnownSymbol.XmlnsPrefixAttribute)
+                                        ? XmlnsPrefix
+                                        : XmlnsDefinition;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), attributeName, xmlNamespace));
+            }
         }
     }
 }

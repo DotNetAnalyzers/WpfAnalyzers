@@ -42,21 +42,18 @@
                 return;
             }
 
-            var method = (IMethodSymbol)context.ContainingSymbol;
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            if (methodDeclaration.Body == null)
+            if (context.Node is MethodDeclarationSyntax methodDeclaration &&
+                context.ContainingSymbol is IMethodSymbol method)
             {
-                return;
-            }
+                if (ClrMethod.IsPotentialClrGetMethod(method))
+                {
+                    HandlePotentialGetMethod(context, methodDeclaration.Body);
+                }
 
-            if (ClrMethod.IsPotentialClrGetMethod(method))
-            {
-                HandlePotentialGetMethod(context, methodDeclaration.Body);
-            }
-
-            if (ClrMethod.IsPotentialClrSetMethod(method))
-            {
-                HandlePotentialSetMethod(context, methodDeclaration.Body);
+                if (ClrMethod.IsPotentialClrSetMethod(method))
+                {
+                    HandlePotentialSetMethod(context, methodDeclaration.Body);
+                }
             }
         }
 
