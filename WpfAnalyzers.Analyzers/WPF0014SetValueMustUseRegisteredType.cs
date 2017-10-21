@@ -39,32 +39,37 @@
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null || context.SemanticModel == null)
+            if (context.Node is InvocationExpressionSyntax invocation)
             {
-                return;
-            }
-
-            if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value) ||
-DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out property, out setField, out value))
-            {
-                if (value.Expression.IsSameType(KnownSymbol.Object, context))
+                if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out _, out var setField, out var value) ||
+                    DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out _, out setField, out value))
                 {
-                    return;
-                }
-
-                if (DependencyProperty.TryGetRegisteredType(setField, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
-                {
-                    if (registeredType.Is(KnownSymbol.Freezable) &&
-                        value.Expression.IsSameType(KnownSymbol.Freezable, context))
+                    if (value.Expression.IsSameType(KnownSymbol.Object, context))
                     {
                         return;
                     }
 
-                    if (!registeredType.IsRepresentationPreservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
+                    if (DependencyProperty.TryGetRegisteredType(
+                        setField,
+                        context.SemanticModel,
+                        context.CancellationToken,
+                        out var registeredType))
                     {
-                        var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
+                        if (registeredType.Is(KnownSymbol.Freezable) &&
+                            value.Expression.IsSameType(KnownSymbol.Freezable, context))
+                        {
+                            return;
+                        }
+
+                        if (!registeredType.IsRepresentationPreservingConversion(
+                            value.Expression,
+                            context.SemanticModel,
+                            context.CancellationToken))
+                        {
+                            var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
+                        }
                     }
                 }
             }

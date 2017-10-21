@@ -11,7 +11,7 @@
             return invocation?.ArgumentList?.Arguments.TryGetAtIndex(index, out result) == true;
         }
 
-        internal static string Name(this InvocationExpressionSyntax invocation)
+        internal static string InvokedMethodName(this InvocationExpressionSyntax invocation)
         {
             if (invocation == null)
             {
@@ -40,7 +40,7 @@
 
         internal static bool IsNameOf(this InvocationExpressionSyntax invocation)
         {
-            return invocation.Name() == "nameof";
+            return invocation.InvokedMethodName() == "nameof";
         }
     }
 }
