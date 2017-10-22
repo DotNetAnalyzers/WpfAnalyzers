@@ -7,6 +7,9 @@ namespace WpfAnalyzers
 
     internal static class DependencyObject
     {
+        /// <summary>
+        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
+        /// </summary>
         internal static bool IsPotentialSetValueCall(InvocationExpressionSyntax invocation)
         {
             if (invocation.TryGetInvokedMethodName(out var name))
@@ -17,6 +20,9 @@ namespace WpfAnalyzers
             return true;
         }
 
+        /// <summary>
+        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
+        /// </summary>
         internal static bool IsPotentialSetCurrentValueCall(InvocationExpressionSyntax invocation)
         {
             if (invocation.TryGetInvokedMethodName(out var name))
@@ -27,6 +33,9 @@ namespace WpfAnalyzers
             return true;
         }
 
+        /// <summary>
+        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
+        /// </summary>
         internal static bool IsPotentialGetValueCall(InvocationExpressionSyntax invocation)
         {
             if (invocation.TryGetInvokedMethodName(out var name))
