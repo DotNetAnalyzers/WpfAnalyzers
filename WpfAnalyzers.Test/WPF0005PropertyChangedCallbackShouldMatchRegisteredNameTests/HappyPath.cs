@@ -16,9 +16,6 @@ namespace RoslynSandbox
     using System.Windows;
     using System.Windows.Controls;
 
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class FooControl : Control
     {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
@@ -40,6 +37,10 @@ namespace RoslynSandbox
         [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
         [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
         [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new PropertyMetadata((o, e) => { })")]
+        [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         public void DependencyPropertyWithMetadata(string metadata)
         {
             var testCode = @"
@@ -65,6 +66,11 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // nop
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            return baseValue;
         }
     }
 }";

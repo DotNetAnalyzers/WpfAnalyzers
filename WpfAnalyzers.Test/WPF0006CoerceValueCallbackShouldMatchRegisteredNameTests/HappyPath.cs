@@ -36,11 +36,19 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("new PropertyMetadata(OnBarChanged)")]
+        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
+        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new PropertyMetadata((o, e) => { })")]
+        [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         [TestCase("new PropertyMetadata(null, null, CoerceBar)")]
         [TestCase("new PropertyMetadata(new CoerceValueCallback(CoerceBar))")]
         [TestCase("new PropertyMetadata(default(int), null, CoerceBar)")]
         [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
-        public void DependencyWithPropertyMetadata(string metadata)
+        public void DependencyWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,6 +68,11 @@ namespace RoslynSandbox
         {
             get { return (int)this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
