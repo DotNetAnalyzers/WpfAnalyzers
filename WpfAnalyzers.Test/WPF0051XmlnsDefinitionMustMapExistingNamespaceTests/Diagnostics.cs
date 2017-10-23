@@ -33,8 +33,12 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
-            var expected = ExpectedMessage.Create("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expected, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0051",
+                "[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -65,8 +69,12 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
-            var expected = ExpectedMessage.Create("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expected, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0051",
+                "[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expectedDiagnostic, testCode);
         }
     }
 }

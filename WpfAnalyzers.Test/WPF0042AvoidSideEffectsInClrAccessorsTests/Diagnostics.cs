@@ -6,6 +6,52 @@
     internal class Diagnostics
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get
+            {
+                ↓SideEffect(); 
+                return (int)this.GetValue(BarProperty); 
+            }
+            set { this.SetValue(OtherProperty, value); }
+        }
+
+        private void SideEffect()
+        {
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0042",
+                "Avoid side effects in CLR accessors.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void DependencyPropertySideEffectInGetter()
         {
             var testCode = @"
@@ -43,8 +89,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
@@ -88,8 +133,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
@@ -126,8 +171,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
@@ -163,8 +208,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]
@@ -200,8 +244,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expected = ExpectedMessage.Create("Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expected, testCode);
+            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
         }
 
         [Test]

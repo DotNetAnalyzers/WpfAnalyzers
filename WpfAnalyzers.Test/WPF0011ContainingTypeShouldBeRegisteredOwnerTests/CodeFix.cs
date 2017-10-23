@@ -43,9 +43,12 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            var expectedMessage = ExpectedMessage.Create("Register containing type: 'RoslynSandbox.FooControl' as owner.");
-            AnalyzerAssert.Diagnostics<WPF0011ContainingTypeShouldBeRegisteredOwner>(expectedMessage, barControlCode, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0011",
+                "Register containing type: 'RoslynSandbox.FooControl' as owner.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0011ContainingTypeShouldBeRegisteredOwner>(expectedDiagnostic, barControlCode, testCode);
         }
 
         [TestCase("BarControl")]

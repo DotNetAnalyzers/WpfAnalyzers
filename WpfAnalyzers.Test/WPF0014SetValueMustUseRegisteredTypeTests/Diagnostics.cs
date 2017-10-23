@@ -5,6 +5,48 @@
 
     internal class Diagnostics
     {
+        [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static void SetBar(FrameworkElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(FrameworkElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+
+        public static void Meh(FrameworkElement element)
+        {
+            element.SetValue(BarProperty, ↓1.0);
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0014",
+                "SetValue must use registered type int",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(expectedDiagnostic, testCode);
+        }
+
         [TestCase("SetValue(BarProperty, ↓1.0)")]
         [TestCase("SetCurrentValue(BarProperty, ↓1.0)")]
         [TestCase("this.SetValue(BarProperty, ↓1.0)")]
