@@ -15,15 +15,16 @@
 <pre><code>
 BenchmarkDotNet=v0.10.9, OS=Windows 7 SP1 (6.1.7601)
 Processor=Intel Xeon CPU E5-2637 v4 3.50GHzIntel Xeon CPU E5-2637 v4 3.50GHz, ProcessorCount=16
-Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
-  [Host] : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2114.0
+Frequency=3410117 Hz, Resolution=293.2451 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2116.0
+  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2116.0
 </code></pre>
 <pre><code></code></pre>
 
 <table>
-<thead><tr><th>                 Method</th><th>Mean</th><th>Error</th><th>Allocated</th>
+<thead><tr><th>            Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Median</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>RunOnWpfAnalyzersProject</td><td>NA</td><td>NA</td><td>N/A</td>
+</thead><tbody><tr><td>RunOnWpfAnalyzersProject</td><td>145.5 us</td><td>3.519 us</td><td>6.947 us</td><td>142.3 us</td><td>42 B</td>
 </tr></tbody></table>
 </body>
 </html>

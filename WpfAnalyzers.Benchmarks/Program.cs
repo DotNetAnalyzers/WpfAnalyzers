@@ -34,7 +34,7 @@ namespace WpfAnalyzers.Benchmarks
                 Console.ReadKey();
                 benchmark.Run();
             }
-            else if (true)
+            else if (false)
             {
                 foreach (var summary in RunSingle<AllBenchmarks>())
                 {
