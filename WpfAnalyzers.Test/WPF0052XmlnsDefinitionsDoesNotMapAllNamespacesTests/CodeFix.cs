@@ -108,8 +108,12 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Meh"")]";
 
-            var expected = ExpectedMessage.Create("XmlnsDefinitions does not map all namespaces with public types.");
-            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expected, control1Code, control2Code, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0052",
+                "XmlnsDefinitions does not map all namespaces with public types.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expectedDiagnostic, control1Code, control2Code, testCode);
             AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(new[] { control1Code, control2Code, testCode }, fixedCode);
         }
 
@@ -215,9 +219,12 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", clrNamespace: ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", clrNamespace: ""Gu.Wpf.Geometry.Meh"")]";
-
-            var expected = ExpectedMessage.Create("XmlnsDefinitions does not map all namespaces with public types.");
-            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expected, control1Code, control2Code, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0052",
+                "XmlnsDefinitions does not map all namespaces with public types.",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(expectedDiagnostic, control1Code, control2Code, testCode);
             AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(new[] { control1Code, control2Code, testCode }, fixedCode);
         }
     }

@@ -31,9 +31,12 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            var expectedMessage = ExpectedMessage.Create("Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'");
-            AnalyzerAssert.Diagnostics<WPF0002BackingFieldShouldMatchRegisteredName>(expectedMessage, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0002",
+                "Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0002BackingFieldShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 
         [Test]

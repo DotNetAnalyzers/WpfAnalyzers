@@ -37,8 +37,12 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedMessage = ExpectedMessage.Create("Method 'WrongName' should be named 'OnValueChanged'");
-            AnalyzerAssert.Diagnostics<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(expectedMessage, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0005",
+                "Method 'WrongName' should be named 'OnValueChanged'",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 
         [TestCase("new PropertyMetadata(1, ↓WrongName)")]

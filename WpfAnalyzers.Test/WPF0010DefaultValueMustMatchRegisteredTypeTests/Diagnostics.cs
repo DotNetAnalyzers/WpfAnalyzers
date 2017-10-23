@@ -29,9 +29,12 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            var expectedMessage = ExpectedMessage.Create("Default value for 'RoslynSandbox.FooControl<T>.BarProperty' must be of type T");
-            AnalyzerAssert.Diagnostics<WPF0010DefaultValueMustMatchRegisteredType>(expectedMessage, testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0010",
+                "Default value for 'RoslynSandbox.FooControl<T>.BarProperty' must be of type T",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0010DefaultValueMustMatchRegisteredType>(expectedDiagnostic, testCode);
         }
 
         [TestCase("int", "new PropertyMetadata(↓default(double))")]

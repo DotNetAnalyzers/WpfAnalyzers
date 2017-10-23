@@ -6,6 +6,38 @@
     internal class Diagnostics
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            ↓typeof(string),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0015",
+                "Maybe you intended to use 'RegisterAttached'?",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(expectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void DependencyRegister()
         {
             var testCode = @"
