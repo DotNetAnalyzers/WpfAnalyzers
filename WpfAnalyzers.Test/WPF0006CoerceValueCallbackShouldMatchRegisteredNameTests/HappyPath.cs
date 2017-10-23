@@ -48,7 +48,7 @@ namespace RoslynSandbox
         [TestCase("new PropertyMetadata(new CoerceValueCallback(CoerceBar))")]
         [TestCase("new PropertyMetadata(default(int), null, CoerceBar)")]
         [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
-        public void DependencyWithMetadata(string metadata)
+        public void DependencyPropertyWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
