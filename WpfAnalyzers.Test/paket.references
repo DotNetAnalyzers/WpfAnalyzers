@@ -4,6 +4,7 @@ group Test
   Gu.Roslyn.Asserts
 
 group Analyzers
+  AsyncUsageAnalyzers
+  IDisposableAnalyzers  
   StyleCop.Analyzers
   Gu.Analyzers
-  AsyncUsageAnalyzers
