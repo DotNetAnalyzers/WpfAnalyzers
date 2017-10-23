@@ -24,11 +24,11 @@
             var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
             var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
             var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
-                                          .AppendLine($"namespace {this.GetType() .Namespace}")
+                                          .AppendLine($"namespace {this.GetType().Namespace}")
                                           .AppendLine("{")
                                           .AppendLine($"    public class {expectedName}")
                                           .AppendLine("    {")
-                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType() .FullName}());")
+                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
                                           .AppendLine()
                                           .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
                                           .AppendLine("        public void RunOnWpfAnalyzersProject()")
@@ -52,7 +52,7 @@
             var fileName = Path.Combine(Program.BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
             builder.AppendLine("// ReSharper disable RedundantNameQualifier")
-                   .AppendLine($"namespace {this.GetType() .Namespace}")
+                   .AppendLine($"namespace {this.GetType().Namespace}")
                    .AppendLine("{")
                    .AppendLine("    public class AllBenchmarks")
                    .AppendLine("    {");
