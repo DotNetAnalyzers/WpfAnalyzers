@@ -44,7 +44,7 @@ namespace WpfAnalyzers
                 context.Node is FieldDeclarationSyntax fieldDeclaration &&
                 field.Type == KnownSymbol.DependencyProperty)
             {
-                if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out string registeredName))
+                if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out var registeredName))
                 {
                     if (!field.Name.IsParts(registeredName, "Property"))
                     {
