@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTes
 
     internal class HappyPath
     {
+        private static readonly WPF0032ClrPropertyGetAndSetSameDependencyProperty Analyzer = new WPF0032ClrPropertyGetAndSetSameDependencyProperty();
+
         [Test]
         public void DependencyProperty()
         {
@@ -30,7 +32,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -58,7 +60,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -88,7 +90,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -145,7 +147,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(linkCode, modernLinksCode, linkGroupCode);
+            AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }

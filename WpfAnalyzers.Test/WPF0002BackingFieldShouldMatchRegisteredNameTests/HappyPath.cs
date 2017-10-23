@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 
     internal class HappyPath
     {
+        private static readonly WPF0002BackingFieldShouldMatchRegisteredName Analyzer = new WPF0002BackingFieldShouldMatchRegisteredName();
+
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
@@ -34,7 +36,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("nameof(Bar)", nameof);
-            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -77,7 +79,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(statusCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, statusCode, testCode);
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -137,7 +139,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -168,7 +170,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0002BackingFieldShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

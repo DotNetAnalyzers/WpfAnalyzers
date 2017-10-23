@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 
     internal class HappyPath
     {
+        private static readonly WPF0030BackingFieldShouldBeStaticReadonly Analyzer = new WPF0030BackingFieldShouldBeStaticReadonly();
+
         [Test]
         public void DependencyProperty()
         {
@@ -27,7 +29,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0030BackingFieldShouldBeStaticReadonly>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -49,7 +51,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0030BackingFieldShouldBeStaticReadonly>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("FooControl")]
@@ -102,7 +104,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
-            AnalyzerAssert.Valid<WPF0030BackingFieldShouldBeStaticReadonly>(fooCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
         }
 
         [Test]
@@ -132,7 +134,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0030BackingFieldShouldBeStaticReadonly>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -164,7 +166,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0030BackingFieldShouldBeStaticReadonly>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

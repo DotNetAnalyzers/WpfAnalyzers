@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0051XmlnsDefinitionMustMapExistingNamespace Analyzer = new WPF0051XmlnsDefinitionMustMapExistingNamespace();
+
         [Test]
         public void WhenXmlnsDefinitionMatches()
         {
@@ -54,7 +56,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid<WPF0051XmlnsDefinitionMustMapExistingNamespace>(controlCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, controlCode, testCode);
         }
 
         [Explicit("Requires updated Gu.Roslyn.Asserts")]
@@ -134,7 +136,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            AnalyzerAssert.Valid<WPF0051XmlnsDefinitionMustMapExistingNamespace>(controlCode1, controlCode2, testCode);
+            AnalyzerAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
         }
     }
 }

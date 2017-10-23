@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
 
     internal class HappyPath
     {
+        private static readonly WPF0006CoerceValueCallbackShouldMatchRegisteredName Analyzer = new WPF0006CoerceValueCallbackShouldMatchRegisteredName();
+
         [Test]
         public void DependencyPropertyNoMetadata()
         {
@@ -31,7 +33,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("new PropertyMetadata(null, null, CoerceBar)")]
@@ -67,7 +69,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
-            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -101,7 +103,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -131,7 +133,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -168,7 +170,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
 
     internal class HappyPath
     {
+        private static readonly WPF0010DefaultValueMustMatchRegisteredType Analyzer = new WPF0010DefaultValueMustMatchRegisteredType();
+
         [Test]
         public void DependencyPropertyNoMetadata()
         {
@@ -31,7 +33,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -63,7 +65,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("int", "new PropertyMetadata()")]
@@ -123,7 +125,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata)
                                .AssertReplace("double", typeName);
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -150,7 +152,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -194,7 +196,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -226,7 +228,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -251,7 +253,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -299,7 +301,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -326,7 +328,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0010DefaultValueMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

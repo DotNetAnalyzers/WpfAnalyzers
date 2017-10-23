@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
 
     internal class HappyPath
     {
+        private static readonly WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName Analyzer = new WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName();
+
         [Test]
         public void DependencyPropertyNoCallback()
         {
@@ -31,7 +33,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("ValueValidateValue);")]
@@ -66,7 +68,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("ValueValidateValue);", metadata);
-            AnalyzerAssert.Valid<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -106,7 +108,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -142,7 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -185,7 +187,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

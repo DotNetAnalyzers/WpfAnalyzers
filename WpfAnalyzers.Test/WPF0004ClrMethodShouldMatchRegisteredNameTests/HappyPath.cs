@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0004ClrMethodShouldMatchRegisteredName Analyzer = new WPF0004ClrMethodShouldMatchRegisteredName();
+
         [TestCase("public")]
         [TestCase("private")]
         public void AttachedProperty(string accessModifier)
@@ -34,7 +36,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("public")]
@@ -66,7 +68,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("public")]
@@ -92,7 +94,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("public")]
@@ -120,7 +122,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -151,7 +153,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -182,7 +184,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -214,7 +216,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -245,7 +247,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -276,7 +278,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -307,7 +309,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -338,7 +340,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -371,7 +373,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -404,7 +406,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0004ClrMethodShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
