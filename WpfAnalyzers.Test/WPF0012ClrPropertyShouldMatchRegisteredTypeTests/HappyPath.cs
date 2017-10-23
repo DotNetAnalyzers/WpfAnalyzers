@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0012ClrPropertyShouldMatchRegisteredType Analyzer = new WPF0012ClrPropertyShouldMatchRegisteredType();
+
         [TestCase("int")]
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
@@ -38,7 +40,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("int", typeName);
-            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -66,7 +68,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -94,7 +96,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -145,7 +147,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [TestCase("int")]
@@ -183,7 +185,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("int", typeName);
-            AnalyzerAssert.Valid<WPF0012ClrPropertyShouldMatchRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

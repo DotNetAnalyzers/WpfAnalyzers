@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
 
     internal class HappyPath
     {
+        private static readonly WPF0016DefaultValueIsSharedReferenceType Analyzer = new WPF0016DefaultValueIsSharedReferenceType();
+
         [Test]
         public void DependencyPropertyNoMetadata()
         {
@@ -28,7 +30,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -60,7 +62,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("int", "new PropertyMetadata()")]
@@ -117,7 +119,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata)
                                .AssertReplace("double", typeName);
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -161,7 +163,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -193,7 +195,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -218,7 +220,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -266,7 +268,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -293,7 +295,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -321,7 +323,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -348,7 +350,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

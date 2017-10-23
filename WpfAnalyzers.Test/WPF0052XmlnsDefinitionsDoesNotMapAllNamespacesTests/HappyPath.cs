@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
+
         [Test]
         public void WhenXmlnsDefinitionMatches()
         {
@@ -55,7 +57,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(controlCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, controlCode, testCode);
         }
 
         [Test]
@@ -132,7 +134,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(testCode, control1Code, control2Code);
+            AnalyzerAssert.Valid(Analyzer, testCode, control1Code, control2Code);
         }
 
         [Test]
@@ -211,7 +213,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(controlCode1, controlCode2, testCode);
+            AnalyzerAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
         }
 
         [Test]
@@ -242,7 +244,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

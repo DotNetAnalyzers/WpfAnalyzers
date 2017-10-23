@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
+
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
         public void DependencyPropertyRegister(string typeName)
@@ -34,7 +36,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -65,7 +67,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -97,7 +99,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -131,7 +133,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("FooControl")]
@@ -180,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(fooCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
         }
 
         [Test]
@@ -222,7 +224,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(fooControlCode, barControlCode);
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, barControlCode);
         }
 
         [Test]
@@ -247,7 +249,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0011ContainingTypeShouldBeRegisteredOwner>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

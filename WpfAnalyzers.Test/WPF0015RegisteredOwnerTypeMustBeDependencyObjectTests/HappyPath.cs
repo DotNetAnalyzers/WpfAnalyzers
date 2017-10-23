@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
+
         [Test]
         public void DependencyProperty()
         {
@@ -29,7 +31,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -57,7 +59,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -97,7 +99,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [Test]
@@ -148,7 +150,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [Test]
@@ -191,7 +193,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(fooControlCode, barControlCode);
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, barControlCode);
         }
 
         [Test]
@@ -222,7 +224,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -252,7 +254,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -285,7 +287,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

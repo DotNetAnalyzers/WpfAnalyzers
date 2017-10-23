@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0031FieldOrder Analyzer = new WPF0031FieldOrder();
+
         [Test]
         public void DependencyProperty()
         {
@@ -32,7 +34,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0031FieldOrder>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -65,7 +67,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0031FieldOrder>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -122,7 +124,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0031FieldOrder>(linkCode, modernLinksCode, linkGroupCode);
+            AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }

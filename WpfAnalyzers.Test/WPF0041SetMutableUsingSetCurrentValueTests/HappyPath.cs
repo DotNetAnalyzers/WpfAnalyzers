@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 
     internal class HappyPath
     {
+        private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
+
         [Test]
         public void DependencyProperty()
         {
@@ -35,7 +37,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
@@ -81,7 +83,7 @@ namespace RoslynSandbox
             fooCode = fooCode.AssertReplace(
                 "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);",
                 setExpression);
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(fooCode, fooControlCode);
+            AnalyzerAssert.Valid(Analyzer, fooCode, fooControlCode);
         }
 
         [Test]
@@ -124,7 +126,7 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -176,7 +178,7 @@ namespace RoslynSandbox
         private static object CreateObjectValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(fooControlCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [Test]
@@ -219,7 +221,7 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -267,7 +269,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -315,7 +317,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(booleanBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -341,7 +343,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -367,7 +369,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -404,7 +406,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(boolBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, boolBoxesCode, testCode);
         }
 
         [Test]
@@ -436,7 +438,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -478,7 +480,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(boolBoxesCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, boolBoxesCode, testCode);
         }
 
         [Test]
@@ -503,7 +505,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -534,7 +536,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -566,7 +568,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -589,7 +591,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -614,7 +616,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -640,7 +642,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -674,7 +676,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -703,7 +705,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0041SetMutableUsingSetCurrentValue>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

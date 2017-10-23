@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 
     internal class HappyPath
     {
+        private static readonly WPF0040SetUsingDependencyPropertyKey Analyzer = new WPF0040SetUsingDependencyPropertyKey();
+
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
@@ -34,7 +36,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("SetValue", method);
-            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -63,7 +65,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -95,7 +97,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -127,7 +129,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0040SetUsingDependencyPropertyKey>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

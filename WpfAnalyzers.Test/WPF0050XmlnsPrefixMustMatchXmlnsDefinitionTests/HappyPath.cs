@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
+
         [Test]
         public void WhenXmlnsDefinitionMatches()
         {
@@ -35,7 +37,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            AnalyzerAssert.Valid<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -69,7 +71,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            AnalyzerAssert.Valid<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
     internal class HappyPath
     {
+        private static readonly WPF0005PropertyChangedCallbackShouldMatchRegisteredName Analyzer = new WPF0005PropertyChangedCallbackShouldMatchRegisteredName();
+
         [Test]
         public void DependencyPropertyNoMetadata()
         {
@@ -31,7 +33,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]
@@ -67,7 +69,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -101,7 +103,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -131,7 +133,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -163,7 +165,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -189,7 +191,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0005PropertyChangedCallbackShouldMatchRegisteredName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

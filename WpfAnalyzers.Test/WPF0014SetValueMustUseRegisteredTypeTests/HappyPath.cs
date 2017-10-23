@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly WPF0014SetValueMustUseRegisteredType Analyzer = new WPF0014SetValueMustUseRegisteredType();
+
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         public void DependencyProperty(string setValueCall)
@@ -36,7 +38,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -77,7 +79,7 @@ namespace RoslynSandbox
     }
 }";
             part2 = part2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(part1, part2);
+            AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -113,7 +115,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);")]
@@ -160,7 +162,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("fooControl.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooControlCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, meh);")]
@@ -194,7 +196,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, meh);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -230,7 +232,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, new Foo());")]
@@ -279,7 +281,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(interfaceCode, fooCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, interfaceCode, fooCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -323,7 +325,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooControlGeneric, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooControlGeneric, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]
@@ -357,7 +359,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, (object)1);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, value);")]
@@ -392,7 +394,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, value);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, true);")]
@@ -473,7 +475,7 @@ namespace RoslynSandbox
     }
 }";
             fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(fooCode, fooControlPart1, fooControlPart2);
+            AnalyzerAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
         }
 
         [TestCase("this.SetValue(VolumeProperty, 1.0);")]
@@ -519,7 +521,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, 2.0);", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
@@ -542,7 +544,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue(TextBox.TextProperty, \"abc\");", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -577,7 +579,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -611,7 +613,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -646,7 +648,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetCurrentValue", setValueCall);
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -703,7 +705,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<WPF0014SetValueMustUseRegisteredType>(linkCode, modernLinksCode, linkGroupCode);
+            AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
     }
 }

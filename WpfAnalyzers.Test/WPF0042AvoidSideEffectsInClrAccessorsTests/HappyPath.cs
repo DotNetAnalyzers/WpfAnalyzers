@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 
     internal class HappyPath
     {
+        private static readonly WPF0042AvoidSideEffectsInClrAccessors Analyzer = new WPF0042AvoidSideEffectsInClrAccessors();
+
         [Test]
         public void DependencyProperty()
         {
@@ -30,7 +32,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -58,7 +60,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -88,7 +90,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -144,7 +146,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -177,7 +179,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -204,7 +206,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
