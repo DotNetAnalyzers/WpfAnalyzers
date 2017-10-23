@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -40,40 +41,47 @@
             }
 
             if (context.Node is InvocationExpressionSyntax invocation &&
-                context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                method.ContainingType != KnownSymbol.DependencyObject)
+                invocation.TryGetInvokedMethodName(out var name))
             {
-                ArgumentSyntax argument;
-                if (method == KnownSymbol.DependencyProperty.AddOwner ||
-                    method == KnownSymbol.DependencyProperty.OverrideMetadata)
+                if (name == KnownSymbol.DependencyProperty.AddOwner.Name &&
+                    invocation.TryGetArgumentAtIndex(0, out var argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol addOwner &&
+                    addOwner == KnownSymbol.DependencyProperty.AddOwner)
                 {
-                    if (!invocation.TryGetArgumentAtIndex(0, out argument))
-                    {
-                        return;
-                    }
-                }
-                else if (method == KnownSymbol.DependencyProperty.Register ||
-                         method == KnownSymbol.DependencyProperty.RegisterReadOnly)
-                {
-                    if (!invocation.TryGetArgumentAtIndex(2, out argument))
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
+                    HandleArgument(context, argument);
                 }
 
-                if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
+                if (name == KnownSymbol.DependencyProperty.OverrideMetadata.Name &&
+                    invocation.TryGetArgumentAtIndex(0, out argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol overrideMetaData &&
+                    overrideMetaData == KnownSymbol.DependencyProperty.OverrideMetadata)
                 {
-                    return;
+                    HandleArgument(context, argument);
                 }
 
-                if (!ownerType.Is(KnownSymbol.DependencyObject))
+                if (name.StartsWith("Register", StringComparison.Ordinal) &&
+                    invocation.TryGetArgumentAtIndex(2, out argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol register)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
+                    if (register == KnownSymbol.DependencyProperty.Register ||
+                             register == KnownSymbol.DependencyProperty.RegisterReadOnly)
+                    {
+                        HandleArgument(context, argument);
+                    }
                 }
+            }
+        }
+
+        private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
+        {
+            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
+            {
+                return;
+            }
+
+            if (!ownerType.Is(KnownSymbol.DependencyObject))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
             }
         }
     }

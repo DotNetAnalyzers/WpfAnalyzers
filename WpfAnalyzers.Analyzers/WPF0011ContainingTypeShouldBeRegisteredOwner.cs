@@ -43,9 +43,8 @@
                 context.ContainingSymbol.IsStatic &&
                 invocation.TryGetInvokedMethodName(out var name))
             {
-                ArgumentSyntax argument;
                 if (name.StartsWith("Register") &&
-                    invocation.TryGetArgumentAtIndex(2, out argument) &&
+                    invocation.TryGetArgumentAtIndex(2, out var argument) &&
                     context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol registerMethod)
                 {
                     if (registerMethod == KnownSymbol.DependencyProperty.Register ||
