@@ -1,3 +1,4 @@
+// ReSharper disable RedundantNameQualifier
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class WPF0004Benchmarks
