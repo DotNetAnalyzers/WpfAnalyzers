@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
@@ -15,6 +16,16 @@
             .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
+
+        private static readonly Solution Solution = CodeFactory.CreateSolution(
+            CodeFactory.FindSolutionFile("WpfAnalyzers.sln"),
+            AllAnalyzers,
+            AnalyzerAssert.MetadataReferences);
+
+        private static readonly Solution AnalyzerProjectSln = CodeFactory.CreateSolution(
+            CodeFactory.FindProjectFile("WpfAnalyzers.Analyzers.csproj"),
+            AllAnalyzers,
+            AnalyzerAssert.MetadataReferences);
 
         [Test]
         public void NotEmpty()
@@ -32,14 +43,13 @@
         [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, CodeFactory.FindProjectFile("WpfAnalyzers.Analyzers.csproj"));
+            AnalyzerAssert.Valid(analyzer, AnalyzerProjectSln);
         }
 
-        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("WpfAnalyzers.sln"));
+            AnalyzerAssert.Valid(analyzer, Solution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

@@ -25,8 +25,6 @@
 
         public ArgumentSyntax Property => this.Arguments?.Arguments[0];
 
-        public ArgumentSyntax Value => this.Arguments?.Arguments[1];
-
         public static ClrSetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
         {
             var walker = Borrow(() => new ClrSetterWalker());
@@ -38,7 +36,7 @@
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
-            if (DependencyObject.TryGetSetValueArguments(invocation, this.semanticModel, this.cancellationToken, out ArgumentListSyntax arguments))
+            if (DependencyObject.TryGetSetValueArguments(invocation, this.semanticModel, this.cancellationToken, out _))
             {
                 if (this.SetValue != null || this.SetCurrentValue != null)
                 {
@@ -52,7 +50,7 @@
                 }
             }
 
-            if (DependencyObject.TryGetSetCurrentValueArguments(invocation, this.semanticModel, this.cancellationToken, out arguments))
+            if (DependencyObject.TryGetSetCurrentValueArguments(invocation, this.semanticModel, this.cancellationToken, out _))
             {
                 if (this.SetValue != null || this.SetCurrentValue != null)
                 {
