@@ -39,29 +39,14 @@
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null || context.SemanticModel == null)
+            if (context.Node is InvocationExpressionSyntax invocation)
             {
-                return;
+                if (DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax _, out IFieldSymbol setField, out ArgumentSyntax value) &&
+                    setField == KnownSymbol.FrameworkElement.DataContextProperty)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), setField.Name, value));
+                }
             }
-
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method != KnownSymbol.DependencyObject.SetCurrentValue)
-            {
-                return;
-            }
-
-            if (!DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax _, out IFieldSymbol setField, out ArgumentSyntax value))
-            {
-                return;
-            }
-
-            if (setField != KnownSymbol.FrameworkElement.DataContextProperty)
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), setField.Name, value));
         }
     }
 }
