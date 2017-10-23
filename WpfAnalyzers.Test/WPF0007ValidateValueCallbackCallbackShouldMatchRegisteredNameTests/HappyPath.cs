@@ -38,6 +38,7 @@ namespace RoslynSandbox
 
         [TestCase("ValueValidateValue);")]
         [TestCase("new ValidateValueCallback(ValueValidateValue));")]
+        [TestCase("o => (int)o >= 0);")]
         public void DependencyPropertyWithCallback(string metadata)
         {
             var testCode = @"
