@@ -41,58 +41,64 @@
 
             if (context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol.IsStatic &&
-                context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                method.ContainingType == KnownSymbol.DependencyProperty)
+                invocation.TryGetInvokedMethodName(out var name))
             {
                 ArgumentSyntax argument;
-                if (method == KnownSymbol.DependencyProperty.AddOwner ||
+                if (name.StartsWith("Register") &&
+                    invocation.TryGetArgumentAtIndex(2, out argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol registerMethod)
+                {
+                    if (registerMethod == KnownSymbol.DependencyProperty.Register ||
+                        registerMethod == KnownSymbol.DependencyProperty.RegisterReadOnly ||
+                        registerMethod == KnownSymbol.DependencyProperty.RegisterAttached ||
+                        registerMethod == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
+                    {
+                        HandleArgument(context, argument);
+                    }
+                }
+
+                if (name == "AddOwner" &&
+                    invocation.TryGetArgumentAtIndex(0, out argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol addOwner &&
+                    addOwner == KnownSymbol.DependencyProperty.AddOwner)
+                {
+                    HandleArgument(context, argument);
+                }
+
+                if (name == "OverrideMetadata" &&
+                    invocation.TryGetArgumentAtIndex(0, out argument) &&
+                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
                     method == KnownSymbol.DependencyProperty.OverrideMetadata)
                 {
-                    if (!invocation.TryGetArgumentAtIndex(0, out argument))
+                    var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                    if (memberAccess == null)
                     {
                         return;
                     }
 
-                    if (method == KnownSymbol.DependencyProperty.OverrideMetadata)
-                    {
-                        var containingType = context.ContainingSymbol.ContainingType;
-                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                        if (memberAccess == null)
-                        {
-                            return;
-                        }
-
-                        var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as IFieldSymbol;
-                        if (!containingType.Is(dp?.ContainingType))
-                        {
-                            return;
-                        }
-                    }
-                }
-                else if (method == KnownSymbol.DependencyProperty.Register ||
-                         method == KnownSymbol.DependencyProperty.RegisterReadOnly ||
-                         method == KnownSymbol.DependencyProperty.RegisterAttached ||
-                         method == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
-                {
-                    if (!invocation.TryGetArgumentAtIndex(2, out argument))
+                    var containingType = context.ContainingSymbol.ContainingType;
+                    var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as
+                        IFieldSymbol;
+                    if (!containingType.Is(dp?.ContainingType))
                     {
                         return;
                     }
-                }
-                else
-                {
-                    return;
-                }
 
-                if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType))
-                {
-                    return;
+                    HandleArgument(context, argument);
                 }
+            }
+        }
 
-                if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
-                }
+        private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
+        {
+            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType))
+            {
+                return;
+            }
+
+            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }
         }
     }

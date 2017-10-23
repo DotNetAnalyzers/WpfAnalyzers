@@ -26,6 +26,17 @@ namespace WpfAnalyzers
         internal static bool TryGetValidateValueCallback(InvocationExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
+            if (registerCall == null)
+            {
+                return false;
+            }
+
+            if (registerCall.TryGetInvokedMethodName(out var name) &&
+                !name.StartsWith("Register", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
             var methodSymbol = semanticModel.GetSymbolSafe(registerCall, cancellationToken) as IMethodSymbol;
             if (methodSymbol == null ||
                 methodSymbol.ContainingType != KnownSymbol.DependencyProperty)
