@@ -22,32 +22,32 @@ Frequency=3410117 Hz, Resolution=293.2451 ns, Timer=TSC
 <pre><code></code></pre>
 
 <table>
-<thead><tr><th>                                                 Method</th><th> Mean</th><th>Error</th><th>StdDev</th><th>Median</th><th>  P95</th><th>Gen 0</th><th>Allocated</th>
+<thead><tr><th>                                                 Method</th><th> Mean</th><th>Error</th><th>StdDev</th><th>Gen 0</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>           WPF0001BackingFieldShouldMatchRegisteredName</td><td>169.14 us</td><td>3.1715 us</td><td>2.9666 us</td><td>167.37 us</td><td>174.63 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>           WPF0002BackingFieldShouldMatchRegisteredName</td><td>165.23 us</td><td>2.6682 us</td><td>2.4958 us</td><td>165.47 us</td><td>168.59 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>            WPF0003ClrPropertyShouldMatchRegisteredName</td><td>68.92 us</td><td>0.1650 us</td><td>0.1288 us</td><td>68.94 us</td><td>69.09 us</td><td>-</td><td>41 B</td>
-</tr><tr><td>              WPF0004ClrMethodShouldMatchRegisteredName</td><td>391.44 us</td><td>7.7655 us</td><td>19.6244 us</td><td>387.63 us</td><td>425.18 us</td><td>-</td><td>44 B</td>
-</tr><tr><td>WPF0005PropertyChangedCallbackShouldMatchRegisteredName</td><td>149.65 us</td><td>2.9921 us</td><td>6.5045 us</td><td>148.17 us</td><td>159.85 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>    WPF0006CoerceValueCallbackShouldMatchRegisteredName</td><td>138.86 us</td><td>1.2727 us</td><td>0.9937 us</td><td>138.60 us</td><td>140.17 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName</td><td>1,150.35 us</td><td>22.5583 us</td><td>29.3322 us</td><td>1,153.07 us</td><td>1,190.32 us</td><td>-</td><td>3600 B</td>
-</tr><tr><td>             WPF0010DefaultValueMustMatchRegisteredType</td><td>142.58 us</td><td>2.8281 us</td><td>6.7759 us</td><td>140.49 us</td><td>154.60 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>           WPF0011ContainingTypeShouldBeRegisteredOwner</td><td>1,227.04 us</td><td>24.2521 us</td><td>47.8714 us</td><td>1,222.41 us</td><td>1,308.04 us</td><td>-</td><td>3600 B</td>
-</tr><tr><td>            WPF0012ClrPropertyShouldMatchRegisteredType</td><td>67.59 us</td><td>0.1931 us</td><td>0.1508 us</td><td>67.55 us</td><td>67.81 us</td><td>-</td><td>41 B</td>
-</tr><tr><td>                WPF0013ClrMethodMustMatchRegisteredType</td><td>380.21 us</td><td>13.3504 us</td><td>13.1118 us</td><td>377.22 us</td><td>405.19 us</td><td>-</td><td>44 B</td>
-</tr><tr><td>                   WPF0014SetValueMustUseRegisteredType</td><td>1,281.62 us</td><td>25.4566 us</td><td>47.1855 us</td><td>1,289.39 us</td><td>1,355.93 us</td><td>-</td><td>3312 B</td>
-</tr><tr><td>       WPF0015RegisteredOwnerTypeMustBeDependencyObject</td><td>3,336.23 us</td><td>77.0954 us</td><td>175.5853 us</td><td>3,277.68 us</td><td>3,877.38 us</td><td>42.9688</td><td>296131 B</td>
-</tr><tr><td>               WPF0016DefaultValueIsSharedReferenceType</td><td>202.52 us</td><td>4.0101 us</td><td>8.1007 us</td><td>201.89 us</td><td>217.43 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>              WPF0030BackingFieldShouldBeStaticReadonly</td><td>185.60 us</td><td>1.1626 us</td><td>0.9077 us</td><td>185.50 us</td><td>186.91 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>                                      WPF0031FieldOrder</td><td>154.51 us</td><td>0.5698 us</td><td>0.4449 us</td><td>154.56 us</td><td>155.06 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>      WPF0032ClrPropertyGetAndSetSameDependencyProperty</td><td>68.26 us</td><td>1.3367 us</td><td>1.6416 us</td><td>67.66 us</td><td>70.82 us</td><td>-</td><td>191 B</td>
-</tr><tr><td>                   WPF0040SetUsingDependencyPropertyKey</td><td>1,195.74 us</td><td>23.0505 us</td><td>29.1515 us</td><td>1,194.12 us</td><td>1,248.23 us</td><td>-</td><td>3312 B</td>
-</tr><tr><td>                  WPF0041SetMutableUsingSetCurrentValue</td><td>2,140.49 us</td><td>42.4453 us</td><td>82.7863 us</td><td>2,111.44 us</td><td>2,315.01 us</td><td>3.9063</td><td>34048 B</td>
-</tr><tr><td>                  WPF0042AvoidSideEffectsInClrAccessors</td><td>445.06 us</td><td>8.8712 us</td><td>14.8217 us</td><td>443.36 us</td><td>466.70 us</td><td>-</td><td>44 B</td>
-</tr><tr><td>            WPF0043DontUseSetCurrentValueForDataContext</td><td>3,347.89 us</td><td>67.2573 us</td><td>151.8110 us</td><td>3,290.99 us</td><td>3,679.43 us</td><td>42.9688</td><td>296131 B</td>
-</tr><tr><td>             WPF0050XmlnsPrefixMustMatchXmlnsDefinition</td><td>144.72 us</td><td>2.9796 us</td><td>4.5501 us</td><td>142.60 us</td><td>152.19 us</td><td>-</td><td>42 B</td>
-</tr><tr><td>         WPF0051XmlnsDefinitionMustMapExistingNamespace</td><td>107.04 us</td><td>1.0050 us</td><td>0.8392 us</td><td>106.87 us</td><td>108.39 us</td><td>0.4883</td><td>3640 B</td>
-</tr><tr><td>         WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces</td><td>119.56 us</td><td>2.7410 us</td><td>2.5639 us</td><td>119.37 us</td><td>124.69 us</td><td>-</td><td>41 B</td>
+</thead><tbody><tr><td>           WPF0001BackingFieldShouldMatchRegisteredName</td><td>182.71 us</td><td>4.859 us</td><td>14.098 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>           WPF0002BackingFieldShouldMatchRegisteredName</td><td>176.23 us</td><td>3.737 us</td><td>10.600 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>            WPF0003ClrPropertyShouldMatchRegisteredName</td><td>77.83 us</td><td>1.554 us</td><td>4.279 us</td><td>-</td><td>41 B</td>
+</tr><tr><td>              WPF0004ClrMethodShouldMatchRegisteredName</td><td>433.03 us</td><td>9.539 us</td><td>27.827 us</td><td>-</td><td>44 B</td>
+</tr><tr><td>WPF0005PropertyChangedCallbackShouldMatchRegisteredName</td><td>162.08 us</td><td>4.145 us</td><td>11.960 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>    WPF0006CoerceValueCallbackShouldMatchRegisteredName</td><td>163.65 us</td><td>4.033 us</td><td>11.765 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName</td><td>1,227.92 us</td><td>32.087 us</td><td>93.600 us</td><td>-</td><td>48 B</td>
+</tr><tr><td>             WPF0010DefaultValueMustMatchRegisteredType</td><td>160.44 us</td><td>3.207 us</td><td>9.097 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>           WPF0011ContainingTypeShouldBeRegisteredOwner</td><td>1,159.74 us</td><td>26.809 us</td><td>77.350 us</td><td>-</td><td>48 B</td>
+</tr><tr><td>            WPF0012ClrPropertyShouldMatchRegisteredType</td><td>76.06 us</td><td>1.951 us</td><td>5.534 us</td><td>-</td><td>41 B</td>
+</tr><tr><td>                WPF0013ClrMethodMustMatchRegisteredType</td><td>453.32 us</td><td>10.221 us</td><td>29.815 us</td><td>-</td><td>44 B</td>
+</tr><tr><td>                   WPF0014SetValueMustUseRegisteredType</td><td>1,377.15 us</td><td>35.446 us</td><td>103.396 us</td><td>-</td><td>3312 B</td>
+</tr><tr><td>       WPF0015RegisteredOwnerTypeMustBeDependencyObject</td><td>1,286.37 us</td><td>27.483 us</td><td>77.966 us</td><td>-</td><td>48 B</td>
+</tr><tr><td>               WPF0016DefaultValueIsSharedReferenceType</td><td>217.03 us</td><td>5.614 us</td><td>16.108 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>              WPF0030BackingFieldShouldBeStaticReadonly</td><td>210.16 us</td><td>4.308 us</td><td>12.498 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>                                      WPF0031FieldOrder</td><td>179.16 us</td><td>4.306 us</td><td>12.285 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>      WPF0032ClrPropertyGetAndSetSameDependencyProperty</td><td>73.33 us</td><td>1.844 us</td><td>5.320 us</td><td>-</td><td>191 B</td>
+</tr><tr><td>                   WPF0040SetUsingDependencyPropertyKey</td><td>1,405.02 us</td><td>35.656 us</td><td>104.574 us</td><td>-</td><td>3312 B</td>
+</tr><tr><td>                  WPF0041SetMutableUsingSetCurrentValue</td><td>2,428.12 us</td><td>51.763 us</td><td>151.813 us</td><td>3.9063</td><td>34048 B</td>
+</tr><tr><td>                  WPF0042AvoidSideEffectsInClrAccessors</td><td>486.25 us</td><td>10.091 us</td><td>25.867 us</td><td>-</td><td>44 B</td>
+</tr><tr><td>            WPF0043DontUseSetCurrentValueForDataContext</td><td>1,304.25 us</td><td>37.005 us</td><td>108.529 us</td><td>-</td><td>1680 B</td>
+</tr><tr><td>             WPF0050XmlnsPrefixMustMatchXmlnsDefinition</td><td>173.92 us</td><td>4.237 us</td><td>12.428 us</td><td>-</td><td>42 B</td>
+</tr><tr><td>         WPF0051XmlnsDefinitionMustMapExistingNamespace</td><td>130.51 us</td><td>3.327 us</td><td>9.547 us</td><td>0.4883</td><td>3640 B</td>
+</tr><tr><td>         WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces</td><td>139.40 us</td><td>4.263 us</td><td>12.569 us</td><td>-</td><td>42 B</td>
 </tr></tbody></table>
 </body>
 </html>
