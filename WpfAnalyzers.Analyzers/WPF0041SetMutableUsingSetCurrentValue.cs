@@ -41,35 +41,30 @@
                 return;
             }
 
-            if (IsInObjectInitializer(context.Node) ||
-                IsInConstructor(context.Node))
+            if (context.Node is AssignmentExpressionSyntax assignment)
             {
-                return;
-            }
-
-            var assignment = context.Node as AssignmentExpressionSyntax;
-            if (assignment == null ||
-                assignment.IsMissing ||
-                context.SemanticModel == null)
-            {
-                return;
-            }
-
-            var property = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IPropertySymbol;
-            if (property == KnownSymbol.FrameworkElement.DataContext)
-            {
-                return;
-            }
-
-            if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
-            {
-                if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                if (IsInObjectInitializer(assignment) ||
+                    IsInConstructor(assignment))
                 {
                     return;
                 }
 
-                var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
+                var property = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IPropertySymbol;
+                if (property == KnownSymbol.FrameworkElement.DataContext)
+                {
+                    return;
+                }
+
+                if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out var field))
+                {
+                    if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                    {
+                        return;
+                    }
+
+                    var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
+                }
             }
         }
 
@@ -80,48 +75,45 @@
                 return;
             }
 
-            var invocation = context.Node as InvocationExpressionSyntax;
-            if (invocation == null || context.SemanticModel == null)
+            if (context.Node is InvocationExpressionSyntax invocation)
             {
-                return;
-            }
+                if (IsInObjectInitializer(invocation) ||
+                    IsInConstructor(invocation))
+                {
+                    return;
+                }
 
-            if (IsInObjectInitializer(context.Node) ||
-                IsInConstructor(context.Node))
-            {
-                return;
-            }
+                if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out var property, out var setField, out var value))
+                {
+                    return;
+                }
 
-            if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax property, out IFieldSymbol setField, out ArgumentSyntax value))
-            {
-                return;
-            }
+                if (setField == null ||
+                    setField.Type != KnownSymbol.DependencyProperty ||
+                    setField == KnownSymbol.FrameworkElement.DataContextProperty)
+                {
+                    return;
+                }
 
-            if (setField == null ||
-                setField.Type != KnownSymbol.DependencyProperty ||
-                setField == KnownSymbol.FrameworkElement.DataContextProperty)
-            {
-                return;
-            }
+                var clrProperty = context.ContainingProperty();
+                if (ClrProperty.IsDependencyPropertyAccessor(clrProperty, context.SemanticModel, context.CancellationToken))
+                {
+                    return;
+                }
 
-            var clrProperty = context.ContainingProperty();
-            if (ClrProperty.IsDependencyPropertyAccessor(clrProperty, context.SemanticModel, context.CancellationToken))
-            {
-                return;
-            }
+                var clrMethod = context.ContainingSymbol as IMethodSymbol;
+                if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken, out setField))
+                {
+                    return;
+                }
 
-            var clrMethod = context.ContainingSymbol as IMethodSymbol;
-            if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken, out setField))
-            {
-                return;
-            }
+                if (IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                {
+                    return;
+                }
 
-            if (IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
-            {
-                return;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
             }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
         }
 
         private static bool IsCalleePotentiallyCreatedInScope(MemberAccessExpressionSyntax memberAccess, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -145,7 +137,7 @@
                 return false;
             }
 
-            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference reference))
+            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 return false;
             }
