@@ -24,6 +24,7 @@
       <Paket>True</Paket>
     </Content>
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj" />
     <ProjectReference Include="..\WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj" />
