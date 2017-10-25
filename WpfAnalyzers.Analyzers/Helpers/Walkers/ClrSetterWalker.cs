@@ -36,7 +36,7 @@
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
-            if (DependencyObject.TryGetSetValueArguments(invocation, this.semanticModel, this.cancellationToken, out _))
+            if (DependencyObject.TryGetSetValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
             {
                 if (this.SetValue != null || this.SetCurrentValue != null)
                 {
@@ -50,7 +50,7 @@
                 }
             }
 
-            if (DependencyObject.TryGetSetCurrentValueArguments(invocation, this.semanticModel, this.cancellationToken, out _))
+            if (DependencyObject.TryGetSetCurrentValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
             {
                 if (this.SetValue != null || this.SetCurrentValue != null)
                 {

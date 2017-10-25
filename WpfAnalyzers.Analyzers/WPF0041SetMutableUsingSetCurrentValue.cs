@@ -83,14 +83,16 @@
                     return;
                 }
 
-                if (!DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out var property, out var setField, out var value))
+                if (!DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
                 {
                     return;
                 }
 
-                if (setField == null ||
-                    setField.Type != KnownSymbol.DependencyProperty ||
-                    setField == KnownSymbol.FrameworkElement.DataContextProperty)
+                var propertyArg = invocation.ArgumentList.Arguments[0];
+                var propertyMember = context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken) as IFieldSymbol;
+                if (propertyMember == null ||
+                    propertyMember.Type != KnownSymbol.DependencyProperty ||
+                    propertyMember == KnownSymbol.FrameworkElement.DataContextProperty)
                 {
                     return;
                 }
@@ -102,7 +104,7 @@
                 }
 
                 var clrMethod = context.ContainingSymbol as IMethodSymbol;
-                if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken, out setField))
+                if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken, out propertyMember))
                 {
                     return;
                 }
@@ -112,7 +114,7 @@
                     return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), property, value));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), propertyMember, invocation.ArgumentList.Arguments[1]));
             }
         }
 

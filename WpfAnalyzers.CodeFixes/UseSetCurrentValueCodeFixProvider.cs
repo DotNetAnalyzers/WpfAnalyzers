@@ -119,13 +119,7 @@
             out InvocationExpressionSyntax setCurrentValueInvocation)
         {
             setCurrentValueInvocation = null;
-            if (!DependencyObject.TryGetSetValueArguments(
-                setValue,
-                semanticModel,
-                cancellationToken,
-                out ArgumentSyntax _,
-                out IFieldSymbol _,
-                out ArgumentSyntax _))
+            if (!DependencyObject.TryGetSetValueCall(setValue, semanticModel, cancellationToken, out _))
             {
                 return false;
             }
