@@ -38,23 +38,24 @@
                     continue;
                 }
 
-                var field = semanticModel.SemanticModelFor(node)
-                                         .GetDeclaredSymbol(node, context.CancellationToken) as IFieldSymbol;
-                if (DependencyProperty.TryGetRegisteredName(
-                    field,
-                    semanticModel,
-                    context.CancellationToken,
-                    out var registeredName))
+                if (BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(node, context.CancellationToken), out var fieldOrProperty))
                 {
-                    var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
-                        ? registeredName + "Property"
-                        : registeredName + "PropertyKey";
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            $"Rename to: {newName}.",
-                            _ => ApplyFixAsync(context, token, newName),
-                            this.GetType().FullName),
-                        diagnostic);
+                    if (DependencyProperty.TryGetRegisteredName(
+                        fieldOrProperty,
+                        semanticModel,
+                        context.CancellationToken,
+                        out var registeredName))
+                    {
+                        var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
+                            ? registeredName + "Property"
+                            : registeredName + "PropertyKey";
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                $"Rename to: {newName}.",
+                                _ => ApplyFixAsync(context, token, newName),
+                                this.GetType().FullName),
+                            diagnostic);
+                    }
                 }
             }
         }

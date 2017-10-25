@@ -80,14 +80,7 @@
 
         internal static ArgumentSyntax CreateArgument(BackingFieldOrProperty field, SemanticModel semanticModel, int position)
         {
-            if (semanticModel.LookupStaticMembers(position, name: field.Name).TryGetSingle(out var match) &&
-                match.IsEither<IFieldSymbol, IPropertySymbol>())
-            {
-                return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name));
-            }
-
-            var typeName = field.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat);
-            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{typeName}.{field.Name}"));
+            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression(field.Symbol.ToMinimalDisplayString(semanticModel, position)));
         }
 
         internal static bool TryGetRegisteredName(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
