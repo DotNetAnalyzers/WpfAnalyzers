@@ -42,16 +42,10 @@
                     continue;
                 }
 
-                if (DependencyObject.TryGetSetValueArguments(
-                    invocation,
-                    semanticModel,
-                    context.CancellationToken,
-                    out _,
-                    out var setField,
-                    out _))
+                if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                        setField,
+                        semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol,
                         semanticModel,
                         context.CancellationToken,
                         out var keyField))
@@ -72,16 +66,10 @@
                     continue;
                 }
 
-                if (DependencyObject.TryGetSetCurrentValueArguments(
-                      invocation,
-                      semanticModel,
-                      context.CancellationToken,
-                      out _,
-                      out setField,
-                      out _))
+                if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                        setField,
+                        semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol,
                         semanticModel,
                         context.CancellationToken,
                         out var keyField))

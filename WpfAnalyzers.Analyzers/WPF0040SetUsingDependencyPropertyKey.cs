@@ -42,42 +42,27 @@
 
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if (!DependencyObject.TryGetSetValueArguments(
-                        invocation,
-                        context.SemanticModel,
-                        context.CancellationToken,
-                        out var property,
-                        out var setField,
-                        out _) &&
-                    !DependencyObject.TryGetSetCurrentValueArguments(
-                        invocation,
-                        context.SemanticModel,
-                        context.CancellationToken,
-                        out property,
-                        out setField,
-                        out _))
+                if (DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    return;
-                }
-
-                if (setField == null ||
-                    setField.Type == KnownSymbol.DependencyPropertyKey)
-                {
-                    return;
-                }
-
-                if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                    setField,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var keyField))
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptor,
-                            property.GetLocation(),
-                            property,
-                            DependencyProperty.CreateArgument(keyField, context.SemanticModel, property.SpanStart)));
+                    var propertyArg = invocation.ArgumentList.Arguments[0];
+                    if (context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken) is IFieldSymbol propertyMember &&
+                        propertyMember.Type == KnownSymbol.DependencyProperty)
+                    {
+                        if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                            propertyMember,
+                            context.SemanticModel,
+                            context.CancellationToken,
+                            out var keyField))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptor,
+                                    propertyArg.GetLocation(),
+                                    propertyArg,
+                                    DependencyProperty.CreateArgument(keyField, context.SemanticModel, propertyArg.SpanStart)));
+                        }
+                    }
                 }
             }
         }

@@ -41,16 +41,19 @@
 
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if (DependencyObject.TryGetSetValueArguments(invocation, context.SemanticModel, context.CancellationToken, out _, out var setField, out var value) ||
-                    DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out _, out setField, out value))
+                if (DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
                 {
+                    var value = invocation.ArgumentList.Arguments[1];
+
                     if (value.Expression.IsSameType(KnownSymbol.Object, context))
                     {
                         return;
                     }
 
+                    var propertyMember = context.SemanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol;
                     if (DependencyProperty.TryGetRegisteredType(
-                        setField,
+                        propertyMember,
                         context.SemanticModel,
                         context.CancellationToken,
                         out var registeredType))
