@@ -211,7 +211,7 @@
                 result = null;
                 var property = semanticModel.GetSymbolInfo(assignment.Left, cancellationToken).Symbol as IPropertySymbol;
 
-                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out IFieldSymbol fieldSymbol))
+                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out var fieldSymbol))
                 {
                     result = DependencyProperty.CreateArgument(fieldSymbol, semanticModel, assignment.SpanStart);
                 }
