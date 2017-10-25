@@ -50,13 +50,13 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
+            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor))
             {
                 return false;
             }
 
             if (constructor == null ||
-    !constructor.Parameters.TryGetFirst(out IParameterSymbol parameter) ||
+    !constructor.Parameters.TryGetFirst(out var parameter) ||
     parameter.Type != KnownSymbol.Object)
             {
                 return false;
@@ -93,17 +93,10 @@
                 out propertyChangedCallbackArg);
         }
 
-        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol dependencyProperty)
+        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty dependencyProperty)
         {
-            dependencyProperty = null;
-            var declarator = objectCreation.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
-            if (declarator == null)
-            {
-                return false;
-            }
-
-            dependencyProperty = semanticModel.GetDeclaredSymbolSafe(declarator, cancellationToken) as IFieldSymbol;
-            return dependencyProperty != null;
+            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(objectCreation.FirstAncestorOrSelf<FieldDeclarationSyntax>(), cancellationToken), out dependencyProperty) ||
+                   BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out dependencyProperty);
         }
 
         internal static bool TryGetCallback(
@@ -120,12 +113,12 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
+            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor))
             {
                 return false;
             }
 
-            for (int i = 0; i < constructor.Parameters.Length; i++)
+            for (var i = 0; i < constructor.Parameters.Length; i++)
             {
                 var parameter = constructor.Parameters[i];
                 if (parameter.Type == callbackType)

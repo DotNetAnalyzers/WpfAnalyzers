@@ -46,11 +46,11 @@
                     DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
                 {
                     var propertyArg = invocation.ArgumentList.Arguments[0];
-                    if (context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken) is IFieldSymbol propertyMember &&
-                        propertyMember.Type == KnownSymbol.DependencyProperty)
+                    if (BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                        fieldOrProperty.Type == KnownSymbol.DependencyProperty)
                     {
                         if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                            propertyMember,
+                            fieldOrProperty,
                             context.SemanticModel,
                             context.CancellationToken,
                             out var keyField))

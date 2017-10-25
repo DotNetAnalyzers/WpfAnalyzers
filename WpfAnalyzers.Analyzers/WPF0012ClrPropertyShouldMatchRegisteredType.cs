@@ -51,7 +51,7 @@
                 return;
             }
 
-            if (ClrProperty.TryGetRegisteredType(propertyDeclaration, context.SemanticModel, context.CancellationToken, out ITypeSymbol registeredType))
+            if (ClrProperty.TryGetRegisteredType(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredType))
             {
                 if (!registeredType.IsSameType(property.Type))
                 {

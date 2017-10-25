@@ -75,24 +75,20 @@
                 return;
             }
 
-            if (context.Node is InvocationExpressionSyntax invocation)
+            if (context.Node is InvocationExpressionSyntax invocation &&
+                !IsInObjectInitializer(invocation) &&
+                !IsInConstructor(invocation) &&
+                DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (IsInObjectInitializer(invocation) ||
-                    IsInConstructor(invocation))
-                {
-                    return;
-                }
-
-                if (!DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
-                {
-                    return;
-                }
-
                 var propertyArg = invocation.ArgumentList.Arguments[0];
-                var propertyMember = context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken) as IFieldSymbol;
-                if (propertyMember == null ||
-                    propertyMember.Type != KnownSymbol.DependencyProperty ||
-                    propertyMember == KnownSymbol.FrameworkElement.DataContextProperty)
+                if (!BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) ||
+                    propertyMember.Type == KnownSymbol.DependencyPropertyKey)
+                {
+                    return;
+                }
+
+                if (propertyMember.Symbol is IFieldSymbol field &&
+                    field == KnownSymbol.FrameworkElement.DataContextProperty)
                 {
                     return;
                 }

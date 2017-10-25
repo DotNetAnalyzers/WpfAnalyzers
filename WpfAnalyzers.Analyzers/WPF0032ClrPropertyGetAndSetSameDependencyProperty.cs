@@ -22,7 +22,8 @@
             HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -39,29 +40,19 @@
                 return;
             }
 
-            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
-            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
-            {
-                return;
-            }
-
-            if (ClrProperty.TryGetBackingFields(
-propertyDeclaration,
-context.SemanticModel,
-context.CancellationToken,
-out IFieldSymbol getter,
-out IFieldSymbol setter))
+            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                ClrProperty.TryGetBackingFields(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var getter, out var setter))
             {
                 if (DependencyProperty.TryGetDependencyPropertyKeyField(
-    getter,
-    context.SemanticModel,
-    context.CancellationToken,
-    out IFieldSymbol keyField))
+                    getter,
+                    context.SemanticModel,
+                    context.CancellationToken,
+                    out var keyField))
                 {
                     getter = keyField;
                 }
 
-                if (ReferenceEquals(getter, setter))
+                if (ReferenceEquals(getter.Symbol, setter.Symbol))
                 {
                     return;
                 }

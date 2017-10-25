@@ -281,36 +281,5 @@ namespace RoslynSandbox
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
             Assert.AreEqual(false, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out method));
         }
-
-        [Test]
-        public void IsPotentialStaticMethodCall()
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class Foo
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new PropertyMetadata(default(int)));
-
-        public static void SetBar(DependencyObject element, int value)
-        {
-            element.SetValue(BarProperty, value);
-        }
-
-        public static int GetBar(DependencyObject element)
-        {
-            return (int)element.GetValue(BarProperty);
-        }
-    }
-}");
-            var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
-            Assert.AreEqual(true, DependencyProperty.IsPotentialStaticMethodCall(invocation));
-        }
     }
 }
