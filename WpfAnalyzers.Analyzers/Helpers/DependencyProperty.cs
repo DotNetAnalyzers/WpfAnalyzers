@@ -8,6 +8,67 @@
 
     internal static class DependencyProperty
     {
+        internal static bool TryGetRegisterCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.Register,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetRegisterReadOnlyCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.RegisterReadOnly,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetRegisterAttachedCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.RegisterAttached,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetRegisterAttachedReadOnlyCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.RegisterAttachedReadOnly,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetAddOwnerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.AddOwner,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetOverrideMetadataCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyProperty.OverrideMetadata,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        [Obsolete("Replace with TryGet calls")]
         internal static bool IsPotentialStaticMethodCall(InvocationExpressionSyntax invocation)
         {
             if (invocation == null)
@@ -256,6 +317,22 @@
             }
 
             return property != null;
+        }
+
+        /// <summary>
+        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
+        /// </summary>
+        private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            method = null;
+            if (invocation.TryGetInvokedMethodName(out var name) &&
+                name != qualifiedMethod.Name)
+            {
+                return false;
+            }
+
+            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            return method == qualifiedMethod;
         }
     }
 }
