@@ -7,6 +7,39 @@ namespace WpfAnalyzers
 
     internal static class DependencyObject
     {
+        internal static bool TryGetSetValueCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyObject.SetValue,
+                2,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetSetCurrentValueCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyObject.SetCurrentValue,
+                2,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
+        internal static bool TryGetGetValueCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            return TryGetCall(
+                invocation,
+                KnownSymbol.DependencyObject.GetValue,
+                1,
+                semanticModel,
+                cancellationToken,
+                out method);
+        }
+
         /// <summary>
         /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
         /// </summary>
@@ -60,9 +93,9 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var methodSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            if (methodSymbol != KnownSymbol.DependencyObject.GetValue ||
-                methodSymbol?.Parameters.Length != 1)
+            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            if (method != KnownSymbol.DependencyObject.GetValue ||
+                method?.Parameters.Length != 1)
             {
                 return false;
             }
@@ -83,9 +116,9 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var setter = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            if (setter != KnownSymbol.DependencyObject.SetValue ||
-                setter?.Parameters.Length != 2)
+            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            if (method != KnownSymbol.DependencyObject.SetValue ||
+                method?.Parameters.Length != 2)
             {
                 return false;
             }
@@ -102,7 +135,7 @@ namespace WpfAnalyzers
         /// <param name="value">The value argument</param>
         internal static bool TryGetSetValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
-            if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out ArgumentListSyntax argumentList))
+            if (TryGetSetValueArguments(invocation, semanticModel, cancellationToken, out var argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
@@ -127,9 +160,9 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var methodSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            if (methodSymbol != KnownSymbol.DependencyObject.SetCurrentValue ||
-                methodSymbol?.Parameters.Length != 2)
+            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            if (method != KnownSymbol.DependencyObject.SetCurrentValue ||
+                method?.Parameters.Length != 2)
             {
                 return false;
             }
@@ -146,7 +179,7 @@ namespace WpfAnalyzers
         /// <param name="value">The value argument</param>
         internal static bool TryGetSetCurrentValueArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax property, out IFieldSymbol field, out ArgumentSyntax value)
         {
-            if (TryGetSetCurrentValueArguments(invocation, semanticModel, cancellationToken, out ArgumentListSyntax argumentList))
+            if (TryGetSetCurrentValueArguments(invocation, semanticModel, cancellationToken, out var argumentList))
             {
                 property = argumentList.Arguments[0];
                 value = argumentList.Arguments[1];
@@ -158,6 +191,29 @@ namespace WpfAnalyzers
             value = null;
             field = null;
             return false;
+        }
+
+        /// <summary>
+        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
+        /// </summary>
+        private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, int expectedArgs, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            method = null;
+            if (invocation == null ||
+                invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count != expectedArgs)
+            {
+                return false;
+            }
+
+            if (invocation.TryGetInvokedMethodName(out var name) &&
+                name != qualifiedMethod.Name)
+            {
+                return false;
+            }
+
+            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            return method == qualifiedMethod;
         }
     }
 }

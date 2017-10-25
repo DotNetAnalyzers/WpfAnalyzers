@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Test
 {
+    using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,7 +11,7 @@
         [TestCase("SetValue(BarProperty, value)")]
         [TestCase("this.SetValue(BarProperty, value)")]
         [TestCase("base.SetValue(BarProperty, value)")]
-        public void IsPotentialSetValueCall(string call)
+        public void TryGetSetValueCall(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,16 +37,19 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("SetValue", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [TestCase(".SetValue")]
         [TestCase("?.SetValue")]
-        public void IsPotentialSetValueCallInstance(string call)
+        public void TryGetSetValueCallInstance(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -73,17 +77,20 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace(".SetValue", call);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("SetValue", method.Name);
 
-            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
+            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [TestCase("SetCurrentValue(BarProperty, value)")]
         [TestCase("this.SetCurrentValue(BarProperty, value)")]
         [TestCase("base.SetCurrentValue(BarProperty, value)")]
-        public void IsPotentialSetCurrentValue(string call)
+        public void TryGetSetCurrentValueCall(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -109,15 +116,18 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetCurrentValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("SetCurrentValue", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
-        public void IsPotentialSetCurrentValueCallInstance()
+        public void TryGetSetCurrentValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -139,17 +149,20 @@ namespace RoslynSandbox
         }
     }
 }");
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetCurrentValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("SetCurrentValue", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetCurrentValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [TestCase("GetValue(BarProperty)")]
         [TestCase("this.GetValue(BarProperty)")]
         [TestCase("base.GetValue(BarProperty)")]
-        public void IsPotentialGetValueCall(string call)
+        public void TryGetGetValueCall(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -175,15 +188,18 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("this.GetValue(BarProperty)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialGetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("GetValue", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialGetValueCall(invocation));
+            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
-        public void IsPotentialGetValueCallInstance()
+        public void TryGetSetValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -209,11 +225,14 @@ namespace RoslynSandbox
         }
     }
 }");
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(true, DependencyObject.IsPotentialGetValueCall(invocation));
+            Assert.AreEqual(true, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("GetValue", method.Name);
 
-            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
-            Assert.AreEqual(false, DependencyObject.IsPotentialGetValueCall(invocation));
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetValue");
+            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out method));
         }
     }
 }
