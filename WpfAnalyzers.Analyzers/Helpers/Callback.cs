@@ -27,7 +27,7 @@ namespace WpfAnalyzers
             {
                 if (semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == callbackSymbol)
                 {
-                    if (creation.ArgumentList.Arguments.TryGetSingle(out ArgumentSyntax arg))
+                    if (creation.ArgumentList.Arguments.TryGetSingle(out var arg))
                     {
                         return TryGetName(arg, callbackSymbol, semanticModel, cancellationToken, out nameExpression, out name);
                     }
@@ -51,13 +51,13 @@ namespace WpfAnalyzers
             if (method == KnownSymbol.DependencyProperty.OverrideMetadata ||
                 method == KnownSymbol.DependencyProperty.AddOwner)
             {
-                var dependencyProperty = semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken) as IFieldSymbol;
-                if (dependencyProperty?.Type != KnownSymbol.DependencyProperty)
+                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty) ||
+                    fieldOrProperty.Type == KnownSymbol.DependencyProperty)
                 {
-                    return false;
+                    return DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
                 }
 
-                return DependencyProperty.TryGetRegisteredName(dependencyProperty, semanticModel, cancellationToken, out registeredName);
+                return false;
             }
 
             if (method == KnownSymbol.DependencyProperty.Register ||
@@ -65,19 +65,8 @@ namespace WpfAnalyzers
                 method == KnownSymbol.DependencyProperty.RegisterAttached ||
                 method == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
             {
-                var fieldDeclaration = callback.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
-                if (fieldDeclaration == null)
-                {
-                    return false;
-                }
-
-                var dependencyProperty = semanticModel.GetDeclaredSymbolSafe(fieldDeclaration, cancellationToken) as IFieldSymbol;
-                if (dependencyProperty == null)
-                {
-                    return false;
-                }
-
-                return DependencyProperty.TryGetRegisteredName(dependencyProperty, semanticModel, cancellationToken, out registeredName);
+                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(callback.FirstAncestorOrSelf<MemberDeclarationSyntax>(), cancellationToken), out var fieldOrProperty) &&
+                       DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
             }
 
             return false;

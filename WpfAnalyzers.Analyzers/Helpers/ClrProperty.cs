@@ -33,7 +33,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
             {
                 return IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
             }
@@ -46,18 +46,18 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return TryGetBackingFields(property, semanticModel, cancellationToken, out IFieldSymbol _, out IFieldSymbol _);
+            return TryGetBackingFields(property, semanticModel, cancellationToken, out var _, out var _);
         }
 
         /// <summary>
         /// Get the single DependencyProperty backing field for <paramref name="property"/>
         /// Returns false for accessors for readonly dependency properties.
         /// </summary>
-        internal static bool TryGetSingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
+        internal static bool TryGetSingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = null;
-            IFieldSymbol getter;
-            IFieldSymbol setter;
+            result = default(BackingFieldOrProperty);
+            BackingFieldOrProperty getter;
+            BackingFieldOrProperty setter;
             if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax _))
             {
                 if (TryGetBackingFields(
@@ -67,7 +67,7 @@ namespace WpfAnalyzers
                     out getter,
                     out setter))
                 {
-                    if (ReferenceEquals(setter, getter) &&
+                    if (ReferenceEquals(setter.Symbol, getter.Symbol) &&
                         setter.Type == KnownSymbol.DependencyProperty)
                     {
                         result = setter;
@@ -78,10 +78,10 @@ namespace WpfAnalyzers
 
             if (TryGetBackingFieldsByName(property, out getter, out setter))
             {
-                if (ReferenceEquals(getter, setter))
+                if (ReferenceEquals(getter.Symbol, setter.Symbol))
                 {
                     result = getter;
-                    return result?.Type == KnownSymbol.DependencyProperty;
+                    return result.Type == KnownSymbol.DependencyProperty;
                 }
             }
 
@@ -94,7 +94,7 @@ namespace WpfAnalyzers
         internal static bool TryGetRegisteredName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
             {
                 return TryGetRegisteredName(
                     propertyDeclaration,
@@ -111,7 +111,7 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool TryGetRegisteredName(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out IFieldSymbol field))
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out var field))
             {
                 return DependencyProperty.TryGetRegisteredName(field, semanticModel, cancellationToken, out result);
             }
@@ -126,7 +126,7 @@ namespace WpfAnalyzers
         internal static bool TryGetRegisteredType(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
             {
                 return TryGetRegisteredType(
                     propertyDeclaration,
@@ -143,7 +143,7 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool TryGetRegisteredType(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out IFieldSymbol field))
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out var field))
             {
                 return DependencyProperty.TryGetRegisteredType(field, semanticModel, cancellationToken, out result);
             }
@@ -155,19 +155,21 @@ namespace WpfAnalyzers
         /// <summary>
         /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field
         /// </summary>
-        internal static bool TryGetBackingFields(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField, out IFieldSymbol setField)
+        internal static bool TryGetBackingFields(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {
-            getField = null;
-            setField = null;
+            getField = default(BackingFieldOrProperty);
+            setField = default(BackingFieldOrProperty);
 
-            if (TryGetPropertyDeclaration(property, cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
             {
                 if (TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
                 {
                     if (getField.ContainingType.IsGenericType)
                     {
-                        return property.ContainingType.TryGetField(getField.Name, out getField) &&
-                               property.ContainingType.TryGetField(setField.Name, out setField);
+                        return property.ContainingType.TryGetSingleMember<ISymbol>(getField.Name, out var getMember) &&
+                               BackingFieldOrProperty.TryCreate(getMember, out getField) &&
+                               property.ContainingType.TryGetSingleMember<ISymbol>(setField.Name, out var setMember) &&
+                               BackingFieldOrProperty.TryCreate(setMember, out setField);
                     }
 
                     return true;
@@ -180,27 +182,27 @@ namespace WpfAnalyzers
         /// <summary>
         /// Get the backing fields for the <paramref name="propertyDeclaration"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field
         /// </summary>
-        internal static bool TryGetBackingFields(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol getField, out IFieldSymbol setField)
+        internal static bool TryGetBackingFields(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {
-            getField = null;
-            setField = null;
-            if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out AccessorDeclarationSyntax getAccessor) &&
-propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out AccessorDeclarationSyntax setAccessor))
+            getField = default(BackingFieldOrProperty);
+            setField = default(BackingFieldOrProperty);
+            if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out var getAccessor) &&
+                propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out var setAccessor))
             {
-                using (var walker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, getAccessor))
+                using (var getterWalker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, getAccessor))
                 {
                     using (var setterWalker = ClrSetterWalker.Borrow(semanticModel, cancellationToken, setAccessor))
                     {
-                        if (walker.HasError ||
+                        if (getterWalker.HasError ||
                             setterWalker.HasError)
                         {
                             return false;
                         }
 
-                        if (walker.IsSuccess &&
-                            walker.Property.TryGetSymbol(semanticModel, cancellationToken, out getField) &&
+                        if (getterWalker.IsSuccess &&
+                            BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(getterWalker.Property.Expression, cancellationToken), out getField) &&
                             setterWalker.IsSuccess &&
-                            setterWalker.Property.TryGetSymbol(semanticModel, cancellationToken, out setField))
+                            BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(setterWalker.Property.Expression, cancellationToken), out setField))
                         {
                             return true;
                         }
@@ -218,49 +220,48 @@ propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration,
         /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field.
         /// This method looks for fields that matches the name NameProperty and NamePropertyKey.
         /// </summary>
-        internal static bool TryGetBackingFieldsByName(IPropertySymbol property, out IFieldSymbol getter, out IFieldSymbol setter)
+        internal static bool TryGetBackingFieldsByName(IPropertySymbol property, out BackingFieldOrProperty getter, out BackingFieldOrProperty setter)
         {
-            getter = null;
-            setter = null;
+            getter = default(BackingFieldOrProperty);
+            setter = default(BackingFieldOrProperty);
             if (property == null ||
                 !property.ContainingType.Is(KnownSymbol.DependencyObject))
             {
                 return false;
             }
 
-            foreach (var field in property.ContainingType.GetMembers().OfType<IFieldSymbol>())
+            foreach (var member in property.ContainingType.GetMembers())
             {
-                if (field.Name.IsParts(property.Name, "Property"))
+                if (BackingFieldOrProperty.TryCreate(member, out var candidate))
                 {
-                    if (!DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
+                    if (candidate.Name.IsParts(property.Name, "Property"))
                     {
-                        getter = null;
-                        setter = null;
-                        return false;
+                        if (!DependencyProperty.IsPotentialDependencyPropertyBackingField(candidate))
+                        {
+                            return false;
+                        }
+
+                        getter = candidate;
                     }
 
-                    getter = field;
-                }
-
-                if (field.Name.IsParts(property.Name, "PropertyKey"))
-                {
-                    if (!DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(field))
+                    if (candidate.Name.IsParts(property.Name, "PropertyKey"))
                     {
-                        getter = null;
-                        setter = null;
-                        return false;
-                    }
+                        if (!DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(candidate))
+                        {
+                            return false;
+                        }
 
-                    setter = field;
+                        setter = candidate;
+                    }
                 }
             }
 
-            if (setter == null)
+            if (setter.Symbol == null)
             {
                 setter = getter;
             }
 
-            return setter != null;
+            return setter.Symbol != null;
         }
 
         internal static bool TryGetPropertyDeclaration(IPropertySymbol property, CancellationToken cancellationToken, out PropertyDeclarationSyntax result)
@@ -271,7 +272,7 @@ propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration,
                 return false;
             }
 
-            if (property.DeclaringSyntaxReferences.TryGetLast(out SyntaxReference reference))
+            if (property.DeclaringSyntaxReferences.TryGetLast(out var reference))
             {
                 result = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
                 return result != null;
@@ -280,26 +281,21 @@ propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration,
             return false;
         }
 
-        private static bool TryGetRegisterField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
+        private static bool TryGetRegisterField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = null;
-            if (TryGetBackingFields(
-property,
-semanticModel,
-cancellationToken,
-out IFieldSymbol getter,
-out IFieldSymbol setter))
+            result = default(BackingFieldOrProperty);
+            if (TryGetBackingFields(property, semanticModel, cancellationToken, out var getter, out var setter))
             {
                 if (DependencyProperty.TryGetDependencyPropertyKeyField(
-    getter,
-    semanticModel,
-    cancellationToken,
-    out IFieldSymbol keyField))
+                    getter,
+                    semanticModel,
+                    cancellationToken,
+                    out var keyField))
                 {
                     getter = keyField;
                 }
 
-                if (ReferenceEquals(setter, getter))
+                if (ReferenceEquals(setter.Symbol, getter.Symbol))
                 {
                     result = setter;
                     return true;

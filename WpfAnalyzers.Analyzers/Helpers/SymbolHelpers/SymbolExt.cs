@@ -4,6 +4,7 @@
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class SymbolExt
     {
@@ -12,6 +13,21 @@
             where T2 : ISymbol
         {
             return symbol is T1 || symbol is T2;
+        }
+
+        internal static bool TryGetSingleDeclaration(this IFieldSymbol symbol, CancellationToken cancellationToken, out FieldDeclarationSyntax declaration)
+        {
+            return TryGetSingleDeclaration<FieldDeclarationSyntax>(symbol, cancellationToken, out declaration);
+        }
+
+        internal static bool TryGetSingleDeclaration(this IPropertySymbol symbol, CancellationToken cancellationToken, out PropertyDeclarationSyntax declaration)
+        {
+            return TryGetSingleDeclaration<PropertyDeclarationSyntax>(symbol, cancellationToken, out declaration);
+        }
+
+        internal static bool TryGetSingleDeclaration(this IMethodSymbol symbol, CancellationToken cancellationToken, out MethodDeclarationSyntax declaration)
+        {
+            return TryGetSingleDeclaration<MethodDeclarationSyntax>(symbol, cancellationToken, out declaration);
         }
 
         internal static bool TryGetSingleDeclaration<T>(this ISymbol symbol, CancellationToken cancellationToken, out T declaration)
@@ -23,7 +39,7 @@
                 return false;
             }
 
-            if (symbol.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference syntaxReference))
+            if (symbol.DeclaringSyntaxReferences.TryGetSingle(out var syntaxReference))
             {
                 declaration = syntaxReference.GetSyntax(cancellationToken) as T;
                 return declaration != null;

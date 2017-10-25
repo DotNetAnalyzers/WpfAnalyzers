@@ -49,7 +49,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            for (int i = 0; i < methodSymbol.Parameters.Length; i++)
+            for (var i = 0; i < methodSymbol.Parameters.Length; i++)
             {
                 var parameter = methodSymbol.Parameters[i];
                 if (parameter.Type == KnownSymbol.ValidateValueCallback)

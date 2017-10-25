@@ -58,7 +58,7 @@
 
         private static void CheckName(
             SyntaxNodeAnalysisContext context,
-            IFieldSymbol dependencyProperty,
+            BackingFieldOrProperty dependencyProperty,
             IMethodSymbol method,
             MethodDeclarationSyntax methodDeclaration,
             string prefix)

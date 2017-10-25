@@ -40,24 +40,16 @@
             }
 
             if (context.Node is FieldDeclarationSyntax fieldDeclaration &&
-                context.ContainingSymbol is IFieldSymbol field &&
-                DependencyProperty.IsPotentialDependencyPropertyBackingField(field))
+                BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var field) &&
+                DependencyProperty.IsPotentialDependencyPropertyBackingField(field) &&
+                DependencyProperty.TryGetDependencyPropertyKeyField(field, context.SemanticModel, context.CancellationToken, out var keyField))
             {
-                if (!DependencyProperty.TryGetDependencyPropertyKeyField(
-                    field,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var keyField))
-                {
-                    return;
-                }
-
                 if (field.ContainingType != keyField.ContainingType)
                 {
                     return;
                 }
 
-                if (keyField.DeclaringSyntaxReferences.TryGetFirst(out SyntaxReference reference))
+                if (keyField.TryGetSyntaxReference(out var reference))
                 {
                     var keyNode = reference.GetSyntax(context.CancellationToken);
                     if (!ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) ||

@@ -68,49 +68,20 @@
                 out method);
         }
 
-        [Obsolete("Replace with TryGet calls")]
-        internal static bool IsPotentialStaticMethodCall(InvocationExpressionSyntax invocation)
+        internal static bool IsPotentialDependencyPropertyBackingField(BackingFieldOrProperty fieldOrProperty)
         {
-            if (invocation == null)
-            {
-                return false;
-            }
-
-            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
-            {
-                if (memberAccess.Expression is IdentifierNameSyntax identifier)
-                {
-                    return identifier.Identifier.ValueText == "DependencyProperty";
-                }
-
-                if (memberAccess.Expression is MemberAccessExpressionSyntax nested)
-                {
-                    return nested.Name.Identifier.ValueText == "DependencyProperty";
-                }
-            }
-
-            return false;
+            return fieldOrProperty.Type == KnownSymbol.DependencyProperty;
         }
 
-        internal static bool IsPotentialDependencyPropertyBackingField(IFieldSymbol field)
+        internal static bool IsPotentialDependencyPropertyKeyBackingField(BackingFieldOrProperty fieldOrProperty)
         {
-            return field != null &&
-                   field.Type == KnownSymbol.DependencyProperty &&
-                   field.IsReadOnly &&
-                   field.IsStatic;
+            return fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey;
         }
 
-        internal static bool IsPotentialDependencyPropertyKeyBackingField(IFieldSymbol field)
+        internal static ArgumentSyntax CreateArgument(BackingFieldOrProperty field, SemanticModel semanticModel, int position)
         {
-            return field != null &&
-                   field.Type == KnownSymbol.DependencyPropertyKey &&
-                   field.IsReadOnly &&
-                   field.IsStatic;
-        }
-
-        internal static ArgumentSyntax CreateArgument(IFieldSymbol field, SemanticModel semanticModel, int position)
-        {
-            if (semanticModel.LookupStaticMembers(position).Contains(field))
+            if (semanticModel.LookupStaticMembers(position, name: field.Name).TryGetSingle(out var match) &&
+                match.IsEither<IFieldSymbol, IPropertySymbol>())
             {
                 return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name));
             }
@@ -119,15 +90,10 @@
             return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{typeName}.{field.Name}"));
         }
 
-        internal static bool TryGetRegisteredName(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetRegisteredName(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (field == null)
-            {
-                return false;
-            }
-
-            if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation))
+            if (TryGetRegisterInvocationRecursive(fieldOrProperty, semanticModel, cancellationToken, out var invocation))
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var arg))
                 {
@@ -137,7 +103,7 @@
                 return false;
             }
 
-            if (TryGetPropertyByName(field, out var property))
+            if (TryGetPropertyByName(fieldOrProperty, out var property))
             {
                 result = property.Name;
                 return true;
@@ -146,7 +112,7 @@
             return false;
         }
 
-        internal static bool TryGetRegisteredType(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        internal static bool TryGetRegisteredType(BackingFieldOrProperty field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
             if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation))
@@ -185,10 +151,10 @@
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyKeyField(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
+        internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = null;
-            if (field.TryGetAssignedValue(cancellationToken, out var value))
+            result = default(BackingFieldOrProperty);
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
                 var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
                 if (symbol is IMethodSymbol method)
@@ -201,8 +167,8 @@
                     var invocation = (InvocationExpressionSyntax)value;
                     var member = invocation.Expression as MemberAccessExpressionSyntax;
 
-                    field = semanticModel.GetSymbolSafe(member?.Expression, cancellationToken) as IFieldSymbol;
-                    return TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out result);
+                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(member?.Expression, cancellationToken), out result) &&
+                           TryGetDependencyPropertyKeyField(fieldOrProperty, semanticModel, cancellationToken, out result);
                 }
 
                 var property = symbol as IPropertySymbol;
@@ -214,18 +180,17 @@
 
                 if (value is MemberAccessExpressionSyntax memberAccess)
                 {
-                    result = semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken) as IFieldSymbol;
-                    return result != null;
+                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out result);
                 }
             }
 
             return false;
         }
 
-        internal static bool TryGetDependencyAddOwnerSourceField(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol result)
+        internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = null;
-            if (field.TryGetAssignedValue(cancellationToken, out var value))
+            result = default(BackingFieldOrProperty);
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
                 var invocation = value as InvocationExpressionSyntax;
                 if (invocation == null)
@@ -237,18 +202,19 @@
                 if (invocationSymbol == KnownSymbol.DependencyProperty.AddOwner)
                 {
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                    result = semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken) as IFieldSymbol;
-                    return result != null;
+                    return BackingFieldOrProperty.TryCreate(
+                        semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken),
+                        out result);
                 }
             }
 
             return false;
         }
 
-        internal static bool TryGetRegisterInvocation(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
+        internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
             result = null;
-            if (field.TryGetAssignedValue(cancellationToken, out var value) &&
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
                 var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken);
@@ -268,32 +234,33 @@
             return false;
         }
 
-        internal static bool TryGetRegisterInvocationRecursive(IFieldSymbol field, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
+        internal static bool TryGetRegisterInvocationRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
-            if (TryGetDependencyPropertyKeyField(field, semanticModel, cancellationToken, out var keyField))
+            if (TryGetDependencyPropertyKeyField(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
             {
                 return TryGetRegisterInvocationRecursive(keyField, semanticModel, cancellationToken, out result);
             }
 
-            if (TryGetDependencyAddOwnerSourceField(field, semanticModel, cancellationToken, out var addOwnerSource))
+            if (TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
             {
                 return TryGetRegisterInvocationRecursive(addOwnerSource, semanticModel, cancellationToken, out result);
             }
 
-            return TryGetRegisterInvocation(field, semanticModel, cancellationToken, out result);
+            return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result);
         }
 
-        private static bool TryGetPropertyByName(IFieldSymbol field, out IPropertySymbol property)
+        private static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)
         {
             property = null;
 
-            if (IsPotentialDependencyPropertyBackingField(field) || IsPotentialDependencyPropertyKeyBackingField(field))
+            if (IsPotentialDependencyPropertyBackingField(fieldOrProperty) ||
+                IsPotentialDependencyPropertyKeyBackingField(fieldOrProperty))
             {
-                var suffix = IsPotentialDependencyPropertyBackingField(field)
+                var suffix = IsPotentialDependencyPropertyBackingField(fieldOrProperty)
                                  ? "Property"
                                  : "PropertyKey";
 
-                foreach (var symbol in field.ContainingType.GetMembers())
+                foreach (var symbol in fieldOrProperty.ContainingType.GetMembers())
                 {
                     var candidate = symbol as IPropertySymbol;
                     if (candidate == null)
@@ -301,7 +268,7 @@
                         continue;
                     }
 
-                    if (!field.Name.IsParts(candidate.Name, suffix))
+                    if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
                     {
                         continue;
                     }
