@@ -41,10 +41,11 @@
 
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if (DependencyObject.TryGetSetCurrentValueArguments(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax _, out IFieldSymbol setField, out ArgumentSyntax value) &&
+                if (DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                    context.SemanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) is IFieldSymbol setField &&
                     setField == KnownSymbol.FrameworkElement.DataContextProperty)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), setField.Name, value));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), setField.Name, invocation.ArgumentList.Arguments[1]));
                 }
             }
         }

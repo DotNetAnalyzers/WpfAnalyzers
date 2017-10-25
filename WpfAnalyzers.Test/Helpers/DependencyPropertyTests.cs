@@ -40,7 +40,7 @@ namespace RoslynSandbox
             Assert.AreEqual("Register", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetRegisterCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace RoslynSandbox
             Assert.AreEqual("RegisterReadOnly", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -115,7 +115,42 @@ namespace RoslynSandbox
             Assert.AreEqual("RegisterAttached", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out method));
+        }
+
+        [Test]
+        public void TryGetRegisterAttachedCallFullyQualified()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    public static class Foo
+    {
+        public static readonly System.Windows.DependencyProperty BarProperty = System.Windows.DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new System.Windows.PropertyMetadata(default(int)));
+
+        public static void SetBar(System.Windows.DependencyObject element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(System.Windows.DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}");
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
+            Assert.AreEqual(true, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out var method));
+            Assert.AreEqual("RegisterAttached", method.Name);
+
+            invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
+            Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -149,7 +184,7 @@ namespace RoslynSandbox
             Assert.AreEqual("RegisterAttachedReadOnly", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -201,7 +236,7 @@ namespace RoslynSandbox
             Assert.AreEqual("AddOwner", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -244,7 +279,7 @@ namespace RoslynSandbox
             Assert.AreEqual("OverrideMetadata", method.Name);
 
             invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("GetValue");
-            Assert.AreEqual(false, DependencyObject.IsPotentialSetValueCall(invocation));
+            Assert.AreEqual(false, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out method));
         }
 
         [Test]
@@ -269,35 +304,6 @@ namespace RoslynSandbox
         }
 
         public static int GetBar(DependencyObject element)
-        {
-            return (int)element.GetValue(BarProperty);
-        }
-    }
-}");
-            var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RegisterAttached");
-            Assert.AreEqual(true, DependencyProperty.IsPotentialStaticMethodCall(invocation));
-        }
-
-        [Test]
-        public void IsPotentialStaticMethodCallFullyQualified()
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
-{
-    public static class Foo
-    {
-        public static readonly System.Windows.DependencyProperty BarProperty = System.Windows.DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new System.Windows.PropertyMetadata(default(int)));
-
-        public static void SetBar(System.Windows.DependencyObject element, int value)
-        {
-            element.SetValue(BarProperty, value);
-        }
-
-        public static int GetBar(System.Windows.DependencyObject element)
         {
             return (int)element.GetValue(BarProperty);
         }
