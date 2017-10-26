@@ -10,7 +10,7 @@
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrSetMethod(this IMethodSymbol method)
+        internal static bool IsPotentialClrSetMethod(IMethodSymbol method)
         {
             if (method == null)
             {
@@ -51,7 +51,7 @@
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrGetMethod(this IMethodSymbol method)
+        internal static bool IsPotentialClrGetMethod(IMethodSymbol method)
         {
             if (method == null)
             {
