@@ -20,8 +20,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static DependencyProperty BarProperty = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        ↓public static DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -39,8 +38,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -51,7 +49,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
             fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -254,7 +252,7 @@ namespace RoslynSandbox
 
         public static void SetBar(DependencyObject element, int value)
         {
-            element.SetValue(BarPropertyKey, value);
+            element.SetValue(BarProperty, value);
         }
 
         public static int GetBar(DependencyObject element)
@@ -279,7 +277,7 @@ namespace RoslynSandbox
 
         public static void SetBar(DependencyObject element, int value)
         {
-            element.SetValue(BarPropertyKey, value);
+            element.SetValue(BarProperty, value);
         }
 
         public static int GetBar(DependencyObject element)

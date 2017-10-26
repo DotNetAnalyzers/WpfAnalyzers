@@ -40,8 +40,8 @@
                 return;
             }
 
-            if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
-                DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out InvocationExpressionSyntax _))
+            if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var fieldOrProperty) &&
+                DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _))
             {
                 if (!fieldOrProperty.Symbol.IsStatic)
                 {
