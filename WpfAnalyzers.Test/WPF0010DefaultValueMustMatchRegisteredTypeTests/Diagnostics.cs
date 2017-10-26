@@ -39,7 +39,9 @@ namespace RoslynSandbox
 
         [TestCase("int", "new PropertyMetadata(↓default(double))")]
         [TestCase("int", "new PropertyMetadata(↓0.0)")]
-        [TestCase("int", "new PropertyMetadata(↓null)")]
+        [TestCase("int", "new PropertyMetadata(↓0.0, OnValueChanged)")]
+        [TestCase("int", "new PropertyMetadata(↓(object)null)")]
+        [TestCase("int", "new PropertyMetadata(↓null, OnValueChanged)")]
         [TestCase("double", "new PropertyMetadata(↓1)")]
         [TestCase("double?", "new PropertyMetadata(↓1)")]
         [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
