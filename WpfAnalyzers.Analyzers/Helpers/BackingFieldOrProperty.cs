@@ -46,6 +46,29 @@
             return false;
         }
 
+        internal static bool TryCreateCandidate(ISymbol symbol, out BackingFieldOrProperty result)
+        {
+            if (symbol != null)
+            {
+                if (symbol is IFieldSymbol field &&
+                    field.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
+                {
+                    result = new BackingFieldOrProperty(field);
+                    return true;
+                }
+
+                if (symbol is IPropertySymbol property &&
+                    property.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
+                {
+                    result = new BackingFieldOrProperty(property);
+                    return true;
+                }
+            }
+
+            result = default(BackingFieldOrProperty);
+            return false;
+        }
+
         internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
         {
             value = null;
@@ -58,7 +81,7 @@
             {
                 if (property.TryGetSingleDeclaration(cancellationToken, out var declaration))
                 {
-                    value = declaration.Initializer.Value;
+                    value = declaration.Initializer?.Value;
                     return value != null;
                 }
             }
