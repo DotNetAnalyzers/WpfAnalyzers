@@ -1,9 +1,11 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Diagnostics;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    [DebuggerDisplay("{this.Symbol}")]
     internal struct BackingFieldOrProperty
     {
         private BackingFieldOrProperty(ISymbol symbol)

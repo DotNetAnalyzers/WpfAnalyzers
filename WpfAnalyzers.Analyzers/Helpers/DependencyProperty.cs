@@ -161,7 +161,7 @@
                     var member = invocation.Expression as MemberAccessExpressionSyntax;
 
                     return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(member?.Expression, cancellationToken), out result) &&
-                           TryGetDependencyPropertyKeyField(fieldOrProperty, semanticModel, cancellationToken, out result);
+                           TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
                 }
 
                 var property = symbol as IPropertySymbol;
