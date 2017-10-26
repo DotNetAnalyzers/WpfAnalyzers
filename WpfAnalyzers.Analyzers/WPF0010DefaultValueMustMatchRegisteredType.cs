@@ -40,38 +40,13 @@
             }
 
             if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
-                context.ContainingSymbol.IsStatic)
+                context.ContainingSymbol.IsStatic &&
+                PropertyMetaData.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg) &&
+                PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
+                DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                !registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken))
             {
-                if (!PropertyMetaData.TryGetDefaultValue(
-                    objectCreation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var defaultValueArg))
-                {
-                    return;
-                }
-
-                var defaultValue = defaultValueArg.Expression;
-                if (defaultValue.IsSameType(KnownSymbol.Object, context))
-                {
-                    return;
-                }
-
-                if (!PropertyMetaData.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var dp))
-                {
-                    return;
-                }
-
-                if (!DependencyProperty.TryGetRegisteredType(dp, context.SemanticModel, context.CancellationToken, out var registeredType))
-                {
-                    return;
-                }
-
-                if (!registeredType.IsRepresentationPreservingConversion(
-                    defaultValue, context.SemanticModel, context.CancellationToken))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), dp, registeredType));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), fieldOrProperty.Symbol, registeredType));
             }
         }
     }

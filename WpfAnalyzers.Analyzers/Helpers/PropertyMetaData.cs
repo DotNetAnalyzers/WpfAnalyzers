@@ -6,42 +6,13 @@
 
     internal static class PropertyMetaData
     {
-        internal static bool TryGetConstructor(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out IMethodSymbol constructor)
+        internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol constructor)
         {
-            constructor = null;
-            var createdType = semanticModel.GetTypeInfoSafe(objectCreation, cancellationToken)
-                                           .Type;
-            if (createdType == null)
-            {
-                return false;
-            }
-
-            if (!createdType.Is(KnownSymbol.PropertyMetadata) ||
-                objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
-            {
-                return false;
-            }
-
-            if (createdType.ContainingNamespace != KnownSymbol.PropertyMetadata.Namespace)
-            {
-                // don't think there is a way to handle custom subclassed.
-                // should not be common
-                return false;
-            }
-
             constructor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
-            return constructor != null;
+            return constructor?.ContainingType.Is(KnownSymbol.PropertyMetadata) == true;
         }
 
-        internal static bool TryGetDefaultValue(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax defaultValueArg)
+        internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax defaultValueArg)
         {
             defaultValueArg = null;
             if (objectCreation?.ArgumentList == null ||
@@ -50,19 +21,10 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor))
-            {
-                return false;
-            }
-
-            if (constructor == null ||
-                !constructor.Parameters.TryGetFirst(out var parameter) ||
-                parameter.Type != KnownSymbol.Object)
-            {
-                return false;
-            }
-
-            return objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+                   constructor.Parameters.TryGetFirst(out var parameter) &&
+                   parameter.Type == KnownSymbol.Object &&
+                   objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
         }
 
         internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax propertyChangedCallbackArg)
@@ -86,8 +48,8 @@
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty dependencyProperty)
         {
-            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(objectCreation.FirstAncestorOrSelf<FieldDeclarationSyntax>(), cancellationToken), out dependencyProperty) ||
-                   BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out dependencyProperty);
+            return BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<FieldDeclarationSyntax>(), cancellationToken), out dependencyProperty) ||
+                   BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out dependencyProperty);
         }
 
         internal static bool TryGetCallback(
