@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -65,18 +66,9 @@
             return objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
         }
 
-        internal static bool TryGetPropertyChangedCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax propertyChangedCallbackArg)
+        internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax propertyChangedCallbackArg)
         {
-            return TryGetCallback(
-                objectCreation,
-                KnownSymbol.PropertyChangedCallback,
-                semanticModel,
-                cancellationToken,
-                out propertyChangedCallbackArg);
+            return TryGetCallback(objectCreation, KnownSymbol.PropertyChangedCallback, semanticModel, cancellationToken, out propertyChangedCallbackArg);
         }
 
         internal static bool TryGetCoerceValueCallback(
@@ -118,7 +110,7 @@
                 return false;
             }
 
-            for (var i = 0; i < constructor.Parameters.Length; i++)
+            for (var i = 0; i < Math.Min(constructor.Parameters.Length, objectCreation.ArgumentList.Arguments.Count); i++)
             {
                 var parameter = constructor.Parameters[i];
                 if (parameter.Type == callbackType)
