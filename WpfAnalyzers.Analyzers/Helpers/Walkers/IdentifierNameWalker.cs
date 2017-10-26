@@ -22,14 +22,6 @@
 
         internal static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
 
-        internal static IdentifierNameSyntax First(SyntaxNode node)
-        {
-            using (var walker = Borrow(node))
-            {
-                return walker.identifierNames[0];
-            }
-        }
-
         protected override void Clear()
         {
             this.identifierNames.Clear();

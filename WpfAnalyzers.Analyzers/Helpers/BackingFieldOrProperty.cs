@@ -69,5 +69,23 @@
         {
             return this.Symbol.DeclaringSyntaxReferences.TryGetSingle(out syntaxReference);
         }
+
+        public SyntaxToken FindIdentifier(SyntaxNode node)
+        {
+            if (node is PropertyDeclarationSyntax propertyDeclaration)
+            {
+                return propertyDeclaration.Identifier;
+            }
+
+            if (node is FieldDeclarationSyntax fieldDeclaration)
+            {
+                if (fieldDeclaration.Declaration.Variables.TryGetSingle(out var variable))
+                {
+                    return variable.Identifier;
+                }
+            }
+
+            return node.GetFirstToken();
+        }
     }
 }
