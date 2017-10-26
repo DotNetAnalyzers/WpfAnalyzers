@@ -34,8 +34,7 @@
 
         internal static IFieldSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, FieldDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            if (node == null ||
-                node.Declaration == null)
+            if (node?.Declaration == null)
             {
                 return null;
             }
@@ -92,6 +91,11 @@
 
         internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
+            if (node is FieldDeclarationSyntax fieldDeclaration)
+            {
+                return GetDeclaredSymbolSafe(semanticModel, fieldDeclaration, cancellationToken);
+            }
+
             return semanticModel.SemanticModelFor(node)
                                 ?.GetDeclaredSymbol(node, cancellationToken);
         }
