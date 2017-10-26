@@ -40,50 +40,29 @@
             }
 
             if (context.Node is InvocationExpressionSyntax invocation &&
-                context.ContainingSymbol.IsStatic &&
-                invocation.TryGetInvokedMethodName(out var name))
+                context.ContainingSymbol.IsStatic)
             {
-                if (name.StartsWith("Register") &&
-                    invocation.TryGetArgumentAtIndex(2, out var argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol registerMethod)
+                if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
+                    (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                     DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                     DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                     DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)))
                 {
-                    if (registerMethod == KnownSymbol.DependencyProperty.Register ||
-                        registerMethod == KnownSymbol.DependencyProperty.RegisterReadOnly ||
-                        registerMethod == KnownSymbol.DependencyProperty.RegisterAttached ||
-                        registerMethod == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
+                    HandleArgument(context, argument);
+                }
+                else if (invocation.TryGetArgumentAtIndex(0, out argument))
+                {
+                    if (DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _))
                     {
                         HandleArgument(context, argument);
                     }
-                }
-
-                if (name == "AddOwner" &&
-                    invocation.TryGetArgumentAtIndex(0, out argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol addOwner &&
-                    addOwner == KnownSymbol.DependencyProperty.AddOwner)
-                {
-                    HandleArgument(context, argument);
-                }
-
-                if (name == "OverrideMetadata" &&
-                    invocation.TryGetArgumentAtIndex(0, out argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                    method == KnownSymbol.DependencyProperty.OverrideMetadata)
-                {
-                    var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                    if (memberAccess == null)
+                    else if (DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                             invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                             BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                             context.ContainingSymbol.ContainingType.Is(fieldOrProperty.ContainingType))
                     {
-                        return;
+                        HandleArgument(context, argument);
                     }
-
-                    var containingType = context.ContainingSymbol.ContainingType;
-                    var dp = context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken) as
-                        IFieldSymbol;
-                    if (!containingType.Is(dp?.ContainingType))
-                    {
-                        return;
-                    }
-
-                    HandleArgument(context, argument);
                 }
             }
         }
