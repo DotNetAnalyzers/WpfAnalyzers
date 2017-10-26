@@ -4,12 +4,13 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class PropertyMetaData
+    internal static class PropertyMetadata
     {
         internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol constructor)
         {
-            constructor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
-            return constructor?.ContainingType.Is(KnownSymbol.PropertyMetadata) == true;
+            return Constructor.TryGet(objectCreation, KnownSymbol.PropertyMetadata, semanticModel, cancellationToken, out constructor) ||
+                   Constructor.TryGet(objectCreation, KnownSymbol.UIPropertyMetadata, semanticModel, cancellationToken, out constructor) ||
+                   Constructor.TryGet(objectCreation, KnownSymbol.FrameworkPropertyMetadata, semanticModel, cancellationToken, out constructor);
         }
 
         internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax defaultValueArg)
