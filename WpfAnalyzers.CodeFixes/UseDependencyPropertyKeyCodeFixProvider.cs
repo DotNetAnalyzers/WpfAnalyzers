@@ -58,7 +58,7 @@
                                     context.Document,
                                     invocation,
                                     null,
-                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, token.SpanStart),
                                     cancellationToken),
                                  this.GetType().FullName),
                             diagnostic);
@@ -83,7 +83,7 @@
                                     context.Document,
                                     invocation,
                                     SetValueExpression(invocation.Expression),
-                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, token.SpanStart),
                                     cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);

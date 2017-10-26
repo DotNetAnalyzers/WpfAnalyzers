@@ -51,20 +51,7 @@
                    BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out dependencyProperty);
         }
 
-        private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
-        {
-            callback = null;
-            if (objectCreation?.ArgumentList == null ||
-                objectCreation.ArgumentList.Arguments.Count == 0)
-            {
-                return false;
-            }
-
-            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
-                   Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
-        }
-
-        public static bool TryFindObjectCreationAncestor(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out ObjectCreationExpressionSyntax objectCreation)
+        internal static bool TryFindObjectCreationAncestor(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out ObjectCreationExpressionSyntax objectCreation)
         {
             objectCreation = null;
             var parent = node?.Parent;
@@ -81,6 +68,19 @@
             }
 
             return false;
+        }
+
+        private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
+        {
+            callback = null;
+            if (objectCreation?.ArgumentList == null ||
+                objectCreation.ArgumentList.Arguments.Count == 0)
+            {
+                return false;
+            }
+
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+                   Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
         }
     }
 }

@@ -55,14 +55,14 @@
                     return;
                 }
 
-                if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out var field))
+                if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
                 {
                     if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
                     {
                         return;
                     }
 
-                    var propertyArg = DependencyProperty.CreateArgument(field, context.SemanticModel, context.Node.SpanStart);
+                    var propertyArg = fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart);
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
                 }
             }

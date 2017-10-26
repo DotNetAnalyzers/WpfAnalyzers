@@ -60,7 +60,7 @@
                                     Descriptor,
                                     propertyArg.GetLocation(),
                                     propertyArg,
-                                    DependencyProperty.CreateArgument(keyField, context.SemanticModel, propertyArg.SpanStart)));
+                                    keyField.CreateArgument(context.SemanticModel, propertyArg.SpanStart)));
                         }
                     }
                 }
