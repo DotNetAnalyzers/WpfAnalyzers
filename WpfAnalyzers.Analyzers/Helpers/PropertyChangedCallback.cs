@@ -6,14 +6,14 @@ namespace WpfAnalyzers
 
     internal class PropertyChangedCallback
     {
-        internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax nameExpression, out string name)
+        internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string name)
         {
             return Callback.TryGetName(
                 callback,
                 KnownSymbol.PropertyChangedCallback,
                 semanticModel,
                 cancellationToken,
-                out nameExpression,
+                out identifier,
                 out name);
         }
 

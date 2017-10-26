@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -57,8 +56,8 @@
             }
 
             if (constructor == null ||
-    !constructor.Parameters.TryGetFirst(out var parameter) ||
-    parameter.Type != KnownSymbol.Object)
+                !constructor.Parameters.TryGetFirst(out var parameter) ||
+                parameter.Type != KnownSymbol.Object)
             {
                 return false;
             }
@@ -105,22 +104,8 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor))
-            {
-                return false;
-            }
-
-            for (var i = 0; i < Math.Min(constructor.Parameters.Length, objectCreation.ArgumentList.Arguments.Count); i++)
-            {
-                var parameter = constructor.Parameters[i];
-                if (parameter.Type == callbackType)
-                {
-                    callback = objectCreation.ArgumentList.Arguments[i];
-                    return true;
-                }
-            }
-
-            return false;
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+                   Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
         }
     }
 }
