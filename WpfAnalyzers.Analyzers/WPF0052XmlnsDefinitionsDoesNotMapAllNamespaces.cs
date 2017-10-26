@@ -110,7 +110,7 @@
                         continue;
                     }
 
-                    if (tree.TryGetRoot(out SyntaxNode root))
+                    if (tree.TryGetRoot(out var root))
                     {
                         walker.Visit(root);
                     }
@@ -137,7 +137,7 @@
             {
                 if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out AttributeSyntax _))
                 {
-                    if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax arg))
+                    if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
                         if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
                         {

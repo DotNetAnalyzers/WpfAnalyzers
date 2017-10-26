@@ -168,7 +168,7 @@
 
         private static void TryUpdateName(
             CodeFixContext context,
-            IFieldSymbol setField,
+            BackingFieldOrProperty setField,
             SemanticModel semanticModel,
             SyntaxNode syntaxRoot,
             SyntaxToken token,

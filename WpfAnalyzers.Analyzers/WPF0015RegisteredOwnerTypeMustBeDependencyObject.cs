@@ -74,7 +74,7 @@
 
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
-            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out ITypeSymbol ownerType))
+            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType))
             {
                 return;
             }

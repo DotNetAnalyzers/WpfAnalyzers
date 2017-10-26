@@ -181,25 +181,7 @@ namespace RoslynSandbox
         [Test]
         public void DependencyPropertyAddOwner()
         {
-            var part1 = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
-
-        public int ↓Error
-        {
-            get { return (int) this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
-        }
-    }
-}";
-
-            var part2 = @"
+            var fooCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -226,6 +208,24 @@ namespace RoslynSandbox
     }
 }";
 
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+        public int ↓Error
+        {
+            get { return (int) this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -243,7 +243,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(new[] { testCode, fooCode }, fixedCode);
         }
 
         [Test]

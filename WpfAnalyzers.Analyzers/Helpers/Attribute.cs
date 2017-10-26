@@ -53,7 +53,7 @@ namespace WpfAnalyzers
             {
                 foreach (var candidate in attributeList.Attributes)
                 {
-                    if (TryGetAttribute(candidate, typeName, semanticModel, cancellationToken, out AttributeSyntax attribute))
+                    if (TryGetAttribute(candidate, typeName, semanticModel, cancellationToken, out var attribute))
                     {
                         yield return attribute;
                     }

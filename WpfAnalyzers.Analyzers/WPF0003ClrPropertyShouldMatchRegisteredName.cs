@@ -41,16 +41,17 @@
 
             if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property &&
-                property.ContainingType.Is(KnownSymbol.DependencyObject))
+                property.ContainingType.Is(KnownSymbol.DependencyObject) &&
+                ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                registeredName != property.Name)
             {
-                if (ClrProperty.TryGetRegisteredName(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredName))
-                {
-                    if (registeredName != property.Name)
-                    {
-                        var identifier = propertyDeclaration.Identifier;
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), property.Name, registeredName));
-                    }
-                }
+                var identifier = propertyDeclaration.Identifier;
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        identifier.GetLocation(),
+                        property.Name,
+                        registeredName));
             }
         }
     }

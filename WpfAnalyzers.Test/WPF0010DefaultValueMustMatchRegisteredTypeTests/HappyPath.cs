@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
         private static readonly WPF0010DefaultValueMustMatchRegisteredType Analyzer = new WPF0010DefaultValueMustMatchRegisteredType();
 
         [Test]
-        public void DependencyPropertyNoMetadata()
+        public void RegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyMetadataWithCallbackOnly()
+        public void RegisterWithMetadataWithCallbackOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
-        public void DependencyPropertyWithMetdadata(string typeName, string metadata)
+        public void RegisterWithMetdadata(string typeName, string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -129,7 +129,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyGeneric()
+        public void RegisterWhenGenericContainingType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWhenBoxed()
+        public void RegisterWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -200,7 +200,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public void RegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -232,7 +232,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void RegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -257,7 +257,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyWhenBoxed()
+        public void RegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -305,7 +305,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void RegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -329,6 +329,94 @@ namespace RoslynSandbox
 }";
 
             AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void AddOwner()
+        {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int), 
+            typeof(Foo), 
+            new FrameworkPropertyMetadata(
+                default(int), 
+                FrameworkPropertyMetadataOptions.Inherits));
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int) element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl), new FrameworkPropertyMetadata(1));
+
+        public int BarProperty
+        {
+            get { return (int) this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode, fooCode);
+        }
+
+        [Test]
+        public void OverrideMetadata()
+        {
+            var fooControlCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            ""Value"",
+            typeof(int),
+            typeof(Control),
+            new PropertyMetadata(default(int)));
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class BarControl : FooControl
+    {
+        static BarControl()
+        {
+            ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
     }
 }

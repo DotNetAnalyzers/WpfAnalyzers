@@ -49,29 +49,17 @@
             }
 
             if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
-                context.ContainingSymbol.IsStatic)
+                context.ContainingSymbol.IsStatic &&
+                PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var callback) &&
+                TryGetIdentifierAndRegisteredName(callback, context.SemanticModel, context.CancellationToken, out var identifier, out var registeredName) &&
+                !identifier.Identifier.ValueText.IsParts("On", registeredName, "Changed"))
             {
-                if (!PropertyMetaData.TryGetPropertyChangedCallback(
-                    objectCreation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var callback))
-                {
-                    return;
-                }
-
-                if (TryGetIdentifierAndRegisteredName(
-                    callback,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var nameExpression,
-                    out var registeredName))
-                {
-                    if (!nameExpression.Identifier.ValueText.IsParts("On", registeredName, "Changed"))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation(), nameExpression, $"On{registeredName}Changed"));
-                    }
-                }
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        identifier.GetLocation(),
+                        identifier,
+                        $"On{registeredName}Changed"));
             }
         }
     }

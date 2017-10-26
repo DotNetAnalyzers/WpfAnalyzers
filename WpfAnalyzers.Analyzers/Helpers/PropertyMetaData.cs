@@ -4,44 +4,16 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class PropertyMetaData
+    internal static class PropertyMetadata
     {
-        internal static bool TryGetConstructor(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out IMethodSymbol constructor)
+        internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol constructor)
         {
-            constructor = null;
-            var createdType = semanticModel.GetTypeInfoSafe(objectCreation, cancellationToken)
-                                           .Type;
-            if (createdType == null)
-            {
-                return false;
-            }
-
-            if (!createdType.Is(KnownSymbol.PropertyMetadata) ||
-                objectCreation?.ArgumentList.Arguments.FirstOrDefault() == null)
-            {
-                return false;
-            }
-
-            if (createdType.ContainingNamespace != KnownSymbol.PropertyMetadata.Namespace)
-            {
-                // don't think there is a way to handle custom subclassed.
-                // should not be common
-                return false;
-            }
-
-            constructor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
-            return constructor != null;
+            return Constructor.TryGet(objectCreation, KnownSymbol.PropertyMetadata, semanticModel, cancellationToken, out constructor) ||
+                   Constructor.TryGet(objectCreation, KnownSymbol.UIPropertyMetadata, semanticModel, cancellationToken, out constructor) ||
+                   Constructor.TryGet(objectCreation, KnownSymbol.FrameworkPropertyMetadata, semanticModel, cancellationToken, out constructor);
         }
 
-        internal static bool TryGetDefaultValue(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax defaultValueArg)
+        internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax defaultValueArg)
         {
             defaultValueArg = null;
             if (objectCreation?.ArgumentList == null ||
@@ -50,68 +22,77 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+                   constructor.Parameters.TryGetFirst(out var parameter) &&
+                   parameter.Type == KnownSymbol.Object &&
+                   objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
+        }
+
+        internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
+        {
+            return TryGetCallback(objectCreation, KnownSymbol.PropertyChangedCallback, semanticModel, cancellationToken, out callback);
+        }
+
+        internal static bool TryGetCoerceValueCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
+        {
+            return TryGetCallback(objectCreation, KnownSymbol.CoerceValueCallback, semanticModel, cancellationToken, out callback);
+        }
+
+        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        {
+            registeredName = null;
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
+                   DependencyProperty.TryGetRegisteredName(objectCreation?.FirstAncestorOrSelf<InvocationExpressionSyntax>(), semanticModel, cancellationToken, out registeredName);
+        }
+
+        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)
+        {
+            fieldOrProperty = default(BackingFieldOrProperty);
+            var invocation = objectCreation.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            if (invocation == null)
             {
                 return false;
             }
 
-            if (constructor == null ||
-    !constructor.Parameters.TryGetFirst(out IParameterSymbol parameter) ||
-    parameter.Type != KnownSymbol.Object)
+            if (DependencyProperty.TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
             {
-                return false;
+                return BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<FieldDeclarationSyntax>(), cancellationToken), out fieldOrProperty) ||
+                       BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out fieldOrProperty);
             }
 
-            return objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
-        }
-
-        internal static bool TryGetPropertyChangedCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax propertyChangedCallbackArg)
-        {
-            return TryGetCallback(
-                objectCreation,
-                KnownSymbol.PropertyChangedCallback,
-                semanticModel,
-                cancellationToken,
-                out propertyChangedCallbackArg);
-        }
-
-        internal static bool TryGetCoerceValueCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax propertyChangedCallbackArg)
-        {
-            return TryGetCallback(
-                objectCreation,
-                KnownSymbol.CoerceValueCallback,
-                semanticModel,
-                cancellationToken,
-                out propertyChangedCallbackArg);
-        }
-
-        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol dependencyProperty)
-        {
-            dependencyProperty = null;
-            var declarator = objectCreation.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
-            if (declarator == null)
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
+                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
-                return false;
+                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out fieldOrProperty);
             }
 
-            dependencyProperty = semanticModel.GetDeclaredSymbolSafe(declarator, cancellationToken) as IFieldSymbol;
-            return dependencyProperty != null;
+            return false;
         }
 
-        internal static bool TryGetCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            QualifiedType callbackType,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax callback)
+        internal static bool TryFindObjectCreationAncestor(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out ObjectCreationExpressionSyntax objectCreation)
+        {
+            objectCreation = null;
+            var parent = node?.Parent;
+            while (parent != null)
+            {
+                if (parent is ObjectCreationExpressionSyntax candidate &&
+                    TryGetConstructor(candidate, semanticModel, cancellationToken, out _))
+                {
+                    objectCreation = candidate;
+                    return true;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
             if (objectCreation?.ArgumentList == null ||
@@ -120,22 +101,8 @@
                 return false;
             }
 
-            if (!TryGetConstructor(objectCreation, semanticModel, cancellationToken, out IMethodSymbol constructor))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < constructor.Parameters.Length; i++)
-            {
-                var parameter = constructor.Parameters[i];
-                if (parameter.Type == callbackType)
-                {
-                    callback = objectCreation.ArgumentList.Arguments[i];
-                    return true;
-                }
-            }
-
-            return false;
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+                   Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
         }
     }
 }

@@ -8,14 +8,6 @@
 
     internal static class ArgumentSyntaxExt
     {
-        internal static bool TryGetSymbol<T>(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out T result)
-            where T : class, ISymbol
-        {
-            result = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken) as T;
-
-            return result != null;
-        }
-
         internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;

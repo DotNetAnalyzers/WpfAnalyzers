@@ -42,10 +42,11 @@
                     continue;
                 }
 
-                if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _))
+                if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
+                    BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out var fieldOrProperty))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                        semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol,
+                        fieldOrProperty,
                         semanticModel,
                         context.CancellationToken,
                         out var keyField))
@@ -57,7 +58,7 @@
                                     context.Document,
                                     invocation,
                                     null,
-                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, token.SpanStart),
                                     cancellationToken),
                                  this.GetType().FullName),
                             diagnostic);
@@ -66,10 +67,11 @@
                     continue;
                 }
 
-                if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _))
+                if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
+                    BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out fieldOrProperty))
                 {
                     if (DependencyProperty.TryGetDependencyPropertyKeyField(
-                        semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol,
+                        fieldOrProperty,
                         semanticModel,
                         context.CancellationToken,
                         out var keyField))
@@ -81,7 +83,7 @@
                                     context.Document,
                                     invocation,
                                     SetValueExpression(invocation.Expression),
-                                    DependencyProperty.CreateArgument(keyField, semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, token.SpanStart),
                                     cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);

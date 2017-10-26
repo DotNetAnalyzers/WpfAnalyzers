@@ -12,15 +12,15 @@
         {
         }
 
-        public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
-
-        public static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
+        internal IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             this.identifierNames.Add(node);
             base.VisitIdentifierName(node);
         }
+
+        internal static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
 
         protected override void Clear()
         {

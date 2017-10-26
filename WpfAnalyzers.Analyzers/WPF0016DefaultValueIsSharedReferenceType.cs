@@ -42,7 +42,7 @@
 
             if (context.Node is ObjectCreationExpressionSyntax objectCreation)
             {
-                if (!PropertyMetaData.TryGetDefaultValue(
+                if (!PropertyMetadata.TryGetDefaultValue(
                     objectCreation,
                     context.SemanticModel,
                     context.CancellationToken,
@@ -62,7 +62,7 @@
                         return;
                     }
 
-                    if (!PropertyMetaData.TryGetDependencyProperty(
+                    if (!PropertyMetadata.TryGetDependencyProperty(
                         objectCreation,
                         context.SemanticModel,
                         context.CancellationToken,

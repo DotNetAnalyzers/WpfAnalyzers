@@ -34,8 +34,18 @@
 
         internal static IFieldSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, FieldDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (IFieldSymbol)semanticModel.SemanticModelFor(node)
-                                              ?.GetDeclaredSymbol(node, cancellationToken);
+            if (node?.Declaration == null)
+            {
+                return null;
+            }
+
+            if (node.Declaration.Variables.TryGetSingle(out var variable))
+            {
+                return (IFieldSymbol)semanticModel.SemanticModelFor(node)
+                                                  ?.GetDeclaredSymbol(variable, cancellationToken);
+            }
+
+            return null;
         }
 
         internal static IMethodSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, ConstructorDeclarationSyntax node, CancellationToken cancellationToken)
@@ -81,6 +91,11 @@
 
         internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
+            if (node is FieldDeclarationSyntax fieldDeclaration)
+            {
+                return GetDeclaredSymbolSafe(semanticModel, fieldDeclaration, cancellationToken);
+            }
+
             return semanticModel.SemanticModelFor(node)
                                 ?.GetDeclaredSymbol(node, cancellationToken);
         }
