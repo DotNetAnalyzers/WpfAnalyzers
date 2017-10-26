@@ -3,6 +3,7 @@
     using System.Diagnostics;
     using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [DebuggerDisplay("{this.Symbol}")]
@@ -86,6 +87,18 @@
             }
 
             return node.GetFirstToken();
+        }
+
+        internal ArgumentSyntax CreateArgument(SemanticModel semanticModel, int position)
+        {
+            var name = this.Name;
+            if (semanticModel.LookupStaticMembers(position, name: name).Contains(this.Symbol))
+            {
+                return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(name));
+            }
+
+            var typeName = this.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat);
+            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{typeName}.{name}"));
         }
     }
 }

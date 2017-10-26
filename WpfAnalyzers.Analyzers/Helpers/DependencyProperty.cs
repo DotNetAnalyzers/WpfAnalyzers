@@ -3,7 +3,6 @@
     using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DependencyProperty
@@ -76,11 +75,6 @@
         internal static bool IsPotentialDependencyPropertyKeyBackingField(BackingFieldOrProperty fieldOrProperty)
         {
             return fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey;
-        }
-
-        internal static ArgumentSyntax CreateArgument(BackingFieldOrProperty field, SemanticModel semanticModel, int position)
-        {
-            return SyntaxFactory.Argument(SyntaxFactory.ParseExpression(field.Symbol.ToMinimalDisplayString(semanticModel, position)));
         }
 
         internal static bool TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
