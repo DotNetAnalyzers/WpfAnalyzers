@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void ReadOnlyDependencyProperty(string nameof)
+        public void RegisterReadOnlyBackingFields(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,8 +39,40 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("\"Bar\"")]
+        [TestCase("nameof(Bar)")]
+        [TestCase("nameof(FooControl.Bar)")]
+        public void RegisterReadOnlyBackingProperties(string nameof)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static DependencyPropertyKey BarPropertyKey { get; } = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static DependencyProperty BarProperty { get; } = BarPropertyKey.DependencyProperty;
+    
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("nameof(Bar)", nameof);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [Test]
-        public void ReadOnlyDependencyPropertyRepro()
+        public void RegisterReadOnlyRepro()
         {
             var statusCode = @"
 namespace RoslynSandbox
@@ -83,7 +115,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void RegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

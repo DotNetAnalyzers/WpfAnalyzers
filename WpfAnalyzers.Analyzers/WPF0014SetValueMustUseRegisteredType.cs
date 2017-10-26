@@ -51,12 +51,8 @@
                         return;
                     }
 
-                    var propertyMember = context.SemanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken) as IFieldSymbol;
-                    if (DependencyProperty.TryGetRegisteredType(
-                        propertyMember,
-                        context.SemanticModel,
-                        context.CancellationToken,
-                        out var registeredType))
+                    if (BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out var fieldOrProperty) &&
+                        DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
                         if (registeredType.Is(KnownSymbol.Freezable) &&
                             value.Expression.IsSameType(KnownSymbol.Freezable, context))

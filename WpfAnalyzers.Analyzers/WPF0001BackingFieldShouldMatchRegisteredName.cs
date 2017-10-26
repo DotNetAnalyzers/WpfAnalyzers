@@ -3,7 +3,6 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -30,7 +29,7 @@ namespace WpfAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.FieldDeclaration, SyntaxKind.PropertyDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
@@ -40,18 +39,17 @@ namespace WpfAnalyzers
                 return;
             }
 
-            if (context.ContainingSymbol is IFieldSymbol field &&
-                context.Node is FieldDeclarationSyntax fieldDeclaration &&
-                field.Type == KnownSymbol.DependencyProperty)
+            if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
+                fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
+                DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                !fieldOrProperty.Name.IsParts(registeredName, "Property"))
             {
-                if (DependencyProperty.TryGetRegisteredName(field, context.SemanticModel, context.CancellationToken, out var registeredName))
-                {
-                    if (!field.Name.IsParts(registeredName, "Property"))
-                    {
-                        var identifier = fieldDeclaration.Declaration.Variables.First().Identifier;
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), field.Name, registeredName));
-                    }
-                }
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                        fieldOrProperty.Name,
+                        registeredName));
             }
         }
     }

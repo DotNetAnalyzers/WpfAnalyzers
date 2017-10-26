@@ -49,34 +49,17 @@
             }
 
             if (context.Node is InvocationExpressionSyntax invocation &&
-                context.ContainingSymbol.IsStatic)
+                context.ContainingSymbol.IsStatic &&
+                ValidateValueCallback.TryGetValidateValueCallback(invocation, context.SemanticModel, context.CancellationToken, out var callback) &&
+                TryGetIdentifierAndRegisteredName(callback, context.SemanticModel, context.CancellationToken, out var identifier, out var registeredName) &&
+                !identifier.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
             {
-                if (!ValidateValueCallback.TryGetValidateValueCallback(
-                    invocation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var callback))
-                {
-                    return;
-                }
-
-                if (TryGetIdentifierAndRegisteredName(
-                    callback,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var nameExpression,
-                    out var registeredName))
-                {
-                    if (!nameExpression.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                nameExpression.GetLocation(),
-                                nameExpression,
-                                $"{registeredName}ValidateValue"));
-                    }
-                }
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        identifier.GetLocation(),
+                        identifier,
+                        $"{registeredName}ValidateValue"));
             }
         }
     }

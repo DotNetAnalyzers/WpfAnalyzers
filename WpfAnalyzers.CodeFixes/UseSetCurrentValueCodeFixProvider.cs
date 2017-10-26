@@ -61,7 +61,7 @@
             {
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                  .ConfigureAwait(false);
-                if (TryGetFix(semanticModel, context.CancellationToken, assignment, out InvocationExpressionSyntax setCurrentValueCall))
+                if (TryGetFix(semanticModel, context.CancellationToken, assignment, out var setCurrentValueCall))
                 {
                     return new Fix(assignment, setCurrentValueCall);
                 }
@@ -73,7 +73,7 @@
             {
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                  .ConfigureAwait(false);
-                if (TryGetFix(semanticModel, context.CancellationToken, invocation, out InvocationExpressionSyntax setCurrentValueCall))
+                if (TryGetFix(semanticModel, context.CancellationToken, invocation, out var setCurrentValueCall))
                 {
                     return new Fix(invocation, setCurrentValueCall);
                 }
@@ -89,17 +89,17 @@
             out InvocationExpressionSyntax setCurrentValueInvocation)
         {
             setCurrentValueInvocation = null;
-            if (!SetCurrentValueExpression.TryCreate(assignment, out ExpressionSyntax setCurrentValue))
+            if (!SetCurrentValueExpression.TryCreate(assignment, out var setCurrentValue))
             {
                 return false;
             }
 
-            if (!Arguments.TryCreateProperty(assignment, semanticModel, cancellationToken, out ArgumentSyntax property))
+            if (!Arguments.TryCreateProperty(assignment, semanticModel, cancellationToken, out var property))
             {
                 return false;
             }
 
-            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out ArgumentSyntax value))
+            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out var value))
             {
                 return false;
             }
@@ -124,7 +124,7 @@
                 return false;
             }
 
-            if (SetCurrentValueExpression.TryCreate(setValue, out ExpressionSyntax setCurrentValue))
+            if (SetCurrentValueExpression.TryCreate(setValue, out var setCurrentValue))
             {
                 setCurrentValueInvocation = setValue.WithExpression(setCurrentValue)
                                                     .WithLeadingTrivia(setValue.GetLeadingTrivia());
@@ -211,9 +211,9 @@
                 result = null;
                 var property = semanticModel.GetSymbolInfo(assignment.Left, cancellationToken).Symbol as IPropertySymbol;
 
-                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out IFieldSymbol fieldSymbol))
+                if (ClrProperty.TryGetSingleBackingField(property, semanticModel, cancellationToken, out var fieldSymbol))
                 {
-                    result = DependencyProperty.CreateArgument(fieldSymbol, semanticModel, assignment.SpanStart);
+                    result = fieldSymbol.CreateArgument(semanticModel, assignment.SpanStart);
                 }
 
                 return result != null;

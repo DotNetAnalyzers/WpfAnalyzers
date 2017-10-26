@@ -30,7 +30,7 @@
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration, SyntaxKind.PropertyDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -40,25 +40,50 @@
                 return;
             }
 
-            if (context.ContainingSymbol is IFieldSymbol field &&
-                field.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
+            if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var fieldOrProperty) &&
+                DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (DependencyProperty.TryGetRegisterInvocationRecursive(
-                    field,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out InvocationExpressionSyntax _))
+                if (!fieldOrProperty.Symbol.IsStatic)
                 {
-                    if (!field.IsReadOnly ||
-                        !field.IsStatic)
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                context.Node.GetLocation(),
-                                field.Name,
-                                field.Type.Name));
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
+                }
+
+                if (fieldOrProperty.Symbol is IFieldSymbol field &&
+                    !field.IsReadOnly)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
+                }
+
+                if (fieldOrProperty.Symbol is IPropertySymbol property &&
+                    !property.IsReadOnly)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
+                }
+
+                if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                    propertyDeclaration.ExpressionBody != null)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
                 }
             }
         }

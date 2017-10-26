@@ -6,14 +6,14 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenamePropertyCodeFixProvider))]
     [Shared]
     internal class RenamePropertyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -31,17 +31,16 @@
                     continue;
                 }
 
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                if (node == null ||
-                    node.IsMissing)
+                var propertyDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                     .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+                if (propertyDeclaration == null ||
+                    propertyDeclaration.IsMissing)
                 {
                     continue;
                 }
 
-                var property = semanticModel.SemanticModelFor(node)
-                                            .GetDeclaredSymbol(node, context.CancellationToken) as IPropertySymbol;
                 if (ClrProperty.TryGetRegisteredName(
-                    property,
+                    propertyDeclaration,
                     semanticModel,
                     context.CancellationToken,
                     out string registeredName))
