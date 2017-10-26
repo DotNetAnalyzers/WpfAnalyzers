@@ -28,23 +28,21 @@
                    objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
         }
 
-        internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax propertyChangedCallbackArg)
+        internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
-            return TryGetCallback(objectCreation, KnownSymbol.PropertyChangedCallback, semanticModel, cancellationToken, out propertyChangedCallbackArg);
+            return TryGetCallback(objectCreation, KnownSymbol.PropertyChangedCallback, semanticModel, cancellationToken, out callback);
         }
 
-        internal static bool TryGetCoerceValueCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax propertyChangedCallbackArg)
+        internal static bool TryGetCoerceValueCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
-            return TryGetCallback(
-                objectCreation,
-                KnownSymbol.CoerceValueCallback,
-                semanticModel,
-                cancellationToken,
-                out propertyChangedCallbackArg);
+            return TryGetCallback(objectCreation, KnownSymbol.CoerceValueCallback, semanticModel, cancellationToken, out callback);
+        }
+
+        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        {
+            registeredName = null;
+            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
+                   DependencyProperty.TryGetRegisteredName(objectCreation?.FirstAncestorOrSelf<InvocationExpressionSyntax>(), semanticModel, cancellationToken, out registeredName);
         }
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty dependencyProperty)
@@ -53,12 +51,7 @@
                    BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out dependencyProperty);
         }
 
-        internal static bool TryGetCallback(
-            ObjectCreationExpressionSyntax objectCreation,
-            QualifiedType callbackType,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax callback)
+        private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
             if (objectCreation?.ArgumentList == null ||
@@ -69,6 +62,25 @@
 
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
                    Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
+        }
+
+        public static bool TryFindObjectCreationAncestor(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out ObjectCreationExpressionSyntax objectCreation)
+        {
+            objectCreation = null;
+            var parent = node?.Parent;
+            while (parent != null)
+            {
+                if (parent is ObjectCreationExpressionSyntax candidate &&
+                    TryGetConstructor(candidate, semanticModel, cancellationToken, out _))
+                {
+                    objectCreation = candidate;
+                    return true;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return false;
         }
     }
 }

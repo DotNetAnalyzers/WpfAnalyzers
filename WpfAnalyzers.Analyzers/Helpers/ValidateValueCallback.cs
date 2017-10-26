@@ -6,20 +6,20 @@ namespace WpfAnalyzers
 
     internal class ValidateValueCallback
     {
-        internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax nameExpression, out string name)
+        internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string name)
         {
             return Callback.TryGetName(
                 callback,
                 KnownSymbol.ValidateValueCallback,
                 semanticModel,
                 cancellationToken,
-                out nameExpression,
+                out identifier,
                 out name);
         }
 
         internal static bool TryGetRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
         {
-            return Callback.TryGetRegisteredName(callback, semanticModel, cancellationToken, out registeredName);
+            return DependencyProperty.TryGetRegisteredName(callback?.FirstAncestorOrSelf<InvocationExpressionSyntax>(), semanticModel, cancellationToken, out registeredName);
         }
 
         internal static bool TryGetValidateValueCallback(InvocationExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)

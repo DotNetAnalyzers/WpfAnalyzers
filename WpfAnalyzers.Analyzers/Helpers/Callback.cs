@@ -36,39 +36,5 @@ namespace WpfAnalyzers
 
             return false;
         }
-
-        internal static bool TryGetRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
-        {
-            registeredName = null;
-            var invocation = callback?.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (invocation == null)
-            {
-                return false;
-            }
-
-            if (DependencyProperty.TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
-            {
-                var nameArg = invocation.ArgumentList?.Arguments.FirstOrDefault();
-                return nameArg?.TryGetStringValue(semanticModel, cancellationToken, out registeredName) == true;
-            }
-
-            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
-                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
-            {
-                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty) ||
-                    fieldOrProperty.Type == KnownSymbol.DependencyProperty)
-                {
-                    return DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
-                }
-
-                return false;
-            }
-
-            return false;
-        }
     }
 }

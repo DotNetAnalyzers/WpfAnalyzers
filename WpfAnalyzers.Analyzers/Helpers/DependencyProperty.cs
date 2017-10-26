@@ -83,6 +83,38 @@
             return SyntaxFactory.Argument(SyntaxFactory.ParseExpression(field.Symbol.ToMinimalDisplayString(semanticModel, position)));
         }
 
+        internal static bool TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        {
+            registeredName = null;
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
+                TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
+                TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
+                TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
+            {
+                var nameArg = invocation.ArgumentList?.Arguments.FirstOrDefault();
+                return nameArg?.TryGetStringValue(semanticModel, cancellationToken, out registeredName) == true;
+            }
+
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
+                 TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
+            {
+                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
+                {
+                    return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         internal static bool TryGetRegisteredName(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
