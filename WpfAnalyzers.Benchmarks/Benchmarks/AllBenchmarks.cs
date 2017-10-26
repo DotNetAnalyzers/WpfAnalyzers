@@ -31,6 +31,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0016 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0016DefaultValueIsSharedReferenceType());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0017MetadataMustBeAssignable());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0030 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0030BackingFieldShouldBeStaticReadonly());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0031 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0031FieldOrder());
@@ -133,6 +135,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0016DefaultValueIsSharedReferenceType()
         {
             WPF0016.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0017MetadataMustBeAssignable()
+        {
+            WPF0017.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

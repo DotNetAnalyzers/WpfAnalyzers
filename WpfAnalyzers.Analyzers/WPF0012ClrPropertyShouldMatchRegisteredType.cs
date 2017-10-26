@@ -39,19 +39,10 @@
                 return;
             }
 
-            var propertyDeclaration = context.Node as PropertyDeclarationSyntax;
-            if (propertyDeclaration == null || propertyDeclaration.IsMissing)
-            {
-                return;
-            }
-
-            var property = context.ContainingSymbol as IPropertySymbol;
-            if (property == null || !property.IsPotentialClrProperty())
-            {
-                return;
-            }
-
-            if (ClrProperty.TryGetRegisteredType(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredType))
+            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                context.ContainingSymbol is IPropertySymbol property &&
+                property.IsPotentialClrProperty() &&
+                ClrProperty.TryGetRegisteredType(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var registeredType))
             {
                 if (!registeredType.IsSameType(property.Type))
                 {
