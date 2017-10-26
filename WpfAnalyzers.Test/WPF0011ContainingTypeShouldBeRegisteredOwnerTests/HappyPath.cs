@@ -9,7 +9,7 @@
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void DependencyPropertyRegister(string typeName)
+        public void Register(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public void RegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public void RegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public void RegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -136,9 +136,76 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [Test]
+        public void OverrideMetadata()
+        {
+            var fooControlCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+    }
+}";
+
+            var barControlCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class BarControl : FooControl
+    {
+        static BarControl()
+        {
+            ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, fooControlCode, barControlCode);
+        }
+
+        [Test]
+        public void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public partial class App : Application
+    {
+        static App()
+        {
+            // Ensure that we are using the right culture
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void DependencyPropertyAddOwner(string typeName)
+        public void AddOwner(string typeName)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -183,73 +250,6 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
             AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
-        }
-
-        [Test]
-        public void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public int Value
-        {
-            get { return (int)this.GetValue(ValueProperty); }
-            set { this.SetValue(ValueProperty, value); }
-        }
-    }
-}";
-
-            var barControlCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class BarControl : FooControl
-    {
-        static BarControl()
-        {
-            ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
-        }
-    }
-}";
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, barControlCode);
-        }
-
-        [Test]
-        public void IgnoreDependencyPropertyOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Globalization;
-    using System.Windows;
-    using System.Windows.Markup;
-
-    public partial class App : Application
-    {
-        static App()
-        {
-            // Ensure that we are using the right culture
-            FrameworkElement.LanguageProperty.OverrideMetadata(
-                typeof(FrameworkElement),
-                new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-        }
-    }
-}";
-
-            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
