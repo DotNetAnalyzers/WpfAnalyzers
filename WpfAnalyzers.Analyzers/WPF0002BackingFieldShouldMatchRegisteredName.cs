@@ -45,7 +45,7 @@
                 {
                     if (!fieldOrProperty.Name.IsParts(registeredName, "PropertyKey"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, IdentifierNameWalker.First(context.Node).GetLocation(), fieldOrProperty.Name, registeredName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldOrProperty.FindIdentifier(context.Node).GetLocation(), fieldOrProperty.Name, registeredName));
                     }
                 }
             }

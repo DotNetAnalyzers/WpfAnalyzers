@@ -46,7 +46,7 @@ namespace WpfAnalyzers
                 {
                     if (!fieldOrProperty.Name.IsParts(registeredName, "Property"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, IdentifierNameWalker.First(context.Node).GetLocation(), fieldOrProperty.Name, registeredName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldOrProperty.FindIdentifier(context.Node).GetLocation(), fieldOrProperty.Name, registeredName));
                     }
                 }
             }
