@@ -40,7 +40,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyPropertyBackingFields()
+        public void RegisterReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyPropertyBackingProperties()
+        public void RegisterReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -146,7 +146,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedPropertyBackingFields()
+        public void RegisterAttachedReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -205,7 +205,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedPropertyBackingProperties()
+        public void RegisterAttachedReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
