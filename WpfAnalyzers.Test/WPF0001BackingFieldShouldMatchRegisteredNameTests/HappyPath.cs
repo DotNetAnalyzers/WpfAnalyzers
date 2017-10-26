@@ -10,7 +10,7 @@
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyBackingField(string nameof)
+        public void RegisterBackingField(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyBackingProperty(string nameof)
+        public void RegisterBackingProperty(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyFormatted()
+        public void RegisterFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyPartial()
+        public void RegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -128,7 +128,38 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public void AttachedProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void AddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -178,38 +209,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class Foo
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new PropertyMetadata(default(int)));
-
-        public static void SetBar(DependencyObject element, int value)
-        {
-            element.SetValue(BarProperty, value);
-        }
-
-        public static int GetBar(DependencyObject element)
-        {
-            return (int)element.GetValue(BarProperty);
-        }
-    }
-}";
-
-            AnalyzerAssert.Valid(Analyzer, testCode);
-        }
-
-        [Test]
-        public void IgnoresReadonlyDependencyProperty()
+        public void IgnoresRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -239,7 +239,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresReadOnlyAttachedProperty()
+        public void IgnoresRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
