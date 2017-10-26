@@ -50,7 +50,7 @@
 
             if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
                 context.ContainingSymbol.IsStatic &&
-                PropertyMetaData.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var callback) &&
+                PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var callback) &&
                 TryGetIdentifierAndRegisteredName(callback, context.SemanticModel, context.CancellationToken, out var identifier, out var registeredName) &&
                 !identifier.Identifier.ValueText.IsParts("Coerce", registeredName))
             {
