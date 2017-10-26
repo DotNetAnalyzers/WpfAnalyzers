@@ -1,8 +1,5 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Text" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ output extension="generated.cs" #>
 namespace WpfAnalyzers
 {
@@ -14,16 +11,16 @@ namespace WpfAnalyzers
     internal static partial class EnumerableExt
     {
 <#
-    var typeNames = new Data[]
+    var typeNames = new []
     {
-        new Data("IReadOnlyList<T>", "T"),
-        new Data("ImmutableArray<T>", "T", count: "Length"),
-        new Data("ChildSyntaxList", "SyntaxNodeOrToken"),
-        new Data("SeparatedSyntaxList<T>", "T", "SyntaxNode"),
-        new Data("SyntaxList<T>", "T", "SyntaxNode"),
-        new Data("SyntaxNodeOrTokenList", "SyntaxNodeOrToken"),
-        new Data("SyntaxTokenList", "SyntaxToken"),
-        new Data("SyntaxTriviaList", "SyntaxTrivia"),
+        new Data("IReadOnlyList<T>", "T", false),
+        new Data("ImmutableArray<T>", "T", true, count: "Length"),
+        new Data("ChildSyntaxList", "SyntaxNodeOrToken", true),
+        new Data("SeparatedSyntaxList<T>", "T", true, "SyntaxNode"),
+        new Data("SyntaxList<T>", "T", true, "SyntaxNode"),
+        new Data("SyntaxNodeOrTokenList", "SyntaxNodeOrToken", true),
+        new Data("SyntaxTokenList", "SyntaxToken", true),
+        new Data("SyntaxTriviaList", "SyntaxTrivia", true),
     };
 
     foreach(var types in typeNames)
@@ -38,11 +35,7 @@ namespace WpfAnalyzers
         internal static bool TryGetAtIndex<#= genericArg #>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> <= index)
             {
                 return false;
@@ -55,11 +48,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 1)
             {
                 result = source[0];
@@ -73,11 +62,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             foreach (var item in source)
             {
                 if (selector(item))
@@ -94,11 +79,7 @@ namespace WpfAnalyzers
         internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
@@ -112,11 +93,7 @@ namespace WpfAnalyzers
         internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             foreach (var item in source)
             {
                 if (selector(item))
@@ -133,11 +110,7 @@ namespace WpfAnalyzers
         internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
@@ -151,11 +124,7 @@ namespace WpfAnalyzers
         internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-            if (source == null)
-            {
-                return false;
-            }
-
+<# WriteLineIfNullReturnFalse(types); #>
             for (var i = source.<#= count #> - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -182,18 +151,32 @@ private void WriteLineIfNotFirst<T>(T item, T[] items)
     }
 }
 
+private void WriteLineIfNullReturnFalse(Data item)
+{
+    if (!item.IsValueType)
+    {
+        this.WriteLine("            if (source == null)");
+        this.WriteLine("            {");
+        this.WriteLine("                return false;");
+        this.WriteLine("            }");
+        this.WriteLine("");
+    }
+}
+
 internal class Data
 {
     public readonly string CollectionType;
     public readonly string ItemType;
+    public readonly bool IsValueType;
     public readonly string Constraint;
     public readonly string Count;
     public readonly string GenericArg;
 
-    public Data(string collectionType, string itemType, string constraint = null, string count = null)
+    public Data(string collectionType, string itemType, bool isValueType, string constraint = null, string count = null)
     {
         this.CollectionType = collectionType;
         this.ItemType = itemType;
+        this.IsValueType = isValueType;
         this.Constraint = string.IsNullOrEmpty(constraint)
             ? string.Empty
             : "\r\n            where T : " + constraint;
