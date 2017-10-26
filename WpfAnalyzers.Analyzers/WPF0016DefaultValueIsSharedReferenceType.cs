@@ -40,38 +40,29 @@
                 return;
             }
 
-            if (context.Node is ObjectCreationExpressionSyntax objectCreation)
+            if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
+                context.ContainingSymbol.IsStatic &&
+                PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
+                DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                registeredType.IsReferenceType &&
+                PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
             {
-                if (!PropertyMetadata.TryGetDefaultValue(
-                    objectCreation,
-                    context.SemanticModel,
-                    context.CancellationToken,
-                    out var defaultValueArg))
+                var defaultValue = defaultValueArg.Expression;
+                if (defaultValue == null ||
+                    defaultValue.IsKind(SyntaxKind.NullLiteralExpression))
                 {
                     return;
                 }
 
-                var defaultValue = defaultValueArg.Expression;
                 if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
                     IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))
                 {
-                    var type = context.SemanticModel.GetSymbolSafe(defaultValue, context.CancellationToken)
-                                      ?.ContainingType;
-                    if (type == KnownSymbol.FontFamily)
+                    if (registeredType == KnownSymbol.FontFamily)
                     {
                         return;
                     }
 
-                    if (!PropertyMetadata.TryGetDependencyProperty(
-                        objectCreation,
-                        context.SemanticModel,
-                        context.CancellationToken,
-                        out var dp))
-                    {
-                        return;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), dp));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
                 }
             }
         }
