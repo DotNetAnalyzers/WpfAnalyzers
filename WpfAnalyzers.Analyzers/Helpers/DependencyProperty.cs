@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -173,7 +172,7 @@
         internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
+            if (fieldOrProperty.TryGetValue(cancellationToken, out var value))
             {
                 var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
                 if (symbol is IMethodSymbol method)
@@ -209,7 +208,7 @@
         internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
+            if (fieldOrProperty.TryGetValue(cancellationToken, out var value))
             {
                 var invocation = value as InvocationExpressionSyntax;
                 if (invocation == null)
@@ -233,17 +232,13 @@
         internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
             result = null;
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
+            if (fieldOrProperty.TryGetValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
-                var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken);
-                if (invocationSymbol == null)
-                {
-                    return false;
-                }
-
-                if (invocationSymbol.ContainingType == KnownSymbol.DependencyProperty &&
-                    invocationSymbol.Name.StartsWith("Register", StringComparison.Ordinal))
+                if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
+                    TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
+                    TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
+                    TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
                 {
                     result = invocation;
                     return true;

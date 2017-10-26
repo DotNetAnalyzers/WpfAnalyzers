@@ -63,8 +63,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public DependencyProperty BarProperty { get; } = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        ↓public DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -82,8 +81,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        public static DependencyProperty BarProperty  { get; } = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -92,7 +90,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -125,7 +123,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        public static DependencyProperty BarProperty  { get; } = DependencyProperty.Register(
+        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -135,7 +133,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -168,7 +166,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        public static DependencyProperty BarProperty  { get; } = DependencyProperty.Register(
+        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -178,7 +176,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]

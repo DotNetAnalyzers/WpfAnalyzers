@@ -63,6 +63,28 @@
                             fieldOrProperty.Name,
                             fieldOrProperty.Type.Name));
                 }
+
+                if (fieldOrProperty.Symbol is IPropertySymbol property &&
+                    !property.IsReadOnly)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
+                }
+
+                if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                    propertyDeclaration.ExpressionBody != null)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            context.Node.GetLocation(),
+                            fieldOrProperty.Name,
+                            fieldOrProperty.Type.Name));
+                }
             }
         }
     }

@@ -69,7 +69,7 @@
             return false;
         }
 
-        internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
+        internal bool TryGetValue(CancellationToken cancellationToken, out ExpressionSyntax value)
         {
             value = null;
             if (this.Symbol is IFieldSymbol field)
@@ -81,7 +81,15 @@
             {
                 if (property.TryGetSingleDeclaration(cancellationToken, out var declaration))
                 {
-                    value = declaration.Initializer?.Value;
+                    if (declaration.Initializer != null)
+                    {
+                        value = declaration.Initializer.Value;
+                    }
+                    else if (declaration.ExpressionBody != null)
+                    {
+                        value = declaration.ExpressionBody.Expression;
+                    }
+
                     return value != null;
                 }
             }
