@@ -10,7 +10,7 @@
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyOneLine(string nameof)
+        public void DependencyPropertyBackingField(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -21,6 +21,32 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("nameof(Bar)", nameof);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [TestCase("\"Bar\"")]
+        [TestCase("nameof(Bar)")]
+        [TestCase("nameof(FooControl.Bar)")]
+        public void DependencyPropertyBackingProperty(string nameof)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {

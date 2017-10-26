@@ -70,7 +70,7 @@
             return this.Symbol.DeclaringSyntaxReferences.TryGetSingle(out syntaxReference);
         }
 
-        public SyntaxToken FindIdentifier(SyntaxNode node)
+        internal SyntaxToken FindIdentifier(SyntaxNode node)
         {
             if (node is PropertyDeclarationSyntax propertyDeclaration)
             {

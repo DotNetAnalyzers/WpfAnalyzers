@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class DependencyPropertyTests
+    public partial class DependencyPropertyTests
     {
         internal class TryGetCalls
         {

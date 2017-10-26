@@ -30,12 +30,12 @@ namespace WpfAnalyzers
         var constraint = types.Constraint;
         var count = types.Count;
         var genericArg = types.GenericArg;
-        WriteLineIfNotFirst(types, typeNames);
+        this.WriteLineIfNotFirst(types, typeNames);
 #>
         internal static bool TryGetAtIndex<#= genericArg #>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> <= index)
             {
                 return false;
@@ -48,7 +48,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 1)
             {
                 result = source[0];
@@ -62,7 +62,7 @@ namespace WpfAnalyzers
         internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             foreach (var item in source)
             {
                 if (selector(item))
@@ -79,7 +79,7 @@ namespace WpfAnalyzers
         internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
@@ -93,7 +93,7 @@ namespace WpfAnalyzers
         internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             foreach (var item in source)
             {
                 if (selector(item))
@@ -110,7 +110,7 @@ namespace WpfAnalyzers
         internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
@@ -124,7 +124,7 @@ namespace WpfAnalyzers
         internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
-<# WriteLineIfNullReturnFalse(types); #>
+<# this.WriteLineIfNullReturnFalse(types); #>
             for (var i = source.<#= count #> - 1; i >= 0; i--)
             {
                 var item = source[i];

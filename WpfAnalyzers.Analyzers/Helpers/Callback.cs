@@ -41,15 +41,23 @@ namespace WpfAnalyzers
         {
             registeredName = null;
             var invocation = callback?.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            var memberAccess = invocation?.Expression as MemberAccessExpressionSyntax;
-            if (memberAccess == null)
+            if (invocation == null)
             {
                 return false;
             }
 
-            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            if (method == KnownSymbol.DependencyProperty.OverrideMetadata ||
-                method == KnownSymbol.DependencyProperty.AddOwner)
+            if (DependencyProperty.TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
+                DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
+            {
+                var nameArg = invocation.ArgumentList?.Arguments.FirstOrDefault();
+                return nameArg?.TryGetStringValue(semanticModel, cancellationToken, out registeredName) == true;
+            }
+
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
+                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
                 if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty) ||
                     fieldOrProperty.Type == KnownSymbol.DependencyProperty)
@@ -58,15 +66,6 @@ namespace WpfAnalyzers
                 }
 
                 return false;
-            }
-
-            if (method == KnownSymbol.DependencyProperty.Register ||
-                method == KnownSymbol.DependencyProperty.RegisterReadOnly ||
-                method == KnownSymbol.DependencyProperty.RegisterAttached ||
-                method == KnownSymbol.DependencyProperty.RegisterAttachedReadOnly)
-            {
-                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(callback.FirstAncestorOrSelf<MemberDeclarationSyntax>(), cancellationToken), out var fieldOrProperty) &&
-                       DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
             }
 
             return false;

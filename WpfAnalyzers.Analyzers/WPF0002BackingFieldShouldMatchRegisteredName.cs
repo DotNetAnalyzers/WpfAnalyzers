@@ -39,15 +39,16 @@
             }
 
             if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey)
+                fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey &&
+                DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                !fieldOrProperty.Name.IsParts(registeredName, "PropertyKey"))
             {
-                if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName))
-                {
-                    if (!fieldOrProperty.Name.IsParts(registeredName, "PropertyKey"))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldOrProperty.FindIdentifier(context.Node).GetLocation(), fieldOrProperty.Name, registeredName));
-                    }
-                }
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                        fieldOrProperty.Name,
+                        registeredName));
             }
         }
     }
