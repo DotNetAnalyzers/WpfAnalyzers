@@ -44,11 +44,15 @@
                 if (toAdd.Any())
                 {
                     context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "Map missing namespaces.",
-                        _ => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.InsertNodesAfter(attribute.FirstAncestorOrSelf<AttributeListSyntax>(), toAdd))),
-                        this.GetType().FullName),
-                    diagnostic);
+                        CodeAction.Create(
+                            "Map missing namespaces.",
+                            _ => Task.FromResult(
+                                context.Document.WithSyntaxRoot(
+                                    syntaxRoot.InsertNodesAfter(
+                                        attribute.FirstAncestorOrSelf<AttributeListSyntax>(),
+                                        toAdd))),
+                            this.GetType().FullName),
+                        diagnostic);
                 }
             }
         }
