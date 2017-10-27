@@ -8,7 +8,7 @@ namespace WpfAnalyzers
     {
         internal static bool TryGet(ObjectCreationExpressionSyntax objectCreation, QualifiedType qualifiedType, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol ctor)
         {
-            if (objectCreation.Type is IdentifierNameSyntax typeName &&
+            if (objectCreation.Type is SimpleNameSyntax typeName &&
                 (typeName.Identifier.ValueText == qualifiedType.Type ||
                  AliasWalker.Contains(objectCreation.SyntaxTree, typeName.Identifier.ValueText)))
             {

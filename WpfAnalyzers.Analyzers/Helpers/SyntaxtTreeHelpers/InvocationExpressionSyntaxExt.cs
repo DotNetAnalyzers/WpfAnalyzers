@@ -24,21 +24,21 @@
                 case SyntaxKind.InvocationExpression:
                 case SyntaxKind.SimpleMemberAccessExpression:
                 case SyntaxKind.TypeOfExpression:
-                    if (invocation.Expression is IdentifierNameSyntax simple)
+                    if (invocation.Expression is SimpleNameSyntax simple)
                     {
                         name = simple.Identifier.ValueText;
                         return true;
                     }
 
                     if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Name is IdentifierNameSyntax member)
+                        memberAccess.Name is SimpleNameSyntax member)
                     {
                         name = member.Identifier.ValueText;
                         return true;
                     }
 
                     if (invocation.Expression is MemberBindingExpressionSyntax memberBinding &&
-                        memberBinding.Name is IdentifierNameSyntax bound)
+                        memberBinding.Name is SimpleNameSyntax bound)
                     {
                         name = bound.Identifier.ValueText;
                         return true;
