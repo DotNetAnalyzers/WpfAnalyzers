@@ -76,12 +76,14 @@ internal static class BooleanBoxes
 
     public static class Foo
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(bool),
             typeof(Foo),
             new PropertyMetadata(default(bool)));
 
+        /// <summary>Identifies the <see cref=""Other""/> dependency property.</summary>
         public static readonly DependencyProperty OtherProperty = DependencyProperty.RegisterAttached(
             ""Other"",
             typeof(string),
@@ -98,6 +100,7 @@ internal static class BooleanBoxes
             typeof(Foo),
             new PropertyMetadata(default(bool)));
 
+        /// <summary>Identifies the <see cref=""ReadOnlyProperty""/> dependency property.</summary>
         public static readonly DependencyProperty ReadOnlyProperty = ReadOnlyPropertyKey.DependencyProperty;
 
         public static void SetBar(FrameworkElement element, bool value)
@@ -157,11 +160,13 @@ internal static class BooleanBoxes
 
     public class FooControl : FrameworkElement
     {
+        /// <summary>Identifies the <see cref=""DoubleValue""/> dependency property.</summary>
         public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(
             nameof(DoubleValue),
             typeof(double),
             typeof(FooControl));
 
+        /// <summary>Identifies the <see cref=""IntValue""/> dependency property.</summary>
         public static readonly DependencyProperty IntValueProperty = DependencyProperty.Register(
             nameof(IntValue),
             typeof(int),
@@ -173,6 +178,7 @@ internal static class BooleanBoxes
                 CoerceIntValue),
             IntValueValidateValue);
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
         private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
@@ -181,8 +187,10 @@ internal static class BooleanBoxes
             typeof(FooControl),
             new PropertyMetadata(default(string)));
 
+        /// <summary>Identifies the <see cref=""ReadOnlyValue""/> dependency property.</summary>
         public static readonly DependencyProperty ReadOnlyValueProperty = ReadOnlyValuePropertyKey.DependencyProperty;
 
+        /// <summary>Identifies the <see cref=""Brush""/> dependency property.</summary>
         public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
             nameof(Brush),
             typeof(Brush),

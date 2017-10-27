@@ -109,6 +109,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md">WPF0052</a></td>
   <td>XmlnsDefinitions does not map all namespaces with public types.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md">WPF0060</a></td>
+  <td>Backing field for a DependencyProperty is missing docs.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
