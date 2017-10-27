@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers
+﻿// ReSharper disable UnusedMember.Global
+namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -38,7 +39,6 @@
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -59,7 +59,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -73,7 +72,6 @@
 
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -98,7 +96,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -112,7 +109,6 @@
 
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -138,7 +134,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -163,7 +158,6 @@
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -179,7 +173,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -188,7 +181,6 @@
             result = default(T);
             if (source.Length == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -208,7 +200,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -217,7 +208,6 @@
             result = default(T);
             if (source.Length == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -238,7 +228,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -263,7 +252,6 @@
                 return true;
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -279,7 +267,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -288,7 +275,6 @@
             result = default(SyntaxNodeOrToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -308,7 +294,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -317,7 +302,6 @@
             result = default(SyntaxNodeOrToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -338,7 +322,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -365,7 +348,6 @@
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -382,7 +364,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -392,7 +373,6 @@
             result = default(T);
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -413,7 +393,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -423,7 +402,6 @@
             result = default(T);
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -445,7 +423,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -472,7 +449,6 @@
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -489,7 +465,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -499,7 +474,6 @@
             result = default(T);
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -520,7 +494,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -530,7 +503,6 @@
             result = default(T);
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -552,7 +524,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -577,7 +548,6 @@
                 return true;
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -593,7 +563,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -602,7 +571,6 @@
             result = default(SyntaxNodeOrToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -622,7 +590,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -631,7 +598,6 @@
             result = default(SyntaxNodeOrToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -652,7 +618,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -677,7 +642,6 @@
                 return true;
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
@@ -693,7 +657,6 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
@@ -702,7 +665,6 @@
             result = default(SyntaxToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxToken);
                 return false;
             }
 
@@ -722,7 +684,6 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
@@ -731,7 +692,6 @@
             result = default(SyntaxToken);
             if (source.Count == 0)
             {
-                result = default(SyntaxToken);
                 return false;
             }
 
@@ -752,7 +712,6 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
@@ -777,7 +736,6 @@
                 return true;
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
@@ -793,7 +751,6 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
@@ -802,7 +759,6 @@
             result = default(SyntaxTrivia);
             if (source.Count == 0)
             {
-                result = default(SyntaxTrivia);
                 return false;
             }
 
@@ -822,7 +778,6 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
@@ -831,7 +786,6 @@
             result = default(SyntaxTrivia);
             if (source.Count == 0)
             {
-                result = default(SyntaxTrivia);
                 return false;
             }
 
@@ -852,7 +806,6 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
     }

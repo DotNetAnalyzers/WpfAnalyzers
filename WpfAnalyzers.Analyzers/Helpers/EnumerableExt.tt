@@ -1,6 +1,7 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ output extension="generated.cs" #>
+// ReSharper disable UnusedMember.Global
 namespace WpfAnalyzers
 {
     using System;
@@ -55,7 +56,6 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            result = default(<#= itemName #>);
             return false;
         }
 
@@ -72,7 +72,6 @@ namespace WpfAnalyzers
                 }
             }
 
-            result = default(<#= itemName #>);
             return false;
         }
 
@@ -82,7 +81,6 @@ namespace WpfAnalyzers
 <# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
-                result = default(<#= itemName #>);
                 return false;
             }
 
@@ -103,7 +101,6 @@ namespace WpfAnalyzers
                 }
             }
 
-            result = default(<#= itemName #>);
             return false;
         }
 
@@ -113,7 +110,6 @@ namespace WpfAnalyzers
 <# this.WriteLineIfNullReturnFalse(types); #>
             if (source.<#= count #> == 0)
             {
-                result = default(<#= itemName #>);
                 return false;
             }
 
@@ -135,7 +131,6 @@ namespace WpfAnalyzers
                 }
             }
 
-            result = default(<#= itemName #>);
             return false;
         }
 <#  }    #>
