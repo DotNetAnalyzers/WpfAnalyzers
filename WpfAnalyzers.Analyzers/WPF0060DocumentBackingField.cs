@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -39,17 +40,38 @@ namespace WpfAnalyzers
                 return;
             }
 
-            if (!context.Node.HasLeadingTrivia &&
+            if ((context.ContainingSymbol.DeclaredAccessibility == Accessibility.Public ||
+                 context.ContainingSymbol.DeclaredAccessibility == Accessibility.Internal) &&
+                GetDocumentationCommentTrivia(context.Node) == null &&
                 BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName))
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptor,
-                        fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                        context.Node.GetLocation(),
                         fieldOrProperty.Name,
                         registeredName));
             }
+        }
+
+        private static DocumentationCommentTriviaSyntax GetDocumentationCommentTrivia(SyntaxNode node)
+        {
+            if (node == null ||
+                !node.HasLeadingTrivia)
+            {
+                return null;
+            }
+
+            foreach (var leadingTrivia in node.GetLeadingTrivia())
+            {
+                if (leadingTrivia.GetStructure() is DocumentationCommentTriviaSyntax structure)
+                {
+                    return structure;
+                }
+            }
+
+            return null;
         }
     }
 }

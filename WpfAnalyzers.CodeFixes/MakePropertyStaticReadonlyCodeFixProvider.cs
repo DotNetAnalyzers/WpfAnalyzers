@@ -65,7 +65,7 @@
             {
                 editor.ReplaceNode(
                     declaration,
-                    (x, g) => ((PropertyDeclarationSyntax) x)
+                    (x, g) => ((PropertyDeclarationSyntax)x)
                         .WithInitializer(SyntaxFactory.EqualsValueClause(declaration.ExpressionBody.Expression))
                         .WithExpressionBody(null)
                         .WithAccessorList(
