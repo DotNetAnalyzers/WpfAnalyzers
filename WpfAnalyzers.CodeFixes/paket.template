@@ -1,5 +1,5 @@
 ﻿type file
-version 0.2.7.10
+version 0.3.0.0
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
@@ -12,8 +12,11 @@ tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
+releasenotes
+  BREAKING CHANGE: move property changed analyzers to https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers.
+
 files
-  ../WpfAnalyzers.Analyzers/bin/Release/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
-  ../WpfAnalyzers.CodeFixes/bin/Release/WpfAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
+  bin/Release/netstandard1.3/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
+  bin/Release/netstandard1.3/WpfAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
   ../.paket/tools/*.ps1 ==> tools
 
