@@ -71,7 +71,7 @@
                         .WithAccessorList(
                             SyntaxFactory.AccessorList(
                                 SyntaxFactory.SingletonList(
-                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, null)
+                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                                                  .WithSemicolonToken(
                                                      SyntaxFactory.Token(SyntaxKind.SemicolonToken))))));
             }
