@@ -10,7 +10,7 @@
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void RegisterBackingField(string nameof)
+        public void DependencyPropertyRegisterBackingField(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void RegisterBackingProperty(string nameof)
+        public void DependencyPropertyRegisterBackingProperty(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterFormatted()
+        public void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterPartial()
+        public void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -128,7 +128,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox

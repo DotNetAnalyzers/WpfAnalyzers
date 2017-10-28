@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
         private static readonly WPF0010DefaultValueMustMatchRegisteredType Analyzer = new WPF0010DefaultValueMustMatchRegisteredType();
 
         [Test]
-        public void RegisterNoMetadata()
+        public void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterWithMetadataWithCallbackOnly()
+        public void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
-        public void RegisterWithMetdadata(string typeName, string metadata)
+        public void DependencyPropertyRegisterWithMetdadata(string typeName, string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -129,7 +129,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterWhenGenericContainingType()
+        public void DependencyPropertyRegisterWhenGenericContainingType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterWhenBoxed()
+        public void DependencyPropertyRegisterWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -200,7 +200,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnly()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -232,7 +232,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -257,7 +257,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedWhenBoxed()
+        public void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -305,7 +305,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnly()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -332,7 +332,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -383,7 +383,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox

@@ -176,7 +176,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyWithSideEffectInSetMethod()
+        public void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -212,7 +212,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyWithSideEffectInGetMethod()
+        public void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -248,7 +248,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedPropertyWithSideEffectInSetMethod()
+        public void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -286,7 +286,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedPropertyWithSideEffectInGetMethod()
+        public void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox

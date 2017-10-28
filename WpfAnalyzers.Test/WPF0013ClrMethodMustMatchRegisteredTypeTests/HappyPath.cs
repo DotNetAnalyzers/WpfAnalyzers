@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void AttachedProperty(string typeName)
+        public void DependencyPropertyRegisterAttached(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -51,7 +51,7 @@ namespace RoslynSandbox
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void AttachedPropertyExtensionMethods(string typeName)
+        public void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyWhenBoxed()
+        public void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -132,7 +132,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertySettingValueInCallback()
+        public void DependencyPropertyRegisterAttachedSettingValueInCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -171,7 +171,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

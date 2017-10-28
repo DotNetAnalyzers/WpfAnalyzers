@@ -10,7 +10,7 @@
         [TestCase("public readonly", "public static readonly")]
         [TestCase("private static", "private static readonly")]
         [TestCase("private", "private static readonly")]
-        public void RegisterBackingField(string before, string after)
+        public void DependencyPropertyRegisterBackingField(string before, string after)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterBackingPropertyGetOnlyNotStatic()
+        public void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterBackingPropertyGetSet()
+        public void DependencyPropertyRegisterBackingPropertyGetSet()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterBackingPropertyExpressionBody()
+        public void DependencyPropertyRegisterBackingPropertyExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -233,7 +233,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -288,7 +288,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnlyKeyField()
+        public void DependencyPropertyRegisterAttachedReadOnlyKeyField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -347,7 +347,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnlyPropertyField()
+        public void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -399,7 +399,7 @@ namespace RoslynSandbox
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void AddOwner(string typeName)
+        public void DependencyPropertyAddOwner(string typeName)
         {
             var fooCode = @"
 namespace RoslynSandbox

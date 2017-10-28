@@ -46,7 +46,7 @@ namespace RoslynSandbox
         [TestCase("double?", "new PropertyMetadata(↓1)")]
         [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
         [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<double>())")]
-        public void Register(string typeName, string metadata)
+        public void DependencyPropertyRegister(string typeName, string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterGenericContainingType()
+        public void DependencyPropertyRegisterGenericContainingType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -109,7 +109,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnly()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -163,7 +163,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnly()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox

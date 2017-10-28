@@ -9,7 +9,7 @@
 
         [TestCase("public")]
         [TestCase("private")]
-        public void AttachedProperty(string accessModifier)
+        public void DependencyPropertyRegisterAttached(string accessModifier)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
 
         [TestCase("public")]
         [TestCase("private")]
-        public void AttachedPropertyExtensionMethods(string accessModifier)
+        public void DependencyPropertyRegisterAttachedExtensionMethods(string accessModifier)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -73,7 +73,7 @@ namespace RoslynSandbox
 
         [TestCase("public")]
         [TestCase("private")]
-        public void AttachedPropertyExpressionBody(string accessModifier)
+        public void DependencyPropertyRegisterAttachedExpressionBody(string accessModifier)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,7 +99,7 @@ namespace RoslynSandbox
 
         [TestCase("public")]
         [TestCase("private")]
-        public void ReadOnlyAttachedProperty(string accessModifier)
+        public void DependencyPropertyRegisterAttachedReadOnly(string accessModifier)
         {
             var testCode = @"
 namespace RoslynSandbox

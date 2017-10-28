@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void RegisterReadOnlyBackingFields(string nameof)
+        public void DependencyPropertyRegisterReadOnlyBackingFields(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void RegisterReadOnlyBackingProperties(string nameof)
+        public void DependencyPropertyRegisterReadOnlyBackingProperties(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnlyRepro()
+        public void DependencyPropertyRegisterReadOnlyRepro()
         {
             var statusCode = @"
 namespace RoslynSandbox
@@ -115,7 +115,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnly()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

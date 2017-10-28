@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
         private static readonly WPF0005PropertyChangedCallbackShouldMatchRegisteredName Analyzer = new WPF0005PropertyChangedCallbackShouldMatchRegisteredName();
 
         [Test]
-        public void DependencyPropertyNoMetadata()
+        public void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public void DependencyPropertyWithMetadata(string metadata)
+        public void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -143,7 +143,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -175,7 +175,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -192,6 +192,32 @@ namespace RoslynSandbox
         }
 
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // nop
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void DependencyPropertyAddOwner()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Documents;
+
+    public class FooControl : FrameworkElement
+    {
+        static FooControl()
+        {
+            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnFontSizeChanged));
+        }
+
+        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // nop
         }

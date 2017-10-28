@@ -40,7 +40,7 @@ namespace RoslynSandbox
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void AttachedPropertySetMethod(string typeName)
+        public void DependencyPropertyRegisterAttachedSetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -73,7 +73,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertySetMethodAsExtensionMethod()
+        public void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -104,7 +104,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedPropertySetMethod()
+        public void DependencyPropertyRegisterAttachedReadOnlySetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void AttachedPropertyGetMethod(string typeName)
+        public void DependencyPropertyRegisterAttachedGetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -167,7 +167,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyGetMethodAsExtensionMethod()
+        public void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox

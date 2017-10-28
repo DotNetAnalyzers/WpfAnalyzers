@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
 
         [TestCase("new PropertyMetadata(1)")]
         [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public void OverrideMetadataWhenBaseHasNone(string metadata)
+        public void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1)")]
         [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public void OverrideMetadataWithSameType(string metadata)
+        public void DependencyPropertyOverrideMetadataWithSameType(string metadata)
         {
             var fooControlCode = @"
 namespace RoslynSandbox

@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -245,7 +245,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

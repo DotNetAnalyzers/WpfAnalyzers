@@ -9,7 +9,7 @@
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void Register(string typeName)
+        public void DependencyPropertyRegister(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnly()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnly()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -205,7 +205,7 @@ namespace RoslynSandbox
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void AddOwner(string typeName)
+        public void DependencyPropertyAddOwner(string typeName)
         {
             var fooCode = @"
 namespace RoslynSandbox

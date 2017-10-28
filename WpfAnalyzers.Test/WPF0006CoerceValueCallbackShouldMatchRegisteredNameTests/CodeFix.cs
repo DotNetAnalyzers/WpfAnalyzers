@@ -46,7 +46,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, null, ↓WrongName)")]
         [TestCase("new PropertyMetadata(1, null, new CoerceValueCallback(↓WrongName))")]
-        public void DependencyProperty(string metadata)
+        public void DependencyPropertyRegister(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -111,7 +111,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -174,7 +174,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -227,7 +227,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyAttachedProperty()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -284,7 +284,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverrideMetadata()
+        public void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -331,7 +331,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox

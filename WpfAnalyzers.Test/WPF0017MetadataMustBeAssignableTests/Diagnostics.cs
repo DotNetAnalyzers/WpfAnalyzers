@@ -6,7 +6,7 @@
     internal class Diagnostics
     {
         [Test]
-        public void OverrideMetadataWithBaseType()
+        public void DependencyPropertyOverrideMetadataWithBaseType()
         {
             var fooControlCode = @"
 namespace RoslynSandbox

@@ -65,7 +65,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void ReadOnlyAttachedProperty(string method)
+        public void DependencyPropertyRegisterAttachedReadOnly(string method)
         {
             var testCode = @"
 namespace RoslynSandbox

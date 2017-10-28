@@ -38,7 +38,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Register()
+        public void DependencyPropertyRegister()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -81,7 +81,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterPartial()
+        public void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnly()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -191,7 +191,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -246,7 +246,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttachedReadOnly()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -305,7 +305,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox

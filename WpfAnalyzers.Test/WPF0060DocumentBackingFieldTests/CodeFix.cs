@@ -6,7 +6,7 @@
     internal class CodeFix
     {
         [Test]
-        public void RegisterBackingField()
+        public void DependencyPropertyRegisterBackingField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -48,7 +48,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterBackingProperty()
+        public void DependencyPropertyRegisterBackingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterFormatted()
+        public void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -140,7 +140,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterPartial()
+        public void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -199,7 +199,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterAttached()
+        public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -256,7 +256,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnlyBackingFields()
+        public void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -309,7 +309,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RegisterReadOnlyBackingProperties()
+        public void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -362,7 +362,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwner()
+        public void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox

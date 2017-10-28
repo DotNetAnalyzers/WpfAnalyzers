@@ -41,7 +41,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyGetMethod()
+        public void DependencyPropertyRegisterAttachedGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyGetMethodExpressionBody()
+        public void DependencyPropertyRegisterAttachedGetMethodExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -140,7 +140,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertySetMethod()
+        public void DependencyPropertyRegisterAttachedSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertySetMethodExpressionBody()
+        public void DependencyPropertyRegisterAttachedSetMethodExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox

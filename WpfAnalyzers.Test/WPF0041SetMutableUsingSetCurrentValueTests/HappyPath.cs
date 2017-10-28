@@ -225,7 +225,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedProperty()
+        public void DependencyPropertyRegisterAttached()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -273,7 +273,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AttachedPropertyWhenBoxed()
+        public void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
