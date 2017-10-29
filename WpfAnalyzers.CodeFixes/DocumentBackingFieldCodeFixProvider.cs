@@ -20,6 +20,9 @@
             ImmutableArray.Create(WPF0060DocumentBackingField.DiagnosticId);
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+
+        /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;
@@ -34,7 +37,7 @@
                 }
 
                 var member = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<MemberDeclarationSyntax>();
+                                       .FirstAncestorOrSelf<MemberDeclarationSyntax>();
                 if (member != null)
                 {
                     context.RegisterCodeFix(

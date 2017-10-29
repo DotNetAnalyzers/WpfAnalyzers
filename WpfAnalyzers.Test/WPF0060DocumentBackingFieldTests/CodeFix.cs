@@ -205,14 +205,21 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using System.Windows;
+    using System.Windows.Controls;
 
-    public static class Foo
+    public class FooControl : Control
     {
         ↓public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
-            typeof(Foo),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
 
         public static void SetBar(DependencyObject element, int value)
         {
@@ -230,15 +237,22 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using System.Windows;
+    using System.Windows.Controls;
 
-    public static class Foo
+    public class FooControl : Control
     {
         /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
-            typeof(Foo),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
 
         public static void SetBar(DependencyObject element, int value)
         {

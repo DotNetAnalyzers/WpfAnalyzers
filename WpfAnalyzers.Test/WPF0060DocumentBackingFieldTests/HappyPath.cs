@@ -135,7 +135,6 @@ namespace RoslynSandbox
 
     public static class Foo
     {
-        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
