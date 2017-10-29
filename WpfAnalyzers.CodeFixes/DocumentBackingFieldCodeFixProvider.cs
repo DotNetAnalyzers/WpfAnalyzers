@@ -5,7 +5,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,7 +19,7 @@
             ImmutableArray.Create(WPF0060DocumentBackingField.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -41,18 +40,18 @@
                 if (member != null)
                 {
                     context.RegisterCodeFix(
-                        CodeAction.Create(
+                        new DocumentEditorAction(
                             "Add xml documentation.",
-                            cancellationToken => AddDocumentationAsync(context.Document, member, cancellationToken),
+                            context.Document,
+                           (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);
                 }
             }
         }
 
-        private static async Task<Document> AddDocumentationAsync(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+        private static void AddDocumentation(DocumentEditor editor, MemberDeclarationSyntax member, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var symbol = editor.SemanticModel.GetDeclaredSymbolSafe(member, cancellationToken);
             if (BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out var name))
@@ -64,8 +63,6 @@
                               .AddRange(SyntaxFactory.ParseLeadingTrivia($"/// <summary>Identifies the <see cref=\"{name}\"/> dependency property.</summary>"))
                               .Add(SyntaxFactory.ElasticLineFeed)));
             }
-
-            return editor.GetChangedDocument();
         }
     }
 }
