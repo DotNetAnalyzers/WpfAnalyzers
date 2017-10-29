@@ -31,7 +31,7 @@
         public void NotEmpty()
         {
             CollectionAssert.IsNotEmpty(AllAnalyzers);
-            Assert.Pass($"Count: {AllAnalyzers.Count()}");
+            Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

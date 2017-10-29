@@ -8,19 +8,30 @@ namespace WpfAnalyzers
     {
         internal static bool TryGet(ObjectCreationExpressionSyntax objectCreation, QualifiedType qualifiedType, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol ctor)
         {
-            if (objectCreation.Type is SimpleNameSyntax typeName &&
-                (typeName.Identifier.ValueText == qualifiedType.Type ||
-                 AliasWalker.Contains(objectCreation.SyntaxTree, typeName.Identifier.ValueText)))
+            ctor = null;
+            if (objectCreation.Type is SimpleNameSyntax simpleName)
             {
-                ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
-                return ctor?.ContainingType == qualifiedType;
+                if (simpleName.Identifier.ValueText == qualifiedType.Type ||
+                    AliasWalker.Contains(objectCreation.SyntaxTree, simpleName.Identifier.ValueText))
+                {
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    return ctor?.ContainingType == qualifiedType;
+                }
+
+                return false;
             }
 
-            if (objectCreation.Type is QualifiedNameSyntax qualifiedName &&
-                qualifiedName.Right.Identifier.ValueText == qualifiedType.Type)
+            if (objectCreation.Type is QualifiedNameSyntax qualifiedName)
             {
-                ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
-                return ctor?.ContainingType == qualifiedType;
+                var typeName = qualifiedName.Right.Identifier.ValueText;
+                if (typeName == qualifiedType.Type ||
+                    AliasWalker.Contains(objectCreation.SyntaxTree, typeName))
+                {
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    return ctor?.ContainingType == qualifiedType;
+                }
+
+                return false;
             }
 
             ctor = null;
