@@ -103,21 +103,41 @@ internal static class BooleanBoxes
         /// <summary>Identifies the <see cref=""ReadOnlyProperty""/> dependency property.</summary>
         public static readonly DependencyProperty ReadOnlyProperty = ReadOnlyPropertyKey.DependencyProperty;
 
+        /// <summary>
+        /// Helper for setting Bar property on a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
         public static void SetBar(FrameworkElement element, bool value)
         {
             element.SetValue(BarProperty, BooleanBoxes.Box(value));
         }
 
+        /// <summary>
+        /// Helper for reading Bar property from a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
         public static bool GetBar(FrameworkElement element)
         {
             return (bool)element.GetValue(BarProperty);
         }
 
+        /// <summary>
+        /// Helper for setting Other property on a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to set Other property on.</param>
+        /// <param name=""value"">Other property value.</param>
         public static void SetOther(this DependencyObject element, string value)
         {
             element.SetValue(OtherProperty, value);
         }
 
+        /// <summary>
+        /// Helper for reading Other property from a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to read Other property from.</param>
+        /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static string GetOther(this DependencyObject element)
@@ -130,6 +150,11 @@ internal static class BooleanBoxes
             element.SetValue(ReadOnlyPropertyKey, value);
         }
 
+        /// <summary>
+        /// Helper for reading ReadOnly property from a Control.
+        /// </summary>
+        /// <param name=""element"">Control to read ReadOnly property from.</param>
+        /// <returns>ReadOnly property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(Control))]
         public static bool GetReadOnly(this Control element)

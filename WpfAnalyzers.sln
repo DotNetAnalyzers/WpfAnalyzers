@@ -53,6 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF0051.md = documentation\WPF0051.md
 		documentation\WPF0052.md = documentation\WPF0052.md
 		documentation\WPF0060.md = documentation\WPF0060.md
+		documentation\WPF0061.md = documentation\WPF0061.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
