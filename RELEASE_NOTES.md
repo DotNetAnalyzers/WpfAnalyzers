@@ -1,4 +1,4 @@
-#### 0.2.0
+#### 0.3.0
 * BREAKING CHANGE: move property changed analyzers to https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers.
 
 #### 0.2.0
