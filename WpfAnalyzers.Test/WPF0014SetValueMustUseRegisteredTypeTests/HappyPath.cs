@@ -707,5 +707,38 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
+
+        [Test]
+        public void CastIntToDouble()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public sealed class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(default(double)));
+
+        public FooControl()
+        {
+            var value = 1;
+            this.SetValue(ValueProperty, (double)value);
+        }
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
