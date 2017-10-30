@@ -34,7 +34,6 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            ctor = null;
             return false;
         }
     }

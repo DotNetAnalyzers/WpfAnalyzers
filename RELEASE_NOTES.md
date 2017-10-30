@@ -1,3 +1,6 @@
+#### 0.3.1
+* BUGFIX: Tweak code for determining representation preserving conversion.
+
 #### 0.3.0
 * BREAKING CHANGE: move property changed analyzers to https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers.
 
