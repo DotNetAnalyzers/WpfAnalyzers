@@ -719,6 +719,8 @@ namespace RoslynSandbox
 
     public sealed class FooControl : Control
     {
+        private const int DefaultValue = 1;
+
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             nameof(Value),
             typeof(double),
@@ -727,8 +729,7 @@ namespace RoslynSandbox
 
         public FooControl()
         {
-            var value = 1;
-            this.SetValue(ValueProperty, (double)value);
+            this.SetValue(ValueProperty, (double)DefaultValue);
         }
 
         public double Value

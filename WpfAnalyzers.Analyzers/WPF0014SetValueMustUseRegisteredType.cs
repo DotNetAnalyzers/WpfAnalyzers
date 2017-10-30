@@ -60,14 +60,10 @@
                             return;
                         }
 
-                        if (!registeredType.IsRepresentationPreservingConversion(
-                            value.Expression,
-                            context.SemanticModel,
-                            context.CancellationToken))
+                        if (!registeredType.IsRepresentationPreservingConversion(value.Expression, context.SemanticModel, context.CancellationToken))
                         {
                             var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, value.GetLocation(), setCall.Name, registeredType));
                         }
                     }
                 }

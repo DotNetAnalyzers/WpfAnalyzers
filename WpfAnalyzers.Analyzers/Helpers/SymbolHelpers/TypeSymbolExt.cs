@@ -114,15 +114,6 @@
             SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
-            if (valueExpression is CastExpressionSyntax castExpression)
-            {
-                return IsRepresentationPreservingConversion(
-                    toType,
-                    castExpression.Expression,
-                    semanticModel,
-                    cancellationToken);
-            }
-
             var conversion = semanticModel.SemanticModelFor(valueExpression)
                                           .ClassifyConversion(valueExpression, toType);
             if (!conversion.Exists)
@@ -150,6 +141,15 @@
             if (conversion.IsBoxing ||
                 conversion.IsUnboxing)
             {
+                if (valueExpression is CastExpressionSyntax castExpression)
+                {
+                    return IsRepresentationPreservingConversion(
+                        toType,
+                        castExpression.Expression,
+                        semanticModel,
+                        cancellationToken);
+                }
+
                 return true;
             }
 

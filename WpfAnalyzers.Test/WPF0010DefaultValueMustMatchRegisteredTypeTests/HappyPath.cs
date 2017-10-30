@@ -418,5 +418,34 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
+
+        [Test]
+        public void CastIntToDouble()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public sealed class FooControl : Control
+    {
+        private const int DefaultValue = 1;
+
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata((double)DefaultValue));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
