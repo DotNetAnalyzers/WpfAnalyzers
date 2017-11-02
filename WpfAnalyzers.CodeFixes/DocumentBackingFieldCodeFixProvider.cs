@@ -39,12 +39,10 @@
                                        .FirstAncestorOrSelf<MemberDeclarationSyntax>();
                 if (member != null)
                 {
-                    context.RegisterCodeFix(
-                        new DocumentEditorAction(
-                            "Add xml documentation.",
-                            context.Document,
-                           (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
-                            this.GetType().FullName),
+                    context.RegisterDocumentEditorFix(
+                        "Add xml documentation.",
+                        (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
+                        this.GetType(),
                         diagnostic);
                 }
             }

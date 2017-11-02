@@ -2,12 +2,11 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakeFieldStaticReadonlyCodeFixProvider))]
     [Shared]
@@ -15,6 +14,9 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -36,25 +38,24 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(
-                    CodeAction.Create(
+                context.RegisterDocumentEditorFix(
                         "Make static readonly",
-                        cancellationToken => ApplyFixAsync(cancellationToken, context, fieldDeclaration),
-                        this.GetType().FullName),
+                        (e, _) => ApplyFix(e, fieldDeclaration),
+                        this.GetType(),
                     diagnostic);
             }
         }
 
-        private static async Task<Document> ApplyFixAsync(CancellationToken cancellationToken, CodeFixContext context, FieldDeclarationSyntax fieldDeclaration)
+        private static void ApplyFix(DocumentEditor context, FieldDeclarationSyntax fieldDeclaration)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(cancellationToken)
-                              .ConfigureAwait(false);
-
-            var updatedModifiers = fieldDeclaration.Modifiers
-                                                   .WithStatic()
-                                                   .WithReadOnly();
-            var updatedDeclaration = fieldDeclaration.WithModifiers(updatedModifiers);
-            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(fieldDeclaration, updatedDeclaration));
+            context.ReplaceNode(fieldDeclaration, (x, _) =>
+            {
+                var f = (FieldDeclarationSyntax)x;
+                return f.WithModifiers(
+                    f.Modifiers
+                     .WithStatic()
+                     .WithReadOnly());
+            });
         }
     }
 }
