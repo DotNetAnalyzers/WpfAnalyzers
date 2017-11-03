@@ -19,7 +19,7 @@
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0070ConverterDoesNotHaveDefaultField.DiagnosticId);
+            ImmutableArray.Create(WPF0071ConverterDoesNotHaveAttribute.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -46,7 +46,7 @@
                     ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var inType, out var outType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Add default field.",
+                        $"Add ValueConversionAttribute.",
                         (e, _) => AddAttribute(e, classDeclaration, inType, outType),
                         diagnostic);
                 }
