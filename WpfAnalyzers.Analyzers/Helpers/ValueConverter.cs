@@ -1,7 +1,10 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal class ValueConverter
     {
@@ -29,6 +32,39 @@
 
             defaults = temp;
             return defaults != null;
+        }
+
+        internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol inType, out ITypeSymbol outType)
+        {
+            inType = null;
+            outType = null;
+            if (classDeclaration.TryFindMethod("Convert", out var convertMethod) &&
+                convertMethod.ReturnType is IdentifierNameSyntax returnType &&
+                returnType.Identifier.ValueText == "object" &&
+                convertMethod.ParameterList != null &&
+                convertMethod.ParameterList.Parameters.Count == 4)
+            {
+                using (var walker = ReturnExpressionsWalker.Borrow(convertMethod))
+                {
+                    using (var returnTypes = PooledHashSet<ITypeSymbol>.Borrow())
+                    {
+                        returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
+                        if (returnTypes.TryGetSingle(out outType))
+                        {
+                            using (var conversionWalker = ConversionWalker.Borrow(convertMethod))
+                            {
+                                if (conversionWalker.Casts.TryGetSingle(out var cast))
+                                {
+                                    inType = semanticModel.GetTypeInfoSafe(cast.Type, cancellationToken).Type;
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -7,11 +7,56 @@ namespace WpfAnalyzers
 
     internal static class Attribute
     {
-        internal static bool TryGetAttribute(AttributeSyntax attribute, QualifiedType attributeName, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
+        internal static bool TryGetAttribute(TypeDeclarationSyntax typeDeclaration, QualifiedType qualifiedType, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
         {
             result = null;
+            if (typeDeclaration == null)
+            {
+                return false;
+            }
+
+            foreach (var attributeList in typeDeclaration.AttributeLists)
+            {
+                foreach (var attribute in attributeList.Attributes)
+                {
+                    if (TryGetAttribute(attribute, qualifiedType, semanticModel, cancellationToken, out result))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetAttribute(AttributeSyntax attribute, QualifiedType qualifiedType, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
+        {
+            result = null;
+            if (attribute == null)
+            {
+                return false;
+            }
+
+            if (attribute.Name is SimpleNameSyntax simpleName)
+            {
+                if (simpleName.Identifier.ValueText != qualifiedType.Type &&
+                    !AliasWalker.Contains(attribute.SyntaxTree, simpleName.Identifier.ValueText))
+                {
+                    return false;
+                }
+            }
+            else if (attribute.Name is QualifiedNameSyntax qualifiedName)
+            {
+                var typeName = qualifiedName.Right.Identifier.ValueText;
+                if (typeName != qualifiedType.Type &&
+                    !AliasWalker.Contains(attribute.SyntaxTree, typeName))
+                {
+                    return false;
+                }
+            }
+
             var attributeType = semanticModel.GetTypeInfoSafe(attribute, cancellationToken).Type;
-            if (attributeType != attributeName)
+            if (attributeType != qualifiedType)
             {
                 return false;
             }
