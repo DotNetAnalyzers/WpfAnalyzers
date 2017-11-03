@@ -57,6 +57,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0061 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0061ClrMethodShouldHaveDocs());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0070ConverterDoesNotHaveDefaultField());
+
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0001BackingFieldShouldMatchRegisteredName()
         {
@@ -217,6 +219,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0061ClrMethodShouldHaveDocs()
         {
             WPF0061.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0070ConverterDoesNotHaveDefaultField()
+        {
+            WPF0070.Run();
         }
     }
 }

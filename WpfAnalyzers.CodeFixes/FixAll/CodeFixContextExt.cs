@@ -24,6 +24,15 @@ namespace WpfAnalyzers
             this CodeFixContext context,
             string title,
             Action<DocumentEditor, CancellationToken> action,
+            Diagnostic diagnostic)
+        {
+            RegisterDocumentEditorFix(context, title, action, title, diagnostic);
+        }
+
+        internal static void RegisterDocumentEditorFix(
+            this CodeFixContext context,
+            string title,
+            Action<DocumentEditor, CancellationToken> action,
             string equivalenceKey,
             Diagnostic diagnostic)
         {

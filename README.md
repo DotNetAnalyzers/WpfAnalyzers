@@ -117,6 +117,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md">WPF0061</a></td>
   <td>CLR accessor for attached property should have documentation.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md">WPF0070</a></td>
+  <td>Add default field to converter.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
