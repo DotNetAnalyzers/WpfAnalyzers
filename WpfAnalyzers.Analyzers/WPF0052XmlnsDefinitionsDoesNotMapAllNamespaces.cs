@@ -43,21 +43,15 @@
                 return;
             }
 
-            if (context.Node is AttributeSyntax attributeSyntax)
+            if (context.Node is AttributeSyntax attribute &&
+                Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
             {
-                var type = context.SemanticModel.GetTypeInfoSafe(attributeSyntax, context.CancellationToken).Type;
-                if (type != KnownSymbol.XmlnsDefinitionAttribute)
-                {
-                    return;
-                }
-
                 using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
                 {
                     if (walker.NotMapped.Count != 0)
                     {
-                        var missing = ImmutableDictionary.CreateRange(
-                            walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeSyntax.GetLocation(), missing));
+                        var missing = ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation(), missing));
                     }
                 }
             }
@@ -135,7 +129,7 @@
 
             public override void VisitAttribute(AttributeSyntax node)
             {
-                if (Attribute.TryGetAttribute(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken, out AttributeSyntax _))
+                if (Attribute.IsType(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken))
                 {
                     if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {

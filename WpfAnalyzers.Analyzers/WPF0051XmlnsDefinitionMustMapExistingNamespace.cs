@@ -40,19 +40,16 @@
                 return;
             }
 
-            if (context.Node is AttributeSyntax attributeSyntax)
+            if (context.Node is AttributeSyntax attribute &&
+                Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
+                Attribute.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
             {
-                var xmlnsDefinitionAttributeType = KnownSymbol.XmlnsDefinitionAttribute;
-                if (Attribute.TryGetAttribute(attributeSyntax, xmlnsDefinitionAttributeType, context.SemanticModel, context.CancellationToken, out AttributeSyntax _) &&
-                    Attribute.TryGetArgument(attributeSyntax, 1, xmlnsDefinitionAttributeType.ClrNamespaceArgumentName, out var arg))
+                if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
                 {
-                    if (context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace))
+                    if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
+                                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
                     {
-                        if (context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
-                                   .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), arg));
                     }
                 }
             }

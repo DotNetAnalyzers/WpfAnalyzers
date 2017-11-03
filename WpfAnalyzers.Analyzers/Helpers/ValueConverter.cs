@@ -39,8 +39,8 @@
             inType = null;
             outType = null;
             if (classDeclaration.TryFindMethod("Convert", out var convertMethod) &&
-                convertMethod.ReturnType is IdentifierNameSyntax returnType &&
-                returnType.Identifier.ValueText == "object" &&
+                convertMethod.ReturnType is PredefinedTypeSyntax returnType &&
+                returnType.Keyword.ValueText == "object" &&
                 convertMethod.ParameterList != null &&
                 convertMethod.ParameterList.Parameters.Count == 4)
             {
@@ -49,16 +49,15 @@
                     using (var returnTypes = PooledHashSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        if (returnTypes.TryGetSingle(out outType))
+                        if (returnTypes.TryGetSingle(out outType) &&
+                            ConversionWalker.TryGetSingle(
+                                convertMethod,
+                                semanticModel.GetDeclaredSymbolSafe(convertMethod.ParameterList.Parameters[0], cancellationToken),
+                                out var inTypeSyntax))
                         {
-                            using (var conversionWalker = ConversionWalker.Borrow(convertMethod))
-                            {
-                                if (conversionWalker.Casts.TryGetSingle(out var cast))
-                                {
-                                    inType = semanticModel.GetTypeInfoSafe(cast.Type, cancellationToken).Type;
-                                    return true;
-                                }
-                            }
+                            inType = semanticModel.GetTypeInfoSafe(inTypeSyntax, cancellationToken)
+                                                  .Type;
+                            return true;
                         }
                     }
                 }

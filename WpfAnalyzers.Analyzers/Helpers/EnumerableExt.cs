@@ -43,9 +43,9 @@
             {
                 if (e.MoveNext())
                 {
+                    result = e.Current;
                     if (!e.MoveNext())
                     {
-                        result = e.Current;
                         return true;
                     }
 

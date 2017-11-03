@@ -43,9 +43,7 @@
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
                 type.Is(KnownSymbol.IValueConverter) &&
-                !Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out _) &&
-                !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
-                 ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out _, out _))
+                !Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out _))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation()));
             }

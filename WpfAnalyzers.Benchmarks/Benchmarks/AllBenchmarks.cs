@@ -59,6 +59,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0070ConverterDoesNotHaveDefaultField());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0071 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0071ConverterDoesNotHaveAttribute());
+
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0001BackingFieldShouldMatchRegisteredName()
         {
@@ -225,6 +227,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0070ConverterDoesNotHaveDefaultField()
         {
             WPF0070.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0071ConverterDoesNotHaveAttribute()
+        {
+            WPF0071.Run();
         }
     }
 }

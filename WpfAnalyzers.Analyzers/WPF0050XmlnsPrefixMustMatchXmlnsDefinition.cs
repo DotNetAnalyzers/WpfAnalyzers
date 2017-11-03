@@ -41,20 +41,21 @@
                 return;
             }
 
-            if (context.Node is AttributeSyntax attributeSyntax)
+            if (context.Node is AttributeSyntax attribute)
             {
-                QualifiedType correspondingType = null;
-                if (Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken, out var xmlnsAttribute))
+                QualifiedType correspondingType;
+                AttributeSyntax xmlnsAttribute;
+                if (Attribute.IsType(attribute, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken))
                 {
+                    xmlnsAttribute = attribute;
                     correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
                 }
-
-                if (xmlnsAttribute == null && Attribute.TryGetAttribute(attributeSyntax, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken, out xmlnsAttribute))
+                else if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
                 {
+                    xmlnsAttribute = attribute;
                     correspondingType = KnownSymbol.XmlnsPrefixAttribute;
                 }
-
-                if (correspondingType == null || xmlnsAttribute == null)
+                else
                 {
                     return;
                 }
