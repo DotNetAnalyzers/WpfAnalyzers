@@ -16,10 +16,17 @@
         {
         }
 
+        public int Count => this.inner.Count;
+
         public bool Add(T item)
         {
             this.ThrowIfDisposed();
             return this.inner.Add(item);
+        }
+
+        public void UnionWith(IEnumerable<T> other)
+        {
+            this.inner.UnionWith(other);
         }
 
         public void Dispose()
@@ -53,6 +60,11 @@
 
             set.refCount++;
             return set;
+        }
+
+        internal bool TryGetSingle(out T result)
+        {
+            return this.inner.TryGetSingle(out result);
         }
 
         [Conditional("DEBUG")]

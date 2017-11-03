@@ -14,7 +14,7 @@ namespace WpfAnalyzers
 
         public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
-        public static ReturnExpressionsWalker Create(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
+        public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {

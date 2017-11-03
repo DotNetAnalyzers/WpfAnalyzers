@@ -34,6 +34,7 @@ namespace WpfAnalyzers
 
         internal static readonly XmlnsPrefixAttributeType XmlnsPrefixAttribute = new XmlnsPrefixAttributeType();
         internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
+        internal static readonly QualifiedType ValueConversionAttribute = new QualifiedType("System.Windows.Data.ValueConversionAttribute");
 
         private static QualifiedType Create(string qualifiedName)
         {

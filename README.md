@@ -121,6 +121,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md">WPF0070</a></td>
   <td>Add default field to converter.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md">WPF0071</a></td>
+  <td>Add ValueConversion attribute.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
