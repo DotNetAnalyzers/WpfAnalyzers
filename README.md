@@ -125,6 +125,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md">WPF0071</a></td>
   <td>Add ValueConversion attribute.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md">WPF0072</a></td>
+  <td>ValueConversion must use correct types.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

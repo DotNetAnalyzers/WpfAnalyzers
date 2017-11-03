@@ -5,7 +5,6 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
@@ -37,10 +36,9 @@
                 }
 
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<ArgumentSyntax>();
+                                                 .FirstAncestorOrSelf<AttributeArgumentSyntax>();
                 var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (argument != null &&
-                    ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var inType, out var outType))
+                if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var inType, out var outType))
                 {
                     context.RegisterDocumentEditorFix(
                         $"Add default field.",

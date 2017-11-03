@@ -1,6 +1,7 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -48,17 +49,30 @@
                 ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var inType, out var outType))
             {
                 if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
-                    !ReferenceEquals(context.SemanticModel.GetTypeInfoSafe(arg, context.CancellationToken).Type, inType))
+                    TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
+                    !ReferenceEquals(argType, inType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
                 }
 
                 if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
-                    !ReferenceEquals(context.SemanticModel.GetTypeInfoSafe(arg, context.CancellationToken).Type, outType))
+                    TryGetType(arg, context.SemanticModel, context.CancellationToken, out argType) &&
+                    !ReferenceEquals(argType, outType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
                 }
             }
+        }
+
+        private static bool TryGetType(AttributeArgumentSyntax arg, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
+        {
+            type = null;
+            if (arg.Expression is TypeOfExpressionSyntax typeOf)
+            {
+                type = semanticModel.GetTypeInfoSafe(typeOf.Type, cancellationToken).Type;
+            }
+
+            return type != null;
         }
     }
 }

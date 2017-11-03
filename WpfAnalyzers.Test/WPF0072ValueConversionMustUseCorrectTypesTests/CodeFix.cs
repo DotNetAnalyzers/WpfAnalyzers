@@ -6,7 +6,7 @@
     internal class CodeFix
     {
         [Test]
-        public void AddAttributeDirectCast()
+        public void DirectCastWrongSourceType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -16,7 +16,8 @@ namespace RoslynSandbox
     using System.Globalization;
     using System.Windows.Data;
 
-    public class ↓CountConverter : IValueConverter
+    [ValueConversion(↓typeof(string), typeof(int))]
+    public class CountConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -52,11 +53,11 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddValueConversionAttributeFix>(testCode, fixedCode, "Add default field.");
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
 
         [Test]
-        public void AddAttributeAsCast()
+        public void DirectCastWrongTargetType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -66,17 +67,12 @@ namespace RoslynSandbox
     using System.Globalization;
     using System.Windows.Data;
 
-    public class ↓CountConverter : IValueConverter
+    [ValueConversion(typeof(ICollection), ↓typeof(string))]
+    public class CountConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var col = value as ICollection;
-            if (col != null)
-            {
-                return col.Count;
-            }
-
-            return 0;
+            return ((ICollection)value).Count;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -99,13 +95,7 @@ namespace RoslynSandbox
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var col = value as ICollection;
-            if (col != null)
-            {
-                return col.Count;
-            }
-
-            return 0;
+            return ((ICollection)value).Count;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -114,7 +104,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddValueConversionAttributeFix>(testCode, fixedCode, "Add default field.");
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
     }
 }
