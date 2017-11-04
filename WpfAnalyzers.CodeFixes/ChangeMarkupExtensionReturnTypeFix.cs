@@ -8,13 +8,13 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ChangeValueConversionAttributeArgumentFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ChangeMarkupExtensionReturnTypeFix))]
     [Shared]
-    internal class ChangeValueConversionAttributeArgumentFix : CodeFixProvider
+    internal class ChangeMarkupExtensionReturnTypeFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0072ValueConversionMustUseCorrectTypes.DiagnosticId);
+            ImmutableArray.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -36,29 +36,24 @@
                 }
 
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<AttributeArgumentSyntax>();
+                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
                 var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var inType, out var outType))
+                if (MarkupExtension.TryGetReturnType(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var returnType))
                 {
                     context.RegisterDocumentEditorFix(
                         $"Change type.",
-                        (e, _) => AddAttribute(e, attribute, inType, outType),
+                        (e, _) => AddAttribute(e, attribute, returnType),
                         diagnostic);
                 }
             }
         }
 
-        private static void AddAttribute(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol inType, ITypeSymbol outType)
+        private static void AddAttribute(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol returnType)
         {
             editor.ReplaceNode(
                 attributeSyntax.ArgumentList.Arguments[0],
                 editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))));
-
-            editor.ReplaceNode(
-                attributeSyntax.ArgumentList.Arguments[1],
-                editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))));
+                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))));
         }
     }
 }

@@ -65,6 +65,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0080 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0080MarkupExtensionDoesNotHaveAttribute());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0081 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0081MarkupExtensionReturnTypeMustUseCorrectType());
+
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0001BackingFieldShouldMatchRegisteredName()
         {
@@ -249,6 +251,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0080MarkupExtensionDoesNotHaveAttribute()
         {
             WPF0080.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0081MarkupExtensionReturnTypeMustUseCorrectType()
+        {
+            WPF0081.Run();
         }
     }
 }

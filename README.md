@@ -133,6 +133,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md">WPF0080</a></td>
   <td>Add MarkupExtensionReturnType attribute.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md">WPF0081</a></td>
+  <td>MarkupExtensionReturnType must use correct types.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
