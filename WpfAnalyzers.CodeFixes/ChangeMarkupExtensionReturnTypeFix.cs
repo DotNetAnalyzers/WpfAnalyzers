@@ -41,8 +41,9 @@
                 if (MarkupExtension.TryGetReturnType(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var returnType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Change type.",
+                        $"Change type to {returnType}.",
                         (e, _) => AddAttribute(e, attribute, returnType),
+                        this.GetType(),
                         diagnostic);
                 }
             }

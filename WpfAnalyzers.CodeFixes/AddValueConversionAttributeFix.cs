@@ -42,25 +42,42 @@
 
                 var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                        .FirstAncestorOrSelf<ClassDeclarationSyntax>();
+                ITypeSymbol sourceType = null;
+                ITypeSymbol targetType = null;
                 if (classDeclaration != null &&
-                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var sourceType, out var targetType))
+                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out sourceType, out targetType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Add ValueConversionAttribute.",
+                        $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
+                        (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
+                        diagnostic);
+                }
+                else
+                {
+                    context.RegisterDocumentEditorFix(
+                        $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))]..",
                         (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
                         diagnostic);
                 }
             }
         }
 
-        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol inType, ITypeSymbol outType)
+        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol sourceType, ITypeSymbol targetType)
         {
+            TypeOfExpressionSyntax TypeOf(ITypeSymbol t)
+            {
+                if (t != null)
+                {
+                    return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(t));
+                }
+
+                return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(SyntaxFactory.ParseTypeName("TYPE"));
+            }
+
             var attributeArguments = new[]
                                      {
-                                         editor.Generator.AttributeArgument(
-                                             editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))),
-                                         editor.Generator.AttributeArgument(
-                                             editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))),
+                                         editor.Generator.AttributeArgument(TypeOf(sourceType)),
+                                         editor.Generator.AttributeArgument(TypeOf(targetType)),
                                      };
             editor.AddAttribute(
                 classDeclaration,

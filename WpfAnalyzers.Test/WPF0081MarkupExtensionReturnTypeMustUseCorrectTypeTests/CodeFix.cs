@@ -6,6 +6,33 @@
     internal class CodeFix
     {
         [Test]
+        public void Message()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Windows.Markup;
+
+    [MarkupExtensionReturnType(↓typeof(int))]
+    public class FooExtension : MarkupExtension
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+}";
+
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                "WPF0081",
+                "MarkupExtensionReturnType must use correct return type. Expected: RoslynSandbox.FooExtension",
+                testCode,
+                out testCode);
+            AnalyzerAssert.Diagnostics<WPF0081MarkupExtensionReturnTypeMustUseCorrectType>(expectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void ReturnThis()
         {
             var testCode = @"

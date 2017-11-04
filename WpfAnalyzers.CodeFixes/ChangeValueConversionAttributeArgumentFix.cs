@@ -41,7 +41,7 @@
                 if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var sourceType, out var targetType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Change type.",
+                        $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         (e, _) => AddAttribute(e, attribute, sourceType, targetType),
                         diagnostic);
                 }

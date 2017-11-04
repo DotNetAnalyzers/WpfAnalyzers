@@ -14,12 +14,12 @@
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "MarkupExtensionReturnType must use correct types.",
-            messageFormat: "MarkupExtensionReturnType must use correct types.",
+            title: "MarkupExtensionReturnType must use correct return type.",
+            messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "MarkupExtensionReturnType must use correct types.",
+            description: "MarkupExtensionReturnType must use correct return type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
@@ -52,7 +52,7 @@
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
                     !ReferenceEquals(argType, returnType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), returnType));
                 }
             }
         }
