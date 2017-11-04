@@ -46,18 +46,18 @@
                 type.Is(KnownSymbol.IValueConverter) &&
                 Attribute.IsType(attribute, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken) &&
                 attribute.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax classDeclaration &&
-                ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var inType, out var outType))
+                ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
             {
                 if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
-                    !ReferenceEquals(argType, inType))
+                    !ReferenceEquals(argType, sourceType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
                 }
 
                 if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out argType) &&
-                    !ReferenceEquals(argType, outType))
+                    !ReferenceEquals(argType, targetType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
                 }

@@ -39,9 +39,9 @@ namespace RoslynSandbox
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var inType, out var outType));
-            Assert.AreEqual("ICollection", inType.Name);
-            Assert.AreEqual("Int32", outType.Name);
+            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+            Assert.AreEqual("ICollection", sourceType.Name);
+            Assert.AreEqual("Int32", targetType.Name);
         }
 
         [Test]
@@ -82,9 +82,9 @@ namespace RoslynSandbox
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var inType, out var outType));
-            Assert.AreEqual("ICollection", inType.Name);
-            Assert.AreEqual("Int32", outType.Name);
+            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+            Assert.AreEqual("ICollection", sourceType.Name);
+            Assert.AreEqual("Int32", targetType.Name);
         }
     }
 }

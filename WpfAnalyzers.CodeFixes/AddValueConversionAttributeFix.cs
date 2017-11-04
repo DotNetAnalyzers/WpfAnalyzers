@@ -43,11 +43,11 @@
                 var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                        .FirstAncestorOrSelf<ClassDeclarationSyntax>();
                 if (classDeclaration != null &&
-                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var inType, out var outType))
+                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var sourceType, out var targetType))
                 {
                     context.RegisterDocumentEditorFix(
                         $"Add ValueConversionAttribute.",
-                        (e, _) => AddAttribute(e, classDeclaration, inType, outType),
+                        (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
                         diagnostic);
                 }
             }

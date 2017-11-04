@@ -38,11 +38,11 @@
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                  .FirstAncestorOrSelf<AttributeArgumentSyntax>();
                 var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var inType, out var outType))
+                if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var sourceType, out var targetType))
                 {
                     context.RegisterDocumentEditorFix(
                         $"Change type.",
-                        (e, _) => AddAttribute(e, attribute, inType, outType),
+                        (e, _) => AddAttribute(e, attribute, sourceType, targetType),
                         diagnostic);
                 }
             }

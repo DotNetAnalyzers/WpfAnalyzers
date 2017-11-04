@@ -34,10 +34,10 @@
             return defaults != null;
         }
 
-        internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol inType, out ITypeSymbol outType)
+        internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol sourceType, out ITypeSymbol targetType)
         {
-            inType = null;
-            outType = null;
+            sourceType = null;
+            targetType = null;
             if (classDeclaration.TryFindMethod("Convert", out var convertMethod) &&
                 convertMethod.ReturnType is PredefinedTypeSyntax returnType &&
                 returnType.Keyword.ValueText == "object" &&
@@ -49,13 +49,13 @@
                     using (var returnTypes = PooledHashSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        if (returnTypes.TryGetSingle(out outType) &&
+                        if (returnTypes.TryGetSingle(out targetType) &&
                             ConversionWalker.TryGetSingle(
                                 convertMethod,
                                 semanticModel.GetDeclaredSymbolSafe(convertMethod.ParameterList.Parameters[0], cancellationToken),
                                 out var inTypeSyntax))
                         {
-                            inType = semanticModel.GetTypeInfoSafe(inTypeSyntax, cancellationToken)
+                            sourceType = semanticModel.GetTypeInfoSafe(inTypeSyntax, cancellationToken)
                                                   .Type;
                             return true;
                         }
