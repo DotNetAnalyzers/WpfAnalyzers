@@ -59,11 +59,7 @@
                 classDeclaration,
                 editor.Generator.AddAttributeArguments(
                     Attribute,
-                    new[]
-                    {
-                        editor.Generator.AttributeArgument(
-                            editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))),
-                    }));
+                    new[] { editor.Generator.AttributeArgument(editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))) }));
         }
     }
 }

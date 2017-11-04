@@ -49,16 +49,15 @@
                     using (var returnTypes = PooledHashSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        if (returnTypes.TryGetSingle(out targetType) &&
-                            ConversionWalker.TryGetSingle(
-                                convertMethod,
-                                semanticModel.GetDeclaredSymbolSafe(convertMethod.ParameterList.Parameters[0], cancellationToken),
-                                out var inTypeSyntax))
-                        {
-                            sourceType = semanticModel.GetTypeInfoSafe(inTypeSyntax, cancellationToken)
-                                                  .Type;
-                            return true;
-                        }
+                        return returnTypes.TryGetSingle(out targetType) &&
+                               ConversionWalker.TryGetCommonBase(
+                                   convertMethod,
+                                   semanticModel.GetDeclaredSymbolSafe(
+                                       convertMethod.ParameterList.Parameters[0],
+                                       cancellationToken),
+                                   semanticModel,
+                                   cancellationToken,
+                                   out sourceType);
                     }
                 }
             }

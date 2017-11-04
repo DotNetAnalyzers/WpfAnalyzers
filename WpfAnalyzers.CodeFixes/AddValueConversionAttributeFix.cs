@@ -55,17 +55,18 @@
 
         private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol inType, ITypeSymbol outType)
         {
+            var attributeArguments = new[]
+                                     {
+                                         editor.Generator.AttributeArgument(
+                                             editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))),
+                                         editor.Generator.AttributeArgument(
+                                             editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))),
+                                     };
             editor.AddAttribute(
                 classDeclaration,
                 editor.Generator.AddAttributeArguments(
                     Attribute,
-                    new[]
-                    {
-                        editor.Generator.AttributeArgument(
-                            editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))),
-                        editor.Generator.AttributeArgument(
-                            editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))),
-                    }));
+                    attributeArguments));
         }
     }
 }

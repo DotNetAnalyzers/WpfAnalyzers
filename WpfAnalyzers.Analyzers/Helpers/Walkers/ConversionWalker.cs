@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Generic;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,52 +45,82 @@ namespace WpfAnalyzers
 
         internal static ConversionWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ConversionWalker());
 
-        internal static bool TryGetSingle(SyntaxNode node, IParameterSymbol parameter, out TypeSyntax toType)
+        internal static bool TryGetCommonBase(SyntaxNode node, ISymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol toType)
         {
+            bool IsFor(ExpressionSyntax e, ISymbol s, SemanticModel sm, CancellationToken ct)
+            {
+                if (e is IdentifierNameSyntax idn &&
+                    idn.Identifier.ValueText != symbol.Name)
+                {
+                    return false;
+                }
+
+                return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
+            }
+
+            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, SemanticModel sm, CancellationToken ct, out ITypeSymbol result)
+            {
+                result = null;
+                if (ts == null)
+                {
+                    return false;
+                }
+
+                var t2 = sm.GetTypeInfoSafe(ts, ct).Type;
+                if (t2 == null)
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(t1, t2))
+                {
+                    result = t1;
+                    return true;
+                }
+
+                if (t1 == null ||
+                    t1.Is(t2))
+                {
+                    result = t2;
+                    return true;
+                }
+
+                if (t2.Is(t1))
+                {
+                    result = t1;
+                    return true;
+                }
+
+                return result != null;
+            }
+
             toType = null;
             using (var walker = Borrow(node))
             {
                 foreach (var cast in walker.casts)
                 {
-                    if (cast.Expression is IdentifierNameSyntax identifierName &&
-                        identifierName.Identifier.ValueText == parameter.Name)
+                    if (IsFor(cast.Expression, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, cast.Type, semanticModel, cancellationToken, out toType))
                     {
-                        if (toType != null)
-                        {
-                            return false;
-                        }
-
-                        toType = cast.Type;
+                        return false;
                     }
                 }
 
                 foreach (var cast in walker.asCasts)
                 {
-                    if (cast.Left is IdentifierNameSyntax identifierName &&
-                        identifierName.Identifier.ValueText == parameter.Name)
+                    if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
                     {
-                        if (toType != null ||
-                            !(cast.Right is TypeSyntax typeSyntax))
-                        {
-                            return false;
-                        }
-
-                        toType = typeSyntax;
+                        return false;
                     }
                 }
 
                 foreach (var cast in walker.isCasts)
                 {
-                    if (cast.Left is IdentifierNameSyntax identifierName &&
-                        identifierName.Identifier.ValueText == parameter.Name)
+                    if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
                     {
-                        if (toType != null ||
-                            !(cast.Right is TypeSyntax typeSyntax))
-                        {
-                            return false;
-                        }
-
-                        toType = typeSyntax;
+                        return false;
                     }
                 }
 
