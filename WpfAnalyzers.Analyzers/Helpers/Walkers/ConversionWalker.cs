@@ -91,7 +91,16 @@ namespace WpfAnalyzers
                     return true;
                 }
 
-                return result != null;
+                using (var set = PooledHashSet<ITypeSymbol>.Borrow())
+                {
+                    set.UnionWith(t1.RecursiveBaseTypes());
+                    set.IntersectWith(t2.RecursiveBaseTypes());
+                    return set.TryGetFirst(
+                               x => x is INamedTypeSymbol namedType &&
+                                    namedType.IsGenericType,
+                               out result) ||
+                           set.TryGetFirst(out result);
+                }
             }
 
             toType = null;

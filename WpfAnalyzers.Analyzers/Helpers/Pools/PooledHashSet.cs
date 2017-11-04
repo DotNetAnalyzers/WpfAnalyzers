@@ -1,12 +1,12 @@
 ﻿namespace WpfAnalyzers
 {
     using System;
+    using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Microsoft.CodeAnalysis;
 
-    internal sealed class PooledHashSet<T> : IDisposable
+    internal sealed class PooledHashSet<T> : IDisposable, IReadOnlyCollection<T>
     {
         private static readonly ConcurrentQueue<PooledHashSet<T>> Cache = new ConcurrentQueue<PooledHashSet<T>>();
         private readonly HashSet<T> inner = new HashSet<T>();
@@ -19,21 +19,24 @@
 
         public int Count => this.inner.Count;
 
-        public bool Add(T item)
+        private HashSet<T> Inner
         {
-            this.ThrowIfDisposed();
-            return this.inner.Add(item);
+            get
+            {
+                this.ThrowIfDisposed();
+                return this.inner;
+            }
         }
 
-        public void UnionWith(IEnumerable<T> other)
-        {
-            this.inner.UnionWith(other);
-        }
+        public bool Add(T item) => this.Inner.Add(item);
 
-        public void IntersectWith(IEnumerable<T> other)
-        {
-            this.inner.IntersectWith(other);
-        }
+        public void UnionWith(IEnumerable<T> other) => this.Inner.UnionWith(other);
+
+        public void IntersectWith(IEnumerable<T> other) => this.Inner.IntersectWith(other);
+
+        public IEnumerator<T> GetEnumerator() => this.Inner.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this.Inner).GetEnumerator();
 
         public void Dispose()
         {
@@ -70,12 +73,7 @@
 
         internal bool TryGetSingle(out T result)
         {
-            return this.inner.TryGetSingle(out result);
-        }
-
-        public bool TryGetFirst(out T result)
-        {
-            return this.inner.TryGetFirst(out result);
+            return this.Inner.TryGetSingle(out result);
         }
 
         [Conditional("DEBUG")]
