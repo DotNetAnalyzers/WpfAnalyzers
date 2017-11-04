@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using Microsoft.CodeAnalysis;
 
     internal sealed class PooledHashSet<T> : IDisposable
     {
@@ -27,6 +28,11 @@
         public void UnionWith(IEnumerable<T> other)
         {
             this.inner.UnionWith(other);
+        }
+
+        public void IntersectWith(IEnumerable<T> other)
+        {
+            this.inner.IntersectWith(other);
         }
 
         public void Dispose()
@@ -65,6 +71,11 @@
         internal bool TryGetSingle(out T result)
         {
             return this.inner.TryGetSingle(out result);
+        }
+
+        public bool TryGetFirst(out T result)
+        {
+            return this.inner.TryGetFirst(out result);
         }
 
         [Conditional("DEBUG")]

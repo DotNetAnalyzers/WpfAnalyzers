@@ -14,7 +14,6 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
-    using System.Windows.Data;
 
     [ValueConversion(↓typeof(string), typeof(int))]
     public class CountConverter : IValueConverter
@@ -37,9 +36,8 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
-    using System.Windows.Data;
 
-    [ValueConversion(typeof(ICollection), typeof(int))]
+    [System.Windows.Data.ValueConversion(typeof(ICollection), typeof(int))]
     public class CountConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -44,7 +44,7 @@ namespace WpfAnalyzers
                  !context.Node.HasDocumentation() &&
                 BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                context.ContainingSymbol.ContainingType.TryGetProperty(registeredName, out _))
+                context.ContainingSymbol.ContainingType.TryGetPropertyRecursive(registeredName, out _))
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(

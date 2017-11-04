@@ -37,17 +37,17 @@
             }
         }
 
-        internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
+        internal static bool TryGetFieldRecursive(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
-            return type.TryGetSingleMember(name, out field);
+            return type.TryGetSingleMemberRecursive(name, out field);
         }
 
-        internal static bool TryGetProperty(this ITypeSymbol type, string name, out IPropertySymbol property)
+        internal static bool TryGetPropertyRecursive(this ITypeSymbol type, string name, out IPropertySymbol property)
         {
-            return type.TryGetSingleMember(name, out property);
+            return type.TryGetSingleMemberRecursive(name, out property);
         }
 
-        internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, string name, out TMember member)
+        internal static bool TryGetSingleMemberRecursive<TMember>(this ITypeSymbol type, string name, out TMember member)
             where TMember : class, ISymbol
         {
             member = null;

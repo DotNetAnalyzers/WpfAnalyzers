@@ -167,9 +167,9 @@ namespace WpfAnalyzers
                 {
                     if (getField.ContainingType.IsGenericType)
                     {
-                        return property.ContainingType.TryGetSingleMember<ISymbol>(getField.Name, out var getMember) &&
+                        return property.ContainingType.TryGetSingleMemberRecursive<ISymbol>(getField.Name, out var getMember) &&
                                BackingFieldOrProperty.TryCreate(getMember, out getField) &&
-                               property.ContainingType.TryGetSingleMember<ISymbol>(setField.Name, out var setMember) &&
+                               property.ContainingType.TryGetSingleMemberRecursive<ISymbol>(setField.Name, out var setMember) &&
                                BackingFieldOrProperty.TryCreate(setMember, out setField);
                     }
 
