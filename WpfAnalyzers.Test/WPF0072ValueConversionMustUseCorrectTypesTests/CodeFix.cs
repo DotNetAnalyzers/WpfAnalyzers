@@ -14,6 +14,7 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
+    using System.Windows.Data;
 
     [ValueConversion(↓typeof(string), typeof(int))]
     public class CountConverter : IValueConverter
@@ -36,8 +37,9 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
+    using System.Windows.Data;
 
-    [System.Windows.Data.ValueConversion(typeof(ICollection), typeof(int))]
+    [ValueConversion(typeof(ICollection), typeof(int))]
     public class CountConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -46,6 +48,104 @@ namespace RoslynSandbox
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+        }
+
+        [Test]
+        public void DirectCastWrongSourceTypeFullyQualified()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+
+    [System.Windows.Data.ValueConversion(↓typeof(string), typeof(int))]
+    public class CountConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((ICollection)value).Count;
+        }
+
+        object System.Windows.Data.IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+
+    [System.Windows.Data.ValueConversion(typeof(ICollection), typeof(int))]
+    public class CountConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((ICollection)value).Count;
+        }
+
+        object System.Windows.Data.IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+        }
+
+        [Test]
+        public void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+
+    [System.Windows.Data.ValueConversionAttribute(↓typeof(string), typeof(int))]
+    public class CountConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((ICollection)value).Count;
+        }
+
+        object System.Windows.Data.IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+
+    [System.Windows.Data.ValueConversionAttribute(typeof(ICollection), typeof(int))]
+    public class CountConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((ICollection)value).Count;
+        }
+
+        object System.Windows.Data.IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

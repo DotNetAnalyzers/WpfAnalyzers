@@ -42,7 +42,6 @@
 
             if (context.ContainingSymbol is ITypeSymbol type &&
                 context.Node is AttributeSyntax attribute &&
-                !type.IsAbstract &&
                 type.Is(KnownSymbol.IValueConverter) &&
                 Attribute.IsType(attribute, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken) &&
                 attribute.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax classDeclaration &&
