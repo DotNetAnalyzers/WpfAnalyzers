@@ -15,7 +15,7 @@
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "ValueConversion must use correct types.",
-            messageFormat: "ValueConversion must use correct types.",
+            messageFormat: "ValueConversion must use correct types. Expected: {0}",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
@@ -49,16 +49,16 @@
             {
                 if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
-                    !ReferenceEquals(argType, sourceType))
+                    !Equals(argType, sourceType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), argType));
                 }
 
                 if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out argType) &&
-                    !ReferenceEquals(argType, targetType))
+                    !Equals(argType, targetType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), argType));
                 }
             }
         }

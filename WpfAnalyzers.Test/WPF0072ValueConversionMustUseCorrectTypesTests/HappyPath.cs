@@ -107,5 +107,34 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenHasAttributeNegatedNullableBoolean()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(bool?), typeof(bool?))]
+    public sealed class InvertBooleanConverter : IValueConverter
+    {
+        public static readonly InvertBooleanConverter Default = new InvertBooleanConverter();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool?)value;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
