@@ -143,7 +143,7 @@ namespace RoslynSandbox
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
             Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
-            Assert.AreEqual("ICollection", sourceType.Name);
+            Assert.AreEqual("IEnumerable", sourceType.Name);
             Assert.AreEqual("Int32", targetType.Name);
         }
     }
