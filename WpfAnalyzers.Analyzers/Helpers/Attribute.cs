@@ -7,7 +7,7 @@ namespace WpfAnalyzers
 
     internal static class Attribute
     {
-        internal static bool TryGetAttribute(TypeDeclarationSyntax typeDeclaration, QualifiedType qualifiedType, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
+        internal static bool TryGetAttribute(TypeDeclarationSyntax typeDeclaration, QualifiedType attributeType, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
         {
             result = null;
             if (typeDeclaration == null)
@@ -19,7 +19,7 @@ namespace WpfAnalyzers
             {
                 foreach (var attribute in attributeList.Attributes)
                 {
-                    if (IsType(attribute, qualifiedType, semanticModel, cancellationToken))
+                    if (IsType(attribute, attributeType, semanticModel, cancellationToken))
                     {
                         result = attribute;
                         return true;
