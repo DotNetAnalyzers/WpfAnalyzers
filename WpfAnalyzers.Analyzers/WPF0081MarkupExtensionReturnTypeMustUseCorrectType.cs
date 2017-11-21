@@ -16,7 +16,7 @@
             id: DiagnosticId,
             title: "MarkupExtensionReturnType must use correct return type.",
             messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "MarkupExtensionReturnType must use correct return type.",

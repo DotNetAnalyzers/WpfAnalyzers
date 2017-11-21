@@ -15,7 +15,7 @@
             id: DiagnosticId,
             title: "Add MarkupExtensionReturnType attribute.",
             messageFormat: "Add MarkupExtensionReturnType attribute.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "Add MarkupExtensionReturnType attribute.",

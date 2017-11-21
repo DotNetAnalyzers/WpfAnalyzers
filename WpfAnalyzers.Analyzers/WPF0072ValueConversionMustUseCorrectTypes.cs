@@ -16,7 +16,7 @@
             id: DiagnosticId,
             title: "ValueConversion must use correct types.",
             messageFormat: "ValueConversion must use correct types. Expected: {0}",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "ValueConversion must use correct types.",

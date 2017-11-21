@@ -17,7 +17,7 @@
             id: DiagnosticId,
             title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
             messageFormat: "There is no [{0}] mapping to '{1}'",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.",

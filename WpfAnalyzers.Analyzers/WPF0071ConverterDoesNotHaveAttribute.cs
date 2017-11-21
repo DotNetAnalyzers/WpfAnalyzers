@@ -15,7 +15,7 @@
             id: DiagnosticId,
             title: "Add ValueConversion attribute.",
             messageFormat: "Add ValueConversion attribute.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "Add ValueConversion attribute.",

@@ -15,7 +15,7 @@
             id: DiagnosticId,
             title: "Add default field to converter.",
             messageFormat: "Add default field to converter.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "Add default field to converter.",

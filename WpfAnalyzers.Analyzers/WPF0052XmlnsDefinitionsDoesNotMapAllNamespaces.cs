@@ -19,7 +19,7 @@
             id: DiagnosticId,
             title: "XmlnsDefinitions does not map all namespaces with public types.",
             messageFormat: "XmlnsDefinitions does not map all namespaces with public types.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "XmlnsDefinitions does not map all namespaces with public types.",
