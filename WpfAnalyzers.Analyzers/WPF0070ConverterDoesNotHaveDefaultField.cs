@@ -42,7 +42,7 @@
             if (context.ContainingSymbol is ITypeSymbol type &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
-                type.Is(KnownSymbol.IValueConverter) &&
+                type.IsEither(KnownSymbol.IValueConverter, KnownSymbol.IMultiValueConverter) &&
                 !type.Is(KnownSymbol.MarkupExtension) &&
                 !Mutable.HasMutableInstanceMembers(type) &&
                 !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
