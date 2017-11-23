@@ -1,3 +1,8 @@
+#### 0.3.3
+* BUGFIX: WPF0070 handle internal
+* BUGFIX: WPF0081 allow more specific types when object
+* Feature: Stub code gen for IValueConverter & IMultiValueConverter
+
 #### 0.3.1
 * BUGFIX: Tweak code for determining representation preserving conversion.
 

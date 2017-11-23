@@ -1,5 +1,5 @@
 ﻿type file
-version 0.3.2.1
+version 0.3.3.0
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
@@ -13,7 +13,9 @@ projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX: Tweak code for determining representation preserving conversion.
+  BUGFIX: WPF0070 handle internal
+  BUGFIX: WPF0081 allow more specific types when object
+  Feature: Stub code gen for IValueConverter & IMultiValueConverter
 
 files
   bin/Release/netstandard1.3/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
