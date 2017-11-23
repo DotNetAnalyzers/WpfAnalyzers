@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
+﻿// ReSharper disable InconsistentNaming
+namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -63,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddDefaultField()
+        public void IValueConverterAddDefaultField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -155,6 +156,47 @@ namespace RoslynSandbox
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field.");
+        }
+
+        [Test]
+        public void IMultiValueConverterAddDefaultField()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓FooConverter : System.Windows.Data.IMultiValueConverter
+    {
+        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public sealed class FooConverter : System.Windows.Data.IMultiValueConverter
+    {
+        public static readonly FooConverter Default = new FooConverter();
+
+        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
         }
     }
 }";

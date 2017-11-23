@@ -353,5 +353,40 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenConstructorWithParameters()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(IEnumerable), typeof(int))]
+    public class FooConverter : IValueConverter
+    {
+        private readonly object value;
+
+        public FooConverter(object value)
+        {
+            this.value = value;
+        }
+
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return this.value;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
