@@ -5,13 +5,11 @@ namespace WpfAnalyzers
     using System.Composition;
     using System.Globalization;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementValueConverterCodeFixProvider))]
     [Shared]
@@ -36,7 +34,7 @@ namespace WpfAnalyzers
         }");
 
         private static readonly MethodDeclarationSyntax IMultiValueConverterConvertBack = ParseMethod(
-            @"        object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+            @"        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
         }");
@@ -70,8 +68,9 @@ namespace WpfAnalyzers
                                   .Contains("does not implement interface member 'IValueConverter.Convert(object, Type, object, CultureInfo)'"))
                     {
                         context.RegisterDocumentEditorFix(
-                            "Implement IValueConverter for one way bindings.",
+                            "Implement IValueConverter.Convert for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvert),
+                            "Implement IValueConverter",
                             diagnostic);
                     }
 
@@ -79,26 +78,36 @@ namespace WpfAnalyzers
                                   .Contains("does not implement interface member 'IValueConverter.ConvertBack(object, Type, object, CultureInfo)'"))
                     {
                         context.RegisterDocumentEditorFix(
-                            "Implement IValueConverter for one way bindings.",
+                            "Implement IValueConverter.ConvertBack for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack),
+                            "Implement IValueConverter",
                             diagnostic);
                     }
                 }
 
                 if (HasInterface(classDeclaration, KnownSymbol.IMultiValueConverter))
                 {
-                    context.RegisterDocumentEditorFix(
-                        "Implement IMultiValueConverter for one way bindings.",
-                        (editor, cancellationToken) => ImplementIMultiValueConverter(editor, classDeclaration, cancellationToken),
-                        diagnostic);
+                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                  .Contains("does not implement interface member 'IMultiValueConverter.Convert(object[], Type, object, CultureInfo)'"))
+                    {
+                        context.RegisterDocumentEditorFix(
+                            "Implement IMultiValueConverter.Convert for one way bindings.",
+                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvert),
+                            "Implement IMultiValueConverter",
+                            diagnostic);
+                    }
+
+                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                  .Contains("does not implement interface member 'IMultiValueConverter.ConvertBack(object, Type[], object, CultureInfo)'"))
+                    {
+                        context.RegisterDocumentEditorFix(
+                            "Implement IMultiValueConverter.ConvertBack for one way bindings.",
+                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack),
+                            "Implement IMultiValueConverter",
+                            diagnostic);
+                    }
                 }
             }
-        }
-
-        private static void ImplementIMultiValueConverter(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
-        {
-            editor.AddMethod(classDeclaration, IMultiValueConverterConvert);
-            editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack);
         }
 
         private static bool HasInterface(ClassDeclarationSyntax classDeclaration, QualifiedType type)
