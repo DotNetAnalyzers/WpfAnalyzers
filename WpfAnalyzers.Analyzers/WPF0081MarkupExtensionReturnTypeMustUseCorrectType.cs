@@ -46,7 +46,8 @@
                 type.Is(KnownSymbol.MarkupExtension) &&
                 Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
                 attribute.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax classDeclaration &&
-                MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType))
+                MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
+                returnType != KnownSymbol.Object)
             {
                 if (Attribute.TryGetArgument(attribute, 0, "returnType", out var arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
