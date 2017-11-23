@@ -15,9 +15,9 @@
     [Shared]
     internal class AddDefaultMemberFix : CodeFixProvider
     {
-        private const string DefaultFieldFormat = "public static readonly {0} Default = new {0}();";
+        private const string DefaultFieldFormat = "{0} static readonly {1} Default = new {1}();";
         private const string DefaultDocs = "/// <summary> Gets the default instance </summary>";
-        private const string DefaulPropertyFormat = "public static {0} Default {{ get; }} = new {0}();";
+        private const string DefaulPropertyFormat = "{0} static {1} Default {{ get; }} = new {1}();";
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -70,7 +70,7 @@
 
         private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, containingType.Identifier.ValueText)));
+            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -78,7 +78,7 @@
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
-                                        .AppendLine(string.Format(DefaultFieldFormat, containingType.Identifier.ValueText))
+                                        .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
@@ -86,7 +86,7 @@
 
         private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, containingType.Identifier.ValueText)));
+            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -94,7 +94,7 @@
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
-                                        .AppendLine(string.Format(DefaulPropertyFormat, containingType.Identifier.ValueText))
+                                        .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
@@ -109,6 +109,24 @@
                                 .WithLeadingElasticLineFeed()
                                 .WithTrailingElasticLineFeed()
                                 .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        private static string Modifier(ClassDeclarationSyntax containingType)
+        {
+            foreach (var modifier in containingType.Modifiers)
+            {
+                if (modifier.IsKind(SyntaxKind.PublicKeyword))
+                {
+                    return "public";
+                }
+
+                if (modifier.IsKind(SyntaxKind.InternalKeyword))
+                {
+                    return "internal";
+                }
+            }
+
+            return string.Empty;
         }
     }
 }

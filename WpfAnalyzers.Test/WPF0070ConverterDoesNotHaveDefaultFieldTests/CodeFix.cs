@@ -64,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IValueConverterAddDefaultField()
+        public void IValueConverterAddDefaultFieldPublic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -124,6 +124,105 @@ namespace RoslynSandbox
     public sealed class CountConverter : IValueConverter
     {
         public static readonly CountConverter Default = new CountConverter();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var collection = value as ICollection;
+            if (collection != null)
+            {
+                return collection.Count;
+            }
+
+            var e = value as IEnumerable;
+            if (e != null)
+            {
+                var num = 0;
+                var enumerator = e.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    checked
+                    {
+                        ++num;
+                    }
+                }
+
+                (enumerator as IDisposable)?.Dispose();
+                return num;
+            }
+
+            return -1;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field.");
+        }
+
+        [Test]
+        public void IValueConverterAddDefaultFieldInternal()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(IEnumerable), typeof(int))]
+    internal class ↓CountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var collection = value as ICollection;
+            if (collection != null)
+            {
+                return collection.Count;
+            }
+
+            var e = value as IEnumerable;
+            if (e != null)
+            {
+                var num = 0;
+                var enumerator = e.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    checked
+                    {
+                        ++num;
+                    }
+                }
+
+                (enumerator as IDisposable)?.Dispose();
+                return num;
+            }
+
+            return -1;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(IEnumerable), typeof(int))]
+    internal sealed class CountConverter : IValueConverter
+    {
+        internal static readonly CountConverter Default = new CountConverter();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
