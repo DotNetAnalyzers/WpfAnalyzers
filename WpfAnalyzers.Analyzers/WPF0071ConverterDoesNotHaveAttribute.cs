@@ -42,6 +42,8 @@
             if (context.ContainingSymbol is ITypeSymbol type &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
+                type.DeclaredAccessibility != Accessibility.Private &&
+                type.DeclaredAccessibility != Accessibility.Protected &&
                 type.Is(KnownSymbol.IValueConverter) &&
                 !Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out _))
             {

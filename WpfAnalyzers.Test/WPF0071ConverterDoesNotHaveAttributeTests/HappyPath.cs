@@ -107,5 +107,75 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void IgnorePrivateClass()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public class Foo
+    {
+        private class FooConverter : IValueConverter
+        {
+            internal static readonly FooConverter Default = new FooConverter();
+
+            private FooConverter()
+            {
+            }
+
+            public object Convert(object value, Type _, object __, CultureInfo ___)
+            {
+                return ((int)value).ToString();
+            }
+
+            public object ConvertBack(object _, Type __, object ___, CultureInfo ____)
+            {
+                throw new NotSupportedException();
+            }
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void IgnoreProtectedClass()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public class Foo
+    {
+        protected class FooConverter : IValueConverter
+        {
+            internal static readonly FooConverter Default = new FooConverter();
+
+            private FooConverter()
+            {
+            }
+
+            public object Convert(object value, Type _, object __, CultureInfo ___)
+            {
+                return ((int)value).ToString();
+            }
+
+            public object ConvertBack(object _, Type __, object ___, CultureInfo ____)
+            {
+                throw new NotSupportedException();
+            }
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
