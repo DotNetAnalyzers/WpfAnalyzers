@@ -18,7 +18,8 @@
                      member.DeclaredAccessibility == Accessibility.Internal))
                 {
                     if (FieldOrProperty.TryCreate(member, out var fieldOrProperty) &&
-                        fieldOrProperty.Type.Is(KnownSymbol.IValueConverter))
+                        (fieldOrProperty.Type.Is(KnownSymbol.IValueConverter) ||
+                         fieldOrProperty.Type.Is(KnownSymbol.IMultiValueConverter)))
                     {
                         if (temp == null)
                         {
