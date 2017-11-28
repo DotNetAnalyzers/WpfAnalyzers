@@ -17,7 +17,7 @@
             messageFormat: "Property '{0}' must be named '{1}'",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "A CLR property accessor for a DependencyProperty must have the same name as the DependencyProperty is registered with.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

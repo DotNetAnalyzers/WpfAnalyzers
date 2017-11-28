@@ -21,7 +21,7 @@
             messageFormat: "XmlnsDefinitions does not map all namespaces with public types.",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "XmlnsDefinitions does not map all namespaces with public types.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

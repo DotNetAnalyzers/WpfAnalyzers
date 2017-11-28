@@ -19,7 +19,7 @@
             messageFormat: "There is no [{0}] mapping to '{1}'",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

@@ -17,7 +17,7 @@
             messageFormat: "Field '{0}' is backing field for a DependencyProperty and should be static and readonly.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Backing field for a DependencyProperty should be static and readonly.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

@@ -16,7 +16,7 @@
             messageFormat: "Field '{0}' that is backing field for the DependencyPropertyKey registered as '{1}' must be named '{1}PropertyKey'",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "A DependencyPropertyKey's backing field must be named with the name it is registered with suffixed by 'PropertyKey'",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

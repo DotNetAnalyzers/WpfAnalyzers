@@ -17,7 +17,7 @@
             messageFormat: "Add MarkupExtensionReturnType attribute.",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Add MarkupExtensionReturnType attribute.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

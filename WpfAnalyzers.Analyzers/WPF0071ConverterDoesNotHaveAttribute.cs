@@ -17,7 +17,7 @@
             messageFormat: "Add ValueConversion attribute.",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Add ValueConversion attribute.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

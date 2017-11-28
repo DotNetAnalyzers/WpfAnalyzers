@@ -18,7 +18,7 @@
             messageFormat: "ValueConversion must use correct types. Expected: {0}",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "ValueConversion must use correct types.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

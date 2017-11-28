@@ -17,7 +17,7 @@
             messageFormat: "Set '{0}' using '{1}'",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

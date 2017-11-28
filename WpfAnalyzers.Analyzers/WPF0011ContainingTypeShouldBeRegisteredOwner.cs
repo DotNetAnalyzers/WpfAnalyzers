@@ -17,7 +17,7 @@
             messageFormat: "Register containing type: '{0}' as owner.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "When registering a DependencyProperty register containing type as owner type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

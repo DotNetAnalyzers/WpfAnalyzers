@@ -18,7 +18,7 @@
             "Method '{0}' should be named '{1}'",
             AnalyzerCategory.DependencyProperties,
             DiagnosticSeverity.Warning,
-            AnalyzerConstants.EnabledByDefault,
+            true,
             "Name of ValidateValueCallback should match registered name.",
             HelpLink.ForId(DiagnosticId));
 

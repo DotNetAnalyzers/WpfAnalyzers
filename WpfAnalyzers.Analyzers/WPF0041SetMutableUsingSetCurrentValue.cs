@@ -18,7 +18,7 @@
             messageFormat: "Use SetCurrentValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Prefer setting mutable dependency properties using SetCurrentValue.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

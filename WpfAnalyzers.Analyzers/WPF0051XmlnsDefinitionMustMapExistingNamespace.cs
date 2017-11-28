@@ -18,7 +18,7 @@
             messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist.",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "XmlnsDefinition must map to existing namespace.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

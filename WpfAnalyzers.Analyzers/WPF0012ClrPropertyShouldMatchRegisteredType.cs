@@ -17,7 +17,7 @@
             messageFormat: "Property '{0}' must be of type {1}",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "CLR property type should match registered type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

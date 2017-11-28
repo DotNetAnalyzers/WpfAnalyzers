@@ -17,7 +17,7 @@
             messageFormat: "CLR accessor for attached property should have documentation.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "CLR accessor for attached property should have documentation.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

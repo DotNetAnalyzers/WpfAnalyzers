@@ -18,7 +18,7 @@
             messageFormat: "Method '{0}' should be named '{1}'",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Name of CoerceValueCallback should match registered name.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

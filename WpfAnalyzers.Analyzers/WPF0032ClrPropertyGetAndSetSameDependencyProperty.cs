@@ -17,7 +17,7 @@
             "Property '{0}' must access same dependency property in getter and setter",
             AnalyzerCategory.DependencyProperties,
             DiagnosticSeverity.Error,
-            AnalyzerConstants.EnabledByDefault,
+            true,
             "Use same dependency property in get and set.",
             HelpLink.ForId(DiagnosticId));
 

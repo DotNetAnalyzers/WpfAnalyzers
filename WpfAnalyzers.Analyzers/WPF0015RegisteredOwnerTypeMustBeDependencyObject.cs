@@ -18,7 +18,7 @@
             messageFormat: "Maybe you intended to use '{0}'?",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "When registering a DependencyProperty owner type must be a subclass of DependencyObject.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

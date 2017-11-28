@@ -17,7 +17,7 @@
             messageFormat: "Metadata must be of same type or super type.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "When overriding metadata must be of the same type or subtype of the overridden property's metadata.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

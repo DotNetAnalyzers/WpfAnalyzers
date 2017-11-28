@@ -17,7 +17,7 @@
             messageFormat: "Use SetValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Set DataContext using SetValue.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

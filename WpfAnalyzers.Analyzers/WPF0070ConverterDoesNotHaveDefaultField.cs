@@ -17,7 +17,7 @@
             messageFormat: "Add default field to converter.",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Add default field to converter.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

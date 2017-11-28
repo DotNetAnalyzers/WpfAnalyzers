@@ -18,7 +18,7 @@
             messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "MarkupExtensionReturnType must use correct return type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

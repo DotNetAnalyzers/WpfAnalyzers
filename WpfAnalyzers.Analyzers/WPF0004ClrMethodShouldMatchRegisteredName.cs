@@ -17,7 +17,7 @@
             messageFormat: "Method '{0}' must be named '{1}'",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

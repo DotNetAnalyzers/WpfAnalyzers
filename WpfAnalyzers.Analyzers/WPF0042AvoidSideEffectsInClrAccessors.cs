@@ -17,7 +17,7 @@
             messageFormat: "Avoid side effects in CLR accessors.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "Avoid side effects in CLR accessors.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 

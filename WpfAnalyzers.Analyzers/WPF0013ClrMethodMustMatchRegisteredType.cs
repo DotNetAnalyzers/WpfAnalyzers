@@ -17,7 +17,7 @@
             messageFormat: "{0} must match registered type {1}",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
+            isEnabledByDefault: true,
             description: "CLR accessor for attached property must match registered type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 
