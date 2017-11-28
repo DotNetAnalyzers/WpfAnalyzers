@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0071_73_ConverterDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

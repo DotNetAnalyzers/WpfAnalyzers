@@ -130,6 +130,10 @@ Roslyn analyzers for WPF.
   <td>ValueConversion must use correct types.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md">WPF0073</a></td>
+  <td>Add ValueConversion attribute (unknown types).</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md">WPF0080</a></td>
   <td>Add MarkupExtensionReturnType attribute.</td>
 </tr>
