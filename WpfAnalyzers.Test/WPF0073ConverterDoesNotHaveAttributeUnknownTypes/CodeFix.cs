@@ -1,10 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0071_73_ConverterDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = Gu.Roslyn.Asserts.ExpectedDiagnostic.Create("WPF0073");
+
         [Test]
         public void AddAttributeDirectCast()
         {
@@ -52,7 +54,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -114,7 +116,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
