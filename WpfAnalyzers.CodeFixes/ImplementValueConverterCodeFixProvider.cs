@@ -21,22 +21,10 @@ namespace WpfAnalyzers
             throw new System.NotImplementedException();
         }");
 
-        private static readonly MethodDeclarationSyntax IValueConverterConvertBack = ParseMethod(
-            @"        object System.Windows.Data.IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
-        }");
-
         private static readonly MethodDeclarationSyntax IMultiValueConverterConvert = ParseMethod(
             @"        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new System.NotImplementedException();
-        }");
-
-        private static readonly MethodDeclarationSyntax IMultiValueConverterConvertBack = ParseMethod(
-            @"        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
         }");
 
         /// <inheritdoc/>
@@ -79,7 +67,7 @@ namespace WpfAnalyzers
                     {
                         context.RegisterDocumentEditorFix(
                             "Implement IValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack),
+                            (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
                             "Implement IValueConverter",
                             diagnostic);
                     }
@@ -102,7 +90,7 @@ namespace WpfAnalyzers
                     {
                         context.RegisterDocumentEditorFix(
                             "Implement IMultiValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack),
+                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
                             "Implement IMultiValueConverter",
                             diagnostic);
                     }
@@ -134,6 +122,28 @@ namespace WpfAnalyzers
             }
 
             return false;
+        }
+
+        private static MethodDeclarationSyntax IValueConverterConvertBack(string containingTypeName)
+        {
+            var code = StringBuilderPool.Borrow()
+                                        .AppendLine("        object System.Windows.Data.IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)")
+                                        .AppendLine("        {")
+                                        .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
+                                        .AppendLine("        }")
+                                        .Return();
+            return ParseMethod(code);
+        }
+
+        private static MethodDeclarationSyntax IMultiValueConverterConvertBack(string containingTypeName)
+        {
+            var code = StringBuilderPool.Borrow()
+                                        .AppendLine("        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)")
+                                        .AppendLine("        {")
+                                        .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
+                                        .AppendLine("        }")
+                                        .Return();
+            return ParseMethod(code);
         }
 
         private static MethodDeclarationSyntax ParseMethod(string code)

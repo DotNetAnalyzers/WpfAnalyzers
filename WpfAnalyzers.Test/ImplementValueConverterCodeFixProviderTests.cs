@@ -9,8 +9,9 @@ namespace WpfAnalyzers.Test
         // ReSharper disable once InconsistentNaming
         private static readonly ExpectedDiagnostic CS0535 = ExpectedDiagnostic.Create(nameof(CS0535));
 
-        [Test]
-        public void IValueConverter()
+        [TestCase("FooConverter")]
+        [TestCase("BarConverter")]
+        public void IValueConverter(string className)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,6 +41,8 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("FooConverter", className);
+            fixedCode = fixedCode.AssertReplace("FooConverter", className);
             AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 
@@ -111,8 +114,9 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 
-        [Test]
-        public void IMultiValueConverter()
+        [TestCase("FooConverter")]
+        [TestCase("BarConverter")]
+        public void IMultiValueConverter(string className)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,10 +142,12 @@ namespace RoslynSandbox
 
         object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
         }
     }
 }";
+            testCode = testCode.AssertReplace("FooConverter", className);
+            fixedCode = fixedCode.AssertReplace("FooConverter", className);
             AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 
@@ -176,10 +182,11 @@ namespace RoslynSandbox
 
         object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
         }
     }
 }";
+
             AnalyzerAssert.CodeFix<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 
@@ -206,7 +213,7 @@ namespace RoslynSandbox
 
         object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{ nameof(FooConverter) } can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
         }
     }
 }";
