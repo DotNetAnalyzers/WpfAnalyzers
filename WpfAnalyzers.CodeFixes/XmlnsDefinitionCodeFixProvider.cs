@@ -11,9 +11,9 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddXmlnsDefinitionCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XmlnsDefinitionCodeFixProvider))]
     [Shared]
-    internal class AddXmlnsDefinitionCodeFixProvider : CodeFixProvider
+    internal class XmlnsDefinitionCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.DiagnosticId);

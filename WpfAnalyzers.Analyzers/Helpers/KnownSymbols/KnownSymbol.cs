@@ -30,6 +30,7 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType DataTemplateSelector = Create("System.Windows.Controls.DataTemplateSelector");
         internal static readonly QualifiedType MarkupExtension = Create("System.Windows.Markup.MarkupExtension");
         internal static readonly QualifiedType MarkupExtensionReturnTypeAttribute = Create("System.Windows.Markup.MarkupExtensionReturnTypeAttribute");
+        internal static readonly QualifiedType ConstructorArgumentAttribute = Create("System.Windows.Markup.ConstructorArgumentAttribute");
         internal static readonly QualifiedType IValueConverter = Create("System.Windows.Data.IValueConverter");
         internal static readonly QualifiedType IMultiValueConverter = Create("System.Windows.Data.IMultiValueConverter");
 

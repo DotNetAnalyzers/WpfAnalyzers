@@ -8,13 +8,13 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ChangeValueConversionAttributeArgumentFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorArgumentAttributeArgumentFix))]
     [Shared]
-    internal class ChangeValueConversionAttributeArgumentFix : CodeFixProvider
+    internal class ConstructorArgumentAttributeArgumentFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0072ValueConversionMustUseCorrectTypes.DiagnosticId);
+            ImmutableArray.Create(WPF0082ConstructorArgument.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -25,8 +25,6 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -36,29 +34,24 @@
                 }
 
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<AttributeArgumentSyntax>();
+                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
                 var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (ValueConverter.TryGetConversionTypes(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var sourceType, out var targetType))
+                if (ConstructorArgument.IsMatch(attribute, out var arg, out var parameterName) == false)
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
-                        (e, _) => AddAttribute(e, attribute, sourceType, targetType),
+                        $"Change to [ConstructorArgument(\"{parameterName})\"))].",
+                        (e, _) => FixArgument(e, arg, parameterName),
+                        this.GetType(),
                         diagnostic);
                 }
             }
         }
 
-        private static void AddAttribute(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol inType, ITypeSymbol outType)
+        private static void FixArgument(DocumentEditor editor, AttributeArgumentSyntax argument, string parameterName)
         {
             editor.ReplaceNode(
-                attributeSyntax.ArgumentList.Arguments[0],
-                editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))));
-
-            editor.ReplaceNode(
-                attributeSyntax.ArgumentList.Arguments[1],
-                editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))));
+                argument.Expression,
+                (_, generator) => generator.LiteralExpression(parameterName));
         }
     }
 }

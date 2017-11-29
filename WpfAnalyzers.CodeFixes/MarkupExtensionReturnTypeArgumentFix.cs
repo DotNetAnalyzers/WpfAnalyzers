@@ -5,21 +5,16 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddMarkupExtensionReturnTypeAttributeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MarkupExtensionReturnTypeArgumentFix))]
     [Shared]
-    internal class AddMarkupExtensionReturnTypeAttributeFix : CodeFixProvider
+    internal class MarkupExtensionReturnTypeArgumentFix : CodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = SyntaxFactory
-            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute"))
-            .WithSimplifiedNames();
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0080MarkupExtensionDoesNotHaveAttribute.DiagnosticId);
+            ImmutableArray.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -40,26 +35,26 @@
                     continue;
                 }
 
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclaration != null &&
-                    MarkupExtension.TryGetReturnType(classDeclaration, semanticModel, context.CancellationToken, out var returnType))
+                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
+                var attribute = argument.FirstAncestor<AttributeSyntax>();
+                if (MarkupExtension.TryGetReturnType(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var returnType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Add MarkupExtensionReturnTypeAttribute.",
-                        (e, _) => AddAttribute(e, classDeclaration, returnType),
+                        $"Change type to {returnType}.",
+                        (e, _) => AddAttribute(e, attribute, returnType),
+                        this.GetType(),
                         diagnostic);
                 }
             }
         }
 
-        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol returnType)
+        private static void AddAttribute(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol returnType)
         {
-            editor.AddAttribute(
-                classDeclaration,
-                editor.Generator.AddAttributeArguments(
-                    Attribute,
-                    new[] { editor.Generator.AttributeArgument(editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))) }));
+            editor.ReplaceNode(
+                attributeSyntax.ArgumentList.Arguments[0],
+                editor.Generator.AttributeArgument(
+                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))));
         }
     }
 }

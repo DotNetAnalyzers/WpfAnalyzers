@@ -66,7 +66,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0081MarkupExtensionReturnTypeMustUseCorrectType, ChangeMarkupExtensionReturnTypeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0081MarkupExtensionReturnTypeMustUseCorrectType, MarkupExtensionReturnTypeArgumentFix>(testCode, fixedCode);
         }
     }
 }

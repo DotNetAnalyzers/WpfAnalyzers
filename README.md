@@ -141,6 +141,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md">WPF0081</a></td>
   <td>MarkupExtensionReturnType must use correct return type.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md">WPF0082</a></td>
+  <td>[ConstructorArgument] must match.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

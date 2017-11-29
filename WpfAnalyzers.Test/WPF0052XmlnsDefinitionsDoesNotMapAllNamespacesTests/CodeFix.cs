@@ -231,7 +231,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, XmlnsDefinitionCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -378,7 +378,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, AddXmlnsDefinitionCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, XmlnsDefinitionCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

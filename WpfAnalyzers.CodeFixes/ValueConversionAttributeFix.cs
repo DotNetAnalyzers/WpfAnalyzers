@@ -9,9 +9,9 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddValueConversionAttributeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ValueConversionAttributeFix))]
     [Shared]
-    internal class AddValueConversionAttributeFix : CodeFixProvider
+    internal class ValueConversionAttributeFix : CodeFixProvider
     {
         private static readonly AttributeSyntax Attribute = SyntaxFactory
             .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute"))

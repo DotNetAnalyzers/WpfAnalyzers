@@ -13,14 +13,14 @@
         public const string DiagnosticId = "WPF0007";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            DiagnosticId,
-            "Name of ValidateValueCallback should match registered name.",
-            "Method '{0}' should be named '{1}'",
-            AnalyzerCategory.DependencyProperties,
-            DiagnosticSeverity.Warning,
-            true,
-            "Name of ValidateValueCallback should match registered name.",
-            HelpLink.ForId(DiagnosticId));
+            id: DiagnosticId,
+            title: "Name of ValidateValueCallback should match registered name.",
+            messageFormat: "Method '{0}' should be named '{1}'",
+            category: AnalyzerCategory.DependencyProperties,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Name of ValidateValueCallback should match registered name.",
+            helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

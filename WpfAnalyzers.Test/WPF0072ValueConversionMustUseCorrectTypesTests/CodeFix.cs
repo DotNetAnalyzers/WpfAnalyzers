@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ChangeValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
         }
     }
 }
