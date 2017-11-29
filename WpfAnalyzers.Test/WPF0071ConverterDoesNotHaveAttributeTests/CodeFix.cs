@@ -5,7 +5,7 @@
 
     internal class CodeFix
     {
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = Gu.Roslyn.Asserts.ExpectedDiagnostic.Create("WPF0071");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0071");
 
         [Test]
         public void AddAttributeDirectCast()
