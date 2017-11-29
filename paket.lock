@@ -152,7 +152,7 @@ NUGET
       BenchmarkDotNet.Core (>= 0.10.10) - restriction: >= net46
       Microsoft.CodeAnalysis.CSharp (>= 2.0) - restriction: >= net46
       System.Threading.Tasks (>= 4.3) - restriction: >= net46
-    Gu.Roslyn.Asserts (2.0.1)
+    Gu.Roslyn.Asserts (2.1.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0 < 3.0) - restriction: >= net461
     ManagedEsent (1.9.4) - restriction: >= net46
     Microsoft.CodeAnalysis.Analyzers (1.1) - restriction: >= netstandard1.3
@@ -849,7 +849,7 @@ GROUP Test
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.Asserts (1.0.0.3)
+    Gu.Roslyn.Asserts (1.1.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 1.0 < 2.0) - restriction: >= net452
     Microsoft.CodeAnalysis.Analyzers (1.1)
     Microsoft.CodeAnalysis.Common (1.2.1)

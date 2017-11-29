@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0071");
+
         [Test]
         public void AddAttributeDirectCast()
         {
@@ -52,7 +54,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -114,7 +116,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, AddValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
