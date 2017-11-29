@@ -24,11 +24,9 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0081",
-                "MarkupExtensionReturnType must use correct return type. Expected: RoslynSandbox.FooExtension",
-                testCode,
-                out testCode);
+                "MarkupExtensionReturnType must use correct return type. Expected: RoslynSandbox.FooExtension");
             AnalyzerAssert.Diagnostics<WPF0081MarkupExtensionReturnTypeMustUseCorrectType>(expectedDiagnostic, testCode);
         }
 

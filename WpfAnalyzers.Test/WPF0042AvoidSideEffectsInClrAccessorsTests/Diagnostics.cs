@@ -43,11 +43,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0042",
-                "Avoid side effects in CLR accessors.",
-                testCode,
-                out testCode);
+                "Avoid side effects in CLR accessors.");
             AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expectedDiagnostic, testCode);
         }
 

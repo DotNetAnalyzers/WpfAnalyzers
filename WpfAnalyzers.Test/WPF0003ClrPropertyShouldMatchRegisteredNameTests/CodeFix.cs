@@ -26,11 +26,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0003",
-                "Property 'Error' must be named 'Bar'",
-                testCode,
-                out testCode);
+                "Property 'Error' must be named 'Bar'");
             AnalyzerAssert.Diagnostics<WPF0003ClrPropertyShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 

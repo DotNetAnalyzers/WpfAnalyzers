@@ -42,11 +42,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0007",
-                "Method 'WrongName' should be named 'ValueValidateValue'",
-                testCode,
-                out testCode);
+                "Method 'WrongName' should be named 'ValueValidateValue'");
             AnalyzerAssert.Diagnostics<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 

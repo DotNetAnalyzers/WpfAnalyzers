@@ -55,11 +55,9 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0070",
-                "Add default field to converter.",
-                testCode,
-                out testCode);
+                "Add default field to converter.");
             AnalyzerAssert.Diagnostics<WPF0070ConverterDoesNotHaveDefaultField>(expectedDiagnostic, testCode);
         }
 

@@ -32,11 +32,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
-                "WPF0083",
-                "Add [ConstructorArgument(\"text\"]",
-                testCode,
-                out testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0083", "Add [ConstructorArgument(\"text\"]");
             AnalyzerAssert.Diagnostics<WPF0083UseConstructorArgumentAttribute>(expectedDiagnostic, testCode);
         }
 

@@ -23,11 +23,9 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0080",
-                "Add MarkupExtensionReturnType attribute.",
-                testCode,
-                out testCode);
+                "Add MarkupExtensionReturnType attribute.");
             AnalyzerAssert.Diagnostics<WPF0080MarkupExtensionDoesNotHaveAttribute>(expectedDiagnostic, testCode);
         }
 

@@ -32,11 +32,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0004",
-                "Method 'GetError' must be named 'GetBar'",
-                testCode,
-                out testCode);
+                "Method 'GetError' must be named 'GetBar'");
             AnalyzerAssert.Diagnostics<WPF0004ClrMethodShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 

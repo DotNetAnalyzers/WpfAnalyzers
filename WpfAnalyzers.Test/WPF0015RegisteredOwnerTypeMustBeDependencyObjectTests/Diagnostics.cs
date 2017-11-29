@@ -29,11 +29,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0015",
-                "Maybe you intended to use 'RegisterAttached'?",
-                testCode,
-                out testCode);
+                "Maybe you intended to use 'RegisterAttached'?");
             AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(expectedDiagnostic, testCode);
         }
 

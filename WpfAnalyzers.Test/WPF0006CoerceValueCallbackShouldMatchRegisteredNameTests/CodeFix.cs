@@ -36,11 +36,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0006",
-                "Method 'WrongName' should be named 'CoerceValue'",
-                testCode,
-                out testCode);
+                "Method 'WrongName' should be named 'CoerceValue'");
             AnalyzerAssert.Diagnostics<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(expectedDiagnostic, testCode);
         }
 

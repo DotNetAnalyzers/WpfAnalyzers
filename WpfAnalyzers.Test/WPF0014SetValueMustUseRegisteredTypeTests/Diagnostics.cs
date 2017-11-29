@@ -39,11 +39,9 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0014",
-                "SetValue must use registered type int",
-                testCode,
-                out testCode);
+                "SetValue must use registered type int");
             AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(expectedDiagnostic, testCode);
         }
 

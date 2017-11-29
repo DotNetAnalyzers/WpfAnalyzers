@@ -33,11 +33,9 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0033",
-                "Add [AttachedPropertyBrowsableForType(typeof(DependencyObject)]",
-                testCode,
-                out testCode);
+                "Add [AttachedPropertyBrowsableForType(typeof(DependencyObject)]");
             AnalyzerAssert.Diagnostics<WPF0033UseAttachedPropertyBrowsableForTypeAttribute>(expectedDiagnostic, testCode);
         }
 
