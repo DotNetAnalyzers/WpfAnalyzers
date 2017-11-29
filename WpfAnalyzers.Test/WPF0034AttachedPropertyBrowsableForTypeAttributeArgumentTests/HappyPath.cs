@@ -1,12 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeTests
+namespace WpfAnalyzers.Test.WPF0034AttachedPropertyBrowsableForTypeAttributeArgumentTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly WPF0033UseAttachedPropertyBrowsableForTypeAttribute Analyzer =
-            new WPF0033UseAttachedPropertyBrowsableForTypeAttribute();
+        private static readonly WPF0034AttachedPropertyBrowsableForTypeAttributeArgument Analyzer =
+            new WPF0034AttachedPropertyBrowsableForTypeAttributeArgument();
 
         [Test]
         public void WhenHasAttribute()

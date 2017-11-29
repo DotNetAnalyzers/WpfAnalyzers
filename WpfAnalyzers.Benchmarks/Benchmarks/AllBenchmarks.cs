@@ -41,6 +41,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0033 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0033UseAttachedPropertyBrowsableForTypeAttribute());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0034 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0040 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0041 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
@@ -185,6 +187,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0033UseAttachedPropertyBrowsableForTypeAttribute()
         {
             WPF0033.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0034AttachedPropertyBrowsableForTypeAttributeArgument()
+        {
+            WPF0034.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

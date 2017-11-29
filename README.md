@@ -86,6 +86,10 @@ Roslyn analyzers for WPF.
   <td>Add [AttachedPropertyBrowsableForType]</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0034.md">WPF0034</a></td>
+  <td>Use correct argument for [AttachedPropertyBrowsableForType]</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
   <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
 </tr>

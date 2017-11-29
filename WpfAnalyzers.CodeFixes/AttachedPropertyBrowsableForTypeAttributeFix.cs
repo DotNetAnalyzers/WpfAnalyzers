@@ -42,7 +42,7 @@
 
                 var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                  .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-                if (AttachedPropertyBrowsableForType.TryGetType(methodDeclaration, semanticModel, context.CancellationToken, out var type))
+                if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var type))
                 {
                     context.RegisterDocumentEditorFix(
                         $"Add [AttachedPropertyBrowsableForTypeAttribute(typeof({type})))].",

@@ -33,7 +33,7 @@
             return false;
         }
 
-        internal static bool TryGetType(MethodDeclarationSyntax methodDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
+        internal static bool TryGetParameterType(MethodDeclarationSyntax methodDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
         {
             type = null;
             if (methodDeclaration == null ||

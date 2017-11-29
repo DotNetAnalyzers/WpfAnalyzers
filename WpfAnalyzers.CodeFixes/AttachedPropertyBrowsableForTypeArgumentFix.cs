@@ -8,13 +8,13 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MarkupExtensionReturnTypeArgumentFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AttachedPropertyBrowsableForTypeArgumentFix))]
     [Shared]
-    internal class MarkupExtensionReturnTypeArgumentFix : CodeFixProvider
+    internal class AttachedPropertyBrowsableForTypeArgumentFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.DiagnosticId);
+            ImmutableArray.Create(WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -37,19 +37,20 @@
 
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                          .FirstAncestorOrSelf<AttributeArgumentSyntax>();
-                var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (MarkupExtension.TryGetReturnType(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var returnType))
+                var methodDeclaration = argument.FirstAncestor<AttributeSyntax>()
+                                        .FirstAncestor<MethodDeclarationSyntax>();
+                if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var parameterType))
                 {
                     context.RegisterDocumentEditorFix(
-                        $"Change type to {returnType}.",
-                        (e, _) => FixType(e, argument, returnType),
+                        $"Change type to {parameterType}.",
+                        (e, _) => Fix(e, argument, parameterType),
                         this.GetType(),
                         diagnostic);
                 }
             }
         }
 
-        private static void FixType(DocumentEditor editor, AttributeArgumentSyntax argument, ITypeSymbol returnType)
+        private static void Fix(DocumentEditor editor, AttributeArgumentSyntax argument, ITypeSymbol returnType)
         {
             editor.ReplaceNode(
                 argument.Expression,
