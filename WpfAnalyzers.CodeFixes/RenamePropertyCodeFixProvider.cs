@@ -43,7 +43,7 @@
                     propertyDeclaration,
                     semanticModel,
                     context.CancellationToken,
-                    out string registeredName))
+                    out var registeredName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

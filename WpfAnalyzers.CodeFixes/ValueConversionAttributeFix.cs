@@ -22,7 +22,7 @@
             ImmutableArray.Create(WPF0071ConverterDoesNotHaveAttribute.DiagnosticId, WPF0073ConverterDoesNotHaveAttributeUnknownTypes.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
