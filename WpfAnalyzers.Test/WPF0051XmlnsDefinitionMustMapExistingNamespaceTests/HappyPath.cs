@@ -59,56 +59,9 @@ using System.Windows.Markup;
             AnalyzerAssert.Valid(Analyzer, controlCode, testCode);
         }
 
-        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [Test]
         public void WhenTwoXmlnsDefinitions()
         {
-            var controlCode1 = @"
-namespace Gu.Wpf.Geometry
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-
-    public class FooControl1 : Control
-    {
-        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
-            nameof(Brush),
-            typeof(Brush),
-            typeof(FooControl1),
-            new PropertyMetadata(default(Brush)));
-
-        public Brush Brush
-        {
-            get { return (Brush)this.GetValue(BrushProperty); }
-            set { this.SetValue(BrushProperty, value); }
-        }
-    }
-}";
-
-            var controlCode2 = @"
-namespace Gu.Wpf.Geometry.Balloons
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-
-    public class FooControl2 : Control
-    {
-        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
-            nameof(Brush),
-            typeof(Brush),
-            typeof(FooControl2),
-            new PropertyMetadata(default(Brush)));
-
-        public Brush Brush
-        {
-            get { return (Brush)this.GetValue(BrushProperty); }
-            set { this.SetValue(BrushProperty, value); }
-        }
-    }
-}";
-
             var testCode = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -134,9 +87,53 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
-[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
+[assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
 
-            AnalyzerAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
+namespace Gu.Wpf.Geometry
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl1 : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl1),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+    }
+}
+
+namespace Gu.Wpf.Geometry.Balloons
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class FooControl2 : Control
+    {
+        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
+            nameof(Brush),
+            typeof(Brush),
+            typeof(FooControl2),
+            new PropertyMetadata(default(Brush)));
+
+        public Brush Brush
+        {
+            get { return (Brush)this.GetValue(BrushProperty); }
+            set { this.SetValue(BrushProperty, value); }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
