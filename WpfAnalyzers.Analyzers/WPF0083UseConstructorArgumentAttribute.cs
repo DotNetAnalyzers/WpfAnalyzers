@@ -16,7 +16,7 @@
             title: "Add [ConstructorArgument].",
             messageFormat: "Add [ConstructorArgument(\"{0}\"]",
             category: AnalyzerCategory.MarkupExtension,
-            defaultSeverity: DiagnosticSeverity.Warning,
+            defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Add [ConstructorArgument] for the property.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
