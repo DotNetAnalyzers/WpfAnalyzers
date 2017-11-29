@@ -10,6 +10,7 @@ namespace WpfAnalyzers
     internal static class AnalyzerCategory
     {
         internal const string DependencyProperties = "WpfAnalyzers.DependencyProperties";
+        internal const string RoutedEvent = "WpfAnalyzers.RoutedEvent";
         internal const string MarkupExtension = "WpfAnalyzers.MarkupExtension";
         internal const string IValueConverter = "WpfAnalyzers.IValueConverter";
         internal const string XmlnsDefinition = "WpfAnalyzers.XmlnsDefinition";

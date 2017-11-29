@@ -75,6 +75,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0090UseMathingNameWithRegisterClassHandler());
+
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0001BackingFieldShouldMatchRegisteredName()
         {
@@ -289,6 +291,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0083UseConstructorArgumentAttribute()
         {
             WPF0083.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void WPF0090UseMathingNameWithRegisterClassHandler()
+        {
+            WPF0090.Run();
         }
     }
 }
