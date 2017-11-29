@@ -145,6 +145,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md">WPF0082</a></td>
   <td>[ConstructorArgument] must match.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md">WPF0083</a></td>
+  <td>Add [ConstructorArgument].</td>
+</tr>
 <table>
 <!-- end generated table -->
 
