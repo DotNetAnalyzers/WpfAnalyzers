@@ -82,6 +82,10 @@ Roslyn analyzers for WPF.
   <td>Use same dependency property in get and set.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md">WPF0033</a></td>
+  <td>Add [AttachedPropertyBrowsableForType]</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
   <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
 </tr>

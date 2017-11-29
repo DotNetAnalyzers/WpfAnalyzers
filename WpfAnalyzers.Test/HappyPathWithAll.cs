@@ -118,6 +118,7 @@ internal static class BooleanBoxes
         /// </summary>
         /// <param name=""element"">FrameworkElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static bool GetBar(FrameworkElement element)
         {
             return (bool)element.GetValue(BarProperty);
@@ -138,7 +139,6 @@ internal static class BooleanBoxes
         /// </summary>
         /// <param name=""element"">DependencyObject to read Other property from.</param>
         /// <returns>Bar property value.</returns>
-        [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static string GetOther(this DependencyObject element)
         {
@@ -155,7 +155,6 @@ internal static class BooleanBoxes
         /// </summary>
         /// <param name=""element"">Control to read ReadOnly property from.</param>
         /// <returns>ReadOnly property value.</returns>
-        [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(Control))]
         public static bool GetReadOnly(this Control element)
         {
