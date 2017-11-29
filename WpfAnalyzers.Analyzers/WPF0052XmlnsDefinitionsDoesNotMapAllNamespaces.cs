@@ -18,7 +18,7 @@
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "XmlnsDefinitions does not map all namespaces with public types.",
-            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.",
+            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.\r\nThe following namespaces are not mapped:\r\n{0}",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -51,7 +51,7 @@
                     if (walker.NotMapped.Count != 0)
                     {
                         var missing = ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation(), missing));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation(), missing, string.Join(Environment.NewLine, walker.NotMapped)));
                     }
                 }
             }
