@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0090UseMatchingNameWithRegisterClassHandlerTests
+﻿namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

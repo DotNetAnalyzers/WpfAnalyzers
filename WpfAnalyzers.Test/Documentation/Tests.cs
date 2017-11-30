@@ -90,8 +90,6 @@
         public void UniqueIds(DescriptorInfo descriptorInfo)
         {
             Assert.AreEqual(1, Descriptors.Count(d => d.Descriptor.Id == descriptorInfo.Descriptor.Id));
-            Assert.AreEqual(1, Descriptors.Count(d => Equals(d.Descriptor.Title, descriptorInfo.Descriptor.Title)));
-            Assert.AreEqual(1, Descriptors.Count(d => Equals(d.Descriptor.Description, descriptorInfo.Descriptor.Description)));
         }
 
         [Test]

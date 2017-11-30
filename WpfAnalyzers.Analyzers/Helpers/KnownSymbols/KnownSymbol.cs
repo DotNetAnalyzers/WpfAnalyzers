@@ -21,6 +21,7 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType PropertyMetadata = Create("System.Windows.PropertyMetadata");
         internal static readonly QualifiedType FrameworkPropertyMetadata = Create("System.Windows.FrameworkPropertyMetadata");
         internal static readonly QualifiedType DependencyPropertyChangedEventArgs = Create("System.Windows.DependencyPropertyChangedEventArgs");
+        internal static readonly QualifiedType RoutedEvent = Create("System.Windows.RoutedEvent");
 
         internal static readonly QualifiedType PropertyChangedCallback = Create("System.Windows.PropertyChangedCallback");
         internal static readonly QualifiedType CoerceValueCallback = Create("System.Windows.CoerceValueCallback");

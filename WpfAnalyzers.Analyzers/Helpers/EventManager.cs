@@ -6,7 +6,7 @@
 
     internal static class EventManager
     {
-        internal static bool TryRegisterClassHandlerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static bool TryGetRegisterClassHandlerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
             return TryGetCall(
                 invocation,

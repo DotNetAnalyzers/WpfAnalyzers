@@ -161,6 +161,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md">WPF0090</a></td>
   <td>Name the invoked method OnEventName.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md">WPF0091</a></td>
+  <td>Name the invoked method OnEventName.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

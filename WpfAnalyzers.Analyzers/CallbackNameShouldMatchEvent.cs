@@ -11,7 +11,9 @@
     internal class CallbackNameShouldMatchEvent : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor,
+            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -35,10 +37,16 @@
                 objectCreation.Parent is ArgumentSyntax handlerArgument &&
                 handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax invocation)
             {
-                if (EventManager.TryRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(1, out var eventArgument))
                 {
                     HandleCallback(context, eventArgument, callbackArg, WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
+                }
+                else if ((TryGetAddHandlerCall(invocation, context, out _) ||
+                          TryGetRemoveHandlerCall(invocation, context, out _)) &&
+                          invocation.TryGetArgumentAtIndex(0, out eventArgument))
+                {
+                    HandleCallback(context, eventArgument, callbackArg, WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
                 }
             }
         }
@@ -77,6 +85,45 @@
                         Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
                 }
             }
+        }
+
+        private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
+        {
+            eventArgument = null;
+            if (invocation.TryGetInvokedMethodName(out string name) &&
+                name != "AddHandler")
+            {
+                return false;
+            }
+
+            if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count < 2 ||
+                invocation.ArgumentList.Arguments.Count > 3)
+            {
+                return false;
+            }
+
+            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
+                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
+        }
+
+        private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
+        {
+            eventArgument = null;
+            if (invocation.TryGetInvokedMethodName(out string name) &&
+                name != "RemoveHandler")
+            {
+                return false;
+            }
+
+            if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count != 2)
+            {
+                return false;
+            }
+
+            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
+                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
         }
     }
 }

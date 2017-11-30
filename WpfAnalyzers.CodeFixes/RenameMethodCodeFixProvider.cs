@@ -19,7 +19,8 @@
                 WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
                 WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId,
                 WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId,
-                WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId);
+                WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId,
+                WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -164,7 +165,8 @@
                             diagnostic);
                     }
                 }
-                else if (diagnostic.Id == WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId)
+                else if (diagnostic.Id == WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId ||
+                         diagnostic.Id == WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId)
                 {
                     if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
                     {
