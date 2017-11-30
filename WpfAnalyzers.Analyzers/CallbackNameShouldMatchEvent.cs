@@ -8,22 +8,10 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0090CallbackNameShouldMatchEvent : DiagnosticAnalyzer
+    internal class CallbackNameShouldMatchEvent : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0090";
-
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            id: DiagnosticId,
-            title: "Name the invoked method OnEventName.",
-            messageFormat: "Rename to {0} to match the event.",
-            category: AnalyzerCategory.RoutedEvent,
-            defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: true,
-            description: "Name the invoked method OnEventName.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -50,12 +38,12 @@
                 if (EventManager.TryRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(1, out var eventArgument))
                 {
-                    HandleCallback(context, eventArgument, callbackArg);
+                    HandleCallback(context, eventArgument, callbackArg, WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
                 }
             }
         }
 
-        private static void HandleCallback(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+        private static void HandleCallback(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg, DiagnosticDescriptor descriptor)
         {
             var invokedHandler = (IdentifierNameSyntax)callbackArg.Expression;
             if (eventArgument.Expression is IdentifierNameSyntax identifierName &&
@@ -64,13 +52,11 @@
                 if (EventManager.TryGetExpectedCallbackName(identifierName.Identifier.ValueText, out var expectedName))
                 {
                     var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("ExpectedName", expectedName) });
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(Descriptor, callbackArg.GetLocation(), properties, expectedName));
+                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
                 }
                 else
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(Descriptor, callbackArg.GetLocation(), "On" + identifierName.Identifier.ValueText));
+                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + identifierName.Identifier.ValueText));
                 }
             }
 
@@ -83,12 +69,12 @@
                     var properties = ImmutableDictionary.CreateRange(
                         new[] { new KeyValuePair<string, string>("ExpectedName", expectedName), });
                     context.ReportDiagnostic(
-                        Diagnostic.Create(Descriptor, callbackArg.GetLocation(), properties, expectedName));
+                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
                 }
                 else
                 {
                     context.ReportDiagnostic(
-                        Diagnostic.Create(Descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
+                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
                 }
             }
         }

@@ -1,10 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0090CallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0090UseMatchingNameWithRegisterClassHandlerTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0090");
+
         [Test]
         public void Message()
         {
@@ -29,7 +31,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0090", "Rename to OnSizeChanged to match the event.");
-            AnalyzerAssert.Diagnostics<WPF0090CallbackNameShouldMatchEvent>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<CallbackNameShouldMatchEvent>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -74,7 +76,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0090CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0090CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -166,7 +168,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0090CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<CallbackNameShouldMatchEvent, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

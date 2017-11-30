@@ -35,12 +35,6 @@
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void IdMatches(DiagnosticAnalyzer analyzer)
-        {
-            StringAssert.StartsWith(analyzer.SupportedDiagnostics[0].Id, analyzer.GetType().Name);
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
         {
             AnalyzerAssert.Valid(analyzer, AnalyzerProjectSln);

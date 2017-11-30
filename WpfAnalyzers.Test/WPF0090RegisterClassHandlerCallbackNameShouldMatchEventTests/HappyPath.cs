@@ -1,11 +1,11 @@
-﻿namespace WpfAnalyzers.Test.WPF0090CallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly WPF0090CallbackNameShouldMatchEvent Analyzer = new WPF0090CallbackNameShouldMatchEvent();
+        private static readonly CallbackNameShouldMatchEvent Analyzer = new CallbackNameShouldMatchEvent();
 
         [Test]
         public void WhenCorrectNameSizeChangedEvent()

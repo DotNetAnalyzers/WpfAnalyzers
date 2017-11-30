@@ -3,6 +3,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackNameShouldMatchEvent());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0002 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName());
@@ -75,7 +77,11 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0090CallbackNameShouldMatchEvent());
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void CallbackNameShouldMatchEvent()
+        {
+            WPF0090.Run();
+        }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0001BackingFieldShouldMatchRegisteredName()
@@ -291,12 +297,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0083UseConstructorArgumentAttribute()
         {
             WPF0083.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0090CallbackNameShouldMatchEvent()
-        {
-            WPF0090.Run();
         }
     }
 }
