@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class WPF0090Benchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0090UseMathingNameWithRegisterClassHandler());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0090UseMatchingNameWithRegisterClassHandler());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnWpfAnalyzersProject()

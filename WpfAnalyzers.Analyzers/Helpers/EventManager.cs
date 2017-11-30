@@ -31,7 +31,7 @@
                 return false;
             }
 
-            for (var i = 0; i < eventName.Length; i++)
+            for (var i = 0; i < eventName.Length - 5; i++)
             {
                 if (handlerName[i + 2] != eventName[i])
                 {
@@ -40,6 +40,18 @@
             }
 
             return true;
+        }
+
+        internal static bool TryGetExpectedCallbackName(string eventName, out string expectedName)
+        {
+            if (eventName.EndsWith("Event"))
+            {
+                expectedName = "On" + eventName.Remove(eventName.Length - "Event".Length);
+                return true;
+            }
+
+            expectedName = null;
+            return false;
         }
 
         private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)

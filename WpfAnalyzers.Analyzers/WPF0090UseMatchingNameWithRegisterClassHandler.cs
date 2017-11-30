@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -7,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0090UseMathingNameWithRegisterClassHandler : DiagnosticAnalyzer
+    internal class WPF0090UseMatchingNameWithRegisterClassHandler : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "WPF0090";
 
@@ -40,8 +41,9 @@
             }
 
             if (context.Node is ArgumentSyntax argument &&
-                argument.Expression is IdentifierNameSyntax invokedHandler &&
                 argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
+                objectCreation.ArgumentList.Arguments.TryGetSingle(out var callbackArg) &&
+                callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
                 objectCreation.Parent is ArgumentSyntax handlerArgument &&
                 handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax invocation &&
                 EventManager.TryRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
@@ -50,7 +52,30 @@
                 if (eventArgument.Expression is IdentifierNameSyntax identifierName &&
                     EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifierName.Identifier.ValueText) == false)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                    if (EventManager.TryGetExpectedCallbackName(identifierName.Identifier.ValueText, out var expectedName))
+                    {
+                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("ExpectedName", expectedName), });
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, callbackArg.GetLocation(), properties, expectedName));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, callbackArg.GetLocation(), "On" + identifierName.Identifier.ValueText));
+                    }
+                }
+
+                if (eventArgument.Expression is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.Name is IdentifierNameSyntax nameSyntax &&
+                    EventManager.IsMatch(invokedHandler.Identifier.ValueText, nameSyntax.Identifier.ValueText) == false)
+                {
+                    if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))
+                    {
+                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("ExpectedName", expectedName), });
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, callbackArg.GetLocation(), properties, expectedName));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
+                    }
                 }
             }
         }
