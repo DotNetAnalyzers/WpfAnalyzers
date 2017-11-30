@@ -69,7 +69,7 @@
             return false;
         }
 
-        internal bool TryGetValue(CancellationToken cancellationToken, out ExpressionSyntax value)
+        internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
         {
             value = null;
             if (this.Symbol is IFieldSymbol field)

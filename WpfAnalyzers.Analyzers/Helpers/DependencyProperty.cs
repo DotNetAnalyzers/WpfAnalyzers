@@ -172,7 +172,7 @@
         internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetValue(cancellationToken, out var value))
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
                 var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
                 if (symbol is IMethodSymbol method)
@@ -208,7 +208,7 @@
         internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetValue(cancellationToken, out var value))
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
                 var invocation = value as InvocationExpressionSyntax;
                 if (invocation == null)
@@ -232,7 +232,7 @@
         internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
         {
             result = null;
-            if (fieldOrProperty.TryGetValue(cancellationToken, out var value) &&
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||

@@ -8,7 +8,7 @@
         private static readonly CallbackNameShouldMatchEvent Analyzer = new CallbackNameShouldMatchEvent();
 
         [Test]
-        public void WhenCorrectNameAddHandlerSizeChangedEvent()
+        public void AddHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerSizeChangedEvent()
+        public void RemoveHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameAddHandlerManipulationStartingEvent()
+        public void AddHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
+        public void RemoveHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameAddHandlerMouseDownEvent()
+        public void AddHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerMouseDownEvent()
+        public void RemoveHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -151,6 +151,56 @@ namespace RoslynSandbox
         }
 
         private static void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void AddPreviewMouseDownHandlerNewHandler()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
+    public class FooControl : Control
+    {
+        public FooControl()
+        {
+            Mouse.AddPreviewMouseDownHandler(this, new MouseButtonEventHandler(OnPreviewMouseDown));
+        }
+
+        private static void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void AddPreviewMouseDownHandlerMethodGroup()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
+    public class FooControl : Control
+    {
+        public FooControl()
+        {
+            Mouse.AddPreviewMouseDownHandler(this, OnPreviewMouseDown);
+        }
+
+        private static void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             throw new System.NotImplementedException();
         }

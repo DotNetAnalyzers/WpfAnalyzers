@@ -44,7 +44,7 @@
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
-                fieldOrProperty.TryGetValue(context.CancellationToken, out var value) &&
+                fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
                 value is InvocationExpressionSyntax registerInvocation &&
                 Argument.TryGetArgument(method.Parameters, invocation.ArgumentList, KnownSymbol.PropertyMetadata, out var metadataArg))
             {
