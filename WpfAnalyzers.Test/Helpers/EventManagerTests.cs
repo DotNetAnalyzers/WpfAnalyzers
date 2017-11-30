@@ -18,7 +18,7 @@
         }
 
         [TestCase("SizeChangedEvent", true, "OnSizeChanged")]
-        [TestCase("SizeChanged", true, null)]
+        [TestCase("SizeChanged", false, null)]
         public void TryGetExpectedCallbackName(string eventName, bool expected, string expectedCallbackName)
         {
             Assert.AreEqual(expected, EventManager.TryGetExpectedCallbackName(eventName, out var callbackName));
