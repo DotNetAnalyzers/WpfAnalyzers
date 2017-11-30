@@ -18,7 +18,8 @@
                 WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
                 WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
                 WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId,
-                WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId);
+                WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId,
+                WPF0090UseMatchingNameWithRegisterClassHandler.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -150,6 +151,23 @@
                         out var registeredName))
                     {
                         var newName = $"{registeredName}ValidateValue";
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                $"Rename to: {newName}",
+                                cancellationToken => RenameHelper.RenameSymbolAsync(
+                                    context.Document,
+                                    syntaxRoot,
+                                    token,
+                                    newName,
+                                    cancellationToken),
+                                this.GetType().FullName),
+                            diagnostic);
+                    }
+                }
+                else if (diagnostic.Id == WPF0090UseMatchingNameWithRegisterClassHandler.DiagnosticId)
+                {
+                    if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
+                    {
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",

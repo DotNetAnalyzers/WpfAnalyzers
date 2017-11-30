@@ -157,6 +157,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md">WPF0083</a></td>
   <td>Add [ConstructorArgument].</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md">WPF0090</a></td>
+  <td>Name the invoked method OnEventName.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

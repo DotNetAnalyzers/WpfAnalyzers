@@ -14,6 +14,7 @@ namespace WpfAnalyzers
 
         internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
         internal static readonly FrameworkElementType FrameworkElement = new FrameworkElementType();
+        internal static readonly EventManagerType EventManager = new EventManagerType();
         internal static readonly DependencyPropertyType DependencyProperty = new DependencyPropertyType();
         internal static readonly DependencyPropertyKeyType DependencyPropertyKey = new DependencyPropertyKeyType();
         internal static readonly QualifiedType UIPropertyMetadata = Create("System.Windows.UIPropertyMetadata");
