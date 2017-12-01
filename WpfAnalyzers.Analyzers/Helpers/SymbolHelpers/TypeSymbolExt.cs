@@ -232,6 +232,12 @@
 
         internal static bool Is(this ITypeSymbol type, ITypeSymbol other)
         {
+            if (type == null ||
+                other == null)
+            {
+                return false;
+            }
+
             if (other.IsInterface())
             {
                 foreach (var @interface in type.AllInterfaces)

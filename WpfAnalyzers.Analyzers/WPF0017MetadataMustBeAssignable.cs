@@ -44,24 +44,26 @@
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
-                fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
-                value is InvocationExpressionSyntax registerInvocation &&
                 Argument.TryGetArgument(method.Parameters, invocation.ArgumentList, KnownSymbol.PropertyMetadata, out var metadataArg))
             {
-                if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out var registerMethod) ||
-                    DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
-                    DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
-                    DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
+                if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
+                    value is InvocationExpressionSyntax registerInvocation)
                 {
-                    if (Argument.TryGetArgument(registerMethod.Parameters, registerInvocation.ArgumentList, KnownSymbol.PropertyMetadata, out var registeredMetadataArg))
+                    if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out var registerMethod) ||
+                        DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
+                        DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
+                        DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
                     {
-                        var type = context.SemanticModel.GetTypeInfoSafe(metadataArg.Expression, context.CancellationToken).Type;
-                        var registeredType = context.SemanticModel.GetTypeInfoSafe(registeredMetadataArg.Expression, context.CancellationToken).Type;
-                        if (type != null &&
-                            registeredType != null &&
-                            !type.Is(registeredType))
+                        if (Argument.TryGetArgument(registerMethod.Parameters, registerInvocation.ArgumentList, KnownSymbol.PropertyMetadata, out var registeredMetadataArg))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, metadataArg.GetLocation()));
+                            var type = context.SemanticModel.GetTypeInfoSafe(metadataArg.Expression, context.CancellationToken).Type;
+                            var registeredType = context.SemanticModel.GetTypeInfoSafe(registeredMetadataArg.Expression, context.CancellationToken).Type;
+                            if (type != null &&
+                                registeredType != null &&
+                                !type.Is(registeredType))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, metadataArg.GetLocation()));
+                            }
                         }
                     }
                 }

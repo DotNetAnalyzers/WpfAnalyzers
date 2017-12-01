@@ -93,5 +93,26 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata);
             AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
+
+        [Test]
+        public void DefaultStyleKeyPropertyOverrideMetadata()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        static FooControl()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(FooControl), new FrameworkPropertyMetadata(typeof(FooControl)));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
