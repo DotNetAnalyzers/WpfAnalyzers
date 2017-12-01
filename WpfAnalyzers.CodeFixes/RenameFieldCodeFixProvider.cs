@@ -15,7 +15,8 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId,
-                WPF0002BackingFieldShouldMatchRegisteredName.DiagnosticId);
+                WPF0002BackingFieldShouldMatchRegisteredName.DiagnosticId,
+                WPF0100BackingFieldShouldMatchRegisteredName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -38,24 +39,31 @@
                     continue;
                 }
 
-                if (BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(node, context.CancellationToken), out var fieldOrProperty))
+                var symbol = semanticModel.GetDeclaredSymbolSafe(node, context.CancellationToken);
+                if (BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
+                    DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var registeredName))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(
-                        fieldOrProperty,
-                        semanticModel,
-                        context.CancellationToken,
-                        out var registeredName))
-                    {
-                        var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
-                            ? registeredName + "Property"
-                            : registeredName + "PropertyKey";
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Rename to: {newName}.",
-                                _ => ApplyFixAsync(context, token, newName),
-                                this.GetType().FullName),
-                            diagnostic);
-                    }
+                    var newName = diagnostic.Id == WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId
+                        ? registeredName + "Property"
+                        : registeredName + "PropertyKey";
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            $"Rename to: {newName}.",
+                            _ => ApplyFixAsync(context, token, newName),
+                            this.GetType().FullName),
+                        diagnostic);
+                }
+                else if (diagnostic.Id == WPF0100BackingFieldShouldMatchRegisteredName.DiagnosticId &&
+                         FieldOrProperty.TryCreate(symbol, out var propertyOrField) &&
+                         RoutedEvent.TryGetRegisteredName(propertyOrField, semanticModel, context.CancellationToken, out registeredName))
+                {
+                    var newName = registeredName + "Event";
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            $"Rename to: {newName}.",
+                            _ => ApplyFixAsync(context, token, newName),
+                            this.GetType().FullName),
+                        diagnostic);
                 }
             }
         }

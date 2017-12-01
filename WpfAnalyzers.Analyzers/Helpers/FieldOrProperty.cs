@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Diagnostics;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [DebuggerDisplay("{this.Symbol}")]
     internal struct FieldOrProperty
@@ -38,6 +40,52 @@
 
             result = default(FieldOrProperty);
             return false;
+        }
+
+        internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
+        {
+            value = null;
+            if (this.Symbol is IFieldSymbol field)
+            {
+                return field.TryGetAssignedValue(cancellationToken, out value);
+            }
+
+            if (this.Symbol is IPropertySymbol property)
+            {
+                if (property.TryGetSingleDeclaration(cancellationToken, out var declaration))
+                {
+                    if (declaration.Initializer != null)
+                    {
+                        value = declaration.Initializer.Value;
+                    }
+                    else if (declaration.ExpressionBody != null)
+                    {
+                        value = declaration.ExpressionBody.Expression;
+                    }
+
+                    return value != null;
+                }
+            }
+
+            return false;
+        }
+
+        internal SyntaxToken FindIdentifier(SyntaxNode node)
+        {
+            if (node is PropertyDeclarationSyntax propertyDeclaration)
+            {
+                return propertyDeclaration.Identifier;
+            }
+
+            if (node is FieldDeclarationSyntax fieldDeclaration)
+            {
+                if (fieldDeclaration.Declaration.Variables.TryGetSingle(out var variable))
+                {
+                    return variable.Identifier;
+                }
+            }
+
+            return node.GetFirstToken();
         }
     }
 }

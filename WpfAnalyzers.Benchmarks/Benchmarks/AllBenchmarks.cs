@@ -7,6 +7,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0002 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName());
@@ -87,6 +89,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void OverrideMetadataAnalyzer()
         {
             WPF0017.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RoutedEventAnalyzer()
+        {
+            WPF0100.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
