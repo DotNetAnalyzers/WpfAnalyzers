@@ -15,6 +15,36 @@ namespace WpfAnalyzers
             this.ContainingType = containingType;
         }
 
+        public static bool operator ==(BackingFieldOrProperty left, QualifiedMember<T> right)
+        {
+            if (left.Symbol is T symbol)
+            {
+                return symbol == right;
+            }
+
+            return false;
+        }
+
+        public static bool operator !=(BackingFieldOrProperty left, QualifiedMember<T> right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(FieldOrProperty left, QualifiedMember<T> right)
+        {
+            if (left.Symbol is T symbol)
+            {
+                return symbol == right;
+            }
+
+            return false;
+        }
+
+        public static bool operator !=(FieldOrProperty left, QualifiedMember<T> right)
+        {
+            return !(left == right);
+        }
+
         public static bool operator ==(T left, QualifiedMember<T> right)
         {
             if (left == null && right == null)

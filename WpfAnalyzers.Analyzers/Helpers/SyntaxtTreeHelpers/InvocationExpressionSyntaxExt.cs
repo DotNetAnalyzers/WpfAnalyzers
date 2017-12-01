@@ -5,6 +5,12 @@
 
     internal static class InvocationExpressionSyntaxExt
     {
+        internal static bool TryGetSingleArgument(this InvocationExpressionSyntax invocation, out ArgumentSyntax result)
+        {
+            result = null;
+            return invocation?.ArgumentList?.Arguments.TryGetSingle(out result) == true;
+        }
+
         internal static bool TryGetArgumentAtIndex(this InvocationExpressionSyntax invocation, int index, out ArgumentSyntax result)
         {
             result = null;

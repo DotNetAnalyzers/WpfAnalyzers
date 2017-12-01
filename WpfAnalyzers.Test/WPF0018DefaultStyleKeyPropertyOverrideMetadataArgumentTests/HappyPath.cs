@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
+namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgumentTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

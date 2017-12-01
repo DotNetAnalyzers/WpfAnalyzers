@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0017");
+
         [Test]
         public void DependencyPropertyOverrideMetadataWithBaseType()
         {
@@ -45,7 +47,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0017MetadataMustBeAssignable>(fooControlCode, barControlCode);
+            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, fooControlCode, barControlCode);
         }
 
         [Test]
@@ -88,7 +90,28 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0017MetadataMustBeAssignable>(fooControlCode, barControlCode);
+            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, fooControlCode, barControlCode);
+        }
+
+        [Test]
+        public void DefaultStyleKeyPropertyOverrideMetadata()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        static FooControl()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(FooControl), ↓new PropertyMetadata(typeof(FooControl)));
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }

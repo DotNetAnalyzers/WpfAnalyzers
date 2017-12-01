@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
     {
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackNameShouldMatchEvent());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0002 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName());
@@ -32,8 +34,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0016 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0016DefaultValueIsSharedReferenceType());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0017MetadataMustBeAssignable());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0030 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0030BackingFieldShouldBeStaticReadonly());
 
@@ -81,6 +81,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void CallbackNameShouldMatchEvent()
         {
             WPF0090.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void OverrideMetadataAnalyzer()
+        {
+            WPF0017.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -165,12 +171,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0016DefaultValueIsSharedReferenceType()
         {
             WPF0016.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0017MetadataMustBeAssignable()
-        {
-            WPF0017.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
