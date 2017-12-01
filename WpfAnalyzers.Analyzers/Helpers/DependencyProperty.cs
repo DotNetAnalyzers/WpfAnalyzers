@@ -189,14 +189,9 @@
                            TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
                 }
 
-                var property = symbol as IPropertySymbol;
-                if (property == null ||
-                    property != KnownSymbol.DependencyPropertyKey.DependencyProperty)
-                {
-                    return false;
-                }
-
-                if (value is MemberAccessExpressionSyntax memberAccess)
+                if (symbol is IPropertySymbol property &&
+                    property == KnownSymbol.DependencyPropertyKey.DependencyProperty &&
+                    value is MemberAccessExpressionSyntax memberAccess)
                 {
                     return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out result);
                 }
@@ -208,14 +203,9 @@
         internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
+                value is InvocationExpressionSyntax invocation)
             {
-                var invocation = value as InvocationExpressionSyntax;
-                if (invocation == null)
-                {
-                    return false;
-                }
-
                 var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
                 if (invocationSymbol == KnownSymbol.DependencyProperty.AddOwner)
                 {

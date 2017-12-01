@@ -58,7 +58,7 @@ namespace WpfAnalyzers
                         }
                     }
                 }
-                else if(DependencyProperty.TryGetPropertyByName(fieldOrProperty, out var property))
+                else if (DependencyProperty.TryGetPropertyByName(fieldOrProperty, out var property))
                 {
                     if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
                         !fieldOrProperty.Name.IsParts(property.Name, "Property"))

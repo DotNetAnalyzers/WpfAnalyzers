@@ -40,34 +40,20 @@
                 return;
             }
 
-            if (context.Node is InvocationExpressionSyntax invocation &&
-                invocation.TryGetInvokedMethodName(out var name))
+            if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if (name == KnownSymbol.DependencyProperty.AddOwner.Name &&
-                    invocation.TryGetArgumentAtIndex(0, out var argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol addOwner &&
-                    addOwner == KnownSymbol.DependencyProperty.AddOwner)
+                if ((DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                     DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                    invocation.TryGetArgumentAtIndex(0, out var argument))
                 {
                     HandleArgument(context, argument);
                 }
 
-                if (name == KnownSymbol.DependencyProperty.OverrideMetadata.Name &&
-                    invocation.TryGetArgumentAtIndex(0, out argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol overrideMetaData &&
-                    overrideMetaData == KnownSymbol.DependencyProperty.OverrideMetadata)
+                if ((DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                     DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                    invocation.TryGetArgumentAtIndex(2, out argument))
                 {
                     HandleArgument(context, argument);
-                }
-
-                if (name.StartsWith("Register", StringComparison.Ordinal) &&
-                    invocation.TryGetArgumentAtIndex(2, out argument) &&
-                    context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol register)
-                {
-                    if (register == KnownSymbol.DependencyProperty.Register ||
-                             register == KnownSymbol.DependencyProperty.RegisterReadOnly)
-                    {
-                        HandleArgument(context, argument);
-                    }
                 }
             }
         }
