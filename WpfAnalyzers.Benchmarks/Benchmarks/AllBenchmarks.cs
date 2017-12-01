@@ -7,9 +7,9 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0003ClrPropertyShouldMatchRegisteredName());
 
@@ -90,13 +90,13 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void RoutedEventAnalyzer()
+        public void RoutedEventBackingFieldOrPropertyAnalyzer()
         {
             WPF0100.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void RoutedEventBackingFieldOrPropertyAnalyzer()
+        public void RoutedEventCallbackAnalyzer()
         {
             WPF0090.Run();
         }

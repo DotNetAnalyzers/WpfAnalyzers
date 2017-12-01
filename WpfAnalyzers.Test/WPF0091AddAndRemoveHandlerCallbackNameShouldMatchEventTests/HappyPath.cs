@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
+        private static readonly RoutedEventCallbackAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
 
         [Test]
         public void AddHandlerSizeChangedEvent()

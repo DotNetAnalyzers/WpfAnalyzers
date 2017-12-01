@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class WPF0101Benchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnWpfAnalyzersProject()

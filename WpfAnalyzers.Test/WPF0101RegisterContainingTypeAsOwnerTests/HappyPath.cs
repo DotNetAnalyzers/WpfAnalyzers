@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly RoutedEventAnalyzer Analyzer = new RoutedEventAnalyzer();
+        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]

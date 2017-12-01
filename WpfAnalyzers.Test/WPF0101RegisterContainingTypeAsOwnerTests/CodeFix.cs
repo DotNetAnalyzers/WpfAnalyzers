@@ -34,7 +34,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0101",
                 "Register containing type: 'ValueChangedEvent' as owner.");
-            AnalyzerAssert.Diagnostics<RoutedEventAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0101");
-            AnalyzerAssert.CodeFix<RoutedEventAnalyzer, UseContainingTypeAsOwnerCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, UseContainingTypeAsOwnerCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
     }
 }

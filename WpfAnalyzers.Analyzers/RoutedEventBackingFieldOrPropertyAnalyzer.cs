@@ -1,129 +1,57 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class RoutedEventBackingFieldOrPropertyAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor,
-            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
+            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
+            WPF0101RegisterContainingTypeAsOwner.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.Argument);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.FieldDeclaration, SyntaxKind.PropertyDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            if (context.Node is ArgumentSyntax argument &&
-                argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
-                objectCreation.ArgumentList.Arguments.TryGetSingle(out var callbackArg) &&
-                callbackArg.Expression is IdentifierNameSyntax &&
-                objectCreation.Parent is ArgumentSyntax handlerArgument &&
-                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax invocation)
+            if (FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
+                fieldOrProperty.Type == KnownSymbol.RoutedEvent)
             {
-                if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
-                    invocation.TryGetArgumentAtIndex(1, out var eventArgument))
-                {
-                    HandleCallback(context, eventArgument, callbackArg, WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
-                }
-                else if ((TryGetAddHandlerCall(invocation, context, out _) ||
-                          TryGetRemoveHandlerCall(invocation, context, out _)) &&
-                          invocation.TryGetArgumentAtIndex(0, out eventArgument))
-                {
-                    HandleCallback(context, eventArgument, callbackArg, WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
-                }
-            }
-        }
-
-        private static void HandleCallback(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg, DiagnosticDescriptor descriptor)
-        {
-            var invokedHandler = (IdentifierNameSyntax)callbackArg.Expression;
-            if (eventArgument.Expression is IdentifierNameSyntax identifierName &&
-                EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifierName.Identifier.ValueText) == false)
-            {
-                if (EventManager.TryGetExpectedCallbackName(identifierName.Identifier.ValueText, out var expectedName))
-                {
-                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("ExpectedName", expectedName) });
-                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
-                }
-                else
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + identifierName.Identifier.ValueText));
-                }
-            }
-
-            if (eventArgument.Expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Name is IdentifierNameSyntax nameSyntax &&
-                EventManager.IsMatch(invokedHandler.Identifier.ValueText, nameSyntax.Identifier.ValueText) == false)
-            {
-                if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))
-                {
-                    var properties = ImmutableDictionary.CreateRange(
-                        new[] { new KeyValuePair<string, string>("ExpectedName", expectedName), });
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
-                }
-                else
+                if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    !fieldOrProperty.Name.IsParts(registeredName, "Event"))
                 {
                     context.ReportDiagnostic(
-                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
+                        Diagnostic.Create(
+                            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
+                            fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                            fieldOrProperty.Name,
+                            registeredName));
+                }
+
+                if (RoutedEvent.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
+                    !Equals(registeredOwnerType, context.ContainingSymbol.ContainingType))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0101RegisterContainingTypeAsOwner.Descriptor,
+                            typeArg.GetLocation(),
+                            fieldOrProperty.Name,
+                            registeredName));
                 }
             }
-        }
-
-        private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
-        {
-            eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out string name) &&
-                name != "AddHandler")
-            {
-                return false;
-            }
-
-            if (invocation.ArgumentList == null ||
-                invocation.ArgumentList.Arguments.Count < 2 ||
-                invocation.ArgumentList.Arguments.Count > 3)
-            {
-                return false;
-            }
-
-            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
-        }
-
-        private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
-        {
-            eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out string name) &&
-                name != "RemoveHandler")
-            {
-                return false;
-            }
-
-            if (invocation.ArgumentList == null ||
-                invocation.ArgumentList.Arguments.Count != 2)
-            {
-                return false;
-            }
-
-            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
         }
     }
 }

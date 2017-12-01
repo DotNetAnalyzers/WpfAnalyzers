@@ -34,7 +34,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0100",
                 "Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'");
-            AnalyzerAssert.Diagnostics<RoutedEventAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0100");
-            AnalyzerAssert.CodeFix<RoutedEventAnalyzer, RenameFieldCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0091", "Rename to OnSizeChanged to match the event.");
-            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<RoutedEventCallbackAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0091", "Rename to OnSizeChanged to match the event.");
-            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<RoutedEventCallbackAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -242,7 +242,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -287,7 +287,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -332,7 +332,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventCallbackAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
