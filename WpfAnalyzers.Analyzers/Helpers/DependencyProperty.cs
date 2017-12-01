@@ -263,7 +263,7 @@
             return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result);
         }
 
-        private static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)
+        internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)
         {
             property = null;
 

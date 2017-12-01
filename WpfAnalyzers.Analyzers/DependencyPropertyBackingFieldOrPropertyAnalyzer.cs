@@ -30,32 +30,57 @@ namespace WpfAnalyzers
 
             if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
             {
-                if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
-                    DependencyProperty.TryGetRegisteredName(
-                        fieldOrProperty,
-                        context.SemanticModel,
-                        context.CancellationToken,
-                        out var registeredName) &&
-                    !fieldOrProperty.Name.IsParts(registeredName, "Property"))
+                if (DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var invocation))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
-                            fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
-                            fieldOrProperty.Name,
-                            registeredName));
-                }
+                    if (invocation.TryGetArgumentAtIndex(0, out var nameArg) &&
+                        nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName))
+                    {
+                        if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
+                            !fieldOrProperty.Name.IsParts(registeredName, "Property"))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
+                                    fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                    fieldOrProperty.Name,
+                                    registeredName));
+                        }
 
-                if (fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey &&
-                    DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out registeredName) &&
-                    !fieldOrProperty.Name.IsParts(registeredName, "PropertyKey"))
+                        if (fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey &&
+                            !fieldOrProperty.Name.IsParts(registeredName, "PropertyKey"))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
+                                    fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                    fieldOrProperty.Name,
+                                    registeredName));
+                        }
+                    }
+                }
+                else if(DependencyProperty.TryGetPropertyByName(fieldOrProperty, out var property))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
-                            fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
-                            fieldOrProperty.Name,
-                            registeredName));
+                    if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
+                        !fieldOrProperty.Name.IsParts(property.Name, "Property"))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
+                                fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                fieldOrProperty.Name,
+                                property.Name));
+                    }
+
+                    if (fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey &&
+                        !fieldOrProperty.Name.IsParts(property.Name, "PropertyKey"))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
+                                fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                fieldOrProperty.Name,
+                                property.Name));
+                    }
                 }
             }
         }
