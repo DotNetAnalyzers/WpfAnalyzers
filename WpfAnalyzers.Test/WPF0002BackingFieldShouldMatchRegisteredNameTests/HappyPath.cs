@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 
     internal class HappyPath
     {
-        private static readonly WPF0002BackingFieldShouldMatchRegisteredName Analyzer = new WPF0002BackingFieldShouldMatchRegisteredName();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
@@ -140,64 +140,6 @@ namespace RoslynSandbox
         public static int GetBar(DependencyObject element)
         {
             return (int)element.GetValue(BarProperty);
-        }
-    }
-}";
-
-            AnalyzerAssert.Valid(Analyzer, testCode);
-        }
-
-        [Test]
-        public void IgnoresDependencyProperty()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ErrorProperty = DependencyProperty.Register(
-            ""Bar"",
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(ErrorProperty); }
-            set { SetValue(ErrorProperty, value); }
-        }
-    }
-}";
-            AnalyzerAssert.Valid(Analyzer, testCode);
-        }
-
-        [Test]
-        public void IgnoresAttachedProperty()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class Foo
-    {
-        public static readonly DependencyProperty ErrorProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new PropertyMetadata(default(int)));
-
-        public static void SetBar(DependencyObject element, int value)
-        {
-            element.SetValue(ErrorProperty, value);
-        }
-
-        public static int GetBar(DependencyObject element)
-        {
-            return (int)element.GetValue(ErrorProperty);
         }
     }
 }";

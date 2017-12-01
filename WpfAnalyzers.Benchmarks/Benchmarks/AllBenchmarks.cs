@@ -5,13 +5,11 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
     {
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackNameShouldMatchEvent());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventAnalyzer());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0001BackingFieldShouldMatchRegisteredName());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0002 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0002BackingFieldShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0003ClrPropertyShouldMatchRegisteredName());
 
@@ -86,6 +84,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void DependencyPropertyBackingFieldOrPropertyAnalyzer()
+        {
+            WPF0001.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void OverrideMetadataAnalyzer()
         {
             WPF0017.Run();
@@ -95,18 +99,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void RoutedEventAnalyzer()
         {
             WPF0100.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0001BackingFieldShouldMatchRegisteredName()
-        {
-            WPF0001.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0002BackingFieldShouldMatchRegisteredName()
-        {
-            WPF0002.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

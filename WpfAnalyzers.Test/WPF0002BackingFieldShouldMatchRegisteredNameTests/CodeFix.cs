@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0002");
+
         [Test]
         public void Message()
         {
@@ -34,7 +36,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0002",
                 "Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'");
-            AnalyzerAssert.Diagnostics<WPF0002BackingFieldShouldMatchRegisteredName>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<DependencyPropertyBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -87,7 +89,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -140,7 +142,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -199,7 +201,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -258,7 +260,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0002BackingFieldShouldMatchRegisteredName, RenameFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
