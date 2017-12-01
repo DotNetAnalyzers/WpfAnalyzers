@@ -59,7 +59,7 @@
                 else if (fieldOrProperty == KnownSymbol.FrameworkElement.DefaultStyleKeyProperty &&
                          metadataArg.Expression is ObjectCreationExpressionSyntax metadataCreation)
                 {
-                    if (!context.SemanticModel.GetTypeInfoSafe(metadataCreation, context.CancellationToken).Type.Is(KnownSymbol.FrameworkPropertyMetadata))
+                    if (!Constructor.TryGet(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.SemanticModel, context.CancellationToken, out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
                     }
