@@ -173,6 +173,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md">WPF0100</a></td>
   <td>Backing field for a RoutedEvent should match registered name.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md">WPF0101</a></td>
+  <td>Containing type should be used as registered owner.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

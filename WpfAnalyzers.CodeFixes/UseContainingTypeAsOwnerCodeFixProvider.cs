@@ -4,18 +4,21 @@
     using System.Composition;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseContainingTypeAsOwnerCodeFixProvider))]
     [Shared]
     internal class UseContainingTypeAsOwnerCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId,
+            WPF0101RegisterContainingTypeAsOwner.DiagnosticId);
+
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -50,24 +53,18 @@
                 }
 
                 var containingTypeName = type.ToMinimalDisplayString(semanticModel, argument.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                var typeSyntax = SyntaxFactory.ParseTypeName(containingTypeName);
-                context.RegisterCodeFix(
-                    CodeAction.Create(
+                context.RegisterDocumentEditorFix(
                         $"Use containing type: {containingTypeName}.",
-                        _ => ApplyFixAsync(context, (TypeOfExpressionSyntax)argument.Expression, typeSyntax),
-                        this.GetType().FullName),
+                        (e, _) => Fix(e, (TypeOfExpressionSyntax)argument.Expression, containingTypeName),
                     diagnostic);
             }
         }
 
-        private static async Task<Document> ApplyFixAsync(CodeFixContext context, TypeOfExpressionSyntax typeOfExpression, TypeSyntax containingType)
+        private static void Fix(DocumentEditor editor, TypeOfExpressionSyntax typeOfExpression, string containingTypeName)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
-
-            var updated = typeOfExpression.WithType(containingType);
-            return document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeOfExpression, updated));
+            editor.ReplaceNode(
+                typeOfExpression,
+                (x, g) => ((TypeOfExpressionSyntax)x).WithType(SyntaxFactory.ParseTypeName(containingTypeName)));
         }
     }
 }

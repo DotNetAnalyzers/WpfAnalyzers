@@ -135,9 +135,9 @@
             result = null;
             if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation))
             {
-                if (invocation.TryGetArgumentAtIndex(1, out var arg))
+                if (invocation.TryGetArgumentAtIndex(1, out var typeArg))
                 {
-                    if (!arg.TryGetTypeofValue(semanticModel, cancellationToken, out result))
+                    if (!typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result))
                     {
                         return false;
                     }

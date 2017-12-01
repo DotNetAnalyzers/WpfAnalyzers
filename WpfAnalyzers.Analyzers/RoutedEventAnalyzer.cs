@@ -9,7 +9,8 @@
     internal class RoutedEventAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor);
+            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
+            WPF0101RegisterContainingTypeAsOwner.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -27,15 +28,26 @@
             }
 
             if (FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type == KnownSymbol.RoutedEvent &&
-                RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName))
+                fieldOrProperty.Type == KnownSymbol.RoutedEvent)
             {
-                if (!fieldOrProperty.Name.IsParts(registeredName, "Event"))
+                if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    !fieldOrProperty.Name.IsParts(registeredName, "Event"))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
                             fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                            fieldOrProperty.Name,
+                            registeredName));
+                }
+
+                if (RoutedEvent.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
+                    !Equals(registeredOwnerType, context.ContainingSymbol.ContainingType))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0101RegisterContainingTypeAsOwner.Descriptor,
+                            typeArg.GetLocation(),
                             fieldOrProperty.Name,
                             registeredName));
                 }

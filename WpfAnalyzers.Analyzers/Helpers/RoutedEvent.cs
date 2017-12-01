@@ -16,16 +16,33 @@
                 out method);
         }
 
-        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            registeredName = null;
+            result = null;
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(0, out var nameArg))
                 {
-                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
+                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetRegisteredType(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax typeArg, out ITypeSymbol result)
+        {
+            typeArg = null;
+            result = null;
+            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
+                value is InvocationExpressionSyntax invocation)
+            {
+                if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
+                    invocation.TryGetArgumentAtIndex(3, out typeArg))
+                {
+                    return typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
                 }
             }
 
