@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class CallbackNameShouldMatchEvent : DiagnosticAnalyzer
+    internal class RoutedEventBackingFieldOrPropertyAnalyzer : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(

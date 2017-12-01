@@ -3,13 +3,13 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackNameShouldMatchEvent());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventAnalyzer());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0003ClrPropertyShouldMatchRegisteredName());
 
@@ -78,12 +78,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void CallbackNameShouldMatchEvent()
-        {
-            WPF0090.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void DependencyPropertyBackingFieldOrPropertyAnalyzer()
         {
             WPF0001.Run();
@@ -99,6 +93,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void RoutedEventAnalyzer()
         {
             WPF0100.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RoutedEventBackingFieldOrPropertyAnalyzer()
+        {
+            WPF0090.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

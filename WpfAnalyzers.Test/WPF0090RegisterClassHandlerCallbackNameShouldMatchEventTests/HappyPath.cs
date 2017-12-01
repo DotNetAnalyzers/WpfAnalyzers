@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly CallbackNameShouldMatchEvent Analyzer = new CallbackNameShouldMatchEvent();
+        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
 
         [Test]
         public void WhenCorrectNameSizeChangedEvent()
