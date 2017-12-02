@@ -26,6 +26,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
     
         public int Bar
@@ -58,6 +59,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static DependencyProperty BarProperty { get; } = BarPropertyKey.DependencyProperty;
     
         public int Bar
@@ -91,12 +93,14 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         internal static readonly DependencyPropertyKey StatusPropertyKey = DependencyProperty.RegisterReadOnly(
             ""Status"",
             typeof(Status),
             typeof(FooControl),
             new PropertyMetadata(Status.Idle, OnStatusChanged));
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         internal static readonly DependencyProperty StatusProperty = StatusPropertyKey.DependencyProperty;
 
         internal Status Status

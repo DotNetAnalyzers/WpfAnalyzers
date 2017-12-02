@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0060");
+
         [Test]
         public void DependencyPropertyRegisterBackingField()
         {
@@ -44,7 +46,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -86,7 +88,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -136,7 +138,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -195,7 +197,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
@@ -266,7 +268,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -319,7 +321,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -372,7 +374,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -442,7 +444,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0060DocumentBackingField, DocumentBackingFieldCodeFixProvider>(new[] { fooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, DocumentBackingFieldCodeFixProvider>(ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
     }
 }

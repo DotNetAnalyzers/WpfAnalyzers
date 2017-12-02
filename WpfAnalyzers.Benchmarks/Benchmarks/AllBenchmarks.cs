@@ -59,8 +59,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0052 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0060 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0060DocumentBackingField());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0061 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0061ClrMethodShouldHaveDocs());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0070ConverterDoesNotHaveDefaultField());
@@ -243,12 +241,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces()
         {
             WPF0052.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0060DocumentBackingField()
-        {
-            WPF0060.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

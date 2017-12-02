@@ -11,7 +11,8 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0002BackingFieldShouldMatchRegisteredName.Descriptor);
+            WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
+            WPF0060DocumentBackingField.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -53,6 +54,19 @@ namespace WpfAnalyzers
                                 Diagnostic.Create(
                                     WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
                                     fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                    fieldOrProperty.Name,
+                                    registeredName));
+                        }
+
+                        if ((context.ContainingSymbol.DeclaredAccessibility == Accessibility.Public ||
+                             context.ContainingSymbol.DeclaredAccessibility == Accessibility.Internal) &&
+                            !context.Node.HasDocumentation() &&
+                            context.ContainingSymbol.ContainingType.TryGetPropertyRecursive(registeredName, out _))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0060DocumentBackingField.Descriptor,
+                                    context.Node.GetLocation(),
                                     fieldOrProperty.Name,
                                     registeredName));
                         }

@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0060DocumentBackingField Analyzer = new WPF0060DocumentBackingField();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterBackingField()
