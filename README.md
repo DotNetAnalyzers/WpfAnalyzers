@@ -177,6 +177,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md">WPF0101</a></td>
   <td>Containing type should be used as registered owner.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md">WPF0102</a></td>
+  <td>Name of the event should match registered name.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

@@ -11,6 +11,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0102 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0003ClrPropertyShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0004ClrMethodShouldMatchRegisteredName());
@@ -97,6 +99,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void RoutedEventCallbackAnalyzer()
         {
             WPF0090.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RoutedEventEventDeclarationAnalyzer()
+        {
+            WPF0102.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

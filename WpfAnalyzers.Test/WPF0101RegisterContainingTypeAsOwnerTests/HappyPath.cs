@@ -10,7 +10,7 @@
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void DependencyPropertyRegisterBackingField(string nameof)
+        public void EventManagerRegisterRoutedEvent(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
+        public void EventManagerRegisterRoutedEventExpressionBodies(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
