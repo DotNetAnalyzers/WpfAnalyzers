@@ -10,7 +10,9 @@
     internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0102EventDeclarationName.Descriptor);
+            WPF0102EventDeclarationName.Descriptor,
+            WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
+            WPF0105EventDeclarationRemovaHandlerInRemove.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -29,11 +31,29 @@
 
             if (context.ContainingSymbol is IEventSymbol eventSymbol &&
                 context.Node is EventDeclarationSyntax eventDeclaration &&
-                EventDeclaration.TryGetAddAndRemoveHandler(eventDeclaration, out var addHandler, out var removeHandler))
+                EventDeclaration.TryGetAddAndRemoveHandler(eventDeclaration, out var addCall, out var removeCall))
             {
-                if (addHandler.TryGetArgumentAtIndex(0, out var addArg) &&
+                if (addCall.TryGetInvokedMethodName(out var addName) &&
+                    addName != "AddHandler")
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
+                            addCall.GetLocation()));
+                }
+
+                if (removeCall.TryGetInvokedMethodName(out var removeName) &&
+                    removeName != "RemoveHandler")
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0105EventDeclarationRemovaHandlerInRemove.Descriptor,
+                            removeCall.GetLocation()));
+                }
+
+                if (addCall.TryGetArgumentAtIndex(0, out var addArg) &&
                     addArg.Expression is IdentifierNameSyntax addIdentifier &&
-                    removeHandler.TryGetArgumentAtIndex(0, out var removeArg) &&
+                    removeCall.TryGetArgumentAtIndex(0, out var removeArg) &&
                     removeArg.Expression is IdentifierNameSyntax removeIdentifier)
                 {
                     if (addIdentifier.Identifier.ValueText != removeIdentifier.Identifier.ValueText)
@@ -81,13 +101,15 @@
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                if (node.TryGetInvokedMethodName(out var name))
+                if (node.TryGetInvokedMethodName(out var name) &&
+                    (name == "AddHandler" || name == "RemoveHandler") &&
+                    node.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor)
                 {
-                    if (name == "AddHandler")
+                    if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))
                     {
                         this.addHandler = node;
                     }
-                    else if (name == "RemoveHandler")
+                    else if (accessor.IsKind(SyntaxKind.RemoveAccessorDeclaration))
                     {
                         this.removeHandler = node;
                     }
