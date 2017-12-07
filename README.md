@@ -182,6 +182,10 @@ Roslyn analyzers for WPF.
   <td>Name of the event should match registered name.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md">WPF0103</a></td>
+  <td>Use same event in add and remove.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md">WPF0104</a></td>
   <td>Call AddHandler in add.</td>
 </tr>

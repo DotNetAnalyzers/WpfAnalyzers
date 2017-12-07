@@ -30,8 +30,7 @@
                                               .AppendLine("{")
                                               .AppendLine($"    public class {expectedName}")
                                               .AppendLine("    {")
-                                              .AppendLine(
-                                                  $"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                                              .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
                                               .AppendLine()
                                               .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
                                               .AppendLine("        public void RunOnWpfAnalyzersProject()")

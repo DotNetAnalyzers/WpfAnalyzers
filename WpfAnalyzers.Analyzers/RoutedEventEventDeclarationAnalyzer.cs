@@ -11,6 +11,7 @@
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0102EventDeclarationName.Descriptor,
+            WPF0103EventDeclarationAddRemove.Descriptor,
             WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
             WPF0105EventDeclarationRemovaHandlerInRemove.Descriptor);
 
