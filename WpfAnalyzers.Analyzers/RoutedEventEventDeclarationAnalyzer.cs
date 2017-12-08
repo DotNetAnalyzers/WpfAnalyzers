@@ -33,7 +33,7 @@
 
             if (context.ContainingSymbol is IEventSymbol eventSymbol &&
                 context.Node is EventDeclarationSyntax eventDeclaration &&
-                EventDeclaration.TryGetAddAndRemoveHandler(eventDeclaration, out var addCall, out var removeCall))
+                EventDeclarationWalker.TryGetCalls(eventDeclaration, out var addCall, out var removeCall))
             {
                 if (addCall.TryGetInvokedMethodName(out var addName) &&
                     addName != "AddHandler")
@@ -67,7 +67,7 @@
                                 addIdentifier.Identifier.ValueText,
                                 removeIdentifier.Identifier.ValueText));
                     }
-                    else if (BackingField.TryGetRegistration(eventDeclaration.Parent as TypeDeclarationSyntax, addIdentifier.Identifier.ValueText, out var registration) &&
+                    else if (BackingFieldWalker.TryGetRegistration(eventDeclaration.Parent as TypeDeclarationSyntax, addIdentifier.Identifier.ValueText, out var registration) &&
                              registration.ArgumentList != null)
                     {
                         if (registration.TryGetArgumentAtIndex(0, out var nameARg) &&
@@ -97,18 +97,18 @@
             }
         }
 
-        private class EventDeclaration : PooledWalker<EventDeclaration>
+        private class EventDeclarationWalker : PooledWalker<EventDeclarationWalker>
         {
-            private InvocationExpressionSyntax addHandler;
-            private InvocationExpressionSyntax removeHandler;
+            private InvocationExpressionSyntax addCall;
+            private InvocationExpressionSyntax removeCall;
 
-            public static bool TryGetAddAndRemoveHandler(EventDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax addHandler, out InvocationExpressionSyntax removeHandler)
+            public static bool TryGetCalls(EventDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax addCall, out InvocationExpressionSyntax removeCall)
             {
-                using (var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclaration()))
+                using (var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker()))
                 {
-                    addHandler = walker.addHandler;
-                    removeHandler = walker.removeHandler;
-                    return addHandler != null || removeHandler != null;
+                    addCall = walker.addCall;
+                    removeCall = walker.removeCall;
+                    return addCall != null || removeCall != null;
                 }
             }
 
@@ -120,11 +120,11 @@
                 {
                     if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))
                     {
-                        this.addHandler = node;
+                        this.addCall = node;
                     }
                     else if (accessor.IsKind(SyntaxKind.RemoveAccessorDeclaration))
                     {
-                        this.removeHandler = node;
+                        this.removeCall = node;
                     }
                 }
 
@@ -133,12 +133,12 @@
 
             protected override void Clear()
             {
-                this.addHandler = null;
-                this.removeHandler = null;
+                this.addCall = null;
+                this.removeCall = null;
             }
         }
 
-        private class BackingField : PooledWalker<BackingField>
+        private class BackingFieldWalker : PooledWalker<BackingFieldWalker>
         {
             private VariableDeclaratorSyntax backingField;
             private PropertyDeclarationSyntax backingProperty;
@@ -153,7 +153,7 @@
                     return false;
                 }
 
-                using (var walker = Borrow(() => new BackingField()))
+                using (var walker = Borrow(() => new BackingFieldWalker()))
                 {
                     walker.memberName = memberName;
                     walker.Visit(typeDeclaration);

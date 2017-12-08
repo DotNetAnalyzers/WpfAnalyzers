@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.PropertyDeclarationAnalyzerTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -29,7 +29,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0003",
                 "Property 'Error' must be named 'Bar'");
-            AnalyzerAssert.Diagnostics<WPF0003ClrPropertyShouldMatchRegisteredName>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -173,7 +173,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(new[] { testCode, fooCode }, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(new[] { testCode, fooCode }, fixedCode);
         }
 
         [Test]
@@ -294,7 +294,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0003ClrPropertyShouldMatchRegisteredName, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

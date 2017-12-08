@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 
     internal class HappyPath
     {
-        private static readonly WPF0003ClrPropertyShouldMatchRegisteredName Analyzer = new WPF0003ClrPropertyShouldMatchRegisteredName();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
