@@ -107,9 +107,9 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool TryGetRegisteredType(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out var field))
+            if (TryGetRegisterField(property, semanticModel, cancellationToken, out var fieldOrProperty))
             {
-                return DependencyProperty.TryGetRegisteredType(field, semanticModel, cancellationToken, out result);
+                return DependencyProperty.TryGetRegisteredType(fieldOrProperty, semanticModel, cancellationToken, out result);
             }
 
             result = null;

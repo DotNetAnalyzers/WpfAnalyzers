@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0012ClrPropertyShouldMatchRegisteredType Analyzer = new WPF0012ClrPropertyShouldMatchRegisteredType();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [TestCase("int")]
         [TestCase("int?")]

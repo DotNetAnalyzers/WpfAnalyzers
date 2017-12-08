@@ -1,10 +1,12 @@
-﻿namespace WpfAnalyzers.Test.PropertyDeclarationAnalyzerTests
+﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0003");
+
         [Test]
         public void Message()
         {
@@ -72,7 +74,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -115,7 +117,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -173,7 +175,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
@@ -241,7 +243,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(new[] { testCode, fooCode }, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
         }
 
         [Test]
@@ -294,7 +296,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, RenamePropertyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

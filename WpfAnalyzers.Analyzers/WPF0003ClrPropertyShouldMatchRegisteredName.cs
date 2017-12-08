@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
 
-    internal class WPF0003ClrPropertyShouldMatchRegisteredName
+    internal static class WPF0003ClrPropertyShouldMatchRegisteredName
     {
         public const string DiagnosticId = "WPF0003";
 
