@@ -12,8 +12,8 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
-            WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
-            WPF0013ClrMethodMustMatchRegisteredType.Descriptor);
+            WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+            WPF0042AvoidSideEffectsInClrAccessors.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -32,7 +32,9 @@
 
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
-                method.IsStatic)
+                method.IsStatic &&
+                method.Parameters.TryGetAtIndex(0, out var parameter) &&
+                parameter.Type.Is(KnownSymbol.DependencyObject))
             {
                 if (ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out var call, out var fieldOrProperty))
                 {
