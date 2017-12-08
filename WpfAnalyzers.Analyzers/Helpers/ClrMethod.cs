@@ -42,7 +42,7 @@
             if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedSetMethod(methodDeclaration, semanticModel, cancellationToken, out setField);
+                return IsAttachedSetMethod(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
             }
 
             return false;
@@ -81,14 +81,15 @@
             if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out getField);
+                return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out _, out getField);
             }
 
             return false;
         }
 
-        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty setField)
         {
+            call = null;
             setField = default(BackingFieldOrProperty);
             if (method == null ||
                 method.ParameterList.Parameters.Count != 2 ||
@@ -105,7 +106,8 @@
                     return false;
                 }
 
-                var memberAccess = (walker.SetValue?.Expression ?? walker.SetCurrentValue?.Expression) as MemberAccessExpressionSyntax;
+                call = walker.SetValue ?? walker.SetCurrentValue;
+                var memberAccess = call.Expression as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||
                     member == null ||
@@ -131,8 +133,9 @@
             }
         }
 
-        internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
+        internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty getField)
         {
+            call = null;
             getField = default(BackingFieldOrProperty);
             if (method == null ||
                 method.ParameterList.Parameters.Count != 1 ||
@@ -144,6 +147,7 @@
 
             using (var walker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, method))
             {
+                call = walker.GetValue;
                 var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
                 var member = memberAccess?.Expression as IdentifierNameSyntax;
                 if (memberAccess == null ||

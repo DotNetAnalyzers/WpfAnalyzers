@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0042");
+
         [Test]
         public void Message()
         {
@@ -40,7 +42,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0042",
                 "Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -76,7 +78,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -112,7 +114,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -150,7 +152,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -189,7 +191,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0042AvoidSideEffectsInClrAccessors>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }

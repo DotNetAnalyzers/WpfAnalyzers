@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
 
     internal class HappyPath
     {
-        private static readonly WPF0042AvoidSideEffectsInClrAccessors Analyzer = new WPF0042AvoidSideEffectsInClrAccessors();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [Test]
         public void DependencyProperty()

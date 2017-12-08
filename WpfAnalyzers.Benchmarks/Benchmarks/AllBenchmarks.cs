@@ -47,8 +47,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0041 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0042 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0042AvoidSideEffectsInClrAccessors());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0043 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0043DontUseSetCurrentValueForDataContext());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0050 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
@@ -203,12 +201,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0041SetMutableUsingSetCurrentValue()
         {
             WPF0041.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0042AvoidSideEffectsInClrAccessors()
-        {
-            WPF0042.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
