@@ -1,16 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemovaHandlerInRemoveTests
+﻿namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal class Diagnostics
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
-
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public void EventManagerRegisterRoutedEvent(string nameof)
+        [Test]
+        public void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -22,7 +18,7 @@ namespace RoslynSandbox
     {
         /// <summary>Identifies the ValueChanged event</summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
-            nameof(ValueChanged),
+            ""ValueChanged"",
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
             typeof(FooControl));
@@ -30,12 +26,15 @@ namespace RoslynSandbox
         public event RoutedEventHandler ValueChanged
         {
             add { this.AddHandler(ValueChangedEvent, value); }
-            remove { this.RemoveHandler(ValueChangedEvent, value); }
+            remove { this.AddHandler(ValueChangedEvent, value); }
         }
     }
 }";
-            testCode = testCode.AssertReplace("nameof(ValueChanged)", nameof);
-            AnalyzerAssert.Valid(Analyzer, testCode);
+
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
+                "WPF0105",
+                "Call RemoveHandler in remove.");
+            AnalyzerAssert.Diagnostics<RoutedEventEventDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
     }
 }

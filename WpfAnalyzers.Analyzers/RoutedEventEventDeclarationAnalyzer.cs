@@ -13,7 +13,7 @@
             WPF0102EventDeclarationName.Descriptor,
             WPF0103EventDeclarationAddRemove.Descriptor,
             WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
-            WPF0105EventDeclarationRemovaHandlerInRemove.Descriptor);
+            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -48,7 +48,7 @@
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0105EventDeclarationRemovaHandlerInRemove.Descriptor,
+                            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor,
                             removeCall.GetLocation()));
                 }
 

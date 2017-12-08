@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class WPF0105EventDeclarationRemovaHandlerInRemove
+    internal static class WPF0105EventDeclarationRemoveHandlerInRemove
     {
         public const string DiagnosticId = "WPF0105";
 
