@@ -98,6 +98,10 @@ Roslyn analyzers for WPF.
   <td>Use SetValue in setter.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0036.md">WPF0036</a></td>
+  <td>Avoid side effects in CLR accessors.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
   <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
 </tr>

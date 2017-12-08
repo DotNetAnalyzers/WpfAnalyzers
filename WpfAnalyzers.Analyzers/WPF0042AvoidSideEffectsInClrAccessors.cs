@@ -11,7 +11,7 @@
     {
         public const string DiagnosticId = "WPF0042";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Avoid side effects in CLR accessors.",
             messageFormat: "Avoid side effects in CLR accessors.",
@@ -31,8 +31,6 @@
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(HandleMethod, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleGetter, SyntaxKind.GetAccessorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleSetter, SyntaxKind.SetAccessorDeclaration);
         }
 
         private static void HandleMethod(SyntaxNodeAnalysisContext context)
@@ -55,44 +53,6 @@
                     HandlePotentialSetMethod(context, methodDeclaration.Body);
                 }
             }
-        }
-
-        private static void HandleGetter(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            var getter = (AccessorDeclarationSyntax)context.Node;
-            var property = (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
-            if (getter.Body == null ||
-                getter.Body.Statements.Count == 1 ||
-                !property.IsPotentialClrProperty())
-            {
-                return;
-            }
-
-            HandlePotentialGetMethod(context, getter.Body);
-        }
-
-        private static void HandleSetter(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            var setter = (AccessorDeclarationSyntax)context.Node;
-            var property = (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
-            if (setter.Body == null ||
-                setter.Body.Statements.Count == 1 ||
-                !property.IsPotentialClrProperty())
-            {
-                return;
-            }
-
-            HandlePotentialSetMethod(context, setter.Body);
         }
 
         private static void HandlePotentialGetMethod(SyntaxNodeAnalysisContext context, BlockSyntax body)

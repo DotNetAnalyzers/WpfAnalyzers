@@ -14,7 +14,8 @@
             WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
             WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
             WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
-            WPF0035ClrPropertyUseSetValueInSetter.Descriptor);
+            WPF0035ClrPropertyUseSetValueInSetter.Descriptor,
+            WPF0036AvoidSideEffectsInClrAccessors.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -37,6 +38,22 @@
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
+                if (setCall != null &&
+                    propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                    setter.Body != null &&
+                    setter.Body.Statements.TryGetFirst(x => !x.Contains(setCall), out var statement))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                }
+
+                if (getCall != null &&
+                    propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
+                    getter.Body != null &&
+                    getter.Body.Statements.TryGetFirst(x => !x.Contains(getCall), out statement))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                }
+
                 if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
                     getArg.Expression is IdentifierNameSyntax getIdentifier &&
                     setCall.TryGetArgumentAtIndex(0, out var setArg) &&
