@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTes
 
     internal class HappyPath
     {
-        private static readonly WPF0032ClrPropertyGetAndSetSameDependencyProperty Analyzer = new WPF0032ClrPropertyGetAndSetSameDependencyProperty();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [Test]
         public void DependencyProperty()

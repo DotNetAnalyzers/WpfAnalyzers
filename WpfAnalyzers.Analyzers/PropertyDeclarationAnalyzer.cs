@@ -12,7 +12,8 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
-            WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor);
+            WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
+            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -33,29 +34,47 @@
                 context.ContainingSymbol is IPropertySymbol property &&
                 context.ContainingSymbol.ContainingType.Is(KnownSymbol.DependencyObject) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall) &&
-                ClrProperty.TryGetRegisterField(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
+                PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
-                if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                    registeredName != property.Name)
+                if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
+                    getArg.Expression is IdentifierNameSyntax getIdentifier &&
+                    setCall.TryGetArgumentAtIndex(0, out var setArg) &&
+                    setArg.Expression is IdentifierNameSyntax setIdentifier)
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
-                            propertyDeclaration.Identifier.GetLocation(),
-                            property.Name,
-                            registeredName));
+                    if (getIdentifier.Identifier.ValueText != setIdentifier.Identifier.ValueText &&
+                        !setIdentifier.Identifier.ValueText.IsParts(getIdentifier.Identifier.ValueText, "Key"))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
+                                propertyDeclaration.GetLocation(),
+                                context.ContainingSymbol.Name));
+                    }
                 }
 
-                if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                   !registeredType.IsSameType(property.Type))
+                if (ClrProperty.TryGetRegisterField(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
-                            propertyDeclaration.Type.GetLocation(),
-                            property,
-                            registeredType));
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                        registeredName != property.Name)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
+                                propertyDeclaration.Identifier.GetLocation(),
+                                property.Name,
+                                registeredName));
+                    }
+
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                        !registeredType.IsSameType(property.Type))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
+                                propertyDeclaration.Type.GetLocation(),
+                                property,
+                                registeredType));
+                    }
                 }
             }
         }

@@ -35,7 +35,48 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<WPF0032ClrPropertyGetAndSetSameDependencyProperty>(testCode);
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
+                "WPF0032",
+                "Property 'Bar' must access same dependency property in getter and setter");
+            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void DependencyPropertyAndReadOnlyDependencyProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
+            ""Other"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        ↓public int Bar
+        {
+            get { return (int)this.GetValue(OtherProperty); }
+            set { this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
+                "WPF0032",
+                "Property 'Bar' must access same dependency property in getter and setter");
+            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
     }
 }

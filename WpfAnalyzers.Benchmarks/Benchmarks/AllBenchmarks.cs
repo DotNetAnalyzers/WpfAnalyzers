@@ -39,8 +39,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0031 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0031FieldOrder());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0032 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0032ClrPropertyGetAndSetSameDependencyProperty());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0033 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0033UseAttachedPropertyBrowsableForTypeAttribute());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0034 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument());
@@ -181,12 +179,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0031FieldOrder()
         {
             WPF0031.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0032ClrPropertyGetAndSetSameDependencyProperty()
-        {
-            WPF0032.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
