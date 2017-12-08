@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Use same event in add and remove.",
             messageFormat: "Add uses: '{0}', remove uses: '{1}'.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use same event in add and remove.",

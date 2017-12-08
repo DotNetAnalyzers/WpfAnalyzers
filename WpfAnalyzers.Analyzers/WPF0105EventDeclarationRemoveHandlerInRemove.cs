@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Call RemoveHandler in remove.",
             messageFormat: "Call RemoveHandler in remove.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Call RemoveHandler in remove.",

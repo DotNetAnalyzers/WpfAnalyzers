@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Call AddHandler in add.",
             messageFormat: "Call AddHandler in add.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Call AddHandler in add.",

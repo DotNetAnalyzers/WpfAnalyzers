@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Name of the event should match registered name.",
             messageFormat: "Rename to: '{0}'.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Name of the event should match registered name.",
