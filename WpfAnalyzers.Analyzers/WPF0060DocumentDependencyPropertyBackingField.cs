@@ -2,7 +2,7 @@ namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class WPF0060DocumentBackingField
+    internal static class WPF0060DocumentDependencyPropertyBackingField
     {
         public const string DiagnosticId = "WPF0060";
 

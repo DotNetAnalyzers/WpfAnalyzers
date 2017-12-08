@@ -16,7 +16,7 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0060DocumentBackingField.DiagnosticId);
+            ImmutableArray.Create(WPF0060DocumentDependencyPropertyBackingField.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;

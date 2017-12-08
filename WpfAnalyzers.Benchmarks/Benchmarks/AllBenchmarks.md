@@ -35,7 +35,7 @@ Frequency=3410097 Hz, Resolution=293.2468 ns, Timer=TSC
  |                    WPF0050XmlnsPrefixMustMatchXmlnsDefinition |   374.48 us | 10.5452 us |  9.8640 us |   370.73 us | 2.4414 | 0.4883 |   17584 B |
  |                WPF0051XmlnsDefinitionMustMapExistingNamespace |   233.59 us |  0.4460 us |  0.4172 us |   233.53 us | 1.9531 | 0.2441 |   13404 B |
  |                WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces |   230.97 us |  0.3310 us |  0.2584 us |   230.92 us | 1.2207 | 0.2441 |    9012 B |
- |                                   WPF0060DocumentBackingField |   389.11 us |  2.2155 us |  1.8500 us |   388.66 us |      - |      - |     444 B |
+ |                                   WPF0060DocumentDependencyPropertyBackingField |   389.11 us |  2.2155 us |  1.8500 us |   388.66 us |      - |      - |     444 B |
  |                                WPF0061ClrMethodShouldHaveDocs |   690.81 us |  3.1730 us |  2.4773 us |   690.27 us |      - |      - |     448 B |
  |                       WPF0070ConverterDoesNotHaveDefaultField |   131.51 us |  0.1918 us |  0.1700 us |   131.50 us |      - |      - |     442 B |
  |                          WPF0071ConverterDoesNotHaveAttribute |   131.27 us |  0.4719 us |  0.3684 us |   131.20 us |      - |      - |     442 B |

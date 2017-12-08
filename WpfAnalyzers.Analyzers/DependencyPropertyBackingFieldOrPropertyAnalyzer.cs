@@ -12,7 +12,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
             WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0060DocumentBackingField.Descriptor);
+            WPF0060DocumentDependencyPropertyBackingField.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0060DocumentBackingField.Descriptor,
+                                    WPF0060DocumentDependencyPropertyBackingField.Descriptor,
                                     context.Node.GetLocation(),
                                     fieldOrProperty.Name,
                                     registeredName));
