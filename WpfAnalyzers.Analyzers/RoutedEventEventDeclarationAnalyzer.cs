@@ -13,7 +13,8 @@
             WPF0102EventDeclarationName.Descriptor,
             WPF0103EventDeclarationAddRemove.Descriptor,
             WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
-            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor);
+            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor,
+            WPF0106EventDeclarationUseRegisteredHandlerType.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -79,6 +80,17 @@
                                     eventDeclaration.Identifier.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("RegisteredName", registeredName),
                                     registeredName));
+                        }
+
+                        if (registration.TryGetArgumentAtIndex(2, out var handlerTypeArg) &&
+                            handlerTypeArg.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var registeredHandlerType) &&
+                            !registeredHandlerType.Equals(eventSymbol.Type))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0106EventDeclarationUseRegisteredHandlerType.Descriptor,
+                                    eventDeclaration.Type.GetLocation(),
+                                    registeredHandlerType.MetadataName));
                         }
                     }
                 }
