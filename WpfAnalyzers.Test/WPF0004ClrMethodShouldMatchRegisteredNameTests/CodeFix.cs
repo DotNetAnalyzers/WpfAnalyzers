@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0004");
+
         [Test]
         public void Message()
         {
@@ -35,7 +37,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0004",
                 "Method 'GetError' must be named 'GetBar'");
-            AnalyzerAssert.Diagnostics<WPF0004ClrMethodShouldMatchRegisteredName>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -90,8 +92,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<MethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -134,7 +136,7 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -189,7 +191,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -232,7 +234,7 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0004ClrMethodShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

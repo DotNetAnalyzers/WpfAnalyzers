@@ -5,6 +5,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
     {
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.MethodDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.PropertyDeclarationAnalyzer());
@@ -14,8 +16,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0102 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0004ClrMethodShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0005 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0005PropertyChangedCallbackShouldMatchRegisteredName());
 
@@ -80,6 +80,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void MethodDeclarationAnalyzer()
+        {
+            WPF0004.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void OverrideMetadataAnalyzer()
         {
             WPF0017.Run();
@@ -107,12 +113,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void RoutedEventEventDeclarationAnalyzer()
         {
             WPF0102.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0004ClrMethodShouldMatchRegisteredName()
-        {
-            WPF0004.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

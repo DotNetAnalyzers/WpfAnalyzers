@@ -87,7 +87,7 @@
             return false;
         }
 
-        private static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
         {
             setField = default(BackingFieldOrProperty);
             if (method == null ||
@@ -131,7 +131,7 @@
             }
         }
 
-        private static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
+        internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
         {
             getField = default(BackingFieldOrProperty);
             if (method == null ||

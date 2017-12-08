@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0004ClrMethodShouldMatchRegisteredName Analyzer = new WPF0004ClrMethodShouldMatchRegisteredName();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [TestCase("public")]
         [TestCase("private")]

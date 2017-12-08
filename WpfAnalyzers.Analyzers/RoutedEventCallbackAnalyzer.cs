@@ -90,7 +90,7 @@
         private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
         {
             eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out string name) &&
+            if (invocation.TryGetInvokedMethodName(out var name) &&
                 name != "AddHandler")
             {
                 return false;
@@ -110,7 +110,7 @@
         private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
         {
             eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out string name) &&
+            if (invocation.TryGetInvokedMethodName(out var name) &&
                 name != "RemoveHandler")
             {
                 return false;
