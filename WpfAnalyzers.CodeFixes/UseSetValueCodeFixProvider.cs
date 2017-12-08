@@ -15,8 +15,9 @@ namespace WpfAnalyzers
     internal class UseSetValueCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0043DontUseSetCurrentValueForDataContext.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0043DontUseSetCurrentValueForDataContext.DiagnosticId,
+            WPF0035ClrPropertyUseSetValueInSetter.DiagnosticId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {

@@ -22,8 +22,24 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public static readonly DependencyProperty OtherProperty = DependencyProperty.Register(
-            ""Other"",
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { ↓this.SetCurrentValue(BarProperty, value); }
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
@@ -31,14 +47,14 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return (int)this.GetValue(BarProperty); }
-            set { ↓this.SetCurrentValue(OtherProperty, value); }
+            set { this.SetValue(BarProperty, value); }
         }
     }
 }";
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0035",
                 "Use SetValue in setter.");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -53,7 +69,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
@@ -62,15 +78,39 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get { return (int)this.GetValue(OtherProperty); }
+            get { return (int)this.GetValue(BarProperty); }
             set { ↓this.SetCurrentValue(BarPropertyKey, value); }
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarPropertyKey, value); }
         }
     }
 }";
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0035",
                 "Use SetValue in setter.");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
     }
 }
