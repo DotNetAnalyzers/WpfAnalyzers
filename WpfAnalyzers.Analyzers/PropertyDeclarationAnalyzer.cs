@@ -13,7 +13,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
             WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
-            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor);
+            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
+            WPF0035ClrPropertyUseSetValueInSetter.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -50,6 +51,16 @@
                                 propertyDeclaration.GetLocation(),
                                 context.ContainingSymbol.Name));
                     }
+                }
+
+                if (setCall.TryGetInvokedMethodName(out var setCallName) &&
+                    setCallName != "SetValue")
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0035ClrPropertyUseSetValueInSetter.Descriptor,
+                            setCall.GetLocation(),
+                            context.ContainingSymbol.Name));
                 }
 
                 if (ClrProperty.TryGetRegisterField(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
