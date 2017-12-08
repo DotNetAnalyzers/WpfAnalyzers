@@ -13,7 +13,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
             WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
-            WPF0042AvoidSideEffectsInClrAccessors.Descriptor);
+            WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
+            WPF0061ClrMethodShouldHaveDocs.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -85,6 +86,17 @@
                                     registeredType));
                         }
                     }
+                }
+                else
+                {
+                    return;
+                }
+
+                if (!methodDeclaration.HasDocumentation() &&
+                    (method.DeclaredAccessibility == Accessibility.Public ||
+                     method.DeclaredAccessibility == Accessibility.Internal))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
                 }
 
                 if (call != null &&

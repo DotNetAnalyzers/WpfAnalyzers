@@ -103,20 +103,6 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Get the value type the backing DependencyProperty is registered with.
-        /// </summary>
-        internal static bool TryGetRegisteredType(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
-        {
-            if (TryGetRegisterField(property, semanticModel, cancellationToken, out var fieldOrProperty))
-            {
-                return DependencyProperty.TryGetRegisteredType(fieldOrProperty, semanticModel, cancellationToken, out result);
-            }
-
-            result = null;
-            return false;
-        }
-
-        /// <summary>
         /// Get the backing fields for the <paramref name="propertyDeclaration"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field
         /// </summary>
         internal static bool TryGetBackingFields(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)

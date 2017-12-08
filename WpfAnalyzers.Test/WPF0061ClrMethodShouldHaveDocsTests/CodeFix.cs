@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0061");
+
         [Test]
         public void DependencyPropertyRegisterAttached()
         {
@@ -68,7 +70,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<WPF0061ClrMethodShouldHaveDocs, DocumentClrMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<MethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -140,7 +142,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<WPF0061ClrMethodShouldHaveDocs, DocumentClrMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<MethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

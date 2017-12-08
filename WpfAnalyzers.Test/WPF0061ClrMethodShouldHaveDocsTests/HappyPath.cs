@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0061ClrMethodShouldHaveDocs Analyzer = new WPF0061ClrMethodShouldHaveDocs();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterBackingField()

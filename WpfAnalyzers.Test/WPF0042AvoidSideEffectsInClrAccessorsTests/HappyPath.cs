@@ -109,11 +109,21 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(1));
 
+        /// <summary>
+        /// Helper for setting Bar property on a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
         public static void SetBar(this FrameworkElement element, int value)
         {
             element.SetValue(BarProperty, value);
         }
 
+        /// <summary>
+        /// Helper for reading Bar property from a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
         public static int GetBar(this FrameworkElement element)
         {
             return (int) element.GetValue(BarProperty);
@@ -140,8 +150,18 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(1));
 
+        /// <summary>
+        /// Helper for setting Bar property on a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
+        /// <summary>
+        /// Helper for reading Bar property from a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
@@ -167,11 +187,21 @@ namespace RoslynSandbox
 
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
+        /// <summary>
+        /// Helper for setting Bar property on a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
         public static void SetBar(this FrameworkElement element, int value)
         {
             element.SetValue(BarPropertyKey, value);
         }
 
+        /// <summary>
+        /// Helper for reading Bar property from a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
         public static int GetBar(this FrameworkElement element)
         {
             return (int) element.GetValue(BarProperty);
@@ -198,10 +228,20 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-            public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
+        /// <summary>
+        /// Helper for setting Bar property on a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
 
+        /// <summary>
+        /// Helper for reading Bar property from a FrameworkElement.
+        /// </summary>
+        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
