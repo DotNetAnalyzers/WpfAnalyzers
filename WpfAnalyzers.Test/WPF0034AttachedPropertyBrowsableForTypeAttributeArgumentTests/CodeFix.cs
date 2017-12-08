@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0034");
+
         [Test]
         public void Message()
         {
@@ -37,7 +39,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0034",
                 "Use [AttachedPropertyBrowsableForType(typeof(UIElement)]");
-            AnalyzerAssert.Diagnostics<WPF0034AttachedPropertyBrowsableForTypeAttributeArgument>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -95,7 +97,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0034AttachedPropertyBrowsableForTypeAttributeArgument, AttachedPropertyBrowsableForTypeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

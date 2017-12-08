@@ -5,8 +5,7 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
 
     internal class HappyPath
     {
-        private static readonly WPF0033UseAttachedPropertyBrowsableForTypeAttribute Analyzer =
-            new WPF0033UseAttachedPropertyBrowsableForTypeAttribute();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [Test]
         public void WhenHasAttribute()
@@ -24,11 +23,21 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
+        /// <summary>
+        /// Helper for setting Value property on a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to set Value property on.</param>
+        /// <param name=""value"">Value property value.</param>
         public static void SetValue(DependencyObject element, int value)
         {
             element.SetValue(ValueProperty, value);
         }
 
+         /// <summary>
+        /// Helper for reading Value property from a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to read Value property from.</param>
+        /// <returns>Value property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static int GetValue(DependencyObject element)
         {

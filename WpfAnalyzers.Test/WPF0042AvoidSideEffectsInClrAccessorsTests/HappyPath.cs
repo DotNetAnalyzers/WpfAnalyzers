@@ -124,6 +124,7 @@ namespace RoslynSandbox
         /// </summary>
         /// <param name=""element"">FrameworkElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element)
         {
             return (int) element.GetValue(BarProperty);
@@ -162,6 +163,7 @@ namespace RoslynSandbox
         /// </summary>
         /// <param name=""element"">FrameworkElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
@@ -202,6 +204,7 @@ namespace RoslynSandbox
         /// </summary>
         /// <param name=""element"">FrameworkElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element)
         {
             return (int) element.GetValue(BarProperty);
@@ -242,6 +245,7 @@ namespace RoslynSandbox
         /// </summary>
         /// <param name=""element"">FrameworkElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";

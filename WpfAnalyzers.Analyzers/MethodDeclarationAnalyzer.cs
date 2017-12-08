@@ -13,6 +13,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
             WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+            WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
+            WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
             WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
             WPF0061ClrMethodShouldHaveDocs.Descriptor);
 
@@ -85,6 +87,31 @@
                                     "Return type",
                                     registeredType));
                         }
+                    }
+
+                    if (AttachedPropertyBrowsableForType.TryGetAttribute(methodDeclaration, context.SemanticModel, context.CancellationToken, out var attribute))
+                    {
+                        if (attribute.ArgumentList != null &&
+                            attribute.ArgumentList.Arguments.TryGetSingle(out var attributeArgument) &&
+                            TypeOf.TryGetType(attributeArgument.Expression as TypeOfExpressionSyntax, context.SemanticModel, context.CancellationToken, out var argumentType) &&
+                            !ReferenceEquals(parameter.Type, argumentType))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
+                                    attributeArgument.GetLocation(),
+                                    parameter.Type.ToMinimalDisplayString(
+                                        context.SemanticModel,
+                                        attributeArgument.SpanStart)));
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                    WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
+                                    methodDeclaration.Identifier.GetLocation(),
+                                    parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
                     }
                 }
                 else

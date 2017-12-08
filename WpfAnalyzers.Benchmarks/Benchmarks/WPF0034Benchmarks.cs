@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class WPF0034Benchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.MethodDeclarationAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnWpfAnalyzersProject()

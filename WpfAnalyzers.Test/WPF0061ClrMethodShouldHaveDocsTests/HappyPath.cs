@@ -152,11 +152,12 @@ namespace RoslynSandbox
             element.SetValue(BarProperty, value);
         }
 
-         /// <summary>
+        /// <summary>
         /// Helper for reading Bar property from a UIElement.
         /// </summary>
         /// <param name=""element"">UIElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(UIElement))]
         public static int GetBar(UIElement element)
         {
             return (int)element.GetValue(BarProperty);
@@ -261,6 +262,7 @@ namespace RoslynSandbox
         /// </summary>
         /// <param name=""element"">UIElement to read Bar property from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(UIElement))]
         public static int GetBar(UIElement element)
         {
             return (int)element.GetValue(BarProperty);
