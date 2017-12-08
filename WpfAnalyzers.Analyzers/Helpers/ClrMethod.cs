@@ -107,29 +107,42 @@
                 }
 
                 call = walker.SetValue ?? walker.SetCurrentValue;
-                var memberAccess = call.Expression as MemberAccessExpressionSyntax;
-                var member = memberAccess?.Expression as IdentifierNameSyntax;
-                if (memberAccess == null ||
-                    member == null ||
-                    !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+                if (call.Expression is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                    memberAccess.Expression is IdentifierNameSyntax member)
                 {
-                    return false;
-                }
-
-                if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
-                {
-                    return false;
-                }
-
-                using (var valueWalker = ValueWalker.Create(method.ParameterList.Parameters[1].Identifier, memberAccess.Parent))
-                {
-                    if (!valueWalker.UsesValue)
+                    if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
                     {
                         return false;
                     }
+
+                    if (call.TryGetArgumentAtIndex(1, out var arg) &&
+                        method.ParameterList.Parameters.TryGetAtIndex(1, out var parameter))
+                    {
+                        if (arg.Expression is IdentifierNameSyntax argIdentifier &&
+                            argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
+                        {
+                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                        }
+
+                        if (arg.Expression is InvocationExpressionSyntax invocation &&
+                            invocation.TryGetSingleArgument(out var nestedArg) &&
+                            nestedArg.Expression is IdentifierNameSyntax nestedArgId &&
+                            nestedArgId.Identifier.ValueText == parameter.Identifier.ValueText)
+                        {
+                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                        }
+
+                        if (arg.Expression is ConditionalExpressionSyntax ternary &&
+                            ternary.Condition is IdentifierNameSyntax conditionIdentifier &&
+                            conditionIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
+                        {
+                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                        }
+                    }
                 }
 
-                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                return false;
             }
         }
 
@@ -163,47 +176,6 @@
                 }
 
                 return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out getField);
-            }
-        }
-
-        private class ValueWalker : PooledWalker<ValueWalker>
-        {
-            private SyntaxToken value;
-
-            public bool UsesValue { get; private set; }
-
-            public static ValueWalker Create(SyntaxToken value, SyntaxNode expression)
-            {
-                var walker = Borrow(() => new ValueWalker());
-                walker.value = value;
-                if (expression != null)
-                {
-                    walker.Visit(expression);
-                }
-
-                return walker;
-            }
-
-            public override void Visit(SyntaxNode node)
-            {
-                if (this.UsesValue)
-                {
-                    return;
-                }
-
-                base.Visit(node);
-            }
-
-            public override void VisitIdentifierName(IdentifierNameSyntax node)
-            {
-                this.UsesValue |= this.value.ValueText == node.Identifier.ValueText;
-                base.VisitIdentifierName(node);
-            }
-
-            protected override void Clear()
-            {
-                this.value = default(SyntaxToken);
-                this.UsesValue = false;
             }
         }
     }

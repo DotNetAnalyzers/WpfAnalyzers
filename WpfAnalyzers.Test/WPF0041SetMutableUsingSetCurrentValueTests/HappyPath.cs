@@ -442,7 +442,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredAttachedPropertyInClrSetMethodWhenBoxed()
+        public void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
         {
             var boolBoxesCode = @"
 namespace RoslynSandbox

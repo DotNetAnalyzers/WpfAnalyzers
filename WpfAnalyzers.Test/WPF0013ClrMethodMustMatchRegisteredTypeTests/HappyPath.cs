@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
 
     internal class HappyPath
     {
-        private static readonly WPF0013ClrMethodMustMatchRegisteredType Analyzer = new WPF0013ClrMethodMustMatchRegisteredType();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [TestCase("int")]
         [TestCase("int?")]

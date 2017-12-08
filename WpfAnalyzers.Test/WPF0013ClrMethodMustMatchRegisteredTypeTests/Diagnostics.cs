@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0013");
+
         [Test]
         public void Message()
         {
@@ -31,7 +33,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0013",
                 "Value type must match registered type int");
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("double")]
@@ -67,7 +69,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -98,7 +100,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -125,7 +127,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("double")]
@@ -161,7 +163,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -192,7 +194,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0013ClrMethodMustMatchRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }

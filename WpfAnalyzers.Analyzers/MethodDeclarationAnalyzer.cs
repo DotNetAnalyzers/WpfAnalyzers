@@ -12,7 +12,8 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
-            WPF0042AvoidSideEffectsInClrAccessors.Descriptor);
+            WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
+            WPF0013ClrMethodMustMatchRegisteredType.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -45,6 +46,17 @@
                             method.Name,
                             "Set" + registeredName));
                     }
+
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                        !method.Parameters[1].Type.IsSameType(registeredType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                methodDeclaration.ParameterList.Parameters[1].GetLocation(),
+                                "Value type",
+                                registeredType));
+                    }
                 }
                 else if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out call, out fieldOrProperty))
                 {
@@ -57,6 +69,19 @@
                             methodDeclaration.Identifier.GetLocation(),
                             method.Name,
                             "Get" + registeredName));
+                    }
+
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
+                    {
+                        if (!method.ReturnType.IsSameType(registeredType))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                    methodDeclaration.ReturnType.GetLocation(),
+                                    "Return type",
+                                    registeredType));
+                        }
                     }
                 }
 

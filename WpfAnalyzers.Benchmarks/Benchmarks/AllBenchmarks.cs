@@ -27,8 +27,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0013 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0013ClrMethodMustMatchRegisteredType());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0014SetValueMustUseRegisteredType());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
@@ -141,12 +139,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0011ContainingTypeShouldBeRegisteredOwner()
         {
             WPF0011.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0013ClrMethodMustMatchRegisteredType()
-        {
-            WPF0013.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
