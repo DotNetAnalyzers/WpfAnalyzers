@@ -43,7 +43,7 @@
                         Diagnostic.Create(
                             WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
                             callBackIdentifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName",$"{registeredName}ValidateValue"),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"{registeredName}ValidateValue"),
                             callBackIdentifier,
                             $"{registeredName}ValidateValue"));
                 }

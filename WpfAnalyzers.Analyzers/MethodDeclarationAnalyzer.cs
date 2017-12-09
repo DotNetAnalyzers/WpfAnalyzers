@@ -76,33 +76,31 @@
                             "Get" + registeredName));
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                        !Equals(method.ReturnType, registeredType))
                     {
-                        if (!method.ReturnType.IsSameType(registeredType))
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
-                                    methodDeclaration.ReturnType.GetLocation(),
-                                    "Return type",
-                                    registeredType));
-                        }
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                methodDeclaration.ReturnType.GetLocation(),
+                                "Return type",
+                                registeredType));
                     }
 
                     if (AttachedPropertyBrowsableForType.TryGetAttribute(methodDeclaration, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
-                        if (attribute.ArgumentList != null &&
-                            attribute.ArgumentList.Arguments.TryGetSingle(out var attributeArgument) &&
-                            TypeOf.TryGetType(attributeArgument.Expression as TypeOfExpressionSyntax, context.SemanticModel, context.CancellationToken, out var argumentType) &&
-                            !ReferenceEquals(parameter.Type, argumentType))
+                        if (attribute.TryGetSingleArgument(out var argument) &&
+                            argument.Expression is TypeOfExpressionSyntax typeOf &&
+                            TypeOf.TryGetType(typeOf, context.SemanticModel, context.CancellationToken, out var argumentType) &&
+                            !Equals(parameter.Type, argumentType))
                         {
                             context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
-                                    attributeArgument.GetLocation(),
-                                    parameter.Type.ToMinimalDisplayString(
-                                        context.SemanticModel,
-                                        attributeArgument.SpanStart)));
+                            Diagnostic.Create(
+                                WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
+                                argument.GetLocation(),
+                                parameter.Type.ToMinimalDisplayString(
+                                    context.SemanticModel,
+                                    argument.SpanStart)));
                         }
                     }
                     else
