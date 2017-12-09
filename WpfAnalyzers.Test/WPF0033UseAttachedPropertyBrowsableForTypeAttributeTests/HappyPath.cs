@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
 
     internal class HappyPath
     {
-        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
+        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [Test]
         public void WhenHasAttribute()

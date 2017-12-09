@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [TestCase("int")]
         [TestCase("int?")]

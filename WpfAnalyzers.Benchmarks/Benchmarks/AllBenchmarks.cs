@@ -3,13 +3,13 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ClrMethodDeclarationAnalyzer());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ClrPropertyDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.MethodDeclarationAnalyzer());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.PropertyDeclarationAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0005 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.PropertyMetadataAnalyzer());
 
@@ -46,27 +46,27 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void ClrMethodDeclarationAnalyzer()
+        {
+            WPF0004.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void ClrPropertyDeclarationAnalyzer()
+        {
+            WPF0003.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void DependencyPropertyBackingFieldOrPropertyAnalyzer()
         {
             WPF0001.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void MethodDeclarationAnalyzer()
-        {
-            WPF0004.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void OverrideMetadataAnalyzer()
         {
             WPF0017.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void PropertyDeclarationAnalyzer()
-        {
-            WPF0003.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

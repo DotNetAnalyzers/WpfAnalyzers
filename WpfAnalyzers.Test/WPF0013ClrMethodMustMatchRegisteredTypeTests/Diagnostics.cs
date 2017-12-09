@@ -33,7 +33,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0013",
                 "Value type must match registered type int");
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("double")]
@@ -69,7 +69,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("double")]
@@ -163,7 +163,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -194,7 +194,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }

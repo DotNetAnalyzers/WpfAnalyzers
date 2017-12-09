@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
 
     internal class HappyPath
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [Test]
         public void DependencyProperty()

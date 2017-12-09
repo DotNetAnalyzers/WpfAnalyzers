@@ -38,7 +38,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0033",
                 "Add [AttachedPropertyBrowsableForType(typeof(DependencyObject)]");
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

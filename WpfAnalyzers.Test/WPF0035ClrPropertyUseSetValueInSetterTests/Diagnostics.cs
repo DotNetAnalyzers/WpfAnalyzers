@@ -54,7 +54,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0035",
                 "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0035",
                 "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix<PropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
     }
 }

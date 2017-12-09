@@ -39,7 +39,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0034",
                 "Use [AttachedPropertyBrowsableForType(typeof(UIElement)]");
-            AnalyzerAssert.Diagnostics<MethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrMethodDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<MethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

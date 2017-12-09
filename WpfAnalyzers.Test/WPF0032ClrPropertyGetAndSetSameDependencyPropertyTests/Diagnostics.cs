@@ -38,7 +38,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0032",
                 "Property 'Bar' must access same dependency property in getter and setter");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0032",
                 "Property 'Bar' must access same dependency property in getter and setter");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
     }
 }

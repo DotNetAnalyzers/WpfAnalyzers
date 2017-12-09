@@ -48,7 +48,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0036",
                 "Avoid side effects in CLR accessors.");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -172,7 +172,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }

@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly MethodDeclarationAnalyzer Analyzer = new MethodDeclarationAnalyzer();
+        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [TestCase("public")]
         [TestCase("private")]

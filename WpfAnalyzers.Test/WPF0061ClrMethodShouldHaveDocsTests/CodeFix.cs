@@ -70,7 +70,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<MethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<MethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

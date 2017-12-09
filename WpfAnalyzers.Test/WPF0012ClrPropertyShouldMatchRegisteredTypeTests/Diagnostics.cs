@@ -34,7 +34,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0012",
                 "Property 'RoslynSandbox.FooControl.Bar' must be of type int");
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("double")]
@@ -67,7 +67,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("double", typeName);
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, part1, part2);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, part1, part2);
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }
