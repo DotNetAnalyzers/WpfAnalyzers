@@ -73,6 +73,7 @@
                 if (setCall.TryGetInvokedMethodName(out var setCallName) &&
                     setCallName != "SetValue")
                 {
+                    //// ReSharper disable once PossibleNullReferenceException
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0035ClrPropertyUseSetValueInSetter.Descriptor,

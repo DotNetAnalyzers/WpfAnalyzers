@@ -1,3 +1,6 @@
+#### 0.4.0
+* New analyzers
+
 #### 0.3.3
 * BUGFIX: WPF0070 handle internal
 * BUGFIX: WPF0081 allow more specific types when object
