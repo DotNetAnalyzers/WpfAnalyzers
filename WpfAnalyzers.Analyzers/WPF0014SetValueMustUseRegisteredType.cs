@@ -1,9 +1,7 @@
 ﻿namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal static class WPF0014SetValueMustUseRegisteredType
     {
         public const string DiagnosticId = "WPF0014";
