@@ -58,6 +58,7 @@
                     Diagnostic.Create(
                         Descriptor,
                         identifier.GetLocation(),
+                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"{registeredName}ValidateValue"),
                         identifier,
                         $"{registeredName}ValidateValue"));
             }

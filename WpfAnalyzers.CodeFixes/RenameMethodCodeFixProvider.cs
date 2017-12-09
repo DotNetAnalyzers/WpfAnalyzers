@@ -91,49 +91,9 @@
                     }
                 }
                 else if (diagnostic.Id == WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId ||
-                         diagnostic.Id == WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId)
-                {
-                    if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
-                    {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(
-                                    context.Document,
-                                    syntaxRoot,
-                                    token,
-                                    newName,
-                                    cancellationToken),
-                                this.GetType().FullName),
-                            diagnostic);
-                    }
-                }
-                else if (diagnostic.Id == WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId)
-                {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                    var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    if (WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out _,
-                        out var registeredName))
-                    {
-                        var newName = $"{registeredName}ValidateValue";
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(
-                                    context.Document,
-                                    syntaxRoot,
-                                    token,
-                                    newName,
-                                    cancellationToken),
-                                this.GetType().FullName),
-                            diagnostic);
-                    }
-                }
-                else if (diagnostic.Id == WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId ||
+                         diagnostic.Id == WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId ||
+                         diagnostic.Id == WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId ||
+                         diagnostic.Id == WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId ||
                          diagnostic.Id == WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId)
                 {
                     if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
