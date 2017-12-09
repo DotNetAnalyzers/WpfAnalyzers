@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = Gu.Roslyn.Asserts.ExpectedDiagnostic.Create("WPF0030");
+
         [TestCase("public static", "public static readonly")]
         [TestCase("public", "public static readonly")]
         [TestCase("public readonly", "public static readonly")]
@@ -49,7 +51,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
             fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
-            AnalyzerAssert.FixAll<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -90,7 +92,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -133,7 +135,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -147,6 +149,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         ↓public static DependencyProperty BarProperty => DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
@@ -166,6 +169,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
@@ -176,7 +180,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakePropertyStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -229,7 +233,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -284,7 +288,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -343,7 +347,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -394,7 +398,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("FooControl")]
@@ -465,7 +469,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("FooControl", typeName);
             fixedCode = fixedCode.AssertReplace("FooControl", typeName);
-            AnalyzerAssert.CodeFix<WPF0030BackingFieldShouldBeStaticReadonly, MakeFieldStaticReadonlyCodeFixProvider>(new[] { fooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
     }
 }

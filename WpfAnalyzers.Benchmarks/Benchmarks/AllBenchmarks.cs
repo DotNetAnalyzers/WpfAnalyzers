@@ -27,8 +27,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0030 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0030BackingFieldShouldBeStaticReadonly());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0031 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0031FieldOrder());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0040 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey());
@@ -127,12 +125,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0015RegisteredOwnerTypeMustBeDependencyObject()
         {
             WPF0015.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0030BackingFieldShouldBeStaticReadonly()
-        {
-            WPF0030.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

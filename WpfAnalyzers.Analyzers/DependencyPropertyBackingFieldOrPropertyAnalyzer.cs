@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -12,7 +13,8 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
             WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0060DocumentDependencyPropertyBackingField.Descriptor);
+            WPF0060DocumentDependencyPropertyBackingField.Descriptor,
+            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -95,6 +97,53 @@ namespace WpfAnalyzers
                                 fieldOrProperty.Name,
                                 property.Name));
                     }
+                }
+            }
+
+            if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
+                DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _, out _))
+            {
+                if (!candidate.Symbol.IsStatic)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+                            context.Node.GetLocation(),
+                            candidate.Name,
+                            candidate.Type.Name));
+                }
+
+                if (candidate.Symbol is IFieldSymbol field &&
+                    !field.IsReadOnly)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+                            context.Node.GetLocation(),
+                            candidate.Name,
+                            candidate.Type.Name));
+                }
+
+                if (candidate.Symbol is IPropertySymbol property &&
+                    !property.IsReadOnly)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+                            context.Node.GetLocation(),
+                            candidate.Name,
+                            candidate.Type.Name));
+                }
+
+                if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                    propertyDeclaration.ExpressionBody != null)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+                            context.Node.GetLocation(),
+                            candidate.Name,
+                            candidate.Type.Name));
                 }
             }
         }

@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 
     internal class HappyPath
     {
-        private static readonly WPF0030BackingFieldShouldBeStaticReadonly Analyzer = new WPF0030BackingFieldShouldBeStaticReadonly();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [Test]
         public void DependencyProperty()
@@ -18,6 +18,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
@@ -40,6 +41,7 @@ namespace RoslynSandbox
 {
     public class FooControl : System.Windows.Controls.Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly System.Windows.DependencyProperty BarProperty = System.Windows.DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new System.Windows.PropertyMetadata(default(int)));
 
@@ -66,6 +68,7 @@ namespace RoslynSandbox
 
     public static class Foo
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
@@ -94,6 +97,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
         public double Bar
@@ -124,6 +128,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         public int Bar
