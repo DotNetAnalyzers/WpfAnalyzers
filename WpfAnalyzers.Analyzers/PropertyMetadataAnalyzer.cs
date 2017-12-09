@@ -13,7 +13,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
             WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
-            WPF0010DefaultValueMustMatchRegisteredType.Descriptor);
+            WPF0010DefaultValueMustMatchRegisteredType.Descriptor,
+            WPF0016DefaultValueIsSharedReferenceType.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -64,10 +65,10 @@
                 }
 
                 if (PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
-                    DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
+                    DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
-                    if (PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg) &&
-                        !registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken))
+                    if (!registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -76,8 +77,64 @@
                                 fieldOrProperty.Symbol,
                                 registeredType));
                     }
+
+                    if (registeredType.IsReferenceType)
+                    {
+                        var defaultValue = defaultValueArg.Expression;
+                        if (defaultValue != null &&
+                            !defaultValue.IsKind(SyntaxKind.NullLiteralExpression) &&
+                            registeredType != KnownSymbol.FontFamily)
+                        {
+                            if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
+                                IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0016DefaultValueIsSharedReferenceType.Descriptor, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        private static bool IsNonEmptyArrayCreation(ArrayCreationExpressionSyntax arrayCreation, SyntaxNodeAnalysisContext context)
+        {
+            if (arrayCreation == null)
+            {
+                return false;
+            }
+
+            foreach (var rank in arrayCreation.Type.RankSpecifiers)
+            {
+                foreach (var size in rank.Sizes)
+                {
+                    var constantValue = context.SemanticModel.GetConstantValueSafe(size, context.CancellationToken);
+                    if (!constantValue.HasValue)
+                    {
+                        return true;
+                    }
+
+                    return !Equals(constantValue.Value, 0);
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsReferenceTypeCreation(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context)
+        {
+            if (objectCreation == null)
+            {
+                return false;
+            }
+
+            var type = context.SemanticModel.GetTypeInfoSafe(objectCreation, context.CancellationToken)
+                              .Type;
+            if (type.IsValueType)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -85,9 +85,10 @@ namespace RoslynSandbox
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
-        public void DependencyPropertyRegisterWithMetdadata(string typeName, string metadata)
+        public void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
         {
             var testCode = @"
+#pragma warning disable WPF0016 // Default value is shared reference type.
 namespace RoslynSandbox
 {
     using System;

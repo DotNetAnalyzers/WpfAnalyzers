@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0016");
+
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<int>())")]
         [TestCase("int[]", "new PropertyMetadata(↓new int[1])")]
         public void DependencyProperty(string typeName, string metadata)
@@ -40,7 +42,7 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(↓1)", metadata);
 
-            AnalyzerAssert.Diagnostics<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -71,7 +73,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -98,7 +100,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -127,7 +129,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0016DefaultValueIsSharedReferenceType>(testCode);
+            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }
