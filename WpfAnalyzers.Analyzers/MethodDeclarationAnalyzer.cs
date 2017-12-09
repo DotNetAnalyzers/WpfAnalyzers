@@ -63,6 +63,19 @@
                                 "Value type",
                                 registeredType));
                     }
+
+                    if (!methodDeclaration.HasDocumentation() &&
+                        (method.DeclaredAccessibility == Accessibility.Public ||
+                         method.DeclaredAccessibility == Accessibility.Internal))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
+                    }
+
+                    if (methodDeclaration.Body is BlockSyntax body &&
+                        body.Statements.TryGetFirst(x => !x.Contains(call), out var statement))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    }
                 }
                 else if (ClrMethod.IsAttachedGetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out call, out fieldOrProperty))
                 {
@@ -86,6 +99,19 @@
                                 methodDeclaration.ReturnType.GetLocation(),
                                 "Return type",
                                 registeredType));
+                    }
+
+                    if (!methodDeclaration.HasDocumentation() &&
+                        (method.DeclaredAccessibility == Accessibility.Public ||
+                         method.DeclaredAccessibility == Accessibility.Internal))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
+                    }
+
+                    if (methodDeclaration.Body is BlockSyntax body &&
+                        body.Statements.TryGetFirst(x => !x.Contains(call), out var statement))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                     }
 
                     if (AttachedPropertyBrowsableForType.TryGetAttribute(methodDeclaration, context.SemanticModel, context.CancellationToken, out var attribute))
@@ -112,24 +138,6 @@
                                     methodDeclaration.Identifier.GetLocation(),
                                     parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
                     }
-                }
-                else
-                {
-                    return;
-                }
-
-                if (!methodDeclaration.HasDocumentation() &&
-                    (method.DeclaredAccessibility == Accessibility.Public ||
-                     method.DeclaredAccessibility == Accessibility.Internal))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
-                }
-
-                if (call != null &&
-                    methodDeclaration.Body is BlockSyntax body &&
-                    body.Statements.TryGetFirst(x => !x.Contains(call), out var statement))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                 }
             }
         }
