@@ -21,8 +21,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0010 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0010DefaultValueMustMatchRegisteredType());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0014SetValueMustUseRegisteredType());
@@ -113,12 +111,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName()
         {
             WPF0007.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0010DefaultValueMustMatchRegisteredType()
-        {
-            WPF0010.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

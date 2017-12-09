@@ -44,8 +44,6 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        [TestCase("new PropertyMetadata(null, null, CoerceBar)")]
-        [TestCase("new PropertyMetadata(new CoerceValueCallback(CoerceBar))")]
         [TestCase("new PropertyMetadata(default(int), null, CoerceBar)")]
         [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
         public void DependencyPropertyWithMetadata(string metadata)

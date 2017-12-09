@@ -31,7 +31,7 @@ namespace WpfAnalyzers
 
             if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
             {
-                if (DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registerInvocation, out var registerSymbol))
+                if (DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registerInvocation, out _))
                 {
                     if (registerInvocation.TryGetArgumentAtIndex(0, out var nameArg) &&
                         nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName))

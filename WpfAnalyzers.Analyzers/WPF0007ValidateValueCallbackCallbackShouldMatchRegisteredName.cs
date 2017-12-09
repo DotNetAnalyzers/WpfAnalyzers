@@ -37,7 +37,7 @@
         internal static bool TryGetIdentifierAndRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string registeredName)
         {
             registeredName = null;
-            return ValidateValueCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out string _) &&
+            return ValidateValueCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out _) &&
                    ValidateValueCallback.TryGetRegisteredName(callback, semanticModel, cancellationToken, out registeredName);
         }
 

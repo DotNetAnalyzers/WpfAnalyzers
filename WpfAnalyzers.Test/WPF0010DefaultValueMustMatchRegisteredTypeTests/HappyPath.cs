@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
 
     internal class HappyPath
     {
-        private static readonly WPF0010DefaultValueMustMatchRegisteredType Analyzer = new WPF0010DefaultValueMustMatchRegisteredType();
+        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()
@@ -51,7 +51,7 @@ namespace RoslynSandbox
             ""Bar"", 
             typeof(int), 
             typeof(FooControl), 
-            new PropertyMetadata(OnValueChanged));
+            new PropertyMetadata(OnBarChanged));
 
         public int Bar
         {
@@ -59,7 +59,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
 
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // nop
         }
