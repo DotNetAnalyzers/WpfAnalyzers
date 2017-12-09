@@ -39,7 +39,8 @@
                 method.Parameters.TryGetAtIndex(0, out var parameter) &&
                 parameter.Type.Is(KnownSymbol.DependencyObject))
             {
-                if (ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out var call, out var fieldOrProperty))
+                if (method.Parameters.TryGetAtIndex(1, out var valueParameter) &&
+                    ClrMethod.IsAttachedSetMethod(methodDeclaration, context.SemanticModel, context.CancellationToken, out var call, out var fieldOrProperty))
                 {
                     if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                         !method.Name.IsParts("Set", registeredName))
@@ -53,12 +54,12 @@
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !method.Parameters[1].Type.IsSameType(registeredType))
+                        !Equals(valueParameter.Type, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
-                                methodDeclaration.ParameterList.Parameters[1].GetLocation(),
+                                methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
                                 "Value type",
                                 registeredType));
                     }
