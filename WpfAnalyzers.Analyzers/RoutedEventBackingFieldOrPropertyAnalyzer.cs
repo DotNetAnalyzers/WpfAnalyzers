@@ -48,7 +48,7 @@
                         Diagnostic.Create(
                             WPF0101RegisterContainingTypeAsOwner.Descriptor,
                             typeArg.GetLocation(),
-                            fieldOrProperty.Name,
+                            fieldOrProperty.ContainingType.Name,
                             registeredName));
                 }
             }
