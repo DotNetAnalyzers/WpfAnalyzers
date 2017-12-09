@@ -13,6 +13,7 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0070ConverterDoesNotHaveDefaultField.Descriptor,
             WPF0071ConverterDoesNotHaveAttribute.Descriptor,
+            WPF0072ValueConversionMustUseCorrectTypes.Descriptor,
             WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor);
 
         /// <inheritdoc/>
@@ -45,16 +46,39 @@
                     context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
                 }
 
-                if (type.Is(KnownSymbol.IValueConverter) &&
-                   !Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out _))
+                if (type.Is(KnownSymbol.IValueConverter))
                 {
-                    if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out _, out _))
+                    if (Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0071ConverterDoesNotHaveAttribute.Descriptor, classDeclaration.Identifier.GetLocation()));
+                        if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
+                        {
+                            if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
+                                arg.Expression is TypeOfExpressionSyntax typeOf &&
+                                TypeOf.TryGetType(typeOf, context.SemanticModel, context.CancellationToken, out var argType) &&
+                                !Equals(argType, sourceType))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));
+                            }
+
+                            if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
+                                arg.Expression is TypeOfExpressionSyntax typeOfExpression &&
+                                TypeOf.TryGetType(typeOfExpression, context.SemanticModel, context.CancellationToken, out argType) &&
+                                !Equals(argType, targetType))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));
+                            }
+                        }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor, classDeclaration.Identifier.GetLocation()));
+                        if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out _, out _))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0071ConverterDoesNotHaveAttribute.Descriptor, classDeclaration.Identifier.GetLocation()));
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor, classDeclaration.Identifier.GetLocation()));
+                        }
                     }
                 }
             }

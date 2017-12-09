@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0072ValueConversionMustUseCorrectTypes Analyzer = new WPF0072ValueConversionMustUseCorrectTypes();
+        private static readonly ValueConverterAnalyzer Analyzer = new ValueConverterAnalyzer();
 
         [Test]
         public void WhenHasAttribute()

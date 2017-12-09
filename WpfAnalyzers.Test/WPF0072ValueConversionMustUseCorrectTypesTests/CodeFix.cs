@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0072");
+
         [Test]
         public void DirectCastWrongSourceType()
         {
@@ -53,7 +55,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -102,7 +104,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -151,7 +153,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -202,7 +204,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0072ValueConversionMustUseCorrectTypes, ValueConversionAttributeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeArgumentFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
