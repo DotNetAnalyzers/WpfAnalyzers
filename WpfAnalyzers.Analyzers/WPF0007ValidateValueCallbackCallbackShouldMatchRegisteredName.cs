@@ -1,18 +1,12 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Collections.Immutable;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName : DiagnosticAnalyzer
+    internal static class WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName
     {
         public const string DiagnosticId = "WPF0007";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Name of ValidateValueCallback should match registered name.",
             messageFormat: "Method '{0}' should be named '{1}'",
@@ -21,47 +15,5 @@
             isEnabledByDefault: true,
             description: "Name of ValidateValueCallback should match registered name.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
-
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.InvocationExpression);
-        }
-
-        internal static bool TryGetIdentifierAndRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string registeredName)
-        {
-            registeredName = null;
-            return ValidateValueCallback.TryGetName(callback, semanticModel, cancellationToken, out identifier, out _) &&
-                   ValidateValueCallback.TryGetRegisteredName(callback, semanticModel, cancellationToken, out registeredName);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax invocation &&
-                context.ContainingSymbol.IsStatic &&
-                ValidateValueCallback.TryGetValidateValueCallback(invocation, context.SemanticModel, context.CancellationToken, out var callback) &&
-                TryGetIdentifierAndRegisteredName(callback, context.SemanticModel, context.CancellationToken, out var identifier, out var registeredName) &&
-                !identifier.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptor,
-                        identifier.GetLocation(),
-                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"{registeredName}ValidateValue"),
-                        identifier,
-                        $"{registeredName}ValidateValue"));
-            }
-        }
     }
 }

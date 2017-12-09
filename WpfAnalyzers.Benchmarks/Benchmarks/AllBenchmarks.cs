@@ -13,6 +13,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0005 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.PropertyMetadataAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RegistrationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
@@ -22,8 +24,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.SetValueAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ValueConverterAnalyzer());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
 
@@ -76,6 +76,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void RegistrationAnalyzer()
+        {
+            WPF0007.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void RoutedEventBackingFieldOrPropertyAnalyzer()
         {
             WPF0100.Run();
@@ -103,12 +109,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void ValueConverterAnalyzer()
         {
             WPF0070.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName()
-        {
-            WPF0007.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

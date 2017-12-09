@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0007");
+
         [Test]
         public void Message()
         {
@@ -45,7 +47,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0007",
                 "Method 'WrongName' should be named 'ValueValidateValue'");
-            AnalyzerAssert.Diagnostics<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<RegistrationAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("↓WrongName")]
@@ -109,7 +111,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("↓WrongName", callback);
             fixedCode = fixedCode.AssertReplace("ValueValidateValue);", callback.AssertReplace("↓WrongName", "ValueValidateValue") + ");");
-            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RegistrationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -184,7 +186,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RegistrationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -239,7 +241,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RegistrationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -308,7 +310,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RegistrationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

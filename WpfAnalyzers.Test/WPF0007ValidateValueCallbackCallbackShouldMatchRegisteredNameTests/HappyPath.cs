@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
 
     internal class HappyPath
     {
-        private static readonly WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName Analyzer = new WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName();
+        private static readonly RegistrationAnalyzer Analyzer = new RegistrationAnalyzer();
 
         [Test]
         public void DependencyPropertyNoCallback()
