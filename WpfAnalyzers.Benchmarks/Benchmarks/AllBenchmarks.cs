@@ -19,21 +19,17 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0102 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.SetValueAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ValueConverterAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0014SetValueMustUseRegisteredType());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0040 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0040SetUsingDependencyPropertyKey());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0041 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0043 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0043DontUseSetCurrentValueForDataContext());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0050 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
 
@@ -98,6 +94,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void SetValueAnalyzer()
+        {
+            WPF0014.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void ValueConverterAnalyzer()
         {
             WPF0070.Run();
@@ -116,33 +118,15 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0014SetValueMustUseRegisteredType()
-        {
-            WPF0014.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0015RegisteredOwnerTypeMustBeDependencyObject()
         {
             WPF0015.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0040SetUsingDependencyPropertyKey()
-        {
-            WPF0040.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0041SetMutableUsingSetCurrentValue()
         {
             WPF0041.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0043DontUseSetCurrentValueForDataContext()
-        {
-            WPF0043.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

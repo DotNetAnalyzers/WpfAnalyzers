@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0014SetValueMustUseRegisteredType Analyzer = new WPF0014SetValueMustUseRegisteredType();
+        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]

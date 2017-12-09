@@ -26,7 +26,7 @@ namespace WpfAnalyzers.Benchmarks
             {
                 var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
                     Code.AnalyzersProject,
-                    new WPF0014SetValueMustUseRegisteredType());
+                    new SetValueAnalyzer());
 
                 // Warmup
                 benchmark.Run();

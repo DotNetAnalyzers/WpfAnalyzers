@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0040");
+
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
@@ -60,7 +62,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("SetValue", method);
             fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
-            AnalyzerAssert.CodeFix<WPF0040SetUsingDependencyPropertyKey, UseDependencyPropertyKeyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -120,7 +122,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("SetValue", method);
-            AnalyzerAssert.CodeFix<WPF0040SetUsingDependencyPropertyKey, UseDependencyPropertyKeyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

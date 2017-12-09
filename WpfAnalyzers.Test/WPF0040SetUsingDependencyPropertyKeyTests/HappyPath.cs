@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 
     internal class HappyPath
     {
-        private static readonly WPF0040SetUsingDependencyPropertyKey Analyzer = new WPF0040SetUsingDependencyPropertyKey();
+        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]

@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0043");
+
         [TestCase("this.SetCurrentValue(DataContextProperty, 1);", "this.SetValue(DataContextProperty, 1);")]
         [TestCase("this.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "this.SetValue(FrameworkElement.DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(DataContextProperty, 1);", "SetValue(DataContextProperty, 1);")]
@@ -42,7 +44,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
             fixedCode = fixedCode.AssertReplace("this.SetValue(DataContextProperty, 1);", after);
-            AnalyzerAssert.CodeFix<WPF0043DontUseSetCurrentValueForDataContext, UseSetValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
@@ -82,7 +84,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
             fixedCode = fixedCode.AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
-            AnalyzerAssert.CodeFix<WPF0043DontUseSetCurrentValueForDataContext, UseSetValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

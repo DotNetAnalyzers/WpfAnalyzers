@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
 
     internal class HappyPath
     {
-        private static readonly WPF0043DontUseSetCurrentValueForDataContext Analyzer = new WPF0043DontUseSetCurrentValueForDataContext();
+        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
         [Test]
         public void IgnoreSetDataContext()

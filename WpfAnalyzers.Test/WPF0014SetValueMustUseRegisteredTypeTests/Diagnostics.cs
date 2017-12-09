@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0014");
+
         [Test]
         public void Message()
         {
@@ -42,7 +44,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0014",
                 "SetValue must use registered type int");
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue(BarProperty, ↓1.0)")]
@@ -82,7 +84,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1.0);")]
@@ -126,7 +128,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(fooControlGeneric, testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, fooControlGeneric, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1);")]
@@ -207,7 +209,7 @@ namespace RoslynSandbox
     }
 }";
             fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(fooCode, fooControlPart1, fooControlPart2);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
         }
 
         [TestCase("SetValue")]
@@ -254,7 +256,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(iFooCode, iMehCode, testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, iFooCode, iMehCode, testCode);
         }
 
         [TestCase("SetValue")]
@@ -300,7 +302,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("1.0")]
@@ -337,7 +339,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("<value>", value);
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -374,7 +376,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -397,7 +399,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -421,7 +423,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -459,7 +461,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
-            AnalyzerAssert.Diagnostics<WPF0014SetValueMustUseRegisteredType>(testCode);
+            AnalyzerAssert.Diagnostics<SetValueAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }
