@@ -19,6 +19,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0102 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ValueConverterAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
@@ -38,10 +40,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0051 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0051XmlnsDefinitionMustMapExistingNamespace());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0052 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0070ConverterDoesNotHaveDefaultField());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0071 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0071ConverterDoesNotHaveAttribute());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0072 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0072ValueConversionMustUseCorrectTypes());
 
@@ -102,6 +100,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void ValueConverterAnalyzer()
+        {
+            WPF0070.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName()
         {
             WPF0007.Run();
@@ -159,18 +163,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces()
         {
             WPF0052.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0070ConverterDoesNotHaveDefaultField()
-        {
-            WPF0070.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0071ConverterDoesNotHaveAttribute()
-        {
-            WPF0071.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

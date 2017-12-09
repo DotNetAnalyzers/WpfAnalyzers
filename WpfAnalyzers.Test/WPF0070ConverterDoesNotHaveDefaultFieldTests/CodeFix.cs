@@ -6,6 +6,8 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0070");
+
         [Test]
         public void Message()
         {
@@ -58,7 +60,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0070",
                 "Add default field to converter.");
-            AnalyzerAssert.Diagnostics<WPF0070ConverterDoesNotHaveDefaultField>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<ValueConverterAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -157,7 +159,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
         }
 
         [Test]
@@ -256,7 +258,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
         }
 
         [Test]
@@ -297,7 +299,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
         }
 
         [Test]
@@ -397,7 +399,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default field with docs.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default field with docs.");
         }
 
         [Test]
@@ -496,7 +498,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default property.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default property.");
         }
 
         [Test]
@@ -596,7 +598,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0070ConverterDoesNotHaveDefaultField, AddDefaultMemberFix>(testCode, fixedCode, "Add default property with docs.");
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, AddDefaultMemberFix>(ExpectedDiagnostic, testCode, fixedCode, "Add default property with docs.");
         }
     }
 }

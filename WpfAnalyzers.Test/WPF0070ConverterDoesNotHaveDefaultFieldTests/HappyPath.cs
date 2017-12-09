@@ -5,7 +5,7 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0070ConverterDoesNotHaveDefaultField Analyzer = new WPF0070ConverterDoesNotHaveDefaultField();
+        private static readonly ValueConverterAnalyzer Analyzer = new ValueConverterAnalyzer();
 
         [Test]
         public void WhenDefaultField()

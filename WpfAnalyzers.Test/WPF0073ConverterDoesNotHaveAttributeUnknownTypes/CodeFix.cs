@@ -224,7 +224,7 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
         }
     }
 }

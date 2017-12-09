@@ -54,7 +54,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0071ConverterDoesNotHaveAttribute, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
