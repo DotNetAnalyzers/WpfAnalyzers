@@ -33,7 +33,7 @@ namespace RoslynSandbox
 
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0101",
-                "Register containing type: 'ValueChangedEvent' as owner.");
+                "Register containing type: 'FooControl' as owner.");
             AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
         }
 

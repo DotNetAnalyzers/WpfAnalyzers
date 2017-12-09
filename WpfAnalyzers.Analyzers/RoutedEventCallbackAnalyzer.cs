@@ -32,7 +32,7 @@
 
             if (context.Node is ArgumentSyntax argument &&
                 argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
-                objectCreation.ArgumentList.Arguments.TryGetSingle(out var callbackArg) &&
+                objectCreation.TryGetSingleArgument(out var callbackArg) &&
                 callbackArg.Expression is IdentifierNameSyntax &&
                 objectCreation.Parent is ArgumentSyntax handlerArgument &&
                 handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax invocation)
