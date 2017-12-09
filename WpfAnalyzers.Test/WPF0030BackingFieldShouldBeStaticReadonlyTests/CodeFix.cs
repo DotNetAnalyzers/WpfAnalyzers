@@ -5,7 +5,7 @@
 
     internal class CodeFix
     {
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = Gu.Roslyn.Asserts.ExpectedDiagnostic.Create("WPF0030");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0030");
 
         [TestCase("public static", "public static readonly")]
         [TestCase("public", "public static readonly")]

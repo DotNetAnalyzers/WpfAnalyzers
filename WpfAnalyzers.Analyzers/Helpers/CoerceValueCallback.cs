@@ -4,7 +4,7 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class CoerceValueCallback
+    internal static class CoerceValueCallback
     {
         internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax nameExpression, out string name)
         {

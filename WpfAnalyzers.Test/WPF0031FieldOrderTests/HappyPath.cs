@@ -5,10 +5,10 @@
 
     internal class HappyPath
     {
-        private static readonly WPF0031FieldOrder Analyzer = new WPF0031FieldOrder();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [Test]
-        public void DependencyProperty()
+        public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -24,6 +24,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         public int Bar
@@ -38,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Attached()
+        public void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -93,9 +94,7 @@ namespace RoslynSandbox
 
     public class ModernLinks : ItemsControl
     {
-        /// <summary>
-        /// Identifies the SelectedSource dependency property.
-        /// </summary>
+        /// <summary> Identifies the SelectedLink dependency property. </summary>
         internal static readonly DependencyPropertyKey SelectedLinkPropertyKey = DependencyProperty.RegisterReadOnly(
             ""SelectedLink"",
             typeof(Link),
@@ -115,6 +114,7 @@ namespace RoslynSandbox
 
     public class LinkGroup : ButtonBase
     {
+        /// <summary> Identifies the SelectedLink dependency property. </summary>
         public static readonly DependencyProperty SelectedLinkProperty = ModernLinks.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
 
         public Link SelectedLink

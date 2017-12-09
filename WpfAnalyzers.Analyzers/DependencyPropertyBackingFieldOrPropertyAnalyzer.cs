@@ -14,7 +14,8 @@ namespace WpfAnalyzers
             WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
             WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
             WPF0060DocumentDependencyPropertyBackingField.Descriptor,
-            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor);
+            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+            WPF0031FieldOrder.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -96,6 +97,24 @@ namespace WpfAnalyzers
                                 fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
                                 fieldOrProperty.Name,
                                 property.Name));
+                    }
+                }
+
+                if (context.Node is FieldDeclarationSyntax fieldDeclaration &&
+                    DependencyProperty.TryGetDependencyPropertyKeyField(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField) &&
+                    fieldOrProperty.ContainingType == keyField.ContainingType &&
+                    keyField.TryGetSyntaxReference(out var reference))
+                {
+                    var keyNode = reference.GetSyntax(context.CancellationToken);
+                    if (ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) &&
+                        fieldDeclaration.SpanStart < keyNode.SpanStart)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0031FieldOrder.Descriptor,
+                                fieldDeclaration.GetLocation(),
+                                keyField.Name,
+                                fieldOrProperty.Name));
                     }
                 }
             }

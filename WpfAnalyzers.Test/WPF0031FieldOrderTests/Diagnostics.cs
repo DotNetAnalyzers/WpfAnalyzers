@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0031");
+
         [Test]
         public void DependencyProperty()
         {
@@ -33,7 +35,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0031FieldOrder>(testCode);
+            AnalyzerAssert.Diagnostics<DependencyPropertyBackingFieldOrPropertyAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -66,7 +68,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0031FieldOrder>(testCode);
+            AnalyzerAssert.Diagnostics<DependencyPropertyBackingFieldOrPropertyAnalyzer>(ExpectedDiagnostic, testCode);
         }
     }
 }
