@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
 
     internal class HappyPath
     {
-        private static readonly WPF0006CoerceValueCallbackShouldMatchRegisteredName Analyzer = new WPF0006CoerceValueCallbackShouldMatchRegisteredName();
+        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
         public void DependencyPropertyNoMetadata()

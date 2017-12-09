@@ -5,6 +5,8 @@
 
     internal class CodeFix
     {
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0006");
+
         [Test]
         public void Message()
         {
@@ -39,7 +41,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0006",
                 "Method 'WrongName' should be named 'CoerceValue'");
-            AnalyzerAssert.Diagnostics<WPF0006CoerceValueCallbackShouldMatchRegisteredName>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(expectedDiagnostic, testCode);
         }
 
         [TestCase("new PropertyMetadata(1, null, ↓WrongName)")]
@@ -104,8 +106,8 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -168,7 +170,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -221,7 +223,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -278,7 +280,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -325,7 +327,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -372,7 +374,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0006CoerceValueCallbackShouldMatchRegisteredName, RenameMethodCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

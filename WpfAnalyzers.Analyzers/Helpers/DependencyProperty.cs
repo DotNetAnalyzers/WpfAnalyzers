@@ -111,7 +111,7 @@
         internal static bool TryGetRegisteredName(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(fieldOrProperty, semanticModel, cancellationToken, out var invocation))
+            if (TryGetRegisterInvocationRecursive(fieldOrProperty, semanticModel, cancellationToken, out var invocation, out _))
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var arg))
                 {
@@ -133,7 +133,7 @@
         internal static bool TryGetRegisteredType(BackingFieldOrProperty field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation))
+            if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation, out _))
             {
                 if (invocation.TryGetArgumentAtIndex(1, out var typeArg))
                 {
@@ -219,16 +219,17 @@
             return false;
         }
 
-        internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
+        internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result, out IMethodSymbol symbol)
         {
+            symbol = null;
             result = null;
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
-                if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
-                    TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
-                    TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
-                    TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
+                if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out symbol) ||
+                    TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out symbol) ||
+                    TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out symbol) ||
+                    TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out symbol))
                 {
                     result = invocation;
                     return true;
@@ -238,19 +239,19 @@
             return false;
         }
 
-        internal static bool TryGetRegisterInvocationRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result)
+        internal static bool TryGetRegisterInvocationRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result, out IMethodSymbol symbol)
         {
             if (TryGetDependencyPropertyKeyField(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
             {
-                return TryGetRegisterInvocationRecursive(keyField, semanticModel, cancellationToken, out result);
+                return TryGetRegisterInvocationRecursive(keyField, semanticModel, cancellationToken, out result, out symbol);
             }
 
             if (TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
             {
-                return TryGetRegisterInvocationRecursive(addOwnerSource, semanticModel, cancellationToken, out result);
+                return TryGetRegisterInvocationRecursive(addOwnerSource, semanticModel, cancellationToken, out result, out symbol);
             }
 
-            return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result);
+            return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result, out symbol);
         }
 
         internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)

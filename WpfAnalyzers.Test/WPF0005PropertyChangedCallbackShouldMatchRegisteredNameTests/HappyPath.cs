@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
     internal class HappyPath
     {
-        private static readonly WPF0005PropertyChangedCallbackShouldMatchRegisteredName Analyzer = new WPF0005PropertyChangedCallbackShouldMatchRegisteredName();
+        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()

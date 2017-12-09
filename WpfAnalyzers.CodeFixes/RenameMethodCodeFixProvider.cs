@@ -90,43 +90,11 @@
                             diagnostic);
                     }
                 }
-                else if (diagnostic.Id == WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId)
+                else if (diagnostic.Id == WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId ||
+                         diagnostic.Id == WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId)
                 {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                    var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    if (WPF0005PropertyChangedCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out IdentifierNameSyntax _,
-                        out var registeredName))
+                    if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
                     {
-                        var newName = $"On{registeredName}Changed";
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(
-                                    context.Document,
-                                    syntaxRoot,
-                                    token,
-                                    newName,
-                                    cancellationToken),
-                                this.GetType().FullName),
-                            diagnostic);
-                    }
-                }
-                else if (diagnostic.Id == WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId)
-                {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                    var callback = node.FirstAncestorOrSelf<ArgumentSyntax>();
-                    if (WPF0006CoerceValueCallbackShouldMatchRegisteredName.TryGetIdentifierAndRegisteredName(
-                        callback,
-                        semanticModel,
-                        context.CancellationToken,
-                        out IdentifierNameSyntax _,
-                        out var registeredName))
-                    {
-                        var newName = $"Coerce{registeredName}";
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 $"Rename to: {newName}",
@@ -148,7 +116,7 @@
                         callback,
                         semanticModel,
                         context.CancellationToken,
-                        out IdentifierNameSyntax _,
+                        out _,
                         out var registeredName))
                     {
                         var newName = $"{registeredName}ValidateValue";
