@@ -40,21 +40,10 @@
                     method.Parameters.TryGetAtIndex(1, out var argParameter) &&
                     (argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
                      argParameter.Type == KnownSymbol.Object) &&
-                    TryGetRegistration(argument, context, out var registration))
+                    TryGetExpectedTypes(argument, method.ContainingType, context, out var senderType, out var valueType))
                 {
-                    if (registration.TryGetArgumentAtIndex(1, out var argTypeArg) &&
-                        argTypeArg.Expression is TypeOfExpressionSyntax argTypeOf &&
-                        TypeOf.TryGetType(argTypeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argType))
-                    {
-                        HandleCasts(context, methodDeclaration, argParameter, argType, WPF0020CastValueToCorrectType.Descriptor);
-                    }
-
-                    if (registration.TryGetArgumentAtIndex(2, out var senderTypeArg) &&
-                        senderTypeArg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                        TypeOf.TryGetType(senderTypeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var senderType))
-                    {
-                        HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
-                    }
+                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
+                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
                 }
             }
         }
@@ -140,9 +129,18 @@
             return argument != null;
         }
 
-        private static bool TryGetRegistration(ArgumentSyntax argument, SyntaxNodeAnalysisContext context, out InvocationExpressionSyntax registration)
+        private static bool TryGetExpectedTypes(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType, out ITypeSymbol valueType)
         {
-            registration = null;
+            bool TryGetRegisteredType(InvocationExpressionSyntax registration, int index, out ITypeSymbol type)
+            {
+                type = null;
+                return registration.TryGetArgumentAtIndex(index, out var senderTypeArg) &&
+                       senderTypeArg.Expression is TypeOfExpressionSyntax senderTypeOf &&
+                       TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+            }
+
+            senderType = null;
+            valueType = null;
             if (argument == null)
             {
                 return false;
@@ -172,8 +170,8 @@
                 if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    registration = registerInvocation;
-                    return true;
+                    return TryGetRegisteredType(registerInvocation, 2, out senderType) &&
+                           TryGetRegisteredType(registerInvocation, 1, out valueType);
                 }
             }
 
