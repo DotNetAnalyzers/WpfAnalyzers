@@ -118,16 +118,16 @@
                     {
                         if (attribute.TryGetSingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
-                            TypeOf.TryGetType(typeOf, context.SemanticModel, context.CancellationToken, out var argumentType) &&
+                            TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
                             !Equals(parameter.Type, argumentType))
                         {
                             context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
-                                argument.GetLocation(),
-                                parameter.Type.ToMinimalDisplayString(
-                                    context.SemanticModel,
-                                    argument.SpanStart)));
+                                Diagnostic.Create(
+                                    WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
+                                    argument.GetLocation(),
+                                    parameter.Type.ToMinimalDisplayString(
+                                        context.SemanticModel,
+                                        argument.SpanStart)));
                         }
                     }
                     else

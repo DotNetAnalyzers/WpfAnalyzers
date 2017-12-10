@@ -6,7 +6,7 @@
 
     internal static class TypeOf
     {
-        internal static bool TryGetType(TypeOfExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
+        internal static bool TryGetType(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
         {
             type = null;
             if (expression == null)
@@ -15,6 +15,24 @@
             }
 
             type = semanticModel.GetTypeInfoSafe(expression.Type, cancellationToken).Type;
+            if (type.Kind == SymbolKind.TypeParameter)
+            {
+                while (containingType != null)
+                {
+                    if (containingType.IsGenericType)
+                    {
+                        var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
+                        if (index >= 0)
+                        {
+                            type = containingType.TypeArguments[index];
+                            return true;
+                        }
+                    }
+
+                    containingType = containingType.ContainingType;
+                }
+            }
+
             return type != null;
         }
     }

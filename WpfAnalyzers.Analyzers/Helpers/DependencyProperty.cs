@@ -89,8 +89,12 @@
                 TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
                 TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
             {
-                var nameArg = invocation.ArgumentList?.Arguments.FirstOrDefault();
-                return nameArg?.TryGetStringValue(semanticModel, cancellationToken, out registeredName) == true;
+                if (invocation.TryGetArgumentAtIndex(0, out var nameArg))
+                {
+                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
+                }
+
+                return false;
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -135,29 +139,9 @@
             result = null;
             if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation, out _))
             {
-                if (invocation.TryGetArgumentAtIndex(1, out var typeArg))
-                {
-                    if (!typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result))
-                    {
-                        return false;
-                    }
-
-                    if (result.Kind == SymbolKind.TypeParameter)
-                    {
-                        var index = field.ContainingType.TypeParameters.IndexOf((ITypeParameterSymbol)result);
-                        if (index < 0)
-                        {
-                            result = null;
-                            return false;
-                        }
-
-                        result = field.ContainingType.TypeArguments[index];
-                    }
-
-                    return result != null;
-                }
-
-                return false;
+                return invocation.TryGetArgumentAtIndex(1, out var typeArg) &&
+                       typeArg.Expression is TypeOfExpressionSyntax typeOf &&
+                       TypeOf.TryGetType(typeOf, field.ContainingType, semanticModel, cancellationToken, out result);
             }
 
             if (TryGetPropertyByName(field, out var property))

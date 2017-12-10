@@ -31,7 +31,7 @@
                 return;
             }
 
-            if (context.ContainingSymbol is ITypeSymbol type &&
+            if (context.ContainingSymbol is INamedTypeSymbol type &&
                 type.IsEither(KnownSymbol.IValueConverter, KnownSymbol.IMultiValueConverter) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
@@ -53,16 +53,16 @@
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {
                             if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
-                                arg.Expression is TypeOfExpressionSyntax typeOf &&
-                                TypeOf.TryGetType(typeOf, context.SemanticModel, context.CancellationToken, out var argType) &&
+                                arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
+                                TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
                                 !Equals(argType, sourceType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));
                             }
 
                             if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
-                                arg.Expression is TypeOfExpressionSyntax typeOfExpression &&
-                                TypeOf.TryGetType(typeOfExpression, context.SemanticModel, context.CancellationToken, out argType) &&
+                                arg.Expression is TypeOfExpressionSyntax targetTypeOf &&
+                                TypeOf.TryGetType(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
                                 !Equals(argType, targetType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));

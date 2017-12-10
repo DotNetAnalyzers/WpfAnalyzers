@@ -87,9 +87,9 @@
             return false;
         }
 
-        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)
         {
-            call = null;
+            setValueCall = null;
             setField = default(BackingFieldOrProperty);
             if (method == null ||
                 method.ParameterList.Parameters.Count != 2 ||
@@ -106,8 +106,8 @@
                     return false;
                 }
 
-                call = walker.SetValue ?? walker.SetCurrentValue;
-                if (call.Expression is MemberAccessExpressionSyntax memberAccess &&
+                setValueCall = walker.SetValue ?? walker.SetCurrentValue;
+                if (setValueCall.Expression is MemberAccessExpressionSyntax memberAccess &&
                     memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
                     memberAccess.Expression is IdentifierNameSyntax member)
                 {
@@ -116,7 +116,7 @@
                         return false;
                     }
 
-                    if (call.TryGetArgumentAtIndex(1, out var arg) &&
+                    if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
                         method.ParameterList.Parameters.TryGetAtIndex(1, out var parameter))
                     {
                         if (arg.Expression is IdentifierNameSyntax argIdentifier &&
