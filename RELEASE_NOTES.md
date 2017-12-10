@@ -1,3 +1,6 @@
+#### 1.0.0
+* New analyzers
+
 #### 0.4.0
 * New analyzers
 
