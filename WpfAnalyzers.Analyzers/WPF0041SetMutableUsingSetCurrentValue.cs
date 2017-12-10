@@ -100,7 +100,7 @@
                 }
 
                 var clrMethod = context.ContainingSymbol as IMethodSymbol;
-                if (ClrMethod.IsAttachedSetMethod(clrMethod, context.SemanticModel, context.CancellationToken, out propertyMember))
+                if (ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out propertyMember))
                 {
                     return;
                 }

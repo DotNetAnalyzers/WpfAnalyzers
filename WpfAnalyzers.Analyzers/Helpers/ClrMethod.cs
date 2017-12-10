@@ -31,7 +31,7 @@
             return true;
         }
 
-        internal static bool IsAttachedSetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
         {
             setField = default(BackingFieldOrProperty);
             if (!IsPotentialClrSetMethod(method))
@@ -42,7 +42,7 @@
             if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedSetMethod(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
+                return IsAttachedSet(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
             }
 
             return false;
@@ -70,7 +70,7 @@
             return true;
         }
 
-        internal static bool IsAttachedGetMethod(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
+        internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
         {
             getField = default(BackingFieldOrProperty);
             if (!IsPotentialClrGetMethod(method))
@@ -81,13 +81,13 @@
             if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedGetMethod(methodDeclaration, semanticModel, cancellationToken, out _, out getField);
+                return IsAttachedGet(methodDeclaration, semanticModel, cancellationToken, out _, out getField);
             }
 
             return false;
         }
 
-        internal static bool IsAttachedSetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)
         {
             setValueCall = null;
             setField = default(BackingFieldOrProperty);
@@ -146,7 +146,7 @@
             }
         }
 
-        internal static bool IsAttachedGetMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty getField)
+        internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty getField)
         {
             call = null;
             getField = default(BackingFieldOrProperty);

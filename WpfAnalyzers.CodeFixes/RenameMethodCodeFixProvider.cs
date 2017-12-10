@@ -6,7 +6,6 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMethodCodeFixProvider))]
     [Shared]
@@ -28,8 +27,6 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -38,109 +35,20 @@
                     continue;
                 }
 
-                if (diagnostic.Id == WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId)
+                if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
                 {
-                    var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                      .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-
-                    if (methodDeclaration == null ||
-                        methodDeclaration.IsMissing)
-                    {
-                        continue;
-                    }
-
-                    var method = semanticModel.GetDeclaredSymbol(methodDeclaration) as IMethodSymbol;
-
-                    if (method == null)
-                    {
-                        continue;
-                    }
-
-                    if (ClrMethod.IsAttachedSetMethod(
-                        method,
-                        semanticModel,
-                        context.CancellationToken,
-                        out var backingField))
-                    {
-                        TryUpdateName(
-                            context,
-                            backingField,
-                            semanticModel,
-                            syntaxRoot,
-                            token,
-                            "Set",
-                            diagnostic);
-
-                        continue;
-                    }
-
-                    if (ClrMethod.IsAttachedGetMethod(
-                        method,
-                        semanticModel,
-                        context.CancellationToken,
-                        out backingField))
-                    {
-                        TryUpdateName(
-                            context,
-                            backingField,
-                            semanticModel,
-                            syntaxRoot,
-                            token,
-                            "Get",
-                            diagnostic);
-                    }
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            $"Rename to: {newName}",
+                            cancellationToken => RenameHelper.RenameSymbolAsync(
+                                context.Document,
+                                syntaxRoot,
+                                token,
+                                newName,
+                                cancellationToken),
+                            this.GetType().FullName),
+                        diagnostic);
                 }
-                else if (diagnostic.Id == WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId ||
-                         diagnostic.Id == WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId ||
-                         diagnostic.Id == WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId ||
-                         diagnostic.Id == WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId ||
-                         diagnostic.Id == WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId)
-                {
-                    if (diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
-                    {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Rename to: {newName}",
-                                cancellationToken => RenameHelper.RenameSymbolAsync(
-                                    context.Document,
-                                    syntaxRoot,
-                                    token,
-                                    newName,
-                                    cancellationToken),
-                                this.GetType().FullName),
-                            diagnostic);
-                    }
-                }
-            }
-        }
-
-        private static void TryUpdateName(
-            CodeFixContext context,
-            BackingFieldOrProperty setField,
-            SemanticModel semanticModel,
-            SyntaxNode syntaxRoot,
-            SyntaxToken token,
-            string prefix,
-            Diagnostic diagnostic)
-        {
-            if (DependencyProperty.TryGetRegisteredName(
-                setField,
-                semanticModel,
-                context.CancellationToken,
-                out var registeredName))
-            {
-                var newName = $"{prefix}{registeredName}";
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        $"Rename to: {newName}",
-                        cancellationToken => RenameHelper.RenameSymbolAsync(
-                            context.Document,
-                            syntaxRoot,
-                            token,
-                            newName,
-                            cancellationToken),
-                        nameof(RenameMethodCodeFixProvider)),
-                    diagnostic);
             }
         }
     }

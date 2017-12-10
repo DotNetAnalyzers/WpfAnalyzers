@@ -52,7 +52,7 @@
         private static void AddDocumentation(DocumentEditor editor, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var method = editor.SemanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken);
-            if (ClrMethod.IsAttachedGetMethod(method, editor.SemanticModel, cancellationToken, out var fieldOrProperty) &&
+            if (ClrMethod.IsAttachedGet(method, editor.SemanticModel, cancellationToken, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out var registeredName))
             {
                 editor.ReplaceNode(
@@ -62,7 +62,7 @@
                                          .AddRange(SyntaxFactory.ParseLeadingTrivia(GetMethodDocs(method.Parameters[0].Type, registeredName))))
                                          .WithAdditionalAnnotations(Formatter.Annotation));
             }
-            else if (ClrMethod.IsAttachedSetMethod(method, editor.SemanticModel, cancellationToken, out fieldOrProperty) &&
+            else if (ClrMethod.IsAttachedSet(method, editor.SemanticModel, cancellationToken, out fieldOrProperty) &&
                      DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out registeredName))
             {
                 editor.ReplaceNode(
