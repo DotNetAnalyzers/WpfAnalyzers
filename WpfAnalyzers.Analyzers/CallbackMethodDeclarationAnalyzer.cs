@@ -50,6 +50,11 @@
 
         private static void HandleCasts(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodDeclaration, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor descriptor)
         {
+            if (expectedType == null)
+            {
+                return;
+            }
+
             using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration, parameter.Name))
             {
                 foreach (var identifierName in walker.IdentifierNames)
@@ -129,16 +134,16 @@
             return argument != null;
         }
 
+        private static bool TryGetRegisteredType(InvocationExpressionSyntax registration, int index, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
+        {
+            type = null;
+            return registration.TryGetArgumentAtIndex(index, out var senderTypeArg) &&
+                   senderTypeArg.Expression is TypeOfExpressionSyntax senderTypeOf &&
+                   TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+        }
+
         private static bool TryGetExpectedTypes(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType, out ITypeSymbol valueType)
         {
-            bool TryGetRegisteredType(InvocationExpressionSyntax registration, int index, out ITypeSymbol type)
-            {
-                type = null;
-                return registration.TryGetArgumentAtIndex(index, out var senderTypeArg) &&
-                       senderTypeArg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                       TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
-            }
-
             senderType = null;
             valueType = null;
             if (argument == null)
@@ -171,13 +176,13 @@
                     DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
                     senderType = containingType;
-                    return TryGetRegisteredType(registerInvocation, 1, out valueType);
+                    return TryGetRegisteredType(registerInvocation, 1, containingType, context, out valueType);
                 }
 
                 if (DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    return false;
+                    return TryGetRegisteredType(registerInvocation, 1, containingType, context, out valueType);
                 }
             }
 

@@ -304,7 +304,6 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyRegisterAttached()
         {
@@ -343,22 +342,21 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(1, OnBarChanged));
+            new PropertyMetadata(1, OnValueChanged));
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓string)e.NewValue;
+            var value = (int)e.NewValue;
         }
     }
 }";
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyRegisterAttachedReadOnly()
         {
@@ -399,7 +397,7 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(default(int), OnBarChanged));
+            new PropertyMetadata(default(int), OnValueChanged));
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -407,9 +405,9 @@ namespace RoslynSandbox
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓string)e.NewValue;
+            var value = (int)e.NewValue;
         }
     }
 }";
