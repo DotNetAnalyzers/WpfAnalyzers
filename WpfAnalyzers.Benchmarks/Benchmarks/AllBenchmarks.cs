@@ -3,6 +3,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0019 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackMethodDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ClrMethodDeclarationAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ClrPropertyDeclarationAnalyzer());
@@ -44,6 +46,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0082 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0082ConstructorArgument());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void CallbackMethodDeclarationAnalyzer()
+        {
+            WPF0019.Run();
+        }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ClrMethodDeclarationAnalyzer()
