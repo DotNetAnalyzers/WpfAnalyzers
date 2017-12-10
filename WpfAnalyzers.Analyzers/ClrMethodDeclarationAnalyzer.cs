@@ -121,7 +121,7 @@
                         if (attribute.TryGetSingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
                             TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
-                            !Equals(parameter.Type, argumentType))
+                            !argumentType.Is(parameter.Type))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
