@@ -6,6 +6,8 @@
 [![NuGet](https://img.shields.io/nuget/v/WpfAnalyzers.svg)](https://www.nuget.org/packages/WpfAnalyzers/)
 
 Roslyn analyzers for WPF.
+* 1.x versions are for C#6.
+* 2.x versions are for C#7.
 
 <!-- start generated table -->
 <table>
