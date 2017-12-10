@@ -4,7 +4,7 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal class PropertyChangedCallback
+    internal static class PropertyChangedCallback
     {
         internal static bool TryGetName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out string name)
         {
@@ -22,6 +22,11 @@ namespace WpfAnalyzers
             registeredName = null;
             return PropertyMetadata.TryFindObjectCreationAncestor(callback, semanticModel, cancellationToken, out var objectCreation) &&
                    PropertyMetadata.TryGetRegisteredName(objectCreation, semanticModel, cancellationToken, out registeredName);
+        }
+
+        internal static bool IsPropertyChangedCallback(MethodDeclarationSyntax methodDeclaration, SemanticModel contextSemanticModel, CancellationToken contextCancellationToken, out BackingFieldOrProperty fieldOrProperty)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

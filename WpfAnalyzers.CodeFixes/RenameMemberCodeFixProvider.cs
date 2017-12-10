@@ -13,7 +13,9 @@
     internal class RenameMemberCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0102EventDeclarationName.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId,
+            WPF0102EventDeclarationName.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -30,15 +32,14 @@
                 }
 
                 var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                    .FirstAncestorOrSelf<MemberDeclarationSyntax>();
+                                                  .FirstAncestorOrSelf<MemberDeclarationSyntax>();
                 if (memberDeclaration == null ||
                     memberDeclaration.IsMissing)
                 {
                     continue;
                 }
 
-                if (diagnostic.Id == WPF0102EventDeclarationName.DiagnosticId &&
-                    diagnostic.Properties.TryGetValue("RegisteredName", out var registeredName))
+                if (diagnostic.Properties.TryGetValue("ExpectedName", out var registeredName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

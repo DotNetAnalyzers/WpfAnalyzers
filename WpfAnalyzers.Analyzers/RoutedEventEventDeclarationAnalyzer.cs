@@ -78,7 +78,7 @@
                                 Diagnostic.Create(
                                     WPF0102EventDeclarationName.Descriptor,
                                     eventDeclaration.Identifier.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("RegisteredName", registeredName),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName),
                                     registeredName));
                         }
 

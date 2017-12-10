@@ -3,7 +3,6 @@
 
 namespace WpfAnalyzers
 {
-    using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace WpfAnalyzers
         {
             if (symbol.Kind == SymbolKind.NamedType)
             {
-                TypeKind typeKind = ((INamedTypeSymbol)symbol).TypeKind;
+                var typeKind = ((INamedTypeSymbol)symbol).TypeKind;
 
                 // If the symbol is a class or struct, the name can't be the same as any of its members.
                 if (typeKind == TypeKind.Class || typeKind == TypeKind.Struct)
@@ -63,7 +62,7 @@ namespace WpfAnalyzers
                 }
                 else if (containingNamespaceOrTypeSymbol.Kind == SymbolKind.NamedType)
                 {
-                    TypeKind typeKind = ((INamedTypeSymbol)containingNamespaceOrTypeSymbol).TypeKind;
+                    var typeKind = ((INamedTypeSymbol)containingNamespaceOrTypeSymbol).TypeKind;
 
                     // If the containing type is a class or struct, the name can't be the same as the name of the containing
                     // type.
@@ -76,7 +75,7 @@ namespace WpfAnalyzers
 
                 // The name can't be the same as the name of an other member of the same type. At this point no special
                 // consideration is given to overloaded methods.
-                ImmutableArray<ISymbol> siblings = containingNamespaceOrTypeSymbol.GetMembers(name);
+                var siblings = containingNamespaceOrTypeSymbol.GetMembers(name);
                 if (!siblings.IsDefaultOrEmpty)
                 {
                     return false;
@@ -86,14 +85,14 @@ namespace WpfAnalyzers
             }
             else if (containingSymbol.Kind == SymbolKind.Method)
             {
-                IMethodSymbol methodSymbol = (IMethodSymbol)containingSymbol;
+                var methodSymbol = (IMethodSymbol)containingSymbol;
                 if (methodSymbol.Parameters.Any(i => i.Name == name)
                     || methodSymbol.TypeParameters.Any(i => i.Name == name))
                 {
                     return false;
                 }
 
-                IMethodSymbol outermostMethod = methodSymbol;
+                var outermostMethod = methodSymbol;
                 while (outermostMethod.ContainingSymbol.Kind == SymbolKind.Method)
                 {
                     outermostMethod = (IMethodSymbol)outermostMethod.ContainingSymbol;
@@ -106,8 +105,8 @@ namespace WpfAnalyzers
 
                 foreach (var syntaxReference in outermostMethod.DeclaringSyntaxReferences)
                 {
-                    SyntaxNode syntaxNode = await syntaxReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
-                    LocalNameFinder localNameFinder = new LocalNameFinder(name);
+                    var syntaxNode = await syntaxReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+                    var localNameFinder = new LocalNameFinder(name);
                     localNameFinder.Visit(syntaxNode);
                     if (localNameFinder.Found)
                     {
@@ -125,7 +124,7 @@ namespace WpfAnalyzers
 
         public static SyntaxNode GetParentDeclaration(SyntaxToken token)
         {
-            SyntaxNode parent = token.Parent;
+            var parent = token.Parent;
 
             while (parent != null)
             {

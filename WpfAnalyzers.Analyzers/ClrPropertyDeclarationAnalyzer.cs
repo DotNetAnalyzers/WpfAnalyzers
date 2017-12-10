@@ -90,6 +90,7 @@
                             Diagnostic.Create(
                                 WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
                                 propertyDeclaration.Identifier.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName),
                                 property.Name,
                                 registeredName));
                     }
