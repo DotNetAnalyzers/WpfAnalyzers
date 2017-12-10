@@ -19,7 +19,8 @@
             {
                 while (containingType != null)
                 {
-                    if (containingType.IsGenericType)
+                    if (containingType.IsGenericType &&
+                        containingType != KnownSymbol.Object)
                     {
                         var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
                         if (index >= 0)
