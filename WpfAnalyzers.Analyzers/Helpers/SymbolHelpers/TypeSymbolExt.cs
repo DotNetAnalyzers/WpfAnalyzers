@@ -238,6 +238,11 @@
                 return false;
             }
 
+            if (IsSameType(type, other))
+            {
+                return true;
+            }
+
             if (other.IsInterface())
             {
                 foreach (var @interface in type.AllInterfaces)

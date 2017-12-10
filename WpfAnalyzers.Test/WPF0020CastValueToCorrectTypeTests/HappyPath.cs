@@ -80,6 +80,54 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("int")]
+        [TestCase("System.Collections.IEnumerable")]
+        public void DependencyPropertyRegisterWithAllCallbacks(string type)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            return (int)basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            return ((int)basevalue) > 1;
+        }
+    }
+}";
+
+            testCode = testCode.AssertReplace("int", type);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [Test]
         public void DependencyPropertyRegisterReadOnly()
         {
