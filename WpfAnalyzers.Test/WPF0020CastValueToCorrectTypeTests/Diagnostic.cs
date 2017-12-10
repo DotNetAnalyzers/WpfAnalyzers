@@ -163,8 +163,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("(↓DataGrid)d", fromCast);
-            fixedCode = fixedCode.AssertReplace("(FooControl)d", toCast);
+            testCode = testCode.AssertReplace("(↓string)e.NewValue", fromCast);
+            fixedCode = fixedCode.AssertReplace("(int)e.NewValue", toCast);
 
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
