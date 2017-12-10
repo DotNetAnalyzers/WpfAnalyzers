@@ -99,6 +99,34 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyExpressionBodyAccessors()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", 
+            typeof(int), 
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public ↓double Bar
+        {
+            get => (double)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics<ClrPropertyDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void DependencyPropertyAddOwner()
         {
             var part1 = @"

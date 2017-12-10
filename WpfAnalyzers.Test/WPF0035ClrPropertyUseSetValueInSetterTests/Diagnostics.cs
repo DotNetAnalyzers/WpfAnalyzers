@@ -58,6 +58,58 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyExpressionBodyAccessors()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => ↓this.SetCurrentValue(BarProperty, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.Create(
+                "WPF0035",
+                "Use SetValue in setter.");
+            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void DependencyPropertyAndReadOnlyDependencyProperty()
         {
             var testCode = @"

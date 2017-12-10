@@ -66,6 +66,64 @@ namespace RoslynSandbox
         }
 
         [TestCase("SetValue")]
+        [TestCase("this.SetValue")]
+        [TestCase("SetCurrentValue")]
+        [TestCase("this.SetCurrentValue")]
+        public void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(↓BarProperty, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarPropertyKey, value);
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("SetValue", method);
+            fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public void DependencyPropertyRegisterAttachedReadOnly(string method)
         {
