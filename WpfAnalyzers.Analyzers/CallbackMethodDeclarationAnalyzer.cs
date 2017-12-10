@@ -34,17 +34,41 @@
                 method.IsStatic &&
                 TryGetSingleUsage(method, methodDeclaration, out var argument))
             {
-                if (method.Parameters.TryGetAtIndex(0, out var senderParameter) &&
+                // PropertyChangedCallback
+                if (method.Parameters.Length == 2 &&
+                    method.ReturnsVoid &&
+                    method.Parameters.TryGetAtIndex(0, out var senderParameter) &&
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
-                    method.Parameters.Length == 2 &&
                     method.Parameters.TryGetAtIndex(1, out var argParameter) &&
-                    (argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
-                     argParameter.Type == KnownSymbol.Object) &&
+                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
                     TryGetExpectedTypes(argument, method.ContainingType, context, out var senderType, out var valueType))
                 {
                     HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
                     HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
                 }
+
+                // CoerceValueCallback
+                if (method.Parameters.Length == 2 &&
+                    method.ReturnType == KnownSymbol.Object &&
+                    method.Parameters.TryGetAtIndex(0, out senderParameter) &&
+                    senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
+                    method.Parameters.TryGetAtIndex(1, out argParameter) &&
+                    argParameter.Type == KnownSymbol.Object &&
+                    TryGetExpectedTypes(argument, method.ContainingType, context, out senderType, out valueType))
+                {
+                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
+                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
+                }
+
+                // ValidateValueCallback
+                ////if (method.Parameters.Length == 1 &&
+                ////    method.ReturnType == KnownSymbol.Boolean &&
+                ////    method.Parameters.TryGetAtIndex(1, out argParameter) &&
+                ////    argParameter.Type == KnownSymbol.Object &&
+                ////    TryGetExpectedTypes(argument, method.ContainingType, context, out var valueType))
+                ////{
+                ////    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
+                ////}
             }
         }
 

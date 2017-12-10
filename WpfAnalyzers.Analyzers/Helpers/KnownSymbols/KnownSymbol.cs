@@ -5,6 +5,7 @@ namespace WpfAnalyzers
     {
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly QualifiedType String = Create("System.String");
+        internal static readonly QualifiedType Boolean = Create("System.Boolean");
         internal static readonly NullableType Nullable = new NullableType();
 
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
