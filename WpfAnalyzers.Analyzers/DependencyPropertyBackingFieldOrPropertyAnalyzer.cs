@@ -46,6 +46,7 @@ namespace WpfAnalyzers
                                 Diagnostic.Create(
                                     WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
                                     fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Property"),
                                     fieldOrProperty.Name,
                                     registeredName));
                         }
@@ -57,6 +58,7 @@ namespace WpfAnalyzers
                                 Diagnostic.Create(
                                     WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
                                     fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "PropertyKey"),
                                     fieldOrProperty.Name,
                                     registeredName));
                         }

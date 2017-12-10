@@ -37,6 +37,7 @@
                         Diagnostic.Create(
                             WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
                             fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
                             fieldOrProperty.Name,
                             registeredName));
                 }

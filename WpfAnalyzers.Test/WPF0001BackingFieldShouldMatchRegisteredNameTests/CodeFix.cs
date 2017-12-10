@@ -76,7 +76,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -300,7 +300,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -368,7 +368,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
+            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
         }
     }
 }

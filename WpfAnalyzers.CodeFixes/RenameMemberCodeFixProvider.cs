@@ -15,6 +15,8 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId,
+            WPF0002BackingFieldShouldMatchRegisteredName.DiagnosticId,
             WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId,
             WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
             WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
@@ -22,6 +24,7 @@
             WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId,
             WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId,
             WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId,
+            WPF0100BackingFieldShouldMatchRegisteredName.DiagnosticId,
             WPF0102EventDeclarationName.DiagnosticId);
 
         /// <inheritdoc/>

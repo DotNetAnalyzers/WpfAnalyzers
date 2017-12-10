@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0100");
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameFieldCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
         }
     }
 }
