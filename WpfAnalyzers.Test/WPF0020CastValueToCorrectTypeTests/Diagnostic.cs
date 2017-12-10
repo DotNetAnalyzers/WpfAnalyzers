@@ -178,6 +178,90 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
+        [TestCase("ValidateValue")]
+        [TestCase("new ValidateValueCallback(ValidateValue)")]
+        public void DependencyPropertyRegisterValidateValue(string validateValue)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(1, OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            return (int)basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            return ((↓string)basevalue) > 1;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(1, OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            return (int)basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            return ((int)basevalue) > 1;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("ValidateValue);", validateValue + ");");
+            fixedCode = fixedCode.AssertReplace("ValidateValue);", validateValue + ");");
+            AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+        }
+
         [TestCase("(↓string)e.NewValue", "(int)e.NewValue")]
         [TestCase("(↓string)e.OldValue", "(int)e.OldValue")]
         public void DependencyPropertyRegisterCast(string fromCast, string toCast)

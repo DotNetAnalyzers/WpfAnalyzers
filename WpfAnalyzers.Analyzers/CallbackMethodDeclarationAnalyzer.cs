@@ -32,7 +32,7 @@
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
-                TryGetSingleUsage(method, methodDeclaration, out var argument))
+                TryGetSingleUsage(method, methodDeclaration, out var callbackArg))
             {
                 // PropertyChangedCallback
                 if (method.Parameters.Length == 2 &&
@@ -41,7 +41,7 @@
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
                     method.Parameters.TryGetAtIndex(1, out var argParameter) &&
                     argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
-                    TryGetExpectedTypes(argument, method.ContainingType, context, out var senderType, out var valueType))
+                    TryGetExpectedTypes(callbackArg, method.ContainingType, context, out var senderType, out var valueType))
                 {
                     HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
                     HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
@@ -54,21 +54,35 @@
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
                     method.Parameters.TryGetAtIndex(1, out argParameter) &&
                     argParameter.Type == KnownSymbol.Object &&
-                    TryGetExpectedTypes(argument, method.ContainingType, context, out senderType, out valueType))
+                    TryGetExpectedTypes(callbackArg, method.ContainingType, context, out senderType, out valueType))
                 {
                     HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
                     HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
                 }
 
                 // ValidateValueCallback
-                ////if (method.Parameters.Length == 1 &&
-                ////    method.ReturnType == KnownSymbol.Boolean &&
-                ////    method.Parameters.TryGetAtIndex(1, out argParameter) &&
-                ////    argParameter.Type == KnownSymbol.Object &&
-                ////    TryGetExpectedTypes(argument, method.ContainingType, context, out var valueType))
-                ////{
-                ////    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
-                ////}
+                if (method.Parameters.Length == 1 &&
+                    method.ReturnType == KnownSymbol.Boolean &&
+                    method.Parameters.TryGetAtIndex(0, out argParameter) &&
+                    argParameter.Type == KnownSymbol.Object)
+                {
+                    if (callbackArg.Parent?.Parent is ObjectCreationExpressionSyntax callbackCreation &&
+                        callbackCreation.Type is SimpleNameSyntax simpleName &&
+                        simpleName.Identifier.ValueText == "ValidateValueCallback")
+                    {
+                        callbackArg = callbackCreation.Parent as ArgumentSyntax;
+                    }
+
+                    if (callbackArg?.Parent?.Parent is InvocationExpressionSyntax invocation &&
+                        (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                         DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                         DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                        TryGetRegisteredType(invocation, 1, method.ContainingType, context, out valueType))
+                    {
+                        HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor);
+                    }
+                }
             }
         }
 
