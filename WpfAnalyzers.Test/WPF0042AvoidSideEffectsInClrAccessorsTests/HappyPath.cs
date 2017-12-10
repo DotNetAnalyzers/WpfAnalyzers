@@ -36,6 +36,34 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyExpressionBodyAccessors()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", 
+            typeof(int), 
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
         public void DependencyPropertyWithThis()
         {
             var testCode = @"
