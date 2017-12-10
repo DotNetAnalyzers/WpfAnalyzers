@@ -9,7 +9,7 @@
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Cast value to correct type.",
-            messageFormat: "Value is of type {0}",
+            messageFormat: "Value is of type {0}.",
             category: AnalyzerCategory.DependencyProperties,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,

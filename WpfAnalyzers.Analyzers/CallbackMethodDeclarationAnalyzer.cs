@@ -41,56 +41,69 @@
                     argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
                     TryGetRegistration(argument, context, out var registration))
                 {
+                    if (registration.TryGetArgumentAtIndex(1, out var argTypeArg) &&
+                        argTypeArg.Expression is TypeOfExpressionSyntax argTypeOf &&
+                        TypeOf.TryGetType(argTypeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argType))
+                    {
+                        HandleCasts(context, methodDeclaration, argParameter, argType, WPF0020CastValueToCorrectType.Descriptor);
+                    }
+
                     if (registration.TryGetArgumentAtIndex(2, out var senderTypeArg) &&
                         senderTypeArg.Expression is TypeOfExpressionSyntax senderTypeOf &&
                         TypeOf.TryGetType(senderTypeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var senderType))
                     {
-                        using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration, senderParameter.Name))
-                        {
-                            foreach (var identifierName in walker.IdentifierNames)
-                            {
-                                if (identifierName.Parent is CastExpressionSyntax castExpression &&
-                                    context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol type)
-                                {
-                                    if (!type.Is(senderType))
-                                    {
-                                        var expectedType = senderType.ToMinimalDisplayString(
-                                            context.SemanticModel,
-                                            castExpression.SpanStart,
-                                            SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                WPF0019CastSenderToCorrectType.Descriptor,
-                                                castExpression.Type.GetLocation(),
-                                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedType),
-                                                expectedType));
-                                    }
-                                }
+                        HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor);
+                    }
+                }
+            }
+        }
 
-                                if (identifierName.Parent is BinaryExpressionSyntax binaryExpression &&
-                                    binaryExpression.IsKind(SyntaxKind.AsExpression) &&
-                                    context.SemanticModel.GetTypeInfoSafe(binaryExpression.Right, context.CancellationToken).Type is ITypeSymbol asType)
-                                {
-                                    if (!asType.Is(senderType))
-                                    {
-                                        var expectedType = senderType.ToMinimalDisplayString(
-                                            context.SemanticModel,
-                                            binaryExpression.SpanStart,
-                                            SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                WPF0019CastSenderToCorrectType.Descriptor,
-                                                binaryExpression.Right.GetLocation(),
-                                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedType),
-                                                expectedType));
-                                    }
-                                }
-                            }
-                        }
+        private static void HandleCasts(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodDeclaration, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor descriptor)
+        {
+            using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration, parameter.Name))
+            {
+                foreach (var identifierName in walker.IdentifierNames)
+                {
+                    var parent = identifierName.Parent;
+                    if (parameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
+                        parent is MemberAccessExpressionSyntax memberAccess &&
+                        (memberAccess.Name.Identifier.ValueText == "NewValue" ||
+                         memberAccess.Name.Identifier.ValueText == "OldValue"))
+                    {
+                        parent = memberAccess.Parent;
                     }
 
-                    using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration, argParameter.Name))
+                    if (parent is CastExpressionSyntax castExpression &&
+                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol type &&
+                        !type.Is(expectedType))
                     {
+                        var expectedTypeName = expectedType.ToMinimalDisplayString(
+                            context.SemanticModel,
+                            castExpression.SpanStart,
+                            SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                descriptor,
+                                castExpression.Type.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                expectedTypeName));
+                    }
+
+                    if (parent is BinaryExpressionSyntax binaryExpression &&
+                        binaryExpression.IsKind(SyntaxKind.AsExpression) &&
+                        context.SemanticModel.GetTypeInfoSafe(binaryExpression.Right, context.CancellationToken).Type is ITypeSymbol asType &&
+                        !asType.Is(expectedType))
+                    {
+                        var expectedTypeName = expectedType.ToMinimalDisplayString(
+                            context.SemanticModel,
+                            binaryExpression.SpanStart,
+                            SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                descriptor,
+                                binaryExpression.Right.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                expectedTypeName));
                     }
                 }
             }

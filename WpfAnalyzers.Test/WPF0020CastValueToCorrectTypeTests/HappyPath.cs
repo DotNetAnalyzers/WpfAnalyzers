@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
+namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -20,12 +20,12 @@ namespace RoslynSandbox
     {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             nameof(Value),
-            typeof(int),
+            typeof(double),
             typeof(FooControl));
 
-        public int Value
+        public double Value
         {
-            get { return (int)this.GetValue(ValueProperty); }
+            get { return (double)this.GetValue(ValueProperty); }
             set { this.SetValue(ValueProperty, value); }
         }
     }
@@ -66,8 +66,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
@@ -93,23 +93,23 @@ namespace RoslynSandbox
     {
         private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Value),
-            typeof(int),
+            typeof(double),
             typeof(FooControl),
             new PropertyMetadata(1.0, OnValueChanged));
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
-        public int Value
+        public double Value
         {
-            get { return (int)this.GetValue(ValueProperty); }
+            get { return (double)this.GetValue(ValueProperty); }
             set { this.SetValue(ValuePropertyKey, value); }
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
     }
 }";
@@ -139,8 +139,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
     }
 }";
@@ -173,8 +173,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FrameworkElement)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
     }
 }";
@@ -202,8 +202,8 @@ namespace RoslynSandbox
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
     }
 }";
@@ -230,8 +230,8 @@ namespace RoslynSandbox
         private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (int)d.OldValue;
+            var newValue = (int)d.NewValue;
         }
     }
 }";

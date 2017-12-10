@@ -15,7 +15,8 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0019CastSenderToCorrectType.DiagnosticId);
+            WPF0019CastSenderToCorrectType.DiagnosticId,
+            WPF0020CastValueToCorrectType.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
@@ -35,7 +36,8 @@
 
                 if (diagnostic.Properties.TryGetValue("ExpectedType", out var registeredType))
                 {
-                    if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<IdentifierNameSyntax>() is IdentifierNameSyntax identifierName &&
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+                    if (node.FirstAncestorOrSelf<IdentifierNameSyntax>() is IdentifierNameSyntax identifierName &&
                         !identifierName.IsMissing)
                     {
                         context.RegisterDocumentEditorFix(
@@ -44,15 +46,25 @@
                             this.GetType().FullName,
                             diagnostic);
                     }
+
+                    if (node.FirstAncestorOrSelf<PredefinedTypeSyntax>() is PredefinedTypeSyntax predefinedType &&
+                        !predefinedType.IsMissing)
+                    {
+                        context.RegisterDocumentEditorFix(
+                            $"Change type to: {registeredType}.",
+                            (e, _) => ChangeType(e, predefinedType, registeredType),
+                            this.GetType().FullName,
+                            diagnostic);
+                    }
                 }
             }
         }
 
-        private static void ChangeType(DocumentEditor editor, SimpleNameSyntax typeSyntax, string newType)
+        private static void ChangeType(DocumentEditor editor, PredefinedTypeSyntax typeSyntax, string newType)
         {
             editor.ReplaceNode(
                 typeSyntax,
-                (x, _) => ((SimpleNameSyntax)x).WithIdentifier(SyntaxFactory.ParseToken(newType)));
+                (x, _) => SyntaxFactory.ParseTypeName(newType));
         }
 
         private static void ChangeType(DocumentEditor editor, IdentifierNameSyntax typeSyntax, string newType)
