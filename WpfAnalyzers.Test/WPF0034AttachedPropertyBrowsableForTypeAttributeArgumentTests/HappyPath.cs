@@ -93,7 +93,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasTwoAttributesForMoreSpecificType()
+        public void WhenHasTwoAttributesForMoreSpecificTypes()
         {
             var testCode = @"
 namespace RoslynSandbox
