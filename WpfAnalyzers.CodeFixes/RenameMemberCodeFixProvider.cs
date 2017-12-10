@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -15,6 +16,12 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId,
+            WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
+            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
+            WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId,
+            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId,
+            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId,
+            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId,
             WPF0102EventDeclarationName.DiagnosticId);
 
         /// <inheritdoc/>
@@ -44,19 +51,18 @@
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             $"Rename to: {registeredName}.",
-                            _ => ApplyFixAsync(context, token, registeredName),
+                            cancellationToken => ApplyFixAsync(context.Document, token, registeredName, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);
                 }
             }
         }
 
-        private static async Task<Solution> ApplyFixAsync(CodeFixContext context, SyntaxToken token, string newName)
+        private static async Task<Solution> ApplyFixAsync(Document document, SyntaxToken token, string newName, CancellationToken cancellationToken)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
                                            .ConfigureAwait(false);
-            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, context.CancellationToken)
+            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, cancellationToken)
                                      .ConfigureAwait(false);
         }
     }

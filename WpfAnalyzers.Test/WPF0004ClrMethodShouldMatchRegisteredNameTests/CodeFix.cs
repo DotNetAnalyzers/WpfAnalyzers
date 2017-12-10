@@ -92,8 +92,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -191,7 +191,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

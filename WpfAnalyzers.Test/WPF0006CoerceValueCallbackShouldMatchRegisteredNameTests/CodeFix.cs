@@ -106,8 +106,8 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-            AnalyzerAssert.FixAll<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -223,7 +223,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -280,7 +280,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -327,7 +327,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -374,7 +374,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<PropertyMetadataAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
