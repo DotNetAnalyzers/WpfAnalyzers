@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "SetValue must use registered type.",
             messageFormat: "{0} must use registered type {1}",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Use a type that matches registered type when setting the value of a DependencyProperty",

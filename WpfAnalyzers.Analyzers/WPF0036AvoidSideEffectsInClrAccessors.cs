@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Avoid side effects in CLR accessors.",
             messageFormat: "Avoid side effects in CLR accessors.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Avoid side effects in CLR accessors.",

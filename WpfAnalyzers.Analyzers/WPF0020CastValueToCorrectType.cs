@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Cast value to correct type.",
             messageFormat: "Value is of type {0}.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Cast value to correct type.",

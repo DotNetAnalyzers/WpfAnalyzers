@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
             messageFormat: "Set '{0}' using '{1}'",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "A readonly DependencyProperty must be set with DependencyPropertyKey.",

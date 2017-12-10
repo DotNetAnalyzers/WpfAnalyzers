@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Use correct argument for [AttachedPropertyBrowsableForType]",
             messageFormat: "Use [AttachedPropertyBrowsableForType(typeof({0})]",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Use correct argument for [AttachedPropertyBrowsableForType]",

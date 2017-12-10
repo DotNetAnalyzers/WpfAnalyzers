@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "CLR method for a DependencyProperty should match registered name.",
             messageFormat: "Method '{0}' must be named '{1}'",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "CLR methods for accessing a DependencyProperty must have names matching the name the DependencyProperty is registered with.",

@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Use SetValue in setter.",
             messageFormat: "Use SetValue in setter.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use SetValue in setter.",

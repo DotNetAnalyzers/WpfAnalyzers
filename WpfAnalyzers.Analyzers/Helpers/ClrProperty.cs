@@ -6,7 +6,7 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Exposes helper methods for working with CLR-properties for DependencyProperties
+    /// Exposes helper methods for working with CLR-properties for DependencyProperty
     /// </summary>
     internal static class ClrProperty
     {

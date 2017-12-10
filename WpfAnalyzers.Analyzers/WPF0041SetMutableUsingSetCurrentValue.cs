@@ -16,7 +16,7 @@
             id: DiagnosticId,
             title: "Set mutable dependency properties using SetCurrentValue.",
             messageFormat: "Use SetCurrentValue({0}, {1})",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Prefer setting mutable dependency properties using SetCurrentValue.",

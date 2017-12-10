@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Don't set DataContext using SetCurrentValue.",
             messageFormat: "Use SetValue({0}, {1})",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Set DataContext using SetValue.",

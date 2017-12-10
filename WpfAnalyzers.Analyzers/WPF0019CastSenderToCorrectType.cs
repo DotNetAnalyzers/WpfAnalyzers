@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Cast sender to correct type.",
             messageFormat: "Sender is of type {0}.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Cast sender to correct type.",

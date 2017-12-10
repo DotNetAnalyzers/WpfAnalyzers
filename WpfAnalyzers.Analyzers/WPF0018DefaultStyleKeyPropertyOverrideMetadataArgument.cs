@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Use containing type.",
             messageFormat: "Expected new FrameworkPropertyMetadata(typeof({0}))",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Call DefaultStyleKeyProperty.OverrideMetadata with containing type as argument.",

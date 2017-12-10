@@ -15,7 +15,7 @@
             id: DiagnosticId,
             title: "Containing type should be used as registered owner.",
             messageFormat: "Register containing type: '{0}' as owner.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "When registering a DependencyProperty register containing type as owner type.",

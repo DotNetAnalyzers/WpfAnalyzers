@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Default value is shared reference type.",
             messageFormat: "Default value for '{0}' is a reference type that will be shared among all instances.",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "When registering a new instance of a reference type as default value the value is shared for all instances of the control.",

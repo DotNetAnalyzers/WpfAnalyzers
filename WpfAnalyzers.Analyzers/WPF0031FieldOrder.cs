@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "DependencyPropertyKey field must come before DependencyProperty field.",
             messageFormat: "Field '{0}' must come before '{1}'",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "DependencyPropertyKey field must come before DependencyProperty field.",

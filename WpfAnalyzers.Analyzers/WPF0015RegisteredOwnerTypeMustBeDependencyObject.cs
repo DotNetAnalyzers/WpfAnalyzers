@@ -15,7 +15,7 @@
             id: DiagnosticId,
             title: "Registered owner type must inherit DependencyObject.",
             messageFormat: "Maybe you intended to use '{0}'?",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "When registering a DependencyProperty owner type must be a subclass of DependencyObject.",

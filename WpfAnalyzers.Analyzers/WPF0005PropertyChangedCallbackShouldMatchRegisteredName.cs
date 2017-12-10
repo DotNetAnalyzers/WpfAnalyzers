@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Name of PropertyChangedCallback should match registered name.",
             messageFormat: "Method '{0}' should be named '{1}'",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Name of PropertyChangedCallback should match registered name.",

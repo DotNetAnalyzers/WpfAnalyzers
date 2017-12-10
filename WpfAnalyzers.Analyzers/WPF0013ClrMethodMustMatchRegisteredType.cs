@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "CLR accessor for attached property must match registered type.",
             messageFormat: "{0} must match registered type {1}",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "CLR accessor for attached property must match registered type.",

@@ -10,7 +10,7 @@
             id: DiagnosticId,
             title: "Add [AttachedPropertyBrowsableForType]",
             messageFormat: "Add [AttachedPropertyBrowsableForType(typeof({0})]",
-            category: AnalyzerCategory.DependencyProperties,
+            category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Add [AttachedPropertyBrowsableForType]",
