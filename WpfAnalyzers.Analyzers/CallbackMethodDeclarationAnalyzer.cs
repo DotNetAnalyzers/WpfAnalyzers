@@ -170,8 +170,14 @@
                 if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    return TryGetRegisteredType(registerInvocation, 2, out senderType) &&
-                           TryGetRegisteredType(registerInvocation, 1, out valueType);
+                    senderType = containingType;
+                    return TryGetRegisteredType(registerInvocation, 1, out valueType);
+                }
+
+                if (DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
+                {
+                    return false;
                 }
             }
 
