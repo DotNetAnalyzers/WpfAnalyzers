@@ -16,12 +16,5 @@ namespace WpfAnalyzers
                 out nameExpression,
                 out name);
         }
-
-        internal static bool TryGetRegisteredName(ArgumentSyntax callback, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
-        {
-            registeredName = null;
-            return PropertyMetadata.TryFindObjectCreationAncestor(callback, semanticModel, cancellationToken, out var objectCreation) &&
-                   PropertyMetadata.TryGetRegisteredName(objectCreation, semanticModel, cancellationToken, out registeredName);
-        }
     }
 }

@@ -73,25 +73,6 @@
             return false;
         }
 
-        internal static bool TryFindObjectCreationAncestor(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out ObjectCreationExpressionSyntax objectCreation)
-        {
-            objectCreation = null;
-            var parent = node?.Parent;
-            while (parent != null)
-            {
-                if (parent is ObjectCreationExpressionSyntax candidate &&
-                    TryGetConstructor(candidate, semanticModel, cancellationToken, out _))
-                {
-                    objectCreation = candidate;
-                    return true;
-                }
-
-                parent = parent.Parent;
-            }
-
-            return false;
-        }
-
         private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
