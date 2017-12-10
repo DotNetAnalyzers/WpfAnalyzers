@@ -45,7 +45,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
-        public void DependencyPropertyRegister(string metadata)
+        public void DependencyPropertyRegisterPropertyChangedCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -103,6 +103,80 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
+            AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
+        [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
+        public void DependencyPropertyRegisterCoerceValueCallback(string metadata)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(1, OnValueChanged, CoerceValue));
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            var control = (↓DataGrid)d;
+            return basevalue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(1, OnValueChanged, CoerceValue));
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            var control = (FooControl)d;
+            return basevalue;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
+            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 

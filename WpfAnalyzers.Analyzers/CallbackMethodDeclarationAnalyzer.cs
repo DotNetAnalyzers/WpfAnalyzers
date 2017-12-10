@@ -38,7 +38,8 @@
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
                     method.Parameters.Length == 2 &&
                     method.Parameters.TryGetAtIndex(1, out var argParameter) &&
-                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
+                    (argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
+                     argParameter.Type == KnownSymbol.Object) &&
                     TryGetRegistration(argument, context, out var registration))
                 {
                     if (registration.TryGetArgumentAtIndex(1, out var argTypeArg) &&
@@ -149,7 +150,8 @@
 
             if (argument.Parent?.Parent is ObjectCreationExpressionSyntax callbackCreation &&
                 callbackCreation.Type is SimpleNameSyntax simpleName &&
-                simpleName.Identifier.ValueText == "PropertyChangedCallback")
+                (simpleName.Identifier.ValueText == "PropertyChangedCallback" ||
+                 simpleName.Identifier.ValueText == "CoerceValueCallback"))
             {
                 if (callbackCreation.Parent is ArgumentSyntax parent)
                 {
