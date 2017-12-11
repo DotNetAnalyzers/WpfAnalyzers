@@ -80,9 +80,11 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [TestCase("int")]
-        [TestCase("System.Collections.IEnumerable")]
-        public void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
+        [TestCase("int", "int")]
+        [TestCase("System.IO.Stream", "IDisposable")]
+        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+        [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
+        public void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -108,29 +110,31 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (string)d.OldValue;
+            var newValue = (string)d.NewValue;
         }
 
         private static object CoerceValue(DependencyObject d, object basevalue)
         {
-            return (int)basevalue;
+            return (string)basevalue;
         }
 
         private static bool ValidateValue(object basevalue)
         {
-            return ((int)basevalue) > 1;
+            return ((string)basevalue) != null;
         }
     }
 }";
 
             testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", type);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
         [TestCase("bool", "bool?")]
+        [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
         public void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
@@ -174,9 +178,8 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            testCode = testCode.AssertReplace("as string", $"as {asType}");
             testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", asType);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

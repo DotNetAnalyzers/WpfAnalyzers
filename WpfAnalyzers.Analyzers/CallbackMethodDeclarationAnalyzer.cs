@@ -124,9 +124,8 @@
 
                     if (parent is BinaryExpressionSyntax binaryExpression &&
                         binaryExpression.IsKind(SyntaxKind.AsExpression) &&
-                        expectedType != KnownSymbol.Object &&
                         context.SemanticModel.GetTypeInfoSafe(binaryExpression.Right, context.CancellationToken).Type is ITypeSymbol asType &&
-                        !asType.Is(expectedType))
+                        !(asType.Is(expectedType) || expectedType.Is(asType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,

@@ -271,6 +271,11 @@
                 type = type.BaseType;
             }
 
+            if (other == KnownSymbol.Object)
+            {
+                return true;
+            }
+
             return false;
         }
 
