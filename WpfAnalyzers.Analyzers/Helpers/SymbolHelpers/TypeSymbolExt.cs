@@ -184,8 +184,7 @@
             SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
-            var namedTypeSymbol = nullableType as INamedTypeSymbol;
-            if (namedTypeSymbol == null ||
+            if (!(nullableType is INamedTypeSymbol namedTypeSymbol) ||
                 !namedTypeSymbol.IsGenericType ||
                 namedTypeSymbol.Name != "Nullable" ||
                 namedTypeSymbol.TypeParameters.Length != 1)
@@ -241,6 +240,12 @@
             if (IsSameType(type, other))
             {
                 return true;
+            }
+
+            if (type == KnownSymbol.Nullable)
+            {
+                return type is INamedTypeSymbol namedType &&
+                       Equals(namedType.TypeArguments[0], other);
             }
 
             if (other.IsInterface())
