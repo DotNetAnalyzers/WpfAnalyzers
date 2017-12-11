@@ -448,5 +448,47 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void FontFamilyConverterConvertFromString()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Media;
+
+    public class Foo
+    {
+        public static readonly DependencyProperty ButtonFontFamilyProperty = DependencyProperty.RegisterAttached(
+            ""ButtonFontFamily"",
+            typeof(FontFamily),
+            typeof(Foo),
+            new FrameworkPropertyMetadata(new FontFamilyConverter().ConvertFromString(""Marlett"")));
+
+        /// <summary>
+        /// Helper for setting ButtonFontFamily property on a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to set ButtonFontFamily property on.</param>
+        /// <param name=""value"">ButtonFontFamily property value.</param>
+        public static void SetButtonFontFamily(DependencyObject element, FontFamily value)
+        {
+            element.SetValue(ButtonFontFamilyProperty, value);
+        }
+
+        /// <summary>
+        /// Helper for reading ButtonFontFamily property from a DependencyObject.
+        /// </summary>
+        /// <param name=""element"">DependencyObject to read ButtonFontFamily property from.</param>
+        /// <returns>ButtonFontFamily property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+        public static FontFamily GetButtonFontFamily(DependencyObject element)
+        {
+            return (FontFamily)element.GetValue(ButtonFontFamilyProperty);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

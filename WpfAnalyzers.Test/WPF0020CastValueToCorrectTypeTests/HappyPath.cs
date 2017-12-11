@@ -130,6 +130,7 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
+        [TestCase("bool", "bool?")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
         public void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)

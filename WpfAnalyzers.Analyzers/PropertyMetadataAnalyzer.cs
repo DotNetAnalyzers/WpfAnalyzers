@@ -68,7 +68,8 @@
                     DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                     PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
-                    if (!registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken))
+                    if (!registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken) &&
+                        !IsInvocationReturningObject(defaultValueArg.Expression, context))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -94,6 +95,13 @@
                     }
                 }
             }
+        }
+
+        private static bool IsInvocationReturningObject(ExpressionSyntax expression, SyntaxNodeAnalysisContext context)
+        {
+            return expression is InvocationExpressionSyntax invocation &&
+                   context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
+                   method.ReturnType == KnownSymbol.Object;
         }
 
         private static bool IsNonEmptyArrayCreation(ArrayCreationExpressionSyntax arrayCreation, SyntaxNodeAnalysisContext context)
