@@ -1,3 +1,9 @@
+#### 2.1.0
+* WPF0050 default warning.
+* BUGFIX: handle as casts.
+* FEATURE: Handle is pattern matching
+* FEATURE: Handle switch pattern matching.
+
 #### 1.0.0
 * New analyzers
 

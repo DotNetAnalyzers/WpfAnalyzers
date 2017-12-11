@@ -1,5 +1,5 @@
 ﻿type file
-version 2.0.0.0
+version 2.1.0.0
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
@@ -13,7 +13,10 @@ projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  New analyzers
+  WPF0050 default warning.
+  BUGFIX: handle as casts.
+  FEATURE: Handle is pattern matching
+  FEATURE: Handle switch pattern matching.
 
 files
   bin/Release/netstandard1.3/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
