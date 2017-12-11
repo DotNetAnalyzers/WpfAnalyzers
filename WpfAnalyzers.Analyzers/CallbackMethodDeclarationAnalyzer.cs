@@ -143,7 +143,7 @@
                         expectedType != KnownSymbol.Object &&
                         isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
                         context.SemanticModel.GetTypeInfoSafe(isDeclaration.Type, context.CancellationToken).Type is ITypeSymbol isType &&
-                        !isType.Is(expectedType))
+                        !(isType.Is(expectedType) || expectedType.Is(isType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
@@ -167,7 +167,7 @@
                                 if (label is CasePatternSwitchLabelSyntax patternLabel &&
                                     patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
                                     context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
-                                    !caseType.Is(expectedType))
+                                    !(caseType.Is(expectedType) || expectedType.Is(caseType)))
                                 {
                                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                                         context.SemanticModel,

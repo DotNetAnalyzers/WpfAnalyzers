@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -185,9 +185,11 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
+        [TestCase("bool", "bool?")]
+        [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string asType)
+        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -247,8 +249,95 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace("is string", $"as {asType}");
             testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", isType);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [TestCase("object", "string")]
+        [TestCase("object", "System.Collections.IEnumerable")]
+        [TestCase("bool", "bool?")]
+        [TestCase("System.IO.Stream", "System.IDisposable")]
+        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+        public void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            switch (d)
+            {
+                case FooControl control:
+                    {
+                        switch (e.OldValue)
+                        {
+                            case string oldText:
+                                break;
+                        }
+
+                        switch (e.NewValue)
+                        {
+                            case string newText:
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            switch (d)
+            {
+                case FooControl control:
+                {
+                    switch (basevalue)
+                    {
+                        case string oldText:
+                            break;
+                    }
+                }
+                    break;
+            }
+
+            return basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            switch (basevalue)
+            {
+                case string text:
+                    return !string.IsNullOrWhiteSpace(text);
+                default:
+                    return false;
+            }
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", caseType);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

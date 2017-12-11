@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
+    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -325,8 +326,8 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix<CallbackMethodDeclarationAnalyzer, FixCastCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Test]
-        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns()
+        [TestCase("int", "string")]
+        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -385,12 +386,13 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", isType);
             AnalyzerAssert.Diagnostics<CallbackMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
-        [Test]
-        public void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns()
+        [TestCase("int", "string")]
+        public void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -466,7 +468,8 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            testCode = testCode.AssertReplace("int", type);
+            testCode = testCode.AssertReplace("string", caseType);
             AnalyzerAssert.Diagnostics<CallbackMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
         }
 
