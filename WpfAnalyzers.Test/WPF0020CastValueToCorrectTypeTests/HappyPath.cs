@@ -82,7 +82,7 @@ namespace RoslynSandbox
 
         [TestCase("int")]
         [TestCase("System.Collections.IEnumerable")]
-        public void DependencyPropertyRegisterWithAllCallbacks(string type)
+        public void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -124,6 +124,57 @@ namespace RoslynSandbox
     }
 }";
 
+            testCode = testCode.AssertReplace("int", type);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [TestCase("object", "string")]
+        [TestCase("object", "System.Collections.IEnumerable")]
+        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+        public void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as FooControl;
+            var oldValue = d.OldValue as string;
+            var newValue = d.NewValue as string;
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            return basevalue as string;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            return (basevalue as string) != null;
+        }
+    }
+}";
+
+            testCode = testCode.AssertReplace("as string", $"as {asType}");
             testCode = testCode.AssertReplace("int", type);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
