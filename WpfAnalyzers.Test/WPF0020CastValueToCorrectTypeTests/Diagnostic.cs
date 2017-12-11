@@ -390,6 +390,87 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            switch (d)
+            {
+                case FooControl control:
+                    {
+                        switch (e.OldValue)
+                        {
+                            case ↓string oldText:
+                                break;
+                        }
+
+                        switch (e.NewValue)
+                        {
+                            case ↓string newText:
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            switch (d)
+            {
+                case FooControl control:
+                {
+                    switch (basevalue)
+                    {
+                        case ↓string oldText:
+                            break;
+                    }
+                }
+                    break;
+            }
+
+            return basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            switch (basevalue)
+            {
+                case ↓string text:
+                    return !string.IsNullOrWhiteSpace(text);
+                default:
+                    return false;
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics<CallbackMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"

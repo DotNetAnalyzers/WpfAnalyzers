@@ -142,8 +142,8 @@
 
                     if (parent is IsPatternExpressionSyntax isPattern &&
                         expectedType != KnownSymbol.Object &&
-                        isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
-                        context.SemanticModel.GetTypeInfoSafe(declarationPattern.Type, context.CancellationToken).Type is ITypeSymbol isType &&
+                        isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
+                        context.SemanticModel.GetTypeInfoSafe(isDeclaration.Type, context.CancellationToken).Type is ITypeSymbol isType &&
                         !isType.Is(expectedType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
@@ -153,10 +153,39 @@
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 descriptor,
-                                declarationPattern.Type.GetLocation(),
+                                isDeclaration.Type.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
                                 expectedTypeName));
                     }
+
+                    if (parent is SwitchStatementSyntax switchStatement &&
+                        expectedType != KnownSymbol.Object)
+                    {
+                        foreach (var section in switchStatement.Sections)
+                        {
+                            foreach (var label in section.Labels)
+                            {
+                                if (label is CasePatternSwitchLabelSyntax patternLabel &&
+                                    patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
+                                    context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
+                                    !caseType.Is(expectedType))
+                                {
+                                    var expectedTypeName = expectedType.ToMinimalDisplayString(
+                                        context.SemanticModel,
+                                        label.SpanStart,
+                                        SymbolDisplayFormat.MinimallyQualifiedFormat);
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            descriptor,
+                                            labelDeclaration.Type.GetLocation(),
+                                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                            expectedTypeName));
+                                }
+                            }
+                        }
+
+                    }
+
                 }
             }
         }
