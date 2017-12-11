@@ -326,6 +326,70 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnValueChanged, CoerceValue),
+            ValidateValue);
+
+        public int Value
+        {
+            get { return (int)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is FooControl control)
+            {
+                if (e.OldValue is ↓string oldText)
+                {
+                }
+                if (e.NewValue is ↓string newText)
+                {
+                }
+            }
+        }
+
+        private static object CoerceValue(DependencyObject d, object basevalue)
+        {
+            if (d is FooControl control)
+            {
+                if (basevalue is ↓string text)
+                {
+                }
+            }
+
+            return basevalue;
+        }
+
+        private static bool ValidateValue(object basevalue)
+        {
+            if (basevalue is ↓string text)
+            {
+                return !string.IsNullOrWhiteSpace(text);
+            }
+
+            return false;
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics<CallbackMethodDeclarationAnalyzer>(ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"

@@ -139,6 +139,24 @@
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
                                 expectedTypeName));
                     }
+
+                    if (parent is IsPatternExpressionSyntax isPattern &&
+                        expectedType != KnownSymbol.Object &&
+                        isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
+                        context.SemanticModel.GetTypeInfoSafe(declarationPattern.Type, context.CancellationToken).Type is ITypeSymbol isType &&
+                        !isType.Is(expectedType))
+                    {
+                        var expectedTypeName = expectedType.ToMinimalDisplayString(
+                            context.SemanticModel,
+                            isPattern.SpanStart,
+                            SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                descriptor,
+                                declarationPattern.Type.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                expectedTypeName));
+                    }
                 }
             }
         }
