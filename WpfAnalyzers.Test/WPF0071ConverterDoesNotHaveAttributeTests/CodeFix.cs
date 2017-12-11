@@ -118,5 +118,127 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void AddAttributeIsPattern()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public class ↓CountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ICollection col)
+            {
+                return col.Count;
+            }
+
+            return 0;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(ICollection), typeof(int))]
+    public class CountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ICollection col)
+            {
+                return col.Count;
+            }
+
+            return 0;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void AddAttributeSwitchPattern()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public class ↓CountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch (value)
+            {
+                case ICollection col:
+                    return col.Count;
+                default:
+                    return 0;
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(ICollection), typeof(int))]
+    public class CountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch (value)
+            {
+                case ICollection col:
+                    return col.Count;
+                default:
+                    return 0;
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+        }
     }
 }

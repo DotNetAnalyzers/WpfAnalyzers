@@ -10,17 +10,13 @@ namespace WpfAnalyzers
     {
         private readonly List<CastExpressionSyntax> casts = new List<CastExpressionSyntax>();
         private readonly List<BinaryExpressionSyntax> asCasts = new List<BinaryExpressionSyntax>();
-        private readonly List<BinaryExpressionSyntax> isCasts = new List<BinaryExpressionSyntax>();
+        private readonly List<BinaryExpressionSyntax> isChecks = new List<BinaryExpressionSyntax>();
+        private readonly List<IsPatternExpressionSyntax> isPatterns = new List<IsPatternExpressionSyntax>();
+        private readonly List<CasePatternSwitchLabelSyntax> caseLabels = new List<CasePatternSwitchLabelSyntax>();
 
         private ConversionWalker()
         {
         }
-
-        public IReadOnlyList<CastExpressionSyntax> Casts => this.casts;
-
-        public IReadOnlyList<BinaryExpressionSyntax> AsCasts => this.asCasts;
-
-        public IReadOnlyList<BinaryExpressionSyntax> IsCasts => this.isCasts;
 
         public override void VisitCastExpression(CastExpressionSyntax node)
         {
@@ -37,10 +33,22 @@ namespace WpfAnalyzers
 
             if (node.IsKind(SyntaxKind.IsExpression))
             {
-                this.isCasts.Add(node);
+                this.isChecks.Add(node);
             }
 
             base.VisitBinaryExpression(node);
+        }
+
+        public override void VisitIsPatternExpression(IsPatternExpressionSyntax node)
+        {
+            this.isPatterns.Add(node);
+            base.VisitIsPatternExpression(node);
+        }
+
+        public override void VisitCasePatternSwitchLabel(CasePatternSwitchLabelSyntax node)
+        {
+            this.caseLabels.Add(node);
+            base.VisitCasePatternSwitchLabel(node);
         }
 
         internal static ConversionWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ConversionWalker());
@@ -124,10 +132,30 @@ namespace WpfAnalyzers
                     }
                 }
 
-                foreach (var cast in walker.isCasts)
+                foreach (var isCheck in walker.isChecks)
                 {
-                    if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
+                    if (IsFor(isCheck.Left, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, isCheck.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
+                    {
+                        return false;
+                    }
+                }
+
+                foreach (var isPattern in walker.isPatterns)
+                {
+                    if (isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
+                        IsFor(isPattern.Expression, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, declarationPattern.Type, semanticModel, cancellationToken, out toType))
+                    {
+                        return false;
+                    }
+                }
+
+                foreach (var label in walker.caseLabels)
+                {
+                    if (label.Pattern is DeclarationPatternSyntax declarationPattern &&
+                        IsFor(label.FirstAncestor<SwitchStatementSyntax>().Expression, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(toType, declarationPattern.Type, semanticModel, cancellationToken, out toType))
                     {
                         return false;
                     }
@@ -141,7 +169,9 @@ namespace WpfAnalyzers
         {
             this.casts.Clear();
             this.asCasts.Clear();
-            this.isCasts.Clear();
+            this.isChecks.Clear();
+            this.isPatterns.Clear();
+            this.caseLabels.Clear();
         }
     }
 }
