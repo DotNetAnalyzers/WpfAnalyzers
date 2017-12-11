@@ -181,17 +181,14 @@
                         return false;
                     }
 
-                    var xIdentifier = x as IdentifierNameSyntax;
-                    var yIdentifier = y as IdentifierNameSyntax;
-                    if (xIdentifier != null && yIdentifier != null)
+                    if (x is IdentifierNameSyntax xIdentifier &&
+                        y is IdentifierNameSyntax yIdentifier)
                     {
                         return xIdentifier.Identifier.ValueText == yIdentifier.Identifier.ValueText;
                     }
 
-                    var xName = x as QualifiedNameSyntax;
-                    var yName = y as QualifiedNameSyntax;
-
-                    if (xName != null && yName != null)
+                    if (x is QualifiedNameSyntax xName &&
+                        y is QualifiedNameSyntax yName)
                     {
                         return xName.Right.Identifier.ValueText == yName.Right.Identifier.ValueText &&
                                RecursiveEquals(xName.Left, yName.Left);
