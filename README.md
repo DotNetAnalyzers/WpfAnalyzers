@@ -25,7 +25,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md">WPF0004</a></td>
-  <td>CLR method for a DependencyProperty should match registered name.</td>
+  <td>CLR method for a DependencyProperty must match registered name.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md">WPF0005</a></td>

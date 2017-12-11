@@ -8,7 +8,7 @@
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "CLR method for a DependencyProperty should match registered name.",
+            title: "CLR method for a DependencyProperty must match registered name.",
             messageFormat: "Method '{0}' must be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
