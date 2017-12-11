@@ -36,8 +36,8 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [TestCase("ValueValidateValue);")]
-        [TestCase("new ValidateValueCallback(ValueValidateValue));")]
+        [TestCase("ValidateValue);")]
+        [TestCase("new ValidateValueCallback(ValidateValue));")]
         [TestCase("o => (int)o >= 0);")]
         public void DependencyPropertyWithCallback(string metadata)
         {
@@ -54,7 +54,7 @@ namespace RoslynSandbox
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)),
-            ValueValidateValue);
+            ValidateValue);
 
         public int Value
         {
@@ -62,13 +62,13 @@ namespace RoslynSandbox
             set { this.SetValue(ValueProperty, value); }
         }
 
-        private static bool ValueValidateValue(object value)
+        private static bool ValidateValue(object value)
         {
             return (int)value >= 0;
         }
     }
 }";
-            testCode = testCode.AssertReplace("ValueValidateValue);", metadata);
+            testCode = testCode.AssertReplace("ValidateValue);", metadata);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -88,7 +88,7 @@ namespace RoslynSandbox
             typeof(double),
             typeof(FooControl),
             new PropertyMetadata(1.0, null, CoerceValue),
-            ValueValidateValue);
+            ValidateValue);
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -103,7 +103,7 @@ namespace RoslynSandbox
             return baseValue;
         }
 
-        private static bool ValueValidateValue(object value)
+        private static bool ValidateValue(object value)
         {
             return (double)value >= 0;
         }
@@ -127,7 +127,7 @@ namespace RoslynSandbox
             typeof(int),
             typeof(Foo),
             new PropertyMetadata(default(int), null, CoerceBar),
-            BarValidateValue);
+            ValidateBar);
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
@@ -138,7 +138,7 @@ namespace RoslynSandbox
             return baseValue;
         }
 
-        private static bool BarValidateValue(object value)
+        private static bool ValidateBar(object value)
         {
             return (int)value >= 0;
         }
@@ -163,7 +163,7 @@ namespace RoslynSandbox
             typeof(int),
             typeof(Foo),
             new PropertyMetadata(default(int), OnBarChanged, CoerceBar),
-            BarValidateValue);
+            ValidateBar);
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -181,7 +181,7 @@ namespace RoslynSandbox
             return baseValue;
         }
 
-        private static bool BarValidateValue(object value)
+        private static bool ValidateBar(object value)
         {
             return (int)value >= 0;
         }

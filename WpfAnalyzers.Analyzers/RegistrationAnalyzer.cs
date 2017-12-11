@@ -37,15 +37,15 @@
                 if (Argument.TryGetArgument(method.Parameters, registerCall.ArgumentList, KnownSymbol.ValidateValueCallback, out var validateValueCallback) &&
                     Callback.TryGetName(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out _) &&
                     DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                    !callBackIdentifier.Identifier.ValueText.IsParts(registeredName, "ValidateValue"))
+                    !callBackIdentifier.Identifier.ValueText.IsParts("Validate", registeredName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
                             callBackIdentifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"{registeredName}ValidateValue"),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
                             callBackIdentifier,
-                            $"{registeredName}ValidateValue"));
+                            $"Validate{registeredName}"));
                 }
             }
         }

@@ -46,7 +46,7 @@ namespace RoslynSandbox
 }";
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0007",
-                "Method 'WrongName' should be named 'ValueValidateValue'");
+                "Method 'WrongName' should be named 'ValidateValue'");
             AnalyzerAssert.Diagnostics<RegistrationAnalyzer>(expectedDiagnostic, testCode);
         }
 
@@ -95,7 +95,7 @@ namespace RoslynSandbox
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)),
-            ValueValidateValue);
+            ValidateValue);
 
         public int Value
         {
@@ -103,14 +103,14 @@ namespace RoslynSandbox
             set { this.SetValue(ValueProperty, value); }
         }
 
-        private static bool ValueValidateValue(object value)
+        private static bool ValidateValue(object value)
         {
             return (int)value >= 0;
         }
     }
 }";
             testCode = testCode.AssertReplace("↓WrongName", callback);
-            fixedCode = fixedCode.AssertReplace("ValueValidateValue);", callback.AssertReplace("↓WrongName", "ValueValidateValue") + ");");
+            fixedCode = fixedCode.AssertReplace("ValidateValue);", callback.AssertReplace("↓WrongName", "ValidateValue") + ");");
             AnalyzerAssert.CodeFix<RegistrationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -165,7 +165,7 @@ namespace RoslynSandbox
             typeof(double),
             typeof(FooControl),
             new PropertyMetadata(1.0, null, CoerceValue),
-            ValueValidateValue);
+            ValidateValue);
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
 
@@ -180,7 +180,7 @@ namespace RoslynSandbox
             return baseValue;
         }
 
-        private static bool ValueValidateValue(object value)
+        private static bool ValidateValue(object value)
         {
             return (int)value >= 0;
         }
@@ -229,13 +229,13 @@ namespace RoslynSandbox
             typeof(int),
             typeof(Foo),
             new PropertyMetadata(1, null, null),
-            BarValidateValue);
+            ValidateBar);
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static bool BarValidateValue(object value)
+        private static bool ValidateBar(object value)
         {
             return (int)value >= 0;
         }
@@ -291,7 +291,7 @@ namespace RoslynSandbox
             typeof(int),
             typeof(Foo),
             new PropertyMetadata(default(int), null, CoerceBar),
-            BarValidateValue);
+            ValidateBar);
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -304,7 +304,7 @@ namespace RoslynSandbox
             return baseValue;
         }
 
-        private static bool BarValidateValue(object value)
+        private static bool ValidateBar(object value)
         {
             return (int)value >= 0;
         }

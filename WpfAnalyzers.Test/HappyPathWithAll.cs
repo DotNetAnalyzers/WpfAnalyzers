@@ -194,7 +194,7 @@ internal static class BooleanBoxes
                 FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure,
                 OnIntValueChanged,
                 CoerceIntValue),
-            IntValueValidateValue);
+            ValidateIntValue);
 
         /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
@@ -280,7 +280,7 @@ internal static class BooleanBoxes
             return d.GetValue(BarProperty);
         }
 
-        private static bool IntValueValidateValue(object value)
+        private static bool ValidateIntValue(object value)
         {
             return true;
         }

@@ -32,7 +32,7 @@ namespace RoslynSandbox
 
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0001",
-                "Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' must be named 'BarProperty'");
+                "Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' should be named 'BarProperty'.");
             AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
