@@ -145,7 +145,9 @@
                         expectedType != KnownSymbol.Object &&
                         isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
                         context.SemanticModel.GetTypeInfoSafe(isDeclaration.Type, context.CancellationToken).Type is ITypeSymbol isType &&
-                        !(isType.Is(expectedType) || expectedType.Is(isType)))
+                        !isType.IsInterface() &&
+                        !expectedType.IsInterface() &&
+                        !isType.Is(expectedType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
@@ -160,6 +162,7 @@
                     }
 
                     if (parent is SwitchStatementSyntax switchStatement &&
+                        !expectedType.IsInterface() &&
                         expectedType != KnownSymbol.Object)
                     {
                         foreach (var section in switchStatement.Sections)
@@ -169,7 +172,8 @@
                                 if (label is CasePatternSwitchLabelSyntax patternLabel &&
                                     patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
                                     context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
-                                    !(caseType.Is(expectedType) || expectedType.Is(caseType)))
+                                    !caseType.IsInterface() &&
+                                    !caseType.Is(expectedType))
                                 {
                                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                                         context.SemanticModel,
