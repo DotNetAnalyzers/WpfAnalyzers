@@ -1,3 +1,7 @@
+#### 2.1.2
+* BUGFIX: better check of casts
+* Feature: new analyzers for direct casts.
+
 #### 2.1.1
 * BUGFIX: allow as casts of interfaces.
 

@@ -1,5 +1,5 @@
 ﻿type file
-version 2.1.1.0
+version 2.1.2.0
 title WpfAnalyzers
 id WpfAnalyzers
 authors Johan Larsson
@@ -13,7 +13,8 @@ projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX: allow as casts of interfaces.
+  BUGFIX: better check of casts
+  Feature: new analyzers for direct casts.
 
 files
   bin/Release/netstandard1.3/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
