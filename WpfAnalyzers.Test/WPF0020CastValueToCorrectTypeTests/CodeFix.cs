@@ -1,10 +1,9 @@
 ﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
-    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Diagnostic
+    internal class CodeFix
     {
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0020");
 

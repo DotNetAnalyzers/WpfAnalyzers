@@ -16,7 +16,9 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0019CastSenderToCorrectType.DiagnosticId,
-            WPF0020CastValueToCorrectType.DiagnosticId);
+            WPF0020CastValueToCorrectType.DiagnosticId,
+            WPF0021DirectCastSenderToExactType.DiagnosticId,
+            WPF0022DirectCastValueToExactType.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 

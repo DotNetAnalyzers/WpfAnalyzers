@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A96555-15B1-4A0C-ADC1-059CEAA3F788}"
 	ProjectSection(SolutionItems) = preProject
@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF0018.md = documentation\WPF0018.md
 		documentation\WPF0019.md = documentation\WPF0019.md
 		documentation\WPF0020.md = documentation\WPF0020.md
+		documentation\WPF0021.md = documentation\WPF0021.md
+		documentation\WPF0022.md = documentation\WPF0022.md
 		documentation\WPF0030.md = documentation\WPF0030.md
 		documentation\WPF0031.md = documentation\WPF0031.md
 		documentation\WPF0032.md = documentation\WPF0032.md

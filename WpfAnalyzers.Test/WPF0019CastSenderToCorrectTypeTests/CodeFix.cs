@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Diagnostic
+    internal class CodeFix
     {
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0019");
 

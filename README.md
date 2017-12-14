@@ -84,6 +84,14 @@ Roslyn analyzers for WPF.
   <td>Cast value to correct type.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md">WPF0021</a></td>
+  <td>Cast sender to containing type.</td>
+</tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md">WPF0022</a></td>
+  <td>Cast value to correct type.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
   <td>Backing field for a DependencyProperty should be static and readonly.</td>
 </tr>

@@ -119,7 +119,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("(FooControl)", $"({type})");
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic.Create("WPF0019"), testCode);
         }
 
         [Test]
