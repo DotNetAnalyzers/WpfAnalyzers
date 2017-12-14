@@ -80,6 +80,48 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("FooControl")]
+        [TestCase("Control")]
+        public void DependencyPropertyRegisterDirectCast(string type)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnBarChanged, CoerceBar));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            var control = (FooControl)d;
+            var oldValue = (int)baseValue;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(FooControl)", $"({type})");
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [Test]
         public void DependencyPropertyRegisterReadOnly()
         {

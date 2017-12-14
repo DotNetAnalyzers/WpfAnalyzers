@@ -107,8 +107,8 @@
                     }
 
                     if (parent is CastExpressionSyntax castExpression &&
-                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol type &&
-                        !type.Is(expectedType))
+                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol castType &&
+                        !expectedType.Is(castType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
