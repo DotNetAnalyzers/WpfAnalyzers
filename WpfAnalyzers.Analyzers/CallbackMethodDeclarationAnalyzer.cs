@@ -45,8 +45,8 @@
                     argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out var senderType, out var valueType))
                 {
-                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
                 }
 
                 // CoerceValueCallback
@@ -58,8 +58,8 @@
                     argParameter.Type == KnownSymbol.Object &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out senderType, out valueType))
                 {
-                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
                 }
 
                 // ValidateValueCallback
@@ -88,10 +88,7 @@
             }
         }
 
-        private static void HandleCasts(
-            SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodDeclaration, IParameterSymbol parameter,
-            ITypeSymbol expectedType, DiagnosticDescriptor wrongTypeDescriptor,
-            DiagnosticDescriptor notExactTypeDescriptor)
+        private static void HandleCasts(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodDeclaration, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor wrongTypeDescriptor, DiagnosticDescriptor notExactTypeDescriptor)
         {
             if (expectedType == null)
             {
@@ -112,8 +109,7 @@
                     }
 
                     if (parent is CastExpressionSyntax castExpression &&
-                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken)
-                               .Type is ITypeSymbol castType &&
+                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol castType &&
                         !Equals(castType, expectedType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(

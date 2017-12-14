@@ -58,6 +58,18 @@
                             this.GetType().FullName,
                             diagnostic);
                     }
+
+                    if (node.FirstAncestorOrSelf<QualifiedNameSyntax>() is QualifiedNameSyntax qualifiedName &&
+                        !qualifiedName.IsMissing)
+                    {
+                        context.RegisterDocumentEditorFix(
+                            $"Change type to: {registeredType}.",
+                            (e, _) => e.ReplaceNode(
+                                qualifiedName,
+                                (x, __) => SyntaxFactory.ParseTypeName(registeredType)),
+                            this.GetType().FullName,
+                            diagnostic);
+                    }
                 }
             }
         }
