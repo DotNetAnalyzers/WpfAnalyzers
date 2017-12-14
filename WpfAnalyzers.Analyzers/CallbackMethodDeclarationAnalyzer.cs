@@ -163,7 +163,7 @@
                                .Type is ITypeSymbol isType &&
                         !isType.IsInterface() &&
                         !expectedType.IsInterface() &&
-                        !isType.Is(expectedType))
+                        !(isType.Is(expectedType) || expectedType.Is(isType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
@@ -192,7 +192,7 @@
                                                context.CancellationToken)
                                            .Type is ITypeSymbol caseType &&
                                     !caseType.IsInterface() &&
-                                    !caseType.Is(expectedType))
+                                    !(caseType.Is(expectedType) || expectedType.Is(caseType)))
                                 {
                                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                                         context.SemanticModel,
