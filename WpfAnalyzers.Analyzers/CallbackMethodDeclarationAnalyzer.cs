@@ -142,7 +142,7 @@
                                .Type is ITypeSymbol asType &&
                         !asType.IsInterface() &&
                         !expectedType.IsInterface() &&
-                        !asType.Is(expectedType))
+                        !(asType.Is(expectedType) || expectedType.Is(asType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
