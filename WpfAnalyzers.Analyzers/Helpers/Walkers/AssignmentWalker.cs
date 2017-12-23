@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -25,6 +25,14 @@
         }
 
         internal static AssignmentWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new AssignmentWalker());
+
+        internal static bool TryGetSingle(SyntaxNode node, out AssignmentExpressionSyntax result)
+        {
+            using (var walker = Borrow(node))
+            {
+                return walker.assignments.TryGetSingle(out result);
+            }
+        }
 
         internal static bool Assigns(IFieldSymbol field, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
         {

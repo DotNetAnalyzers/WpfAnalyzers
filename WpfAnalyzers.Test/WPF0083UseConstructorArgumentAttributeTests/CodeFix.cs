@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
+namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -84,6 +84,72 @@ namespace RoslynSandbox
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return Text;
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<WPF0083UseConstructorArgumentAttribute, ConstructorArgumentAttributeFix>(testCode, fixedCode);
+        }
+
+        [Test]
+        public void WhenMissingAssigningBackingField()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Windows.Markup;
+
+    [MarkupExtensionReturnType(typeof(string))]
+    public class FooExtension : MarkupExtension
+    {
+        private string text;
+
+        public FooExtension(string text)
+        {
+            this.text = text;
+        }
+
+        public string ↓Text
+        {
+            get { return this.text; }
+            set { this.text = value; }
+        }
+
+        /// <inheritdoc />
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this.Text;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Windows.Markup;
+
+    [MarkupExtensionReturnType(typeof(string))]
+    public class FooExtension : MarkupExtension
+    {
+        private string text;
+
+        public FooExtension(string text)
+        {
+            this.text = text;
+        }
+
+        [ConstructorArgument(""text"")]
+        public string Text
+        {
+            get { return this.text; }
+            set { this.text = value; }
+        }
+
+        /// <inheritdoc />
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this.Text;
         }
     }
 }";

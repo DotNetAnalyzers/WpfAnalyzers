@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -46,11 +46,36 @@
 
         internal static bool IsAssigned(PropertyDeclarationSyntax propertyDeclaration, out string parameterName)
         {
+            bool TryGetAssignedName(AssignmentExpressionSyntax assignment, out string name)
+            {
+                name = null;
+                if (assignment.Left is IdentifierNameSyntax identifierName)
+                {
+                    name = identifierName.Identifier.ValueText;
+                }
+
+                if (assignment.Left is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.Expression is ThisExpressionSyntax &&
+                    memberAccess.Name is IdentifierNameSyntax nameSyntax)
+                {
+                    name = nameSyntax.Identifier.ValueText;
+                }
+
+                return name != null;
+            }
+
             parameterName = null;
             var typeDeclaration = propertyDeclaration?.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             if (typeDeclaration == null)
             {
                 return false;
+            }
+
+            var backingFieldName = "<missing>";
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                AssignmentWalker.TryGetSingle(setter, out var fieldAssignment) &&
+                TryGetAssignedName(fieldAssignment, out backingFieldName))
+            {
             }
 
             using (var walker = AssignmentWalker.Borrow(typeDeclaration))
@@ -63,31 +88,22 @@
                         continue;
                     }
 
-                    if (assignment.Left is IdentifierNameSyntax identifierName &&
-                        propertyDeclaration.Identifier.ValueText != identifierName.Identifier.ValueText)
+                    if (TryGetAssignedName(assignment, out var name) &&
+                        (propertyDeclaration.Identifier.ValueText == name ||
+                         backingFieldName == name))
                     {
-                        continue;
-                    }
-
-                    if (assignment.Left is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Expression is ThisExpressionSyntax &&
-                        memberAccess.Name is IdentifierNameSyntax nameSyntax &&
-                        propertyDeclaration.Identifier.ValueText != nameSyntax.Identifier.ValueText)
-                    {
-                        continue;
-                    }
-
-                    if (assignment.Right is IdentifierNameSyntax candidate &&
-                        ctor.ParameterList.Parameters.TryGetSingle(x => x.Identifier.ValueText == candidate.Identifier.ValueText, out var parameter))
-                    {
-                        if (parameterName != null &&
-                            parameterName != parameter.Identifier.ValueText)
+                        if (assignment.Right is IdentifierNameSyntax candidate &&
+                            ctor.ParameterList.Parameters.TryGetSingle(x => x.Identifier.ValueText == candidate.Identifier.ValueText, out var parameter))
                         {
-                            parameterName += ", " + parameter.Identifier.ValueText;
-                        }
-                        else
-                        {
-                            parameterName = parameter.Identifier.ValueText;
+                            if (parameterName != null &&
+                                parameterName != parameter.Identifier.ValueText)
+                            {
+                                parameterName += ", " + parameter.Identifier.ValueText;
+                            }
+                            else
+                            {
+                                parameterName = parameter.Identifier.ValueText;
+                            }
                         }
                     }
                 }
