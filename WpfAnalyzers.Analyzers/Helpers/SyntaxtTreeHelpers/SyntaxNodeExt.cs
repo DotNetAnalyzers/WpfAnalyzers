@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -12,10 +12,12 @@
                 return null;
             }
 
-            var ancestor = node.FirstAncestorOrSelf<T>();
-            return ReferenceEquals(ancestor, node)
-                ? node.Parent?.FirstAncestorOrSelf<T>()
-                : ancestor;
+            if (node is T)
+            {
+                return node.Parent?.FirstAncestorOrSelf<T>();
+            }
+
+            return node.FirstAncestorOrSelf<T>();
         }
     }
 }
