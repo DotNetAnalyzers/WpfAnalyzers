@@ -1,4 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
@@ -13,7 +13,7 @@ namespace WpfAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementValueConverterCodeFixProvider))]
     [Shared]
-    internal class ImplementValueConverterCodeFixProvider : CodeFixProvider
+    internal class ImplementValueConverterCodeFixProvider : DocumentEditorCodeFixProvider
     {
         private static readonly MethodDeclarationSyntax IValueConverterConvert = ParseMethod(
             @"        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -31,7 +31,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS0535");
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -55,7 +55,7 @@ namespace WpfAnalyzers
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IValueConverter.Convert(object, Type, object, CultureInfo)'"))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             "Implement IValueConverter.Convert for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvert),
                             "Implement IValueConverter",
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IValueConverter.ConvertBack(object, Type, object, CultureInfo)'"))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             "Implement IValueConverter.ConvertBack for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
                             "Implement IValueConverter",
@@ -78,7 +78,7 @@ namespace WpfAnalyzers
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IMultiValueConverter.Convert(object[], Type, object, CultureInfo)'"))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             "Implement IMultiValueConverter.Convert for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvert),
                             "Implement IMultiValueConverter",
@@ -88,7 +88,7 @@ namespace WpfAnalyzers
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IMultiValueConverter.ConvertBack(object, Type[], object, CultureInfo)'"))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             "Implement IMultiValueConverter.ConvertBack for one way bindings.",
                             (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
                             "Implement IMultiValueConverter",

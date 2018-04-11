@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -13,21 +13,18 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddDefaultMemberFix))]
     [Shared]
-    internal class AddDefaultMemberFix : CodeFixProvider
+    internal class AddDefaultMemberFix : DocumentEditorCodeFixProvider
     {
         private const string DefaultFieldFormat = "{0} static readonly {1} Default = new {1}();";
         private const string DefaultDocs = "/// <summary> Gets the default instance </summary>";
         private const string DefaulPropertyFormat = "{0} static {1} Default {{ get; }} = new {1}();";
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0070ConverterDoesNotHaveDefaultField.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0070ConverterDoesNotHaveDefaultField.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -45,23 +42,23 @@
                                          .FirstAncestorOrSelf<ClassDeclarationSyntax>();
                 if (classDeclarationSyntax != null)
                 {
-                    context.RegisterDocumentEditorFix(
-                        $"Add default field.",
+                    context.RegisterCodeFix(
+                        "Add default field.",
                         (e, _) => AddDefaultField(e, classDeclarationSyntax),
                         diagnostic);
 
-                    context.RegisterDocumentEditorFix(
-                        $"Add default field with docs.",
+                    context.RegisterCodeFix(
+                        "Add default field with docs.",
                         (e, _) => AddDefaultFieldWithDocs(e, classDeclarationSyntax),
                         diagnostic);
 
-                    context.RegisterDocumentEditorFix(
-                        $"Add default property.",
+                    context.RegisterCodeFix(
+                        "Add default property.",
                         (e, _) => AddDefaultProperty(e, classDeclarationSyntax),
                         diagnostic);
 
-                    context.RegisterDocumentEditorFix(
-                        $"Add default property with docs.",
+                    context.RegisterCodeFix(
+                        "Add default property with docs.",
                         (e, _) => AddDefaultPropertyWithDocs(e, classDeclarationSyntax),
                         diagnostic);
                 }

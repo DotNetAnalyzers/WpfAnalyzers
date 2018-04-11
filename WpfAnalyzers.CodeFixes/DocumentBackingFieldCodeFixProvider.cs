@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -12,17 +12,14 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentBackingFieldCodeFixProvider))]
     [Shared]
-    internal class DocumentBackingFieldCodeFixProvider : CodeFixProvider
+    internal class DocumentBackingFieldCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(WPF0060DocumentDependencyPropertyBackingField.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -39,7 +36,7 @@
                                        .FirstAncestorOrSelf<MemberDeclarationSyntax>();
                 if (member != null)
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Add xml documentation.",
                         (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
                         this.GetType(),

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,7 +11,7 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ValueConversionAttributeFix))]
     [Shared]
-    internal class ValueConversionAttributeFix : CodeFixProvider
+    internal class ValueConversionAttributeFix : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeSyntax Attribute = SyntaxFactory
             .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute"))
@@ -22,10 +22,7 @@
             ImmutableArray.Create(WPF0071ConverterDoesNotHaveAttribute.DiagnosticId, WPF0073ConverterDoesNotHaveAttributeUnknownTypes.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -47,14 +44,14 @@
                 if (classDeclaration != null &&
                     ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out sourceType, out targetType))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
                         diagnostic);
                 }
                 else
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))]..",
                         (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
                         diagnostic);

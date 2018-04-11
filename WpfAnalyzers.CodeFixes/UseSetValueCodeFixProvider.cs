@@ -19,6 +19,8 @@ namespace WpfAnalyzers
             WPF0043DontUseSetCurrentValueForDataContext.DiagnosticId,
             WPF0035ClrPropertyUseSetValueInSetter.DiagnosticId);
 
+        public override FixAllProvider GetFixAllProvider() => null;
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)

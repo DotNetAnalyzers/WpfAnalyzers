@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -10,17 +10,14 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MarkupExtensionReturnTypeArgumentFix))]
     [Shared]
-    internal class MarkupExtensionReturnTypeArgumentFix : CodeFixProvider
+    internal class MarkupExtensionReturnTypeArgumentFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0081MarkupExtensionReturnTypeMustUseCorrectType.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -40,7 +37,7 @@
                 var attribute = argument.FirstAncestor<AttributeSyntax>();
                 if (MarkupExtension.TryGetReturnType(attribute.FirstAncestor<ClassDeclarationSyntax>(), semanticModel, context.CancellationToken, out var returnType))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Change type to {returnType}.",
                         (e, _) => FixType(e, argument, returnType),
                         this.GetType(),

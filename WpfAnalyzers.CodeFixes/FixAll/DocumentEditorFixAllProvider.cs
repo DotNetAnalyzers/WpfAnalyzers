@@ -1,6 +1,5 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading;
@@ -10,26 +9,28 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Editing;
 
-    internal class DocumentEditorFixAllProvider : FixAllProvider
+    public sealed class DocumentEditorFixAllProvider : FixAllProvider
     {
-        public static readonly DocumentEditorFixAllProvider Default = new DocumentEditorFixAllProvider();
+        public static readonly DocumentEditorFixAllProvider Document = new DocumentEditorFixAllProvider(ImmutableArray.Create(FixAllScope.Document));
 
-        private static readonly ImmutableArray<FixAllScope> SupportedFixAllScopes = ImmutableArray.Create(FixAllScope.Document);
+        public static readonly DocumentEditorFixAllProvider Project = new DocumentEditorFixAllProvider(ImmutableArray.Create(FixAllScope.Document, FixAllScope.Project));
 
-        private DocumentEditorFixAllProvider()
+        public static readonly DocumentEditorFixAllProvider Solution = new DocumentEditorFixAllProvider(ImmutableArray.Create(FixAllScope.Document, FixAllScope.Project, FixAllScope.Solution));
+
+        private readonly ImmutableArray<FixAllScope> supportedFixAllScopes;
+
+        private DocumentEditorFixAllProvider(ImmutableArray<FixAllScope> supportedFixAllScopes)
         {
+            this.supportedFixAllScopes = supportedFixAllScopes;
         }
 
-        public override IEnumerable<FixAllScope> GetSupportedFixAllScopes()
-        {
-            return SupportedFixAllScopes;
-        }
+        public override IEnumerable<FixAllScope> GetSupportedFixAllScopes() => this.supportedFixAllScopes;
 
         public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
         {
             var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document)
                                                  .ConfigureAwait(false);
-            var documentEditorActions = new List<DocumentEditorAction>();
+            var actions = new List<DocumentEditorAction>();
             foreach (var diagnostic in diagnostics)
             {
                 var codeFixContext = new CodeFixContext(
@@ -39,14 +40,7 @@
                     {
                         if (a.EquivalenceKey == fixAllContext.CodeActionEquivalenceKey)
                         {
-                            if (a is DocumentEditorAction docAction)
-                            {
-                                documentEditorActions.Add(docAction);
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException("When using DocumentEditorFixAllProvider all registered code actions must be of type DocumentEditorAction");
-                            }
+                            actions.Add((DocumentEditorAction)a);
                         }
                     },
                     fixAllContext.CancellationToken);
@@ -54,19 +48,19 @@
                                    .ConfigureAwait(false);
             }
 
-            if (documentEditorActions.Count == 0)
+            if (actions.Count == 0)
             {
                 return null;
             }
 
-            return CodeAction.Create(documentEditorActions[0].Title, c => FixDocumentAsync(fixAllContext.Document, documentEditorActions, c));
+            return CodeAction.Create(actions[0].Title, c => FixDocumentAsync(fixAllContext.Document, actions, c));
         }
 
-        private static async Task<Document> FixDocumentAsync(Document document, IReadOnlyList<DocumentEditorAction> documentEditorActions, CancellationToken cancellationToken)
+        private static async Task<Document> FixDocumentAsync(Document document, IReadOnlyList<DocumentEditorAction> actions, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            foreach (var action in documentEditorActions)
+            foreach (var action in actions)
             {
                 action.Action(editor, cancellationToken);
             }

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,16 +11,13 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyStaticReadonlyCodeFixProvider))]
     [Shared]
-    internal class MakePropertyStaticReadonlyCodeFixProvider : CodeFixProvider
+    internal class MakePropertyStaticReadonlyCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -40,10 +37,10 @@
                     continue;
                 }
 
-                context.RegisterDocumentEditorFix(
-                        "Make static readonly",
-                        (e, _) => ApplyFix(e, declaration),
-                        this.GetType(),
+                context.RegisterCodeFix(
+                    "Make static readonly",
+                    (e, _) => ApplyFix(e, declaration),
+                    this.GetType(),
                     diagnostic);
             }
         }

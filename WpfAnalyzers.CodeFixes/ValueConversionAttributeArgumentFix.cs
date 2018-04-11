@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -10,17 +10,14 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ValueConversionAttributeArgumentFix))]
     [Shared]
-    internal class ValueConversionAttributeArgumentFix : CodeFixProvider
+    internal class ValueConversionAttributeArgumentFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(WPF0072ValueConversionMustUseCorrectTypes.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -45,7 +42,7 @@
                     out var sourceType,
                     out var targetType))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         (e, _) => FixArgument(e, attribute, sourceType, targetType),
                         diagnostic);

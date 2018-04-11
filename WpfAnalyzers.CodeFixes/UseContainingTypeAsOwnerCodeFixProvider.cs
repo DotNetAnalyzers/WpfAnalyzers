@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,17 +11,15 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseContainingTypeAsOwnerCodeFixProvider))]
     [Shared]
-    internal class UseContainingTypeAsOwnerCodeFixProvider : CodeFixProvider
+    internal class UseContainingTypeAsOwnerCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId,
             WPF0101RegisterContainingTypeAsOwner.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -53,9 +51,9 @@
                 }
 
                 var containingTypeName = type.ToMinimalDisplayString(semanticModel, argument.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                context.RegisterDocumentEditorFix(
-                        $"Use containing type: {containingTypeName}.",
-                        (e, _) => Fix(e, (TypeOfExpressionSyntax)argument.Expression, containingTypeName),
+                context.RegisterCodeFix(
+                    $"Use containing type: {containingTypeName}.",
+                    (e, _) => Fix(e, (TypeOfExpressionSyntax)argument.Expression, containingTypeName),
                     diagnostic);
             }
         }

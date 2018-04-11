@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -10,17 +10,14 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AttachedPropertyBrowsableForTypeArgumentFix))]
     [Shared]
-    internal class AttachedPropertyBrowsableForTypeArgumentFix : CodeFixProvider
+    internal class AttachedPropertyBrowsableForTypeArgumentFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -41,7 +38,7 @@
                                         .FirstAncestor<MethodDeclarationSyntax>();
                 if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var parameterType))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Change type to {parameterType}.",
                         (e, _) => Fix(e, argument, parameterType),
                         this.GetType(),

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -13,17 +13,14 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentClrMethodCodeFixProvider))]
     [Shared]
-    internal class DocumentClrMethodCodeFixProvider : CodeFixProvider
+    internal class DocumentClrMethodCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0061ClrMethodShouldHaveDocs.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0061ClrMethodShouldHaveDocs.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -40,7 +37,7 @@
                                        .FirstAncestorOrSelf<MethodDeclarationSyntax>();
                 if (member != null)
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Add xml documentation.",
                         (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
                         this.GetType(),

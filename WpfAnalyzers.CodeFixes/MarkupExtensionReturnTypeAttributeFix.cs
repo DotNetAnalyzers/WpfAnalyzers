@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,21 +11,18 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MarkupExtensionReturnTypeAttributeFix))]
     [Shared]
-    internal class MarkupExtensionReturnTypeAttributeFix : CodeFixProvider
+    internal class MarkupExtensionReturnTypeAttributeFix : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeSyntax Attribute = SyntaxFactory
             .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute"))
             .WithSimplifiedNames();
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0080MarkupExtensionDoesNotHaveAttribute.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0080MarkupExtensionDoesNotHaveAttribute.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -45,7 +42,7 @@
                 if (classDeclaration != null &&
                     MarkupExtension.TryGetReturnType(classDeclaration, semanticModel, context.CancellationToken, out var returnType))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Add MarkupExtensionReturnTypeAttribute.",
                         (e, _) => AddAttribute(e, classDeclaration, returnType),
                         diagnostic);

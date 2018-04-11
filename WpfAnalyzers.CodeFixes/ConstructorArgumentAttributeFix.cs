@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,7 +11,7 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorArgumentAttributeFix))]
     [Shared]
-    internal class ConstructorArgumentAttributeFix : CodeFixProvider
+    internal class ConstructorArgumentAttributeFix : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeSyntax Attribute = SyntaxFactory
             .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute"))
@@ -22,10 +22,7 @@
             ImmutableArray.Create(WPF0083UseConstructorArgumentAttribute.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -43,8 +40,8 @@
                 if (propertyDeclaration != null &&
                     ConstructorArgument.IsAssigned(propertyDeclaration, out var parameterName))
                 {
-                    context.RegisterDocumentEditorFix(
-                        $"Add ConstructorArgumentAttribute.",
+                    context.RegisterCodeFix(
+                        "Add ConstructorArgumentAttribute.",
                         (e, _) => AddAttribute(e, propertyDeclaration, parameterName),
                         diagnostic);
                 }

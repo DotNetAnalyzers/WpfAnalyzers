@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,7 +11,7 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FixCastCodeFixProvider))]
     [Shared]
-    internal class FixCastCodeFixProvider : CodeFixProvider
+    internal class FixCastCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -20,10 +20,8 @@
             WPF0021DirectCastSenderToExactType.DiagnosticId,
             WPF0022DirectCastValueToExactType.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -42,7 +40,7 @@
                     if (node.FirstAncestorOrSelf<IdentifierNameSyntax>() is IdentifierNameSyntax identifierName &&
                         !identifierName.IsMissing)
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Change type to: {registeredType}.",
                             (e, _) => ChangeType(e, identifierName, registeredType),
                             this.GetType().FullName,
@@ -52,7 +50,7 @@
                     if (node.FirstAncestorOrSelf<PredefinedTypeSyntax>() is PredefinedTypeSyntax predefinedType &&
                         !predefinedType.IsMissing)
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Change type to: {registeredType}.",
                             (e, _) => ChangeType(e, predefinedType, registeredType),
                             this.GetType().FullName,
@@ -62,7 +60,7 @@
                     if (node.FirstAncestorOrSelf<QualifiedNameSyntax>() is QualifiedNameSyntax qualifiedName &&
                         !qualifiedName.IsMissing)
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Change type to: {registeredType}.",
                             (e, _) => e.ReplaceNode(
                                 qualifiedName,

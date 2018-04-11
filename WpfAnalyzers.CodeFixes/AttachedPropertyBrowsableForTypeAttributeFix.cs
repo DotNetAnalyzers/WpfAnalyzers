@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,7 +11,7 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AttachedPropertyBrowsableForTypeAttributeFix))]
     [Shared]
-    internal class AttachedPropertyBrowsableForTypeAttributeFix : CodeFixProvider
+    internal class AttachedPropertyBrowsableForTypeAttributeFix : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeSyntax Attribute = SyntaxFactory
             .Attribute(SyntaxFactory.ParseName("System.Windows.AttachedPropertyBrowsableForTypeAttribute"))
@@ -22,10 +22,7 @@
             ImmutableArray.Create(WPF0071ConverterDoesNotHaveAttribute.DiagnosticId, WPF0033UseAttachedPropertyBrowsableForTypeAttribute.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -44,9 +41,10 @@
                                                  .FirstAncestorOrSelf<MethodDeclarationSyntax>();
                 if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var type))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         $"Add [AttachedPropertyBrowsableForTypeAttribute(typeof({type})))].",
                         (e, _) => AddAttribute(e, methodDeclaration, type),
+                        this.GetType().FullName,
                         diagnostic);
                 }
             }

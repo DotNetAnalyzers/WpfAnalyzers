@@ -21,9 +21,9 @@ namespace WpfAnalyzers
 
         public Action<DocumentEditor, CancellationToken> Action { get; }
 
-        public override sealed string Title { get; }
+        public sealed override string Title { get; }
 
-        public override sealed string EquivalenceKey { get; }
+        public sealed override string EquivalenceKey { get; }
 
         protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
         {
