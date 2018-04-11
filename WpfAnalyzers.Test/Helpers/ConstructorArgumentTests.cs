@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var attribute = syntaxTree.FindBestMatch<AttributeSyntax>("ConstructorArgument");
+            var attribute = syntaxTree.FindAttribute("ConstructorArgument");
             Assert.AreEqual(true, ConstructorArgument.IsMatch(attribute, out _, out _));
         }
 
@@ -67,7 +67,7 @@ namespace RoslynSandbox
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var attribute = syntaxTree.FindBestMatch<AttributeSyntax>("ConstructorArgument");
+            var attribute = syntaxTree.FindAttribute("ConstructorArgument");
             Assert.AreEqual(false, ConstructorArgument.IsMatch(attribute, out _, out var parameterName));
             Assert.AreEqual("text", parameterName);
         }
