@@ -14,7 +14,7 @@ namespace WpfAnalyzers
                 if (simpleName.Identifier.ValueText == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, simpleName.Identifier.ValueText))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 
@@ -27,7 +27,7 @@ namespace WpfAnalyzers
                 if (typeName == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, typeName))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 
