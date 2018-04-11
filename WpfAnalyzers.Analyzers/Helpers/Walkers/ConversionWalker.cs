@@ -99,7 +99,7 @@ namespace WpfAnalyzers
                     return true;
                 }
 
-                using (var set = PooledHashSet<ITypeSymbol>.Borrow())
+                using (var set = PooledSet<ITypeSymbol>.Borrow())
                 {
                     set.UnionWith(t1.RecursiveBaseTypes());
                     set.IntersectWith(t2.RecursiveBaseTypes());

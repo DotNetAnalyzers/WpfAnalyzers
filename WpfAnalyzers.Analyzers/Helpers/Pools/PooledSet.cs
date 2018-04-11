@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System;
     using System.Collections;
@@ -6,14 +6,14 @@
     using System.Collections.Generic;
     using System.Diagnostics;
 
-    internal sealed class PooledHashSet<T> : IDisposable, IReadOnlyCollection<T>
+    internal sealed class PooledSet<T> : IDisposable, IReadOnlyCollection<T>
     {
-        private static readonly ConcurrentQueue<PooledHashSet<T>> Cache = new ConcurrentQueue<PooledHashSet<T>>();
+        private static readonly ConcurrentQueue<PooledSet<T>> Cache = new ConcurrentQueue<PooledSet<T>>();
         private readonly HashSet<T> inner = new HashSet<T>();
 
         private int refCount;
 
-        private PooledHashSet()
+        private PooledSet()
         {
         }
 
@@ -49,18 +49,18 @@
             }
         }
 
-        internal static PooledHashSet<T> Borrow()
+        internal static PooledSet<T> Borrow()
         {
             if (!Cache.TryDequeue(out var set))
             {
-                set = new PooledHashSet<T>();
+                set = new PooledSet<T>();
             }
 
             set.refCount = 1;
             return set;
         }
 
-        internal static PooledHashSet<T> Borrow(PooledHashSet<T> set)
+        internal static PooledSet<T> Borrow(PooledSet<T> set)
         {
             if (set == null)
             {

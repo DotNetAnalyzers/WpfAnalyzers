@@ -1,14 +1,21 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Concurrent;
     using System.Text;
 
-    internal static class StringBuilderPool
+    /// <summary>
+    /// A pooled <see cref="StringBuilder"/>
+    /// </summary>
+    public static class StringBuilderPool
     {
         private static readonly ConcurrentQueue<PooledStringBuilder> Cache = new ConcurrentQueue<PooledStringBuilder>();
 
-        internal static PooledStringBuilder Borrow()
+        /// <summary>
+        /// Borrow an instance.
+        /// </summary>
+        /// <returns>A <see cref="PooledStringBuilder"/></returns>
+        public static PooledStringBuilder Borrow()
         {
             if (Cache.TryDequeue(out var item))
             {
@@ -18,40 +25,46 @@
             return new PooledStringBuilder();
         }
 
-        internal static string Return(this PooledStringBuilder stringBuilder)
-        {
-            var text = stringBuilder.GetTextAndClear();
-            Cache.Enqueue(stringBuilder);
-            return text;
-        }
-
-        internal class PooledStringBuilder
+        public class PooledStringBuilder
         {
             private readonly StringBuilder inner = new StringBuilder();
 
-            public void Clear() => this.inner.Clear();
-
+            /// <summary>
+            /// Adds a line of text to the inner <see cref="StringBuilder"/>.
+            /// </summary>
+            /// <param name="text">The text</param>
+            /// <returns>This instance.</returns>
             public PooledStringBuilder AppendLine(string text)
             {
                 this.inner.AppendLine(text);
                 return this;
             }
 
+            /// <summary>
+            /// Adds an empty of text to the inner <see cref="StringBuilder"/>.
+            /// </summary>
+            /// <returns>This instance.</returns>
             public PooledStringBuilder AppendLine()
             {
                 this.inner.AppendLine();
                 return this;
             }
 
-            [Obsolete("Use StringBuilderPool.Return", true)]
+            /// <inheritdoc/>
+            [Obsolete("Use Return", true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
             public override string ToString() => throw new InvalidOperationException("Use StringBuilderPool.Return");
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
-            public string GetTextAndClear()
+            /// <summary>
+            /// Get the string and return this instance to the pool.
+            /// </summary>
+            /// <returns>The text.</returns>
+            public string Return()
             {
                 var text = this.inner.ToString();
                 this.inner.Clear();
+                Cache.Enqueue(this);
                 return text;
             }
         }

@@ -47,7 +47,7 @@
             {
                 using (var walker = ReturnExpressionsWalker.Borrow(convertMethod))
                 {
-                    using (var returnTypes = PooledHashSet<ITypeSymbol>.Borrow())
+                    using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
                         return returnTypes.TryGetSingle(out targetType) &&
