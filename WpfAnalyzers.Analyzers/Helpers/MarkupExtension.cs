@@ -21,7 +21,7 @@
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        return returnTypes.TryGetSingle(out returnType);
+                        return returnTypes.TrySingle(out returnType);
                     }
                 }
             }

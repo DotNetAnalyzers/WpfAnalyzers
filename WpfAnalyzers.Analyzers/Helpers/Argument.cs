@@ -20,7 +20,7 @@
                 var parameter = parameters[i];
                 if (parameter.Type == type)
                 {
-                    if (arguments.Arguments.TryGetAtIndex(i, out argument))
+                    if (arguments.Arguments.TryElementAt(i, out argument))
                     {
                         if (argument.NameColon == null)
                         {

@@ -39,7 +39,7 @@
                 return false;
             }
 
-            if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+            if (method.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
                 return IsAttachedSet(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
@@ -78,7 +78,7 @@
                 return false;
             }
 
-            if (method.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+            if (method.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
                 var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
                 return IsAttachedGet(methodDeclaration, semanticModel, cancellationToken, out _, out getField);
@@ -117,7 +117,7 @@
                     }
 
                     if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
-                        method.ParameterList.Parameters.TryGetAtIndex(1, out var parameter))
+                        method.ParameterList.Parameters.TryElementAt(1, out var parameter))
                     {
                         if (arg.Expression is IdentifierNameSyntax argIdentifier &&
                             argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
@@ -126,7 +126,7 @@
                         }
 
                         if (arg.Expression is InvocationExpressionSyntax invocation &&
-                            invocation.TryGetSingleArgument(out var nestedArg) &&
+                            invocation.TrySingleArgument(out var nestedArg) &&
                             nestedArg.Expression is IdentifierNameSyntax nestedArgId &&
                             nestedArgId.Identifier.ValueText == parameter.Identifier.ValueText)
                         {

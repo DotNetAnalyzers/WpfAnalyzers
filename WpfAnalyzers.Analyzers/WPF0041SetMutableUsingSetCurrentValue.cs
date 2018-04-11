@@ -55,7 +55,7 @@
                     return;
                 }
 
-                if (ClrProperty.TryGetSingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
+                if (ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
                 {
                     if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
                     {
@@ -135,7 +135,7 @@
                 return false;
             }
 
-            if (!symbol.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+            if (!symbol.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
                 return false;
             }

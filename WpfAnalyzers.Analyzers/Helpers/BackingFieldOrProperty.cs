@@ -79,7 +79,7 @@
 
             if (this.Symbol is IPropertySymbol property)
             {
-                if (property.TryGetSingleDeclaration(cancellationToken, out var declaration))
+                if (property.TrySingleDeclaration(cancellationToken, out var declaration))
                 {
                     if (declaration.Initializer != null)
                     {
@@ -99,7 +99,7 @@
 
         internal bool TryGetSyntaxReference(out SyntaxReference syntaxReference)
         {
-            return this.Symbol.DeclaringSyntaxReferences.TryGetSingle(out syntaxReference);
+            return this.Symbol.DeclaringSyntaxReferences.TrySingle(out syntaxReference);
         }
 
         internal SyntaxToken FindIdentifier(SyntaxNode node)
@@ -111,7 +111,7 @@
 
             if (node is FieldDeclarationSyntax fieldDeclaration)
             {
-                if (fieldDeclaration.Declaration.Variables.TryGetSingle(out var variable))
+                if (fieldDeclaration.Declaration.Variables.TrySingle(out var variable))
                 {
                     return variable.Identifier;
                 }

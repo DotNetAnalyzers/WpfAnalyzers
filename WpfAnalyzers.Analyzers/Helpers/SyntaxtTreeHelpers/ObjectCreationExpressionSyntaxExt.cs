@@ -4,10 +4,10 @@
 
     internal static class ObjectCreationExpressionSyntaxExt
     {
-        internal static bool TryGetSingleArgument(this ObjectCreationExpressionSyntax objectCreation, out ArgumentSyntax result)
+        internal static bool TrySingleArgument(this ObjectCreationExpressionSyntax objectCreation, out ArgumentSyntax result)
         {
             result = null;
-            return objectCreation?.ArgumentList?.Arguments.TryGetSingle(out result) == true;
+            return objectCreation?.ArgumentList?.Arguments.TrySingle(out result) == true;
         }
     }
 }

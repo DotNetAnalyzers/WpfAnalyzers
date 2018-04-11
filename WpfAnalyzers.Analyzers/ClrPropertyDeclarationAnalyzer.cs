@@ -41,7 +41,7 @@
                 if (setCall != null &&
                     propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
                     setter.Body != null &&
-                    setter.Body.Statements.TryGetFirst(x => !x.Contains(setCall), out var statement))
+                    setter.Body.Statements.TryFirst(x => !x.Contains(setCall), out var statement))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                 }
@@ -49,7 +49,7 @@
                 if (getCall != null &&
                     propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
                     getter.Body != null &&
-                    getter.Body.Statements.TryGetFirst(x => !x.Contains(getCall), out statement))
+                    getter.Body.Statements.TryFirst(x => !x.Contains(getCall), out statement))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                 }

@@ -26,11 +26,11 @@ namespace WpfAnalyzers
 
         internal static AssignmentWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new AssignmentWalker());
 
-        internal static bool TryGetSingle(SyntaxNode node, out AssignmentExpressionSyntax result)
+        internal static bool TrySingle(SyntaxNode node, out AssignmentExpressionSyntax result)
         {
             using (var walker = Borrow(node))
             {
-                return walker.assignments.TryGetSingle(out result);
+                return walker.assignments.TrySingle(out result);
             }
         }
 

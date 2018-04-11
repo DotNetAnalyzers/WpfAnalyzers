@@ -56,15 +56,15 @@
 
         internal static bool TryGetFieldRecursive(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
-            return type.TryGetSingleMemberRecursive(name, out field);
+            return type.TrySingleMemberRecursive(name, out field);
         }
 
         internal static bool TryGetPropertyRecursive(this ITypeSymbol type, string name, out IPropertySymbol property)
         {
-            return type.TryGetSingleMemberRecursive(name, out property);
+            return type.TrySingleMemberRecursive(name, out property);
         }
 
-        internal static bool TryGetSingleMemberRecursive<TMember>(this ITypeSymbol type, string name, out TMember member)
+        internal static bool TrySingleMemberRecursive<TMember>(this ITypeSymbol type, string name, out TMember member)
             where TMember : class, ISymbol
         {
             member = null;

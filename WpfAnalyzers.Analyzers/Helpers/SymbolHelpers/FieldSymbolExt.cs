@@ -15,7 +15,7 @@
                 return false;
             }
 
-            if (field.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+            if (field.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
                 var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
                 value = declarator?.Initializer?.Value;

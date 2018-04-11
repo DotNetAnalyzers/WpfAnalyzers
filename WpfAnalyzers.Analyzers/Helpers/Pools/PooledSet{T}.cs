@@ -50,7 +50,7 @@ namespace WpfAnalyzers
         /// <summary>
         /// The result from this call is meant to be used in a using.
         /// </summary>
-        public static PooledSet<T> Borrow()
+        internal static PooledSet<T> Borrow()
         {
             if (Cache.TryDequeue(out var set))
             {

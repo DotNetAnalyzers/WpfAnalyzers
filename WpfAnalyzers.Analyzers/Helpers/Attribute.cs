@@ -89,10 +89,10 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            return attribute.ArgumentList.Arguments.TryGetAtIndex(argumentIndex, out arg);
+            return attribute.ArgumentList.Arguments.TryElementAt(argumentIndex, out arg);
         }
 
-        internal static bool TryGetSingleArgument(this AttributeSyntax attribute, out AttributeArgumentSyntax argument)
+        internal static bool TrySingleArgument(this AttributeSyntax attribute, out AttributeArgumentSyntax argument)
         {
             var argumentList = attribute?.ArgumentList;
             if (argumentList == null)
@@ -101,7 +101,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            return argumentList.Arguments.TryGetSingle(out argument);
+            return argumentList.Arguments.TrySingle(out argument);
         }
 
         internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, QualifiedType typeName, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -63,7 +63,7 @@
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
                     }
-                    else if (metadataCreation.TryGetSingleArgument(out var typeArg) &&
+                    else if (metadataCreation.TrySingleArgument(out var typeArg) &&
                              typeArg.Expression is TypeOfExpressionSyntax typeOf &&
                              typeOf.Type is IdentifierNameSyntax typeName &&
                              typeName.Identifier.ValueText != context.ContainingSymbol.ContainingType.MetadataName)

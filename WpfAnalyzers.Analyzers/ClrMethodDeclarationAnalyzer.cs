@@ -36,10 +36,10 @@
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
-                method.Parameters.TryGetAtIndex(0, out var parameter) &&
+                method.Parameters.TryElementAt(0, out var parameter) &&
                 parameter.Type.Is(KnownSymbol.DependencyObject))
             {
-                if (method.Parameters.TryGetAtIndex(1, out var valueParameter) &&
+                if (method.Parameters.TryElementAt(1, out var valueParameter) &&
                     ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out var fieldOrProperty))
                 {
                     if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
@@ -73,7 +73,7 @@
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
-                        body.Statements.TryGetFirst(x => !x.Contains(setValueCall), out var statement))
+                        body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                     }
@@ -111,14 +111,14 @@
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
-                        body.Statements.TryGetFirst(x => !x.Contains(getValueCall), out var statement))
+                        body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                     }
 
                     if (AttachedPropertyBrowsableForType.TryGetAttribute(methodDeclaration, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
-                        if (attribute.TryGetSingleArgument(out var argument) &&
+                        if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
                             TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
                             !argumentType.Is(parameter.Type))

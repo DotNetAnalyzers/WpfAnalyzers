@@ -9,130 +9,130 @@
         internal class WhenSourceIsEnumerable
         {
             [Test]
-            public void TryGetFirst()
+            public void TryFirst()
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 3).TryGetFirst(out var result));
+                Assert.AreEqual(true, Enumerable.Range(1, 3).TryFirst(out var result));
                 Assert.AreEqual(1, result);
             }
 
             [Test]
-            public void TryGetFirstFailsWhenEmpty()
+            public void TryFirstFailsWhenEmpty()
             {
-                Assert.AreEqual(false, Enumerable.Empty<int>().TryGetFirst(out var result));
+                Assert.AreEqual(false, Enumerable.Empty<int>().TryFirst(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetFirstFailsWhenNull()
+            public void TryFirstFailsWhenNull()
             {
-                Assert.AreEqual(false, ((IEnumerable<int>)null).TryGetFirst(out var result));
+                Assert.AreEqual(false, ((IEnumerable<int>)null).TryFirst(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetFirstWithPredicate()
+            public void TryFirstWithPredicate()
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 3).TryGetFirst(x => x == 2, out var result));
+                Assert.AreEqual(true, Enumerable.Range(1, 3).TryFirst(x => x == 2, out var result));
                 Assert.AreEqual(2, result);
             }
 
             [Test]
-            public void TryGetFirstWithPredicateFailsWhenEmpty()
+            public void TryFirstWithPredicateFailsWhenEmpty()
             {
-                Assert.AreEqual(false, Enumerable.Empty<int>().TryGetFirst(x => x == 2, out var result));
+                Assert.AreEqual(false, Enumerable.Empty<int>().TryFirst(x => x == 2, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetFirstWithPredicateFailsWhenNull()
+            public void TryFirstWithPredicateFailsWhenNull()
             {
-                Assert.AreEqual(false, ((IEnumerable<int>)null).TryGetFirst(x => x == 2, out var result));
+                Assert.AreEqual(false, ((IEnumerable<int>)null).TryFirst(x => x == 2, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingle()
+            public void TrySingle()
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 1).TryGetSingle(out var result));
+                Assert.AreEqual(true, Enumerable.Range(1, 1).TrySingle(out var result));
                 Assert.AreEqual(1, result);
             }
 
             [Test]
-            public void TryGetSingleFailsWhenMoreThanOne()
+            public void TrySingleFailsWhenMoreThanOne()
             {
-                Assert.AreEqual(false, Enumerable.Range(0, 3).TryGetSingle(out var result));
+                Assert.AreEqual(false, Enumerable.Range(0, 3).TrySingle(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingleFailsWhenEmpty()
+            public void TrySingleFailsWhenEmpty()
             {
-                Assert.AreEqual(false, Enumerable.Empty<int>().TryGetSingle(out var result));
+                Assert.AreEqual(false, Enumerable.Empty<int>().TrySingle(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingleFailsWhenNull()
+            public void TrySingleFailsWhenNull()
             {
-                Assert.AreEqual(false, ((IEnumerable<int>)null).TryGetSingle(out var result));
+                Assert.AreEqual(false, ((IEnumerable<int>)null).TrySingle(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingleWithPredicate()
+            public void TrySingleWithPredicate()
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 5).TryGetSingle(x => x == 2, out var result));
+                Assert.AreEqual(true, Enumerable.Range(1, 5).TrySingle(x => x == 2, out var result));
                 Assert.AreEqual(2, result);
             }
 
             [Test]
-            public void TryGetSingleWithPredicateFailsWhenMoreThanOne()
+            public void TrySingleWithPredicateFailsWhenMoreThanOne()
             {
-                Assert.AreEqual(false, Enumerable.Repeat(2, 3).TryGetSingle(x => x == 2, out var result));
+                Assert.AreEqual(false, Enumerable.Repeat(2, 3).TrySingle(x => x == 2, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingleWithPredicateFailsWhenEmpty()
+            public void TrySingleWithPredicateFailsWhenEmpty()
             {
-                Assert.AreEqual(false, Enumerable.Empty<int>().TryGetSingle(x => x == 2, out var result));
+                Assert.AreEqual(false, Enumerable.Empty<int>().TrySingle(x => x == 2, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetSingleWithPredicateFailsWhenNull()
+            public void TrySingleWithPredicateFailsWhenNull()
             {
-                Assert.AreEqual(false, ((IEnumerable<int>)null).TryGetSingle(out var result));
+                Assert.AreEqual(false, ((IEnumerable<int>)null).TrySingle(out var result));
                 Assert.AreEqual(0, result);
             }
 
             [TestCase(0, 1)]
             [TestCase(1, 2)]
             [TestCase(2, 3)]
-            public void TryGetFirst(int index, int expected)
+            public void TryFirst(int index, int expected)
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 3).TryGetAtIndex(index, out var result));
+                Assert.AreEqual(true, Enumerable.Range(1, 3).TryElementAt(index, out var result));
                 Assert.AreEqual(expected, result);
             }
 
             [TestCase(5)]
-            public void TryGetFirstFailsWhenOtOfBounds(int index)
+            public void TryFirstFailsWhenOtOfBounds(int index)
             {
-                Assert.AreEqual(false, Enumerable.Range(1, 3).TryGetAtIndex(index, out var result));
+                Assert.AreEqual(false, Enumerable.Range(1, 3).TryElementAt(index, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetAtIndexFailsWhenEmpty()
+            public void TryElementAtFailsWhenEmpty()
             {
-                Assert.AreEqual(false, Enumerable.Empty<int>().TryGetAtIndex(0, out var result));
+                Assert.AreEqual(false, Enumerable.Empty<int>().TryElementAt(0, out var result));
                 Assert.AreEqual(0, result);
             }
 
             [Test]
-            public void TryGetAtIndexFailsWhenNull()
+            public void TryElementAtFailsWhenNull()
             {
-                Assert.AreEqual(false, ((IEnumerable<int>)null).TryGetAtIndex(0, out var result));
+                Assert.AreEqual(false, ((IEnumerable<int>)null).TryElementAt(0, out var result));
                 Assert.AreEqual(0, result);
             }
         }

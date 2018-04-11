@@ -34,14 +34,14 @@
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
-                TryGetSingleUsage(method, methodDeclaration, out var callbackArg))
+                TrySingleUsage(method, methodDeclaration, out var callbackArg))
             {
                 // PropertyChangedCallback
                 if (method.Parameters.Length == 2 &&
                     method.ReturnsVoid &&
-                    method.Parameters.TryGetAtIndex(0, out var senderParameter) &&
+                    method.Parameters.TryElementAt(0, out var senderParameter) &&
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
-                    method.Parameters.TryGetAtIndex(1, out var argParameter) &&
+                    method.Parameters.TryElementAt(1, out var argParameter) &&
                     argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out var senderType, out var valueType))
                 {
@@ -52,9 +52,9 @@
                 // CoerceValueCallback
                 if (method.Parameters.Length == 2 &&
                     method.ReturnType == KnownSymbol.Object &&
-                    method.Parameters.TryGetAtIndex(0, out senderParameter) &&
+                    method.Parameters.TryElementAt(0, out senderParameter) &&
                     senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
-                    method.Parameters.TryGetAtIndex(1, out argParameter) &&
+                    method.Parameters.TryElementAt(1, out argParameter) &&
                     argParameter.Type == KnownSymbol.Object &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out senderType, out valueType))
                 {
@@ -65,7 +65,7 @@
                 // ValidateValueCallback
                 if (method.Parameters.Length == 1 &&
                     method.ReturnType == KnownSymbol.Boolean &&
-                    method.Parameters.TryGetAtIndex(0, out argParameter) &&
+                    method.Parameters.TryElementAt(0, out argParameter) &&
                     argParameter.Type == KnownSymbol.Object)
                 {
                     if (callbackArg.Parent?.Parent is ObjectCreationExpressionSyntax callbackCreation &&
@@ -214,7 +214,7 @@
             }
         }
 
-        private static bool TryGetSingleUsage(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax argument)
+        private static bool TrySingleUsage(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax argument)
         {
             argument = null;
             if (method.DeclaredAccessibility != Accessibility.Private)

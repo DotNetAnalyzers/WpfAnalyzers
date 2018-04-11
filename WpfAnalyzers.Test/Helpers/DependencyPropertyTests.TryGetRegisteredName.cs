@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode.AssertReplace("nameof(Bar)", nameCode);
+                testCode = testCode.AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode.AssertReplace("nameof(Bar)", nameCode);
+                testCode = testCode.AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);

@@ -50,7 +50,7 @@
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        return returnTypes.TryGetSingle(out targetType) &&
+                        return returnTypes.TrySingle(out targetType) &&
                                ConversionWalker.TryGetCommonBase(
                                    convertMethod,
                                    semanticModel.GetDeclaredSymbolSafe(

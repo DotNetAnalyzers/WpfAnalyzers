@@ -53,7 +53,7 @@ namespace WpfAnalyzers
         /// Get the single DependencyProperty backing field for <paramref name="property"/>
         /// Returns false for accessors for readonly dependency properties.
         /// </summary>
-        internal static bool TryGetSingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
+        internal static bool TrySingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
             BackingFieldOrProperty getter;
@@ -159,9 +159,9 @@ namespace WpfAnalyzers
                 {
                     if (getField.ContainingType.IsGenericType)
                     {
-                        return property.ContainingType.TryGetSingleMemberRecursive<ISymbol>(getField.Name, out var getMember) &&
+                        return property.ContainingType.TrySingleMemberRecursive<ISymbol>(getField.Name, out var getMember) &&
                                BackingFieldOrProperty.TryCreate(getMember, out getField) &&
-                               property.ContainingType.TryGetSingleMemberRecursive<ISymbol>(setField.Name, out var setMember) &&
+                               property.ContainingType.TrySingleMemberRecursive<ISymbol>(setField.Name, out var setMember) &&
                                BackingFieldOrProperty.TryCreate(setMember, out setField);
                     }
 
@@ -228,7 +228,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (property.DeclaringSyntaxReferences.TryGetLast(out var reference))
+            if (property.DeclaringSyntaxReferences.TryLast(out var reference))
             {
                 result = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
                 return result != null;

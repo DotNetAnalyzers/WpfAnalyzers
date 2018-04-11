@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
 
@@ -8,18 +8,60 @@
     /// <summary>
     /// The safe versions handle situations like partial classes when the node is not in the same syntax tree.
     /// </summary>
-    internal static class SemanticModelExt
+    internal static partial class SemanticModelExt
     {
+        internal static bool TryGetSymbol<TSymbol>(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken, out TSymbol symbol)
+            where TSymbol : class, ISymbol
+        {
+            symbol = GetSymbolSafe(semanticModel, node, cancellationToken) as TSymbol ??
+                     GetDeclaredSymbolSafe(semanticModel, node, cancellationToken) as TSymbol;
+            return symbol != null;
+        }
+
+        /// <summary>
+        /// Same as SemanticModel.GetSymbolInfo().Symbol but works when <paramref name="node"/> is not in the syntax tree.
+        /// Unwraps the await
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="node">The <see cref="SyntaxNode"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static ISymbol GetSymbolSafe(this SemanticModel semanticModel, AwaitExpressionSyntax node, CancellationToken cancellationToken)
         {
             return semanticModel.GetSymbolSafe(node.Expression, cancellationToken);
         }
 
+        /// <summary>
+        /// Same as SemanticModel.GetSymbolInfo().Symbol but works when <paramref name="node"/> is not in the syntax tree.
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="node">The <see cref="SyntaxNode"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static IMethodSymbol GetSymbolSafe(this SemanticModel semanticModel, ConstructorInitializerSyntax node, CancellationToken cancellationToken)
         {
             return (IMethodSymbol)semanticModel.GetSymbolSafe((SyntaxNode)node, cancellationToken);
         }
 
+        /// <summary>
+        /// Same as SemanticModel.GetSymbolInfo().Symbol but works when <paramref name="node"/> is not in the syntax tree.
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="node">The <see cref="SyntaxNode"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>An <see cref="ISymbol"/> or null</returns>
+        internal static IMethodSymbol GetSymbolSafe(this SemanticModel semanticModel, ObjectCreationExpressionSyntax node, CancellationToken cancellationToken)
+        {
+            return (IMethodSymbol)semanticModel.GetSymbolSafe((SyntaxNode)node, cancellationToken);
+        }
+
+        /// <summary>
+        /// Same as SemanticModel.GetSymbolInfo().Symbol but works when <paramref name="node"/> is not in the syntax tree.
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="node">The <see cref="SyntaxNode"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static ISymbol GetSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
             if (node is AwaitExpressionSyntax awaitExpression)
@@ -30,74 +72,6 @@
             return semanticModel.SemanticModelFor(node)
                                 ?.GetSymbolInfo(node, cancellationToken)
                                 .Symbol;
-        }
-
-        internal static IFieldSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, FieldDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            if (node?.Declaration == null)
-            {
-                return null;
-            }
-
-            if (node.Declaration.Variables.TryGetSingle(out var variable))
-            {
-                return (IFieldSymbol)semanticModel.SemanticModelFor(node)
-                                                  ?.GetDeclaredSymbol(variable, cancellationToken);
-            }
-
-            return null;
-        }
-
-        internal static IMethodSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, ConstructorDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return (IMethodSymbol)semanticModel.SemanticModelFor(node)
-                                               ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, BasePropertyDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return semanticModel.SemanticModelFor(node)
-                                ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static IPropertySymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, PropertyDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return (IPropertySymbol)semanticModel.SemanticModelFor(node)
-                                                 ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static IPropertySymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, IndexerDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return (IPropertySymbol)semanticModel.SemanticModelFor(node)
-                                                 ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static IMethodSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, MethodDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return (IMethodSymbol)semanticModel.SemanticModelFor(node)
-                                               ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static ITypeSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, TypeDeclarationSyntax node, CancellationToken cancellationToken)
-        {
-            return (ITypeSymbol)semanticModel.SemanticModelFor(node)
-                                             ?.GetDeclaredSymbol(node, cancellationToken);
-        }
-
-        internal static IParameterSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, ParameterSyntax node, CancellationToken cancellationToken)
-        {
-            return (IParameterSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
-        }
-
-        internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
-        {
-            if (node is FieldDeclarationSyntax fieldDeclaration)
-            {
-                return GetDeclaredSymbolSafe(semanticModel, fieldDeclaration, cancellationToken);
-            }
-
-            return semanticModel.SemanticModelFor(node)
-                                ?.GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static Optional<object> GetConstantValueSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
@@ -132,6 +106,14 @@
         /// <param name="semanticModel">The semantic model.</param>
         /// <param name="expression">The expression.</param>
         /// <returns>The semantic model that corresponds to <paramref name="expression"/></returns>
+
+        /// <summary>
+        /// Gets the semantic model for <paramref name="expression"/>
+        /// This can be needed for partial classes.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="expression">The expression.</param>
+        /// <returns>The semantic model that corresponds to <paramref name="expression"/></returns>
         internal static SemanticModel SemanticModelFor(this SemanticModel semanticModel, SyntaxNode expression)
         {
             if (semanticModel == null ||
@@ -146,23 +128,28 @@
                 return semanticModel;
             }
 
-            if (semanticModel.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
-            {
-                return semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
-            }
+            return Cache.GetOrAdd(expression.SyntaxTree, GetSemanticModel);
 
-            foreach (var metadataReference in semanticModel.Compilation.References)
+            SemanticModel GetSemanticModel(SyntaxTree syntaxTree)
             {
-                if (metadataReference is CompilationReference compilationReference)
+                if (semanticModel.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
                 {
-                    if (compilationReference.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
+                    return semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
+                }
+
+                foreach (var metadataReference in semanticModel.Compilation.References)
+                {
+                    if (metadataReference is CompilationReference compilationReference)
                     {
-                        return compilationReference.Compilation.GetSemanticModel(expression.SyntaxTree);
+                        if (compilationReference.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
+                        {
+                            return compilationReference.Compilation.GetSemanticModel(expression.SyntaxTree);
+                        }
                     }
                 }
-            }
 
-            return null;
+                return null;
+            }
         }
     }
 }

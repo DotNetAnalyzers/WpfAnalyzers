@@ -73,7 +73,7 @@ namespace WpfAnalyzers
 
             var backingFieldName = "<missing>";
             if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                AssignmentWalker.TryGetSingle(setter, out var fieldAssignment) &&
+                AssignmentWalker.TrySingle(setter, out var fieldAssignment) &&
                 TryGetAssignedName(fieldAssignment, out backingFieldName))
             {
             }
@@ -93,7 +93,7 @@ namespace WpfAnalyzers
                          backingFieldName == name))
                     {
                         if (assignment.Right is IdentifierNameSyntax candidate &&
-                            ctor.ParameterList.Parameters.TryGetSingle(x => x.Identifier.ValueText == candidate.Identifier.ValueText, out var parameter))
+                            ctor.ParameterList.Parameters.TrySingle(x => x.Identifier.ValueText == candidate.Identifier.ValueText, out var parameter))
                         {
                             if (parameterName != null &&
                                 parameterName != parameter.Identifier.ValueText)

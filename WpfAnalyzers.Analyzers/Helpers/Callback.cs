@@ -27,7 +27,7 @@ namespace WpfAnalyzers
             {
                 if (semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == callbackSymbol)
                 {
-                    if (creation.ArgumentList.Arguments.TryGetSingle(out var arg))
+                    if (creation.ArgumentList.Arguments.TrySingle(out var arg))
                     {
                         return TryGetName(arg, callbackSymbol, semanticModel, cancellationToken, out nameExpression, out name);
                     }

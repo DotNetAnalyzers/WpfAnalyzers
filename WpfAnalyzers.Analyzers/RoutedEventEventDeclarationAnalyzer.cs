@@ -179,7 +179,7 @@
 
             public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
             {
-                if (node.Declaration.Variables.TryGetSingle(out var variable) &&
+                if (node.Declaration.Variables.TrySingle(out var variable) &&
                     variable.Identifier.ValueText == this.memberName)
                 {
                     this.backingField = variable;

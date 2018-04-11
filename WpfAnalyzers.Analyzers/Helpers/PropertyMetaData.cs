@@ -23,9 +23,9 @@
             }
 
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
-                   constructor.Parameters.TryGetFirst(out var parameter) &&
+                   constructor.Parameters.TryFirst(out var parameter) &&
                    parameter.Type == KnownSymbol.Object &&
-                   objectCreation.ArgumentList.Arguments.TryGetFirst(out defaultValueArg);
+                   objectCreation.ArgumentList.Arguments.TryFirst(out defaultValueArg);
         }
 
         internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)

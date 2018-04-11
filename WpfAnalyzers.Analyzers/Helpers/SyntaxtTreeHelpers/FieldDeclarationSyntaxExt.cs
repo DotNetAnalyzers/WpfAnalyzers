@@ -9,7 +9,7 @@
         internal static string Name(this FieldDeclarationSyntax declaration)
         {
             VariableDeclaratorSyntax variable = null;
-            if (declaration?.Declaration?.Variables.TryGetSingle(out variable) == true)
+            if (declaration?.Declaration?.Variables.TrySingle(out variable) == true)
             {
                 return variable.Identifier.ValueText;
             }

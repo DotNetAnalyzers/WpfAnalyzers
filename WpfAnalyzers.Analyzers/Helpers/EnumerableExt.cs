@@ -5,7 +5,7 @@
 
     internal static partial class EnumerableExt
     {
-        internal static bool TryGetAtIndex<T>(this IEnumerable<T> source, int index, out T result)
+        internal static bool TryElementAt<T>(this IEnumerable<T> source, int index, out T result)
         {
             result = default(T);
             if (source == null)
@@ -31,7 +31,7 @@
             return false;
         }
 
-        internal static bool TryGetSingle<T>(this IEnumerable<T> source, out T result)
+        internal static bool TrySingle<T>(this IEnumerable<T> source, out T result)
         {
             result = default(T);
             if (source == null)
@@ -57,7 +57,7 @@
             }
         }
 
-        internal static bool TryGetSingle<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
+        internal static bool TrySingle<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
         {
             result = default(T);
             if (source == null)
@@ -90,7 +90,7 @@
             return false;
         }
 
-        internal static bool TryGetFirst<T>(this IEnumerable<T> source, out T result)
+        internal static bool TryFirst<T>(this IEnumerable<T> source, out T result)
         {
             result = default(T);
             if (source == null)
@@ -110,7 +110,7 @@
             }
         }
 
-        internal static bool TryGetFirst<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
+        internal static bool TryFirst<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
         {
             if (source == null)
             {

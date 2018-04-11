@@ -103,11 +103,11 @@ namespace WpfAnalyzers
                 {
                     set.UnionWith(t1.RecursiveBaseTypes());
                     set.IntersectWith(t2.RecursiveBaseTypes());
-                    return set.TryGetFirst(
+                    return set.TryFirst(
                                x => x is INamedTypeSymbol namedType &&
                                     namedType.IsGenericType,
                                out result) ||
-                           set.TryGetFirst(out result);
+                           set.TryFirst(out result);
                 }
             }
 
