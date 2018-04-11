@@ -7,7 +7,7 @@ namespace WpfAnalyzers
     /// <summary>
     /// A pooled <see cref="StringBuilder"/>
     /// </summary>
-    public static class StringBuilderPool
+    internal static class StringBuilderPool
     {
         private static readonly ConcurrentQueue<PooledStringBuilder> Cache = new ConcurrentQueue<PooledStringBuilder>();
 
@@ -15,7 +15,7 @@ namespace WpfAnalyzers
         /// Borrow an instance.
         /// </summary>
         /// <returns>A <see cref="PooledStringBuilder"/></returns>
-        public static PooledStringBuilder Borrow()
+        internal static PooledStringBuilder Borrow()
         {
             if (Cache.TryDequeue(out var item))
             {
@@ -25,7 +25,7 @@ namespace WpfAnalyzers
             return new PooledStringBuilder();
         }
 
-        public class PooledStringBuilder
+        internal class PooledStringBuilder
         {
             private readonly StringBuilder inner = new StringBuilder();
 
