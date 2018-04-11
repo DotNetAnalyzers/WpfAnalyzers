@@ -1,3 +1,6 @@
+#### 2.1.2.1
+* Feature: tweak perf.
+
 #### 2.1.2
 * BUGFIX: better check of casts
 * Feature: new analyzers for direct casts.

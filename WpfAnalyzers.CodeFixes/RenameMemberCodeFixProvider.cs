@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -26,6 +26,8 @@
             WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId,
             WPF0100BackingFieldShouldMatchRegisteredName.DiagnosticId,
             WPF0102EventDeclarationName.DiagnosticId);
+
+        public override FixAllProvider GetFixAllProvider() => null;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
