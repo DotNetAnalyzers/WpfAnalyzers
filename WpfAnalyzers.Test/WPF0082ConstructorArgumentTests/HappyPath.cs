@@ -74,7 +74,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenPropertyWithBackingFieldAssigtnedBackingFieldHasAttribute()
+        public void WhenPropertyWithBackingFieldAssignedBackingFieldHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -127,6 +127,56 @@ namespace RoslynSandbox
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return Text;
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void Issue185()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Windows.Markup;
+
+    /// <summary>
+    /// Markup extension for getting Enum.GetValues(this.Type)
+    /// </summary>
+    [MarkupExtensionReturnType(typeof(Array))]
+    public class EnumValuesForExtension : MarkupExtension
+    {
+        private Type type;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""EnumValuesForExtension""/> class.
+        /// </summary>
+        /// <param name=""type"">The enum type.</param>
+        public EnumValuesForExtension(Type type)
+        {
+            this.type = type;
+        }
+
+        /// <summary>
+        /// The enum type.
+        /// </summary>
+        [ConstructorArgument(""type"")]
+        public Type Type
+        {
+            get => this.type;
+
+            set
+            {
+                this.type = value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return Enum.GetValues(this.Type);
         }
     }
 }";
