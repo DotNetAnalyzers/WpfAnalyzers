@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System;
     using System.Collections.Generic;
