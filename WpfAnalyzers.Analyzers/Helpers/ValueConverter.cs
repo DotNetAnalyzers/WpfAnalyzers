@@ -43,19 +43,22 @@ namespace WpfAnalyzers
                 convertMethod.ReturnType is PredefinedTypeSyntax returnType &&
                 returnType.Keyword.ValueText == "object" &&
                 convertMethod.ParameterList != null &&
-                convertMethod.ParameterList.Parameters.Count == 4)
+                convertMethod.ParameterList.Parameters.Count == 4 &&
+                convertMethod.ParameterList.Parameters.TryFirst(out var valueParameter))
             {
-                using (var walker = ReturnValueWalker.Borrow(convertMethod))
+                using (var returnValues = ReturnValueWalker.Borrow(convertMethod))
                 {
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
-                        returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
+                        foreach (var returnValue in returnValues.ReturnValues)
+                        {
+                            AddReturnType(returnTypes, returnValue);
+                        }
+
                         return returnTypes.TrySingle(out targetType) &&
                                ConversionWalker.TryGetCommonBase(
                                    convertMethod,
-                                   semanticModel.GetDeclaredSymbolSafe(
-                                       convertMethod.ParameterList.Parameters[0],
-                                       cancellationToken),
+                                   semanticModel.GetDeclaredSymbolSafe(valueParameter, cancellationToken),
                                    semanticModel,
                                    cancellationToken,
                                    out sourceType);
@@ -64,6 +67,11 @@ namespace WpfAnalyzers
             }
 
             return false;
+
+            void AddReturnType(PooledSet<ITypeSymbol> retuenTypes, ExpressionSyntax returnValue)
+            {
+                retuenTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+            }
         }
     }
 }
