@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Generic;
     using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class ValueConverter
@@ -69,42 +70,62 @@ namespace WpfAnalyzers
 
             void AddReturnType(PooledSet<ITypeSymbol> returnTypes, ExpressionSyntax returnValue)
             {
-                var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
-                if (type == KnownSymbol.Object &&
-                    semanticModel.GetSymbolSafe(returnValue, cancellationToken) is ISymbol symbol &&
-                    symbol.IsEither<IFieldSymbol, IPropertySymbol>())
+                switch (returnValue)
                 {
-                    switch (symbol)
+                case ConditionalExpressionSyntax ternary:
+                    AddReturnType(returnTypes, ternary.WhenTrue);
+                    AddReturnType(returnTypes, ternary.WhenFalse);
+                    break;
+                case BinaryExpressionSyntax coalesce when coalesce.IsKind(SyntaxKind.CoalesceExpression):
+                    AddReturnType(returnTypes, coalesce.Left);
+                    AddReturnType(returnTypes, coalesce.Right);
+                    break;
+                case IdentifierNameSyntax _:
+                case MemberAccessExpressionSyntax _:
+                    var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
+                    if (type == KnownSymbol.Object &&
+                        semanticModel.GetSymbolSafe(returnValue, cancellationToken) is ISymbol symbol &&
+                        symbol.IsEither<IFieldSymbol, IPropertySymbol>())
                     {
-                    case IFieldSymbol field:
-                        if (field.Type == KnownSymbol.Object &&
-                            field.DeclaredAccessibility == Accessibility.Private &&
-                            returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
+                        switch (symbol)
                         {
-                            using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, Search.TopLevel, semanticModel, cancellationToken))
+                        case IFieldSymbol field:
+                            if (field.Type == KnownSymbol.Object &&
+                                field.DeclaredAccessibility == Accessibility.Private &&
+                                returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
                             {
-                                foreach (var assignment in walker.Assignments)
+                                using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, Search.TopLevel, semanticModel, cancellationToken))
                                 {
-                                    if (SymbolComparer.Equals(semanticModel.GetSymbolSafe(assignment.Left, cancellationToken), field))
+                                    foreach (var assignment in walker.Assignments)
                                     {
-                                        returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
+                                        if (SymbolComparer.Equals(semanticModel.GetSymbolSafe(assignment.Left, cancellationToken), field))
+                                        {
+                                            returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else
-                        {
-                            returnTypes.Add(field.Type);
-                        }
+                            else
+                            {
+                                returnTypes.Add(field.Type);
+                            }
 
-                        return;
-                    case IPropertySymbol property:
-                        returnTypes.Add(property.Type);
-                        return;
+                            return;
+                        case IPropertySymbol property:
+                            returnTypes.Add(property.Type);
+                            return;
+                        }
                     }
-                }
+                    else
+                    {
+                        returnTypes.Add(type);
+                    }
 
-                returnTypes.Add(type);
+                    break;
+                default:
+                    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                    break;
+                }
             }
         }
     }

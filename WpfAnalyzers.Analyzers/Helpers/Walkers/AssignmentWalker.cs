@@ -1,7 +1,6 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Generic;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
