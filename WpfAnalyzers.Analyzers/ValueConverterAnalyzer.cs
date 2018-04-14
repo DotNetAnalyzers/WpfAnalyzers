@@ -57,7 +57,7 @@ namespace WpfAnalyzers
                                 TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
                                 !Equals(argType, sourceType))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), sourceType));
                             }
 
                             if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                                 TypeOf.TryGetType(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
                                 !Equals(argType, targetType))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), argType));
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), targetType));
                             }
                         }
                     }

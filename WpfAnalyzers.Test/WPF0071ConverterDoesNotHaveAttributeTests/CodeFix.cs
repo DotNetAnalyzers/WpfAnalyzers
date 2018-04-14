@@ -244,6 +244,111 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void WhenReturningThisObjectFields()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+
+    public class ↓EmptyToVisibilityConverter : IValueConverter
+    {
+        public static readonly EmptyToVisibilityConverter VisibleWhenEmpty = new EmptyToVisibilityConverter(Visibility.Visible, Visibility.Collapsed);
+        public static readonly EmptyToVisibilityConverter CollapsedWhenEmpty = new EmptyToVisibilityConverter(Visibility.Collapsed, Visibility.Visible);
+
+        private readonly object whenEmpty;
+        private readonly object whenNot;
+
+        public EmptyToVisibilityConverter(Visibility whenEmpty, Visibility whenNot)
+        {
+            this.whenEmpty = whenEmpty;
+            this.whenNot = whenNot;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return this.whenEmpty;
+            }
+
+            if (value is ICollection col)
+            {
+                return col.Count == 0 ? this.whenEmpty : this.whenNot;
+            }
+
+            if (value is IEnumerable enumerable)
+            {
+                return enumerable.GetEnumerator().MoveNext() ? this.whenNot : this.whenEmpty;
+            }
+
+            return this.whenEmpty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Collections;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(IEnumerable), typeof(Visibility))]
+    public class EmptyToVisibilityConverter : IValueConverter
+    {
+        public static readonly EmptyToVisibilityConverter VisibleWhenEmpty = new EmptyToVisibilityConverter(Visibility.Visible, Visibility.Collapsed);
+        public static readonly EmptyToVisibilityConverter CollapsedWhenEmpty = new EmptyToVisibilityConverter(Visibility.Collapsed, Visibility.Visible);
+
+        private readonly object whenEmpty;
+        private readonly object whenNot;
+
+        public EmptyToVisibilityConverter(Visibility whenEmpty, Visibility whenNot)
+        {
+            this.whenEmpty = whenEmpty;
+            this.whenNot = whenNot;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return this.whenEmpty;
+            }
+
+            if (value is ICollection col)
+            {
+                return col.Count == 0 ? this.whenEmpty : this.whenNot;
+            }
+
+            if (value is IEnumerable enumerable)
+            {
+                return enumerable.GetEnumerator().MoveNext() ? this.whenNot : this.whenEmpty;
+            }
+
+            return this.whenEmpty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

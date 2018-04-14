@@ -34,29 +34,6 @@ namespace WpfAnalyzers
             }
         }
 
-        internal static bool Assigns(IFieldSymbol field, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (field == null ||
-                scope == null)
-            {
-                return false;
-            }
-
-            using (var pooledAssignments = Borrow(scope))
-            {
-                foreach (var assignment in pooledAssignments.Assignments)
-                {
-                    var assignedSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken);
-                    if (field.Equals(assignedSymbol))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         protected override void Clear()
         {
             this.assignments.Clear();

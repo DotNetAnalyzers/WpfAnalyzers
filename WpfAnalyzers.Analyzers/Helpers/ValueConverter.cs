@@ -69,19 +69,42 @@ namespace WpfAnalyzers
 
             void AddReturnType(PooledSet<ITypeSymbol> returnTypes, ExpressionSyntax returnValue)
             {
-                returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
-                //if (returnValue is IdentifierNameSyntax identifierName)
-                //{
-                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
-                //}
-                //else if (returnValue is MemberAccessExpressionSyntax memberAccess)
-                //{
-                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
-                //}
-                //else
-                //{
-                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
-                //}
+                var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
+                if (type == KnownSymbol.Object &&
+                    semanticModel.GetSymbolSafe(returnValue, cancellationToken) is ISymbol symbol &&
+                    symbol.IsEither<IFieldSymbol, IPropertySymbol>())
+                {
+                    switch (symbol)
+                    {
+                    case IFieldSymbol field:
+                        if (field.Type == KnownSymbol.Object &&
+                            field.DeclaredAccessibility == Accessibility.Private &&
+                            returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
+                        {
+                            using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, Search.TopLevel, semanticModel, cancellationToken))
+                            {
+                                foreach (var assignment in walker.Assignments)
+                                {
+                                    if (SymbolComparer.Equals(semanticModel.GetSymbolSafe(assignment.Left, cancellationToken), field))
+                                    {
+                                        returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            returnTypes.Add(field.Type);
+                        }
+
+                        return;
+                    case IPropertySymbol property:
+                        returnTypes.Add(property.Type);
+                        return;
+                    }
+                }
+
+                returnTypes.Add(type);
             }
         }
     }
