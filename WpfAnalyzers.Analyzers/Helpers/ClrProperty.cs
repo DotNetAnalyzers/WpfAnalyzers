@@ -95,8 +95,8 @@ namespace WpfAnalyzers
         {
             getField = default(BackingFieldOrProperty);
             setField = default(BackingFieldOrProperty);
-            if (propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.GetAccessorDeclaration, out var getAccessor) &&
-                propertyDeclaration.TryGetAccessorDeclaration(SyntaxKind.SetAccessorDeclaration, out var setAccessor))
+            if (propertyDeclaration.TryGetGetter(out var getAccessor) &&
+                propertyDeclaration.TryGetSetter(out var setAccessor))
             {
                 using (var getterWalker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, getAccessor))
                 {

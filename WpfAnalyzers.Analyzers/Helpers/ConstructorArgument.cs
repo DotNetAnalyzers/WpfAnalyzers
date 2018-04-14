@@ -72,7 +72,7 @@ namespace WpfAnalyzers
             }
 
             var backingFieldName = "<missing>";
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+            if (propertyDeclaration.TryGetSetter(out var setter) &&
                 AssignmentWalker.TrySingle(setter, out var fieldAssignment) &&
                 TryGetAssignedName(fieldAssignment, out backingFieldName))
             {

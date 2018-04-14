@@ -39,7 +39,7 @@
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
                 if (setCall != null &&
-                    propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                    propertyDeclaration.TryGetSetter(out var setter) &&
                     setter.Body != null &&
                     setter.Body.Statements.TryFirst(x => !x.Contains(setCall), out var statement))
                 {
@@ -47,7 +47,7 @@
                 }
 
                 if (getCall != null &&
-                    propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
+                    propertyDeclaration.TryGetGetter(out var getter) &&
                     getter.Body != null &&
                     getter.Body.Statements.TryFirst(x => !x.Contains(getCall), out statement))
                 {

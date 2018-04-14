@@ -49,7 +49,7 @@ namespace WpfAnalyzers
         {
             editor.ReplaceNode(declaration, declaration.WithModifiers(declaration.Modifiers.WithStatic()));
 
-            if (declaration.TryGetSetAccessorDeclaration(out var setter) &&
+            if (declaration.TryGetSetter(out var setter) &&
                 setter.Body == null)
             {
                 editor.RemoveNode(setter, SyntaxRemoveOptions.KeepLeadingTrivia);
