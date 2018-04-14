@@ -1,10 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
+namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0010");
 
         [Test]
@@ -34,7 +36,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0010",
                 "Default value for 'RoslynSandbox.FooControl<T>.BarProperty' must be of type T");
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [TestCase("int", "new PropertyMetadata(↓default(double))")]
@@ -78,7 +80,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("double", typeName)
                                .AssertReplace("new PropertyMetadata(↓1)", metadata);
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -105,7 +107,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -134,7 +136,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -159,7 +161,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -186,7 +188,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -237,7 +239,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, testCode, fooCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode, fooCode);
         }
 
         [Test]
@@ -274,7 +276,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<PropertyMetadataAnalyzer>(ExpectedDiagnostic, fooControlCode, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, testCode);
         }
     }
 }

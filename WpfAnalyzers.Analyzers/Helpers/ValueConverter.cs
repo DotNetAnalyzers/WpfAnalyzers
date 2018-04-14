@@ -1,7 +1,6 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -68,9 +67,21 @@ namespace WpfAnalyzers
 
             return false;
 
-            void AddReturnType(PooledSet<ITypeSymbol> retuenTypes, ExpressionSyntax returnValue)
+            void AddReturnType(PooledSet<ITypeSymbol> returnTypes, ExpressionSyntax returnValue)
             {
-                retuenTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                //if (returnValue is IdentifierNameSyntax identifierName)
+                //{
+                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                //}
+                //else if (returnValue is MemberAccessExpressionSyntax memberAccess)
+                //{
+                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                //}
+                //else
+                //{
+                //    returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                //}
             }
         }
     }

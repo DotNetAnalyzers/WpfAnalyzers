@@ -1,10 +1,14 @@
-﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
+namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0003");
 
         [Test]
@@ -74,7 +78,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -117,7 +121,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -160,7 +164,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -218,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
@@ -286,7 +290,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
         }
 
         [Test]
@@ -339,7 +343,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, RenameMemberCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix,ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

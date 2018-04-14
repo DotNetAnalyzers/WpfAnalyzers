@@ -1,10 +1,14 @@
-﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
+namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
+        private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0073");
 
         [Test]
@@ -224,7 +228,7 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ValueConverterAnalyzer, ValueConversionAttributeFix>(ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
         }
     }
 }
