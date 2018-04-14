@@ -4,17 +4,17 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class ReturnExpressionsWalker : PooledWalker<ReturnExpressionsWalker>
+    internal sealed class ReturnValueWalker : PooledWalker<ReturnValueWalker>
     {
         private readonly List<ExpressionSyntax> returnValues = new List<ExpressionSyntax>();
 
-        private ReturnExpressionsWalker()
+        private ReturnValueWalker()
         {
         }
 
         public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
-        public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
+        public static ReturnValueWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnValueWalker());
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {

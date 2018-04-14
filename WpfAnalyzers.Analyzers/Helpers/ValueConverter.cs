@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -45,7 +45,7 @@
                 convertMethod.ParameterList != null &&
                 convertMethod.ParameterList.Parameters.Count == 4)
             {
-                using (var walker = ReturnExpressionsWalker.Borrow(convertMethod))
+                using (var walker = ReturnValueWalker.Borrow(convertMethod))
                 {
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {

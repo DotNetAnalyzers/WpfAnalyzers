@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;

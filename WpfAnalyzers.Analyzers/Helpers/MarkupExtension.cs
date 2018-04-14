@@ -16,7 +16,7 @@
                 convertMethod.ParameterList != null &&
                 convertMethod.ParameterList.Parameters.Count == 1)
             {
-                using (var walker = ReturnExpressionsWalker.Borrow(convertMethod))
+                using (var walker = ReturnValueWalker.Borrow(convertMethod))
                 {
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
