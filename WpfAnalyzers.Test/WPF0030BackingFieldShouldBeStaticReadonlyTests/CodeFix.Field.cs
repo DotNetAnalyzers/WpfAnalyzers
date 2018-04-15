@@ -1,20 +1,26 @@
-﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    internal partial class CodeFix
     {
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0030");
-
-        [TestCase("public static", "public static readonly")]
-        [TestCase("public", "public static readonly")]
-        [TestCase("public readonly", "public static readonly")]
-        [TestCase("private static", "private static readonly")]
-        [TestCase("private", "private static readonly")]
-        public void DependencyPropertyRegisterBackingField(string before, string after)
+        internal class Field
         {
-            var testCode = @"
+            private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
+            private static readonly CodeFixProvider Fix = new MakeFieldStaticReadonlyCodeFixProvider();
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0030");
+
+            [TestCase("public static", "public static readonly")]
+            [TestCase("public", "public static readonly")]
+            [TestCase("public readonly", "public static readonly")]
+            [TestCase("private static", "private static readonly")]
+            [TestCase("private", "private static readonly")]
+            public void DependencyPropertyRegisterBackingField(string before, string after)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -32,7 +38,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -49,144 +55,15 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
-            fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
-            AnalyzerAssert.FixAll<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
+                testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
+                fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
 
-        [Test]
-        public void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        ↓public DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [Test]
-        public void DependencyPropertyRegisterBackingPropertyGetSet()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        ↓public static DependencyProperty BarProperty { get; set; } = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [Test]
-        public void DependencyPropertyRegisterBackingPropertyExpressionBody()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
-        ↓public static DependencyProperty BarProperty => DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
-        public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakePropertyStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [Test]
-        public void ReadOnlyDependencyProperty()
-        {
-            var testCode = @"
+            [Test]
+            public void ReadOnlyDependencyProperty()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -210,7 +87,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -233,13 +110,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
 
-        [Test]
-        public void DependencyPropertyRegisterAttached()
-        {
-            var testCode = @"
+            [Test]
+            public void DependencyPropertyRegisterAttached()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -264,7 +141,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -288,13 +165,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
 
-        [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyKeyField()
-        {
-            var testCode = @"
+            [Test]
+            public void DependencyPropertyRegisterAttachedReadOnlyKeyField()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -321,7 +198,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -347,13 +224,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
 
-        [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
-        {
-            var testCode = @"
+            [Test]
+            public void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -376,7 +253,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -398,14 +275,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
 
-        [TestCase("FooControl")]
-        [TestCase("FooControl<T>")]
-        public void DependencyPropertyAddOwner(string typeName)
-        {
-            var fooCode = @"
+            [TestCase("FooControl")]
+            [TestCase("FooControl<T>")]
+            public void DependencyPropertyAddOwner(string typeName)
+            {
+                var fooCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -432,7 +309,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var testCode = @"
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -450,7 +327,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -467,9 +344,10 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("FooControl", typeName);
-            fixedCode = fixedCode.AssertReplace("FooControl", typeName);
-            AnalyzerAssert.CodeFix<DependencyPropertyBackingFieldOrPropertyAnalyzer, MakeFieldStaticReadonlyCodeFixProvider>(ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
+                testCode = testCode.AssertReplace("FooControl", typeName);
+                fixedCode = fixedCode.AssertReplace("FooControl", typeName);
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
+            }
         }
     }
 }

@@ -1,10 +1,14 @@
-﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
+namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0015");
+
         [Test]
         public void Message()
         {
@@ -32,7 +36,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0015",
                 "Maybe you intended to use 'RegisterAttached'?");
-            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -59,7 +63,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -83,7 +87,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -128,7 +132,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(part1, part2);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, part1, part2);
         }
 
         [Test]
@@ -165,7 +169,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<WPF0015RegisteredOwnerTypeMustBeDependencyObject>(fooControlCode, barControlCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
         }
     }
 }

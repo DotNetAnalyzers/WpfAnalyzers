@@ -1,10 +1,13 @@
-﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
+namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0051XmlnsDefinitionMustMapExistingNamespace();
+
         [Test]
         public void WhenNoNamespace()
         {
@@ -36,7 +39,7 @@ using System.Windows.Markup;
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0051",
                 "[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -70,7 +73,7 @@ using System.Windows.Markup;
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0051",
                 "[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist.");
-            AnalyzerAssert.Diagnostics<WPF0051XmlnsDefinitionMustMapExistingNamespace>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
     }
 }

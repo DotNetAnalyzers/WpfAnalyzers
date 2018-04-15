@@ -1,10 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
+namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new OverrideMetadataAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0017");
 
         [Test]
@@ -47,7 +49,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, fooControlCode, barControlCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
         }
 
         [Test]
@@ -90,7 +92,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, fooControlCode, barControlCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
         }
 
         [Test]
@@ -111,7 +113,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<OverrideMetadataAnalyzer>(ExpectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }
 }
