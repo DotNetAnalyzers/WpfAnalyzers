@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
 
@@ -16,28 +16,26 @@
                 return false;
             }
 
-            if (argument.Expression.IsKind(SyntaxKind.NullLiteralExpression))
+            switch (argument.Expression)
             {
-                return true;
-            }
-
-            if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression) ||
-                argument.Expression.IsNameOf())
-            {
-                var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
-                if (cv.HasValue && cv.Value is string)
-                {
-                    result = (string)cv.Value;
+                case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) :
+                    result = literal.Token.ValueText;
                     return true;
-                }
-            }
+                case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.NullLiteralExpression) :
+                    result = null;
+                    return true;
+                case InvocationExpressionSyntax invocation when invocation.IsNameOf():
+                    var cv = semanticModel.GetConstantValueSafe(invocation, cancellationToken);
+                    if (cv.HasValue && cv.Value is string)
+                    {
+                        result = (string)cv.Value;
+                        return true;
+                    }
 
-            var symbolInfo = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken);
-            if (symbolInfo?.ContainingType?.Name == "String" &&
-                symbolInfo.Name == "Empty")
-            {
-                result = string.Empty;
-                return true;
+                    return false;
+                case MemberAccessExpressionSyntax memberAccess when semanticModel.GetSymbolSafe(memberAccess, cancellationToken) == KnownSymbol.String.Empty:
+                    result = string.Empty;
+                    return true;
             }
 
             return false;
