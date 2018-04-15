@@ -18,24 +18,40 @@ namespace WpfAnalyzers
 
             switch (argument.Expression)
             {
-                case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) :
-                    result = literal.Token.ValueText;
-                    return true;
-                case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.NullLiteralExpression) :
-                    result = null;
-                    return true;
-                case InvocationExpressionSyntax invocation when invocation.IsNameOf():
-                    var cv = semanticModel.GetConstantValueSafe(invocation, cancellationToken);
-                    if (cv.HasValue && cv.Value is string)
+            case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression):
+                result = literal.Token.ValueText;
+                return true;
+            case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.NullLiteralExpression):
+                result = null;
+                return true;
+            case InvocationExpressionSyntax invocation when invocation.IsNameOf():
+                if (invocation.ArgumentList != null &&
+                    invocation.ArgumentList.Arguments.TrySingle(out var nameofArg))
+                {
+                    switch (nameofArg.Expression)
                     {
-                        result = (string)cv.Value;
+                    case IdentifierNameSyntax identifierName:
+                        result = identifierName.Identifier.ValueText;
                         return true;
-                    }
+                    case MemberAccessExpressionSyntax memberAccess:
+                        result = memberAccess.Name.Identifier.ValueText;
+                        return true;
+                    default:
+                        var constantValue = semanticModel.GetConstantValueSafe(invocation, cancellationToken);
+                        if (constantValue.HasValue && constantValue.Value is string)
+                        {
+                            result = (string)constantValue.Value;
+                            return true;
+                        }
 
-                    return false;
-                case MemberAccessExpressionSyntax memberAccess when semanticModel.GetSymbolSafe(memberAccess, cancellationToken) == KnownSymbol.String.Empty:
-                    result = string.Empty;
-                    return true;
+                        break;
+                    }
+                }
+
+                return false;
+            case MemberAccessExpressionSyntax memberAccess when semanticModel.GetSymbolSafe(memberAccess, cancellationToken) == KnownSymbol.String.Empty:
+                result = string.Empty;
+                return true;
             }
 
             return false;
@@ -59,11 +75,6 @@ namespace WpfAnalyzers
             }
 
             return false;
-        }
-
-        private static bool IsNameOf(this ExpressionSyntax expression)
-        {
-            return (expression as InvocationExpressionSyntax)?.IsNameOf() == true;
         }
     }
 }
