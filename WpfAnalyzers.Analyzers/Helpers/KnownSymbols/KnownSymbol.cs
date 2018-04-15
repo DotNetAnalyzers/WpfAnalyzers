@@ -7,6 +7,7 @@ namespace WpfAnalyzers
         internal static readonly StringType String = new StringType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
         internal static readonly NullableType Nullable = new NullableType();
+        internal static readonly QualifiedType NullableOfT = new QualifiedType("System.Nullable`1");
 
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
         internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();

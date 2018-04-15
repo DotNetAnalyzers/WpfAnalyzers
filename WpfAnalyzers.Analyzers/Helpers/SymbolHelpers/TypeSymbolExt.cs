@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -243,7 +243,20 @@
                 return true;
             }
 
-            if (type == KnownSymbol.Nullable)
+            if (type is ITypeParameterSymbol typeParameter)
+            {
+                foreach (var constraintType in typeParameter.ConstraintTypes)
+                {
+                    if (constraintType.Is(other))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            if (type == KnownSymbol.NullableOfT)
             {
                 return type is INamedTypeSymbol namedType &&
                        Equals(namedType.TypeArguments[0], other);

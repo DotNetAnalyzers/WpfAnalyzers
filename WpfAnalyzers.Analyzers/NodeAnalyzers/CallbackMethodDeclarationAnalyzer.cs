@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -112,10 +112,7 @@
                         context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol castType &&
                         !Equals(castType, expectedType))
                     {
-                        var expectedTypeName = expectedType.ToMinimalDisplayString(
-                            context.SemanticModel,
-                            castExpression.SpanStart,
-                            SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
                         if (!expectedType.Is(castType))
                         {
                             context.ReportDiagnostic(
@@ -187,10 +184,7 @@
                             {
                                 if (label is CasePatternSwitchLabelSyntax patternLabel &&
                                     patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
-                                    context.SemanticModel.GetTypeInfoSafe(
-                                               labelDeclaration.Type,
-                                               context.CancellationToken)
-                                           .Type is ITypeSymbol caseType &&
+                                    context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
                                     !caseType.IsInterface() &&
                                     !(caseType.Is(expectedType) || expectedType.Is(caseType)))
                                 {
