@@ -31,16 +31,14 @@ namespace WpfAnalyzers.Test.Documentation
         [TestCaseSource(nameof(Descriptors))]
         public void MissingDocs(DescriptorInfo descriptorInfo)
         {
-            if (descriptorInfo.DocExists)
+            if (!descriptorInfo.DocExists)
             {
-                Assert.Pass();
+                var descriptor = descriptorInfo.Descriptor;
+                var id = descriptor.Id;
+                DumpIfDebug(CreateStub(descriptorInfo));
+                File.WriteAllText(descriptorInfo.DocFileName + ".generated", CreateStub(descriptorInfo));
+                Assert.Fail($"Documentation is missing for {id}");
             }
-
-            var descriptor = descriptorInfo.Descriptor;
-            var id = descriptor.Id;
-            DumpIfDebug(CreateStub(descriptorInfo));
-            File.WriteAllText(descriptorInfo.DocFileName + ".generated", CreateStub(descriptorInfo));
-            Assert.Fail($"Documentation is missing for {id}");
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
