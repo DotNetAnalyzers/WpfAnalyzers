@@ -6,7 +6,7 @@ namespace WpfAnalyzers
         internal new readonly QualifiedMethod ReferenceEquals;
 
         internal ObjectType()
-            : base("System.Object")
+            : base("System.Object", "object")
         {
             this.Equals = new QualifiedMethod(this, nameof(this.Equals));
             this.ReferenceEquals = new QualifiedMethod(this, nameof(this.ReferenceEquals));
