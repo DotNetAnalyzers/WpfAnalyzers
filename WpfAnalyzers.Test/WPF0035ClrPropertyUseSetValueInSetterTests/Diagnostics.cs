@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
+namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseSetValueCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0035");
+
         [Test]
         public void DependencyProperty()
         {
@@ -54,7 +60,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0035",
                 "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -103,10 +109,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0035",
-                "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -159,10 +163,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0035",
-                "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix<ClrPropertyDeclarationAnalyzer, UseSetValueCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

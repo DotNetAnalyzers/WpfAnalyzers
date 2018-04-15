@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
+namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
+        private static readonly CodeFixProvider Fix = new UseContainingTypeAsOwnerCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0011");
+
         [Test]
         public void Message()
         {
@@ -46,7 +52,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0011",
                 "Register containing type: 'RoslynSandbox.FooControl' as owner.");
-            AnalyzerAssert.Diagnostics<WPF0011ContainingTypeShouldBeRegisteredOwner>(expectedDiagnostic, barControlCode, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, barControlCode, testCode);
         }
 
         [TestCase("BarControl")]
@@ -111,7 +117,7 @@ namespace RoslynSandbox
 }";
             barControlCode = barControlCode.AssertReplace("class BarControl", $"class {typeName}");
             testCode = testCode.AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barControlCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -178,7 +184,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barControlCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -241,7 +247,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -300,7 +306,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -367,7 +373,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -447,7 +453,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { fooCode, barControlCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, barControlCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -505,7 +511,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0011ContainingTypeShouldBeRegisteredOwner, UseContainingTypeAsOwnerCodeFixProvider>(new[] { fooControlCode, barControlCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, barControlCode }, fixedCode);
         }
     }
 }
