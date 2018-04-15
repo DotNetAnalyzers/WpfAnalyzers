@@ -1,10 +1,16 @@
 namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
+        private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0083");
+
         [Test]
         public void Message()
         {
@@ -33,7 +39,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0083", "Add [ConstructorArgument(\"text\"]");
-            AnalyzerAssert.Diagnostics<WPF0083UseConstructorArgumentAttribute>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -87,7 +93,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0083UseConstructorArgumentAttribute, ConstructorArgumentAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -153,7 +159,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0083UseConstructorArgumentAttribute, ConstructorArgumentAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

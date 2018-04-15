@@ -1,10 +1,14 @@
-﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
+namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0050");
+
         [Test]
         public void WhenNoXmlnsDefinition()
         {
@@ -36,7 +40,7 @@ using System.Windows.Markup;
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0050",
                 "There is no [XmlnsDefinition] mapping to 'http://gu.se/Geometry'");
-            AnalyzerAssert.Diagnostics<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -70,7 +74,7 @@ using System.Windows.Markup;
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0050",
                 "There is no [XmlnsPrefix] mapping to 'http://gu.se/Geometry'");
-            AnalyzerAssert.Diagnostics<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -103,7 +107,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(↓""http://gu.se/SomewhereElse"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsPrefix(↓""http://gu.se/Geometry"", ""geometry"")]";
 
-            AnalyzerAssert.Diagnostics<WPF0050XmlnsPrefixMustMatchXmlnsDefinition>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }
 }

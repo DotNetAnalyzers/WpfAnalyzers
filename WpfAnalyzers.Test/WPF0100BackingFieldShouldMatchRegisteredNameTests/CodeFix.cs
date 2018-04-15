@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
+namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
+        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0100");
+
         [Test]
         public void Message()
         {
@@ -34,7 +40,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0100",
                 "Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'");
-            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -86,8 +92,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0100");
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, RenameMemberCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

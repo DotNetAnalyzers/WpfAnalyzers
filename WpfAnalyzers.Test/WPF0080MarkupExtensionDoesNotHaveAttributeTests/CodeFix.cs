@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
+namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0080MarkupExtensionDoesNotHaveAttribute();
+        private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeAttributeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0080");
+
         [Test]
         public void Message()
         {
@@ -26,7 +32,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0080",
                 "Add MarkupExtensionReturnType attribute.");
-            AnalyzerAssert.Diagnostics<WPF0080MarkupExtensionDoesNotHaveAttribute>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -62,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0080MarkupExtensionDoesNotHaveAttribute, MarkupExtensionReturnTypeAttributeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

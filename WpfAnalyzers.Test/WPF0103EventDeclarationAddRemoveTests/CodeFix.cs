@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
+namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostics
+    internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0103");
+
         [Test]
         public void Message()
         {
@@ -41,7 +47,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0103",
                 "Add uses: 'ValueChangedEvent', remove uses: 'Value2ChangedEvent'.");
-            AnalyzerAssert.Diagnostics<RoutedEventEventDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -78,7 +84,7 @@ namespace RoslynSandbox
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0103");
-            AnalyzerAssert.Diagnostics<RoutedEventEventDeclarationAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Explicit("C#7")]
@@ -138,8 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0102");
-            AnalyzerAssert.CodeFix<RoutedEventEventDeclarationAnalyzer, RenameMemberCodeFixProvider>(expectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
         }
     }
 }

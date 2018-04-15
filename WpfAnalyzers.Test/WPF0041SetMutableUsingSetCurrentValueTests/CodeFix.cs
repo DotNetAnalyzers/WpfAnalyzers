@@ -1,11 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
+namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
     using System.Text.RegularExpressions;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
+        private static readonly CodeFixProvider Fix = new UseSetCurrentValueCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0041");
+
         [TestCase("Bar = 1;")]
         [TestCase("this.Bar = 1;")]
         [TestCase("this.Bar = this.CreateValue();")]
@@ -74,7 +80,7 @@ namespace RoslynSandbox
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("Bar = 1;")]
@@ -149,7 +155,7 @@ namespace RoslynSandbox
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("Bar = 1;", "SetCurrentValue(FooControl.BarProperty, (double)1);")]
@@ -223,7 +229,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
             fixedCode = fixedCode.AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { testCode, fooControlCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { testCode, fooControlCode }, fixedCode);
         }
 
         [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);")]
@@ -283,7 +289,7 @@ namespace RoslynSandbox
     }
 }";
             fooCode = fooCode.AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooCode, fooControlCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, fooControlCode }, fixedCode);
         }
 
         [Test]
@@ -344,7 +350,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -402,7 +408,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -460,7 +466,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -518,7 +524,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -574,7 +580,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooControlCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -633,7 +639,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(new[] { fooControlCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -690,7 +696,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -726,7 +732,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -762,7 +768,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue(BarProperty, 1);")]
@@ -833,7 +839,7 @@ namespace RoslynSandbox
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue(BarProperty, 1);")]
@@ -908,7 +914,7 @@ namespace RoslynSandbox
                                  ? "this."
                                  : string.Empty;
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -1010,7 +1016,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase(@"Text = ""1"";")]
@@ -1054,7 +1060,7 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("Text = \"1\";", setExpression);
             var right = setExpression.Split('=')[1].Trim(' ', ';');
             fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(TextProperty, \"1\");", $"this.SetCurrentValue(TextProperty, {right});");
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("this.")]
@@ -1096,7 +1102,7 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("this.", thisExpression);
             fixedCode = fixedCode.AssertReplace("this.", thisExpression);
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -1161,7 +1167,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0041SetMutableUsingSetCurrentValue, UseSetCurrentValueCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

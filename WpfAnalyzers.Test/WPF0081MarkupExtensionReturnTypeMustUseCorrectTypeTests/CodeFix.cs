@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
+namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0081MarkupExtensionReturnTypeMustUseCorrectType();
+        private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeArgumentFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0081");
+
         [Test]
         public void Message()
         {
@@ -27,7 +33,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0081",
                 "MarkupExtensionReturnType must use correct return type. Expected: RoslynSandbox.FooExtension");
-            AnalyzerAssert.Diagnostics<WPF0081MarkupExtensionReturnTypeMustUseCorrectType>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -64,7 +70,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<WPF0081MarkupExtensionReturnTypeMustUseCorrectType, MarkupExtensionReturnTypeArgumentFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

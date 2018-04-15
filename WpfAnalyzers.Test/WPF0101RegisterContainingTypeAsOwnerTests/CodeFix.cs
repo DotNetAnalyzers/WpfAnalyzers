@@ -1,10 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
+namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseContainingTypeAsOwnerCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0101");
+
         [Test]
         public void Message()
         {
@@ -34,7 +40,7 @@ namespace RoslynSandbox
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0101",
                 "Register containing type: 'FooControl' as owner.");
-            AnalyzerAssert.Diagnostics<RoutedEventBackingFieldOrPropertyAnalyzer>(expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -86,8 +92,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0101");
-            AnalyzerAssert.CodeFix<RoutedEventBackingFieldOrPropertyAnalyzer, UseContainingTypeAsOwnerCodeFixProvider>(expectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
