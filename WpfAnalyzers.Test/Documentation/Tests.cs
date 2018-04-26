@@ -17,7 +17,6 @@ namespace WpfAnalyzers.Test.Documentation
             .Assembly
             .GetTypes()
             .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t))
-            .Except(new[] { typeof(CacheAnalyzer) })
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .SelectMany(DescriptorInfo.Create)
             .ToArray();

@@ -1,7 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Threading;
-
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -28,7 +28,7 @@ namespace WpfAnalyzers
         /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static ISymbol GetSymbolSafe(this SemanticModel semanticModel, AwaitExpressionSyntax node, CancellationToken cancellationToken)
         {
-            return semanticModel.GetSymbolSafe(node.Expression, cancellationToken);
+            return GetSymbolSafe(semanticModel, node.Expression, cancellationToken);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
         /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static IMethodSymbol GetSymbolSafe(this SemanticModel semanticModel, ConstructorInitializerSyntax node, CancellationToken cancellationToken)
         {
-            return (IMethodSymbol)semanticModel.GetSymbolSafe((SyntaxNode)node, cancellationToken);
+            return (IMethodSymbol)GetSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace WpfAnalyzers
         /// <returns>An <see cref="ISymbol"/> or null</returns>
         internal static IMethodSymbol GetSymbolSafe(this SemanticModel semanticModel, ObjectCreationExpressionSyntax node, CancellationToken cancellationToken)
         {
-            return (IMethodSymbol)semanticModel.GetSymbolSafe((SyntaxNode)node, cancellationToken);
+            return (IMethodSymbol)GetSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
         }
 
         /// <summary>
@@ -69,14 +69,14 @@ namespace WpfAnalyzers
                 return GetSymbolSafe(semanticModel, awaitExpression, cancellationToken);
             }
 
-            return semanticModel.SemanticModelFor(node)
+            return SemanticModelFor(semanticModel, node)
                                 ?.GetSymbolInfo(node, cancellationToken)
                                 .Symbol;
         }
 
         internal static Optional<object> GetConstantValueSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return semanticModel.SemanticModelFor(node)
+            return SemanticModelFor(semanticModel, node)
                                 ?.GetConstantValue(node, cancellationToken) ?? default(Optional<object>);
         }
 
@@ -95,7 +95,7 @@ namespace WpfAnalyzers
 
         internal static TypeInfo GetTypeInfoSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return semanticModel.SemanticModelFor(node)
+            return SemanticModelFor(semanticModel, node)
                                 ?.GetTypeInfo(node, cancellationToken) ?? default(TypeInfo);
         }
 
