@@ -23,9 +23,9 @@ namespace WpfAnalyzers.Test.Documentation
 
         private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => Descriptors.Where(d => d.DocExists).ToArray();
 
-        private static string SolutionDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\");
+        private static DirectoryInfo SolutionDirectory => SolutionFile.Find("WpfAnalyzers.sln").Directory;
 
-        private static string DocumentsDirectory => Path.Combine(SolutionDirectory, "documentation");
+        private static DirectoryInfo DocumentsDirectory => SolutionDirectory.EnumerateDirectories("documentation", SearchOption.TopDirectoryOnly).Single();
 
         [TestCaseSource(nameof(Descriptors))]
         public void MissingDocs(DescriptorInfo descriptorInfo)
@@ -108,7 +108,7 @@ namespace WpfAnalyzers.Test.Documentation
                    .Append("<!-- end generated table -->");
             var expected = builder.ToString();
             DumpIfDebug(expected);
-            var actual = GetTable(File.ReadAllText(Path.Combine(SolutionDirectory, "Readme.md")));
+            var actual = GetTable(File.ReadAllText(Path.Combine(SolutionDirectory.FullName, "Readme.md")));
             CodeAssert.AreEqual(expected, actual);
         }
 
@@ -179,15 +179,15 @@ namespace WpfAnalyzers.Test.Documentation
             {
                 this.Analyzer = analyzer;
                 this.Descriptor = descriptor;
-                this.DocFileName = Path.Combine(DocumentsDirectory, descriptor.Id + ".md");
+                this.DocFileName = Path.Combine(DocumentsDirectory.FullName, descriptor.Id + ".md");
                 this.CodeFileName = Directory.EnumerateFiles(
-                                                 SolutionDirectory,
+                                                 SolutionDirectory.FullName,
                                                  analyzer.GetType().Name + ".cs",
                                                  SearchOption.AllDirectories)
                                              .FirstOrDefault();
                 this.CodeFileUri = this.CodeFileName != null
-                    ? @"https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master/" +
-                      this.CodeFileName.Substring(SolutionDirectory.Length).Replace("\\", "/")
+                    ? "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" +
+                      this.CodeFileName.Substring(SolutionDirectory.FullName.Length).Replace("\\", "/")
                     : "missing";
             }
 
