@@ -18,12 +18,12 @@ namespace WpfAnalyzers.Test
             .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            CodeFactory.FindSolutionFile("WpfAnalyzers.sln"),
+            SolutionFile.Find("WpfAnalyzers.sln"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
         private static readonly Solution AnalyzerProjectSln = CodeFactory.CreateSolution(
-            CodeFactory.FindProjectFile("WpfAnalyzers.Analyzers.csproj"),
+            ProjectFile.Find("WpfAnalyzers.Analyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
