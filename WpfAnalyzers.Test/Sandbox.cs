@@ -1,9 +1,10 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System;
     using System.Linq;
     using NUnit.Framework;
 
+    [Explicit]
     public class Sandbox
     {
         [Test]
