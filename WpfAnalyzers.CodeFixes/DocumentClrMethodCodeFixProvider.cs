@@ -4,6 +4,8 @@ namespace WpfAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -48,7 +50,7 @@ namespace WpfAnalyzers
 
         private static void AddDocumentation(DocumentEditor editor, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
-            var method = editor.SemanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken);
+            var method = SemanticModelExt.GetDeclaredSymbolSafe(editor.SemanticModel, methodDeclaration, cancellationToken);
             if (ClrMethod.IsAttachedGet(method, editor.SemanticModel, cancellationToken, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out var registeredName))
             {

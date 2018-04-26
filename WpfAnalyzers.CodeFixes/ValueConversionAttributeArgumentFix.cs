@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,6 +46,7 @@ namespace WpfAnalyzers
                     context.RegisterCodeFix(
                         $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         (e, _) => FixArgument(e, attribute, sourceType, targetType),
+                        $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         diagnostic);
                 }
             }

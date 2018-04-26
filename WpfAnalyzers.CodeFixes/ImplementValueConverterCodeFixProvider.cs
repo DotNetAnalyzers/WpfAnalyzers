@@ -7,6 +7,7 @@ namespace WpfAnalyzers
     using System.Linq;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -149,10 +150,9 @@ namespace WpfAnalyzers
 
         private static MethodDeclarationSyntax ParseMethod(string code)
         {
-            return (MethodDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                         .Members
-                                                         .Single()
-                                                         .WithSimplifiedNames()
+            return (MethodDeclarationSyntax)Simplify.WithSimplifiedNames(SyntaxFactory.ParseCompilationUnit(code)
+                                                                                           .Members
+                                                                                           .Single())
                                                          .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
         }

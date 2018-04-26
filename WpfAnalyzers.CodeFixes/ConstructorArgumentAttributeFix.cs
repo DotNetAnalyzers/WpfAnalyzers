@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -13,9 +14,8 @@ namespace WpfAnalyzers
     [Shared]
     internal class ConstructorArgumentAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = SyntaxFactory
-            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute"))
-            .WithSimplifiedNames();
+        private static readonly AttributeSyntax Attribute = Simplify.WithSimplifiedNames(SyntaxFactory
+                                     .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute")));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -43,6 +43,7 @@ namespace WpfAnalyzers
                     context.RegisterCodeFix(
                         "Add ConstructorArgumentAttribute.",
                         (e, _) => AddAttribute(e, propertyDeclaration, parameterName),
+                        "Add ConstructorArgumentAttribute.",
                         diagnostic);
                 }
             }

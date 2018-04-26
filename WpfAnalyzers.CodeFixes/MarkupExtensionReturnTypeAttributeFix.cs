@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -13,9 +14,8 @@ namespace WpfAnalyzers
     [Shared]
     internal class MarkupExtensionReturnTypeAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = SyntaxFactory
-            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute"))
-            .WithSimplifiedNames();
+        private static readonly AttributeSyntax Attribute = Simplify.WithSimplifiedNames(SyntaxFactory
+                                     .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute")));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -43,8 +43,9 @@ namespace WpfAnalyzers
                     MarkupExtension.TryGetReturnType(classDeclaration, semanticModel, context.CancellationToken, out var returnType))
                 {
                     context.RegisterCodeFix(
-                        $"Add MarkupExtensionReturnTypeAttribute.",
+                        "Add MarkupExtensionReturnTypeAttribute.",
                         (e, _) => AddAttribute(e, classDeclaration, returnType),
+                        "Add MarkupExtensionReturnTypeAttribute.",
                         diagnostic);
                 }
             }

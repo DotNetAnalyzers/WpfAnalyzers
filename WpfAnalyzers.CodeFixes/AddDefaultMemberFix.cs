@@ -4,6 +4,8 @@ namespace WpfAnalyzers
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -45,21 +47,25 @@ namespace WpfAnalyzers
                     context.RegisterCodeFix(
                         "Add default field.",
                         (e, _) => AddDefaultField(e, classDeclarationSyntax),
+                        "Add default field.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default field with docs.",
                         (e, _) => AddDefaultFieldWithDocs(e, classDeclarationSyntax),
+                        "Add default field with docs.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default property.",
                         (e, _) => AddDefaultProperty(e, classDeclarationSyntax),
+                        "Add default property.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default property with docs.",
                         (e, _) => AddDefaultPropertyWithDocs(e, classDeclarationSyntax),
+                        "Add default property with docs.",
                         diagnostic);
                 }
             }
@@ -67,7 +73,7 @@ namespace WpfAnalyzers
 
         private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            DocumentEditorExt.AddField(editor, containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -77,13 +83,13 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(code));
+            DocumentEditorExt.AddField(editor, containingType, (FieldDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
         }
 
         private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            DocumentEditorExt.AddProperty(editor, containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -93,18 +99,17 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(code));
+            DocumentEditorExt.AddProperty(editor, containingType, (PropertyDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
         }
 
         private static MemberDeclarationSyntax ParseMember(string code)
         {
-            return SyntaxFactory.ParseCompilationUnit(code)
-                                .Members
-                                .Single()
-                                .WithSimplifiedNames()
-                                .WithLeadingElasticLineFeed()
-                                .WithTrailingElasticLineFeed()
+            return Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseCompilationUnit(code)
+                                                                          .Members
+                                                                          .Single()
+                                                                          .WithSimplifiedNames()
+                                                                          .WithLeadingElasticLineFeed())
                                 .WithAdditionalAnnotations(Formatter.Annotation);
         }
 

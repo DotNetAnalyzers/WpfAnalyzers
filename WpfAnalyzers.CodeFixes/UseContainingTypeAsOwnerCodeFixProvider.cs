@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -54,6 +55,7 @@ namespace WpfAnalyzers
                 context.RegisterCodeFix(
                     $"Use containing type: {containingTypeName}.",
                     (e, _) => Fix(e, (TypeOfExpressionSyntax)argument.Expression, containingTypeName),
+                    $"Use containing type.",
                     diagnostic);
             }
         }
