@@ -138,8 +138,8 @@ namespace WpfAnalyzers
                         binaryExpression.IsKind(SyntaxKind.AsExpression) &&
                         context.SemanticModel.GetTypeInfoSafe(binaryExpression.Right, context.CancellationToken)
                                .Type is ITypeSymbol asType &&
-                        !asType.IsInterface() &&
-                        !expectedType.IsInterface() &&
+                        asType.TypeKind != TypeKind.Interface &&
+                        expectedType.TypeKind != TypeKind.Interface &&
                         !(asType.Is(expectedType) || expectedType.Is(asType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
@@ -159,8 +159,8 @@ namespace WpfAnalyzers
                         isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
                         context.SemanticModel.GetTypeInfoSafe(isDeclaration.Type, context.CancellationToken)
                                .Type is ITypeSymbol isType &&
-                        !isType.IsInterface() &&
-                        !expectedType.IsInterface() &&
+                        isType.TypeKind != TypeKind.Interface &&
+                        expectedType.TypeKind != TypeKind.Interface &&
                         !(isType.Is(expectedType) || expectedType.Is(isType)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
@@ -176,7 +176,7 @@ namespace WpfAnalyzers
                     }
 
                     if (parent is SwitchStatementSyntax switchStatement &&
-                        !expectedType.IsInterface() &&
+                        expectedType.TypeKind != TypeKind.Interface &&
                         expectedType != KnownSymbol.Object)
                     {
                         foreach (var section in switchStatement.Sections)
@@ -186,7 +186,7 @@ namespace WpfAnalyzers
                                 if (label is CasePatternSwitchLabelSyntax patternLabel &&
                                     patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
                                     context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
-                                    !caseType.IsInterface() &&
+                                    caseType.TypeKind != TypeKind.Interface &&
                                     !(caseType.Is(expectedType) || expectedType.Is(caseType)))
                                 {
                                     var expectedTypeName = expectedType.ToMinimalDisplayString(

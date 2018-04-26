@@ -28,19 +28,6 @@ namespace WpfAnalyzers
             }
         }
 
-        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type)
-        {
-            while (type != null)
-            {
-                foreach (var member in type.GetMembers())
-                {
-                    yield return member;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
         internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type, string name)
         {
             while (type != null)
@@ -252,7 +239,7 @@ namespace WpfAnalyzers
                        Equals(namedType.TypeArguments[0], other);
             }
 
-            if (other.IsInterface())
+            if (other.TypeKind == TypeKind.Interface)
             {
                 foreach (var @interface in type.AllInterfaces)
                 {
