@@ -16,18 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Helpers\EnumerableExt.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>EnumerableExt.generated.cs</LastGenOutput>
-    </None>
-    <Compile Update="Helpers\EnumerableExt.generated.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>EnumerableExt.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

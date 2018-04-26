@@ -1,7 +1,8 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Diagnostics;
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -52,7 +53,7 @@
 
             if (this.Symbol is IPropertySymbol property)
             {
-                if (property.TrySingleDeclaration(cancellationToken, out var declaration))
+                if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax declaration))
                 {
                     if (declaration.Initializer != null)
                     {

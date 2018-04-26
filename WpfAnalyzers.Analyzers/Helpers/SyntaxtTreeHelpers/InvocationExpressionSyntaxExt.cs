@@ -1,5 +1,6 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 

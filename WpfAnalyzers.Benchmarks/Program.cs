@@ -1,4 +1,4 @@
-﻿// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable HeuristicUnreachableCode
 #pragma warning disable CS0162 // Unreachable code detected
@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Benchmarks
 
     public class Program
     {
-        public static string ProjectDirectory { get; } = CodeFactory.FindProjectFile("WpfAnalyzers.Benchmarks.csproj").DirectoryName;
+        public static string ProjectDirectory { get; } = ProjectFile.Find("WpfAnalyzers.Benchmarks.csproj").DirectoryName;
 
         public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
 
