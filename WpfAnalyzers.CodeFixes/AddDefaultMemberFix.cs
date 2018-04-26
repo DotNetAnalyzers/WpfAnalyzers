@@ -73,7 +73,7 @@ namespace WpfAnalyzers
 
         private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            DocumentEditorExt.AddField(editor, containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -83,13 +83,13 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            DocumentEditorExt.AddField(editor, containingType, (FieldDeclarationSyntax)ParseMember(code));
+            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
         }
 
         private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            DocumentEditorExt.AddProperty(editor, containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -99,7 +99,7 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            DocumentEditorExt.AddProperty(editor, containingType, (PropertyDeclarationSyntax)ParseMember(code));
+            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(code));
             editor.MakeSealed(containingType);
         }
 
