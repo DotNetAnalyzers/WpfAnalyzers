@@ -3,7 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
-
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -131,7 +131,7 @@ namespace WpfAnalyzers
             SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
-            var conversion = semanticModel.SemanticModelFor(valueExpression)
+            var conversion = SemanticModelExt.SemanticModelFor(semanticModel, valueExpression)
                                           .ClassifyConversion(valueExpression, toType);
             if (!conversion.Exists)
             {
@@ -170,7 +170,7 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            if (toType.IsNullable(valueExpression, semanticModel, cancellationToken))
+            if (IsNullable(toType, valueExpression, semanticModel, cancellationToken))
             {
                 return true;
             }
@@ -198,13 +198,13 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            var typeInfo = semanticModel.GetTypeInfoSafe(value, cancellationToken);
-            return namedTypeSymbol.TypeArguments[0].IsSameType(typeInfo.Type);
+            var typeInfo = SemanticModelExt.GetTypeInfoSafe(semanticModel, value, cancellationToken);
+            return IsSameType(namedTypeSymbol.TypeArguments[0], typeInfo.Type);
         }
 
         internal static bool IsEither(this ITypeSymbol type, QualifiedType qualifiedType1, QualifiedType qualifiedType2)
         {
-            return type.Is(qualifiedType1) || type.Is(qualifiedType2);
+            return Is(type, qualifiedType1) || Is(type, qualifiedType2);
         }
 
         internal static bool Is(this ITypeSymbol type, QualifiedType qualifiedType)
@@ -247,7 +247,7 @@ namespace WpfAnalyzers
             {
                 foreach (var constraintType in typeParameter.ConstraintTypes)
                 {
-                    if (constraintType.Is(other))
+                    if (Is(constraintType, other))
                     {
                         return true;
                     }

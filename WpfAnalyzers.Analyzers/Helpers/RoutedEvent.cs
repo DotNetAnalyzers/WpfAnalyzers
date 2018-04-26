@@ -1,6 +1,7 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -25,7 +26,7 @@
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(0, out var nameArg))
                 {
-                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
+                    return ArgumentSyntaxExt.TryGetStringValue(nameArg, semanticModel, cancellationToken, out result);
                 }
             }
 
@@ -42,7 +43,7 @@
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(3, out typeArg))
                 {
-                    return typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
+                    return ArgumentSyntaxExt.TryGetTypeofValue(typeArg, semanticModel, cancellationToken, out result);
                 }
             }
 
@@ -61,7 +62,7 @@
                 return false;
             }
 
-            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
             return method == qualifiedMethod;
         }
     }

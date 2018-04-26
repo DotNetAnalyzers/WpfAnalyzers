@@ -1,5 +1,7 @@
 namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class XmlnsPrefixAttributeType : QualifiedType
     {
         internal readonly string XmlNamespaceArgumentName = "xmlNamespace";

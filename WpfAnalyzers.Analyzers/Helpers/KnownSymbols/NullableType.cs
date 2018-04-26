@@ -1,5 +1,7 @@
 namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class NullableType : QualifiedType
     {
         internal new readonly QualifiedMethod Equals;

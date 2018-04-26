@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -14,7 +15,7 @@ namespace WpfAnalyzers
                 if (simpleName.Identifier.ValueText == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, simpleName.Identifier.ValueText))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
+                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 
@@ -27,7 +28,7 @@ namespace WpfAnalyzers
                 if (typeName == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, typeName))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
+                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 

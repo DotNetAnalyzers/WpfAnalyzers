@@ -1,6 +1,7 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -70,7 +71,7 @@
                 return false;
             }
 
-            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
             return method == qualifiedMethod;
         }
     }

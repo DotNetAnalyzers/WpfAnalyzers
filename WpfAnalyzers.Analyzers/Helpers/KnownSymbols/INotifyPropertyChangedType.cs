@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
+    using Gu.Roslyn.AnalyzerExtensions;
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal class INotifyPropertyChangedType : QualifiedType
@@ -10,7 +11,7 @@ namespace WpfAnalyzers
         internal INotifyPropertyChangedType()
             : base("System.ComponentModel.INotifyPropertyChanged")
         {
-            this.PropertyChanged = new QualifiedEvent(this, "PropertyChanged");
+            this.PropertyChanged = new QualifiedEvent(this, nameof(this.PropertyChanged));
         }
     }
 }

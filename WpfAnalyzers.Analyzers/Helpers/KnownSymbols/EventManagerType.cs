@@ -1,5 +1,7 @@
 namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class EventManagerType : QualifiedType
     {
         internal readonly QualifiedMethod RegisterClassHandler;

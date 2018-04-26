@@ -1,6 +1,7 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -65,7 +66,7 @@
                     return;
                 }
 
-                if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string xmlNamespace))
+                if (!SemanticModelExt.TryGetConstantValue(context.SemanticModel, arg.Expression, context.CancellationToken, out string xmlNamespace))
                 {
                     return;
                 }
@@ -80,7 +81,7 @@
                 {
                     if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
                     {
-                        if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
+                        if (!SemanticModelExt.TryGetConstantValue(context.SemanticModel, correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
                         {
                             return;
                         }

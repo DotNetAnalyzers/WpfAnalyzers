@@ -1,5 +1,7 @@
 namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class FrameworkElementType : QualifiedType
     {
         internal readonly QualifiedProperty DataContext;

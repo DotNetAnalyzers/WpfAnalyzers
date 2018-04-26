@@ -1,7 +1,8 @@
-﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMember.Global
 namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,10 +33,10 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var symbol = semanticModel.SemanticModelFor(expression)
+            var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return symbol.Is(type);
+            return TypeSymbolExt.Is(symbol, type);
         }
 
         internal static bool IsSameType(this ExpressionSyntax expression, QualifiedType metadataName, SyntaxNodeAnalysisContext context)
@@ -61,10 +62,10 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var symbol = semanticModel.SemanticModelFor(expression)
+            var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return symbol.IsSameType(type);
+            return TypeSymbolExt.IsSameType(symbol, type);
         }
     }
 }

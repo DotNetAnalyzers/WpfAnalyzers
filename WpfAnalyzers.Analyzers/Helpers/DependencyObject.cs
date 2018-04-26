@@ -1,7 +1,8 @@
-﻿#pragma warning disable 1573
+#pragma warning disable 1573
 namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -56,7 +57,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
             return method == qualifiedMethod;
         }
     }

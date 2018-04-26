@@ -1,6 +1,7 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -91,7 +92,7 @@
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var nameArg))
                 {
-                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
+                    return ArgumentSyntaxExt.TryGetStringValue(nameArg, semanticModel, cancellationToken, out registeredName);
                 }
 
                 return false;
@@ -101,7 +102,7 @@
                 (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
-                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
+                if (BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, memberAccess.Expression, cancellationToken), out var fieldOrProperty))
                 {
                     return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
                 }
@@ -119,7 +120,7 @@
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var arg))
                 {
-                    return arg.TryGetStringValue(semanticModel, cancellationToken, out result);
+                    return ArgumentSyntaxExt.TryGetStringValue(arg, semanticModel, cancellationToken, out result);
                 }
 
                 return false;
@@ -158,7 +159,7 @@
             result = default(BackingFieldOrProperty);
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
-                var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
+                var symbol = SemanticModelExt.GetSymbolSafe(semanticModel, value, cancellationToken);
                 if (symbol is IMethodSymbol method)
                 {
                     if (method != KnownSymbol.DependencyProperty.AddOwner)
@@ -169,7 +170,7 @@
                     var invocation = (InvocationExpressionSyntax)value;
                     var member = invocation.Expression as MemberAccessExpressionSyntax;
 
-                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(member?.Expression, cancellationToken), out result) &&
+                    return BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, member?.Expression, cancellationToken), out result) &&
                            TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
                 }
 
@@ -177,7 +178,7 @@
                     property == KnownSymbol.DependencyPropertyKey.DependencyProperty &&
                     value is MemberAccessExpressionSyntax memberAccess)
                 {
-                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out result);
+                    return BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, memberAccess.Expression, cancellationToken), out result);
                 }
             }
 
@@ -190,12 +191,12 @@
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
-                var invocationSymbol = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                var invocationSymbol = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
                 if (invocationSymbol == KnownSymbol.DependencyProperty.AddOwner)
                 {
                     var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
                     return BackingFieldOrProperty.TryCreate(
-                        semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken),
+                        SemanticModelExt.GetSymbolSafe(semanticModel, addOwner.Expression, cancellationToken),
                         out result);
                 }
             }
@@ -257,7 +258,7 @@
                         continue;
                     }
 
-                    if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
+                    if (!StringHelper.IsParts(fieldOrProperty.Name, candidate.Name, suffix))
                     {
                         continue;
                     }
@@ -287,7 +288,7 @@
                 return false;
             }
 
-            method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
             return method == qualifiedMethod;
         }
     }

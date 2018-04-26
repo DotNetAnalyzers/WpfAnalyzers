@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -56,7 +56,7 @@
                         }
                     }
                 }
-                else if (fieldOrProperty == KnownSymbol.FrameworkElement.DefaultStyleKeyProperty &&
+                else if (fieldOrProperty.Symbol == KnownSymbol.FrameworkElement.DefaultStyleKeyProperty &&
                          metadataArg.Expression is ObjectCreationExpressionSyntax metadataCreation)
                 {
                     if (!Constructor.TryGet(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.SemanticModel, context.CancellationToken, out _))
