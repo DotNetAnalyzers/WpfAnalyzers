@@ -54,16 +54,6 @@ namespace WpfAnalyzers
             }
         }
 
-        internal static bool TryGetFieldRecursive(this ITypeSymbol type, string name, out IFieldSymbol field)
-        {
-            return type.TrySingleMemberRecursive(name, out field);
-        }
-
-        internal static bool TryGetPropertyRecursive(this ITypeSymbol type, string name, out IPropertySymbol property)
-        {
-            return type.TrySingleMemberRecursive(name, out property);
-        }
-
         internal static bool TrySingleMemberRecursive<TMember>(this ITypeSymbol type, string name, out TMember member)
             where TMember : class, ISymbol
         {

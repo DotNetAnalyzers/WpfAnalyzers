@@ -67,7 +67,7 @@ namespace WpfAnalyzers
                         if ((context.ContainingSymbol.DeclaredAccessibility == Accessibility.Public ||
                              context.ContainingSymbol.DeclaredAccessibility == Accessibility.Internal) &&
                             !context.Node.HasDocumentation() &&
-                            context.ContainingSymbol.ContainingType.TryGetPropertyRecursive(registeredName, out _))
+                            context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
