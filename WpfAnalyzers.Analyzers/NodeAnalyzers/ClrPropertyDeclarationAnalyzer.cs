@@ -71,7 +71,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (setCall.TryGetInvokedMethodName(out var setCallName) &&
+                if (setCall.TryGetMethodName(out var setCallName) &&
                     setCallName != "SetValue")
                 {
                     //// ReSharper disable once PossibleNullReferenceException
@@ -127,7 +127,7 @@ namespace WpfAnalyzers
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                if (node.TryGetInvokedMethodName(out var name) &&
+                if (node.TryGetMethodName(out var name) &&
                     (name == "SetValue" || name == "SetCurrentValue" || name == "GetValue") &&
                     node.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor)
                 {

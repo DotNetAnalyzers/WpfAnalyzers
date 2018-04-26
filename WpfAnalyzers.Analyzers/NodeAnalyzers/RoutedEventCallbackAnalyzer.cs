@@ -1,7 +1,8 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -90,7 +91,7 @@
         private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
         {
             eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out var name) &&
+            if (invocation.TryGetMethodName(out var name) &&
                 name != "AddHandler")
             {
                 return false;
@@ -110,7 +111,7 @@
         private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
         {
             eventArgument = null;
-            if (invocation.TryGetInvokedMethodName(out var name) &&
+            if (invocation.TryGetMethodName(out var name) &&
                 name != "RemoveHandler")
             {
                 return false;

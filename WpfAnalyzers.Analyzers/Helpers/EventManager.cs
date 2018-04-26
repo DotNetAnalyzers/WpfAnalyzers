@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (invocation.TryGetInvokedMethodName(out var name) &&
+            if (invocation.TryGetMethodName(out var name) &&
                 name != qualifiedMethod.Name)
             {
                 return false;

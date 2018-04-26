@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                 context.Node is EventDeclarationSyntax eventDeclaration &&
                 EventDeclarationWalker.TryGetCalls(eventDeclaration, out var addCall, out var removeCall))
             {
-                if (addCall.TryGetInvokedMethodName(out var addName) &&
+                if (addCall.TryGetMethodName(out var addName) &&
                     addName != "AddHandler")
                 {
                     context.ReportDiagnostic(
@@ -45,7 +45,7 @@ namespace WpfAnalyzers
                             addCall.GetLocation()));
                 }
 
-                if (removeCall.TryGetInvokedMethodName(out var removeName) &&
+                if (removeCall.TryGetMethodName(out var removeName) &&
                     removeName != "RemoveHandler")
                 {
                     context.ReportDiagnostic(
@@ -115,7 +115,7 @@ namespace WpfAnalyzers
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                if (node.TryGetInvokedMethodName(out var name) &&
+                if (node.TryGetMethodName(out var name) &&
                     (name == "AddHandler" || name == "RemoveHandler") &&
                     node.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor)
                 {
@@ -173,7 +173,7 @@ namespace WpfAnalyzers
 
                     return registration?.ArgumentList != null &&
                            registration.ArgumentList.Arguments.Count == 4 &&
-                           registration.TryGetInvokedMethodName(out var name) &&
+                           registration.TryGetMethodName(out var name) &&
                            name == "RegisterRoutedEvent";
                 }
             }

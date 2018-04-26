@@ -282,7 +282,7 @@ namespace WpfAnalyzers
         private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
             method = null;
-            if (invocation.TryGetInvokedMethodName(out var name) &&
+            if (invocation.TryGetMethodName(out var name) &&
                 name != qualifiedMethod.Name)
             {
                 return false;
