@@ -66,7 +66,7 @@ namespace WpfAnalyzers
                     return;
                 }
 
-                if (!SemanticModelExt.TryGetConstantValue(context.SemanticModel, arg.Expression, context.CancellationToken, out string xmlNamespace))
+                if (!context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string xmlNamespace))
                 {
                     return;
                 }
@@ -81,7 +81,7 @@ namespace WpfAnalyzers
                 {
                     if (Attribute.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
                     {
-                        if (!SemanticModelExt.TryGetConstantValue(context.SemanticModel, correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
+                        if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
                         {
                             return;
                         }

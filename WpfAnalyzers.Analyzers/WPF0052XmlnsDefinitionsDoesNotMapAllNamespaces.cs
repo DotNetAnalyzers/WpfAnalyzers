@@ -134,7 +134,7 @@ namespace WpfAnalyzers
                 {
                     if (Attribute.TryGetArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
-                        if (SemanticModelExt.TryGetConstantValue(this.semanticModel, arg.Expression, this.cancellationToken, out string @namespace))
+                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
                         {
                             this.mappedNamespaces.Add(@namespace);
                         }
