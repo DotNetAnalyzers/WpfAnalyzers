@@ -153,20 +153,18 @@ namespace WpfAnalyzers
             getField = default(BackingFieldOrProperty);
             setField = default(BackingFieldOrProperty);
 
-            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
+            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration) &&
+                TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
             {
-                if (TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
+                if (getField.ContainingType.IsGenericType)
                 {
-                    if (getField.ContainingType.IsGenericType)
-                    {
-                        return property.ContainingType.TrySingleMemberRecursive<ISymbol>(getField.Name, out var getMember) &&
-                               BackingFieldOrProperty.TryCreate(getMember, out getField) &&
-                               property.ContainingType.TrySingleMemberRecursive<ISymbol>(setField.Name, out var setMember) &&
-                               BackingFieldOrProperty.TryCreate(setMember, out setField);
-                    }
-
-                    return true;
+                    return property.ContainingType.TryFindFirstMember(getField.Name, out var getMember) &&
+                           BackingFieldOrProperty.TryCreate(getMember, out getField) &&
+                           property.ContainingType.TryFindFirstMember(setField.Name, out var setMember) &&
+                           BackingFieldOrProperty.TryCreate(setMember, out setField);
                 }
+
+                return true;
             }
 
             return false;

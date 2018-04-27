@@ -28,43 +28,6 @@ namespace WpfAnalyzers
             }
         }
 
-        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type, string name)
-        {
-            while (type != null)
-            {
-                foreach (var member in type.GetMembers(name))
-                {
-                    yield return member;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
-        internal static bool TrySingleMemberRecursive<TMember>(this ITypeSymbol type, string name, out TMember member)
-            where TMember : class, ISymbol
-        {
-            member = null;
-            if (type == null ||
-                string.IsNullOrEmpty(name))
-            {
-                return false;
-            }
-
-            foreach (var symbol in type.RecursiveMembers(name))
-            {
-                if (member != null)
-                {
-                    member = null;
-                    return false;
-                }
-
-                member = symbol as TMember;
-            }
-
-            return member != null;
-        }
-
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
             if (ReferenceEquals(first, other) ||
