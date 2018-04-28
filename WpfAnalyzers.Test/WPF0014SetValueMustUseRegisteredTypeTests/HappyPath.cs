@@ -708,7 +708,6 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
 
-        [Explicit]
         [Test]
         public void CastIntToDouble()
         {
