@@ -9,9 +9,9 @@ namespace WpfAnalyzers
     {
         internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol constructor)
         {
-            return Constructor.TryGet(objectCreation, KnownSymbol.PropertyMetadata, semanticModel, cancellationToken, out constructor) ||
-                   Constructor.TryGet(objectCreation, KnownSymbol.UIPropertyMetadata, semanticModel, cancellationToken, out constructor) ||
-                   Constructor.TryGet(objectCreation, KnownSymbol.FrameworkPropertyMetadata, semanticModel, cancellationToken, out constructor);
+            return semanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyMetadata, cancellationToken, out constructor) ||
+                   semanticModel.TryGetSymbol(objectCreation, KnownSymbol.UIPropertyMetadata, cancellationToken, out constructor) ||
+                   semanticModel.TryGetSymbol(objectCreation, KnownSymbol.FrameworkPropertyMetadata, cancellationToken, out constructor);
         }
 
         internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax defaultValueArg)

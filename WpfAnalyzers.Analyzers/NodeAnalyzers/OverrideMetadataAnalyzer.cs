@@ -60,7 +60,7 @@ namespace WpfAnalyzers
                 else if (fieldOrProperty.Symbol == KnownSymbol.FrameworkElement.DefaultStyleKeyProperty &&
                          metadataArg.Expression is ObjectCreationExpressionSyntax metadataCreation)
                 {
-                    if (!Constructor.TryGet(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.SemanticModel, context.CancellationToken, out _))
+                    if (!context.SemanticModel.TryGetSymbol(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.CancellationToken, out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
                     }
