@@ -62,7 +62,7 @@ namespace WpfAnalyzers
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var nameArg))
                 {
-                    return ArgumentSyntaxExt.TryGetStringValue(nameArg, semanticModel, cancellationToken, out registeredName);
+                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
                 }
 
                 return false;
@@ -72,7 +72,7 @@ namespace WpfAnalyzers
                 (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
-                if (BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, memberAccess.Expression, cancellationToken), out var fieldOrProperty))
+                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
                 {
                     return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
                 }
@@ -90,7 +90,7 @@ namespace WpfAnalyzers
             {
                 if (invocation.TryGetArgumentAtIndex(0, out var arg))
                 {
-                    return ArgumentSyntaxExt.TryGetStringValue(arg, semanticModel, cancellationToken, out result);
+                    return arg.TryGetStringValue(semanticModel, cancellationToken, out result);
                 }
 
                 return false;
@@ -129,7 +129,7 @@ namespace WpfAnalyzers
             result = default(BackingFieldOrProperty);
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value))
             {
-                var symbol = SemanticModelExt.GetSymbolSafe(semanticModel, value, cancellationToken);
+                var symbol = semanticModel.GetSymbolSafe(value, cancellationToken);
                 if (symbol is IMethodSymbol method)
                 {
                     if (method != KnownSymbol.DependencyProperty.AddOwner)
@@ -140,7 +140,7 @@ namespace WpfAnalyzers
                     var invocation = (InvocationExpressionSyntax)value;
                     var member = invocation.Expression as MemberAccessExpressionSyntax;
 
-                    return BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, member?.Expression, cancellationToken), out result) &&
+                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(member?.Expression, cancellationToken), out result) &&
                            TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
                 }
 
@@ -148,7 +148,7 @@ namespace WpfAnalyzers
                     property == KnownSymbol.DependencyPropertyKey.DependencyProperty &&
                     value is MemberAccessExpressionSyntax memberAccess)
                 {
-                    return BackingFieldOrProperty.TryCreate(SemanticModelExt.GetSymbolSafe(semanticModel, memberAccess.Expression, cancellationToken), out result);
+                    return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out result);
                 }
             }
 
@@ -164,7 +164,7 @@ namespace WpfAnalyzers
             {
                 var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
                 return BackingFieldOrProperty.TryCreate(
-                    SemanticModelExt.GetSymbolSafe(semanticModel, addOwner.Expression, cancellationToken),
+                    semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken),
                     out result);
             }
 
@@ -225,7 +225,7 @@ namespace WpfAnalyzers
                         continue;
                     }
 
-                    if (!StringHelper.IsParts(fieldOrProperty.Name, candidate.Name, suffix))
+                    if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
                     {
                         continue;
                     }

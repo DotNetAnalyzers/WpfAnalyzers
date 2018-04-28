@@ -28,7 +28,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
+            var symbol = semanticModel.SemanticModelFor(expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
             return symbol.IsSameType(type);

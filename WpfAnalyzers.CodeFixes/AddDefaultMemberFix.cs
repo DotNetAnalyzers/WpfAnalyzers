@@ -2,7 +2,6 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -73,7 +72,7 @@ namespace WpfAnalyzers
 
         private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -83,13 +82,13 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddField(containingType, (FieldDeclarationSyntax)ParseMember(code));
+            editor.AddField(containingType, ParseField(code));
             editor.MakeSealed(containingType);
         }
 
         private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -99,18 +98,26 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddProperty(containingType, (PropertyDeclarationSyntax)ParseMember(code));
+            editor.AddProperty(containingType, ParseProperty(code));
             editor.MakeSealed(containingType);
         }
 
-        private static MemberDeclarationSyntax ParseMember(string code)
+        private static FieldDeclarationSyntax ParseField(string code)
         {
-            return Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseCompilationUnit(code)
-                                                                          .Members
-                                                                          .Single()
-                                                                          .WithSimplifiedNames()
-                                                                          .WithLeadingElasticLineFeed())
-                                .WithAdditionalAnnotations(Formatter.Annotation);
+            return Parse.FieldDeclaration(code)
+                        .WithSimplifiedNames()
+                        .WithLeadingElasticLineFeed()
+                        .WithTrailingElasticLineFeed()
+                        .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        private static PropertyDeclarationSyntax ParseProperty(string code)
+        {
+            return Parse.PropertyDeclaration(code)
+                        .WithSimplifiedNames()
+                        .WithLeadingElasticLineFeed()
+                        .WithTrailingElasticLineFeed()
+                        .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static string Modifier(ClassDeclarationSyntax containingType)

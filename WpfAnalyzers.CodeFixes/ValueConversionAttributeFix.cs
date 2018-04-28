@@ -14,8 +14,8 @@ namespace WpfAnalyzers
     [Shared]
     internal class ValueConversionAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = Simplify.WithSimplifiedNames(SyntaxFactory
-                                     .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute")));
+        private static readonly AttributeSyntax Attribute = SyntaxFactory
+                                                            .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

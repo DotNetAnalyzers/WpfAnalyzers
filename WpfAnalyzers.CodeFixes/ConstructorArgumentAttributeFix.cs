@@ -14,8 +14,8 @@ namespace WpfAnalyzers
     [Shared]
     internal class ConstructorArgumentAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = Simplify.WithSimplifiedNames(SyntaxFactory
-                                     .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute")));
+        private static readonly AttributeSyntax Attribute = SyntaxFactory
+                                                            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

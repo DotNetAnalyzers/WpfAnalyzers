@@ -95,7 +95,7 @@ namespace WpfAnalyzers
                 }
 
                 var clrProperty = context.ContainingProperty();
-                if (ClrProperty.IsDependencyPropertyAccessor(clrProperty, context.SemanticModel, context.CancellationToken))
+                if (clrProperty.IsDependencyPropertyAccessor(context.SemanticModel, context.CancellationToken))
                 {
                     return;
                 }

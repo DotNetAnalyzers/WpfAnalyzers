@@ -21,7 +21,7 @@ namespace WpfAnalyzers
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(0, out var nameArg))
                 {
-                    return ArgumentSyntaxExt.TryGetStringValue(nameArg, semanticModel, cancellationToken, out result);
+                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
                 }
             }
 
@@ -38,7 +38,7 @@ namespace WpfAnalyzers
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(3, out typeArg))
                 {
-                    return ArgumentSyntaxExt.TryGetTypeofValue(typeArg, semanticModel, cancellationToken, out result);
+                    return typeArg.TryGetTypeofValue(semanticModel, cancellationToken, out result);
                 }
             }
 

@@ -150,11 +150,10 @@ namespace WpfAnalyzers
 
         private static MethodDeclarationSyntax ParseMethod(string code)
         {
-            return (MethodDeclarationSyntax)Simplify.WithSimplifiedNames(SyntaxFactory.ParseCompilationUnit(code)
-                                                                                           .Members
-                                                                                           .Single())
-                                                         .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                                                         .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
+            return Parse.MethodDeclaration(code)
+                        .WithSimplifiedNames()
+                        .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
         }
     }
 }

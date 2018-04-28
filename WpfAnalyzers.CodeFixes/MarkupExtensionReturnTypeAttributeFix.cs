@@ -14,8 +14,8 @@ namespace WpfAnalyzers
     [Shared]
     internal class MarkupExtensionReturnTypeAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = Simplify.WithSimplifiedNames(SyntaxFactory
-                                     .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute")));
+        private static readonly AttributeSyntax Attribute = SyntaxFactory
+                                                            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(

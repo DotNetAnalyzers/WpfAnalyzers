@@ -50,7 +50,7 @@ namespace WpfAnalyzers
 
         private static void AddDocumentation(DocumentEditor editor, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
-            var method = SemanticModelExt.GetDeclaredSymbolSafe(editor.SemanticModel, methodDeclaration, cancellationToken);
+            var method = editor.SemanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken);
             if (ClrMethod.IsAttachedGet(method, editor.SemanticModel, cancellationToken, out var fieldOrProperty) &&
                 DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out var registeredName))
             {
