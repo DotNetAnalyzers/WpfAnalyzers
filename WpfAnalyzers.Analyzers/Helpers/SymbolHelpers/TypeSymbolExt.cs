@@ -65,59 +65,6 @@ namespace WpfAnalyzers
                    AreEquivalent(first, other);
         }
 
-        internal static bool IsRepresentationPreservingConversion(
-            this ITypeSymbol toType,
-            ExpressionSyntax valueExpression,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken)
-        {
-            var conversion = SemanticModelExt.SemanticModelFor(semanticModel, valueExpression)
-                                          .ClassifyConversion(valueExpression, toType);
-            if (!conversion.Exists)
-            {
-                return false;
-            }
-
-            if (conversion.IsIdentity)
-            {
-                return true;
-            }
-
-            if (conversion.IsReference &&
-                conversion.IsImplicit)
-            {
-                return true;
-            }
-
-            if (conversion.IsNullable &&
-                conversion.IsNullLiteral)
-            {
-                return true;
-            }
-
-            if (conversion.IsBoxing ||
-                conversion.IsUnboxing)
-            {
-                if (valueExpression is CastExpressionSyntax castExpression)
-                {
-                    return IsRepresentationPreservingConversion(
-                        toType,
-                        castExpression.Expression,
-                        semanticModel,
-                        cancellationToken);
-                }
-
-                return true;
-            }
-
-            if (IsNullable(toType, valueExpression, semanticModel, cancellationToken))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         internal static bool IsNullable(
             this ITypeSymbol nullableType,
             ExpressionSyntax value,
