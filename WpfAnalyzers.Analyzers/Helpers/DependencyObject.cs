@@ -51,14 +51,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (invocation.TryGetMethodName(out var name) &&
-                name != qualifiedMethod.Name)
-            {
-                return false;
-            }
-
-            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
-            return method == qualifiedMethod;
+            return semanticModel.TryGetSymbol(invocation, qualifiedMethod, cancellationToken, out method);
         }
     }
 }
