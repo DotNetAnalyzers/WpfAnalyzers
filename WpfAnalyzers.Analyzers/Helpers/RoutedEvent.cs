@@ -9,12 +9,7 @@ namespace WpfAnalyzers
     {
         internal static bool TryGetRegisterCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return TryGetCall(
-                invocation,
-                KnownSymbol.EventManager.RegisterRoutedEvent,
-                semanticModel,
-                cancellationToken,
-                out method);
+            return semanticModel.TryGetSymbol(invocation, KnownSymbol.EventManager.RegisterRoutedEvent, cancellationToken, out method);
         }
 
         internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
@@ -48,22 +43,6 @@ namespace WpfAnalyzers
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// This is an optimization to avoid calling <see cref="SemanticModel.GetSymbolInfo"/>
-        /// </summary>
-        private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
-        {
-            method = null;
-            if (invocation.TryGetMethodName(out var name) &&
-                name != qualifiedMethod.Name)
-            {
-                return false;
-            }
-
-            method = SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) as IMethodSymbol;
-            return method == qualifiedMethod;
         }
     }
 }

@@ -233,16 +233,6 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool IsInterface(this ITypeSymbol type)
-        {
-            if (type == null)
-            {
-                return false;
-            }
-
-            return type != KnownSymbol.Object && type.BaseType == null;
-        }
-
         internal static bool AreEquivalent(this INamedTypeSymbol first, INamedTypeSymbol other)
         {
             if (ReferenceEquals(first, other))
