@@ -69,7 +69,7 @@ namespace WpfAnalyzers
                     DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                     PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
-                    if (!registeredType.IsRepresentationPreservingConversion(defaultValueArg.Expression, context.SemanticModel, context.CancellationToken) &&
+                    if (!context.SemanticModel.IsRepresentationPreservingConversion(defaultValueArg.Expression, registeredType, context.CancellationToken) &&
                         !IsInvocationReturningObject(defaultValueArg.Expression, context))
                     {
                         context.ReportDiagnostic(

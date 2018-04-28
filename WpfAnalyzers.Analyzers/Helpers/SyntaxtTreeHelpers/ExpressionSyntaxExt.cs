@@ -36,7 +36,7 @@ namespace WpfAnalyzers
             var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return TypeSymbolExt.Is(symbol, type);
+            return symbol.Is(type);
         }
 
         internal static bool IsSameType(this ExpressionSyntax expression, QualifiedType metadataName, SyntaxNodeAnalysisContext context)
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
             var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return TypeSymbolExt.IsSameType(symbol, type);
+            return symbol.IsSameType(type);
         }
     }
 }

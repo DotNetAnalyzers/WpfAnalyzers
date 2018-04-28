@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                                 return;
                             }
 
-                            if (!registeredType.IsRepresentationPreservingConversion(valueArg.Expression, context.SemanticModel, context.CancellationToken))
+                            if (!context.SemanticModel.IsRepresentationPreservingConversion(valueArg.Expression, registeredType, context.CancellationToken))
                             {
                                 var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
                                 context.ReportDiagnostic(Diagnostic.Create(WPF0014SetValueMustUseRegisteredType.Descriptor, valueArg.GetLocation(), setCall.Name, registeredType));

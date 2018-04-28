@@ -420,6 +420,7 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
+        [Explicit]
         [Test]
         public void CastIntToDouble()
         {

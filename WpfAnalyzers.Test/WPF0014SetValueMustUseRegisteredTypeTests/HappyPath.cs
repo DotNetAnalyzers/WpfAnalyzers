@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
+namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -708,6 +708,7 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
 
+        [Explicit]
         [Test]
         public void CastIntToDouble()
         {

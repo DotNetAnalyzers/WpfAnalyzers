@@ -4,6 +4,7 @@ namespace WpfAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -232,7 +233,7 @@ namespace WpfAnalyzers
                 }
 
                 var valueExpression = assignment.Right;
-                if (assignedType.IsRepresentationPreservingConversion(valueExpression, semanticModel, cancellationToken))
+                if (semanticModel.IsRepresentationPreservingConversion(valueExpression, assignedType, cancellationToken))
                 {
                     result = SyntaxFactory.Argument(valueExpression);
                 }

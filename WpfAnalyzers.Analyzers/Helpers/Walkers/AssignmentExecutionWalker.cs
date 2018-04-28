@@ -156,7 +156,7 @@ namespace WpfAnalyzers
                             identifierName.Identifier.ValueText == symbol.Name &&
                             semanticModel.GetSymbolSafe(argument.Parent?.Parent, cancellationToken) is IMethodSymbol method &&
                             method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax methodDeclaration) &&
-                            method.TryGetMatchingParameter(argument, out var parameter))
+                            method.TryFindParameter(argument, out var parameter))
                         {
                             using (var visited = recursion.IncrementUsage())
                             {
