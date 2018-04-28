@@ -35,15 +35,11 @@ namespace WpfAnalyzers
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property &&
                 property.ContainingType.Is(KnownSymbol.MarkupExtension) &&
-                !ConstructorArgument.TryGetAttribute(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _) &&
+                !Attribute.TryFind(propertyDeclaration.AttributeLists, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
                 ConstructorArgument.IsAssigned(propertyDeclaration, out var parameterName))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Identifier.GetLocation(), parameterName));

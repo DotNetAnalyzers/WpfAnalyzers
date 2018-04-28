@@ -1,6 +1,7 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -34,12 +35,8 @@
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is AttributeSyntax attribute &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is AttributeSyntax attribute &&
                 Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
                 ConstructorArgument.IsMatch(attribute, out var arg, out var parameterName) == false)
             {

@@ -1,41 +1,16 @@
 namespace WpfAnalyzers
 {
-    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class ConstructorArgument
     {
-        internal static bool TryGetAttribute(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeSyntax result)
-        {
-            result = null;
-            if (propertyDeclaration == null)
-            {
-                return false;
-            }
-
-            foreach (var attributeList in propertyDeclaration.AttributeLists)
-            {
-                foreach (var attribute in attributeList.Attributes)
-                {
-                    if (Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, semanticModel, cancellationToken))
-                    {
-                        result = attribute;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         internal static bool? IsMatch(AttributeSyntax attribute, out AttributeArgumentSyntax argument, out string parameterName)
         {
             argument = null;
             parameterName = null;
             var propertyDeclaration = attribute?.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-            if (Attribute.TryGetArgument(attribute, 0, "argumentName", out argument) &&
+            if (AttributeExt.TryGetArgument(attribute, 0, "argumentName", out argument) &&
                 argument.Expression is LiteralExpressionSyntax literal)
             {
                 return IsAssigned(propertyDeclaration, out parameterName) &&

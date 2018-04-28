@@ -49,11 +49,11 @@ namespace WpfAnalyzers
 
                 if (type.Is(KnownSymbol.IValueConverter))
                 {
-                    if (Attribute.TryGetAttribute(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(classDeclaration.AttributeLists, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {
-                            if (Attribute.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
+                            if (AttributeExt.TryGetArgument(attribute, 0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
                                 TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
                                 !Equals(argType, sourceType))
@@ -61,7 +61,7 @@ namespace WpfAnalyzers
                                 context.ReportDiagnostic(Diagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor, arg.GetLocation(), sourceType));
                             }
 
-                            if (Attribute.TryGetArgument(attribute, 1, "targetType", out arg) &&
+                            if (AttributeExt.TryGetArgument(attribute, 1, "targetType", out arg) &&
                                 arg.Expression is TypeOfExpressionSyntax targetTypeOf &&
                                 TypeOf.TryGetType(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
                                 !Equals(argType, targetType))

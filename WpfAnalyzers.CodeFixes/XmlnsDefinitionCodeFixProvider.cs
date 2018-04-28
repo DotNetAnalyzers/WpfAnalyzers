@@ -67,7 +67,7 @@ namespace WpfAnalyzers
                 return null;
             }
 
-            if (!Attribute.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
+            if (!AttributeExt.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
             {
                 return null;
             }
