@@ -33,7 +33,7 @@ namespace WpfAnalyzers
             }
 
             if (context.ContainingSymbol is INamedTypeSymbol type &&
-                type.IsEither(KnownSymbol.IValueConverter, KnownSymbol.IMultiValueConverter) &&
+                (type.Is(KnownSymbol.IValueConverter) || type.Is(KnownSymbol.IMultiValueConverter)) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
                 type.DeclaredAccessibility != Accessibility.Private &&
