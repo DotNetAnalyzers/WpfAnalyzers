@@ -1,6 +1,7 @@
 // ReSharper disable UnusedMember.Global
 namespace WpfAnalyzers
 {
+    using System;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -10,6 +11,7 @@ namespace WpfAnalyzers
 
     internal static class ExpressionSyntaxExt
     {
+        [Obsolete("Don't use this")]
         internal static bool IsSameType(this ExpressionSyntax expression, QualifiedType metadataName, SyntaxNodeAnalysisContext context)
         {
             return expression.IsSameType(metadataName, context.SemanticModel, context.CancellationToken);
