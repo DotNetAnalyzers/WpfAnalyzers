@@ -38,7 +38,7 @@ namespace WpfAnalyzers
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
                 method.Parameters.TryElementAt(0, out var parameter) &&
-                parameter.Type.Is(KnownSymbol.DependencyObject))
+                parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
             {
                 if (method.Parameters.TryElementAt(1, out var valueParameter) &&
                     ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out var fieldOrProperty))
@@ -117,12 +117,12 @@ namespace WpfAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                     }
 
-                    if (Attribute.TryFind(methodDeclaration.AttributeLists, KnownSymbol.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(methodDeclaration, KnownSymbol.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
                             TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
-                            !argumentType.Is(parameter.Type))
+                            !argumentType.IsAssignableTo(parameter.Type, context.Compilation))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

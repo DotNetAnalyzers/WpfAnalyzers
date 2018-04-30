@@ -60,7 +60,7 @@ namespace WpfAnalyzers
                     else if (DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                              invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                              BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
-                             context.ContainingSymbol.ContainingType.Is(fieldOrProperty.ContainingType))
+                             context.ContainingSymbol.ContainingType.IsAssignableTo(fieldOrProperty.ContainingType, context.Compilation))
                     {
                         HandleArgument(context, argument);
                     }
@@ -70,12 +70,8 @@ namespace WpfAnalyzers
 
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
-            if (!argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType))
-            {
-                return;
-            }
-
-            if (!context.ContainingSymbol.ContainingType.IsSameType(ownerType as INamedTypeSymbol))
+            if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
+                !context.ContainingSymbol.ContainingType.IsSameType(ownerType, context.Compilation))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }

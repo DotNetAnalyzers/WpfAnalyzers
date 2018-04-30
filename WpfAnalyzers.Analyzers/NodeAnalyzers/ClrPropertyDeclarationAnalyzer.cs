@@ -35,7 +35,7 @@ namespace WpfAnalyzers
 
             if (!context.ContainingSymbol.IsStatic &&
                 context.ContainingSymbol is IPropertySymbol property &&
-                context.ContainingSymbol.ContainingType.Is(KnownSymbol.DependencyObject) &&
+                property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
@@ -97,7 +97,7 @@ namespace WpfAnalyzers
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !registeredType.IsSameType(property.Type))
+                        !registeredType.IsSameType(property.Type, context.Compilation))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(

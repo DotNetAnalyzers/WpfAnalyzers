@@ -33,13 +33,14 @@ namespace WpfAnalyzers
             }
 
             if (context.ContainingSymbol is INamedTypeSymbol type &&
-                (type.Is(KnownSymbol.IValueConverter) || type.Is(KnownSymbol.IMultiValueConverter)) &&
+                (type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation) ||
+                 type.IsAssignableTo(KnownSymbol.IMultiValueConverter, context.Compilation)) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
-                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.SemanticModel.Compilation) &&
+                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                     !Mutable.HasMutableInstanceMembers(type) &&
                     !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
                     !ValueConverter.TryGetDefaultFieldsOrProperties(type, out _))
@@ -47,7 +48,7 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
                 }
 
-                if (type.IsAssignableTo(KnownSymbol.IValueConverter, context.SemanticModel.Compilation))
+                if (type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation))
                 {
                     if (Attribute.TryFind(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {

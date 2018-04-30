@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyProperty()
+        public void DependencyPropertyStatementBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -44,7 +44,7 @@ namespace WpfAnalyzers
                     {
                         if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                         {
-                            if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.SemanticModel.Compilation) &&
+                            if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.Compilation) &&
                                 valueArg.Expression.IsSameType(KnownSymbol.Freezable, context.SemanticModel))
                             {
                                 return;
