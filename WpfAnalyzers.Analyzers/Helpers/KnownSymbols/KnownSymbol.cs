@@ -6,15 +6,7 @@ namespace WpfAnalyzers
     internal static class KnownSymbol
     {
         internal static readonly ObjectType Object = new ObjectType();
-        internal static readonly StringType String = new StringType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
-        internal static readonly NullableType Nullable = new NullableType();
-        internal static readonly QualifiedType NullableOfT = new QualifiedType("System.Nullable`1");
-
-        internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
-        internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();
-        internal static readonly QualifiedType PropertyChangedEventArgs = new QualifiedType("System.ComponentModel.PropertyChangedEventArgs");
-        internal static readonly PropertyChangedEventHandlerType PropertyChangedEventHandler = new PropertyChangedEventHandlerType();
 
         internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
         internal static readonly FrameworkElementType FrameworkElement = new FrameworkElementType();
@@ -33,7 +25,6 @@ namespace WpfAnalyzers
 
         internal static readonly QualifiedType FontFamily = Create("System.Windows.Media.FontFamily");
         internal static readonly QualifiedType Freezable = Create("System.Windows.Freezable");
-        internal static readonly QualifiedType DataTemplateSelector = Create("System.Windows.Controls.DataTemplateSelector");
         internal static readonly QualifiedType MarkupExtension = Create("System.Windows.Markup.MarkupExtension");
         internal static readonly QualifiedType MarkupExtensionReturnTypeAttribute = Create("System.Windows.Markup.MarkupExtensionReturnTypeAttribute");
         internal static readonly QualifiedType ConstructorArgumentAttribute = Create("System.Windows.Markup.ConstructorArgumentAttribute");
