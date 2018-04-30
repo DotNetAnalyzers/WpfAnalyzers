@@ -60,15 +60,27 @@ namespace WpfAnalyzers
                 DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
                 DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
             {
-                return BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<FieldDeclarationSyntax>(), cancellationToken), out fieldOrProperty) ||
-                       BackingFieldOrProperty.TryCreate(semanticModel.GetDeclaredSymbolSafe(objectCreation.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken), out fieldOrProperty);
+                if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
+                    semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))
+                {
+                    return BackingFieldOrProperty.TryCreate(field, out fieldOrProperty);
+                }
+
+                if (objectCreation.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
+                    semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property))
+                {
+                    return BackingFieldOrProperty.TryCreate(property, out fieldOrProperty);
+                }
+
+                return false;
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
-                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
+                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
+                semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol candidate))
             {
-                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out fieldOrProperty);
+                return BackingFieldOrProperty.TryCreate(candidate, out fieldOrProperty);
             }
 
             return false;

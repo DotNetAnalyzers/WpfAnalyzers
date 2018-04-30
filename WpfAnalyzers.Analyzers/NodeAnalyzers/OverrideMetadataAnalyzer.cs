@@ -33,7 +33,8 @@ namespace WpfAnalyzers
             if (context.Node is InvocationExpressionSyntax invocation &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol candidate) &&
+                BackingFieldOrProperty.TryCreate(candidate, out var fieldOrProperty) &&
                 Argument.TryGetArgument(method.Parameters, invocation.ArgumentList, KnownSymbol.PropertyMetadata, out var metadataArg))
             {
                 if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
@@ -44,16 +45,12 @@ namespace WpfAnalyzers
                         DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
                     {
-                        if (Argument.TryGetArgument(registerMethod.Parameters, registerInvocation.ArgumentList, KnownSymbol.PropertyMetadata, out var registeredMetadataArg))
+                        if (Argument.TryGetArgument(registerMethod.Parameters, registerInvocation.ArgumentList, KnownSymbol.PropertyMetadata, out var registeredMetadataArg) &&
+                            context.SemanticModel.TryGetType(metadataArg.Expression, context.CancellationToken, out var type) &&
+                            context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
+                            !type.IsAssignableTo(registeredType, context.Compilation))
                         {
-                            var type = context.SemanticModel.GetTypeInfoSafe(metadataArg.Expression, context.CancellationToken).Type;
-                            var registeredType = context.SemanticModel.GetTypeInfoSafe(registeredMetadataArg.Expression, context.CancellationToken).Type;
-                            if (type != null &&
-                                registeredType != null &&
-                                !type.IsAssignableTo(registeredType, context.Compilation))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
-                            }
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
                         }
                     }
                 }
