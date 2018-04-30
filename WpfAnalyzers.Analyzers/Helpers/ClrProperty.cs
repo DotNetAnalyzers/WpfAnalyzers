@@ -13,14 +13,14 @@ namespace WpfAnalyzers
         /// <summary>
         /// Check if the <paramref name="property"/> can be an accessor for a DependencyProperty
         /// </summary>
-        internal static bool IsPotentialClrProperty(this IPropertySymbol property)
+        internal static bool IsPotentialClrProperty(this IPropertySymbol property, Compilation compilation)
         {
             return property != null &&
                    !property.IsIndexer &&
                    !property.IsReadOnly &&
                    !property.IsWriteOnly &&
                    !property.IsStatic &&
-                   property.ContainingType.Is(KnownSymbol.DependencyObject);
+                   property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
         }
 
         /// <summary>
@@ -28,17 +28,9 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (!property.IsPotentialClrProperty())
-            {
-                return false;
-            }
-
-            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration))
-            {
-                return IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
-            }
-
-            return false;
+            return property.IsPotentialClrProperty(semanticModel.Compilation) &&
+                   property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
+                   IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
         }
 
         /// <summary>
@@ -58,7 +50,8 @@ namespace WpfAnalyzers
             result = default(BackingFieldOrProperty);
             BackingFieldOrProperty getter;
             BackingFieldOrProperty setter;
-            if (TryGetPropertyDeclaration(property, cancellationToken, out _))
+            if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
+                property.TrySingleDeclaration(cancellationToken, out _))
             {
                 if (TryGetBackingFields(
                     property,
@@ -153,7 +146,8 @@ namespace WpfAnalyzers
             getField = default(BackingFieldOrProperty);
             setField = default(BackingFieldOrProperty);
 
-            if (TryGetPropertyDeclaration(property, cancellationToken, out var propertyDeclaration) &&
+            if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
+                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
                 TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
             {
                 if (getField.ContainingType.IsGenericType)
@@ -216,23 +210,6 @@ namespace WpfAnalyzers
             }
 
             return setter.Symbol != null;
-        }
-
-        private static bool TryGetPropertyDeclaration(IPropertySymbol property, CancellationToken cancellationToken, out PropertyDeclarationSyntax result)
-        {
-            result = null;
-            if (!property.IsPotentialClrProperty())
-            {
-                return false;
-            }
-
-            if (property.DeclaringSyntaxReferences.TryLast(out var reference))
-            {
-                result = reference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
-                return result != null;
-            }
-
-            return false;
         }
     }
 }

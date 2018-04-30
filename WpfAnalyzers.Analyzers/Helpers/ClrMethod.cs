@@ -55,18 +55,9 @@ namespace WpfAnalyzers
         internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
         {
             getField = default(BackingFieldOrProperty);
-            if (!IsPotentialClrGetMethod(method, semanticModel.Compilation))
-            {
-                return false;
-            }
-
-            if (method.DeclaringSyntaxReferences.TrySingle(out var reference))
-            {
-                var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
-                return IsAttachedGet(methodDeclaration, semanticModel, cancellationToken, out _, out getField);
-            }
-
-            return false;
+            return IsPotentialClrGetMethod(method, semanticModel.Compilation) &&
+                   method.TrySingleMethodDeclaration(cancellationToken, out var declaration) &&
+                   IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
         }
 
         internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)

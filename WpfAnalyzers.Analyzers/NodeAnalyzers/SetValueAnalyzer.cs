@@ -40,12 +40,12 @@ namespace WpfAnalyzers
                 var property = context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken);
                 if (BackingFieldOrProperty.TryCreate(property, out var fieldOrProperty))
                 {
-                    if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context))
+                    if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context.SemanticModel))
                     {
                         if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                         {
-                            if (registeredType.Is(KnownSymbol.Freezable) &&
-                                valueArg.Expression.IsSameType(KnownSymbol.Freezable, context))
+                            if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.SemanticModel.Compilation) &&
+                                valueArg.Expression.IsSameType(KnownSymbol.Freezable, context.SemanticModel))
                             {
                                 return;
                             }
