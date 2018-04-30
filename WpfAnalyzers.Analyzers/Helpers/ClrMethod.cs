@@ -11,31 +11,21 @@ namespace WpfAnalyzers
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrSetMethod(IMethodSymbol method)
+        internal static bool IsPotentialClrSetMethod(IMethodSymbol method, Compilation compilation)
         {
-            if (method == null)
-            {
-                return false;
-            }
-
-            if (!method.IsStatic ||
-                method.Parameters.Length != 2 ||
-                method.AssociatedSymbol != null ||
-                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
-                method.Parameters[1].Type == KnownSymbol.DependencyPropertyChangedEventArgs ||
-                !method.ReturnsVoid ||
-                !method.Name.StartsWith("Set"))
-            {
-                return false;
-            }
-
-            return true;
+            return method != null &&
+                   method.IsStatic &&
+                   method.ReturnsVoid &&
+                   method.Name.StartsWith("Set") &&
+                   method.Parameters.Length == 2 &&
+                   method.Parameters.TryElementAt(0, out var parameter) &&
+                   parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
         }
 
         internal static bool IsAttachedSet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
         {
             setField = default(BackingFieldOrProperty);
-            if (!IsPotentialClrSetMethod(method))
+            if (!IsPotentialClrSetMethod(method, semanticModel.Compilation))
             {
                 return false;
             }
@@ -52,29 +42,20 @@ namespace WpfAnalyzers
         /// <summary>
         /// Check if <paramref name="method"/> is a potential accessor for an attached property
         /// </summary>
-        internal static bool IsPotentialClrGetMethod(IMethodSymbol method)
+        internal static bool IsPotentialClrGetMethod(IMethodSymbol method, Compilation compilation)
         {
-            if (method == null)
-            {
-                return false;
-            }
-
-            if (!method.IsStatic ||
-                method.Parameters.Length != 1 ||
-                !method.Parameters[0].Type.Is(KnownSymbol.DependencyObject) ||
-                method.ReturnsVoid ||
-                !method.Name.StartsWith("Get"))
-            {
-                return false;
-            }
-
-            return true;
+            return method != null &&
+                   method.IsStatic &&
+                   !method.ReturnsVoid &&
+                   method.Name.StartsWith("Get") &&
+                   method.Parameters.TrySingle(out var parameter) &&
+                   parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
         }
 
         internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
         {
             getField = default(BackingFieldOrProperty);
-            if (!IsPotentialClrGetMethod(method))
+            if (!IsPotentialClrGetMethod(method, semanticModel.Compilation))
             {
                 return false;
             }

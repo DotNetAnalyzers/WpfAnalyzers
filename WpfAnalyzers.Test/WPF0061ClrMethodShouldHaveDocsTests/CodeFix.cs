@@ -1,10 +1,14 @@
-﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
+namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new DocumentClrMethodCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0061");
 
         [Test]
@@ -70,7 +74,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -142,7 +146,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.FixAll<ClrMethodDeclarationAnalyzer, DocumentClrMethodCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace WpfAnalyzers
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
-                if (!type.Is(KnownSymbol.MarkupExtension) &&
+                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.SemanticModel.Compilation) &&
                     !Mutable.HasMutableInstanceMembers(type) &&
                     !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
                     !ValueConverter.TryGetDefaultFieldsOrProperties(type, out _))
@@ -47,9 +47,9 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
                 }
 
-                if (type.Is(KnownSymbol.IValueConverter))
+                if (type.IsAssignableTo(KnownSymbol.IValueConverter, context.SemanticModel.Compilation))
                 {
-                    if (Attribute.TryFind(classDeclaration.AttributeLists, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {
