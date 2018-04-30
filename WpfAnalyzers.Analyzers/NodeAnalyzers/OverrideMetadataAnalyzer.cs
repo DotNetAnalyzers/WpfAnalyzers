@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                             var registeredType = context.SemanticModel.GetTypeInfoSafe(registeredMetadataArg.Expression, context.CancellationToken).Type;
                             if (type != null &&
                                 registeredType != null &&
-                                !type.Is(registeredType))
+                                !type.IsAssignableTo(registeredType, context.Compilation))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
                             }

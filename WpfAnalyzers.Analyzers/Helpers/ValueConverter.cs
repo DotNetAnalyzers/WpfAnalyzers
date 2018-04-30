@@ -9,7 +9,7 @@ namespace WpfAnalyzers
 
     internal static class ValueConverter
     {
-        internal static bool TryGetDefaultFieldsOrProperties(ITypeSymbol type, out IReadOnlyList<FieldOrProperty> defaults)
+        internal static bool TryGetDefaultFieldsOrProperties(ITypeSymbol type, Compilation compilation, out IReadOnlyList<FieldOrProperty> defaults)
         {
             List<FieldOrProperty> temp = null;
             foreach (var member in type.GetMembers())
@@ -19,8 +19,8 @@ namespace WpfAnalyzers
                      member.DeclaredAccessibility == Accessibility.Internal))
                 {
                     if (FieldOrProperty.TryCreate(member, out var fieldOrProperty) &&
-                        (fieldOrProperty.Type.Is(KnownSymbol.IValueConverter) ||
-                         fieldOrProperty.Type.Is(KnownSymbol.IMultiValueConverter)))
+                        (fieldOrProperty.Type.IsAssignableTo(KnownSymbol.IValueConverter, compilation) ||
+                         fieldOrProperty.Type.IsAssignableTo(KnownSymbol.IMultiValueConverter, compilation)))
                     {
                         if (temp == null)
                         {

@@ -136,11 +136,11 @@ namespace WpfAnalyzers
 
                     if (parent is BinaryExpressionSyntax binaryExpression &&
                         binaryExpression.IsKind(SyntaxKind.AsExpression) &&
-                        context.SemanticModel.GetTypeInfoSafe(binaryExpression.Right, context.CancellationToken)
-                               .Type is ITypeSymbol asType &&
+                        context.SemanticModel.TryGetType(binaryExpression.Right, context.CancellationToken, out var asType) &&
                         asType.TypeKind != TypeKind.Interface &&
                         expectedType.TypeKind != TypeKind.Interface &&
-                        !(asType.Is(expectedType) || expectedType.Is(asType)))
+                        !(asType.IsAssignableTo(expectedType, context.Compilation) ||
+                          expectedType.IsAssignableTo(asType, context.Compilation)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
@@ -157,11 +157,10 @@ namespace WpfAnalyzers
                     if (parent is IsPatternExpressionSyntax isPattern &&
                         expectedType != KnownSymbol.Object &&
                         isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
-                        context.SemanticModel.GetTypeInfoSafe(isDeclaration.Type, context.CancellationToken)
-                               .Type is ITypeSymbol isType &&
+                        context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
                         isType.TypeKind != TypeKind.Interface &&
                         expectedType.TypeKind != TypeKind.Interface &&
-                        !(isType.Is(expectedType) || expectedType.Is(isType)))
+                        !(isType.IsAssignableTo(expectedType, context.Compilation) || expectedType.IsAssignableTo(isType, context.Compilation)))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
@@ -185,9 +184,10 @@ namespace WpfAnalyzers
                             {
                                 if (label is CasePatternSwitchLabelSyntax patternLabel &&
                                     patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
-                                    context.SemanticModel.GetTypeInfoSafe(labelDeclaration.Type, context.CancellationToken).Type is ITypeSymbol caseType &&
+                                    context.SemanticModel.TryGetType(labelDeclaration.Type, context.CancellationToken, out var caseType) &&
                                     caseType.TypeKind != TypeKind.Interface &&
-                                    !(caseType.Is(expectedType) || expectedType.Is(caseType)))
+                                    !(caseType.IsAssignableTo(expectedType, context.Compilation) ||
+                                      expectedType.IsAssignableTo(caseType, context.Compilation)))
                                 {
                                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                                         context.SemanticModel,

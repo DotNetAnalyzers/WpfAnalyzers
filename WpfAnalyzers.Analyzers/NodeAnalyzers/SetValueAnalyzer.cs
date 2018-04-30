@@ -35,40 +35,43 @@ namespace WpfAnalyzers
                 (DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out var call) ||
                  DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out call)) &&
                  invocation.TryGetArgumentAtIndex(0, out var propertyArg) &&
-                 invocation.TryGetArgumentAtIndex(1, out var valueArg))
+                 invocation.TryGetArgumentAtIndex(1, out var valueArg) &&
+                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol property) &&
+                BackingFieldOrProperty.TryCreate(property, out var fieldOrProperty))
             {
-                var property = context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken);
-                if (BackingFieldOrProperty.TryCreate(property, out var fieldOrProperty))
+                if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context.SemanticModel))
                 {
-                    if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context.SemanticModel))
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
-                        if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
+                        if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.Compilation) &&
+                            valueArg.Expression.IsSameType(KnownSymbol.Freezable, context.SemanticModel))
                         {
-                            if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.Compilation) &&
-                                valueArg.Expression.IsSameType(KnownSymbol.Freezable, context.SemanticModel))
-                            {
-                                return;
-                            }
-
-                            if (!context.SemanticModel.IsRepresentationPreservingConversion(valueArg.Expression, registeredType, context.CancellationToken))
-                            {
-                                var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0014SetValueMustUseRegisteredType.Descriptor, valueArg.GetLocation(), setCall.Name, registeredType));
-                            }
+                            return;
                         }
-                    }
 
-                    if (fieldOrProperty.Type == KnownSymbol.DependencyProperty)
-                    {
-                        if (DependencyProperty.TryGetDependencyPropertyKeyField(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
+                        if (!context.SemanticModel.IsRepresentationPreservingConversion(valueArg.Expression, registeredType, context.CancellationToken))
                         {
+                            var setCall = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0040SetUsingDependencyPropertyKey.Descriptor,
-                                    propertyArg.GetLocation(),
-                                    propertyArg,
-                                    keyField.CreateArgument(context.SemanticModel, propertyArg.SpanStart)));
+                                    WPF0014SetValueMustUseRegisteredType.Descriptor,
+                                    valueArg.GetLocation(),
+                                    setCall.Name,
+                                    registeredType));
                         }
+                    }
+                }
+
+                if (fieldOrProperty.Type == KnownSymbol.DependencyProperty)
+                {
+                    if (DependencyProperty.TryGetDependencyPropertyKeyField(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0040SetUsingDependencyPropertyKey.Descriptor,
+                                propertyArg.GetLocation(),
+                                propertyArg,
+                                keyField.CreateArgument(context.SemanticModel, propertyArg.SpanStart)));
                     }
                 }
 

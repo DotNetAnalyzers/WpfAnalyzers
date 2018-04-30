@@ -42,8 +42,8 @@ namespace WpfAnalyzers
 
             if (context.ContainingSymbol is ITypeSymbol type &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
-                type.Is(KnownSymbol.MarkupExtension) &&
-                !Attribute.TryFind(classDeclaration.AttributeLists, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
+                type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
+                !Attribute.TryFind(classDeclaration, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation()));
             }

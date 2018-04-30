@@ -67,7 +67,7 @@ namespace WpfAnalyzers
                 return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
             }
 
-            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, SemanticModel sm, CancellationToken ct, out ITypeSymbol result)
+            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, out ITypeSymbol result)
             {
                 result = null;
                 if (ts == null)
@@ -75,7 +75,7 @@ namespace WpfAnalyzers
                     return false;
                 }
 
-                var t2 = sm.GetTypeInfoSafe(ts, ct).Type;
+                var t2 = semanticModel.GetTypeInfoSafe(ts, cancellationToken).Type;
                 if (t2 == null)
                 {
                     return false;
@@ -88,13 +88,13 @@ namespace WpfAnalyzers
                 }
 
                 if (t1 == null ||
-                    t1.Is(t2))
+                    t1.IsAssignableTo(t2, semanticModel.Compilation))
                 {
                     result = t2;
                     return true;
                 }
 
-                if (t2.Is(t1))
+                if (t2.IsAssignableTo(t1, semanticModel.Compilation))
                 {
                     result = t1;
                     return true;
@@ -118,7 +118,7 @@ namespace WpfAnalyzers
                 foreach (var cast in walker.casts)
                 {
                     if (IsFor(cast.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, cast.Type, semanticModel, cancellationToken, out toType))
+                        !TryGetCommonBase(toType, cast.Type, out toType))
                     {
                         return false;
                     }
@@ -127,7 +127,7 @@ namespace WpfAnalyzers
                 foreach (var cast in walker.asCasts)
                 {
                     if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
+                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, out toType))
                     {
                         return false;
                     }
@@ -136,7 +136,7 @@ namespace WpfAnalyzers
                 foreach (var isCheck in walker.isChecks)
                 {
                     if (IsFor(isCheck.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, isCheck.Right as TypeSyntax, semanticModel, cancellationToken, out toType))
+                        !TryGetCommonBase(toType, isCheck.Right as TypeSyntax, out toType))
                     {
                         return false;
                     }
@@ -146,7 +146,7 @@ namespace WpfAnalyzers
                 {
                     if (isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
                         IsFor(isPattern.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, declarationPattern.Type, semanticModel, cancellationToken, out toType))
+                        !TryGetCommonBase(toType, declarationPattern.Type, out toType))
                     {
                         return false;
                     }
@@ -156,7 +156,7 @@ namespace WpfAnalyzers
                 {
                     if (label.Pattern is DeclarationPatternSyntax declarationPattern &&
                         IsFor(label.FirstAncestor<SwitchStatementSyntax>().Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, declarationPattern.Type, semanticModel, cancellationToken, out toType))
+                        !TryGetCommonBase(toType, declarationPattern.Type, out toType))
                     {
                         return false;
                     }

@@ -43,7 +43,7 @@ namespace WpfAnalyzers
                 if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                     !Mutable.HasMutableInstanceMembers(type) &&
                     !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
-                    !ValueConverter.TryGetDefaultFieldsOrProperties(type, out _))
+                    !ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out _))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
                 }

@@ -44,9 +44,9 @@ namespace WpfAnalyzers
             if (context.ContainingSymbol is ITypeSymbol type &&
                 context.Node is AttributeSyntax attribute &&
                 !type.IsAbstract &&
-                type.Is(KnownSymbol.MarkupExtension) &&
+                type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                 Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
-                attribute.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax classDeclaration &&
+                attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                 MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                 returnType != KnownSymbol.Object)
             {

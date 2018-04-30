@@ -69,7 +69,7 @@ namespace WpfAnalyzers
                 }
             }
 
-            if (TryGetBackingFieldsByName(property, out getter, out setter))
+            if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out getter, out setter))
             {
                 if (ReferenceEquals(getter.Symbol, setter.Symbol))
                 {
@@ -110,7 +110,7 @@ namespace WpfAnalyzers
                         }
 
                         var property = semanticModel.GetSymbolSafe(propertyDeclaration, cancellationToken) as IPropertySymbol;
-                        return TryGetBackingFieldsByName(property, out getField, out setField);
+                        return TryGetBackingFieldsByName(property, semanticModel.Compilation, out getField, out setField);
                     }
                 }
             }
@@ -168,12 +168,12 @@ namespace WpfAnalyzers
         /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field.
         /// This method looks for fields that matches the name NameProperty and NamePropertyKey.
         /// </summary>
-        private static bool TryGetBackingFieldsByName(IPropertySymbol property, out BackingFieldOrProperty getter, out BackingFieldOrProperty setter)
+        private static bool TryGetBackingFieldsByName(IPropertySymbol property, Compilation compilation, out BackingFieldOrProperty getter, out BackingFieldOrProperty setter)
         {
             getter = default(BackingFieldOrProperty);
             setter = default(BackingFieldOrProperty);
             if (property == null ||
-                !property.ContainingType.Is(KnownSymbol.DependencyObject))
+                !property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, compilation))
             {
                 return false;
             }
