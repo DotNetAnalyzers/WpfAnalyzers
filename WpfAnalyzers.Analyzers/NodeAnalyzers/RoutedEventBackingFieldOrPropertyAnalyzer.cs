@@ -4,6 +4,7 @@ namespace WpfAnalyzers
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -37,7 +38,7 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
-                            fieldOrProperty.FindIdentifier(context.Node).GetLocation(),
+                            FindIdentifier(context.Node).GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
                             fieldOrProperty.Name,
                             registeredName));
@@ -54,6 +55,24 @@ namespace WpfAnalyzers
                             registeredName));
                 }
             }
+        }
+
+        private static SyntaxToken FindIdentifier(SyntaxNode node)
+        {
+            if (node is PropertyDeclarationSyntax propertyDeclaration)
+            {
+                return propertyDeclaration.Identifier;
+            }
+
+            if (node is FieldDeclarationSyntax fieldDeclaration)
+            {
+                if (fieldDeclaration.Declaration.Variables.TrySingle(out var variable))
+                {
+                    return variable.Identifier;
+                }
+            }
+
+            return node.GetFirstToken();
         }
     }
 }

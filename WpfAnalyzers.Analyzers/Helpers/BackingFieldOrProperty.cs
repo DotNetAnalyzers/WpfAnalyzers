@@ -10,37 +10,30 @@ namespace WpfAnalyzers
     [DebuggerDisplay("{this.Symbol}")]
     internal struct BackingFieldOrProperty
     {
-        private BackingFieldOrProperty(ISymbol symbol)
+        private BackingFieldOrProperty(FieldOrProperty fieldOrProperty)
         {
-            this.Symbol = symbol;
+            this.FieldOrProperty = fieldOrProperty;
         }
 
-        public ISymbol Symbol { get; }
+        public FieldOrProperty FieldOrProperty { get; }
 
-        internal ITypeSymbol Type => (this.Symbol as IFieldSymbol)?.Type ?? ((IPropertySymbol)this.Symbol).Type;
+        public ISymbol Symbol => this.FieldOrProperty.Symbol;
 
-        internal INamedTypeSymbol ContainingType => this.Symbol.ContainingType;
+        internal ITypeSymbol Type => this.FieldOrProperty.Type;
 
-        internal string Name => (this.Symbol as IFieldSymbol)?.Name ?? ((IPropertySymbol)this.Symbol).Name;
+        internal INamedTypeSymbol ContainingType => this.FieldOrProperty.ContainingType;
+
+        internal string Name => this.FieldOrProperty.Name;
 
         internal static bool TryCreate(ISymbol symbol, out BackingFieldOrProperty result)
         {
             if (symbol != null &&
-                symbol.IsStatic)
+                symbol.IsStatic &&
+                FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
+                fieldOrProperty.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
             {
-                if (symbol is IFieldSymbol field &&
-                    field.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
-                {
-                    result = new BackingFieldOrProperty(field);
-                    return true;
-                }
-
-                if (symbol is IPropertySymbol property &&
-                    property.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
-                {
-                    result = new BackingFieldOrProperty(property);
-                    return true;
-                }
+                result = new BackingFieldOrProperty(fieldOrProperty);
+                return true;
             }
 
             result = default(BackingFieldOrProperty);
@@ -49,21 +42,12 @@ namespace WpfAnalyzers
 
         internal static bool TryCreateCandidate(ISymbol symbol, out BackingFieldOrProperty result)
         {
-            if (symbol != null)
+            if (symbol != null &&
+                FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
+                fieldOrProperty.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
             {
-                if (symbol is IFieldSymbol field &&
-                    field.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
-                {
-                    result = new BackingFieldOrProperty(field);
-                    return true;
-                }
-
-                if (symbol is IPropertySymbol property &&
-                    property.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
-                {
-                    result = new BackingFieldOrProperty(property);
-                    return true;
-                }
+                result = new BackingFieldOrProperty(fieldOrProperty);
+                return true;
             }
 
             result = default(BackingFieldOrProperty);
@@ -72,30 +56,7 @@ namespace WpfAnalyzers
 
         internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
         {
-            value = null;
-            if (this.Symbol is IFieldSymbol field)
-            {
-                return field.TryGetAssignedValue(cancellationToken, out value);
-            }
-
-            if (this.Symbol is IPropertySymbol property)
-            {
-                if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax declaration))
-                {
-                    if (declaration.Initializer != null)
-                    {
-                        value = declaration.Initializer.Value;
-                    }
-                    else if (declaration.ExpressionBody != null)
-                    {
-                        value = declaration.ExpressionBody.Expression;
-                    }
-
-                    return value != null;
-                }
-            }
-
-            return false;
+            return this.FieldOrProperty.TryGetAssignedValue(cancellationToken, out value);
         }
 
         internal bool TryGetSyntaxReference(out SyntaxReference syntaxReference)

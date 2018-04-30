@@ -36,8 +36,8 @@ namespace WpfAnalyzers
                  DependencyObject.TryGetSetCurrentValueCall(invocation, context.SemanticModel, context.CancellationToken, out call)) &&
                  invocation.TryGetArgumentAtIndex(0, out var propertyArg) &&
                  invocation.TryGetArgumentAtIndex(1, out var valueArg) &&
-                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol property) &&
-                BackingFieldOrProperty.TryCreate(property, out var fieldOrProperty))
+                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol symbol) &&
+                 BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty))
             {
                 if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context.SemanticModel))
                 {
@@ -76,7 +76,7 @@ namespace WpfAnalyzers
                 }
 
                 if (call == KnownSymbol.DependencyObject.SetCurrentValue &&
-                    property is IFieldSymbol setField &&
+                    fieldOrProperty.Symbol is IFieldSymbol setField &&
                     setField == KnownSymbol.FrameworkElement.DataContextProperty)
                 {
                     context.ReportDiagnostic(
