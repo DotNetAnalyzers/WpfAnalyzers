@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -37,13 +38,13 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                var methodDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-                if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var type))
+                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan).TryFirstAncestorOrSelf<MethodDeclarationSyntax>(out var methodDeclaration) &&
+                    semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method) &&
+                    method.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
-                        $"Add [AttachedPropertyBrowsableForTypeAttribute(typeof({type})))].",
-                        (e, _) => AddAttribute(e, methodDeclaration, type),
+                        $"Add [AttachedPropertyBrowsableForTypeAttribute(typeof({parameter.Type})))].",
+                        (e, _) => AddAttribute(e, methodDeclaration, parameter.Type),
                         this.GetType().FullName,
                         diagnostic);
                 }

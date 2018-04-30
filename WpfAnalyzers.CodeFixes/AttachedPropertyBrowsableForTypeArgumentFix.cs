@@ -34,15 +34,14 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
-                var methodDeclaration = argument.FirstAncestor<AttributeSyntax>()
-                                        .FirstAncestor<MethodDeclarationSyntax>();
-                if (AttachedPropertyBrowsableForType.TryGetParameterType(methodDeclaration, semanticModel, context.CancellationToken, out var parameterType))
+                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan).TryFirstAncestorOrSelf<AttributeArgumentSyntax>(out var argument) &&
+                    argument.TryFirstAncestor<MethodDeclarationSyntax>(out var methodDeclaration) &&
+                    semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method) &&
+                    method.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
-                        $"Change type to {parameterType}.",
-                        (e, _) => Fix(e, argument, parameterType),
+                        $"Change type to {parameter.Type}.",
+                        (e, _) => Fix(e, argument, parameter.Type),
                         this.GetType(),
                         diagnostic);
                 }
