@@ -41,7 +41,7 @@ namespace WpfAnalyzers
                 if (method.Parameters.Length == 2 &&
                     method.ReturnsVoid &&
                     method.Parameters.TryElementAt(0, out var senderParameter) &&
-                    senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
+                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
                     method.Parameters.TryElementAt(1, out var argParameter) &&
                     argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out var senderType, out var valueType))
@@ -54,7 +54,7 @@ namespace WpfAnalyzers
                 if (method.Parameters.Length == 2 &&
                     method.ReturnType == KnownSymbol.Object &&
                     method.Parameters.TryElementAt(0, out senderParameter) &&
-                    senderParameter.Type.Is(KnownSymbol.DependencyObject) &&
+                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
                     method.Parameters.TryElementAt(1, out argParameter) &&
                     argParameter.Type == KnownSymbol.Object &&
                     TryGetExpectedTypes(callbackArg, method.ContainingType, context, out senderType, out valueType))
@@ -114,7 +114,7 @@ namespace WpfAnalyzers
                         !Equals(castType, expectedType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                        if (!expectedType.Is(castType))
+                        if (!expectedType.IsAssignableTo(castType, context.Compilation))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
