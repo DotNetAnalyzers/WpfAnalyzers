@@ -56,62 +56,6 @@ namespace WpfAnalyzers
 
         internal static bool TryGetCommonBase(SyntaxNode node, ISymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol toType)
         {
-            bool IsFor(ExpressionSyntax e, ISymbol s, SemanticModel sm, CancellationToken ct)
-            {
-                if (e is IdentifierNameSyntax idn &&
-                    idn.Identifier.ValueText != symbol.Name)
-                {
-                    return false;
-                }
-
-                return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
-            }
-
-            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, out ITypeSymbol result)
-            {
-                result = null;
-                if (ts == null)
-                {
-                    return false;
-                }
-
-                var t2 = semanticModel.GetTypeInfoSafe(ts, cancellationToken).Type;
-                if (t2 == null)
-                {
-                    return false;
-                }
-
-                if (ReferenceEquals(t1, t2))
-                {
-                    result = t1;
-                    return true;
-                }
-
-                if (t1 == null ||
-                    t1.IsAssignableTo(t2, semanticModel.Compilation))
-                {
-                    result = t2;
-                    return true;
-                }
-
-                if (t2.IsAssignableTo(t1, semanticModel.Compilation))
-                {
-                    result = t1;
-                    return true;
-                }
-
-                using (var set = PooledSet<ITypeSymbol>.Borrow())
-                {
-                    set.UnionWith(t1.RecursiveBaseTypes());
-                    set.IntersectWith(t2.RecursiveBaseTypes());
-                    return set.TryFirst(
-                               x => x is INamedTypeSymbol namedType &&
-                                    namedType.IsGenericType,
-                               out result) ||
-                           set.TryFirst(out result);
-                }
-            }
-
             toType = null;
             using (var walker = Borrow(node))
             {
@@ -162,7 +106,60 @@ namespace WpfAnalyzers
                     }
                 }
 
-                return toType != null;
+                return true;
+            }
+
+            bool IsFor(ExpressionSyntax e, ISymbol s, SemanticModel sm, CancellationToken ct)
+            {
+                if (e is IdentifierNameSyntax idn &&
+                    idn.Identifier.ValueText != symbol.Name)
+                {
+                    return false;
+                }
+
+                return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
+            }
+
+            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, out ITypeSymbol result)
+            {
+                result = null;
+                if (ts == null)
+                {
+                    return false;
+                }
+
+                var t2 = semanticModel.GetTypeInfoSafe(ts, cancellationToken).Type;
+                if (t2 == null)
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(t1, t2))
+                {
+                    result = t1;
+                    return true;
+                }
+
+                if (t1 == null ||
+                    t1.IsAssignableTo(t2, semanticModel.Compilation))
+                {
+                    result = t2;
+                    return true;
+                }
+
+                if (t2.IsAssignableTo(t1, semanticModel.Compilation))
+                {
+                    result = t1;
+                    return true;
+                }
+
+                using (var set = PooledSet<ITypeSymbol>.Borrow())
+                {
+                    set.UnionWith(t1.RecursiveBaseTypes());
+                    set.IntersectWith(t2.RecursiveBaseTypes());
+                    return set.TryFirst(x => x is INamedTypeSymbol namedType && namedType.IsGenericType, out result) ||
+                           set.TryFirst(out result);
+                }
             }
         }
 

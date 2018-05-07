@@ -37,26 +37,24 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                       .FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                ITypeSymbol sourceType = null;
-                ITypeSymbol targetType = null;
-                if (classDeclaration != null &&
-                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out sourceType, out targetType))
+                if (syntaxRoot.TryFindNodeOrAncestor<ClassDeclarationSyntax>(diagnostic, out var classDeclaration))
                 {
-                    context.RegisterCodeFix(
-                        $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
-                        (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
-                        $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
-                        diagnostic);
-                }
-                else
-                {
-                    context.RegisterCodeFix(
-                        $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))].",
-                        (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
-                        $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))].",
-                        diagnostic);
+                    if (ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var sourceType, out var targetType))
+                    {
+                        context.RegisterCodeFix(
+                            $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
+                            (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
+                            $"Add [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
+                            diagnostic);
+                    }
+                    else
+                    {
+                        context.RegisterCodeFix(
+                            $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))].",
+                            (e, _) => AddAttribute(e, classDeclaration, sourceType, targetType),
+                            $"Add [ValueConversion(typeof({sourceType?.ToString() ?? "TYPE"}), typeof({targetType?.ToString() ?? "TYPE"}))].",
+                            diagnostic);
+                    }
                 }
             }
         }

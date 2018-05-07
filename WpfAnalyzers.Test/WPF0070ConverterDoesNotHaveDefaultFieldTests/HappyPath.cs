@@ -1,11 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
+namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new ValueConverterAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
 
         [Test]
         public void WhenDefaultField()
@@ -365,7 +366,7 @@ namespace RoslynSandbox
     using System.Globalization;
     using System.Windows.Data;
 
-    [ValueConversion(typeof(IEnumerable), typeof(int))]
+    [ValueConversion(typeof(object), typeof(object))]
     public class FooConverter : IValueConverter
     {
         private readonly object value;
