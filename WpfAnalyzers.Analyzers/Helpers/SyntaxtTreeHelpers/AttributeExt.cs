@@ -35,18 +35,6 @@ namespace WpfAnalyzers
             return attribute.ArgumentList.Arguments.TryElementAt(argumentIndex, out arg);
         }
 
-        internal static bool TrySingleArgument(this AttributeSyntax attribute, out AttributeArgumentSyntax argument)
-        {
-            var argumentList = attribute?.ArgumentList;
-            if (argumentList == null)
-            {
-                argument = null;
-                return false;
-            }
-
-            return argumentList.Arguments.TrySingle(out argument);
-        }
-
         internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, QualifiedType typeName, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             foreach (var attributeList in assemblyInfo.AttributeLists)
