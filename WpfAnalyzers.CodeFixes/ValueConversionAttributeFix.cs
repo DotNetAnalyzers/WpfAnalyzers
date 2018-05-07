@@ -18,8 +18,9 @@ namespace WpfAnalyzers
                                                             .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0071ConverterDoesNotHaveAttribute.DiagnosticId, WPF0073ConverterDoesNotHaveAttributeUnknownTypes.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0071ConverterDoesNotHaveAttribute.DiagnosticId,
+            WPF0073ConverterDoesNotHaveAttributeUnknownTypes.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -31,12 +32,6 @@ namespace WpfAnalyzers
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
                 if (syntaxRoot.TryFindNodeOrAncestor<ClassDeclarationSyntax>(diagnostic, out var classDeclaration))
                 {
                     if (ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var sourceType, out var targetType))

@@ -73,6 +73,8 @@ namespace WpfAnalyzers
             {
                 switch (returnValue)
                 {
+                    case LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.NullLiteralExpression):
+                        break;
                     case ConditionalExpressionSyntax ternary:
                         AddReturnType(returnTypes, ternary.WhenTrue);
                         AddReturnType(returnTypes, ternary.WhenFalse);
