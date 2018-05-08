@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -26,7 +26,7 @@
 
                     if (member is IPropertySymbol property &&
                         !property.IsStatic &&
-                        !property.IsReadOnly)
+                        !property.IsGetOnly())
                     {
                         return true;
                     }
