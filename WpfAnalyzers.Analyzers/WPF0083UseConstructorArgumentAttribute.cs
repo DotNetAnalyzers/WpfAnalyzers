@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -40,9 +41,14 @@ namespace WpfAnalyzers
                 context.ContainingSymbol is IPropertySymbol property &&
                 property.ContainingType.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                 !Attribute.TryFind(propertyDeclaration, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
-                ConstructorArgument.IsAssigned(propertyDeclaration, out var parameterName))
+                ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.Identifier.GetLocation(), parameterName));
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        propertyDeclaration.Identifier.GetLocation(),
+                        ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
+                        parameterName));
             }
         }
     }

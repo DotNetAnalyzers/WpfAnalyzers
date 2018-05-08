@@ -1,11 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly WPF0082ConstructorArgument Analyzer = new WPF0082ConstructorArgument();
+        private static readonly DiagnosticAnalyzer Analyzer = new WPF0082ConstructorArgument();
 
         [Test]
         public void WhenPropertyHasAttribute()

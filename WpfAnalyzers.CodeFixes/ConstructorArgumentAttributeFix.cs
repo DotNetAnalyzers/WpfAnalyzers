@@ -14,8 +14,7 @@ namespace WpfAnalyzers
     [Shared]
     internal class ConstructorArgumentAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = SyntaxFactory
-                                                            .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute")).WithSimplifiedNames();
+        private static readonly AttributeSyntax Attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("System.Windows.Markup.ConstructorArgumentAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -29,16 +28,8 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var propertyDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-                if (propertyDeclaration != null &&
-                    ConstructorArgument.IsAssigned(propertyDeclaration, out var parameterName))
+                if (syntaxRoot.TryFindNodeOrAncestor<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
+                    diagnostic.Properties.TryGetValue(nameof(ConstructorArgument), out var parameterName))
                 {
                     context.RegisterCodeFix(
                         "Add ConstructorArgumentAttribute.",

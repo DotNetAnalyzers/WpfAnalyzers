@@ -3,7 +3,6 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -26,20 +25,12 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
-                var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (ConstructorArgument.IsMatch(attribute, out var arg, out var parameterName) == false)
+                if (syntaxRoot.TryFindNodeOrAncestor<AttributeArgumentSyntax>(diagnostic, out var argument) &&
+                    diagnostic.Properties.TryGetValue(nameof(ConstructorArgument), out var parameterName))
                 {
                     context.RegisterCodeFix(
                         $"Change to [ConstructorArgument(\"{parameterName})\"))].",
-                        (e, _) => FixArgument(e, arg, parameterName),
+                        (e, _) => FixArgument(e, argument, parameterName),
                         this.GetType(),
                         diagnostic);
                 }

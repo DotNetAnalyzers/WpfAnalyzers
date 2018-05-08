@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -38,9 +39,14 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AttributeSyntax attribute &&
                 Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
-                ConstructorArgument.IsMatch(attribute, out var arg, out var parameterName) == false)
+                !ConstructorArgument.IsMatch(attribute, context.SemanticModel, context.CancellationToken, out var arg, out var parameterName))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), parameterName));
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptor,
+                        arg.GetLocation(),
+                        ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
+                        parameterName));
             }
         }
     }
