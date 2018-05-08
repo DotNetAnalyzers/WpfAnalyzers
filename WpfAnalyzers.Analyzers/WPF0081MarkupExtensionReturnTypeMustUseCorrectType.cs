@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                 MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                 returnType != KnownSymbol.Object)
             {
-                if (AttributeExt.TryGetArgument(attribute, 0, "returnType", out var arg) &&
+                if (Attribute.TryFindArgument(attribute, 0, "returnType", out var arg) &&
                     TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
                     !ReferenceEquals(argType, returnType))
                 {

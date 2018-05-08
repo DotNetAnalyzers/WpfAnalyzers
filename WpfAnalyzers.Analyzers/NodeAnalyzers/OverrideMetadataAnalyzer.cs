@@ -35,7 +35,8 @@ namespace WpfAnalyzers
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol candidate) &&
                 BackingFieldOrProperty.TryCreate(candidate, out var fieldOrProperty) &&
-                Argument.TryGetArgument(method.Parameters, invocation.ArgumentList, KnownSymbol.PropertyMetadata, out var metadataArg))
+                method.TryFindParameter(KnownSymbol.PropertyMetadata, out var parameter) &&
+                invocation.TryFindArgument(parameter, out var metadataArg))
             {
                 if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
                     value is InvocationExpressionSyntax registerInvocation)

@@ -89,14 +89,9 @@ namespace WpfAnalyzers
         private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
             callback = null;
-            if (objectCreation?.ArgumentList == null ||
-                objectCreation.ArgumentList.Arguments.Count == 0)
-            {
-                return false;
-            }
-
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
-                   Argument.TryGetArgument(constructor.Parameters, objectCreation.ArgumentList, callbackType, out callback);
+                   constructor.TryFindParameter(callbackType, out var parameter) &&
+                   objectCreation.TryFindArgument(parameter, out callback);
         }
     }
 }

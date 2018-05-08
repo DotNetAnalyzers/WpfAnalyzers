@@ -61,7 +61,7 @@ namespace WpfAnalyzers
                     return;
                 }
 
-                if (!AttributeExt.TryGetArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var arg))
+                if (!Attribute.TryFindArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var arg))
                 {
                     return;
                 }
@@ -79,7 +79,7 @@ namespace WpfAnalyzers
 
                 foreach (var correspondingAttribute in AttributeExt.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
                 {
-                    if (AttributeExt.TryGetArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
+                    if (Attribute.TryFindArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
                     {
                         if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
                         {

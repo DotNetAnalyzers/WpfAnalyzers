@@ -4,6 +4,7 @@ namespace WpfAnalyzers
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -67,7 +68,7 @@ namespace WpfAnalyzers
                 return null;
             }
 
-            if (!AttributeExt.TryGetArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
+            if (!Attribute.TryFindArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
             {
                 return null;
             }

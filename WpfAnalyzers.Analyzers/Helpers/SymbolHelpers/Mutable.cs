@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
 
     internal static class Mutable
@@ -12,7 +13,7 @@ namespace WpfAnalyzers
             }
 
             while (type != null &&
-                type != KnownSymbol.Object)
+                   type != KnownSymbol.Object)
             {
                 foreach (var member in type.GetMembers())
                 {

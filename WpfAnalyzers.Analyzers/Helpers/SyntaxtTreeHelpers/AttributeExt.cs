@@ -8,33 +8,6 @@ namespace WpfAnalyzers
 
     internal static class AttributeExt
     {
-        internal static bool TryGetArgument(AttributeSyntax attribute, int argumentIndex, string argumentName, out AttributeArgumentSyntax arg)
-        {
-            arg = null;
-            if (attribute?.ArgumentList == null)
-            {
-                return false;
-            }
-
-            if (argumentName != null)
-            {
-                foreach (var argument in attribute.ArgumentList.Arguments)
-                {
-                    if (argument.NameColon?.Name.Identifier.ValueText == argumentName)
-                    {
-                        arg = argument;
-                    }
-                }
-            }
-
-            if (arg != null)
-            {
-                return true;
-            }
-
-            return attribute.ArgumentList.Arguments.TryElementAt(argumentIndex, out arg);
-        }
-
         internal static IEnumerable<AttributeSyntax> FindAttributes(CompilationUnitSyntax assemblyInfo, QualifiedType typeName, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             foreach (var attributeList in assemblyInfo.AttributeLists)

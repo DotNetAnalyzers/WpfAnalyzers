@@ -10,7 +10,7 @@ namespace WpfAnalyzers
             argument = null;
             parameterName = null;
             var propertyDeclaration = attribute?.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-            if (AttributeExt.TryGetArgument(attribute, 0, "argumentName", out argument) &&
+            if (Attribute.TryFindArgument(attribute, 0, "argumentName", out argument) &&
                 argument.Expression is LiteralExpressionSyntax literal)
             {
                 return IsAssigned(propertyDeclaration, out parameterName) &&

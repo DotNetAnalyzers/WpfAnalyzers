@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -24,15 +25,16 @@ namespace WpfAnalyzers
 
         internal static bool TryGetValidateValueCallback(InvocationExpressionSyntax registerCall, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
+            callback = null;
             if (DependencyProperty.TryGetRegisterCall(registerCall, semanticModel, cancellationToken, out var method) ||
                 DependencyProperty.TryGetRegisterReadOnlyCall(registerCall, semanticModel, cancellationToken, out method) ||
                 DependencyProperty.TryGetRegisterAttachedCall(registerCall, semanticModel, cancellationToken, out method) ||
                 DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerCall, semanticModel, cancellationToken, out method))
             {
-                return Argument.TryGetArgument(method.Parameters, registerCall.ArgumentList, KnownSymbol.ValidateValueCallback, out callback);
+                return method.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
+                       registerCall.TryFindArgument(parameter, out callback);
             }
 
-            callback = null;
             return false;
         }
     }

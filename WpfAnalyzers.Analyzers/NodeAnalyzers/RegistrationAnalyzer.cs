@@ -35,7 +35,8 @@ namespace WpfAnalyzers
                  DependencyProperty.TryGetRegisterAttachedCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
                  DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method)))
             {
-                if (Argument.TryGetArgument(method.Parameters, registerCall.ArgumentList, KnownSymbol.ValidateValueCallback, out var validateValueCallback) &&
+                if (method.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
+                    registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
                     Callback.TryGetName(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out _) &&
                     DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                     !callBackIdentifier.Identifier.ValueText.IsParts("Validate", registeredName))
