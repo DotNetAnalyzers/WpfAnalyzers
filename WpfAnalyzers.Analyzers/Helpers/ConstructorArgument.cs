@@ -25,7 +25,9 @@ namespace WpfAnalyzers
             if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
                 propertyDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration))
             {
+#pragma warning disable GU0011 // Don't ignore the return value.
                 TryGetParameterName(property, typeDeclaration, semanticModel, cancellationToken, out parameterName);
+#pragma warning restore GU0011 // Don't ignore the return value.
 
                 if (propertyDeclaration.TryGetBackingField(out var backingField) &&
                     semanticModel.TryGetSymbol(backingField, cancellationToken, out var field))

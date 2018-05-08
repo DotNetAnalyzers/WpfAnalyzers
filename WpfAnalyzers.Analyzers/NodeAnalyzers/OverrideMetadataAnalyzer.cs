@@ -46,7 +46,8 @@ namespace WpfAnalyzers
                         DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
                     {
-                        if (Argument.TryGetArgument(registerMethod.Parameters, registerInvocation.ArgumentList, KnownSymbol.PropertyMetadata, out var registeredMetadataArg) &&
+                        if (registerMethod.TryFindParameter(KnownSymbol.PropertyMetadata, out var registerParameter) &&
+                            registerInvocation.TryFindArgument(registerParameter, out var registeredMetadataArg) &&
                             context.SemanticModel.TryGetType(metadataArg.Expression, context.CancellationToken, out var type) &&
                             context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
                             !type.IsAssignableTo(registeredType, context.Compilation))
