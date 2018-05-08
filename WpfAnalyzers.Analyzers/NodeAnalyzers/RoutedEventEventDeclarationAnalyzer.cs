@@ -159,14 +159,16 @@ namespace WpfAnalyzers
                     walker.memberName = memberName;
                     walker.Visit(typeDeclaration);
                     if (walker.backingField is VariableDeclaratorSyntax variableDeclarator &&
-                        variableDeclarator.Initializer is EqualsValueClauseSyntax fieldInitializer)
+                        variableDeclarator.Initializer is EqualsValueClauseSyntax fieldInitializer &&
+                        fieldInitializer.Value is InvocationExpressionSyntax fieldRegistration)
                     {
-                        registration = fieldInitializer.Value as InvocationExpressionSyntax;
+                        registration = fieldRegistration;
                     }
                     else if (walker.backingProperty is PropertyDeclarationSyntax propertyDeclaration &&
-                             propertyDeclaration.Initializer is EqualsValueClauseSyntax propertyInitializer)
+                             propertyDeclaration.Initializer is EqualsValueClauseSyntax propertyInitializer &&
+                             propertyInitializer.Value is InvocationExpressionSyntax propertyRegistration)
                     {
-                        registration = propertyInitializer.Value as InvocationExpressionSyntax;
+                        registration = propertyRegistration;
                     }
                     else
                     {
