@@ -39,12 +39,16 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AttributeSyntax attribute &&
                 Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
-                !ConstructorArgument.IsMatch(attribute, context.SemanticModel, context.CancellationToken, out var arg, out var parameterName))
+                ConstructorArgument.TryGetArgumentName(attribute, out var argument, out var argumentName) &&
+                attribute.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
+                context.SemanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property) &&
+                ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName) &&
+                argumentName != parameterName)
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptor,
-                        arg.GetLocation(),
+                        argument.GetLocation(),
                         ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
                         parameterName));
             }

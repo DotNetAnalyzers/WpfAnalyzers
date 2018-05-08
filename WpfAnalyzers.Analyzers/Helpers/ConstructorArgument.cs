@@ -7,20 +7,16 @@ namespace WpfAnalyzers
 
     internal static class ConstructorArgument
     {
-        internal static bool IsMatch(AttributeSyntax attribute, SemanticModel semanticModel, CancellationToken cancellationToken, out AttributeArgumentSyntax argument, out string parameterName)
+        internal static bool TryGetArgumentName(AttributeSyntax attribute, out AttributeArgumentSyntax argument, out string argumentName)
         {
-            argument = null;
-            parameterName = null;
+            argumentName = null;
             if (Attribute.TryFindArgument(attribute, 0, "argumentName", out argument) &&
-                argument.Expression is LiteralExpressionSyntax literal &&
-                attribute.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
-                semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property))
+                argument.Expression is LiteralExpressionSyntax literal)
             {
-                return TryGetParameterName(property, semanticModel, cancellationToken, out parameterName) &&
-                       parameterName == literal.Token.ValueText;
+                argumentName = literal.Token.ValueText;
             }
 
-            return true;
+            return argumentName != null;
         }
 
         internal static bool TryGetParameterName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string parameterName)
