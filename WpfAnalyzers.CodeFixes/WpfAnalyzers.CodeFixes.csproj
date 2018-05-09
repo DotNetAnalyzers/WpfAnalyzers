@@ -3,13 +3,30 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>WpfAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>WpfAnalyzers</PackageId>
+    <Product>WpfAnalyzers</Product>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Roslyn analyzers for WPF.</Description>
+    <Authors>Johan Larsson</Authors>
+    <Version>2.1.3.0</Version>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
+    <PackageReleaseNotes>BUGFIX: Nullchecks in routed event analyzer.</PackageReleaseNotes>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
@@ -18,5 +35,6 @@
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj" />
   </ItemGroup>
+
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

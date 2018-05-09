@@ -1,23 +1,13 @@
-﻿type file
-version 2.1.2.1
-title WpfAnalyzers
+﻿type project
 id WpfAnalyzers
-authors Johan Larsson
-owners Johan Larsson
-copyright Copyright Johan Larsson 2016
-developmentDependency true
-description Roslyn analyzers for WPF.
-tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
+include-referenced-projects true
 
-projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
-licenseUrl http://opensource.org/licenses/MIT
-
-releasenotes
-  BUGFIX: better check of casts
-  Feature: new analyzers for direct casts.
+excludedgroups
+  Main
+  Analyzers
 
 files
-  bin/Release/netstandard1.3/WpfAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
-  bin/Release/netstandard1.3/WpfAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
-  ../.paket/tools/*.ps1 ==> tools
+  bin/Release/Gu.Roslyn.AnalyzerExtensions.dll ==> analyzers/dotnet/cs
+  bin/Release/Gu.Roslyn.CodeFixExtensions.dll ==> analyzers/dotnet/cs
+
 
