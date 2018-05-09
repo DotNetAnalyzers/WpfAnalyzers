@@ -34,5 +34,9 @@
     <ProjectReference Include="..\WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Exec Command=".paket\paket.exe pack publish --template $(ProjectDir)paket.template" WorkingDirectory="$(SolutionDir)" />
+  </Target>
+
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
