@@ -4,11 +4,11 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <CodeAnalysisRuleSet>WpfAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
     <Version>2.1.3.0</Version>
     <Authors>Johan Larsson</Authors>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <CodeAnalysisRuleSet>WpfAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
   <PropertyGroup>
