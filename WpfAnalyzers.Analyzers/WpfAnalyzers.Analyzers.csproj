@@ -5,9 +5,10 @@
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>WpfAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Version>2.1.3.0</Version>
+    <Authors>Johan Larsson</Authors>
     <RootNamespace>WpfAnalyzers</RootNamespace>
-    <NoWarn>NU1605</NoWarn>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
   
   <PropertyGroup>
