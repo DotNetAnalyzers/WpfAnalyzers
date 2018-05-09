@@ -15,7 +15,6 @@
 
   <PropertyGroup>
     <PackageId>WpfAnalyzers</PackageId>
-    <Product>WpfAnalyzers</Product>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
