@@ -1,11 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()
@@ -485,6 +486,44 @@ namespace RoslynSandbox
         public static FontFamily GetButtonFontFamily(DependencyObject element)
         {
             return (FontFamily)element.GetValue(ButtonFontFamilyProperty);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void BoxedBool()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(
+            nameof(IsTrue),
+            typeof(bool), 
+            typeof(FooControl), 
+            new PropertyMetadata(BooleanBoxes.False));
+
+        public bool IsTrue
+        {
+            get => (bool)GetValue(IsTrueProperty);
+            set => SetValue(IsTrueProperty, BooleanBoxes.Box(value));
+        }
+    }
+
+    internal static class BooleanBoxes
+    {
+        internal static readonly object True = true;
+        internal static readonly object False = false;
+
+        internal static object Box(bool value)
+        {
+            return value ? True : False;
         }
     }
 }";

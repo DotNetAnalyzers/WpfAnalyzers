@@ -69,8 +69,7 @@ namespace WpfAnalyzers
                     DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                     PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
-                    if (!context.SemanticModel.IsRepresentationPreservingConversion(defaultValueArg.Expression, registeredType, context.CancellationToken) &&
-                        !IsInvocationReturningObject(defaultValueArg.Expression, context))
+                    if (!IsDefaultValueOfRegisteredType(defaultValueArg.Expression, registeredType, context))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -98,11 +97,115 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool IsInvocationReturningObject(ExpressionSyntax expression, SyntaxNodeAnalysisContext context)
+        private static bool IsDefaultValueOfRegisteredType(ExpressionSyntax defaultValue, ITypeSymbol registeredType, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
         {
-            return expression is InvocationExpressionSyntax invocation &&
-                   context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                   method.ReturnType == KnownSymbol.Object;
+            switch (defaultValue)
+            {
+
+                case ConditionalExpressionSyntax conditional:
+                    using (visited = visited.IncrementUsage())
+                    {
+                        return visited.Add(defaultValue) &&
+                               IsDefaultValueOfRegisteredType(conditional.WhenTrue, registeredType, context, visited) &&
+                               IsDefaultValueOfRegisteredType(conditional.WhenFalse, registeredType, context, visited);
+                    }
+
+                case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
+                    using (visited = visited.IncrementUsage())
+                    {
+                        return visited.Add(defaultValue) &&
+                               IsDefaultValueOfRegisteredType(binary.Left, registeredType, context, visited) &&
+                               IsDefaultValueOfRegisteredType(binary.Right, registeredType, context, visited);
+                    }
+            }
+
+            if (context.SemanticModel.IsRepresentationPreservingConversion(defaultValue, registeredType, context.CancellationToken))
+            {
+                return true;
+            }
+
+            if (context.SemanticModel.TryGetSymbol(defaultValue, context.CancellationToken, out ISymbol symbol))
+            {
+                if (symbol is IFieldSymbol field)
+                {
+                    if (field.TrySingleDeclaration(context.CancellationToken, out var fieldDeclaration))
+                    {
+                        using (visited = visited.IncrementUsage())
+                        {
+                            if (fieldDeclaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
+                                variableDeclaration.Variables.TryLast(out var variable) &&
+                                variable.Initializer is EqualsValueClauseSyntax initializer)
+                            {
+                                return visited.Add(initializer.Value) &&
+                                       IsDefaultValueOfRegisteredType(initializer.Value, registeredType, context, visited);
+                            }
+
+                            return fieldDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration) &&
+                                   AssignmentExecutionWalker.SingleFor(symbol, typeDeclaration, Scope.Instance, context.SemanticModel, context.CancellationToken, out var assignedValue) &&
+                                   visited.Add(assignedValue) &&
+                                   IsDefaultValueOfRegisteredType(assignedValue, registeredType, context, visited);
+                        }
+                    }
+
+                    return field.Type == KnownSymbol.Object;
+                }
+
+                if (symbol is IPropertySymbol property)
+                {
+                    if (property.TrySingleDeclaration(context.CancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+                    {
+                        using (visited = visited.IncrementUsage())
+                        {
+                            if (propertyDeclaration.Initializer is EqualsValueClauseSyntax initializer)
+                            {
+                                return visited.Add(initializer.Value) &&
+                                       IsDefaultValueOfRegisteredType(initializer.Value, registeredType, context, visited);
+                            }
+
+                            if (property.SetMethod == null &&
+                                property.GetMethod is IMethodSymbol getMethod)
+                            {
+                                return IsReturnValueOfRegisteredType(getMethod, visited);
+                            }
+
+                            return propertyDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration) &&
+                                   AssignmentExecutionWalker.SingleFor(symbol, typeDeclaration, Scope.Instance, context.SemanticModel, context.CancellationToken, out var assignedValue) &&
+                                   visited.Add(assignedValue) &&
+                                   IsDefaultValueOfRegisteredType(assignedValue, registeredType, context, visited);
+                        }
+                    }
+
+                    return property.Type == KnownSymbol.Object;
+                }
+
+                if (symbol is IMethodSymbol method)
+                {
+                    return IsReturnValueOfRegisteredType(method, visited);
+                }
+            }
+
+            return false;
+
+            bool IsReturnValueOfRegisteredType(IMethodSymbol method, PooledSet<SyntaxNode> v)
+            {
+                if (method.TrySingleMethodDeclaration(context.CancellationToken, out var target))
+                {
+                    using (var walker = ReturnValueWalker.Borrow(target))
+                    {
+                        foreach (var returnValue in walker.ReturnValues)
+                        {
+                            if (!IsDefaultValueOfRegisteredType(returnValue, registeredType, context, v))
+                            {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+
+                return method.ReturnType == KnownSymbol.Object;
+            }
         }
 
         private static bool IsNonEmptyArrayCreation(ArrayCreationExpressionSyntax arrayCreation, SyntaxNodeAnalysisContext context)
