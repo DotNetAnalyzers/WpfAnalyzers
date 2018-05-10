@@ -8,6 +8,7 @@
     <AssemblyName>WpfAnalyzers.Vsix</AssemblyName>
     <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
+  
   <PropertyGroup>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
@@ -17,26 +18,31 @@
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>
   </PropertyGroup>
+  
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <!-- This property disables extension deployment for command line builds; required for AppVeyor and the build script -->
     <DeployExtension>False</DeployExtension>
   </PropertyGroup>
+  
   <ItemGroup>
     <None Include="source.extension.vsixmanifest" />
   </ItemGroup>
+  
   <ItemGroup>
-    <ProjectReference Include="..\WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj" />
+    <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />
     <ProjectReference Include="..\WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <!-- https://github.com/dotnet/sdk/issues/433 -->
     <ProjectReference Update="@(ProjectReference)" AdditionalProperties="TargetFramework=netstandard1.3" />
     <!-- https://github.com/Microsoft/extendvs/issues/57 -->
     <ProjectReference Update="@(ProjectReference)" Name="%(Filename)" />
   </ItemGroup>
+  
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')" />
-  <Import Project="..\.paket\paket.targets" />
+  
   <ItemGroup>
     <Analyzer Include="..\packages\build\Microsoft.VisualStudio.SDK.Analyzers\analyzers\cs\Microsoft.VisualStudio.SDK.Analyzers.dll">
       <Paket>True</Paket>
@@ -88,4 +94,5 @@
     </Analyzer>
   </ItemGroup>
   <Import Project="..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.targets" Condition="Exists('..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.targets')" Label="Paket" />
+  <Import Project="..\.paket\paket.targets" />
 </Project>

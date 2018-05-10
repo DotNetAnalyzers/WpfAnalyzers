@@ -8,6 +8,7 @@
     <Authors>Johan Larsson</Authors>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageId>WpfAnalyzers.NewIdRequiredDueToNuGetBug</PackageId>
     <CodeAnalysisRuleSet>WpfAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   

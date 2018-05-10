@@ -30,9 +30,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj" />
+    <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />
   </ItemGroup>
-
+  
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Exec Command=".paket\paket.exe pack publish --template $(ProjectDir)paket.template" WorkingDirectory="$(SolutionDir)" />
   </Target>

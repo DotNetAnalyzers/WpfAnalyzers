@@ -23,7 +23,7 @@ namespace WpfAnalyzers.Test
             AnalyzerAssert.MetadataReferences);
 
         private static readonly Solution AnalyzerProjectSln = CodeFactory.CreateSolution(
-            ProjectFile.Find("WpfAnalyzers.Analyzers.csproj"),
+            ProjectFile.Find("WpfAnalyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 

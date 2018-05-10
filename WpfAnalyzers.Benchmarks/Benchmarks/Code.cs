@@ -30,7 +30,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                                                                                                     .ToArray();
 
         public static Solution AnalyzersProject { get; } = CodeFactory.CreateSolution(
-            ProjectFile.Find("WpfAnalyzers.Analyzers.csproj"),
+            ProjectFile.Find("WpfAnalyzers.csproj"),
             AllAnalyzers,
             MetadataReferences);
     }

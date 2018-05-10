@@ -85,13 +85,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Test", "WpfAnalyzers.Test\WpfAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Analyzers", "WpfAnalyzers.Analyzers\WpfAnalyzers.Analyzers.csproj", "{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.CodeFixes", "WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj", "{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Vsix", "WpfAnalyzers.Vsix\WpfAnalyzers.Vsix.csproj", "{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Benchmarks", "WpfAnalyzers.Benchmarks\WpfAnalyzers.Benchmarks.csproj", "{647A2616-4524-469D-B7D6-56151513BC6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers", "WpfAnalyzers\WpfAnalyzers.csproj", "{27A6CC19-422F-4986-BA0C-8F967EF37DF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,10 +103,6 @@ Global
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -119,6 +115,10 @@ Global
 		{647A2616-4524-469D-B7D6-56151513BC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{647A2616-4524-469D-B7D6-56151513BC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{647A2616-4524-469D-B7D6-56151513BC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27A6CC19-422F-4986-BA0C-8F967EF37DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A6CC19-422F-4986-BA0C-8F967EF37DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A6CC19-422F-4986-BA0C-8F967EF37DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A6CC19-422F-4986-BA0C-8F967EF37DF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
