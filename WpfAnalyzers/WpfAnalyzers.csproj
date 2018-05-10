@@ -9,7 +9,7 @@
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>WpfAnalyzers.NewIdRequiredDueToNuGetBug</PackageId>
-    <CodeAnalysisRuleSet>WpfAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>WpfAnalyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
   <PropertyGroup>
