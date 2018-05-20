@@ -610,7 +610,6 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Ignore("Has to be ignored till AssignmentExecutionWalker is fixed")]
         [Test]
         public void NullToVisibiltyConverter()
         {
