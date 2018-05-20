@@ -55,6 +55,7 @@ namespace WpfAnalyzers
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {
                             if (sourceType != null &&
+                                sourceType != QualifiedType.System.Object &&
                                 Attribute.TryFindArgument(attribute, 0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
                                 TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
