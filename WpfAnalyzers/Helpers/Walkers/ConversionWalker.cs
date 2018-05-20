@@ -54,15 +54,15 @@ namespace WpfAnalyzers
 
         internal static ConversionWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ConversionWalker());
 
-        internal static bool TryGetCommonBase(SyntaxNode node, ISymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol toType)
+        internal static bool TryGetCommonBase(SyntaxNode node, IParameterSymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol sourceType)
         {
-            toType = null;
+            sourceType = null;
             using (var walker = Borrow(node))
             {
                 foreach (var cast in walker.casts)
                 {
                     if (IsFor(cast.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, cast.Type, out toType))
+                        !TryGetCommonBase(sourceType, cast.Type, out sourceType))
                     {
                         return false;
                     }
@@ -71,7 +71,7 @@ namespace WpfAnalyzers
                 foreach (var cast in walker.asCasts)
                 {
                     if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, cast.Right as TypeSyntax, out toType))
+                        !TryGetCommonBase(sourceType, cast.Right as TypeSyntax, out sourceType))
                     {
                         return false;
                     }
@@ -80,7 +80,7 @@ namespace WpfAnalyzers
                 foreach (var isCheck in walker.isChecks)
                 {
                     if (IsFor(isCheck.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, isCheck.Right as TypeSyntax, out toType))
+                        !TryGetCommonBase(sourceType, isCheck.Right as TypeSyntax, out sourceType))
                     {
                         return false;
                     }
@@ -90,7 +90,7 @@ namespace WpfAnalyzers
                 {
                     if (isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
                         IsFor(isPattern.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, declarationPattern.Type, out toType))
+                        !TryGetCommonBase(sourceType, declarationPattern.Type, out sourceType))
                     {
                         return false;
                     }
@@ -100,10 +100,16 @@ namespace WpfAnalyzers
                 {
                     if (label.Pattern is DeclarationPatternSyntax declarationPattern &&
                         IsFor(label.FirstAncestor<SwitchStatementSyntax>().Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(toType, declarationPattern.Type, out toType))
+                        !TryGetCommonBase(sourceType, declarationPattern.Type, out sourceType))
                     {
                         return false;
                     }
+                }
+
+                // If we couldn't "guess" a source type we take parameters type
+                if (sourceType == null)
+                {
+                    sourceType = symbol.Type;
                 }
 
                 return true;

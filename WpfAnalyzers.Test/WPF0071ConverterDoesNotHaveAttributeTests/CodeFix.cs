@@ -517,7 +517,7 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Data;
 
-    [ValueConversion(typeof(TYPE), typeof(Thickness))]
+    [ValueConversion(typeof(object), typeof(Thickness))]
     internal class FormattedTextBlockMarginConverter : IValueConverter
     {
         internal static readonly FormattedTextBlockMarginConverter Default = new FormattedTextBlockMarginConverter();
@@ -555,6 +555,134 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+        }
+
+        [Test]
+        public void NotNullReturnsTrueConverter()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public sealed class NotNullReturnsTrueConverter : IValueConverter
+    {
+        public static readonly NotNullReturnsTrueConverter Default = new NotNullReturnsTrueConverter();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{this.GetType().Name} can only be used in oneway bindings"");
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(object), typeof(bool))]
+    public sealed class NotNullReturnsTrueConverter : IValueConverter
+    {
+        public static readonly NotNullReturnsTrueConverter Default = new NotNullReturnsTrueConverter();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{this.GetType().Name} can only be used in oneway bindings"");
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void NullToVisibiltyConverter()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+
+    public sealed class NullToVisibiltyConverter : IValueConverter
+    {
+        public static readonly NullToVisibiltyConverter VisibleWhenNull = new NullToVisibiltyConverter(Visibility.Visible, Visibility.Hidden);
+        public static readonly NullToVisibiltyConverter HiddenWhenNull = new NullToVisibiltyConverter(Visibility.Hidden, Visibility.Visible);
+
+        private readonly object whenNull;
+        private readonly object whenNot;
+
+        private NullToVisibiltyConverter(Visibility whenNull, Visibility whenNot)
+        {
+            this.whenNull = whenNull;
+            this.whenNot = whenNot;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value == null ? whenNull : whenNot;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{this.GetType().Name} can only be used in one way bindings"");
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(object), typeof(Visibility))]
+    public sealed class NullToVisibiltyConverter : IValueConverter
+    {
+        public static readonly NullToVisibiltyConverter VisibleWhenNull = new NullToVisibiltyConverter(Visibility.Visible, Visibility.Hidden);
+        public static readonly NullToVisibiltyConverter HiddenWhenNull = new NullToVisibiltyConverter(Visibility.Hidden, Visibility.Visible);
+
+        private readonly object whenNull;
+        private readonly object whenNot;
+
+        private NullToVisibiltyConverter(Visibility whenNull, Visibility whenNot)
+        {
+            this.whenNull = whenNull;
+            this.whenNot = whenNot;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value == null ? whenNull : whenNot;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{this.GetType().Name} can only be used in one way bindings"");
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
