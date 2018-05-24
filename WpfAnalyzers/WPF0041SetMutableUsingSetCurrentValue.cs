@@ -124,31 +124,25 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            var callee = memberAccess.Expression as IdentifierNameSyntax;
-            if (callee == null)
+            if (memberAccess.Expression is IdentifierNameSyntax callee)
             {
-                return false;
+                var symbol = semanticModel.GetSymbolSafe(callee, cancellationToken);
+                if (symbol.Kind != SymbolKind.Local)
+                {
+                    return false;
+                }
+
+                if (!symbol.DeclaringSyntaxReferences.TrySingle(out var reference))
+                {
+                    return false;
+                }
+
+                return reference.GetSyntax(cancellationToken) is VariableDeclaratorSyntax variableDeclarator &&
+                       variableDeclarator.Initializer is EqualsValueClauseSyntax initializer &&
+                       initializer.Value is ObjectCreationExpressionSyntax;
             }
 
-            var symbol = semanticModel.GetSymbolSafe(callee, cancellationToken);
-            if (symbol.Kind != SymbolKind.Local)
-            {
-                return false;
-            }
-
-            if (!symbol.DeclaringSyntaxReferences.TrySingle(out var reference))
-            {
-                return false;
-            }
-
-            var declarator = reference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
-            var objectCreation = declarator?.Initializer?.Value as ObjectCreationExpressionSyntax;
-            if (objectCreation == null)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
         private static bool IsInObjectInitializer(SyntaxNode node)
@@ -158,14 +152,9 @@ namespace WpfAnalyzers
 
         private static bool IsInConstructor(SyntaxNode node)
         {
-            var statement = node.Parent as StatementSyntax;
-            var blockSyntax = statement?.Parent as BlockSyntax;
-            if (blockSyntax == null)
-            {
-                return false;
-            }
-
-            return blockSyntax.Parent.IsKind(SyntaxKind.ConstructorDeclaration);
+            return node.Parent is StatementSyntax statement &&
+                   statement.Parent is BlockSyntax blockSyntax &&
+                   blockSyntax.Parent.IsKind(SyntaxKind.ConstructorDeclaration);
         }
     }
 }

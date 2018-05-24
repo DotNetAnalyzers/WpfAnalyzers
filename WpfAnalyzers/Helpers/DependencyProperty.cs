@@ -216,24 +216,21 @@ namespace WpfAnalyzers
 
                 foreach (var symbol in fieldOrProperty.ContainingType.GetMembers())
                 {
-                    var candidate = symbol as IPropertySymbol;
-                    if (candidate == null)
+                    if (symbol is IPropertySymbol candidate)
                     {
-                        continue;
-                    }
+                        if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
+                        {
+                            continue;
+                        }
 
-                    if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
-                    {
-                        continue;
-                    }
+                        if (property != null)
+                        {
+                            property = null;
+                            return false;
+                        }
 
-                    if (property != null)
-                    {
-                        property = null;
-                        return false;
+                        property = candidate;
                     }
-
-                    property = symbol as IPropertySymbol;
                 }
             }
 

@@ -72,7 +72,7 @@ namespace WpfAnalyzers
 
         private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            _ = editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -82,13 +82,13 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddField(containingType, ParseField(code));
+            _ = editor.AddField(containingType, ParseField(code));
             editor.MakeSealed(containingType);
         }
 
         private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
+            _ = editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
             editor.MakeSealed(containingType);
         }
 
@@ -98,7 +98,7 @@ namespace WpfAnalyzers
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            editor.AddProperty(containingType, ParseProperty(code));
+            _ = editor.AddProperty(containingType, ParseProperty(code));
             editor.MakeSealed(containingType);
         }
 
