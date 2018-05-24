@@ -101,7 +101,6 @@ namespace WpfAnalyzers
         {
             switch (defaultValue)
             {
-
                 case ConditionalExpressionSyntax conditional:
                     using (visited = visited.IncrementUsage())
                     {
