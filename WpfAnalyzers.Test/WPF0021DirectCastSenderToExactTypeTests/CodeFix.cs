@@ -306,7 +306,7 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the arguments in the getvalue & setvalue methods and can still not be sure. Perhaps limited value?.")]
         [Test]
         public void DependencyPropertyRegisterAttached()
         {
@@ -321,13 +321,13 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(1, OnBarChanged));
 
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarProperty, value);
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (↓DataGrid)d;
         }
@@ -353,14 +353,14 @@ namespace RoslynSandbox
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (FrameworkElement)d;
         }
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the arguments in the getvalue & setvalue methods and can still not be sure. Perhaps limited value?.")]
         [Test]
         public void DependencyPropertyRegisterAttachedReadOnly()
         {
@@ -375,7 +375,7 @@ namespace RoslynSandbox
             ""Bar"",
             typeof(int),
             typeof(Foo),
-            new PropertyMetadata(default(int), OnValueChanged));
+            new PropertyMetadata(default(int), OnBarChanged));
 
             public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
@@ -383,7 +383,7 @@ namespace RoslynSandbox
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (↓DataGrid)d;
         }
@@ -411,14 +411,13 @@ namespace RoslynSandbox
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (FrameworkElement)d;
         }
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyOverrideMetadata()
         {
@@ -433,12 +432,12 @@ namespace RoslynSandbox
         static FooControl()
         {
             BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, OnValueChanged));
+                new FrameworkPropertyMetadata(null, OnBackgroundChanged));
         }
 
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (↓UserControl)d;
         }
     }
 }";
@@ -459,14 +458,13 @@ namespace RoslynSandbox
 
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (FooControl)d;
         }
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyAddOwner()
         {
@@ -481,12 +479,12 @@ namespace RoslynSandbox
     {
         static FooControl()
         {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnValueChanged));
+            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnFontSizeChanged));
         }
 
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (↓FrameworkElement)d;
         }
     }
 }";
@@ -507,7 +505,7 @@ namespace RoslynSandbox
 
         private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // nop
+            var control = (FooControl)d;
         }
     }
 }";

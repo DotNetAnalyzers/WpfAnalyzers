@@ -123,15 +123,13 @@ namespace WpfAnalyzers
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
                                     expectedTypeName));
                         }
-                        else
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    notExactTypeDescriptor,
-                                    castExpression.Type.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
-                                    expectedTypeName));
-                        }
+
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                notExactTypeDescriptor,
+                                castExpression.Type.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                expectedTypeName));
                     }
 
                     if (parent is BinaryExpressionSyntax binaryExpression &&
