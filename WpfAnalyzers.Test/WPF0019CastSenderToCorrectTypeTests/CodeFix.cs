@@ -422,7 +422,6 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyOverrideMetadata()
         {
@@ -436,8 +435,7 @@ namespace RoslynSandbox
     {
         static FooControl()
         {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, OnValueChanged));
+            BackgroundProperty.OverrideMetadata(typeof(FooControl), new FrameworkPropertyMetadata(null, OnValueChanged));
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -457,20 +455,18 @@ namespace RoslynSandbox
     {
         static FooControl()
         {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, OnBackgroundChanged));
+            BackgroundProperty.OverrideMetadata(typeof(FooControl), new FrameworkPropertyMetadata(null, OnValueChanged));
         }
 
-        private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (↓DataGrid)d;
+            var control = (FooControl)d;
         }
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
         [Test]
         public void DependencyPropertyAddOwner()
         {
@@ -506,12 +502,12 @@ namespace RoslynSandbox
     {
         static FooControl()
         {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnFontSizeChanged));
+            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnValueChanged));
         }
 
-        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // nop
+            var control = (FooControl)d;
         }
     }
 }";
