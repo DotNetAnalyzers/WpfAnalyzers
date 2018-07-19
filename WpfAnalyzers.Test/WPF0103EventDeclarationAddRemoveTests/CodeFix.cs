@@ -1,14 +1,12 @@
 namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    internal class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0103");
 
         [Test]
@@ -83,11 +81,9 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create("WPF0103");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
-        [Explicit("C#7")]
         [Test]
         public void EventManagerRegisterRoutedEventExpressionBodies()
         {
@@ -121,30 +117,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        /// <summary>Identifies the ValueChanged event</summary>
-        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
-            ""ValueChanged"",
-            RoutingStrategy.Direct,
-            typeof(RoutedEventHandler),
-            typeof(FooControl));
-
-        public event RoutedEventHandler ValueChanged
-        {
-            add => this.AddHandler(ValueChangedEvent, value);
-            remove => this.RemoveHandler(ValueChangedEvent, value);
-        }
-    }
-}";
-
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }
 }

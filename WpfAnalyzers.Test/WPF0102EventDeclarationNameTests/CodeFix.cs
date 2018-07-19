@@ -95,7 +95,6 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("C#7")]
         [Test]
         public void EventManagerRegisterRoutedEventExpressionBodies()
         {
