@@ -501,53 +501,5 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
-
-        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the overridden property.")]
-        [Test]
-        public void DependencyPropertyOverrideMetadata()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : UserControl
-    {
-        static FooControl()
-        {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, OnValueChanged));
-        }
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var value = (↓int)e.NewValue;
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : UserControl
-    {
-        static FooControl()
-        {
-            BackgroundProperty.OverrideMetadata(typeof(FooControl),
-                new FrameworkPropertyMetadata(null, OnBackgroundChanged));
-        }
-
-        private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var value = (↓System.Collections.IEnumerable)e.NewValue;
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
     }
 }
