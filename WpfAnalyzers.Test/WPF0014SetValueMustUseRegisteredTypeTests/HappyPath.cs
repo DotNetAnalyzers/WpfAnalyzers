@@ -199,6 +199,41 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("this.SetValue(ValueProperty, meh);")]
+        [TestCase("this.SetCurrentValue(ValueProperty, meh);")]
+        public void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl<T> : Control
+        where T : struct
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(T?),
+            typeof(FooControl<T>),
+            new PropertyMetadata(default(T?)));
+
+        public FooControl(T meh)
+        {
+            this.SetValue(ValueProperty, meh);
+        }
+
+        public T? Value
+        {
+            get => (T?)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("this.SetValue(ValueProperty, meh);", setValueCall);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
