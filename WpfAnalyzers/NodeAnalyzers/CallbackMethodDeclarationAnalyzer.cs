@@ -289,6 +289,13 @@ namespace WpfAnalyzers
                 {
                     return TryGetRegisteredType(registerInvocation, 1, containingType, context, out valueType);
                 }
+
+                if (DependencyProperty.TryGetAddOwnerCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.TryGetOverrideMetadataCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
+                {
+                    senderType = containingType;
+                    return true;
+                }
             }
 
             return false;
