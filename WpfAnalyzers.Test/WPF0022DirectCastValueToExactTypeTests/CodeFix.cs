@@ -502,7 +502,7 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the overridden property.")]
         [Test]
         public void DependencyPropertyOverrideMetadata()
         {
@@ -522,7 +522,7 @@ namespace RoslynSandbox
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓System.Collections.IEnumerable)e.NewValue;
+            var value = (↓int)e.NewValue;
         }
     }
 }";
@@ -550,7 +550,7 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the source property.")]
         [Test]
         public void DependencyPropertyAddOwner()
         {
@@ -570,7 +570,7 @@ namespace RoslynSandbox
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓System.Collections.IEnumerable)e.NewValue;
+            var value = (↓int)e.NewValue;
         }
     }
 }";
