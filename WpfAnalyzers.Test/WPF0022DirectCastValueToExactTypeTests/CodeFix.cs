@@ -549,53 +549,5 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
-
-        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the source property.")]
-        [Test]
-        public void DependencyPropertyAddOwner()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-
-    public class FooControl : FrameworkElement
-    {
-        static FooControl()
-        {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnValueChanged));
-        }
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var value = (↓int)e.NewValue;
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-
-    public class FooControl : FrameworkElement
-    {
-        static FooControl()
-        {
-            TextElement.FontSizeProperty.AddOwner(typeof(FooControl), new PropertyMetadata(12.0, OnFontSizeChanged));
-        }
-
-        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            // nop
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
     }
 }
