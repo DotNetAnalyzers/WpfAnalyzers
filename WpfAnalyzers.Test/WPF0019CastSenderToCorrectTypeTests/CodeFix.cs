@@ -310,7 +310,7 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the arguments in the getvalue & setvalue methods and can still not be sure. Perhaps limited value?.")]
         [Test]
         public void DependencyPropertyRegisterAttached()
         {
@@ -364,7 +364,7 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Explicit("Not handling this yet.")]
+        [Explicit("Not handling this yet, will be a bit messy as we need to get the type from the arguments in the getvalue & setvalue methods and can still not be sure. Perhaps limited value?.")]
         [Test]
         public void DependencyPropertyRegisterAttachedReadOnly()
         {
