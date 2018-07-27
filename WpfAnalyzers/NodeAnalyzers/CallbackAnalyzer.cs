@@ -37,13 +37,8 @@ namespace WpfAnalyzers
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic)
             {
-                // PropertyChangedCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnsVoid &&
-                    method.Parameters.TryElementAt(0, out var senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out var argParameter) &&
-                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs)
+                if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
+                    TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
                 {
                     using (var usages = GetCallbackArguments(context, method, methodDeclaration))
                     {
@@ -57,33 +52,7 @@ namespace WpfAnalyzers
                         }
                     }
                 }
-
-                // CoerceValueCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnType == KnownSymbol.Object &&
-                    method.Parameters.TryElementAt(0, out senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object)
-                {
-                    using (var usages = GetCallbackArguments(context, method, methodDeclaration))
-                    {
-                        foreach (var callbackArgument in usages)
-                        {
-                            if (TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
-                            {
-                                HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                            }
-                        }
-                    }
-                }
-
-                // ValidateValueCallback
-                if (method.Parameters.Length == 1 &&
-                    method.ReturnType == KnownSymbol.Boolean &&
-                    method.Parameters.TryElementAt(0, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object)
+                else if (TryMatchValidateValueCallback(method, out argParameter))
                 {
                     using (var usages = GetCallbackArguments(context, method, methodDeclaration))
                     {
@@ -116,47 +85,59 @@ namespace WpfAnalyzers
                 TryGetCallbackArgument(argument, out var callbackArgument) &&
                 context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol method))
             {
-                // PropertyChangedCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnsVoid &&
-                    method.Parameters.TryElementAt(0, out var senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out var argParameter) &&
-                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
-                    TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
+                    TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
                 {
-                    HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    if (TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                    {
+                        HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                        HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    }
                 }
-
-                // CoerceValueCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnType == KnownSymbol.Object &&
-                    method.Parameters.TryElementAt(0, out senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object &&
-                    TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out senderType, out valueType))
-                {
-                    HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                }
-
-                // ValidateValueCallback
-                if (method.Parameters.Length == 1 &&
-                    method.ReturnType == KnownSymbol.Boolean &&
-                    method.Parameters.TryElementAt(0, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object &&
+                else if (TryMatchValidateValueCallback(method, out argParameter) &&
                     callbackArgument?.Parent?.Parent is InvocationExpressionSyntax invocation &&
                     (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                      DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                      DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                      DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
-                    TryGetValueType(invocation, 1, method.ContainingType, context, out valueType))
+                    TryGetValueType(invocation, 1, method.ContainingType, context, out var valueType))
                 {
                     HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
                 }
             }
+        }
+
+        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        {
+            senderParameter = null;
+            argParameter = null;
+            return methodSymbol.Parameters.Length == 2 &&
+                   methodSymbol.ReturnsVoid &&
+                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
+                   argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs;
+        }
+
+        private static bool TryMatchCoerceValueCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        {
+            senderParameter = null;
+            argParameter = null;
+            return methodSymbol.Parameters.Length == 2 &&
+                   methodSymbol.ReturnType == KnownSymbol.Object &&
+                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
+                   argParameter.Type == KnownSymbol.Object;
+        }
+
+        private static bool TryMatchValidateValueCallback(IMethodSymbol methodSymbol, out IParameterSymbol argParameter)
+        {
+            argParameter = null;
+            return methodSymbol.Parameters.Length == 1 &&
+                   methodSymbol.ReturnType == KnownSymbol.Boolean &&
+                   methodSymbol.Parameters.TryElementAt(0, out argParameter) &&
+                   argParameter.Type == KnownSymbol.Object;
         }
 
         private static void HandleCasts(SyntaxNodeAnalysisContext context, SyntaxNode methodOrLambda, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor wrongTypeDescriptor, DiagnosticDescriptor notExactTypeDescriptor)
