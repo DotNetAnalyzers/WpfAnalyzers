@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
+namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -110,18 +110,29 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (string)d.OldValue;
-            var newValue = (string)d.NewValue;
+            var oldValue = (string)e.OldValue;
+            var newValue = (string)e.NewValue;
         }
 
         private static object CoerceValue(DependencyObject d, object basevalue)
         {
-            return (string)basevalue;
+            if (basevalue is int i &&
+                i > 100)
+            {
+                return 100;
+            }
+
+            return basevalue;
         }
 
         private static bool ValidateValue(object basevalue)
         {
-            return ((string)basevalue) != null;
+            if (basevalue is int i)
+            {
+                return i <= 100;
+            }
+
+            return false;
         }
     }
 }";
@@ -163,18 +174,29 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as FooControl;
-            var oldValue = d.OldValue as string;
-            var newValue = d.NewValue as string;
+            var oldValue = e.OldValue as string;
+            var newValue = e.NewValue as string;
         }
 
         private static object CoerceValue(DependencyObject d, object basevalue)
         {
-            return basevalue as string;
+            if (basevalue is int i &&
+                i > 100)
+            {
+                return 100;
+            }
+
+            return basevalue;
         }
 
         private static bool ValidateValue(object basevalue)
         {
-            return (basevalue as string) != null;
+            if (basevalue is int i)
+            {
+                return i <= 100;
+            }
+
+            return false;
         }
     }
 }";
@@ -249,8 +271,8 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace("int", type);
-            testCode = testCode.AssertReplace("string", isType);
+            testCode = testCode.AssertReplace("int", type)
+                               .AssertReplace("string", isType);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

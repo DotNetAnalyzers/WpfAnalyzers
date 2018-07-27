@@ -63,7 +63,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(default(string), OnValueChanged));
 
         public string Value
         {
@@ -73,7 +73,7 @@ namespace RoslynSandbox
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓System.Collections.IEnumerable)e.NewValue;
+            var value = (↓int)e.NewValue;
         }
     }
 }";
@@ -90,7 +90,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(default(string), OnValueChanged));
 
         public string Value
         {
@@ -104,8 +104,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
+            testCode = testCode.AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
+            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -126,7 +126,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(default(string), OnValueChanged));
 
         public string Value
         {
@@ -157,7 +157,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(default(string), OnValueChanged));
 
         public string Value
         {
@@ -175,8 +175,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", $"new PropertyMetadata(1, {callback})");
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", $"new PropertyMetadata(1, {callback})");
+            testCode = testCode.AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", $"new PropertyMetadata(1, {callback})");
+            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", $"new PropertyMetadata(1, {callback})");
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

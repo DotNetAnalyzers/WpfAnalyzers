@@ -72,6 +72,12 @@ namespace RoslynSandbox
 
         private static object CoerceBar(DependencyObject d, object baseValue)
         {
+            if (baseValue is int i &&
+                i > 100)
+            {
+                return 100;
+            }
+
             return baseValue;
         }
     }
