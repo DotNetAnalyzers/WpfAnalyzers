@@ -700,5 +700,92 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void DependencyPropertyAddOwner()
+        {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(string), 
+            typeof(Foo), 
+            new FrameworkPropertyMetadata(
+                default(string), 
+                FrameworkPropertyMetadataOptions.Inherits));
+
+        public static void SetBar(DependencyObject element, string value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static string GetBar(DependencyObject element)
+        {
+            return (string) element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(
+            typeof(FooControl), 
+            new FrameworkPropertyMetadata(
+                default(string), 
+                OnBarChanged));
+
+        public string Bar
+        {
+            get => (string)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (↓System.Collections.IEnumerable)e.NewValue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(
+            typeof(FooControl), 
+            new FrameworkPropertyMetadata(
+                default(string), 
+                OnBarChanged));
+
+        public string Bar
+        {
+            get => (string)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (string)e.NewValue;
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
+        }
     }
 }

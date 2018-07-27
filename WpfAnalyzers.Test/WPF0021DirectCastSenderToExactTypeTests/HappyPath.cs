@@ -243,8 +243,8 @@ namespace RoslynSandbox
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (System.Windows.Media.Brush)e.OldValue;
+            var newValue = (System.Windows.Media.Brush)e.NewValue;
         }
     }
 }";
@@ -271,8 +271,8 @@ namespace RoslynSandbox
         private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (double)e.OldValue;
+            var newValue = (double)e.NewValue;
         }
     }
 }";

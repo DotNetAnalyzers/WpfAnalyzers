@@ -373,7 +373,7 @@ namespace RoslynSandbox
     {
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl), new FrameworkPropertyMetadata(1));
 
-        public int BarProperty
+        public int Bar
         {
             get { return (int) this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }

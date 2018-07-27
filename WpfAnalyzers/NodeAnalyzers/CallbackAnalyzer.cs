@@ -347,11 +347,20 @@ namespace WpfAnalyzers
                         DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                         DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _):
-                    {
-                        return invocation.TryGetArgumentAtIndex(1, out var arg) &&
-                               arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                               TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
-                    }
+                        {
+                            return invocation.TryGetArgumentAtIndex(1, out var arg) &&
+                                   arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
+                                   TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+                        }
+
+                    case InvocationExpressionSyntax invocation when
+                        invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        (DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                         DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _)):
+                        {
+                            return BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                                   DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out type);
+                        }
                 }
             }
 
