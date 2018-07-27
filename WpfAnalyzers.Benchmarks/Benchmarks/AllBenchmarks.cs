@@ -48,7 +48,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void CallbackMethodDeclarationAnalyzer()
+        public void CallbackAnalyzer()
         {
             WPF0019.Run();
         }

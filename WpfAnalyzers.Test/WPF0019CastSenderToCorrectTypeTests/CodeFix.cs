@@ -49,7 +49,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
-        public void DependencyPropertyRegisterPropertyChangedCallback(string metadata)
+        public void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -107,6 +107,128 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("(d, e) => OnValueChanged(d, e)")]
+        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
+        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (↓DataGrid)d;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (FooControl)d;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+            fixedCode = fixedCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("(d, e) => (({0})d).InvalidateArrange()")]
+        [TestCase("new PropertyChangedCallback((d, e) => (({0})d).InvalidateArrange())")]
+        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => ((DataGrid)d).InvalidateArrange()));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => ((FooControl)d).InvalidateArrange()));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
+            fixedCode = fixedCode.AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
