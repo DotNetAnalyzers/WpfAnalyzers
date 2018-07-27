@@ -36,48 +36,64 @@ namespace WpfAnalyzers
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic)
             {
-                using (var usages = GetRegistrations(context, method, methodDeclaration))
+                // PropertyChangedCallback
+                if (method.Parameters.Length == 2 &&
+                    method.ReturnsVoid &&
+                    method.Parameters.TryElementAt(0, out var senderParameter) &&
+                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                    method.Parameters.TryElementAt(1, out var argParameter) &&
+                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs)
                 {
-                    foreach (var callbackArgument in usages)
+                    using (var usages = GetRegistrations(context, method, methodDeclaration))
                     {
-                        // PropertyChangedCallback
-                        if (method.Parameters.Length == 2 &&
-                            method.ReturnsVoid &&
-                            method.Parameters.TryElementAt(0, out var senderParameter) &&
-                            senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                            method.Parameters.TryElementAt(1, out var argParameter) &&
-                            argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
-                            TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                        foreach (var callbackArgument in usages)
                         {
-                            HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                            HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                            if (TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                            {
+                                HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                            }
                         }
+                    }
+                }
 
-                        // CoerceValueCallback
-                        if (method.Parameters.Length == 2 &&
-                            method.ReturnType == KnownSymbol.Object &&
-                            method.Parameters.TryElementAt(0, out senderParameter) &&
-                            senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                            method.Parameters.TryElementAt(1, out argParameter) &&
-                            argParameter.Type == KnownSymbol.Object &&
-                            TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out senderType, out valueType))
+                // CoerceValueCallback
+                if (method.Parameters.Length == 2 &&
+                    method.ReturnType == KnownSymbol.Object &&
+                    method.Parameters.TryElementAt(0, out senderParameter) &&
+                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                    method.Parameters.TryElementAt(1, out argParameter) &&
+                    argParameter.Type == KnownSymbol.Object)
+                {
+                    using (var usages = GetRegistrations(context, method, methodDeclaration))
+                    {
+                        foreach (var callbackArgument in usages)
                         {
-                            HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                            HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                            if (TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                            {
+                                HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                            }
                         }
+                    }
+                }
 
-                        // ValidateValueCallback
-                        if (method.Parameters.Length == 1 &&
-                            method.ReturnType == KnownSymbol.Boolean &&
-                            method.Parameters.TryElementAt(0, out argParameter) &&
-                            argParameter.Type == KnownSymbol.Object)
+                // ValidateValueCallback
+                if (method.Parameters.Length == 1 &&
+                    method.ReturnType == KnownSymbol.Boolean &&
+                    method.Parameters.TryElementAt(0, out argParameter) &&
+                    argParameter.Type == KnownSymbol.Object)
+                {
+                    using (var usages = GetRegistrations(context, method, methodDeclaration))
+                    {
+                        foreach (var callbackArgument in usages)
                         {
                             if (callbackArgument?.Parent?.Parent is InvocationExpressionSyntax invocation &&
                                 (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                                  DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                                  DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                                  DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
-                                TryGetRegisteredType(invocation, 1, method.ContainingType, context, out valueType))
+                                TryGetRegisteredType(invocation, 1, method.ContainingType, context, out var valueType))
                             {
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
                             }
