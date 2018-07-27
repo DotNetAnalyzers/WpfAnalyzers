@@ -35,7 +35,7 @@ namespace WpfAnalyzers
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
-                TrySingleUsage(method, methodDeclaration, out var callbackArg))
+                TrySingleUsage(context, method, methodDeclaration, out var callbackArg))
             {
                 // PropertyChangedCallback
                 if (method.Parameters.Length == 2 &&
@@ -207,7 +207,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TrySingleUsage(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax argument)
+        private static bool TrySingleUsage(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax argument)
         {
             argument = null;
             if (method.DeclaredAccessibility != Accessibility.Private)
@@ -219,18 +219,22 @@ namespace WpfAnalyzers
             {
                 foreach (var identifierName in walker.IdentifierNames)
                 {
-                    if (identifierName.Parent is ArgumentSyntax candidate)
+                    if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
+                        Equals(symbol, method))
                     {
-                        if (argument != null)
+                        if (identifierName.Parent is ArgumentSyntax candidate)
                         {
-                            return false;
+                            if (argument != null)
+                            {
+                                return false;
+                            }
+
+                            argument = candidate;
+                            continue;
                         }
 
-                        argument = candidate;
-                        continue;
+                        return false;
                     }
-
-                    return false;
                 }
             }
 
