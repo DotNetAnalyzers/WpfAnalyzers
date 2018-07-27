@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
 
     internal class HappyPath
     {
-        private static readonly CallbackMethodDeclarationAnalyzer Analyzer = new CallbackMethodDeclarationAnalyzer();
+        private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()

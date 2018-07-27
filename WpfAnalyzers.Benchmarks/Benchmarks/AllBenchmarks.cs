@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0019 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackMethodDeclarationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0019 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.CallbackAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.ClrMethodDeclarationAnalyzer());
 

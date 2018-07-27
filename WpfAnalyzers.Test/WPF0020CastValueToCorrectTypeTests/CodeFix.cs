@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 
     internal class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new CallbackMethodDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0020");
 
@@ -109,6 +109,135 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
+        [TestCase("(d, e) => OnValueChanged(d, e)")]
+        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
+        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (↓string)e.NewValue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (int)e.NewValue;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+            fixedCode = fixedCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((↓string)e.OldValue, (int)e.NewValue)")]
+        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((int)e.OldValue, (↓string)e.NewValue)")]
+        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => ((FooControl)d).OnValueChanged((int)e.OldValue, (int)e.NewValue)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(object oldValue, object newValue)
+        {
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => ((FooControl)d).OnValueChanged((int)e.OldValue, (int)e.NewValue)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(object oldValue, object newValue)
+        {
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((int)e.OldValue, (int)e.NewValue)", lambda);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
         [TestCase("OnValueChanged")]
         [TestCase("new PropertyChangedCallback(OnValueChanged)")]
         public void DependencyPropertyRegisterPropertyChangedCallbackMethodGroupCallingInstanceMethod(string callback)
@@ -176,72 +305,6 @@ namespace RoslynSandbox
 }";
             testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", $"new PropertyMetadata(1, {callback})");
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", $"new PropertyMetadata(1, {callback})");
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [TestCase("(d, e) => OnValueChanged(d, e)")]
-        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambda(string lambda)
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(
-                1,
-                (d, e) => OnValueChanged(d, e)));
-
-        public int Value
-        {
-            get => (int)this.GetValue(ValueProperty);
-            set => this.SetValue(ValueProperty, value);
-        }
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var value = (↓string)e.NewValue;
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(
-                1,
-                (d, e) => OnValueChanged(d, e)));
-
-        public int Value
-        {
-            get => (int)this.GetValue(ValueProperty);
-            set => this.SetValue(ValueProperty, value);
-        }
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var value = (int)e.NewValue;
-        }
-    }
-}";
-            testCode = testCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
-            fixedCode = fixedCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

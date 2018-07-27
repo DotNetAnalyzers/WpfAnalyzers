@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
 
     internal class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new CallbackMethodDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0021");
 
