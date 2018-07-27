@@ -48,7 +48,7 @@ namespace WpfAnalyzers
                     {
                         foreach (var callbackArgument in usages)
                         {
-                            if (TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                            if (TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
                             {
                                 HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
@@ -69,7 +69,7 @@ namespace WpfAnalyzers
                     {
                         foreach (var callbackArgument in usages)
                         {
-                            if (TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                            if (TryGetSenderAndValueTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
                             {
                                 HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
@@ -93,7 +93,7 @@ namespace WpfAnalyzers
                                  DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                                  DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                                  DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
-                                TryGetRegisteredType(invocation, 1, method.ContainingType, context, out var valueType))
+                                TryGetValueType(invocation, 1, method.ContainingType, context, out var valueType))
                             {
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
                             }
@@ -266,11 +266,11 @@ namespace WpfAnalyzers
                     result = candidate;
                 }
 
-                return result != null;
+                return true;
             }
         }
 
-        private static bool TryGetRegisteredType(InvocationExpressionSyntax registration, int index, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
+        private static bool TryGetValueType(InvocationExpressionSyntax registration, int index, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
         {
             type = null;
             return registration.TryGetArgumentAtIndex(index, out var senderTypeArg) &&
@@ -278,7 +278,7 @@ namespace WpfAnalyzers
                    TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
         }
 
-        private static bool TryGetExpectedTypes(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType, out ITypeSymbol valueType)
+        private static bool TryGetSenderAndValueTypes(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType, out ITypeSymbol valueType)
         {
             senderType = null;
             valueType = null;
@@ -297,13 +297,13 @@ namespace WpfAnalyzers
                     DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
                     senderType = containingType;
-                    return TryGetRegisteredType(registerInvocation, 1, containingType, context, out valueType);
+                    return TryGetValueType(registerInvocation, 1, containingType, context, out valueType);
                 }
 
                 if (DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    return TryGetRegisteredType(registerInvocation, 1, containingType, context, out valueType);
+                    return TryGetValueType(registerInvocation, 1, containingType, context, out valueType);
                 }
 
                 if (DependencyProperty.TryGetAddOwnerCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
