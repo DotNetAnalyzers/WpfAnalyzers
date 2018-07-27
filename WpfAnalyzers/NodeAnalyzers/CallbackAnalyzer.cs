@@ -117,24 +117,24 @@ namespace WpfAnalyzers
                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs;
         }
 
-        private static bool TryMatchCoerceValueCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
         {
             senderParameter = null;
             argParameter = null;
-            return methodSymbol.Parameters.Length == 2 &&
-                   methodSymbol.ReturnType == KnownSymbol.Object &&
-                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
+            return candidate.Parameters.Length == 2 &&
+                   candidate.ReturnType == KnownSymbol.Object &&
+                   candidate.Parameters.TryElementAt(0, out senderParameter) &&
                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
+                   candidate.Parameters.TryElementAt(1, out argParameter) &&
                    argParameter.Type == KnownSymbol.Object;
         }
 
-        private static bool TryMatchValidateValueCallback(IMethodSymbol methodSymbol, out IParameterSymbol argParameter)
+        private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, out IParameterSymbol argParameter)
         {
             argParameter = null;
-            return methodSymbol.Parameters.Length == 1 &&
-                   methodSymbol.ReturnType == KnownSymbol.Boolean &&
-                   methodSymbol.Parameters.TryElementAt(0, out argParameter) &&
+            return candidate.Parameters.Length == 1 &&
+                   candidate.ReturnType == KnownSymbol.Boolean &&
+                   candidate.Parameters.TryElementAt(0, out argParameter) &&
                    argParameter.Type == KnownSymbol.Object;
         }
 
@@ -305,32 +305,6 @@ namespace WpfAnalyzers
             return true;
         }
 
-        private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
-        {
-            type = null;
-
-            if (argument?.Parent is ArgumentListSyntax argumentList)
-            {
-                switch (argumentList.Parent)
-                {
-                    case ObjectCreationExpressionSyntax objectCreation:
-                        return TryGetValueType(objectCreation.Parent as ArgumentSyntax, containingType, context, out type);
-                    case InvocationExpressionSyntax invocation when
-                        DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                        DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                        DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                        DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _):
-                        {
-                            return invocation.TryGetArgumentAtIndex(1, out var arg) &&
-                                   arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                                   TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
-                        }
-                }
-            }
-
-            return false;
-        }
-
         private static bool TryGetSenderType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType)
         {
             senderType = null;
@@ -352,6 +326,32 @@ namespace WpfAnalyzers
                 {
                     senderType = containingType;
                     return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
+        {
+            type = null;
+
+            if (argument?.Parent is ArgumentListSyntax argumentList)
+            {
+                switch (argumentList.Parent)
+                {
+                    case ObjectCreationExpressionSyntax objectCreation:
+                        return TryGetValueType(objectCreation.Parent as ArgumentSyntax, containingType, context, out type);
+                    case InvocationExpressionSyntax invocation when
+                        DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                        DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                        DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                        DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _):
+                    {
+                        return invocation.TryGetArgumentAtIndex(1, out var arg) &&
+                               arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
+                               TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+                    }
                 }
             }
 
