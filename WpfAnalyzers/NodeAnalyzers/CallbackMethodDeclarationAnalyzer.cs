@@ -222,14 +222,27 @@ namespace WpfAnalyzers
                     if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
                         Equals(symbol, method))
                     {
-                        if (identifierName.Parent is ArgumentSyntax candidate)
+                        if (identifierName.Parent is ArgumentSyntax methodGroupArgument)
                         {
                             if (argument != null)
                             {
                                 return false;
                             }
 
-                            argument = candidate;
+                            argument = methodGroupArgument;
+                            continue;
+                        }
+
+                        if (identifierName.Parent is InvocationExpressionSyntax invocation &&
+                            invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
+                            lambda.Parent is ArgumentSyntax lambdaArgument)
+                        {
+                            if (argument != null)
+                            {
+                                return false;
+                            }
+
+                            argument = lambdaArgument;
                             continue;
                         }
 

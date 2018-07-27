@@ -179,7 +179,69 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
+        [TestCase("(d, e) => OnValueChanged(d, e)")]
+        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
+        public void DependencyPropertyRegisterPropertyChangedCallbackLambda(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
 
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (↓string)e.NewValue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                1,
+                (d, e) => OnValueChanged(d, e)));
+
+        public int Value
+        {
+            get => (int)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (int)e.NewValue;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+            fixedCode = fixedCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
