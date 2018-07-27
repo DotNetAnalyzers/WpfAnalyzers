@@ -787,5 +787,72 @@ namespace RoslynSandbox
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
+
+        [Test]
+        public void DependencyPropertyOverrideMetadata()
+        {
+            var fooControlCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(string),
+            typeof(FooControl),
+            new PropertyMetadata(default(string)));
+
+        public string Value
+        {
+            get => (string)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class BarControl : FooControl
+    {
+        static BarControl()
+        {
+            ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(default(string), OnValueChanged));
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (↓System.Collections.IEnumerable)e.NewValue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class BarControl : FooControl
+    {
+        static BarControl()
+        {
+            ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(default(string), OnValueChanged));
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = (string)e.NewValue;
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, testCode }, fixedCode);
+        }
     }
 }
