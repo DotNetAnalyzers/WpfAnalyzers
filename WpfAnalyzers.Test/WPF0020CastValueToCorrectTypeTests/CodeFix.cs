@@ -403,7 +403,7 @@ namespace RoslynSandbox
 
         [TestCase("(↓string)e.NewValue", "(int)e.NewValue")]
         [TestCase("(↓string)e.OldValue", "(int)e.OldValue")]
-        public void DependencyPropertyRegisterCast(string fromCast, string toCast)
+        public void DependencyPropertyRegisterPropertyChangedCallback(string fromCast, string toCast)
         {
             var testCode = @"
 namespace RoslynSandbox

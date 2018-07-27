@@ -34,56 +34,54 @@ namespace WpfAnalyzers
 
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
-                method.IsStatic &&
-                TrySingleUsage(context, method, methodDeclaration, out var callbackArg))
+                method.IsStatic)
             {
-                // PropertyChangedCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnsVoid &&
-                    method.Parameters.TryElementAt(0, out var senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out var argParameter) &&
-                    argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
-                    TryGetExpectedTypes(callbackArg, method.ContainingType, context, out var senderType, out var valueType))
+                using (var usages = GetRegistrations(context, method, methodDeclaration))
                 {
-                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                }
-
-                // CoerceValueCallback
-                if (method.Parameters.Length == 2 &&
-                    method.ReturnType == KnownSymbol.Object &&
-                    method.Parameters.TryElementAt(0, out senderParameter) &&
-                    senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                    method.Parameters.TryElementAt(1, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object &&
-                    TryGetExpectedTypes(callbackArg, method.ContainingType, context, out senderType, out valueType))
-                {
-                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                }
-
-                // ValidateValueCallback
-                if (method.Parameters.Length == 1 &&
-                    method.ReturnType == KnownSymbol.Boolean &&
-                    method.Parameters.TryElementAt(0, out argParameter) &&
-                    argParameter.Type == KnownSymbol.Object)
-                {
-                    if (callbackArg.Parent?.Parent is ObjectCreationExpressionSyntax callbackCreation &&
-                        callbackCreation.Type is SimpleNameSyntax simpleName &&
-                        simpleName.Identifier.ValueText == "ValidateValueCallback")
+                    foreach (var callbackArgument in usages)
                     {
-                        callbackArg = callbackCreation.Parent as ArgumentSyntax;
-                    }
+                        // PropertyChangedCallback
+                        if (method.Parameters.Length == 2 &&
+                            method.ReturnsVoid &&
+                            method.Parameters.TryElementAt(0, out var senderParameter) &&
+                            senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                            method.Parameters.TryElementAt(1, out var argParameter) &&
+                            argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
+                            TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out var senderType, out var valueType))
+                        {
+                            HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                            HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                        }
 
-                    if (callbackArg?.Parent?.Parent is InvocationExpressionSyntax invocation &&
-                        (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                         DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                         DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
-                        TryGetRegisteredType(invocation, 1, method.ContainingType, context, out valueType))
-                    {
-                        HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                        // CoerceValueCallback
+                        if (method.Parameters.Length == 2 &&
+                            method.ReturnType == KnownSymbol.Object &&
+                            method.Parameters.TryElementAt(0, out senderParameter) &&
+                            senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                            method.Parameters.TryElementAt(1, out argParameter) &&
+                            argParameter.Type == KnownSymbol.Object &&
+                            TryGetExpectedTypes(callbackArgument, method.ContainingType, context, out senderType, out valueType))
+                        {
+                            HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                            HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                        }
+
+                        // ValidateValueCallback
+                        if (method.Parameters.Length == 1 &&
+                            method.ReturnType == KnownSymbol.Boolean &&
+                            method.Parameters.TryElementAt(0, out argParameter) &&
+                            argParameter.Type == KnownSymbol.Object)
+                        {
+                            if (callbackArgument?.Parent?.Parent is InvocationExpressionSyntax invocation &&
+                                (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                                 DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                                 DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                                 DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                                TryGetRegisteredType(invocation, 1, method.ContainingType, context, out valueType))
+                            {
+                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                            }
+                        }
                     }
                 }
             }
@@ -207,14 +205,10 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TrySingleUsage(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax argument)
+        private static PooledSet<ArgumentSyntax> GetRegistrations(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration)
         {
-            argument = null;
-            if (method.DeclaredAccessibility != Accessibility.Private)
-            {
-                return false;
-            }
-
+            // Set is not perfect here but using it as there is no pooled list
+            var usages = PooledSet<ArgumentSyntax>.Borrow();
             using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration.Parent as ClassDeclarationSyntax, method.MetadataName))
             {
                 foreach (var identifierName in walker.IdentifierNames)
@@ -222,36 +216,42 @@ namespace WpfAnalyzers
                     if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
                         Equals(symbol, method))
                     {
-                        if (identifierName.Parent is ArgumentSyntax methodGroupArgument)
+                        switch (identifierName.Parent)
                         {
-                            if (argument != null)
-                            {
-                                return false;
-                            }
-
-                            argument = methodGroupArgument;
-                            continue;
+                            case ArgumentSyntax argument when TryGetRegistrationArgument(argument, out argument):
+                                usages.Add(argument);
+                                break;
+                            case InvocationExpressionSyntax invocation when
+                                invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
+                                lambda.Parent is ArgumentSyntax argument &&
+                                TryGetRegistrationArgument(argument, out argument):
+                                usages.Add(argument);
+                                break;
                         }
-
-                        if (identifierName.Parent is InvocationExpressionSyntax invocation &&
-                            invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
-                            lambda.Parent is ArgumentSyntax lambdaArgument)
-                        {
-                            if (argument != null)
-                            {
-                                return false;
-                            }
-
-                            argument = lambdaArgument;
-                            continue;
-                        }
-
-                        return false;
                     }
                 }
             }
 
-            return argument != null;
+            return usages;
+
+            bool TryGetRegistrationArgument(ArgumentSyntax candidate, out ArgumentSyntax result)
+            {
+                if (candidate.Parent is ArgumentListSyntax argumentList &&
+                    argumentList.Parent is ObjectCreationExpressionSyntax callbackCreation &&
+                    callbackCreation.Parent is ArgumentSyntax parent &&
+                    (callbackCreation.Type == KnownSymbol.PropertyChangedCallback ||
+                     callbackCreation.Type == KnownSymbol.CoerceValueCallback ||
+                     callbackCreation.Type == KnownSymbol.ValidateValueCallback))
+                {
+                    result = parent;
+                }
+                else
+                {
+                    result = candidate;
+                }
+
+                return result != null;
+            }
         }
 
         private static bool TryGetRegisteredType(InvocationExpressionSyntax registration, int index, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
@@ -269,21 +269,6 @@ namespace WpfAnalyzers
             if (argument == null)
             {
                 return false;
-            }
-
-            if (argument.Parent?.Parent is ObjectCreationExpressionSyntax callbackCreation &&
-                callbackCreation.Type is SimpleNameSyntax simpleName &&
-                (simpleName.Identifier.ValueText == "PropertyChangedCallback" ||
-                 simpleName.Identifier.ValueText == "CoerceValueCallback"))
-            {
-                if (callbackCreation.Parent is ArgumentSyntax parent)
-                {
-                    argument = parent;
-                }
-                else
-                {
-                    return false;
-                }
             }
 
             if (argument.Parent is ArgumentListSyntax argumentList &&
