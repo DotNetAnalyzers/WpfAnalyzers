@@ -23,13 +23,24 @@ namespace WpfAnalyzers
                     identifier = identifierName;
                     return true;
                 case LambdaExpressionSyntax candidate when
-                    candidate.Body is InvocationExpressionSyntax invocation &&
-                    invocation.Expression is IdentifierNameSyntax identifierName &&
-                    semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                {
-                    identifier = identifierName;
-                    return true;
-                }
+                    candidate.Body is InvocationExpressionSyntax invocation:
+                    {
+                        switch (invocation.Expression)
+                        {
+                            case IdentifierNameSyntax identifierName when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                                identifier = identifierName;
+                                return true;
+                            case MemberAccessExpressionSyntax memberAccess when
+                                memberAccess.Name is IdentifierNameSyntax identifierName &&
+                                semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                                {
+                                    identifier = identifierName;
+                                    return true;
+                                }
+                        }
+
+                        break;
+                    }
             }
 
             return callback.Expression is ObjectCreationExpressionSyntax creation &&

@@ -83,8 +83,6 @@ namespace RoslynSandbox
             var fixedCode = @"
 namespace RoslynSandbox
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -111,6 +109,66 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", metadata);
             fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(double), OnValueChanged)", metadata.AssertReplace("↓WrongName", "OnValueChanged"));
 
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [TestCase("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
+        [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
+        public void DependencyPropertyRegisterInstanceMethod(string before, string after)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(default(double), (d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        protected virtual void WrongName(double eNewValue, double eOldValue)
+        {
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(default(double), (d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        protected virtual void OnValueChanged(double eNewValue, double eOldValue)
+        {
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", before);
+            fixedCode = fixedCode.AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", after);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
