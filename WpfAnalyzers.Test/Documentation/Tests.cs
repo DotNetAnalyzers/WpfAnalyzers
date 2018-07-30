@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.Documentation
 
     public class Tests
     {
-        private static readonly IReadOnlyList<DescriptorInfo> Descriptors = typeof(AnalyzerCategory)
+        private static readonly IReadOnlyList<DescriptorInfo> DescriptorInfos = typeof(AnalyzerCategory)
             .Assembly
             .GetTypes()
             .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t))
@@ -21,13 +21,13 @@ namespace WpfAnalyzers.Test.Documentation
             .SelectMany(DescriptorInfo.Create)
             .ToArray();
 
-        private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => Descriptors.Where(d => d.DocExists).ToArray();
+        private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => DescriptorInfos.Where(d => d.DocExists).ToArray();
 
         private static DirectoryInfo SolutionDirectory => SolutionFile.Find("WpfAnalyzers.sln").Directory;
 
         private static DirectoryInfo DocumentsDirectory => SolutionDirectory.EnumerateDirectories("documentation", SearchOption.TopDirectoryOnly).Single();
 
-        [TestCaseSource(nameof(Descriptors))]
+        [TestCaseSource(nameof(DescriptorInfos))]
         public void MissingDocs(DescriptorInfo descriptorInfo)
         {
             if (!descriptorInfo.DocExists)
@@ -84,10 +84,10 @@ namespace WpfAnalyzers.Test.Documentation
             CodeAssert.AreEqual(expected, actual);
         }
 
-        [TestCaseSource(nameof(Descriptors))]
+        [TestCaseSource(nameof(DescriptorInfos))]
         public void UniqueIds(DescriptorInfo descriptorInfo)
         {
-            Assert.AreEqual(1, Descriptors.Count(d => d.Descriptor.Id == descriptorInfo.Descriptor.Id));
+            Assert.AreEqual(1, DescriptorInfos.Select(x => x.Descriptor).Distinct().Count(d => d.Id == descriptorInfo.Descriptor.Id));
         }
 
         [Test]
@@ -96,11 +96,11 @@ namespace WpfAnalyzers.Test.Documentation
             var builder = new StringBuilder();
             builder.AppendLine("<!-- start generated table -->")
                    .AppendLine("<table>");
-            foreach (var info in DescriptorsWithDocs.OrderBy(x => x.Descriptor.Id))
+            foreach (var descriptor in DescriptorsWithDocs.Select(x=>x.Descriptor).Distinct().OrderBy(x => x.Id))
             {
                 builder.AppendLine("<tr>");
-                builder.AppendLine($@"  <td><a href=""{info.Descriptor.HelpLinkUri}"">{info.Descriptor.Id}</a></td>");
-                builder.AppendLine($"  <td>{info.Descriptor.Title}</td>");
+                builder.AppendLine($@"  <td><a href=""{descriptor.HelpLinkUri}"">{descriptor.Id}</a></td>");
+                builder.AppendLine($"  <td>{descriptor.Title}</td>");
                 builder.AppendLine("</tr>");
             }
 
