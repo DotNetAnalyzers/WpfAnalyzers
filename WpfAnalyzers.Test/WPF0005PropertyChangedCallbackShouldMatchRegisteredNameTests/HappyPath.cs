@@ -37,6 +37,8 @@ namespace RoslynSandbox
         [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
         [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
         [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new PropertyMetadata(default(int), (d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue))")]
+        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback((d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue)))")]
         [TestCase("new PropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
@@ -59,13 +61,18 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        protected virtual void OnBarChanged(object eOldValue, object eNewValue)
+        {
         }
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // nop
+            var control = (FooControl)d;
+            control.OnBarChanged(e.OldValue, e.NewValue);
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
