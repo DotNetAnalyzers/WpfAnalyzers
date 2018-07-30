@@ -65,7 +65,12 @@ namespace RoslynSandbox
 
         private static bool ValidateValue(object value)
         {
-            return (int)value >= 0;
+            if (value is int i)
+            {
+                return i > 0;
+            }
+
+            return false;
         }
     }
 }";
@@ -106,7 +111,12 @@ namespace RoslynSandbox
 
         private static bool ValidateValue(object value)
         {
-            return (double)value >= 0;
+            if (value is int i)
+            {
+                return i > 0;
+            }
+
+            return false;
         }
     }
 }";
@@ -141,7 +151,12 @@ namespace RoslynSandbox
 
         private static bool ValidateBar(object value)
         {
-            return (int)value >= 0;
+            if (value is int i)
+            {
+                return i > 0;
+            }
+
+            return false;
         }
     }
 }";
@@ -184,7 +199,12 @@ namespace RoslynSandbox
 
         private static bool ValidateBar(object value)
         {
-            return (int)value >= 0;
+            if (value is int i)
+            {
+                return i > 0;
+            }
+
+            return false;
         }
     }
 }";

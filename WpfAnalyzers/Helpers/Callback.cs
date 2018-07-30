@@ -1,6 +1,5 @@
 namespace WpfAnalyzers
 {
-    using System;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -18,11 +17,19 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (callback.Expression is IdentifierNameSyntax candidate &&
-                semanticModel.TryGetSymbol(candidate, cancellationToken, out method))
+            switch (callback.Expression)
             {
-                identifier = candidate;
-                return true;
+                case IdentifierNameSyntax identifierName when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                    identifier = identifierName;
+                    return true;
+                case LambdaExpressionSyntax candidate when
+                    candidate.Body is InvocationExpressionSyntax invocation &&
+                    invocation.Expression is IdentifierNameSyntax identifierName &&
+                    semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                {
+                    identifier = identifierName;
+                    return true;
+                }
             }
 
             return callback.Expression is ObjectCreationExpressionSyntax creation &&
@@ -40,7 +47,8 @@ namespace WpfAnalyzers
 
             return method.Body is BlockSyntax body &&
                    body.Statements.TrySingle(out var statement) &&
-                   statement is ExpressionStatementSyntax;
+                   (statement is ExpressionStatementSyntax ||
+                    statement is ReturnStatementSyntax);
         }
     }
 }

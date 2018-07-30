@@ -11,7 +11,8 @@ namespace WpfAnalyzers
     internal class RegistrationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor);
+            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+            WPF0023ConvertToLambda.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -37,17 +38,25 @@ namespace WpfAnalyzers
             {
                 if (method.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
                     registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
-                    Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target) &&
-                    DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                    !target.Name.IsParts("Validate", registeredName))
+                    Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
                 {
-                    context.ReportDiagnostic(
+                    if (DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                        !target.Name.IsParts("Validate", registeredName))
+                    {
+                        context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
                             callBackIdentifier.GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
                             callBackIdentifier,
                             $"Validate{registeredName}"));
+                    }
+
+                    if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                        Callback.IsSingleExpression(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, validateValueCallback.GetLocation()));
+                    }
                 }
             }
         }

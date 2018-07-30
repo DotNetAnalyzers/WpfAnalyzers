@@ -282,7 +282,12 @@ internal static class BooleanBoxes
 
         private static bool ValidateIntValue(object value)
         {
-            return true;
+            if (value is int i)
+            {
+                return i > 0;
+            }
+
+            return false;
         }
     }";
             AnalyzerAssert.Valid(analyzer, fooCode, fooControlCode, booleanBoxesCode);

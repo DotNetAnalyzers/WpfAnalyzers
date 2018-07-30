@@ -92,6 +92,10 @@ Roslyn analyzers for WPF.
   <td>Cast value to correct type.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md">WPF0023</a></td>
+  <td>The callback is trivial, convert to lambda.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
   <td>Backing field for a DependencyProperty should be static and readonly.</td>
 </tr>
