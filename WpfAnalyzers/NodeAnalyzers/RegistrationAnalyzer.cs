@@ -37,9 +37,9 @@ namespace WpfAnalyzers
             {
                 if (method.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
                     registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
-                    Callback.TryGetName(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out _) &&
+                    Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target) &&
                     DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                    !callBackIdentifier.Identifier.ValueText.IsParts("Validate", registeredName))
+                    !target.Name.IsParts("Validate", registeredName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

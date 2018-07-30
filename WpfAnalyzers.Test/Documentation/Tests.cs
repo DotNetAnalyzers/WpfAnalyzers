@@ -96,7 +96,7 @@ namespace WpfAnalyzers.Test.Documentation
             var builder = new StringBuilder();
             builder.AppendLine("<!-- start generated table -->")
                    .AppendLine("<table>");
-            foreach (var descriptor in DescriptorsWithDocs.Select(x=>x.Descriptor).Distinct().OrderBy(x => x.Id))
+            foreach (var descriptor in DescriptorsWithDocs.Select(x => x.Descriptor).Distinct().OrderBy(x => x.Id))
             {
                 builder.AppendLine("<tr>");
                 builder.AppendLine($@"  <td><a href=""{descriptor.HelpLinkUri}"">{descriptor.Id}</a></td>");

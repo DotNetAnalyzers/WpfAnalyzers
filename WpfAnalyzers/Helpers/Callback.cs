@@ -8,7 +8,7 @@ namespace WpfAnalyzers
 
     internal static class Callback
     {
-        internal static bool TryGetTarget(ArgumentSyntax callback, QualifiedType callbackSymbol, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out IMethodSymbol method)
+        internal static bool TryGetTarget(ArgumentSyntax callback, QualifiedType handlerType, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out IMethodSymbol method)
         {
             identifier = null;
             method = null;
@@ -26,22 +26,9 @@ namespace WpfAnalyzers
             }
 
             return callback.Expression is ObjectCreationExpressionSyntax creation &&
-                   semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == callbackSymbol &&
+                   semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == handlerType &&
                    creation.ArgumentList.Arguments.TrySingle(out var arg) &&
-                   TryGetTarget(arg, callbackSymbol, semanticModel, cancellationToken, out identifier, out method);
-        }
-
-        [Obsolete("Don't use this.")]
-        internal static bool TryGetName(ArgumentSyntax callback, QualifiedType callbackSymbol, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax nameExpression, out string name)
-        {
-            if (TryGetTarget(callback, callbackSymbol, semanticModel, cancellationToken, out nameExpression, out var target))
-            {
-                name = target.Name;
-                return true;
-            }
-
-            name = null;
-            return false;
+                   TryGetTarget(arg, handlerType, semanticModel, cancellationToken, out identifier, out method);
         }
 
         internal static bool IsSingleExpression(MethodDeclarationSyntax method)
