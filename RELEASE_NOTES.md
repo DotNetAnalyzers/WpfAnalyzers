@@ -1,3 +1,9 @@
+#### 2.1.4
+* Feature: new analyzer convert to lambda.
+* Feature: WPF0020 and WPF0022 for OverrideMetadata
+* Feature: WPF0020 and WPF0022 for AddOwner
+* Feature: WPF0019 and WPF0021 check lambdas
+
 #### 2.1.2.1
 * Feature: tweak perf.
 
