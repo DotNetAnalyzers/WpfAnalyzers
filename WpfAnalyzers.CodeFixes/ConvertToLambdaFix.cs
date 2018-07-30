@@ -92,6 +92,41 @@ namespace WpfAnalyzers
                     RemoveMethod(editor, method, declaration, cancellationToken);
                 }
             }
+
+            if (method.Parameters.Length == 2 &&
+                method.Parameters.TryElementAt(0, out var parameter1) &&
+                method.Parameters.TryElementAt(1, out var parameter2))
+            {
+                if (declaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                {
+                    editor.ReplaceNode(
+                        toReplace,
+                        SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionBody.Expression}")
+                                     .WithLeadingTriviaFrom(toReplace));
+                    RemoveMethod(editor, method, declaration, cancellationToken);
+                }
+                else if (declaration.Body is BlockSyntax body &&
+                         body.Statements.TrySingle(out var statement))
+                {
+                    switch (statement)
+                    {
+                        case ReturnStatementSyntax returnStatement:
+                            editor.ReplaceNode(
+                                toReplace,
+                                SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {returnStatement.Expression}")
+                                             .WithLeadingTriviaFrom(toReplace));
+                            RemoveMethod(editor, method, declaration, cancellationToken);
+                            break;
+                        case ExpressionStatementSyntax expressionStatement:
+                            editor.ReplaceNode(
+                                toReplace,
+                                SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionStatement.Expression}")
+                                             .WithLeadingTriviaFrom(toReplace));
+                            RemoveMethod(editor, method, declaration, cancellationToken);
+                            break;
+                    }
+                }
+            }
         }
 
         private static void RemoveMethod(DocumentEditor editor, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)

@@ -71,7 +71,7 @@ namespace WpfAnalyzers.Test.Documentation
         {
             switch (descriptorInfo.Analyzer)
             {
-                case PropertyMetadataAnalyzer _ when descriptorInfo.Descriptor.Id == WPF0023ConvertToLambda.Descriptor.Id:
+                case RegistrationAnalyzer _ when descriptorInfo.Descriptor.Id == WPF0023ConvertToLambda.Descriptor.Id:
                     return;
             }
 

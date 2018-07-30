@@ -15,7 +15,8 @@ namespace WpfAnalyzers
             WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
             WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
             WPF0010DefaultValueMustMatchRegisteredType.Descriptor,
-            WPF0016DefaultValueIsSharedReferenceType.Descriptor);
+            WPF0016DefaultValueIsSharedReferenceType.Descriptor,
+            WPF0023ConvertToLambda.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -51,19 +52,33 @@ namespace WpfAnalyzers
                                 identifier,
                                 $"On{registeredName}Changed"));
                         }
+
+                        if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                            Callback.IsSingleExpression(declaration))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, propertyChangedCallback.GetLocation()));
+                        }
                     }
 
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
-                        Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out identifier, out target) &&
-                        !target.Name.IsParts("Coerce", registeredName))
+                        Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out identifier, out target))
                     {
-                        context.ReportDiagnostic(
+                        if (!target.Name.IsParts("Coerce", registeredName))
+                        {
+                            context.ReportDiagnostic(
                             Diagnostic.Create(
                                 WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
                                 identifier.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
                                 identifier,
                                 $"Coerce{registeredName}"));
+                        }
+
+                        if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                            Callback.IsSingleExpression(declaration))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, propertyChangedCallback.GetLocation()));
+                        }
                     }
                 }
 
