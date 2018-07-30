@@ -108,8 +108,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, ↓WrongName)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata.AssertReplace("↓WrongName", "OnValueChanged"));
+            testCode = testCode.AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", metadata);
+            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(double), OnValueChanged)", metadata.AssertReplace("↓WrongName", "OnValueChanged"));
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
