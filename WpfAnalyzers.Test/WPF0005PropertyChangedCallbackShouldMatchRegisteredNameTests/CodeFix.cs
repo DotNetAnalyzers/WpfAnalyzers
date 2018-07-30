@@ -49,15 +49,13 @@ namespace RoslynSandbox
             AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
-        [TestCase("new PropertyMetadata(1, ↓WrongName)")]
-        [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(↓WrongName))")]
+        [TestCase("new PropertyMetadata(default(double), ↓WrongName)")]
+        [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(↓WrongName))")]
         public void DependencyPropertyRegister(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -67,7 +65,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(double),
             typeof(FooControl),
-            new PropertyMetadata(1, ↓WrongName));
+            new PropertyMetadata(default(double), ↓WrongName));
 
         public double Value
         {
@@ -96,7 +94,7 @@ namespace RoslynSandbox
             nameof(Value),
             typeof(double),
             typeof(FooControl),
-            new PropertyMetadata(1, OnValueChanged));
+            new PropertyMetadata(default(double), OnValueChanged));
 
         public double Value
         {
