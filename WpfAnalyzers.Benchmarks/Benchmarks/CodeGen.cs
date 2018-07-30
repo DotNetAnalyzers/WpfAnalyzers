@@ -9,6 +9,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
+    [Explicit("Script")]
     public class CodeGen
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
