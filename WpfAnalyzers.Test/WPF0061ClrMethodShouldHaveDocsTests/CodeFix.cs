@@ -27,12 +27,12 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-        ↓public static void SetBar(UIElement element, int value)
+        public static void ↓SetBar(UIElement element, int value)
         {
             element.SetValue(BarProperty, value);
         }
 
-        ↓public static int GetBar(UIElement element)
+        public static int ↓GetBar(UIElement element)
         {
             return (int)element.GetValue(BarProperty);
         }
@@ -96,12 +96,12 @@ namespace RoslynSandbox
                 default(int), 
                 FrameworkPropertyMetadataOptions.Inherits));
 
-        ↓public static void SetBar(UIElement element, int value)
+        public static void ↓SetBar(UIElement element, int value)
         {
             element.SetValue(BarProperty, value);
         }
 
-        ↓public static int GetBar(UIElement element)
+        public static int ↓GetBar(UIElement element)
         {
             return (int)element.GetValue(BarProperty);
         }

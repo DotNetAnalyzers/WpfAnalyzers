@@ -66,11 +66,16 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (!methodDeclaration.TryGetDocumentationComment(out _) &&
-                        (method.DeclaredAccessibility == Accessibility.Public ||
-                         method.DeclaredAccessibility == Accessibility.Internal))
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
+                        if (methodDeclaration.TryGetDocumentationComment(out var comment))
+                        {
+
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        }
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
@@ -104,11 +109,16 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (!methodDeclaration.TryGetDocumentationComment(out _) &&
-                        (method.DeclaredAccessibility == Accessibility.Public ||
-                         method.DeclaredAccessibility == Accessibility.Internal))
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.GetLocation()));
+                        if (methodDeclaration.TryGetDocumentationComment(out var comment))
+                        {
+
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        }
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
