@@ -15,7 +15,8 @@ namespace WpfAnalyzers
             WPF0070ConverterDoesNotHaveDefaultField.Descriptor,
             WPF0071ConverterDoesNotHaveAttribute.Descriptor,
             WPF0072ValueConversionMustUseCorrectTypes.Descriptor,
-            WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor);
+            WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor,
+            WPF0074DefaultMemberOfWrongType.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -42,10 +43,24 @@ namespace WpfAnalyzers
             {
                 if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                     !Mutable.HasMutableInstanceMembers(type) &&
-                    !Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
-                    !ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out _))
+                    !Virtual.HasVirtualOrAbstractOrProtectedMembers(type))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
+                    if (ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out var defaults))
+                    {
+                        foreach (var fieldOrProperty in defaults)
+                        {
+                            if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var assignedValue) &&
+                                context.SemanticModel.TryGetType(assignedValue, context.CancellationToken, out var assignedType) &&
+                                !Equals(assignedType, type))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0074DefaultMemberOfWrongType.Descriptor, assignedValue.GetLocation()));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
+                    }
                 }
 
                 if (type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation))

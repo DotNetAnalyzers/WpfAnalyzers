@@ -176,6 +176,10 @@ Roslyn analyzers for WPF.
   <td>Add ValueConversion attribute (unknown types).</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md">WPF0074</a></td>
+  <td>Use containing type.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md">WPF0080</a></td>
   <td>Add MarkupExtensionReturnType attribute.</td>
 </tr>

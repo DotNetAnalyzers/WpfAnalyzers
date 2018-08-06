@@ -66,16 +66,10 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal) &&
+                        !methodDeclaration.TryGetDocumentationComment(out _))
                     {
-                        if (methodDeclaration.TryGetDocumentationComment(out var comment))
-                        {
-
-                        }
-                        else
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
@@ -109,16 +103,10 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public))
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
+                        !methodDeclaration.TryGetDocumentationComment(out _))
                     {
-                        if (methodDeclaration.TryGetDocumentationComment(out var comment))
-                        {
-
-                        }
-                        else
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
