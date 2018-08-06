@@ -66,7 +66,7 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (!methodDeclaration.HasDocumentation() &&
+                    if (!methodDeclaration.TryGetDocumentationComment(out _) &&
                         (method.DeclaredAccessibility == Accessibility.Public ||
                          method.DeclaredAccessibility == Accessibility.Internal))
                     {
@@ -104,7 +104,7 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (!methodDeclaration.HasDocumentation() &&
+                    if (!methodDeclaration.TryGetDocumentationComment(out _) &&
                         (method.DeclaredAccessibility == Accessibility.Public ||
                          method.DeclaredAccessibility == Accessibility.Internal))
                     {

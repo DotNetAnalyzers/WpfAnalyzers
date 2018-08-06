@@ -33,7 +33,8 @@ namespace WpfAnalyzers
                 return;
             }
 
-            if (BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
+            if (context.Node is MemberDeclarationSyntax memberDeclaration &&
+                BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
             {
                 if (DependencyProperty.TryGetRegisterInvocationRecursive(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registerInvocation, out _))
                 {
@@ -66,7 +67,7 @@ namespace WpfAnalyzers
 
                         if ((context.ContainingSymbol.DeclaredAccessibility == Accessibility.Public ||
                              context.ContainingSymbol.DeclaredAccessibility == Accessibility.Internal) &&
-                            !context.Node.HasDocumentation() &&
+                            !memberDeclaration.TryGetDocumentationComment(out _) &&
                             context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
                         {
                             context.ReportDiagnostic(
