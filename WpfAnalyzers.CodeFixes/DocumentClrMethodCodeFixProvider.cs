@@ -2,16 +2,12 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentClrMethodCodeFixProvider))]
     [Shared]
@@ -27,72 +23,45 @@ namespace WpfAnalyzers
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
+                    semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method))
                 {
-                    continue;
+                    if (ClrMethod.IsAttachedGet(method, semanticModel, context.CancellationToken, out var fieldOrProperty) &&
+                        DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var registeredName))
+                    {
+                        var parameter = method.Parameters[0];
+                        var text = StringBuilderPool.Borrow()
+                                                    .AppendLine($"/// <summary>Helper for reading {registeredName} property from <paramref name=\"{parameter.Name}\"/>.</summary>")
+                                                    .AppendLine($"/// <param name=\"element\">{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)} to read {registeredName} property from.</param>")
+                                                    .AppendLine($"/// <returns>{registeredName} property value.</returns>")
+                                                    .Return();
+                        context.RegisterCodeFix(
+                            "Add standard documentation.",
+                            (editor, _) => editor.ReplaceNode(methodDeclaration, x => x.WithDocumentationText(text)),
+                            this.GetType(),
+                            diagnostic);
+                    }
+                    else if (ClrMethod.IsAttachedSet(method, semanticModel, context.CancellationToken, out fieldOrProperty) &&
+                             DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out registeredName))
+                    {
+                        var parameter = method.Parameters[0];
+                        var text = StringBuilderPool.Borrow()
+                                                    .AppendLine($"/// <summary>Helper for setting {registeredName} property on <paramref name=\"{parameter.Name}\"/>.</summary>")
+                                                    .AppendLine($"/// <param name=\"element\">{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)} to set {registeredName} property on.</param>")
+                                                    .AppendLine($"/// <param name=\"value\">{registeredName} property value.</param>")
+                                                    .Return();
+                        context.RegisterCodeFix(
+                            "Add standard documentation.",
+                            (editor, _) => editor.ReplaceNode(methodDeclaration, x => x.WithDocumentationText(text)),
+                            this.GetType(),
+                            diagnostic);
+                    }
                 }
-
-                var member = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                       .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-                if (member != null)
-                {
-                    context.RegisterCodeFix(
-                        "Add xml documentation.",
-                        (editor, cancellationToken) => AddDocumentation(editor, member, cancellationToken),
-                        this.GetType(),
-                        diagnostic);
-                }
             }
-        }
-
-        private static void AddDocumentation(DocumentEditor editor, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
-        {
-            var method = editor.SemanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken);
-            if (ClrMethod.IsAttachedGet(method, editor.SemanticModel, cancellationToken, out var fieldOrProperty) &&
-                DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out var registeredName))
-            {
-                editor.ReplaceNode(
-                    methodDeclaration,
-                    methodDeclaration.WithLeadingTrivia(
-                        methodDeclaration.GetLeadingTrivia()
-                                         .AddRange(SyntaxFactory.ParseLeadingTrivia(GetMethodDocs(method.Parameters[0].Type, registeredName))))
-                                         .WithAdditionalAnnotations(Formatter.Annotation));
-            }
-            else if (ClrMethod.IsAttachedSet(method, editor.SemanticModel, cancellationToken, out fieldOrProperty) &&
-                     DependencyProperty.TryGetRegisteredName(fieldOrProperty, editor.SemanticModel, cancellationToken, out registeredName))
-            {
-                editor.ReplaceNode(
-                    methodDeclaration,
-                    methodDeclaration.WithLeadingTrivia(
-                        methodDeclaration.GetLeadingTrivia()
-                                         .AddRange(SyntaxFactory.ParseLeadingTrivia(SetMethodDocs(method.Parameters[0].Type, registeredName))))
-                                         .WithAdditionalAnnotations(Formatter.Annotation));
-            }
-        }
-
-        private static string GetMethodDocs(ITypeSymbol type, string registeredName)
-        {
-            return StringBuilderPool.Borrow()
-                                    .AppendLine("/// <summary>")
-                                    .AppendLine($"/// Helper for reading {registeredName} property from a {type.Name}.")
-                                    .AppendLine("/// </summary>")
-                                    .AppendLine($"/// <param name=\"element\">{type.Name} to read {registeredName} property from.</param>")
-                                    .AppendLine($"/// <returns>{registeredName} property value.</returns>")
-                                    .Return();
-        }
-
-        private static string SetMethodDocs(ITypeSymbol type, string registeredName)
-        {
-            return StringBuilderPool.Borrow()
-                                    .AppendLine("/// <summary>")
-                                    .AppendLine($"/// Helper for setting {registeredName} property on a {type.Name}.")
-                                    .AppendLine("/// </summary>")
-                                    .AppendLine($"/// <param name=\"element\">{type.Name} to set {registeredName} property on.</param>")
-                                    .AppendLine($"/// <param name=\"value\">{registeredName} property value.</param>")
-                                    .Return();
         }
     }
 }
