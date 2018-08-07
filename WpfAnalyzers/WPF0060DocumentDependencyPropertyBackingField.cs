@@ -10,7 +10,7 @@ namespace WpfAnalyzers
             id: DiagnosticId,
             title: "Backing field for a DependencyProperty is missing docs.",
             messageFormat: "Backing field for a DependencyProperty is missing docs.",
-            category: AnalyzerCategory.DependencyProperty,
+            category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Hidden,
             isEnabledByDefault: true,
             description: "Backing field for a DependencyProperty is missing docs.",

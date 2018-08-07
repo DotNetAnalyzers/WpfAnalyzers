@@ -1,4 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers
 {
     /// <summary>
@@ -7,6 +7,7 @@ namespace WpfAnalyzers
     internal static class AnalyzerCategory
     {
         internal const string DependencyProperty = "WpfAnalyzers.DependencyProperty";
+        internal const string Documentation = "WpfAnalyzers.Documentation";
         internal const string RoutedEvent = "WpfAnalyzers.RoutedEvent";
         internal const string MarkupExtension = "WpfAnalyzers.MarkupExtension";
         internal const string IValueConverter = "WpfAnalyzers.IValueConverter";

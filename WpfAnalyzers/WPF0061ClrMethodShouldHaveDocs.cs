@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -10,8 +10,8 @@
             id: DiagnosticId,
             title: "CLR accessor for attached property should have documentation.",
             messageFormat: "CLR accessor for attached property should have documentation.",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Info,
+            category: AnalyzerCategory.Documentation,
+            defaultSeverity: DiagnosticSeverity.Hidden,
             isEnabledByDefault: true,
             description: "CLR accessor for attached property should have documentation.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
