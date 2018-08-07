@@ -19,7 +19,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0061ClrMethodShouldHaveDocs.DiagnosticId);
+            WPF0061DocumentClrMethod.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)

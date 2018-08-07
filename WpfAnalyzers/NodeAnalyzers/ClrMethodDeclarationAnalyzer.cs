@@ -17,7 +17,7 @@ namespace WpfAnalyzers
             WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
             WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
             WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
-            WPF0061ClrMethodShouldHaveDocs.Descriptor);
+            WPF0061DocumentClrMethod.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -69,7 +69,7 @@ namespace WpfAnalyzers
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal) &&
                         !methodDeclaration.TryGetDocumentationComment(out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&
@@ -106,7 +106,7 @@ namespace WpfAnalyzers
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
                         !methodDeclaration.TryGetDocumentationComment(out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061ClrMethodShouldHaveDocs.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
 
                     if (methodDeclaration.Body is BlockSyntax body &&

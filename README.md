@@ -157,7 +157,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md">WPF0061</a></td>
-  <td>CLR accessor for attached property should have documentation.</td>
+  <td>Accessor method for attached property must have standard documentation text.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md">WPF0070</a></td>
