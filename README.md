@@ -153,7 +153,7 @@ Roslyn analyzers for WPF.
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md">WPF0060</a></td>
-  <td>Backing field for a DependencyProperty is missing docs.</td>
+  <td>Backing member for DependencyProperty must have standard documentation text.</td>
 </tr>
 <tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md">WPF0061</a></td>

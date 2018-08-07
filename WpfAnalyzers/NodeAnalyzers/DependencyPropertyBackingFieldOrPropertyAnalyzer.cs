@@ -14,7 +14,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
             WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0060DocumentDependencyPropertyBackingField.Descriptor,
+            WPF0060DocumentDependencyPropertyBackingMember.Descriptor,
             WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
             WPF0031FieldOrder.Descriptor);
 
@@ -65,17 +65,14 @@ namespace WpfAnalyzers
                                     registeredName));
                         }
 
-                        if ((context.ContainingSymbol.DeclaredAccessibility == Accessibility.Public ||
-                             context.ContainingSymbol.DeclaredAccessibility == Accessibility.Internal) &&
+                        if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
                             !memberDeclaration.TryGetDocumentationComment(out _) &&
                             context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0060DocumentDependencyPropertyBackingField.Descriptor,
-                                    context.Node.GetLocation(),
-                                    fieldOrProperty.Name,
-                                    registeredName));
+                                    WPF0060DocumentDependencyPropertyBackingMember.Descriptor,
+                                    context.Node.GetLocation()));
                         }
                     }
                 }
