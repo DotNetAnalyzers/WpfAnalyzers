@@ -33,7 +33,7 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                if (syntaxRoot.TryFindNode(diagnostic, out MemberDeclarationSyntax member) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
                     semanticModel.TryGetSymbol(member, context.CancellationToken, out ISymbol symbol) &&
                     BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                     DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var name))

@@ -22,7 +22,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty ↓BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        public static DependencyProperty ↓BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -106,7 +106,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ↓BarProperty = DependencyProperty.Register(
             ""Bar"", 
             typeof(int), 
             typeof(FooControl),
@@ -172,7 +172,7 @@ namespace RoslynSandbox
 
     public partial class FooControl
     {
-        ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty ↓BarProperty = BarPropertyKey.DependencyProperty;
 
         public int Bar
         {
@@ -215,7 +215,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty ↓BarProperty = DependencyProperty.RegisterAttached(
             ""Bar"",
             typeof(int),
             typeof(FooControl),
@@ -292,7 +292,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty ↓BarProperty = BarPropertyKey.DependencyProperty;
     
         public int Bar
         {
@@ -345,7 +345,7 @@ namespace RoslynSandbox
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        ↓public static DependencyProperty BarProperty { get; } = BarPropertyKey.DependencyProperty;
+        public static DependencyProperty ↓BarProperty { get; } = BarPropertyKey.DependencyProperty;
     
         public int Bar
         {
@@ -419,7 +419,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+        public static readonly DependencyProperty ↓BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
         public int Bar
         {
