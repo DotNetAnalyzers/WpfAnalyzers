@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
+namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -94,13 +94,13 @@ namespace RoslynSandbox
 
     public class ModernLinks : ItemsControl
     {
-        /// <summary> Identifies the SelectedLink dependency property. </summary>
         internal static readonly DependencyPropertyKey SelectedLinkPropertyKey = DependencyProperty.RegisterReadOnly(
             ""SelectedLink"",
             typeof(Link),
             typeof(ModernLinks),
             new FrameworkPropertyMetadata(null));
 
+        /// <summary>Identifies the <see cref=""SelectedLink""/> dependency property.</summary>
         public static readonly DependencyProperty SelectedLinkProperty = SelectedLinkPropertyKey.DependencyProperty;
     }
 }";
@@ -114,7 +114,7 @@ namespace RoslynSandbox
 
     public class LinkGroup : ButtonBase
     {
-        /// <summary> Identifies the SelectedLink dependency property. </summary>
+        /// <summary>Identifies the <see cref=""SelectedLink""/> dependency property.</summary>
         public static readonly DependencyProperty SelectedLinkProperty = ModernLinks.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
 
         public Link SelectedLink

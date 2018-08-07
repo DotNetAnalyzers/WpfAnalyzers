@@ -93,14 +93,14 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        /// <summary>Identifies the <see cref=""Status""/> dependency property.</summary>
         internal static readonly DependencyPropertyKey StatusPropertyKey = DependencyProperty.RegisterReadOnly(
             ""Status"",
             typeof(Status),
             typeof(FooControl),
             new PropertyMetadata(Status.Idle, OnStatusChanged));
 
-        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        /// <summary>Identifies the <see cref=""Status""/> dependency property.</summary>
         internal static readonly DependencyProperty StatusProperty = StatusPropertyKey.DependencyProperty;
 
         internal Status Status
