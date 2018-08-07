@@ -40,45 +40,7 @@ namespace WpfAnalyzers
                 method.Parameters.TryElementAt(0, out var parameter) &&
                 parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
             {
-                if (method.Parameters.TryElementAt(1, out var valueParameter) &&
-                    ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out var fieldOrProperty))
-                {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                        !method.Name.IsParts("Set", registeredName))
-                    {
-                        context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
-                            methodDeclaration.Identifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
-                            method.Name,
-                            "Set" + registeredName));
-                    }
-
-                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !Equals(valueParameter.Type, registeredType))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
-                                methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
-                                "Value type",
-                                registeredType));
-                    }
-
-                    if (methodDeclaration.Body is BlockSyntax body &&
-                        body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
-                    }
-
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !methodDeclaration.TryGetDocumentationComment(out _))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
-                    }
-                }
-                else if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out fieldOrProperty))
+                if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var fieldOrProperty))
                 {
                     if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                         !method.Name.IsParts("Get", registeredName))
@@ -101,18 +63,6 @@ namespace WpfAnalyzers
                                 methodDeclaration.ReturnType.GetLocation(),
                                 "Return type",
                                 registeredType));
-                    }
-
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !methodDeclaration.TryGetDocumentationComment(out _))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
-                    }
-
-                    if (methodDeclaration.Body is BlockSyntax body &&
-                        body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
                     }
 
                     if (Attribute.TryFind(methodDeclaration, KnownSymbol.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
@@ -138,6 +88,56 @@ namespace WpfAnalyzers
                                     WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
                                     methodDeclaration.Identifier.GetLocation(),
                                     parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
+                    }
+
+                    if (methodDeclaration.Body is BlockSyntax body &&
+                        body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    }
+
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                        !methodDeclaration.TryGetDocumentationComment(out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                    }
+                }
+                else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
+                {
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                        !method.Name.IsParts("Set", registeredName))
+                    {
+                        context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
+                            methodDeclaration.Identifier.GetLocation(),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
+                            method.Name,
+                            "Set" + registeredName));
+                    }
+
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                        method.Parameters.TryElementAt(1, out var valueParameter) &&
+                        !Equals(valueParameter.Type, registeredType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
+                                "Value type",
+                                registeredType));
+                    }
+
+                    if (methodDeclaration.Body is BlockSyntax body &&
+                        body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    }
+
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                        !methodDeclaration.TryGetDocumentationComment(out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
                 }
             }
