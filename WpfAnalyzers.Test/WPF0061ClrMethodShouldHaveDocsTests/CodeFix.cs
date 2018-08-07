@@ -12,6 +12,68 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0061");
 
         [Test]
+        public void DependencyPropertyRegisterAttached()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static void ↓SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static int ↓GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting Bar property on <paramref name=""element""/>.</summary>
+        /// <param name=""element"">UIElement to set Bar property on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for reading Bar property from <paramref name=""element""/>.</summary>
+        /// <param name=""element"">UIElement to read Bar property from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterAttachedWithAttachedPropertyBrowsableForType()
         {
             var testCode = @"
@@ -74,68 +136,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [Test]
-        public void DependencyPropertyRegisterAttached()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class Foo
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new PropertyMetadata(default(int)));
-
-        public static void ↓SetBar(UIElement element, int value)
-        {
-            element.SetValue(BarProperty, value);
-        }
-
-        public static int ↓GetBar(UIElement element)
-        {
-            return (int)element.GetValue(BarProperty);
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class Foo
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(int),
-            typeof(Foo),
-            new PropertyMetadata(default(int)));
-
-        /// <summary>Helper for setting Bar property on <paramref name=""element""/>.</summary>
-        /// <param name=""element"">UIElement to set Bar property on.</param>
-        /// <param name=""value"">Bar property value.</param>
-        public static void SetBar(UIElement element, int value)
-        {
-            element.SetValue(BarProperty, value);
-        }
-
-        /// <summary>Helper for reading Bar property from <paramref name=""element""/>.</summary>
-        /// <param name=""element"">UIElement to read Bar property from.</param>
-        /// <returns>Bar property value.</returns>
-        public static int GetBar(UIElement element)
-        {
-            return (int)element.GetValue(BarProperty);
-        }
-    }
-}";
-
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
