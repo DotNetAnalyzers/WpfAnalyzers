@@ -67,12 +67,14 @@ namespace WpfAnalyzers
 
                         if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
                             context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
-                            !HasStandardText(memberDeclaration, registeredName))
+                            !HasStandardText(memberDeclaration, registeredName, out var comment))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     WPF0060DocumentDependencyPropertyBackingMember.Descriptor,
-                                    backingMember.FindIdentifier(memberDeclaration).GetLocation()));
+                                    comment == null
+                                        ? backingMember.FindIdentifier(memberDeclaration).GetLocation()
+                                        : comment.GetLocation()));
                         }
                     }
                 }
@@ -168,9 +170,9 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name)
+        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, out DocumentationCommentTriviaSyntax comment)
         {
-            return memberDeclaration.TryGetDocumentationComment(out var comment) &&
+            return memberDeclaration.TryGetDocumentationComment(out comment) &&
                    comment.TryGetSummary(out var summary) &&
                    summary.ToString().IsParts("<summary>Identifies the <see cref=\"", name, "\"/> dependency property.</summary>");
         }
