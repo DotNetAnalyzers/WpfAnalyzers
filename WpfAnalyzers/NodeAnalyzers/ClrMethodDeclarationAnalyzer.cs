@@ -66,16 +66,16 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal) &&
-                        !methodDeclaration.TryGetDocumentationComment(out _))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
-                    }
-
                     if (methodDeclaration.Body is BlockSyntax body &&
                         body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    }
+
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                        !methodDeclaration.TryGetDocumentationComment(out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }
                 }
                 else if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out fieldOrProperty))
@@ -103,7 +103,7 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                         !methodDeclaration.TryGetDocumentationComment(out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));

@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                                     registeredName));
                         }
 
-                        if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
+                        if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                             context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
                             !HasStandardText(memberDeclaration, registeredName, out var comment))
                         {
