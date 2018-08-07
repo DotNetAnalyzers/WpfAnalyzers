@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
+namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

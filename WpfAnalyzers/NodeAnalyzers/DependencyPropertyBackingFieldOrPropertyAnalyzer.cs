@@ -66,8 +66,8 @@ namespace WpfAnalyzers
                         }
 
                         if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Internal, Accessibility.Public) &&
-                            !memberDeclaration.TryGetDocumentationComment(out _) &&
-                            context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
+                            context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
+                            !HasStandardText(memberDeclaration, registeredName))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -166,6 +166,13 @@ namespace WpfAnalyzers
                             candidate.Type.Name));
                 }
             }
+        }
+
+        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name)
+        {
+            return memberDeclaration.TryGetDocumentationComment(out var comment) &&
+                   comment.TryGetSummary(out var summary) &&
+                   summary.ToString().IsParts("<summary>Identifies the <see cref=\"", name, "\"/> dependency property.</summary>");
         }
     }
 }

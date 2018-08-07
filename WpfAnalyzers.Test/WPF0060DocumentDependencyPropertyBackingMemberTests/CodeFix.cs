@@ -205,6 +205,49 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyRegisterNotStandardText()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""BarProperty""/> dependency property.</summary>
+        public static readonly DependencyProperty ↓BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
