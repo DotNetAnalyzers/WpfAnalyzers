@@ -15,7 +15,8 @@ namespace WpfAnalyzers
             WPF0019CastSenderToCorrectType.Descriptor,
             WPF0020CastValueToCorrectType.Descriptor,
             WPF0021DirectCastSenderToExactType.Descriptor,
-            WPF0022DirectCastValueToExactType.Descriptor);
+            WPF0022DirectCastValueToExactType.Descriptor,
+            WPF0062DocumentPropertyChangedCallback.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -34,39 +35,48 @@ namespace WpfAnalyzers
             }
 
             if (context.Node is MethodDeclarationSyntax methodDeclaration &&
-                context.ContainingSymbol is IMethodSymbol method &&
-                method.IsStatic)
+                context.ContainingSymbol is IMethodSymbol method)
             {
-                if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
-                    TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
+                if (method.IsStatic)
                 {
-                    using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                    if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
+                        TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
                     {
-                        foreach (var callbackArgument in usages)
+                        using (var usages = GetCallbackArguments(context, method, methodDeclaration))
                         {
-                            if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
+                            foreach (var callbackArgument in usages)
                             {
-                                HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                            }
+                                if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
+                                {
+                                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                                }
 
-                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                                if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                                {
+                                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                                }
+                            }
+                        }
+                    }
+                    else if (TryMatchValidateValueCallback(method, out argParameter))
+                    {
+                        using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                        {
+                            foreach (var callbackArgument in usages)
                             {
-                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                                if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                                {
+                                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                                }
                             }
                         }
                     }
                 }
-                else if (TryMatchValidateValueCallback(method, out argParameter))
+                else if (method.DeclaredAccessibility == Accessibility.Protected)
                 {
                     using (var usages = GetCallbackArguments(context, method, methodDeclaration))
                     {
-                        foreach (var callbackArgument in usages)
-                        {
-                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
-                            {
-                                HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                            }
-                        }
+
                     }
                 }
             }
@@ -260,24 +270,27 @@ namespace WpfAnalyzers
         {
             // Set is not perfect here but using it as there is no pooled list
             var callbacks = PooledSet<ArgumentSyntax>.Borrow();
-            using (var walker = SpecificIdentifierNameWalker.Borrow(methodDeclaration.Parent as ClassDeclarationSyntax, method.MetadataName))
+            if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
             {
-                foreach (var identifierName in walker.IdentifierNames)
+                using (var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, method.MetadataName))
                 {
-                    if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
-                        Equals(symbol, method))
+                    foreach (var identifierName in walker.IdentifierNames)
                     {
-                        switch (identifierName.Parent)
+                        if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
+                            Equals(symbol, method))
                         {
-                            case ArgumentSyntax argument when TryGetCallbackArgument(argument, out argument):
-                                callbacks.Add(argument);
-                                break;
-                            case InvocationExpressionSyntax invocation when
-                                invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
-                                lambda.Parent is ArgumentSyntax argument &&
-                                TryGetCallbackArgument(argument, out argument):
-                                callbacks.Add(argument);
-                                break;
+                            switch (identifierName.Parent)
+                            {
+                                case ArgumentSyntax argument when TryGetCallbackArgument(argument, out argument):
+                                    callbacks.Add(argument);
+                                    break;
+                                case InvocationExpressionSyntax invocation when
+                                    invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
+                                    lambda.Parent is ArgumentSyntax argument &&
+                                    TryGetCallbackArgument(argument, out argument):
+                                    callbacks.Add(argument);
+                                    break;
+                            }
                         }
                     }
                 }

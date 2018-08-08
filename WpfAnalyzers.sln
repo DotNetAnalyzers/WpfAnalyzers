@@ -65,6 +65,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\WPF0052.md = documentation\WPF0052.md
 		documentation\WPF0060.md = documentation\WPF0060.md
 		documentation\WPF0061.md = documentation\WPF0061.md
+		documentation\WPF0062.md = documentation\WPF0062.md
 		documentation\WPF0070.md = documentation\WPF0070.md
 		documentation\WPF0071.md = documentation\WPF0071.md
 		documentation\WPF0072.md = documentation\WPF0072.md
