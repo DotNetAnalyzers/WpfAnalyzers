@@ -30,20 +30,16 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to set <see cref=""BarProperty""/> on.</param>
         /// <param name=""value"">Bar property value.</param>
         public static void SetBar(FrameworkElement element, int value)
         {
             element.SetValue(BarProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(FrameworkElement element)
@@ -79,10 +75,8 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to set <see cref=""BarProperty""/> on.</param>
         /// <param name=""value"">Bar property value.</param>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static void SetBar(this FrameworkElement element, int value)
@@ -90,10 +84,8 @@ namespace RoslynSandbox
             element.SetValue(BarProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element)
@@ -140,20 +132,16 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(bool)));
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to set <see cref=""BarProperty""/> on.</param>
         /// <param name=""value"">Bar property value.</param>
         public static void SetBar(FrameworkElement element, bool value)
         {
             element.SetValue(BarProperty, BooleanBoxes.Box(value));
         }
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static bool GetBar(FrameworkElement element)
@@ -183,21 +171,17 @@ namespace RoslynSandbox
                 default(int),
                 OnValueChanged));
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Value property on.</param>
+        /// <summary>Helper for setting <see cref=""ValueProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to set <see cref=""ValueProperty""/> on.</param>
         /// <param name=""value"">Value property value.</param>
         public static void SetValue(this DependencyObject element, int value)
         {
             element.SetValue(ValueProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
-        /// <returns>Bar property value.</returns>
+        /// <summary>Helper for getting <see cref=""ValueProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""ValueProperty""/> from.</param>
+        /// <returns>Value property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static int GetValue(this DependencyObject element)
@@ -230,19 +214,15 @@ namespace RoslynSandbox
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <summary>Helper for setting <see cref=""BarPropertyKey""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to set <see cref=""BarPropertyKey""/> on.</param>
         /// <param name=""value"">Bar property value.</param>
         public static void SetBar(this FrameworkElement element, int value) => element.SetValue(BarPropertyKey, value);
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);

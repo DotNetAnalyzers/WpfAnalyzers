@@ -97,9 +97,9 @@ namespace WpfAnalyzers
                     }
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !methodDeclaration.TryGetDocumentationComment(out _))
+                        !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, location));
                     }
                 }
                 else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
@@ -135,11 +135,110 @@ namespace WpfAnalyzers
                     }
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !methodDeclaration.TryGetDocumentationComment(out _))
+                        !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, location));
                     }
                 }
+            }
+        }
+
+        private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backingField, string registeredName, out Location location)
+        {
+            location = null;
+            if (methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                parameterList.Parameters.TryElementAt(0, out var parameter))
+            {
+                if (parameterList.Parameters.Count == 1)
+                {
+                    if (HasDocComment(out var comment, out location) &&
+                        HasSummary(comment, $"<summary>Helper for getting <see cref=\"{backingField.Name}\"/> from <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
+                        HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to read <see cref=\"{backingField.Name}\"/> from.</param>", out location) &&
+                        HasReturns(comment, $"<returns>{registeredName} property value.</returns>", out location))
+                    {
+                        location = null;
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                if (parameterList.Parameters.Count == 2)
+                {
+                    return HasDocComment(out var comment, out location) &&
+                           HasSummary(comment, $"<summary>Helper for setting <see cref=\"{backingField.Name}\"/> on <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
+                           HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to set <see cref=\"{backingField.Name}\"/> on.</param>", out location) &&
+                           parameterList.Parameters.TryElementAt(1, out parameter) &&
+                           HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\">{registeredName} property value.</param>", out location);
+                }
+            }
+
+            return false;
+
+            bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location errorLocation)
+            {
+                if (methodDeclaration.TryGetDocumentationComment(out comment))
+                {
+                    errorLocation = null;
+                    return true;
+                }
+
+                errorLocation = methodDeclaration.Identifier.GetLocation();
+                return false;
+            }
+
+            bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            {
+                if (comment.TryGetSummary(out var summary))
+                {
+                    if (summary.ToString() == expected)
+                    {
+                        errorLocation = null;
+                        return true;
+                    }
+
+                    errorLocation = summary.GetLocation();
+                    return false;
+                }
+
+                errorLocation = comment.GetLocation();
+                return false;
+            }
+
+            bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, out Location errorLocation)
+            {
+                if (comment.TryGetParam(current.Identifier.ValueText, out var param))
+                {
+                    if (param.ToString() == expected)
+                    {
+                        errorLocation = null;
+                        return true;
+                    }
+
+                    errorLocation = param.GetLocation();
+                    return false;
+                }
+
+                errorLocation = comment.GetLocation();
+                return false;
+            }
+
+            bool HasReturns(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            {
+                if (comment.TryGetReturns(out var returns))
+                {
+                    if (returns.ToString() == expected)
+                    {
+                        errorLocation = null;
+                        return true;
+                    }
+
+                    errorLocation = returns.GetLocation();
+                    return false;
+                }
+
+                errorLocation = comment.GetLocation();
+                return false;
             }
         }
     }

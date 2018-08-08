@@ -97,20 +97,16 @@ internal static class BooleanBoxes
         /// <summary>Identifies the <see cref=""ReadOnlyProperty""/> dependency property.</summary>
         public static readonly DependencyProperty ReadOnlyProperty = ReadOnlyPropertyKey.DependencyProperty;
 
-        /// <summary>
-        /// Helper for setting Bar property on a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to set Bar property on.</param>
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to set <see cref=""BarProperty""/> on.</param>
         /// <param name=""value"">Bar property value.</param>
         public static void SetBar(FrameworkElement element, bool value)
         {
             element.SetValue(BarProperty, BooleanBoxes.Box(value));
         }
 
-        /// <summary>
-        /// Helper for reading Bar property from a FrameworkElement.
-        /// </summary>
-        /// <param name=""element"">FrameworkElement to read Bar property from.</param>
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""FrameworkElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
         public static bool GetBar(FrameworkElement element)
@@ -118,21 +114,17 @@ internal static class BooleanBoxes
             return (bool)element.GetValue(BarProperty);
         }
 
-        /// <summary>
-        /// Helper for setting Other property on a DependencyObject.
-        /// </summary>
-        /// <param name=""element"">DependencyObject to set Other property on.</param>
+        /// <summary>Helper for setting <see cref=""OtherProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to set <see cref=""OtherProperty""/> on.</param>
         /// <param name=""value"">Other property value.</param>
         public static void SetOther(this DependencyObject element, string value)
         {
             element.SetValue(OtherProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Other property from a DependencyObject.
-        /// </summary>
-        /// <param name=""element"">DependencyObject to read Other property from.</param>
-        /// <returns>Bar property value.</returns>
+        /// <summary>Helper for getting <see cref=""OtherProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""OtherProperty""/> from.</param>
+        /// <returns>Other property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static string GetOther(this DependencyObject element)
         {
@@ -144,10 +136,8 @@ internal static class BooleanBoxes
             element.SetValue(ReadOnlyPropertyKey, value);
         }
 
-        /// <summary>
-        /// Helper for reading ReadOnly property from a Control.
-        /// </summary>
-        /// <param name=""element"">Control to read ReadOnly property from.</param>
+        /// <summary>Helper for getting <see cref=""ReadOnlyProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""Control""/> to read <see cref=""ReadOnlyProperty""/> from.</param>
         /// <returns>ReadOnly property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Control))]
         public static bool GetReadOnly(this Control element)
