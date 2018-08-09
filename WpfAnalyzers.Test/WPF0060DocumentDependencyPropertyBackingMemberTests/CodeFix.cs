@@ -50,6 +50,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -92,6 +93,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -142,6 +144,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -200,7 +203,7 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
@@ -244,6 +247,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -314,7 +318,7 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -368,6 +372,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -421,6 +426,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -490,7 +496,7 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
     }
