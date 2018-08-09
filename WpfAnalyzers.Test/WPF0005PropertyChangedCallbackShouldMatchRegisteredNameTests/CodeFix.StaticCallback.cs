@@ -140,7 +140,7 @@ namespace RoslynSandbox
             set { this.SetValue(ValueProperty, value); }
         }
 
-        protected virtual void WrongName(double eNewValue, double eOldValue)
+        protected virtual void WrongName(double newValue, double oldValue)
         {
         }
     }
@@ -166,7 +166,7 @@ namespace RoslynSandbox
             set { this.SetValue(ValueProperty, value); }
         }
 
-        protected virtual void OnValueChanged(double eNewValue, double eOldValue)
+        protected virtual void OnValueChanged(double newValue, double oldValue)
         {
         }
     }

@@ -1,11 +1,15 @@
 namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class HappyPath
+    [TestFixture(typeof(CallbackAnalyzer))]
+    [TestFixture(typeof(PropertyMetadataAnalyzer))]
+    internal class HappyPath<T>
+        where T : DiagnosticAnalyzer, new()
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new T();
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()
@@ -65,7 +69,7 @@ namespace RoslynSandbox
             set => this.SetValue(BarProperty, value);
         }
 
-        protected virtual void OnBarChanged(object eOldValue, object eNewValue)
+        protected virtual void OnBarChanged(object oldValue, object newValue)
         {
         }
 

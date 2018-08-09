@@ -12,6 +12,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
             WPF0019CastSenderToCorrectType.Descriptor,
             WPF0020CastValueToCorrectType.Descriptor,
             WPF0021DirectCastSenderToExactType.Descriptor,
@@ -77,6 +78,18 @@ namespace WpfAnalyzers
                     if (TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
                         TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
                     {
+                        if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                            !method.Name.IsParts("On", registeredName, "Changed"))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                    methodDeclaration.Identifier.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                    methodDeclaration.Identifier,
+                                    $"On{registeredName}Changed"));
+                        }
+
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                             HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
                         {
@@ -88,6 +101,72 @@ namespace WpfAnalyzers
                     }
                 }
             }
+        }
+
+        private static void HandleLambda(SyntaxNodeAnalysisContext context)
+        {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
+            if (context.Node is ParenthesizedLambdaExpressionSyntax lambda &&
+                lambda.Parent is ArgumentSyntax argument &&
+                TryGetCallbackArgument(argument, out var callbackArgument) &&
+                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol method))
+            {
+                if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
+                    TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
+                {
+                    if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
+                    {
+                        HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                    }
+
+                    if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                    {
+                        HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    }
+                }
+                else if (TryMatchValidateValueCallback(method, out argParameter) &&
+                         TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                {
+                    HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                }
+            }
+        }
+
+        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        {
+            senderParameter = null;
+            argParameter = null;
+            return methodSymbol.Parameters.Length == 2 &&
+                   methodSymbol.ReturnsVoid &&
+                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
+                   argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs;
+        }
+
+        private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        {
+            senderParameter = null;
+            argParameter = null;
+            return candidate.Parameters.Length == 2 &&
+                   candidate.ReturnType == KnownSymbol.Object &&
+                   candidate.Parameters.TryElementAt(0, out senderParameter) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   candidate.Parameters.TryElementAt(1, out argParameter) &&
+                   argParameter.Type == KnownSymbol.Object;
+        }
+
+        private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, out IParameterSymbol argParameter)
+        {
+            argParameter = null;
+            return candidate.Parameters.Length == 1 &&
+                   candidate.ReturnType == KnownSymbol.Boolean &&
+                   candidate.Parameters.TryElementAt(0, out argParameter) &&
+                   argParameter.Type == KnownSymbol.Object;
         }
 
         private static bool TryGetDpFromInstancePropertyChanged(InvocationExpressionSyntax singleInvocation, SyntaxNodeAnalysisContext context, out BackingFieldOrProperty fieldOrProperty)
@@ -164,72 +243,6 @@ namespace WpfAnalyzers
                        metadataCreationArgs.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
                        PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out backing);
             }
-        }
-
-        private static void HandleLambda(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is ParenthesizedLambdaExpressionSyntax lambda &&
-                lambda.Parent is ArgumentSyntax argument &&
-                TryGetCallbackArgument(argument, out var callbackArgument) &&
-                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol method))
-            {
-                if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
-                    TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
-                {
-                    if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
-                    {
-                        HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
-                    }
-
-                    if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
-                    {
-                        HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                    }
-                }
-                else if (TryMatchValidateValueCallback(method, out argParameter) &&
-                         TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
-                {
-                    HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
-                }
-            }
-        }
-
-        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
-        {
-            senderParameter = null;
-            argParameter = null;
-            return methodSymbol.Parameters.Length == 2 &&
-                   methodSymbol.ReturnsVoid &&
-                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
-                   argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs;
-        }
-
-        private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
-        {
-            senderParameter = null;
-            argParameter = null;
-            return candidate.Parameters.Length == 2 &&
-                   candidate.ReturnType == KnownSymbol.Object &&
-                   candidate.Parameters.TryElementAt(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
-                   candidate.Parameters.TryElementAt(1, out argParameter) &&
-                   argParameter.Type == KnownSymbol.Object;
-        }
-
-        private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, out IParameterSymbol argParameter)
-        {
-            argParameter = null;
-            return candidate.Parameters.Length == 1 &&
-                   candidate.ReturnType == KnownSymbol.Boolean &&
-                   candidate.Parameters.TryElementAt(0, out argParameter) &&
-                   argParameter.Type == KnownSymbol.Object;
         }
 
         private static void HandleCasts(SyntaxNodeAnalysisContext context, SyntaxNode methodOrLambda, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor wrongTypeDescriptor, DiagnosticDescriptor notExactTypeDescriptor)
