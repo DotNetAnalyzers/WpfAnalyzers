@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class Callback
@@ -21,6 +22,12 @@ namespace WpfAnalyzers
             {
                 case IdentifierNameSyntax identifierName when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
                     identifier = identifierName;
+                    return true;
+                case MemberAccessExpressionSyntax memberAccess when
+                    memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                    memberAccess.Name is IdentifierNameSyntax candidate &&
+                    semanticModel.TryGetSymbol(candidate, cancellationToken, out method):
+                    identifier = candidate;
                     return true;
                 case LambdaExpressionSyntax candidate when
                     candidate.Body is InvocationExpressionSyntax invocation:
