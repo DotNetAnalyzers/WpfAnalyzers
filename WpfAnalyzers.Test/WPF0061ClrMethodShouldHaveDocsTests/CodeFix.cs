@@ -69,7 +69,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -118,7 +118,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -167,7 +167,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -234,7 +234,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -302,7 +302,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -370,7 +370,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -426,7 +426,7 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -492,7 +492,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
