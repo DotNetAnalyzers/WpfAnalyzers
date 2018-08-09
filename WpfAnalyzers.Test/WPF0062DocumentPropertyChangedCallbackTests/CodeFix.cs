@@ -552,5 +552,83 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void DependencyPropertyRegisterStaticCallbackCallingInstance()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(double),
+                new PropertyChangedCallback(OnValueChanged)));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void ↓OnValueChanged(double oldValue, double newValue)
+        {
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(double),
+                new PropertyChangedCallback(OnValueChanged)));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
+        /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
+        /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
+        protected virtual void OnValueChanged(double oldValue, double newValue)
+        {
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
     }
 }

@@ -97,17 +97,23 @@ namespace WpfAnalyzers
                 TryGetCallbackArgument(lambdaArg, out var callbackArgument) &&
                 context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol lambdaMethod) &&
                 TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
-                IsCalledOnSender() &&
-                ArgsUsesParameter() &&
-                callbackArgument.Parent is ArgumentListSyntax metadataCreationArgs &&
-                metadataCreationArgs.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
-                PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out fieldOrProperty))
+                Try(out fieldOrProperty))
             {
                 return true;
             }
 
-            // Figure out usage from static callback now.
+            if (singleInvocation.TryFirstAncestor(out MethodDeclarationSyntax staticCallback) &&
+               context.SemanticModel.TryGetSymbol(staticCallback, context.CancellationToken, out var staticMethod) &&
+               staticMethod.IsStatic &&
+                TryGetStaticCallbackArgument(staticMethod, staticCallback, out callbackArgument) &&
+               TryMatchPropertyChangedCallback(staticMethod, context, out senderParameter, out argParameter) &&
+                Try(out fieldOrProperty))
+            {
+                return true;
+            }
+
             return false;
+
             bool IsCalledOnSender()
             {
                 return singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -140,6 +146,23 @@ namespace WpfAnalyzers
                 }
 
                 return false;
+            }
+
+            bool TryGetStaticCallbackArgument(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax result)
+            {
+                using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                {
+                    return usages.TrySingle(out result);
+                }
+            }
+
+            bool Try(out BackingFieldOrProperty backing)
+            {
+                return IsCalledOnSender() &&
+                       ArgsUsesParameter() &&
+                       callbackArgument.Parent is ArgumentListSyntax metadataCreationArgs &&
+                       metadataCreationArgs.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
+                       PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out backing);
             }
         }
 
