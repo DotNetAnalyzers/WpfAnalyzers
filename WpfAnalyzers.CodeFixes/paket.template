@@ -4,10 +4,8 @@ include-referenced-projects true
 developmentDependency true
 
 releaseNotes
-  Feature: new analyzer convert to lambda.
-  Feature: WPF0020 and WPF0022 for OverrideMetadata
-  Feature: WPF0020 and WPF0022 for AddOwner
-  Feature: WPF0019 and WPF0021 check lambdas
+  BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
+  FEATURE: Check and generate standard docs.
 
 excludedgroups
   Main

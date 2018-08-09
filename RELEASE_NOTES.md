@@ -1,3 +1,7 @@
+#### 2.1.5
+* BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
+* Feature: Check and generate standard docs.
+ 
 #### 2.1.4
 * Feature: new analyzer convert to lambda.
 * Feature: WPF0020 and WPF0022 for OverrideMetadata
