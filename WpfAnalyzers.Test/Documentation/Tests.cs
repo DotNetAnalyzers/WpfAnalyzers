@@ -131,7 +131,7 @@ namespace WpfAnalyzers.Test.Documentation
             if (Analyzers.Count(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)) == 1)
             {
                 return stub.AssertReplace("{TYPENAME}", descriptorInfo.Analyzer.GetType().Name)
-                           .AssertReplace("{URL}", descriptorInfo.CodeFileUri ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers");
+                           .AssertReplace("{URL}", descriptorInfo.CodeFileUri);
             }
 
             var builder = StringBuilderPool.Borrow();
@@ -146,7 +146,9 @@ namespace WpfAnalyzers.Test.Documentation
                 first = false;
             }
 
-            return stub.AssertReplace($"  <tr>\r\n    <td>Code</td>\r\n    <td><a href=\"{{URL}}\">{{TYPENAME}}</a></td>\r\n  </tr>\r\n", builder.Return());
+            var text = builder.Return();
+            return stub.Replace("  <tr>\r\n    <td>Code</td>\r\n    <td><a href=\"{URL}\">{TYPENAME}</a></td>\r\n  </tr>\r\n", text)
+                       .Replace("  <tr>\n    <td>Code</td>\n    <td><a href=\"{URL}\">{TYPENAME}</a></td>\n  </tr>\n", text);
         }
 
         private static string GetTable(string doc)
