@@ -65,7 +65,9 @@ namespace WpfAnalyzers
                             $"Change type to: {registeredType}.",
                             (e, _) => e.ReplaceNode(
                                 qualifiedName,
+#pragma warning disable SA1313 // Parameter names must begin with lower-case letter
                                 (x, __) => SyntaxFactory.ParseTypeName(registeredType)),
+#pragma warning restore SA1313 // Parameter names must begin with lower-case letter
                             this.GetType().FullName,
                             diagnostic);
                     }

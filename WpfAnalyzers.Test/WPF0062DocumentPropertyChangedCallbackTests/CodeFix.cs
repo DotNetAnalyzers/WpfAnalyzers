@@ -731,6 +731,5 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
-
     }
 }
