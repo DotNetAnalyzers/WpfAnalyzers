@@ -69,6 +69,9 @@ namespace RoslynSandbox
             set => this.SetValue(BarProperty, value);
         }
 
+        /// <summary>This method is invoked when the <see cref=""BarProperty""/> changes.</summary>
+        /// <param name=""oldValue"">The old value of <see cref=""BarProperty""/>.</param>
+        /// <param name=""newValue"">The new value of <see cref=""BarProperty""/>.</param>
         protected virtual void OnBarChanged(object oldValue, object newValue)
         {
         }

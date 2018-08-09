@@ -195,9 +195,35 @@ namespace WpfAnalyzers
 
             bool IsCalledOnSender()
             {
-                return singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                       MemberPath.TrySingle(memberAccess.Expression, out var pathItem) &&
-                       pathItem.Identifier.ValueText == senderParameter.Name;
+                if (singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                    MemberPath.TrySingle(memberAccess.Expression, out var pathItem))
+                {
+                    if (pathItem.Identifier.ValueText == senderParameter.Name)
+                    {
+                        return true;
+                    }
+
+                    if (context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out ILocalSymbol local) &&
+                        local.TrySingleDeclaration(context.CancellationToken, out var declaration))
+                    {
+                        if (declaration is SingleVariableDesignationSyntax singleVariableDesignation &&
+                            singleVariableDesignation.Parent is DeclarationPatternSyntax pattern &&
+                            pattern.Parent is IsPatternExpressionSyntax isPattern)
+                        {
+                            return isPattern.Expression is IdentifierNameSyntax identifier &&
+                                   identifier.Identifier.ValueText == senderParameter.Name;
+                        }
+
+                        using (var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name))
+                        {
+                            return walker.IdentifierNames.TrySingle(out pathItem) &&
+                                   context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out IParameterSymbol symbol) &&
+                                   symbol.Name == senderParameter.Name;
+                        }
+                    }
+                }
+
+                return false;
             }
 
             bool ArgsUsesParameter()

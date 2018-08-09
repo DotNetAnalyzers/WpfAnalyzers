@@ -11,6 +11,108 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
         private static readonly CodeFixProvider Fix = new DocumentOnPropertyChangedCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0062");
 
+        [TestCase("new PropertyMetadata(OnBarChanged)")]
+        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
+        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
+        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnBarChanged));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        protected virtual void ↓OnBarChanged(object oldValue, object newValue)
+        {
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            control.OnBarChanged(e.OldValue, e.NewValue);
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            if (baseValue is int i &&
+                i < 0)
+            {
+                return 0;
+            }
+
+            return baseValue;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), OnBarChanged));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        /// <summary>This method is invoked when the <see cref=""BarProperty""/> changes.</summary>
+        /// <param name=""oldValue"">The old value of <see cref=""BarProperty""/>.</param>
+        /// <param name=""newValue"">The new value of <see cref=""BarProperty""/>.</param>
+        protected virtual void OnBarChanged(object oldValue, object newValue)
+        {
+        }
+
+        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            control.OnBarChanged(e.OldValue, e.NewValue);
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            if (baseValue is int i &&
+                i < 0)
+            {
+                return 0;
+            }
+
+            return baseValue;
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+            AnalyzerAssert.Valid(Analyzer, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
         [Test]
         public void DependencyPropertyRegisterMissingDocsOldValueAndNewValue()
         {
