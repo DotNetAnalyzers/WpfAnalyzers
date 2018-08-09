@@ -72,11 +72,29 @@ namespace WpfAnalyzers
                         }
                     }
                 }
-                else if (method.DeclaredAccessibility == Accessibility.Protected)
+                else if (method.ReturnsVoid)
                 {
-                    using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                    if (TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
+                        singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
+                        lambda.Parent is ArgumentSyntax argument &&
+                        TryGetCallbackArgument(argument, out var callbackArgument) &&
+                        context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol lambdaMethod) &&
+                        TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
+                        singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        MemberPath.TrySingle(memberAccess.Expression, out var pathItem) &&
+                        pathItem.Identifier.ValueText == senderParameter.Name &&
+                        callbackArgument.Parent is ArgumentListSyntax argumentList &&
+                        argumentList.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
+                        PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
                     {
-
+                        if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                            HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(
+                                                         WPF0062DocumentPropertyChangedCallback.Descriptor,
+                                                         location,
+                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
+                        }
                     }
                 }
             }
@@ -264,6 +282,254 @@ namespace WpfAnalyzers
                     }
                 }
             }
+        }
+
+        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, out Location location, out string expectedText)
+        {
+            expectedText = null;
+            location = null;
+            var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
+            if (methodDeclaration.ParameterList is ParameterListSyntax parameterList)
+            {
+                if (HasDocComment(out var comment, out location) &&
+                    HasSummary(comment, standardSummaryText, out location))
+                {
+                    if (parameterList.Parameters.Count == 0)
+                    {
+                        return true;
+                    }
+
+                    if (parameterList.Parameters.Count == 1)
+                    {
+                        if (TryGetNewValue(out var parameter, out var standardParamText) ||
+                            TryGetOldValue(out parameter, out standardParamText))
+                        {
+                            if (HasParam(comment, parameter, standardParamText, out location))
+                            {
+                                return true;
+                            }
+
+                            expectedText = StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(standardSummaryText)
+                                                            .Append("/// ").AppendLine(standardParamText)
+                                                            .Return();
+                            return false;
+                        }
+
+                        return null;
+                    }
+
+                    if (parameterList.Parameters.Count == 2)
+                    {
+                        if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
+                            TryGetNewValue(out var newParameter, out var standardNewParamText))
+                        {
+                            if (HasParam(comment, oldParameter, standardOldParamText, out location) &&
+                                HasParam(comment, newParameter, standardNewParamText, out location))
+                            {
+                                return true;
+                            }
+
+                            if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
+                            {
+                                expectedText = StringBuilderPool.Borrow()
+                                                                .Append("/// ").AppendLine(standardSummaryText)
+                                                                .Append("/// ").AppendLine(standardOldParamText)
+                                                                .Append("/// ").AppendLine(standardNewParamText)
+                                                                .Return();
+                            }
+                            else
+                            {
+                                expectedText = StringBuilderPool.Borrow()
+                                                                .Append("/// ").AppendLine(standardSummaryText)
+                                                                .Append("/// ").AppendLine(standardNewParamText)
+                                                                .Append("/// ").AppendLine(standardOldParamText)
+                                                                .Return();
+                            }
+
+                            return false;
+                        }
+
+                        return null;
+                    }
+
+                    return false;
+                }
+
+                if (parameterList.Parameters.Count == 0)
+                {
+                    expectedText = $"/// {standardSummaryText}";
+                }
+
+                if (parameterList.Parameters.Count == 1)
+                {
+                    if (TryGetNewValue(out _, out var standardParamText) ||
+                        TryGetOldValue(out _, out standardParamText))
+                    {
+                        expectedText = StringBuilderPool.Borrow()
+                                                        .Append("/// ").AppendLine(standardSummaryText)
+                                                        .Append("/// ").AppendLine(standardParamText)
+                                                        .Return();
+                        return false;
+                    }
+
+                    return null;
+                }
+
+                if (parameterList.Parameters.Count == 2)
+                {
+                    if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
+                        TryGetNewValue(out var newParameter, out var standardNewParamText))
+                    {
+                        if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
+                        {
+                            expectedText = StringBuilderPool.Borrow()
+                                                        .Append("/// ").AppendLine(standardSummaryText)
+                                                        .Append("/// ").AppendLine(standardOldParamText)
+                                                        .Append("/// ").AppendLine(standardNewParamText)
+                                                        .Return();
+                        }
+                        else
+                        {
+                            expectedText = StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(standardSummaryText)
+                                                            .Append("/// ").AppendLine(standardNewParamText)
+                                                            .Append("/// ").AppendLine(standardOldParamText)
+                                                            .Return();
+                        }
+
+                        return false;
+                    }
+
+                    return null;
+                }
+            }
+
+            return false;
+
+            bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location errorLocation)
+            {
+                if (methodDeclaration.TryGetDocumentationComment(out comment))
+                {
+                    errorLocation = null;
+                    return true;
+                }
+
+                errorLocation = methodDeclaration.Identifier.GetLocation();
+                return false;
+            }
+
+            bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            {
+                if (comment.TryGetSummary(out var summary))
+                {
+                    if (summary.ToString() == expected)
+                    {
+                        errorLocation = null;
+                        return true;
+                    }
+
+                    errorLocation = summary.GetLocation();
+                    return false;
+                }
+
+                errorLocation = comment.GetLocation();
+                return false;
+            }
+
+            bool TryGetNewValue(out ParameterSyntax parameter, out string standardText)
+            {
+                parameter = null;
+                standardText = null;
+                if (TryFindParameter("NewValue", out parameter))
+                {
+                    standardText = $"<param name=\"{parameter.Identifier.ValueText}\">The new value of <see cref=\"{backingField.Name}\"/>.</param>";
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool TryGetOldValue(out ParameterSyntax parameter, out string standardText)
+            {
+                parameter = null;
+                standardText = null;
+                if (TryFindParameter("OldValue", out parameter))
+                {
+                    standardText = $"<param name=\"{parameter.Identifier.ValueText}\">The old value of <see cref=\"{backingField.Name}\"/>.</param>";
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool TryFindParameter(string propertyName, out ParameterSyntax parameter)
+            {
+                parameter = null;
+                if (invocation.ArgumentList is ArgumentListSyntax argumentList)
+                {
+                    foreach (var argument in argumentList.Arguments)
+                    {
+                        using (var walker = SpecificIdentifierNameWalker.Borrow(argument.Expression, propertyName))
+                        {
+                            if (walker.IdentifierNames.TrySingle(out _) &&
+                                methodDeclaration.TryFindParameter(argument, out parameter))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, out Location errorLocation)
+            {
+                if (comment.TryGetParam(current.Identifier.ValueText, out var param))
+                {
+                    if (param.ToString() == expected)
+                    {
+                        errorLocation = null;
+                        return true;
+                    }
+
+                    errorLocation = param.GetLocation();
+                    return false;
+                }
+
+                errorLocation = comment.GetLocation();
+                return false;
+            }
+        }
+
+        private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, out InvocationExpressionSyntax invocation)
+        {
+            invocation = null;
+            if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
+            {
+                using (var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, methodDeclaration.Identifier.ValueText))
+                {
+                    foreach (var identifierName in walker.IdentifierNames)
+                    {
+                        if (identifierName.Parent is MemberAccessExpressionSyntax memberAccess &&
+                            memberAccess.Parent is InvocationExpressionSyntax candidate &&
+                            context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
+                            Equals(symbol, method))
+                        {
+                            if (invocation != null)
+                            {
+                                invocation = null;
+                                return false;
+                            }
+
+                            invocation = candidate;
+                        }
+                    }
+                }
+            }
+
+            return invocation != null;
         }
 
         private static PooledSet<ArgumentSyntax> GetCallbackArguments(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration)
