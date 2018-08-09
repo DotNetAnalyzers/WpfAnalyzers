@@ -147,7 +147,7 @@ namespace WpfAnalyzers.Test.Documentation
                     first = false;
                 }
 
-                return stub.AssertReplace("  <tr>\r\n    <td>Code</td>\r\n    <td><a href=\"{URL}\">{TYPENAME}</a></td>\r\n  </tr>\r\n", builder.Return());
+                return stub.AssertReplace($"  <tr>{Environment.NewLine}    <td>Code</td>{Environment.NewLine}    <td><a href=\"{{URL}}\">{{TYPENAME}}</a></td>{Environment.NewLine}  </tr>{Environment.NewLine}", builder.Return());
             }
         }
 
