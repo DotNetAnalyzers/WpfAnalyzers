@@ -6,6 +6,7 @@ namespace WpfAnalyzers.Test.Documentation
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,11 +14,15 @@ namespace WpfAnalyzers.Test.Documentation
 
     public class Tests
     {
-        private static readonly IReadOnlyList<DescriptorInfo> DescriptorInfos = typeof(AnalyzerCategory)
-            .Assembly
-            .GetTypes()
-            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t))
-            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> Analyzers = typeof(AnalyzerCategory)
+                                                                              .Assembly
+                                                                              .GetTypes()
+                                                                              .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t))
+                                                                              .OrderBy(x => x.Name)
+                                                                              .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+                                                                              .ToArray();
+
+        private static readonly IReadOnlyList<DescriptorInfo> DescriptorInfos = Analyzers
             .SelectMany(DescriptorInfo.Create)
             .ToArray();
 
@@ -69,12 +74,6 @@ namespace WpfAnalyzers.Test.Documentation
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Table(DescriptorInfo descriptorInfo)
         {
-            switch (descriptorInfo.Analyzer)
-            {
-                case RegistrationAnalyzer _ when descriptorInfo.Descriptor.Id == WPF0023ConvertToLambda.Descriptor.Id:
-                    return;
-            }
-
             var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
             var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
@@ -121,37 +120,35 @@ namespace WpfAnalyzers.Test.Documentation
         private static string CreateStub(DescriptorInfo descriptorInfo)
         {
             var descriptor = descriptorInfo.Descriptor;
-            return CreateStub(
-                descriptor.Id,
-                descriptor.Title.ToString(),
-                descriptor.DefaultSeverity,
-                descriptor.IsEnabledByDefault,
-                descriptorInfo.CodeFileUri,
-                descriptor.Category,
-                descriptorInfo.Analyzer.GetType().Name,
-                descriptor.Description.ToString());
-        }
+            var stub = Properties.Resources.DiagnosticDocTemplate
+                             .AssertReplace("{ID}", descriptor.Id)
+                             .AssertReplace("## ADD TITLE HERE", $"## {descriptor.Title.ToString()}")
+                             .AssertReplace("{SEVERITY}", descriptor.DefaultSeverity.ToString())
+                             .AssertReplace("{ENABLED}", descriptor.IsEnabledByDefault ? "true" : "false")
+                             .AssertReplace("{CATEGORY}", descriptor.Category)
+                             .AssertReplace("ADD DESCRIPTION HERE", descriptor.Description.ToString())
+                             .AssertReplace("{TITLE}", descriptor.Title.ToString());
+            if (Analyzers.Count(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)) == 1)
+            {
+                return stub.AssertReplace("{TYPENAME}", descriptorInfo.Analyzer.GetType().Name)
+                           .AssertReplace("{URL}", descriptorInfo.CodeFileUri ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers");
+            }
+            else
+            {
+                var builder = StringBuilderPool.Borrow();
+                var first = true;
+                foreach (var analyzer in Analyzers.Where(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)))
+                {
+                    _ = builder.AppendLine("  <tr>")
+                               .AppendLine($"    <td>{(first ? "Code" : string.Empty)}</td>")
+                               .AppendLine($"     <td><a href=\"{DescriptorInfo.GetCodeFileUri(analyzer)}\">{analyzer.GetType().Name}</a></td>")
+                               .AppendLine("  </tr>");
 
-        private static string CreateStub(
-            string id,
-            string title,
-            DiagnosticSeverity severity,
-            bool enabled,
-            string codeFileUrl,
-            string category,
-            string typeName,
-            string description)
-        {
-            return Properties.Resources.DiagnosticDocTemplate.Replace("{ID}", id)
-                             .Replace("## ADD TITLE HERE", $"## {title}")
-                             .Replace("{SEVERITY}", severity.ToString())
-                             .Replace("{ENABLED}", enabled ? "true" : "false")
-                             .Replace("{CATEGORY}", category)
-                             .Replace("{URL}", codeFileUrl ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers")
-                             .Replace("{TYPENAME}", typeName)
-                             .Replace("ADD DESCRIPTION HERE", description ?? "ADD DESCRIPTION HERE")
-                             .Replace("{TITLE}", title)
-                             .Replace("{TRIMMEDTYPENAME}", typeName.Substring(id.Length));
+                    first = false;
+                }
+
+                return stub.AssertReplace("  <tr>\r\n    <td>Code</td>\r\n    <td><a href=\"{URL}\">{TYPENAME}</a></td>\r\n  </tr>\r\n", builder.Return());
+            }
         }
 
         private static string GetTable(string doc)
@@ -191,10 +188,7 @@ namespace WpfAnalyzers.Test.Documentation
                                                  analyzer.GetType().Name + ".cs",
                                                  SearchOption.AllDirectories)
                                              .FirstOrDefault();
-                this.CodeFileUri = this.CodeFileName != null
-                    ? "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" +
-                      this.CodeFileName.Substring(SolutionDirectory.FullName.Length).Replace("\\", "/")
-                    : "missing";
+                this.CodeFileUri = GetCodeFileUri(analyzer);
             }
 
             public DiagnosticAnalyzer Analyzer { get; }
@@ -208,6 +202,16 @@ namespace WpfAnalyzers.Test.Documentation
             public string CodeFileName { get; }
 
             public string CodeFileUri { get; }
+
+            public static string GetCodeFileUri(DiagnosticAnalyzer analyzer)
+            {
+                string fileName = Directory.EnumerateFiles(SolutionDirectory.FullName, analyzer.GetType().Name + ".cs", SearchOption.AllDirectories)
+                                           .FirstOrDefault();
+                return fileName != null
+                    ? "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" +
+                      fileName.Substring(SolutionDirectory.FullName.Length).Replace("\\", "/")
+                    : "missing";
+            }
 
             public static IEnumerable<DescriptorInfo> Create(DiagnosticAnalyzer analyzer)
             {
