@@ -160,6 +160,10 @@ Roslyn analyzers for WPF.
   <td>Accessor method for attached property must have standard documentation text.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md">WPF0062</a></td>
+  <td>Property changed callback must have standard documentation text.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md">WPF0070</a></td>
   <td>Add default field to converter.</td>
 </tr>
