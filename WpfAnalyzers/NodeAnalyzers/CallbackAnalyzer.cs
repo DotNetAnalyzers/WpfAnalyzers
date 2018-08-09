@@ -75,17 +75,7 @@ namespace WpfAnalyzers
                 else if (method.ReturnsVoid)
                 {
                     if (TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
-                        singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
-                        lambda.Parent is ArgumentSyntax argument &&
-                        TryGetCallbackArgument(argument, out var callbackArgument) &&
-                        context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol lambdaMethod) &&
-                        TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
-                        singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                        MemberPath.TrySingle(memberAccess.Expression, out var pathItem) &&
-                        pathItem.Identifier.ValueText == senderParameter.Name &&
-                        callbackArgument.Parent is ArgumentListSyntax argumentList &&
-                        argumentList.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
-                        PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
+                        TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
                     {
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                             HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
@@ -97,6 +87,59 @@ namespace WpfAnalyzers
                         }
                     }
                 }
+            }
+        }
+
+        private static bool TryGetDpFromInstancePropertyChanged(InvocationExpressionSyntax singleInvocation, SyntaxNodeAnalysisContext context, out BackingFieldOrProperty fieldOrProperty)
+        {
+            if (singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
+                lambda.Parent is ArgumentSyntax lambdaArg &&
+                TryGetCallbackArgument(lambdaArg, out var callbackArgument) &&
+                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol lambdaMethod) &&
+                TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
+                IsCalledOnSender() &&
+                ArgsUsesParameter() &&
+                callbackArgument.Parent is ArgumentListSyntax metadataCreationArgs &&
+                metadataCreationArgs.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
+                PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out fieldOrProperty))
+            {
+                return true;
+            }
+
+            // Figure out usage from static callback now.
+            return false;
+            bool IsCalledOnSender()
+            {
+                return singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                       MemberPath.TrySingle(memberAccess.Expression, out var pathItem) &&
+                       pathItem.Identifier.ValueText == senderParameter.Name;
+            }
+
+            bool ArgsUsesParameter()
+            {
+                if (singleInvocation.ArgumentList is ArgumentListSyntax argumentList)
+                {
+                    foreach (var argument in argumentList.Arguments)
+                    {
+                        using (var walker = IdentifierNameWalker.Borrow(argument.Expression))
+                        {
+                            if (!walker.TryFind(argParameter.Name, out _))
+                            {
+                                return false;
+                            }
+
+                            if (!walker.TryFind("NewValue", out _) &&
+                                !walker.TryFind("OldValue", out _))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
             }
         }
 
