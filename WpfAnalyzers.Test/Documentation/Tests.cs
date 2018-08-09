@@ -133,22 +133,20 @@ namespace WpfAnalyzers.Test.Documentation
                 return stub.AssertReplace("{TYPENAME}", descriptorInfo.Analyzer.GetType().Name)
                            .AssertReplace("{URL}", descriptorInfo.CodeFileUri ?? "https://github.com/DotNetAnalyzers/WpfAnalyzers");
             }
-            else
+
+            var builder = StringBuilderPool.Borrow();
+            var first = true;
+            foreach (var analyzer in Analyzers.Where(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)))
             {
-                var builder = StringBuilderPool.Borrow();
-                var first = true;
-                foreach (var analyzer in Analyzers.Where(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)))
-                {
-                    _ = builder.AppendLine("  <tr>")
-                               .AppendLine($"    <td>{(first ? "Code" : string.Empty)}</td>")
-                               .AppendLine($"     <td><a href=\"{DescriptorInfo.GetCodeFileUri(analyzer)}\">{analyzer.GetType().Name}</a></td>")
-                               .AppendLine("  </tr>");
+                _ = builder.AppendLine("  <tr>")
+                           .AppendLine($"    <td>{(first ? "Code" : string.Empty)}</td>")
+                           .AppendLine($"     <td><a href=\"{DescriptorInfo.GetCodeFileUri(analyzer)}\">{analyzer.GetType().Name}</a></td>")
+                           .AppendLine("  </tr>");
 
-                    first = false;
-                }
-
-                return stub.AssertReplace($"  <tr>{Environment.NewLine}    <td>Code</td>{Environment.NewLine}    <td><a href=\"{{URL}}\">{{TYPENAME}}</a></td>{Environment.NewLine}  </tr>{Environment.NewLine}", builder.Return());
+                first = false;
             }
+
+            return stub.AssertReplace($"  <tr>\r\n    <td>Code</td>\r\n    <td><a href=\"{{URL}}\">{{TYPENAME}}</a></td>\r\n  </tr>\r\n", builder.Return());
         }
 
         private static string GetTable(string doc)
