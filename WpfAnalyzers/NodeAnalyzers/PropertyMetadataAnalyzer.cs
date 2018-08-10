@@ -42,7 +42,10 @@ namespace WpfAnalyzers
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
                         Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var identifier, out var target))
                     {
-                        if (!target.Name.IsParts("On", registeredName, "Changed"))
+                        if (!target.Name.IsParts("On", registeredName, "Changed") &&
+                            target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected) &&
+                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                            target.IsInvokedOnce(classDeclaration, context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -63,7 +66,8 @@ namespace WpfAnalyzers
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
                         Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out identifier, out target))
                     {
-                        if (!target.Name.IsParts("Coerce", registeredName))
+                        if (!target.Name.IsParts("Coerce", registeredName) &&
+                            target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
                             Diagnostic.Create(

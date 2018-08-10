@@ -245,5 +245,45 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void LambdaCallingMethodCalledInOtherPlaces()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => Meh(d)));
+
+        public int Bar
+        {
+            get => (int) this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            Meh(null);
+        }
+
+        private static void Meh(DependencyObject o)
+        {
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

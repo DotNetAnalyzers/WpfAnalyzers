@@ -132,19 +132,9 @@ namespace WpfAnalyzers
         private static void RemoveMethod(DocumentEditor editor, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             if (method.DeclaredAccessibility == Accessibility.Private &&
-                IsSingleUsage(editor.SemanticModel, method, declaration, cancellationToken))
+                method.IsInvokedOnce(declaration.Parent, editor.SemanticModel, cancellationToken))
             {
                 editor.RemoveNode(declaration);
-            }
-        }
-
-        private static bool IsSingleUsage(SemanticModel semanticModel, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
-        {
-            using (var walker = SpecificIdentifierNameWalker.Borrow(declaration.Parent as ClassDeclarationSyntax, method.MetadataName))
-            {
-                return walker.IdentifierNames.TrySingle(
-                    x => semanticModel.TryGetSymbol(x, cancellationToken, out IMethodSymbol candidate) &&
-                         Equals(candidate, method), out _);
             }
         }
     }
