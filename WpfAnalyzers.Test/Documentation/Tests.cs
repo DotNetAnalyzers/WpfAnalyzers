@@ -103,10 +103,10 @@ namespace WpfAnalyzers.Test.Documentation
                    .AppendLine("<table>");
             foreach (var descriptor in DescriptorsWithDocs.Select(x => x.Descriptor).Distinct().OrderBy(x => x.Id))
             {
-                builder.AppendLine("<tr>");
-                builder.AppendLine($@"  <td><a href=""{descriptor.HelpLinkUri}"">{descriptor.Id}</a></td>");
-                builder.AppendLine($"  <td>{descriptor.Title}</td>");
-                builder.AppendLine("</tr>");
+                builder.AppendLine("  <tr>")
+                       .AppendLine($@"    <td><a href=""{descriptor.HelpLinkUri}"">{descriptor.Id}</a></td>")
+                       .AppendLine($"    <td>{descriptor.Title}</td>")
+                       .AppendLine("  </tr>");
             }
 
             builder.AppendLine("<table>")
