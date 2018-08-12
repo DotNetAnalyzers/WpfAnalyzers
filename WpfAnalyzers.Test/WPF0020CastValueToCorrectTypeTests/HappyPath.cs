@@ -556,5 +556,71 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode, enumCode);
         }
+
+        [Test]
+        public void EnumAddOwnerIssue211()
+        {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty FooEnumProperty = DependencyProperty.RegisterAttached(
+            ""FooEnum"",
+            typeof(FooEnum),
+            typeof(Foo),
+            new FrameworkPropertyMetadata(FooEnum.Baz, FrameworkPropertyMetadataOptions.Inherits));
+
+        /// <summary>Helper for setting <see cref=""FooEnumProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to set <see cref=""FooEnumProperty""/> on.</param>
+        /// <param name=""value"">FooEnum property value.</param>
+        public static void SetFooEnum(DependencyObject element, FooEnum value)
+        {
+            element.SetValue(FooEnumProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""FooEnumProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""FooEnumProperty""/> from.</param>
+        /// <returns>FooEnum property value.</returns>
+        public static FooEnum GetFooEnum(DependencyObject element)
+        {
+            return (FooEnum)element.GetValue(FooEnumProperty);
+        }
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""FooEnum""/> dependency property.</summary>
+        public static readonly DependencyProperty FooEnumProperty = Foo.FooEnumProperty.AddOwner(
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(
+                FooEnum.Bar,
+                FrameworkPropertyMetadataOptions.Inherits));
+
+        public FooEnum FooEnum
+        {
+            get => (FooEnum) this.GetValue(FooEnumProperty);
+            set => this.SetValue(FooEnumProperty, value);
+        }
+    }
+}";
+            var enumCode = @"namespace RoslynSandbox
+{
+    public enum FooEnum
+    {
+        Bar,
+        Baz
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, fooCode, testCode, enumCode);
+        }
     }
 }
