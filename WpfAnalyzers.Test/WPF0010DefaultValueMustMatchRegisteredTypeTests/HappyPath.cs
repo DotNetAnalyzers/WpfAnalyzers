@@ -529,5 +529,41 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void EnumIssue211()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""FooEnum""/> dependency property.</summary>
+        public static readonly DependencyProperty FooEnumProperty = DependencyProperty.Register(
+            nameof(FooEnum),
+            typeof(FooEnum),
+            typeof(FooControl),
+            new PropertyMetadata(FooEnum.Bar));
+
+        public FooEnum FooEnum
+        {
+            get => (FooEnum) this.GetValue(FooEnumProperty);
+            set => this.SetValue(FooEnumProperty, value);
+        }
+    }
+}";
+            var enumCode = @"namespace RoslynSandbox
+{
+    public enum FooEnum
+    {
+        Bar,
+        Baz
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode, enumCode);
+        }
     }
 }
