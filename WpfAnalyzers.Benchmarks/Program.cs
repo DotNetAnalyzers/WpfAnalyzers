@@ -53,7 +53,7 @@ namespace WpfAnalyzers.Benchmarks
         private static IEnumerable<Summary> RunAll()
         {
             var switcher = new BenchmarkSwitcher(typeof(Program).Assembly);
-            var summaries = switcher.Run(new[] { "*" });
+            var summaries = switcher.RunAll();
             return summaries;
         }
 
