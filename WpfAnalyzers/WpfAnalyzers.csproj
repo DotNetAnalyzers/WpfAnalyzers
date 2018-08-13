@@ -4,22 +4,43 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>2.1.5.0</Version>
-    <Authors>Johan Larsson</Authors>
-    <RootNamespace>WpfAnalyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageId>WpfAnalyzers.NewIdRequiredDueToNuGetBug</PackageId>
     <CodeAnalysisRuleSet>WpfAnalyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
+  <PropertyGroup>
+    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>2.1.5.0</Version>
+    <Authors>Johan Larsson</Authors>
+    <Description>Roslyn analyzers for WPF.</Description>
+    <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
+    <PackageReleaseNotes>
+      BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
+      Feature: Check and generate standard docs.
+    </PackageReleaseNotes>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
+  </PropertyGroup>
+
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Exec Command=".paket\paket.exe pack publish" WorkingDirectory="$(SolutionDir)" />
+  </Target>
 
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

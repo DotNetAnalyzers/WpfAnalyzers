@@ -20,8 +20,6 @@
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="WpfAnalyzers" Path="|WpfAnalyzers|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="WpfAnalyzers" Path="|WpfAnalyzers|"/>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="WpfAnalyzers.CodeFixes" Path="|WpfAnalyzers.CodeFixes|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="WpfAnalyzers.CodeFixes" Path="|WpfAnalyzers.CodeFixes|"/>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Gu.Roslyn.CodeFixExtensions.dll" />

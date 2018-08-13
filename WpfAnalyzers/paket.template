@@ -1,6 +1,4 @@
 ﻿type project
-id WpfAnalyzers
-include-referenced-projects true
 developmentDependency true
 
 releaseNotes

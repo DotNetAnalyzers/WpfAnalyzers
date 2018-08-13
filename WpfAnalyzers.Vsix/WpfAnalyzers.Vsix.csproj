@@ -26,7 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />
-    <ProjectReference Include="..\WpfAnalyzers.CodeFixes\WpfAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- https://github.com/dotnet/sdk/issues/433 -->
