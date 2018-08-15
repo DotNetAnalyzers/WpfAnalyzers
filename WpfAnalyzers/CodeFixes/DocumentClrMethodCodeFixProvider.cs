@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                         var parameter = method.Parameters[0];
                         var text = StringBuilderPool.Borrow()
                                                     .AppendLine($"/// <summary>Helper for getting <see cref=\"{fieldOrProperty.Name}\"/> from <paramref name=\"{parameter.Name}\"/>.</summary>")
-                                                    .AppendLine($"/// <param name=\"element\"><see cref=\"{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)}\"/> to read <see cref=\"{fieldOrProperty.Name}\"/> from.</param>")
+                                                    .AppendLine($"/// <param name=\"{parameter.Name}\"><see cref=\"{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)}\"/> to read <see cref=\"{fieldOrProperty.Name}\"/> from.</param>")
                                                     .AppendLine($"/// <returns>{registeredName} property value.</returns>")
                                                     .Return();
                         context.RegisterCodeFix(
@@ -51,8 +51,8 @@ namespace WpfAnalyzers
                         var parameter = method.Parameters[0];
                         var text = StringBuilderPool.Borrow()
                                                     .AppendLine($"/// <summary>Helper for setting <see cref=\"{fieldOrProperty.Name}\"/> on <paramref name=\"{parameter.Name}\"/>.</summary>")
-                                                    .AppendLine($"/// <param name=\"element\"><see cref=\"{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)}\"/> to set <see cref=\"{fieldOrProperty.Name}\"/> on.</param>")
-                                                    .AppendLine($"/// <param name=\"value\">{registeredName} property value.</param>")
+                                                    .AppendLine($"/// <param name=\"{parameter.Name}\"><see cref=\"{parameter.Type.ToMinimalDisplayString(semanticModel, methodDeclaration.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat)}\"/> to set <see cref=\"{fieldOrProperty.Name}\"/> on.</param>")
+                                                    .AppendLine($"/// <param name=\"{method.Parameters[1].Name}\">{registeredName} property value.</param>")
                                                     .Return();
                         context.RegisterCodeFix(
                             "Add standard documentation.",

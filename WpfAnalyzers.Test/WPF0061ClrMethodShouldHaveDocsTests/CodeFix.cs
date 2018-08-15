@@ -74,6 +74,68 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void DependencyPropertyRegisterAttachedBothMissingDocsDifferentTypeAndParameterName()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static void ↓SetBar(DependencyObject d, int i)
+        {
+            d.SetValue(BarProperty, i);
+        }
+
+        public static int ↓GetBar(DependencyObject d)
+        {
+            return (int)d.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""d""/>.</summary>
+        /// <param name=""d""><see cref=""DependencyObject""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""i"">Bar property value.</param>
+        public static void SetBar(DependencyObject d, int i)
+        {
+            d.SetValue(BarProperty, i);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""d""/>.</summary>
+        /// <param name=""d""><see cref=""DependencyObject""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(DependencyObject d)
+        {
+            return (int)d.GetValue(BarProperty);
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void DependencyPropertyRegisterAttachedGetMethodMissingDocs()
         {
             var testCode = @"
