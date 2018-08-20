@@ -41,7 +41,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("public static readonly DependencyProperty BarProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-                Assert.AreEqual(true, BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty));
+                Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
                 Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("Bar", name);
             }
@@ -77,7 +77,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindPropertyDeclaration("public static DependencyProperty BarProperty { get; }");
                 var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
-                Assert.AreEqual(true, BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty));
+                Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
                 Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("Bar", name);
             }

@@ -102,9 +102,9 @@ namespace WpfAnalyzers
                         }
 
                         if (getterWalker.IsSuccess &&
-                            BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(getterWalker.Property.Expression, cancellationToken), out getField) &&
+                            BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(getterWalker.Property.Expression, cancellationToken), out getField) &&
                             setterWalker.IsSuccess &&
-                            BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(setterWalker.Property.Expression, cancellationToken), out setField))
+                            BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(setterWalker.Property.Expression, cancellationToken), out setField))
                         {
                             return true;
                         }
@@ -153,9 +153,9 @@ namespace WpfAnalyzers
                 if (getField.ContainingType.IsGenericType)
                 {
                     return property.ContainingType.TryFindFirstMember(getField.Name, out var getMember) &&
-                           BackingFieldOrProperty.TryCreate(getMember, out getField) &&
+                           BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out getField) &&
                            property.ContainingType.TryFindFirstMember(setField.Name, out var setMember) &&
-                           BackingFieldOrProperty.TryCreate(setMember, out setField);
+                           BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out setField);
                 }
 
                 return true;
@@ -180,7 +180,7 @@ namespace WpfAnalyzers
 
             foreach (var member in property.ContainingType.GetMembers())
             {
-                if (BackingFieldOrProperty.TryCreate(member, out var candidate))
+                if (BackingFieldOrProperty.TryCreateForDependencyProperty(member, out var candidate))
                 {
                     if (candidate.Name.IsParts(property.Name, "Property"))
                     {

@@ -34,7 +34,7 @@ namespace WpfAnalyzers
             }
 
             if (context.Node is MemberDeclarationSyntax memberDeclaration &&
-                BackingFieldOrProperty.TryCreate(context.ContainingSymbol, out var backingMember))
+                BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backingMember))
             {
                 if (DependencyProperty.TryGetRegisterInvocationRecursive(backingMember, context.SemanticModel, context.CancellationToken, out var registerInvocation, out _))
                 {
@@ -125,40 +125,7 @@ namespace WpfAnalyzers
             if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
                 DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _, out _))
             {
-                if (!candidate.Symbol.IsStatic)
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
-                            context.Node.GetLocation(),
-                            candidate.Name,
-                            candidate.Type.Name));
-                }
-
-                if (candidate.Symbol is IFieldSymbol field &&
-                    !field.IsReadOnly)
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
-                            context.Node.GetLocation(),
-                            candidate.Name,
-                            candidate.Type.Name));
-                }
-
-                if (candidate.Symbol is IPropertySymbol property &&
-                    !property.IsReadOnly)
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
-                            context.Node.GetLocation(),
-                            candidate.Name,
-                            candidate.Type.Name));
-                }
-
-                if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                    propertyDeclaration.ExpressionBody != null)
+                if (!candidate.FieldOrProperty.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -29,6 +29,22 @@
                     }
 
                     return value != null;
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool IsStaticReadOnly(this FieldOrProperty fieldOrProperty)
+        {
+            if (fieldOrProperty.IsStatic)
+            {
+                switch (fieldOrProperty.Symbol)
+                {
+                    case IFieldSymbol field:
+                        return field.IsReadOnly;
+                    case IPropertySymbol property:
+                        return property.IsGetOnly();
                 }
             }
 

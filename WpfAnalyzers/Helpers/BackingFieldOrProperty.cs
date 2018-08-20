@@ -25,7 +25,7 @@ namespace WpfAnalyzers
 
         internal string Name => this.FieldOrProperty.Name;
 
-        internal static bool TryCreate(ISymbol symbol, out BackingFieldOrProperty result)
+        internal static bool TryCreateForDependencyProperty(ISymbol symbol, out BackingFieldOrProperty result)
         {
             if (symbol != null &&
                 symbol.IsStatic &&

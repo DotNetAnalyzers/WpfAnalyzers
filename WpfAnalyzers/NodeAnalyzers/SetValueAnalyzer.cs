@@ -37,7 +37,7 @@ namespace WpfAnalyzers
                  invocation.TryGetArgumentAtIndex(0, out var propertyArg) &&
                  invocation.TryGetArgumentAtIndex(1, out var valueArg) &&
                  context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol symbol) &&
-                 BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty))
+                 BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
             {
                 if (!valueArg.Expression.IsSameType(KnownSymbol.Object, context.SemanticModel))
                 {

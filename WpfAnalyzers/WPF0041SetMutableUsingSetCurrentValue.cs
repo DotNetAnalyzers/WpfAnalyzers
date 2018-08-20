@@ -82,7 +82,7 @@ namespace WpfAnalyzers
                 DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
             {
                 var propertyArg = invocation.ArgumentList.Arguments[0];
-                if (!BackingFieldOrProperty.TryCreate(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) ||
+                if (!BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) ||
                     propertyMember.Type == KnownSymbol.DependencyPropertyKey)
                 {
                     return;

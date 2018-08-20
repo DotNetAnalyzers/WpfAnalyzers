@@ -35,7 +35,7 @@ namespace WpfAnalyzers
 
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
                     semanticModel.TryGetSymbol(member, context.CancellationToken, out ISymbol symbol) &&
-                    BackingFieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
+                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
                     DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var name))
                 {
                     context.RegisterCodeFix(

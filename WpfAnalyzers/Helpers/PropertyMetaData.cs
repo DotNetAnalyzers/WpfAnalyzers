@@ -63,13 +63,13 @@ namespace WpfAnalyzers
                 if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
                     semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))
                 {
-                    return BackingFieldOrProperty.TryCreate(field, out fieldOrProperty);
+                    return BackingFieldOrProperty.TryCreateForDependencyProperty(field, out fieldOrProperty);
                 }
 
                 if (objectCreation.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
                     semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property))
                 {
-                    return BackingFieldOrProperty.TryCreate(property, out fieldOrProperty);
+                    return BackingFieldOrProperty.TryCreateForDependencyProperty(property, out fieldOrProperty);
                 }
 
                 return false;
@@ -80,7 +80,7 @@ namespace WpfAnalyzers
                  DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
                 semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol candidate))
             {
-                return BackingFieldOrProperty.TryCreate(candidate, out fieldOrProperty);
+                return BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out fieldOrProperty);
             }
 
             return false;

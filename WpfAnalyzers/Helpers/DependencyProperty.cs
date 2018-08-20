@@ -72,7 +72,7 @@ namespace WpfAnalyzers
                 (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
-                if (BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
+                if (BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
                 {
                     return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
                 }
@@ -136,7 +136,7 @@ namespace WpfAnalyzers
                            value is InvocationExpressionSyntax invocation &&
                            invocation.Expression is MemberAccessExpressionSyntax member &&
                            semanticModel.TryGetSymbol(member.Expression, cancellationToken, out ISymbol candidate) &&
-                           BackingFieldOrProperty.TryCreate(candidate, out result) &&
+                           BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result) &&
                            TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
                 }
                 else
@@ -145,7 +145,7 @@ namespace WpfAnalyzers
                            property == KnownSymbol.DependencyPropertyKey.DependencyProperty &&
                            value is MemberAccessExpressionSyntax memberAccess &&
                            semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol candidate) &&
-                           BackingFieldOrProperty.TryCreate(candidate, out result);
+                           BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result);
                 }
             }
 
@@ -160,7 +160,7 @@ namespace WpfAnalyzers
                 semanticModel.TryGetSymbol(invocation, KnownSymbol.DependencyProperty.AddOwner, cancellationToken, out _))
             {
                 var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                return BackingFieldOrProperty.TryCreate(
+                return BackingFieldOrProperty.TryCreateForDependencyProperty(
                     semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken),
                     out result);
             }

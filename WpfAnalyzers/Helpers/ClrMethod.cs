@@ -95,7 +95,7 @@ namespace WpfAnalyzers
                         if (arg.Expression is IdentifierNameSyntax argIdentifier &&
                             argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
                         {
-                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                            return BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
                         }
 
                         if (arg.Expression is InvocationExpressionSyntax invocation &&
@@ -103,14 +103,14 @@ namespace WpfAnalyzers
                             nestedArg.Expression is IdentifierNameSyntax nestedArgId &&
                             nestedArgId.Identifier.ValueText == parameter.Identifier.ValueText)
                         {
-                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                            return BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
                         }
 
                         if (arg.Expression is ConditionalExpressionSyntax ternary &&
                             ternary.Condition is IdentifierNameSyntax conditionIdentifier &&
                             conditionIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
                         {
-                            return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
+                            return BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out setField);
                         }
                     }
                 }
@@ -148,7 +148,7 @@ namespace WpfAnalyzers
                     return false;
                 }
 
-                return BackingFieldOrProperty.TryCreate(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out getField);
+                return BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out getField);
             }
         }
     }
