@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
+namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;

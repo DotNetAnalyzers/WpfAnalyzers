@@ -12,6 +12,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
             WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor);
 
         /// <inheritdoc/>
@@ -42,7 +43,23 @@ namespace WpfAnalyzers
                 }
                 else
                 {
-                    // context.ReportDiagnostic(Diagnostic.Create("Register owner")));
+                    // context.ReportDiagnostic(Diagnostic.Create("Register name and owner")));
+                }
+
+                if (objectCreation.Parent is EqualsValueClauseSyntax &&
+                    FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
+                {
+                    if (ctor.TryFindParameter("name", out var nameParameter) &&
+                        objectCreation.TryFindArgument(nameParameter, out var nameArg) &&
+                        nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                        registeredName != fieldOrProperty.Name)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                                                     WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
+                                                     nameArg.GetLocation(),
+                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(UseNameofCodeFixProvider), fieldOrProperty.Name),
+                                                     fieldOrProperty.Name));
+                    }
                 }
             }
         }

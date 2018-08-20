@@ -236,6 +236,10 @@ Roslyn analyzers for WPF.
     <td>Use the registered handler type.</td>
   </tr>
   <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md">WPF0120</a></td>
+    <td>Register containing member name as name for routed command.</td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md">WPF0121</a></td>
     <td>Register containing type as owner for routed command.</td>
   </tr>
