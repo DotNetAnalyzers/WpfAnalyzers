@@ -39,7 +39,7 @@ namespace RoslynSandbox
 
             var expectedDiagnostic = ExpectedDiagnostic.Create(
                 "WPF0033",
-                "Add [AttachedPropertyBrowsableForType(typeof(DependencyObject)]");
+                "Add [AttachedPropertyBrowsableForType(typeof(DependencyObject))]");
             AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
