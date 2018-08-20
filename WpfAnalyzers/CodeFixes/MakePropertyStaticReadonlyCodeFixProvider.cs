@@ -9,7 +9,6 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyStaticReadonlyCodeFixProvider))]
     [Shared]
@@ -18,6 +17,7 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId,
+            WPF0107BackingMemberShouldBeStaticReadonly.DiagnosticId,
             WPF0123BackingMemberShouldBeStaticReadonly.DiagnosticId);
 
         /// <inheritdoc/>

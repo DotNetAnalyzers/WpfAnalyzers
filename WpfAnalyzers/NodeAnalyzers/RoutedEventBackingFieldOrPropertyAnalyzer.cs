@@ -12,7 +12,8 @@ namespace WpfAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0101RegisterContainingTypeAsOwner.Descriptor);
+            WPF0101RegisterContainingTypeAsOwner.Descriptor,
+            WPF0107BackingMemberShouldBeStaticReadonly.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -29,7 +30,8 @@ namespace WpfAnalyzers
                 return;
             }
 
-            if (FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
+            if (context.Node is MemberDeclarationSyntax memberDeclaration &&
+                FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type == KnownSymbol.RoutedEvent)
             {
                 if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
@@ -53,6 +55,14 @@ namespace WpfAnalyzers
                             typeArg.GetLocation(),
                             fieldOrProperty.ContainingType.Name,
                             registeredName));
+                }
+
+                if (!fieldOrProperty.IsStaticReadOnly())
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0107BackingMemberShouldBeStaticReadonly.Descriptor,
+                            BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
                 }
             }
         }
