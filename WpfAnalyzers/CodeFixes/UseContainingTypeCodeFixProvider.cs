@@ -17,7 +17,8 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId,
-            WPF0101RegisterContainingTypeAsOwner.DiagnosticId);
+            WPF0101RegisterContainingTypeAsOwner.DiagnosticId,
+            WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
