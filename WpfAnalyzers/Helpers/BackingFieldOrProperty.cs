@@ -54,6 +54,24 @@ namespace WpfAnalyzers
             return false;
         }
 
+        internal static SyntaxToken FindIdentifier(MemberDeclarationSyntax member)
+        {
+            if (member.TryFirstAncestorOrSelf(out PropertyDeclarationSyntax property))
+            {
+                return property.Identifier;
+            }
+
+            if (member.TryFirstAncestorOrSelf(out FieldDeclarationSyntax field))
+            {
+                if (field.Declaration.Variables.TrySingle(out var variable))
+                {
+                    return variable.Identifier;
+                }
+            }
+
+            return member.GetFirstToken();
+        }
+
         internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
         {
             return this.FieldOrProperty.TryGetAssignedValue(cancellationToken, out value);
@@ -62,24 +80,6 @@ namespace WpfAnalyzers
         internal bool TryGetSyntaxReference(out SyntaxReference syntaxReference)
         {
             return this.Symbol.DeclaringSyntaxReferences.TrySingle(out syntaxReference);
-        }
-
-        internal SyntaxToken FindIdentifier(SyntaxNode node)
-        {
-            if (node is PropertyDeclarationSyntax propertyDeclaration)
-            {
-                return propertyDeclaration.Identifier;
-            }
-
-            if (node is FieldDeclarationSyntax fieldDeclaration)
-            {
-                if (fieldDeclaration.Declaration.Variables.TrySingle(out var variable))
-                {
-                    return variable.Identifier;
-                }
-            }
-
-            return node.GetFirstToken();
         }
 
         internal ArgumentSyntax CreateArgument(SemanticModel semanticModel, int position)

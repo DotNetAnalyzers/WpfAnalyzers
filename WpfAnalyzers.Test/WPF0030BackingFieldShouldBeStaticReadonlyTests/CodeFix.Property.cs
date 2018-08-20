@@ -24,7 +24,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public DependencyProperty BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+        public DependencyProperty ↓BarProperty { get; } = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -65,7 +65,7 @@ namespace RoslynSandbox
 
     public class FooControl : Control
     {
-        ↓public static DependencyProperty BarProperty { get; set; } = DependencyProperty.Register(
+        public static DependencyProperty ↓BarProperty { get; set; } = DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -109,7 +109,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
-        ↓public static DependencyProperty BarProperty => DependencyProperty.Register(
+        public static DependencyProperty ↓BarProperty => DependencyProperty.Register(
             ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar

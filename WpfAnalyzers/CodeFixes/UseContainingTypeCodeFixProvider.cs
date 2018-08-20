@@ -35,7 +35,7 @@ namespace WpfAnalyzers
                     typeofExpression.TryFirstAncestor(out TypeDeclarationSyntax typeDeclaration) &&
                     semanticModel.TryGetSymbol(typeDeclaration, context.CancellationToken, out var containingType))
                 {
-                    var containingTypeName = containingType.ToMinimalDisplayString(semanticModel, typeofExpression.SpanStart,SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    var containingTypeName = containingType.ToMinimalDisplayString(semanticModel, typeofExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
 
                     context.RegisterCodeFix(
                         $"Use containing type: {containingTypeName}.",
