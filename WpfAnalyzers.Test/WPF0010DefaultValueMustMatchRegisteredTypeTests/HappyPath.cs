@@ -555,7 +555,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"
+namespace RoslynSandbox
 {
     public enum FooEnum
     {
@@ -564,6 +565,7 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.Valid(Analyzer, testCode, enumCode);
+            AnalyzerAssert.Valid(Analyzer, enumCode, testCode);
         }
 
         [Test]
