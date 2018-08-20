@@ -54,9 +54,15 @@ namespace RoslynSandbox
             AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
         }
 
-        [TestCase("↓WrongName")]
-        [TestCase("new ValidateValueCallback(↓WrongName)")]
-        public void DependencyPropertyWithCallback(string callback)
+        [TestCase("↓WrongName", "ValidateValue")]
+        [TestCase("x => ↓WrongName(x)", "x => ValidateValue(x)")]
+        [TestCase("x => FooControl.↓WrongName(x)", "x => FooControl.ValidateValue(x)")]
+        [TestCase("FooControl.↓WrongName", "FooControl.ValidateValue")]
+        [TestCase("new ValidateValueCallback(↓WrongName)", "new ValidateValueCallback(ValidateValue)")]
+        [TestCase("new ValidateValueCallback(FooControl.↓WrongName)", "new ValidateValueCallback(FooControl.ValidateValue)")]
+        [TestCase("new ValidateValueCallback(x => ↓WrongName(x))", "new ValidateValueCallback(x => ValidateValue(x))")]
+        [TestCase("new ValidateValueCallback(x => FooControl.↓WrongName(x))", "new ValidateValueCallback(x => FooControl.ValidateValue(x))")]
+        public void DependencyPropertyWithCallback(string callback, string expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -114,7 +120,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("↓WrongName", callback);
-            fixedCode = fixedCode.AssertReplace("ValidateValue);", callback.AssertReplace("↓WrongName", "ValidateValue") + ");");
+            fixedCode = fixedCode.AssertReplace("ValidateValue);", $"{expected});");
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

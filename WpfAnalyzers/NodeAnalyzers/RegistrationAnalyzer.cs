@@ -40,7 +40,8 @@ namespace WpfAnalyzers
                     registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
                     Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                        DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                         !target.Name.IsParts("Validate", registeredName) &&
                         target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
                     {
