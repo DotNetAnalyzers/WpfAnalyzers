@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
+namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -9,6 +9,7 @@ namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider Fix = new UseContainingTypeCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0121");
 
         [Test]
         public void RoutedCommand()
@@ -34,7 +35,7 @@ namespace RoslynSandbox
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -61,7 +62,7 @@ namespace RoslynSandbox
         public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
