@@ -14,7 +14,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
             WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
-            WPF0122RegisterRoutedCommand.Descriptor);
+            WPF0122RegisterRoutedCommand.Descriptor,
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
