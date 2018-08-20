@@ -52,6 +52,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Foo.cs" />
     <Compile Include="FooControl.cs">
       <SubType>Code</SubType>
     </Compile>

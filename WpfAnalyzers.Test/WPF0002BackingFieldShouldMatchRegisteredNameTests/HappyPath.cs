@@ -32,7 +32,7 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
+            set { SetValue(Bar3PropertyKey, value); }
         }
     }
 }";

@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -9,7 +9,7 @@
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Add [AttachedPropertyBrowsableForType]",
-            messageFormat: "Add [AttachedPropertyBrowsableForType(typeof({0})]",
+            messageFormat: "Add [AttachedPropertyBrowsableForType(typeof({0}))]",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
