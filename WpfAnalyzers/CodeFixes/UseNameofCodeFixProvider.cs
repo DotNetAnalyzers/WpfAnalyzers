@@ -26,7 +26,7 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(nameof(UseNameofCodeFixProvider), out var name) &&
+                if (diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument))
                 {
                     context.RegisterCodeFix(

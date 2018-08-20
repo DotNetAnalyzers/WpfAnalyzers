@@ -243,6 +243,10 @@ Roslyn analyzers for WPF.
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md">WPF0121</a></td>
     <td>Register containing type as owner for routed command.</td>
   </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md">WPF0122</a></td>
+    <td>Register name and owning type for routed command.</td>
+  </tr>
 <table>
 <!-- end generated table -->
 
