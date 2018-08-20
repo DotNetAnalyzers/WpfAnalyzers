@@ -16,7 +16,7 @@ namespace WpfAnalyzers
             WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
             WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
             WPF0122RegisterRoutedCommand.Descriptor,
-            WPF0123BackingFieldShouldBeStaticReadonly.Descriptor);
+            WPF0123BackingMemberShouldBeStaticReadonly.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -77,7 +77,7 @@ namespace WpfAnalyzers
 
                     if (!fieldOrProperty.IsStaticReadOnly())
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0123BackingFieldShouldBeStaticReadonly.Descriptor, BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0123BackingMemberShouldBeStaticReadonly.Descriptor, BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
                     }
                 }
             }

@@ -2,7 +2,7 @@ namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class WPF0123BackingFieldShouldBeStaticReadonly
+    internal static class WPF0123BackingMemberShouldBeStaticReadonly
     {
         public const string DiagnosticId = "WPF0123";
 
