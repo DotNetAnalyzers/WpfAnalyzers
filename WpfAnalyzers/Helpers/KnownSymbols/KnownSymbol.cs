@@ -23,6 +23,9 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType CoerceValueCallback = Create("System.Windows.CoerceValueCallback");
         internal static readonly QualifiedType ValidateValueCallback = Create("System.Windows.ValidateValueCallback");
 
+        internal static readonly QualifiedType RoutedCommand = Create("System.Windows.Input.RoutedCommand");
+        internal static readonly QualifiedType RoutedUICommand = Create("System.Windows.Input.RoutedUICommand");
+
         internal static readonly QualifiedType FontFamily = Create("System.Windows.Media.FontFamily");
         internal static readonly QualifiedType Freezable = Create("System.Windows.Freezable");
         internal static readonly QualifiedType MarkupExtension = Create("System.Windows.Markup.MarkupExtension");
