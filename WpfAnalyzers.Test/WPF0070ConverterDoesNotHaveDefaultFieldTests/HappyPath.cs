@@ -209,7 +209,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasMutableMembersExtension()
+        public void WhenIValueConverterHasMutableMembers()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -252,6 +252,30 @@ namespace RoslynSandbox
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void WhenIMultiValueConverterHasMutableProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    public sealed class FooConverter : IMultiValueConverter
+    {
+        public int Value { get; set; }
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            => Value;
+
+        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
     }
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
