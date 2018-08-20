@@ -247,6 +247,10 @@ Roslyn analyzers for WPF.
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md">WPF0122</a></td>
     <td>Register name and owning type for routed command.</td>
   </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md">WPF0123</a></td>
+    <td>Backing field for a RoutedCommand should be static and readonly.</td>
+  </tr>
 <table>
 <!-- end generated table -->
 

@@ -16,7 +16,9 @@ namespace WpfAnalyzers
     internal class MakePropertyStaticReadonlyCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId,
+            WPF0123BackingFieldShouldBeStaticReadonly.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -25,52 +27,44 @@ namespace WpfAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax propertyDeclaration))
                 {
-                    continue;
+                    context.RegisterCodeFix(
+                        "Make static readonly",
+                        (e, _) => e.ReplaceNode(propertyDeclaration, p => ToStaticGetOnly(p)),
+                        this.GetType(),
+                        diagnostic);
                 }
-
-                var declaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-                if (declaration == null ||
-                    declaration.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(
-                    "Make static readonly",
-                    (e, _) => ApplyFix(e, declaration),
-                    this.GetType(),
-                    diagnostic);
             }
         }
 
-        private static void ApplyFix(DocumentEditor editor, PropertyDeclarationSyntax declaration)
+        private static PropertyDeclarationSyntax ToStaticGetOnly(PropertyDeclarationSyntax property)
         {
-            editor.ReplaceNode(declaration, declaration.WithModifiers(declaration.Modifiers.WithStatic()));
+            if (!property.Modifiers.Any(SyntaxKind.StaticKeyword))
+            {
+                property = property.WithModifiers(property.Modifiers.WithStatic());
+            }
 
-            if (declaration.TryGetSetter(out var setter) &&
+            if (property.TryGetSetter(out var setter) &&
                 setter.Body == null)
             {
-                editor.RemoveNode(setter, SyntaxRemoveOptions.KeepLeadingTrivia);
+                return property.RemoveNode(setter, SyntaxRemoveOptions.KeepNoTrivia);
             }
 
-            if (declaration.ExpressionBody != null)
+            if (property.ExpressionBody != null)
             {
-                editor.ReplaceNode(
-                    declaration,
-                    (x, g) => ((PropertyDeclarationSyntax)x)
-                        .WithInitializer(SyntaxFactory.EqualsValueClause(declaration.ExpressionBody.Expression))
-                        .WithExpressionBody(null)
-                        .WithAccessorList(
-                            SyntaxFactory.AccessorList(
-                                SyntaxFactory.SingletonList(
-                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                 .WithSemicolonToken(
-                                                     SyntaxFactory.Token(SyntaxKind.SemicolonToken))))));
+                return property
+                       .WithInitializer(SyntaxFactory.EqualsValueClause(property.ExpressionBody.Expression))
+                       .WithExpressionBody(null)
+                       .WithAccessorList(
+                           SyntaxFactory.AccessorList(
+                               SyntaxFactory.SingletonList(
+                                   SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                                .WithSemicolonToken(
+                                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)))));
             }
+
+            return property;
         }
     }
 }

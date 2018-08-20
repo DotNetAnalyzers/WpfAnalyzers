@@ -15,6 +15,7 @@ namespace WpfAnalyzers
             WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
             WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
             WPF0122RegisterRoutedCommand.Descriptor,
+            WPF0123BackingFieldShouldBeStaticReadonly.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -43,8 +44,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (objectCreation.Parent is EqualsValueClauseSyntax &&
-                    FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
+                if (TryGetBackingMember(objectCreation, context, out var fieldOrProperty, out var memberDeclaration))
                 {
                     if (ctor.TryFindParameter("name", out var nameParameter))
                     {
@@ -63,8 +63,31 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0122RegisterRoutedCommand.Descriptor, objectCreation.ArgumentList.GetLocation()));
                     }
+
+                    if (!fieldOrProperty.IsStaticReadOnly())
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(WPF0123BackingFieldShouldBeStaticReadonly.Descriptor, BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
+                    }
                 }
             }
+        }
+
+        private static bool TryGetBackingMember(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context, out FieldOrProperty fieldOrProperty, out MemberDeclarationSyntax memberDeclaration)
+        {
+            fieldOrProperty = default(FieldOrProperty);
+            memberDeclaration = null;
+            switch (objectCreation.Parent)
+            {
+                case EqualsValueClauseSyntax _:
+                    return objectCreation.TryFirstAncestor(out memberDeclaration) &&
+                           FieldOrProperty.TryCreate(context.ContainingSymbol, out fieldOrProperty);
+                case ArrowExpressionClauseSyntax _:
+                    return objectCreation.TryFirstAncestor(out memberDeclaration) &&
+                           context.ContainingSymbol is IMethodSymbol getter &&
+                           FieldOrProperty.TryCreate(getter.AssociatedSymbol, out fieldOrProperty);
+            }
+
+            return false;
         }
     }
 }

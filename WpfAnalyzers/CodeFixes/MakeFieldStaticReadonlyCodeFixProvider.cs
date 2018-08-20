@@ -7,14 +7,15 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakeFieldStaticReadonlyCodeFixProvider))]
     [Shared]
     internal class MakeFieldStaticReadonlyCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            WPF0030BackingFieldShouldBeStaticReadonly.DiagnosticId,
+            WPF0123BackingFieldShouldBeStaticReadonly.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -23,37 +24,17 @@ namespace WpfAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out FieldDeclarationSyntax fieldDeclaration))
                 {
-                    continue;
-                }
-
-                var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                     .FirstAncestorOrSelf<FieldDeclarationSyntax>();
-                if (fieldDeclaration == null || fieldDeclaration.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(
+                    context.RegisterCodeFix(
                         "Make static readonly",
-                        (e, _) => ApplyFix(e, fieldDeclaration),
+                        (e, _) => e.ReplaceNode(
+                            fieldDeclaration,
+                            x => x.WithModifiers(x.Modifiers.WithStatic().WithReadOnly())),
                         this.GetType(),
-                    diagnostic);
+                        diagnostic);
+                }
             }
-        }
-
-        private static void ApplyFix(DocumentEditor context, FieldDeclarationSyntax fieldDeclaration)
-        {
-            context.ReplaceNode(fieldDeclaration, (x, _) =>
-            {
-                var f = (FieldDeclarationSyntax)x;
-                return f.WithModifiers(
-                    f.Modifiers
-                     .WithStatic()
-                     .WithReadOnly());
-            });
         }
     }
 }
