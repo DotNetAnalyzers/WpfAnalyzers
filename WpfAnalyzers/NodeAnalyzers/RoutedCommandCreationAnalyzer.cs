@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -37,10 +38,11 @@ namespace WpfAnalyzers
                         ownerTypeArg.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var type) &&
                         !type.Equals(context.ContainingSymbol.ContainingType))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(
-                                                     WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
-                                                     ownerTypeArg.GetLocation(),
-                                                     context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
+                                ownerTypeArg.GetLocation(),
+                                context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
                     }
                 }
 
@@ -52,16 +54,25 @@ namespace WpfAnalyzers
                             nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&
                             registeredName != fieldOrProperty.Name)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(
-                                                     WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
-                                                     nameArg.GetLocation(),
-                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
-                                                     fieldOrProperty.Name));
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
+                                    nameArg.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                    fieldOrProperty.Name));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0122RegisterRoutedCommand.Descriptor, objectCreation.ArgumentList.GetLocation()));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                WPF0122RegisterRoutedCommand.Descriptor,
+                                objectCreation.ArgumentList.GetLocation(),
+                                ImmutableDictionary.CreateRange(new[]
+                                {
+                                    new KeyValuePair<string, string>(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                    new KeyValuePair<string, string>(nameof(TypeOfExpressionSyntax), context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)),
+                                })));
                     }
 
                     if (!fieldOrProperty.IsStaticReadOnly())
