@@ -21,14 +21,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.1.5.2</Version>
+    <Version>2.1.5.3</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>
-      BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
-      Feature: Check and generate standard docs.
-    </PackageReleaseNotes>
+    <PackageReleaseNotes>BUGFIX: WPF007 don't nag when validation method is not in containing class.
+BUGFIX: WPF070 don't nag when constructor has parameters.</PackageReleaseNotes>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>

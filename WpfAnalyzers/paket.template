@@ -2,8 +2,8 @@
 developmentDependency true
 
 releaseNotes
-  BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
-  FEATURE: Check and generate standard docs.
+  BUGFIX: WPF007 don't nag when validation method is not in containing class.
+  BUGFIX: WPF070 don't nag when constructor has parameters.
 
 excludedgroups
   Main

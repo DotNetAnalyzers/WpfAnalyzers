@@ -1,3 +1,7 @@
+#### 2.1.5.3
+* BUGFIX: WPF007 don't nag when validation method is not in containing class.
+* BUGFIX: WPF070 don't nag when constructor has parameters.
+
 #### 2.1.5
 * BREAKING: Move docs analyzers to category WpfAnalyzers.Documentation.
 * Feature: Check and generate standard docs.
