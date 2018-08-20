@@ -41,9 +41,7 @@ namespace WpfAnalyzers
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
-                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
-                    !Mutable.HasMutableInstanceMembers(type) &&
-                    !Virtual.HasVirtualOrAbstractOrProtectedMembers(type))
+                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation))
                 {
                     if (ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out var defaults))
                     {
@@ -57,7 +55,9 @@ namespace WpfAnalyzers
                             }
                         }
                     }
-                    else
+                    else if (!Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
+                             !type.Constructors.TryFirst(x => x.Parameters.Length > 0, out _) &&
+                             !Mutable.HasMutableInstanceMembers(type))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor, classDeclaration.Identifier.GetLocation()));
                     }
