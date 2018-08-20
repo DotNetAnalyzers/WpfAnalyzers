@@ -1,3 +1,6 @@
+#### 2.1.6
+* FEATURE: New analyzers WPF0107, WPF0120, WPF0121, WPF0122, WPF0123
+
 #### 2.1.5.3
 * BUGFIX: WPF007 don't nag when validation method is not in containing class.
 * BUGFIX: WPF070 don't nag when constructor has parameters.
