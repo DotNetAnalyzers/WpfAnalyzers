@@ -8,12 +8,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Use the registered handler type .",
+            title: "Use the registered handler type.",
             messageFormat: "Use the registered handler type {0}.",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use the registered handler type .",
+            description: "Use the registered handler type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
     }
 }

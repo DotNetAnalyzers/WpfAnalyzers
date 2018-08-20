@@ -233,7 +233,7 @@ Roslyn analyzers for WPF.
   </tr>
   <tr>
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md">WPF0106</a></td>
-    <td>Use the registered handler type .</td>
+    <td>Use the registered handler type.</td>
   </tr>
 <table>
 <!-- end generated table -->
