@@ -41,7 +41,8 @@ namespace WpfAnalyzers
                     Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
                 {
                     if (DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                        !target.Name.IsParts("Validate", registeredName))
+                        !target.Name.IsParts("Validate", registeredName) &&
+                        target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
                     {
                         context.ReportDiagnostic(
                         Diagnostic.Create(

@@ -67,6 +67,59 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void WhenValidationMethodIsUsedMoreThanOnce()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(double),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1d),
+            ValidateDoubleIsGreaterThanZero);
+
+        /// <summary>Identifies the <see cref=""Baz""/> dependency property.</summary>
+        public static readonly DependencyProperty BazProperty = DependencyProperty.Register(
+            nameof(Baz),
+            typeof(double),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1d),
+            ValidateDoubleIsGreaterThanZero);
+
+        public double Bar
+        {
+            get => (double)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        public double Baz
+        {
+            get => (double)this.GetValue(BazProperty);
+            set => this.SetValue(BazProperty, value);
+        }
+
+        private static bool ValidateDoubleIsGreaterThanZero(object value)
+        {
+            if (value is double d)
+            {
+                return d > 0;
+            }
+
+            return false;
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
         public void DependencyPropertyNoCallback()
         {
             var testCode = @"
