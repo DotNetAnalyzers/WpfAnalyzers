@@ -266,6 +266,51 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void IValueConverterAddDefaultFieldWhenSealedIssue225()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    sealed class ↓Foo : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    sealed class Foo : IValueConverter
+    {
+        static readonly Foo Default = new Foo();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
+        }
+
+        [Test]
         public void IMultiValueConverterAddDefaultField()
         {
             var testCode = @"

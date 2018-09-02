@@ -9,9 +9,14 @@ namespace WpfAnalyzers
 
     internal static class DocumentEditorExt
     {
-        internal static DocumentEditor MakeSealed(this DocumentEditor editor, ClassDeclarationSyntax containingType)
+        internal static DocumentEditor MakeSealed(this DocumentEditor editor, ClassDeclarationSyntax classDeclaration)
         {
-            editor.ReplaceNode(containingType, (node, generator) => MakeSealedRewriter.Default.Visit(node, (ClassDeclarationSyntax)node));
+            if (classDeclaration.Modifiers.Any(SyntaxKind.SealedKeyword))
+            {
+                return editor;
+            }
+
+            editor.ReplaceNode(classDeclaration, (node, generator) => MakeSealedRewriter.Default.Visit(node, (ClassDeclarationSyntax)node));
             return editor;
         }
 
