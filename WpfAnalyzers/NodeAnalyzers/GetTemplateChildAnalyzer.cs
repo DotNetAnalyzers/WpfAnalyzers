@@ -108,6 +108,9 @@ namespace WpfAnalyzers
                 case CastExpressionSyntax castExpression:
                     type = castExpression.Type;
                     return true;
+                case IsPatternExpressionSyntax isPattern when isPattern.Pattern is DeclarationPatternSyntax declarationPattern:
+                    type = declarationPattern.Type;
+                    return !type.IsVar;
                 default:
                     type = null;
                     return false;

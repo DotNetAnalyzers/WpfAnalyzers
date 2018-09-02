@@ -50,6 +50,56 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void IsPatternStringLiteral()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private Border bar;
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.bar = null;
+            if (↓this.GetTemplateChild(""PART_Bar"") is Border border)
+            {
+                this.bar = border;
+            }
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = ""PART_Bar"", Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        private Border bar;
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.bar = null;
+            if (this.GetTemplateChild(""PART_Bar"") is Border border)
+            {
+                this.bar = border;
+            }
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void CastConstant()
         {
             var testCode = @"

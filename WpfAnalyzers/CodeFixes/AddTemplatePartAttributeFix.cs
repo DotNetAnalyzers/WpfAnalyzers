@@ -40,7 +40,7 @@ namespace WpfAnalyzers
                                         classDeclaration.AttributeLists.Add(
                                             ParseAttributeList(attribute))));
                             },
-                            $"[TemplatePart].",
+                            "[TemplatePart]",
                             diagnostic);
                     }
                 }
