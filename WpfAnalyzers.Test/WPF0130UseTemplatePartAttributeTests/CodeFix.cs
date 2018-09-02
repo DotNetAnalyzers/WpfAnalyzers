@@ -90,5 +90,43 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void CastNameof()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = (Border)↓this.GetTemplateChild(nameof(OnApplyTemplate));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = nameof(OnApplyTemplate), Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = (Border)this.GetTemplateChild(nameof(OnApplyTemplate));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
     }
 }
