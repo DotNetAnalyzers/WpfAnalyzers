@@ -50,5 +50,20 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenAbstract()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows.Markup;
+
+    public abstract class AbstractFooExtension : MarkupExtension
+    {
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
