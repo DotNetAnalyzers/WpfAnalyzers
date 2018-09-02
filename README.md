@@ -255,6 +255,10 @@ Roslyn analyzers for WPF.
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md">WPF0123</a></td>
     <td>Backing field for a RoutedCommand should be static and readonly.</td>
   </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md">WPF0130</a></td>
+    <td>Add [TemplatePart] to the type.</td>
+  </tr>
 <table>
 <!-- end generated table -->
 
