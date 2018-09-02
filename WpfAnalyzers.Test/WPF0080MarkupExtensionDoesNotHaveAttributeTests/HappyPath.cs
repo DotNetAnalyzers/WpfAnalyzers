@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
+namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -23,6 +23,29 @@ namespace RoslynSandbox
         {
             return this;
         }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void WhenNotOverridingProvideValue()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public sealed class Foo : ResourceKey
+    {
+        public Foo(int id) => ID = id;
+
+        [ConstructorArgument(""id"")]
+        public int ID { get; }
+
+        public override Assembly Assembly => typeof(Foo).Assembly;
     }
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);

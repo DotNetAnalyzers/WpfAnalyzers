@@ -7,6 +7,7 @@ namespace WpfAnalyzers
     {
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
+        internal static readonly QualifiedType IServiceProvider = Create("System.IServiceProvider");
 
         internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
         internal static readonly FrameworkElementType FrameworkElement = new FrameworkElementType();
