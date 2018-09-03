@@ -1,11 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
+namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal class ValidCode
     {
-        private static readonly WPF0051XmlnsDefinitionMustMapExistingNamespace Analyzer = new WPF0051XmlnsDefinitionMustMapExistingNamespace();
+        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
         public void WhenXmlnsDefinitionMatches()

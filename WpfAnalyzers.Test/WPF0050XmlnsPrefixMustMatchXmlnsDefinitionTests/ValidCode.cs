@@ -1,9 +1,9 @@
-﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
+namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal class ValidCode
     {
         private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
 

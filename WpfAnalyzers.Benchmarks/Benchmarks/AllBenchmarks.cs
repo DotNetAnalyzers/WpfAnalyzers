@@ -35,8 +35,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0050 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0051 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0051XmlnsDefinitionMustMapExistingNamespace());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0052 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0080 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0080MarkupExtensionDoesNotHaveAttribute());
@@ -137,12 +135,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0050XmlnsPrefixMustMatchXmlnsDefinition()
         {
             WPF0050.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0051XmlnsDefinitionMustMapExistingNamespace()
-        {
-            WPF0051.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

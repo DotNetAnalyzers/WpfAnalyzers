@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
 
     internal class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0051XmlnsDefinitionMustMapExistingNamespace();
+        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
         public void WhenNoNamespace()

@@ -2,7 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Threading;
+    using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -14,6 +14,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor,
             WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor,
             WPF0082ConstructorArgument.Descriptor);
 
@@ -30,6 +31,16 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AttributeSyntax attribute)
             {
+                if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
+                    Attribute.TryFindArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg) &&
+                    context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace) &&
+                    context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
+                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor, arg.GetLocation(), arg));
+
+                }
+
                 if (context.ContainingSymbol is ITypeSymbol type &&
                     !type.IsAbstract &&
                     type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
@@ -37,7 +48,7 @@ namespace WpfAnalyzers
                     attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                     MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                     returnType != KnownSymbol.Object &&
-                    Attribute.TryFindArgument(attribute, 0, "returnType", out var arg) &&
+                    Attribute.TryFindArgument(attribute, 0, "returnType", out arg) &&
                     arg.Expression is TypeOfExpressionSyntax typeOf &&
                     context.SemanticModel.TryGetType(typeOf.Type, context.CancellationToken, out var argType) &&
                     !ReferenceEquals(argType, returnType))
