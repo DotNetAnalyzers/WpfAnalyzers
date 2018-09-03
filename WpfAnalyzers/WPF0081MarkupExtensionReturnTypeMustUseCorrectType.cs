@@ -1,19 +1,12 @@
 namespace WpfAnalyzers
 {
-    using System.Collections.Immutable;
-    using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0081MarkupExtensionReturnTypeMustUseCorrectType : DiagnosticAnalyzer
+    internal static class WPF0081MarkupExtensionReturnTypeMustUseCorrectType
     {
         public const string DiagnosticId = "WPF0081";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "MarkupExtensionReturnType must use correct return type.",
             messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
@@ -22,52 +15,5 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "MarkupExtensionReturnType must use correct return type.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
-
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.Attribute);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is ITypeSymbol type &&
-                context.Node is AttributeSyntax attribute &&
-                !type.IsAbstract &&
-                type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
-                Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
-                attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
-                MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
-                returnType != KnownSymbol.Object)
-            {
-                if (Attribute.TryFindArgument(attribute, 0, "returnType", out var arg) &&
-                    TryGetType(arg, context.SemanticModel, context.CancellationToken, out var argType) &&
-                    !ReferenceEquals(argType, returnType))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), returnType));
-                }
-            }
-        }
-
-        private static bool TryGetType(AttributeArgumentSyntax arg, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
-        {
-            type = null;
-            if (arg.Expression is TypeOfExpressionSyntax typeOf)
-            {
-                type = semanticModel.GetTypeInfoSafe(typeOf.Type, cancellationToken).Type;
-            }
-
-            return type != null;
-        }
     }
 }

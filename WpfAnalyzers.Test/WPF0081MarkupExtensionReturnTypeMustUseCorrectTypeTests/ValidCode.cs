@@ -1,11 +1,12 @@
-﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
+namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal class ValidCode
     {
-        private static readonly WPF0081MarkupExtensionReturnTypeMustUseCorrectType Analyzer = new WPF0081MarkupExtensionReturnTypeMustUseCorrectType();
+        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
         public void WhenHasAttribute()
