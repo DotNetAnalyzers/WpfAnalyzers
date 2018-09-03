@@ -50,5 +50,27 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenCastingToLessSpecificType()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = ""PART_Bar"", Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = (FrameworkElement)this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

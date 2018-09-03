@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                         {
                             if (partType != null &&
                                 context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
-                                !castType.Equals(partType))
+                                !partType.IsAssignableTo(castType, context.Compilation))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(
                                                              WPF0131TemplatePartType.Descriptor,
