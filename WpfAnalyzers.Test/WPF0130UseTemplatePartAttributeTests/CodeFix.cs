@@ -12,6 +12,44 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0130");
 
         [Test]
+        public void StringLiteralNoCast()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = ↓this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = ""PART_Bar"")]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void CastStringLiteral()
         {
             var testCode = @"
