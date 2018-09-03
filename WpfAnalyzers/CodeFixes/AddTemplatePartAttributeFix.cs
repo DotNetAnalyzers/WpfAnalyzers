@@ -49,9 +49,12 @@ namespace WpfAnalyzers
 
         private static AttributeListSyntax ParseAttributeList(string text)
         {
-            var code = $"\r\n    {text}public class Foo {{}}";
+            var code = $"{text}public class Foo {{}}";
             return ((ClassDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code).Members.Single()).AttributeLists
                                                                                                       .Single()
+                                                                                                      .WithoutTrivia()
+                                                                                                      .WithLeadingElasticLineFeed()
+                                                                                                      .WithTrailingElasticLineFeed()
                                                                                                       .WithSimplifiedNames();
         }
     }

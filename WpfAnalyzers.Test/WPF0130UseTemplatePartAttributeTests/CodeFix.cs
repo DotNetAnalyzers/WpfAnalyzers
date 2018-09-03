@@ -216,5 +216,45 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void WhenWrongAttributeCastStringLiteral()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = ""PART_Bar"", Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = (Border)this.GetTemplateChild(""PART_Baz"");
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = ""PART_Bar"", Type = typeof(Border))]
+    [TemplatePart(Name = ""PART_Baz"", Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = (Border)this.GetTemplateChild(""PART_Baz"");
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
     }
 }
