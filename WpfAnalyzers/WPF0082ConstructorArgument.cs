@@ -1,19 +1,12 @@
 namespace WpfAnalyzers
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0082ConstructorArgument : DiagnosticAnalyzer
+    internal static class WPF0082ConstructorArgument
     {
         public const string DiagnosticId = "WPF0082";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "[ConstructorArgument] must match.",
             messageFormat: "[ConstructorArgument] must match. Expected: {0}",
@@ -22,36 +15,5 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "[ConstructorArgument] must match the name of the constructor parameter.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
-
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.Attribute);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (!context.IsExcludedFromAnalysis() &&
-                context.Node is AttributeSyntax attribute &&
-                Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
-                ConstructorArgument.TryGetArgumentName(attribute, out var argument, out var argumentName) &&
-                attribute.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
-                context.SemanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property) &&
-                ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName) &&
-                argumentName != parameterName)
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptor,
-                        argument.GetLocation(),
-                        ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
-                        parameterName));
-            }
-        }
     }
 }

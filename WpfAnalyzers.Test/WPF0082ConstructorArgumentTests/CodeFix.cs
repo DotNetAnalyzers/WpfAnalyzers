@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
 
     internal class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0082ConstructorArgument();
+        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeArgumentFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0082");
 
@@ -39,10 +39,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0082",
-                "[ConstructorArgument] must match. Expected: text");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[ConstructorArgument] must match. Expected: text"), testCode);
         }
 
         [Test]

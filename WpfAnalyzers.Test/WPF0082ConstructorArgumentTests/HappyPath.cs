@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
 
     internal class HappyPath
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0082ConstructorArgument();
+        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
         public void WhenPropertyHasAttribute()

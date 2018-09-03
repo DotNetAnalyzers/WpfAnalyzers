@@ -43,8 +43,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0081 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0081MarkupExtensionReturnTypeMustUseCorrectType());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0082 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0082ConstructorArgument());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -165,12 +163,6 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0081MarkupExtensionReturnTypeMustUseCorrectType()
         {
             WPF0081.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void WPF0082ConstructorArgument()
-        {
-            WPF0082.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
