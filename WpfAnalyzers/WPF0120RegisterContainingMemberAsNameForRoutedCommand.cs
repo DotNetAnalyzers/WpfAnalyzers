@@ -10,7 +10,7 @@ namespace WpfAnalyzers
             id: DiagnosticId,
             title: "Register containing member name as name for routed command.",
             messageFormat: "Register {0} as name.",
-            category: AnalyzerCategory.RoutedEvent,
+            category: AnalyzerCategory.RoutedCommand,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Register containing member name as name for routed command.",

@@ -10,7 +10,7 @@ namespace WpfAnalyzers
             id: DiagnosticId,
             title: "Add [TemplatePart] to the type.",
             messageFormat: "Add {0} to the type.",
-            category: AnalyzerCategory.DependencyProperty,
+            category: AnalyzerCategory.TemplatePart,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Add [TemplatePart] to the type.",
