@@ -70,36 +70,36 @@ namespace WpfAnalyzers
             }
         }
 
-        private static void AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
+        private static DocumentEditor AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            _ = editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)));
-            editor.MakeSealed(containingType);
+            return editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)))
+                         .MakeSealed(containingType);
         }
 
-        private static void AddDefaultFieldWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
+        private static DocumentEditor AddDefaultFieldWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            _ = editor.AddField(containingType, ParseField(code));
-            editor.MakeSealed(containingType);
+            return editor.AddField(containingType, ParseField(code))
+                         .MakeSealed(containingType);
         }
 
-        private static void AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
+        private static DocumentEditor AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            _ = editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)));
-            editor.MakeSealed(containingType);
+            return editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
+                         .MakeSealed(containingType);
         }
 
-        private static void AddDefaultPropertyWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
+        private static DocumentEditor AddDefaultPropertyWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
-            _ = editor.AddProperty(containingType, ParseProperty(code));
-            editor.MakeSealed(containingType);
+            return editor.AddProperty(containingType, ParseProperty(code))
+                         .MakeSealed(containingType);
         }
 
         private static FieldDeclarationSyntax ParseField(string code)
