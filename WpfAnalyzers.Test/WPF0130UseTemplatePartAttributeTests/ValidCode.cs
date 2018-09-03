@@ -142,5 +142,37 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, baseCode, testCode);
             AnalyzerAssert.Valid(Analyzer, testCode, baseCode);
         }
+
+        [Test]
+        public void IsPatternStringLiteral()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = PartBar, Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        private const string PartBar = ""PART_Bar"";
+
+        private Border bar;
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.bar = null;
+            if (this.GetTemplateChild(PartBar) is Border border)
+            {
+                this.bar = border;
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
     }
 }
