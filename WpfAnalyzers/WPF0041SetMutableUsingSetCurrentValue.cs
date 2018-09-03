@@ -31,8 +31,8 @@ namespace WpfAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleAssignment, SyntaxKind.SimpleAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(x => HandleAssignment(x), SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeAction(x => HandleInvocation(x), SyntaxKind.InvocationExpression);
         }
 
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)

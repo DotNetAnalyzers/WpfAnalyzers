@@ -101,7 +101,7 @@ namespace WpfAnalyzers
             foreach (var candidate in type.GetAttributes())
             {
                 if (candidate.AttributeClass == KnownSymbol.TemplatePartAttribute &&
-                    candidate.NamedArguments.TryFirst(IsMatch, out _))
+                    candidate.NamedArguments.TryFirst(x => IsMatch(x), out _))
                 {
                     attribute = candidate;
                     return true;

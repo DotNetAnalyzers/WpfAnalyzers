@@ -24,7 +24,7 @@ namespace WpfAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.MethodDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)

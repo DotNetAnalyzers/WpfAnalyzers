@@ -21,10 +21,10 @@ namespace WpfAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.InvocationExpression);
         }
 
-        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {

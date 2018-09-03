@@ -22,7 +22,7 @@ namespace WpfAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.EventDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
