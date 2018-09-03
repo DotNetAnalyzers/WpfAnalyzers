@@ -13,7 +13,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0130UseTemplatePartAttribute.Descriptor);
+            WPF0130UseTemplatePartAttribute.Descriptor,
+            WPF0131TemplatePartType.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -43,6 +44,28 @@ namespace WpfAnalyzers
             {
                 if (TryFindAttribute(containingMethod.ContainingType, partName, out var attribute))
                 {
+                    if (TryGetCastType(invocation, out var castTypeSyntax))
+                    {
+                        if (TryFindTemplatePartType(attribute, out var partType))
+                        {
+                            if (partType != null &&
+                                context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
+                                !castType.Equals(partType))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(
+                                                             WPF0131TemplatePartType.Descriptor,
+                                                             invocation.GetLocation(),
+                                                             ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), castTypeSyntax.ToString())));
+                            }
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(
+                                                         WPF0131TemplatePartType.Descriptor,
+                                                         invocation.GetLocation(),
+                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), castTypeSyntax.ToString())));
+                        }
+                    }
                 }
                 else
                 {
@@ -99,6 +122,17 @@ namespace WpfAnalyzers
                        a.Value.Value is string candidate &&
                        candidate == part;
             }
+        }
+
+        private static bool TryFindTemplatePartType(AttributeData attribute, out INamedTypeSymbol type)
+        {
+            type = null;
+            if (attribute.NamedArguments.TrySingle(x => x.Key == "Type", out var arg))
+            {
+                type = arg.Value.Value as INamedTypeSymbol;
+            }
+
+            return type != null;
         }
 
         private static bool TryGetCastType(InvocationExpressionSyntax invocation, out TypeSyntax type)

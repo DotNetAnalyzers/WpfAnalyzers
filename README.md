@@ -259,6 +259,10 @@ Roslyn analyzers for WPF.
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md">WPF0130</a></td>
     <td>Add [TemplatePart] to the type.</td>
   </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md">WPF0131</a></td>
+    <td>Use correct [TemplatePart] type.</td>
+  </tr>
 <table>
 <!-- end generated table -->
 
