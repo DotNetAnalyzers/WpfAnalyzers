@@ -51,10 +51,36 @@ namespace RoslynSandbox
         {
             base.OnApplyTemplate();
             this.bar = null;
-            if (this.GetTemplateChild(PartBar) is Button button)
+            if (↓this.GetTemplateChild(PartBar) is Button button)
             {
                 this.bar = button;
             }
+        }
+    }
+}";
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void AsCastNotMatching()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = PartBar, Type = typeof(Border))]
+    public class FooControl : Control
+    {
+        private const string PartBar = ""PART_Bar"";
+
+        private Button bar;
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.bar = ↓this.GetTemplateChild(PartBar) as Button;
         }
     }
 }";

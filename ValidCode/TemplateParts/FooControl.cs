@@ -24,6 +24,13 @@ namespace ValidCode.TemplateParts
             this.bar = (FrameworkElement)this.GetTemplateChild(PartBar);
             this.bar = this.GetTemplateChild(PartBar) as Border;
             this.bar = this.GetTemplateChild(PartBar) as FrameworkElement;
+            switch (this.GetTemplateChild(PartBar))
+            {
+                case Border b:
+                    this.bar = b;
+                    break;
+            }
+
             var baz = this.GetTemplateChild("PART_Baz") as FrameworkElement;
             baz = this.GetTemplateChild("PART_Baz") as Control;
             baz = this.GetTemplateChild("PART_Baz") as DataGrid;

@@ -56,7 +56,7 @@ namespace WpfAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
+        public void CurrentSolution(DiagnosticAnalyzer analyzer)
         {
             AnalyzerAssert.Valid(analyzer, Solution);
         }

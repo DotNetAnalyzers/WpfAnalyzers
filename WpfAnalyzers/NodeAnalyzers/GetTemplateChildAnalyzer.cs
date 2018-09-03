@@ -44,26 +44,20 @@ namespace WpfAnalyzers
             {
                 if (TryFindAttribute(containingMethod.ContainingType, partName, out var attribute))
                 {
-                    if (TryGetCastType(invocation, out var castTypeSyntax))
+                    if (TryGetCastType(invocation, out var cast, out var castTypeSyntax))
                     {
                         if (TryFindTemplatePartType(attribute, out var partType))
                         {
                             if (partType != null &&
                                 context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
-                                !partType.IsAssignableTo(castType, context.Compilation))
+                                !IsValidCast(partType, castType, cast, context.Compilation))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(
-                                                             WPF0131TemplatePartType.Descriptor,
-                                                             invocation.GetLocation(),
-                                                             ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), castTypeSyntax.ToString())));
+                                context.ReportDiagnostic(Diagnostic.Create(WPF0131TemplatePartType.Descriptor, invocation.GetLocation()));
                             }
                         }
                         else
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(
-                                                         WPF0131TemplatePartType.Descriptor,
-                                                         invocation.GetLocation(),
-                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), castTypeSyntax.ToString())));
+                            context.ReportDiagnostic(Diagnostic.Create(WPF0131TemplatePartType.Descriptor, invocation.GetLocation()));
                         }
                     }
                 }
@@ -73,7 +67,7 @@ namespace WpfAnalyzers
                         ? $"\"{partName}\""
                         : argument.Expression.ToString();
 
-                    if (TryGetCastType(invocation, out var partType))
+                    if (TryGetCastType(invocation, out _, out var partType))
                     {
                         var attributeText = $"[System.Windows.TemplatePartAttribute(Name = {partNameArg}, Type = typeof({partType}))]";
                         context.ReportDiagnostic(Diagnostic.Create(
@@ -135,20 +129,51 @@ namespace WpfAnalyzers
             return type != null;
         }
 
-        private static bool TryGetCastType(InvocationExpressionSyntax invocation, out TypeSyntax type)
+        private static bool TryGetCastType(InvocationExpressionSyntax invocation, out ExpressionSyntax cast, out SyntaxNode type)
         {
             switch (invocation.Parent)
             {
+                case BinaryExpressionSyntax binary when
+                    binary.IsKind(SyntaxKind.AsExpression):
+                    {
+                        cast = binary;
+                        type = binary.Right as TypeSyntax;
+                        return true;
+                    }
+
                 case CastExpressionSyntax castExpression:
+                    cast = castExpression;
                     type = castExpression.Type;
                     return true;
-                case IsPatternExpressionSyntax isPattern when isPattern.Pattern is DeclarationPatternSyntax declarationPattern:
-                    type = declarationPattern.Type;
-                    return !type.IsVar;
+                case IsPatternExpressionSyntax isPattern when
+                    isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
+                    !declarationPattern.Type.IsVar:
+                    {
+                        cast = isPattern;
+                        type = declarationPattern.Type;
+                        return true;
+                    }
+
                 default:
                     type = null;
+                    cast = null;
                     return false;
             }
+        }
+
+        private static bool IsValidCast(INamedTypeSymbol partType, ITypeSymbol castType, ExpressionSyntax cast, Compilation compilation)
+        {
+            if (partType.IsAssignableTo(castType, compilation))
+            {
+                return true;
+            }
+
+            if (!(cast is CastExpressionSyntax))
+            {
+                return castType.IsAssignableTo(partType, compilation);
+            }
+
+            return false;
         }
     }
 }

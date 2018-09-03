@@ -174,5 +174,33 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [TestCase("as FrameworkElement")]
+        [TestCase("as UIElement")]
+        [TestCase("as Control")]
+        public void AsCastStringLiteral(string cast)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [TemplatePart(Name = PartBar, Type = typeof(FrameworkElement))]
+    public class FooControl : Control
+    {
+        private const string PartBar = ""PART_Bar"";
+
+        private Border bar;
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.bar = this.GetTemplateChild(PartBar) as FrameworkElement;
+        }
+    }
+}".AssertReplace("as FrameworkElement", cast);
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
