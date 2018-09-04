@@ -35,10 +35,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0104",
-                "Call AddHandler in add.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Call AddHandler in add."), testCode);
         }
 
         [Test]
