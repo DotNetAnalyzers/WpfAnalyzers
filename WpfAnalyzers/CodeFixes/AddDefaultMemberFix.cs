@@ -70,12 +70,14 @@ namespace WpfAnalyzers
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             return editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)))
                          .MakeSealed(containingType);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultFieldWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             var code = StringBuilderPool.Borrow()
@@ -86,12 +88,14 @@ namespace WpfAnalyzers
                          .MakeSealed(containingType);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             return editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
                          .MakeSealed(containingType);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultPropertyWithDocs(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             var code = StringBuilderPool.Borrow()

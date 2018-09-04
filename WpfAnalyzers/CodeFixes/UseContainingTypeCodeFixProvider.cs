@@ -18,7 +18,8 @@ namespace WpfAnalyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId,
             WPF0101RegisterContainingTypeAsOwner.DiagnosticId,
-            WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.DiagnosticId);
+            WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.DiagnosticId,
+            WPF0140UseContainingTypeComponentResourceKey.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -43,6 +44,20 @@ namespace WpfAnalyzers
                             typeofExpression,
                             x => x.WithType(SyntaxFactory.ParseTypeName(containingTypeName))),
                         "Use containing type.",
+                        diagnostic);
+                }
+                else if (diagnostic.Id == WPF0140UseContainingTypeComponentResourceKey.DiagnosticId &&
+                         syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ObjectCreationExpressionSyntax objectCreation) &&
+                         objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
+                         argumentList.Arguments.Count == 0 &&
+                         diagnostic.Properties.TryGetValue(nameof(ArgumentListSyntax), out var argumentListString))
+                {
+                    context.RegisterCodeFix(
+                        "Use default arguments for ComponentResourceKey.",
+                        (editor, _) => editor.ReplaceNode(
+                            argumentList,
+                            x => SyntaxFactory.ParseArgumentList($"({argumentListString})")),
+                        "Use default arguments for ComponentResourceKey.",
                         diagnostic);
                 }
             }
