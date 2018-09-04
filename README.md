@@ -200,6 +200,10 @@ Roslyn analyzers for WPF.
     <td>Add [ConstructorArgument].</td>
   </tr>
   <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0084.md">WPF0084</a></td>
+    <td>Target of [XamlSetMarkupExtension] should exist and have correct signature.</td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md">WPF0090</a></td>
     <td>Name the invoked method OnEventName.</td>
   </tr>

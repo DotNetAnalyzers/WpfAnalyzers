@@ -17,6 +17,7 @@ namespace WpfAnalyzers
             WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor,
             WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor,
             WPF0082ConstructorArgument.Descriptor,
+            WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor,
             WPF0132UsePartPrefix.Descriptor);
 
         /// <inheritdoc/>
@@ -40,10 +41,10 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(Diagnostic.Create(WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor, arg.GetLocation(), arg));
                 }
-                else if (context.ContainingSymbol is ITypeSymbol type &&
-                         !type.IsAbstract &&
-                         type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
-                         Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
+                else if (Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
+                         context.ContainingSymbol is ITypeSymbol containingType &&
+                         !containingType.IsAbstract &&
+                         containingType.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                          returnType != KnownSymbol.Object &&
@@ -68,6 +69,14 @@ namespace WpfAnalyzers
                             ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
                             parameterName));
                 }
+                else if (Attribute.IsType(attribute, KnownSymbol.XamlSetMarkupExtensionAttribute, context.SemanticModel, context.CancellationToken) &&
+                         Attribute.TryFindArgument(attribute, 0, "xamlSetMarkupExtensionHandler", out arg) &&
+                         context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string target) &&
+                         context.ContainingSymbol is ITypeSymbol type &&
+                         !type.TryFindFirstMethodRecursive(target, m => IsMarkupExtensionHandler(m), out _))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor, arg.Expression.GetLocation()));
+                }
                 else if (Attribute.IsType(attribute, KnownSymbol.TemplatePartAttribute, context.SemanticModel, context.CancellationToken) &&
                          Attribute.TryFindArgument(attribute, 0, "Name", out arg) &&
                          context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string partName) &&
@@ -76,6 +85,16 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(WPF0132UsePartPrefix.Descriptor, arg.Expression.GetLocation(), arg));
                 }
             }
+        }
+
+        private static bool IsMarkupExtensionHandler(IMethodSymbol candidate)
+        {
+            return candidate.ReturnsVoid &&
+                   candidate.Parameters.Length == 2 &&
+                   candidate.Parameters.TryElementAt(0, out var parameter) &&
+                   parameter.Type == KnownSymbol.Object &&
+                   candidate.Parameters.TryElementAt(1, out parameter) &&
+                   parameter.Type == KnownSymbol.XamlSetMarkupExtensionEventArgs;
         }
     }
 }
