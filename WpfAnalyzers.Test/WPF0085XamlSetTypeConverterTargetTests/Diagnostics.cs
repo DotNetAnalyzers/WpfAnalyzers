@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
+namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0084");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0085");
 
         [Test]
         public void Message()
@@ -18,17 +18,17 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static int ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
+        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
         {
-            return 1;
+            return int;
         }
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs)."), testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs)."), testCode);
         }
 
         [Test]
@@ -40,12 +40,12 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static int ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
+        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
         {
-            return 1;
+            return int;
         }
     }
 }";
@@ -62,10 +62,10 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static void ReceiveMarkupExtension()
+        public static void ReceiveTypeConverter()
         {
         }
     }
@@ -83,10 +83,10 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static void ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs, int i)
+        public static void ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs, int i)
         {
         }
     }
@@ -104,10 +104,10 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static void ReceiveMarkupExtension(int targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
+        public static void ReceiveTypeConverter(int targetObject, XamlSetTypeConverterEventArgs eventArgs)
         {
         }
     }
@@ -125,10 +125,10 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    public class FooControl : Control
     {
-        public static void ReceiveMarkupExtension(object targetObject, int eventArgs)
+        public static void ReceiveTypeConverter(object targetObject, int eventArgs)
         {
         }
     }

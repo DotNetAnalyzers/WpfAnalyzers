@@ -18,6 +18,7 @@ namespace WpfAnalyzers
             WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor,
             WPF0082ConstructorArgument.Descriptor,
             WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor,
+            WPF0085XamlSetTypeConverterTarget.Descriptor,
             WPF0132UsePartPrefix.Descriptor);
 
         /// <inheritdoc/>
@@ -72,10 +73,16 @@ namespace WpfAnalyzers
                 else if (Attribute.IsType(attribute, KnownSymbol.XamlSetMarkupExtensionAttribute, context.SemanticModel, context.CancellationToken) &&
                          Attribute.TryFindArgument(attribute, 0, "xamlSetMarkupExtensionHandler", out arg) &&
                          context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string target) &&
-                         context.ContainingSymbol is ITypeSymbol type &&
-                         !type.TryFindFirstMethodRecursive(target, m => IsMarkupExtensionHandler(m), out _))
+                         !(context.ContainingSymbol as ITypeSymbol).TryFindFirstMethodRecursive(target, m => IsMarkupExtensionHandler(m), out _))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor, arg.Expression.GetLocation()));
+                }
+                else if (Attribute.IsType(attribute, KnownSymbol.XamlSetTypeConverterAttribute, context.SemanticModel, context.CancellationToken) &&
+                         Attribute.TryFindArgument(attribute, 0, "xamlSetTypeConverterHandler", out arg) &&
+                         context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out target) &&
+                         !(context.ContainingSymbol as ITypeSymbol).TryFindFirstMethodRecursive(target, m => IsTypeConverterHandler(m), out _))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0085XamlSetTypeConverterTarget.Descriptor, arg.Expression.GetLocation()));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.TemplatePartAttribute, context.SemanticModel, context.CancellationToken) &&
                          Attribute.TryFindArgument(attribute, 0, "Name", out arg) &&
@@ -95,6 +102,16 @@ namespace WpfAnalyzers
                    parameter.Type == KnownSymbol.Object &&
                    candidate.Parameters.TryElementAt(1, out parameter) &&
                    parameter.Type == KnownSymbol.XamlSetMarkupExtensionEventArgs;
+        }
+
+        private static bool IsTypeConverterHandler(IMethodSymbol candidate)
+        {
+            return candidate.ReturnsVoid &&
+                   candidate.Parameters.Length == 2 &&
+                   candidate.Parameters.TryElementAt(0, out var parameter) &&
+                   parameter.Type == KnownSymbol.Object &&
+                   candidate.Parameters.TryElementAt(1, out parameter) &&
+                   parameter.Type == KnownSymbol.XamlSetTypeConverterEventArgs;
         }
     }
 }
