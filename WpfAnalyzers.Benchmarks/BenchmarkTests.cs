@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Benchmarks
+namespace WpfAnalyzers.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +17,7 @@
                                                                                                     .ToArray();
 
         private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarks { get; } = AllAnalyzers
-            .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, x))
+            .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, x))
             .ToArray();
 
         [OneTimeSetUp]

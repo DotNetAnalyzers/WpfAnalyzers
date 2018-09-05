@@ -10,4 +10,4 @@ Frequency=3410097 Hz, Resolution=293.2468 ns, Timer=TSC
 ```
  |                   Method |     Mean |    Error |   StdDev |   Median |  Gen 0 |  Gen 1 | Allocated |
  |------------------------- |---------:|---------:|---------:|---------:|-------:|-------:|----------:|
- | RunOnWpfAnalyzersProject | 234.3 us | 4.672 us | 6.992 us | 229.1 us | 2.9297 | 0.4883 |  19.37 KB |
+ | RunOnWpfValidCodeProject | 234.3 us | 4.672 us | 6.992 us | 229.1 us | 2.9297 | 0.4883 |  19.37 KB |

@@ -29,8 +29,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                                                                                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                                                     .ToArray();
 
-        public static Solution AnalyzersProject { get; } = CodeFactory.CreateSolution(
-            ProjectFile.Find("WpfAnalyzers.csproj"),
+        public static Solution ValidCodeProject { get; } = CodeFactory.CreateSolution(
+            ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
             MetadataReferences);
     }

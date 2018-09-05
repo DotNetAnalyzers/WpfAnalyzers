@@ -25,7 +25,7 @@ namespace WpfAnalyzers.Benchmarks
             if (false)
             {
                 var benchmark = Benchmark.Create(
-                    Code.AnalyzersProject,
+                    Code.ValidCodeProject,
                     new SetValueAnalyzer());
 
                 // Warmup
