@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="TemplateParts\FooControl.cs" />
     <Compile Include="WithSetMarkupExtensionAttribute.cs" />
+    <Compile Include="WithValidateValueCallback.cs" />
     <Compile Include="WithXamlSetTypeConverter.cs" />
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
