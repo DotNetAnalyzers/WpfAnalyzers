@@ -21,32 +21,28 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)
         {
-            foreach (var descriptor in analyzer.SupportedDiagnostics)
+            var expectedName = analyzer.GetType().Name + "Benchmarks";
+            var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
+            var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
+                                          .AppendLine($"namespace {this.GetType().Namespace}")
+                                          .AppendLine("{")
+                                          .AppendLine($"    public class {expectedName}")
+                                          .AppendLine("    {")
+                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
+                                          .AppendLine()
+                                          .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
+                                          .AppendLine("        public void RunOnWpfValidCodeProject()")
+                                          .AppendLine("        {")
+                                          .AppendLine("            Benchmark.Run();")
+                                          .AppendLine("        }")
+                                          .AppendLine("    }")
+                                          .AppendLine("}")
+                                          .ToString();
+            if (!File.Exists(fileName) ||
+                !CodeComparer.Equals(File.ReadAllText(fileName), code))
             {
-                var id = descriptor.Id;
-                var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
-                var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
-                var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
-                                              .AppendLine($"namespace {this.GetType().Namespace}")
-                                              .AppendLine("{")
-                                              .AppendLine($"    public class {expectedName}")
-                                              .AppendLine("    {")
-                                              .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
-                                              .AppendLine()
-                                              .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
-                                              .AppendLine("        public void RunOnWpfValidCodeProject()")
-                                              .AppendLine("        {")
-                                              .AppendLine("            Benchmark.Run();")
-                                              .AppendLine("        }")
-                                              .AppendLine("    }")
-                                              .AppendLine("}")
-                                              .ToString();
-                if (!File.Exists(fileName) ||
-                    !CodeComparer.Equals(File.ReadAllText(fileName), code))
-                {
-                    File.WriteAllText(fileName, code);
-                    Assert.Fail();
-                }
+                File.WriteAllText(fileName, code);
+                Assert.Fail();
             }
         }
 
@@ -63,7 +59,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
             foreach (var analyzer in AllAnalyzers)
             {
                 builder.AppendLine(
-                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)} = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
+                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.GetType().Name}Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
                        .AppendLine();
             }
 
@@ -72,7 +68,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                 builder.AppendLine($"        [BenchmarkDotNet.Attributes.Benchmark]")
                        .AppendLine($"        public void {analyzer.GetType().Name}()")
                        .AppendLine("        {")
-                       .AppendLine($"            {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)}.Run();")
+                       .AppendLine($"            {analyzer.GetType().Name}Benchmark.Run();")
                        .AppendLine("        }");
                 if (!ReferenceEquals(analyzer, AllAnalyzers.Last()))
                 {

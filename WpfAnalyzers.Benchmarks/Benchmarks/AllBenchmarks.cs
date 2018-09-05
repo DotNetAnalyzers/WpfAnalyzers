@@ -3,156 +3,188 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0019 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.CallbackAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark AttributeAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.AttributeAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ClrMethodDeclarationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark CallbackAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.CallbackAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ClrPropertyDeclarationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark ClrMethodDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ClrMethodDeclarationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark ClrPropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ClrPropertyDeclarationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0017 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark ComponentResourceKeyAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ComponentResourceKeyAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0005 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.PropertyMetadataAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark DependencyPropertyBackingFieldOrPropertyAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RegistrationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark GetTemplateChildAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.GetTemplateChildAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0100 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark OverrideMetadataAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.OverrideMetadataAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0090 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark PropertyMetadataAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.PropertyMetadataAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0102 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark RegistrationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RegistrationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.SetValueAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark RoutedCommandCreationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedCommandCreationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0070 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ValueConverterAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark RoutedEventBackingFieldOrPropertyAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventBackingFieldOrPropertyAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
+        private static readonly Gu.Roslyn.Asserts.Benchmark RoutedEventCallbackAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventCallbackAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
+        private static readonly Gu.Roslyn.Asserts.Benchmark RoutedEventEventDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.RoutedEventEventDeclarationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0041 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
+        private static readonly Gu.Roslyn.Asserts.Benchmark SetValueAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.SetValueAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0050 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
+        private static readonly Gu.Roslyn.Asserts.Benchmark ValueConverterAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.ValueConverterAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0052 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0011ContainingTypeShouldBeRegisteredOwnerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0011ContainingTypeShouldBeRegisteredOwner());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0080 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0080MarkupExtensionDoesNotHaveAttribute());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0015RegisteredOwnerTypeMustBeDependencyObjectBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0015RegisteredOwnerTypeMustBeDependencyObject());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083 = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0041SetMutableUsingSetCurrentValueBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0041SetMutableUsingSetCurrentValue());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0050XmlnsPrefixMustMatchXmlnsDefinitionBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0050XmlnsPrefixMustMatchXmlnsDefinition());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0080MarkupExtensionDoesNotHaveAttributeBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0080MarkupExtensionDoesNotHaveAttribute());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083UseConstructorArgumentAttributeBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void AttributeAnalyzer()
+        {
+            AttributeAnalyzerBenchmark.Run();
+        }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void CallbackAnalyzer()
         {
-            WPF0019.Run();
+            CallbackAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ClrMethodDeclarationAnalyzer()
         {
-            WPF0004.Run();
+            ClrMethodDeclarationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ClrPropertyDeclarationAnalyzer()
         {
-            WPF0003.Run();
+            ClrPropertyDeclarationAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void ComponentResourceKeyAnalyzer()
+        {
+            ComponentResourceKeyAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void DependencyPropertyBackingFieldOrPropertyAnalyzer()
         {
-            WPF0001.Run();
+            DependencyPropertyBackingFieldOrPropertyAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void GetTemplateChildAnalyzer()
+        {
+            GetTemplateChildAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void OverrideMetadataAnalyzer()
         {
-            WPF0017.Run();
+            OverrideMetadataAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void PropertyMetadataAnalyzer()
         {
-            WPF0005.Run();
+            PropertyMetadataAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RegistrationAnalyzer()
         {
-            WPF0007.Run();
+            RegistrationAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RoutedCommandCreationAnalyzer()
+        {
+            RoutedCommandCreationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RoutedEventBackingFieldOrPropertyAnalyzer()
         {
-            WPF0100.Run();
+            RoutedEventBackingFieldOrPropertyAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RoutedEventCallbackAnalyzer()
         {
-            WPF0090.Run();
+            RoutedEventCallbackAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RoutedEventEventDeclarationAnalyzer()
         {
-            WPF0102.Run();
+            RoutedEventEventDeclarationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void SetValueAnalyzer()
         {
-            WPF0014.Run();
+            SetValueAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ValueConverterAnalyzer()
         {
-            WPF0070.Run();
+            ValueConverterAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0011ContainingTypeShouldBeRegisteredOwner()
         {
-            WPF0011.Run();
+            WPF0011ContainingTypeShouldBeRegisteredOwnerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0015RegisteredOwnerTypeMustBeDependencyObject()
         {
-            WPF0015.Run();
+            WPF0015RegisteredOwnerTypeMustBeDependencyObjectBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0041SetMutableUsingSetCurrentValue()
         {
-            WPF0041.Run();
+            WPF0041SetMutableUsingSetCurrentValueBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0050XmlnsPrefixMustMatchXmlnsDefinition()
         {
-            WPF0050.Run();
+            WPF0050XmlnsPrefixMustMatchXmlnsDefinitionBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces()
         {
-            WPF0052.Run();
+            WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0080MarkupExtensionDoesNotHaveAttribute()
         {
-            WPF0080.Run();
+            WPF0080MarkupExtensionDoesNotHaveAttributeBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void WPF0083UseConstructorArgumentAttribute()
         {
-            WPF0083.Run();
+            WPF0083UseConstructorArgumentAttributeBenchmark.Run();
         }
     }
 }

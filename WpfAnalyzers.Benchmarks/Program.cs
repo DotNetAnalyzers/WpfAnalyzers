@@ -70,7 +70,7 @@ namespace WpfAnalyzers.Benchmarks
             {
                 var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath)
                                               .Single(x => x.EndsWith(summary.Title + "-report-github.md"));
-                var destinationFileName = Path.Combine(BenchmarksDirectory, summary.Title + ".md");
+                var destinationFileName = Path.Combine(BenchmarksDirectory, summary.Title.Split('.').Last() + ".md");
                 Console.WriteLine($"Copy: {sourceFileName} -> {destinationFileName}");
                 File.Copy(sourceFileName, destinationFileName, overwrite: true);
             }
