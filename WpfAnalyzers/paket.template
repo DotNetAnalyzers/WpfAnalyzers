@@ -2,7 +2,7 @@
 developmentDependency true
 
 releaseNotes
-  FEATURE: New analyzers WPF0107, WPF0120, WPF0121, WPF0122, WPF0123 
+  FEATURE: New analyzers WPF0130, WPF0131, WPF0132, WPF0140, WPF0141
 
 excludedgroups
   Main
