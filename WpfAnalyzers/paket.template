@@ -4,6 +4,9 @@ developmentDependency true
 releaseNotes
   FEATURE: New analyzers WPF0130, WPF0131, WPF0132, WPF0140, WPF0141
 
+projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
+licenseUrl http://opensource.org/licenses/MIT
+
 excludedgroups
   Main
   Analyzers
@@ -12,5 +15,3 @@ files
   bin/Release/Gu.Roslyn.AnalyzerExtensions.dll ==> analyzers/dotnet/cs
   bin/Release/Gu.Roslyn.CodeFixExtensions.dll ==> analyzers/dotnet/cs
   ../.paket/tools/*.ps1 ==> tools
-
-
