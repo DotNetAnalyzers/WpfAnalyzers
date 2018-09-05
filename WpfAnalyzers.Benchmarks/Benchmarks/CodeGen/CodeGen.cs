@@ -31,7 +31,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                                           .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
                                           .AppendLine()
                                           .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
-                                          .AppendLine("        public void RunOnWpfValidCodeProject()")
+                                          .AppendLine("        public void RunOnValidCodeProject()")
                                           .AppendLine("        {")
                                           .AppendLine("            Benchmark.Run();")
                                           .AppendLine("        }")
