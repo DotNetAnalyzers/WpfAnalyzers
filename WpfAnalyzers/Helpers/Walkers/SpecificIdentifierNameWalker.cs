@@ -1,6 +1,5 @@
 namespace WpfAnalyzers
 {
-    using System;
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -34,11 +33,6 @@ namespace WpfAnalyzers
             walker.name = name;
             walker.Visit(node);
             return walker;
-        }
-
-        internal void RemoveAll(Predicate<IdentifierNameSyntax> match)
-        {
-            this.identifierNames.RemoveAll(match);
         }
 
         protected override void Clear()

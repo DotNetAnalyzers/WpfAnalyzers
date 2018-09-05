@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                 if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName))
                 {
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
-                        Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var identifier, out var target))
+                        Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
                     {
                         if (!target.Name.IsParts("On", registeredName, "Changed") &&
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected) &&
@@ -46,9 +46,9 @@ namespace WpfAnalyzers
                             context.ReportDiagnostic(
                             Diagnostic.Create(
                                 WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
-                                identifier.GetLocation(),
+                                callbackIdentifier.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
-                                identifier,
+                                callbackIdentifier,
                                 $"On{registeredName}Changed"));
                         }
 
@@ -60,7 +60,7 @@ namespace WpfAnalyzers
                     }
 
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
-                        Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out identifier, out target))
+                        Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
                         if (!target.Name.IsParts("Coerce", registeredName) &&
                             target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
@@ -68,9 +68,9 @@ namespace WpfAnalyzers
                             context.ReportDiagnostic(
                             Diagnostic.Create(
                                 WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
-                                identifier.GetLocation(),
+                                callbackIdentifier.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
-                                identifier,
+                                callbackIdentifier,
                                 $"Coerce{registeredName}"));
                         }
 

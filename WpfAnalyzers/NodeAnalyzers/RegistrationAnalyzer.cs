@@ -40,10 +40,8 @@ namespace WpfAnalyzers
                     DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                     context.Node.TryFirstAncestor(out TypeDeclarationSyntax containingType))
                 {
-                    using (var walker = SpecificIdentifierNameWalker.Borrow(containingType, target.MetadataName))
+                    using (var walker = InvocationWalker.Borrow(containingType, target, context.SemanticModel, context.CancellationToken))
                     {
-                        walker.RemoveAll(x => context.SemanticModel.TryGetSymbol(x, context.CancellationToken, out ISymbol candidate) &&
-                                              !candidate.Equals(target));
                         if (walker.IdentifierNames.Count == 1)
                         {
                             context.ReportDiagnostic(
