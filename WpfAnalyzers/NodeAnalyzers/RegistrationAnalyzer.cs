@@ -31,36 +31,75 @@ namespace WpfAnalyzers
 
             if (context.Node is InvocationExpressionSyntax registerCall &&
                 context.ContainingSymbol.IsStatic &&
-                (DependencyProperty.TryGetRegisterCall(registerCall, context.SemanticModel, context.CancellationToken, out var method) ||
-                 DependencyProperty.TryGetRegisterReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
-                 DependencyProperty.TryGetRegisterAttachedCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
-                 DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method)))
+                TryGetAnyRegisterCall(registerCall, context, out var registerMethod) &&
+                registerMethod.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
+                registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
+                Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
             {
-                if (method.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
-                    registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
-                    Callback.TryGetTarget(validateValueCallback, KnownSymbol.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
+                if (!MatchesValidateValueCallbackName(validateValueCallback, target, context) &&
+                    DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    context.Node.TryFirstAncestor(out TypeDeclarationSyntax containingType))
                 {
-                    if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
-                        DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                        !target.Name.IsParts("Validate", registeredName) &&
-                        target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
+                    using (var walker = SpecificIdentifierNameWalker.Borrow(containingType, target.MetadataName))
                     {
-                        context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
-                            callBackIdentifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
-                            callBackIdentifier,
-                            $"Validate{registeredName}"));
-                    }
-
-                    if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
-                        Callback.IsSingleExpression(declaration))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, validateValueCallback.GetLocation()));
+                        walker.RemoveAll(x => context.SemanticModel.TryGetSymbol(x, context.CancellationToken, out ISymbol candidate) &&
+                                              !candidate.Equals(target));
+                        if (walker.IdentifierNames.Count == 1 ||
+                            walker.IdentifierNames.TrySingle(x => x.TryFirstAncestor(out ArgumentSyntax _), out _))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+                                    callBackIdentifier.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
+                                    callBackIdentifier,
+                                    $"Validate{registeredName}"));
+                        }
+                        else if (target.Name.StartsWith("Validate"))
+                        {
+                            foreach (var identifierName in walker.IdentifierNames)
+                            {
+                                if (identifierName.TryFirstAncestor(out ArgumentSyntax argument) &&
+                                    argument != validateValueCallback &&
+                                    MatchesValidateValueCallbackName(argument, target, context))
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+                                            callBackIdentifier.GetLocation(),
+                                            callBackIdentifier,
+                                            $"Validate{registeredName}"));
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
+
+                if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                    Callback.IsSingleExpression(declaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, validateValueCallback.GetLocation()));
+                }
             }
+        }
+
+        private static bool MatchesValidateValueCallbackName(ArgumentSyntax validateValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
+        {
+            return validateValueCallback.Parent is ArgumentListSyntax argumentList &&
+                   argumentList.Parent is InvocationExpressionSyntax invocation &&
+                   TryGetAnyRegisterCall(invocation, context, out _) &&
+                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   target.Name.IsParts("Validate", registeredName);
+        }
+
+        private static bool TryGetAnyRegisterCall(InvocationExpressionSyntax registerCall, SyntaxNodeAnalysisContext context, out IMethodSymbol method)
+        {
+            return DependencyProperty.TryGetRegisterCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
+                   DependencyProperty.TryGetRegisterReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
+                   DependencyProperty.TryGetRegisterAttachedCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
+                   DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method);
         }
     }
 }

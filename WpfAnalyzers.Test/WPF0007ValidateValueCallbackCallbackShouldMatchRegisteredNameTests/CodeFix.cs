@@ -372,8 +372,8 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'ValidateValue'"), testCode);
-            AnalyzerAssert.NoFix(Analyzer, Fix, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), testCode);
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
         }
     }
 }

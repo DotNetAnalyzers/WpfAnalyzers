@@ -36,7 +36,6 @@ namespace ValidCode
             new PropertyMetadata(default(int)),
             ValidateGreaterThanZero);
 
-
         public int Value1
         {
             get => (int)this.GetValue(Value1Property);
