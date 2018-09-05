@@ -65,7 +65,7 @@ namespace RoslynSandbox
 
     public static class ResourceKeys
     {
-        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(typeof(ResourceKeys), $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(typeof(ResourceKeys), nameof(FooKey));
     }
 }";
             AnalyzerAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, testCode);

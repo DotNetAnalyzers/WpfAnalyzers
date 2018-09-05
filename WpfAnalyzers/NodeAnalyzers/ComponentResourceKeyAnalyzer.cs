@@ -35,7 +35,7 @@ namespace WpfAnalyzers
                 if (constructor.Parameters.Length == 0)
                 {
                     var containingTypeString = context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart);
-                    var argumentListText = $"typeof({containingTypeString}), $\"{{typeof({containingTypeString}).FullName}}.{{nameof({fieldOrProperty.Name})}}\"";
+                    var argumentListText = $"typeof({containingTypeString}), nameof({fieldOrProperty.Name})";
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             WPF0140UseContainingTypeComponentResourceKey.Descriptor,
@@ -59,9 +59,10 @@ namespace WpfAnalyzers
 
                     if (constructor.TryFindParameter("resourceId", out parameter) &&
                         objectCreation.TryFindArgument(parameter, out arg) &&
-                        !IsMatchingKey(arg, fieldOrProperty))
+                        context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string name) &&
+                        name != fieldOrProperty.Name)
                     {
-                        var keyText = $"$\"{{typeof({context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)}).FullName}}.{{nameof({fieldOrProperty.Name})}}\"";
+                        var keyText = $"nameof({fieldOrProperty.Name})";
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 WPF0141UseContainingMemberComponentResourceKey.Descriptor,
@@ -71,31 +72,6 @@ namespace WpfAnalyzers
                     }
                 }
             }
-        }
-
-        private static bool IsMatchingKey(ArgumentSyntax argument, FieldOrProperty fieldOrProperty)
-        {
-            return argument.Expression is InterpolatedStringExpressionSyntax interpolatedString &&
-                   interpolatedString.Contents.Count == 3 &&
-                   interpolatedString.Contents.TryElementAt(0, out var content) &&
-                   content is InterpolationSyntax typeInterpolation &&
-                   typeInterpolation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   memberAccess.Name.Identifier.ValueText == "FullName" &&
-                   memberAccess.Expression is TypeOfExpressionSyntax typeOf &&
-                   typeOf.Type is IdentifierNameSyntax typeIdentifierName &&
-                   typeIdentifierName.Identifier.ValueText == fieldOrProperty.ContainingType.Name &&
-                   interpolatedString.Contents.TryElementAt(1, out content) &&
-                   content is InterpolatedStringTextSyntax interpolatedStringText &&
-                   interpolatedStringText.TextToken.ValueText == "." &&
-                   interpolatedString.Contents.TryElementAt(2, out content) &&
-                   content is InterpolationSyntax memberInterpolation &&
-                   memberInterpolation.Expression is InvocationExpressionSyntax invocation &&
-                   invocation.TryGetMethodName(out var targetName) &&
-                   targetName == "nameof" &&
-                   invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                   argumentList.Arguments.TrySingle(out var nameofArg) &&
-                   nameofArg.Expression is IdentifierNameSyntax nameofIdentifier &&
-                   nameofIdentifier.Identifier.ValueText == fieldOrProperty.Name;
         }
     }
 }

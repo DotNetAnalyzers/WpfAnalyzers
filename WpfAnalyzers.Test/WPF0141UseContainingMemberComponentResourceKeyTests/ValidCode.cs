@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
 
         [Test]
-        public void WhenExpectedArguments()
+        public void WhenExpectedLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -20,7 +20,25 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(ResourceKeys),
-            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+            ""FooKey"");
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void WhenExpectedNameof()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public static class ResourceKeys
+    {
+        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
+            typeof(ResourceKeys),
+            nameof(FooKey));
     }
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);

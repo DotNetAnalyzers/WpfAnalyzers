@@ -23,14 +23,14 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(string),
-            ↓$""{typeof(ResourceKeys).Name}.{nameof(FooKey)}"");
+            nameof(ResourceKeys));
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: $\"{typeof(ResourceKeys).FullName}.{nameof(FooKey)}\"."), testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)."), testCode);
         }
 
         [Test]
-        public void WhenNotUsingFullName()
+        public void WhenNotUsingNameofContainingMember()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(ResourceKeys),
-            ↓$""{typeof(ResourceKeys).Name}.{nameof(FooKey)}"");
+            ↓nameof(ResourceKeys));
     }
 }";
 
@@ -54,14 +54,14 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(ResourceKeys),
-            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+            nameof(FooKey));
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
-        public void WhenNotUsingContainingType()
+        public void WhenUsingWrongStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(ResourceKeys),
-            ↓$""{typeof(string).FullName}.{nameof(FooKey)}"");
+            ↓""WrongName"");
     }
 }";
 
@@ -85,38 +85,7 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(ResourceKeys),
-            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
-    }
-}";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenNotUsingContainingMember()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class ResourceKeys
-    {
-        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
-            typeof(ResourceKeys),
-            ↓$""{typeof(ResourceKeys).FullName}.{nameof(ResourceKeys)}"");
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-
-    public static class ResourceKeys
-    {
-        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
-            typeof(ResourceKeys),
-            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+            nameof(FooKey));
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
