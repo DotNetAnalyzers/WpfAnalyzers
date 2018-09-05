@@ -275,6 +275,14 @@ Roslyn analyzers for WPF.
     <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md">WPF0132</a></td>
     <td>Use PART prefix.</td>
   </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md">WPF0140</a></td>
+    <td>Use containing type when creating a ComponentResourceKey.</td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md">WPF0141</a></td>
+    <td>Use containing member as key when creating a ComponentResourceKey.</td>
+  </tr>
 <table>
 <!-- end generated table -->
 
