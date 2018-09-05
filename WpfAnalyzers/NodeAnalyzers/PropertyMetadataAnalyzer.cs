@@ -40,16 +40,40 @@ namespace WpfAnalyzers
                     {
                         if (!target.Name.IsParts("On", registeredName, "Changed") &&
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected) &&
-                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
-                            target.IsInvokedOnce(classDeclaration, context.SemanticModel, context.CancellationToken))
+                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax containingType))
                         {
-                            context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
-                                callbackIdentifier.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
-                                callbackIdentifier,
-                                $"On{registeredName}Changed"));
+                            using (var walker = InvocationWalker.Borrow(containingType, target, context.SemanticModel, context.CancellationToken))
+                            {
+                                if (walker.IdentifierNames.Count == 1)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                            callbackIdentifier.GetLocation(),
+                                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                            callbackIdentifier,
+                                            $"On{registeredName}Changed"));
+                                }
+                                else if (target.Name.StartsWith("On") &&
+                                         target.Name.EndsWith("Changed"))
+                                {
+                                    foreach (var identifierName in walker.IdentifierNames)
+                                    {
+                                        if (identifierName.TryFirstAncestor(out ArgumentSyntax argument) &&
+                                            argument != propertyChangedCallback &&
+                                            MatchesPropertyChangedCallbackName(argument, target, context))
+                                        {
+                                            context.ReportDiagnostic(
+                                                Diagnostic.Create(
+                                                    WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                                    callbackIdentifier.GetLocation(),
+                                                    callbackIdentifier,
+                                                    $"On{registeredName}Changed"));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
@@ -112,6 +136,15 @@ namespace WpfAnalyzers
                     }
                 }
             }
+        }
+
+        private static bool MatchesPropertyChangedCallbackName(ArgumentSyntax propertyChangedCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
+        {
+            return propertyChangedCallback.Parent is ArgumentListSyntax argumentList &&
+                   argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
+                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   target.Name.IsParts("On", registeredName, "Changed");
         }
 
         private static bool IsDefaultValueOfRegisteredType(ExpressionSyntax defaultValue, ITypeSymbol registeredType, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
