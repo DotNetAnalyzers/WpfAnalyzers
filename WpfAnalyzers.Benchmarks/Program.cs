@@ -24,7 +24,7 @@ namespace WpfAnalyzers.Benchmarks
         {
             if (false)
             {
-                var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
+                var benchmark = Benchmark.Create(
                     Code.AnalyzersProject,
                     new SetValueAnalyzer());
 

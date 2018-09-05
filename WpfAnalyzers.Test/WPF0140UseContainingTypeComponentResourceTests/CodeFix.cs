@@ -8,7 +8,8 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseContainingTypeCodeFixProvider();
+        private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeCodeFixProvider();
+        private static readonly CodeFixProvider ComponentResourceKeyFix = new ComponentResourceKeyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0140");
 
         [Test]
@@ -39,7 +40,8 @@ namespace RoslynSandbox
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), testCode, fixedCode);
+            AnalyzerAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), testCode, fixedCode);
         }
 
         [Test]
@@ -66,7 +68,8 @@ namespace RoslynSandbox
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(typeof(ResourceKeys), $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
