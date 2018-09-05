@@ -44,8 +44,7 @@ namespace WpfAnalyzers
                     {
                         walker.RemoveAll(x => context.SemanticModel.TryGetSymbol(x, context.CancellationToken, out ISymbol candidate) &&
                                               !candidate.Equals(target));
-                        if (walker.IdentifierNames.Count == 1 ||
-                            walker.IdentifierNames.TrySingle(x => x.TryFirstAncestor(out ArgumentSyntax _), out _))
+                        if (walker.IdentifierNames.Count == 1)
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
