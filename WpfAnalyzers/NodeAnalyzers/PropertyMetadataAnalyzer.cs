@@ -42,7 +42,7 @@ namespace WpfAnalyzers
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected) &&
                             context.Node.TryFirstAncestor(out ClassDeclarationSyntax containingType))
                         {
-                            using (var walker = InvocationWalker.Borrow(containingType, target, context.SemanticModel, context.CancellationToken))
+                            using (var walker = InvocationWalker.Borrow(target, containingType, context.SemanticModel, context.CancellationToken))
                             {
                                 if (walker.IdentifierNames.Count == 1)
                                 {
@@ -87,15 +87,39 @@ namespace WpfAnalyzers
                         Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
                         if (!target.Name.IsParts("Coerce", registeredName) &&
-                            target.IsInvokedOnce(context.SemanticModel, context.CancellationToken))
+                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax containingType))
                         {
-                            context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
-                                callbackIdentifier.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
-                                callbackIdentifier,
-                                $"Coerce{registeredName}"));
+                            using (var walker = InvocationWalker.Borrow(target, containingType, context.SemanticModel, context.CancellationToken))
+                            {
+                                if (walker.IdentifierNames.Count == 1)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
+                                            callbackIdentifier.GetLocation(),
+                                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
+                                            callbackIdentifier,
+                                            $"Coerce{registeredName}"));
+                                }
+                                else if (target.Name.StartsWith("Coerce"))
+                                {
+                                    foreach (var identifierName in walker.IdentifierNames)
+                                    {
+                                        if (identifierName.TryFirstAncestor(out ArgumentSyntax argument) &&
+                                            argument != propertyChangedCallback &&
+                                            MatchesCoerceValueCallbackName(argument, target, context))
+                                        {
+                                            context.ReportDiagnostic(
+                                                Diagnostic.Create(
+                                                    WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
+                                                    callbackIdentifier.GetLocation(),
+                                                    callbackIdentifier,
+                                                    $"Coerce{registeredName}"));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
@@ -145,6 +169,15 @@ namespace WpfAnalyzers
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
+        }
+
+        private static bool MatchesCoerceValueCallbackName(ArgumentSyntax coerceValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
+        {
+            return coerceValueCallback.Parent is ArgumentListSyntax argumentList &&
+                   argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
+                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   target.Name.IsParts("Coerce", registeredName);
         }
 
         private static bool IsDefaultValueOfRegisteredType(ExpressionSyntax defaultValue, ITypeSymbol registeredType, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)

@@ -69,16 +69,9 @@ namespace WpfAnalyzers
                     statement is ReturnStatementSyntax);
         }
 
-        internal static bool IsInvokedOnce(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            return method.DeclaredAccessibility == Accessibility.Private &&
-                   method.ContainingType.TrySingleDeclaration(cancellationToken, out TypeDeclarationSyntax typeDeclaration) &&
-                   IsInvokedOnce(method, typeDeclaration, semanticModel, cancellationToken);
-        }
-
         internal static bool IsInvokedOnce(this IMethodSymbol method, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var walker = SpecificIdentifierNameWalker.Borrow(scope, method.MetadataName))
+            using (var walker = InvocationWalker.Borrow(method, scope, semanticModel, cancellationToken))
             {
                 return walker.IdentifierNames.TrySingle(
                     x => semanticModel.TryGetSymbol(x, cancellationToken, out IMethodSymbol candidate) &&

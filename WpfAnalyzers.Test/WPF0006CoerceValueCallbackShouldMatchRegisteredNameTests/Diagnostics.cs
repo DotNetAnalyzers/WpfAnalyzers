@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
+namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0005");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0006");
 
         [Test]
         public void UsedByMoreThanOnePropertyMatchingNeither()
@@ -27,14 +27,14 @@ namespace RoslynSandbox
             nameof(Bar),
             typeof(int),
             typeof(FooControl),
-            new PropertyMetadata(default(int), OnBarChanged));
+            new PropertyMetadata(default(int), Meh, CoerceBar));
 
         /// <summary>Identifies the <see cref=""Baz""/> dependency property.</summary>
         public static readonly DependencyProperty BazProperty = DependencyProperty.Register(
             nameof(Baz),
             typeof(int),
             typeof(FooControl),
-            new PropertyMetadata(default(int), ↓OnBarChanged));
+            new PropertyMetadata(default(int), Meh, ↓CoerceBar));
 
         public int Bar
         {
@@ -48,12 +48,23 @@ namespace RoslynSandbox
             set => this.SetValue(BazProperty, value);
         }
 
-        private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Meh(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if ((int)e.NewValue > 0)
             {
                 d.ClearValue(BackgroundProperty);
             }
+        }
+
+        private static object CoerceBar(DependencyObject d, object baseValue)
+        {
+            if (baseValue is int i &&
+                i < 0)
+            {
+                return 0;
+            }
+
+            return baseValue;
         }
     }
 }";
