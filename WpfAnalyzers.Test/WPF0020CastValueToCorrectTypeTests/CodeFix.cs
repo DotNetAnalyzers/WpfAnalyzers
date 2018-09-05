@@ -41,10 +41,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0020",
-                "Value is of type int.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type int."), testCode);
         }
 
         [TestCase("OnValueChanged")]

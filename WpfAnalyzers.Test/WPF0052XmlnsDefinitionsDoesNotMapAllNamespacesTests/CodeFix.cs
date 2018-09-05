@@ -87,10 +87,7 @@ namespace Gu.Wpf.Geometry
             var message = "XmlnsDefinitions does not map all namespaces with public types.\r\n" +
                           "The following namespaces are not mapped:\r\n" +
                           "Gu.Wpf.Geometry.Meh";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0052",
-                message);
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+              AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), testCode);
         }
 
         [Test]

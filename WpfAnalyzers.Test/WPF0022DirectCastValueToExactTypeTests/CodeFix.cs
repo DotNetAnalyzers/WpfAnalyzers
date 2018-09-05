@@ -41,10 +41,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0022",
-                "Value is of type string.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type string."), testCode);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]

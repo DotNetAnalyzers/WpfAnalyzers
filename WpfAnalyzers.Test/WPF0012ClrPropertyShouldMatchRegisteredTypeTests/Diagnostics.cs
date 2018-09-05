@@ -33,10 +33,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0012",
-                "Property 'RoslynSandbox.FooControl.Bar' must be of type int");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'RoslynSandbox.FooControl.Bar' must be of type int"), testCode);
         }
 
         [TestCase("double")]

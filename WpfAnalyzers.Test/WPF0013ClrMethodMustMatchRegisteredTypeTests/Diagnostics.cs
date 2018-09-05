@@ -32,10 +32,8 @@ namespace RoslynSandbox
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0013",
-                "Value type must match registered type int");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type int"), testCode);
         }
 
         [TestCase("double")]

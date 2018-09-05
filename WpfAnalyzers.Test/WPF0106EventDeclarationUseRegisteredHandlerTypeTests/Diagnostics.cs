@@ -36,10 +36,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0106",
-                "Use the registered handler type RoutedEventHandler.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use the registered handler type RoutedEventHandler."), testCode);
         }
 
         [Test]

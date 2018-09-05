@@ -33,10 +33,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0010",
-                "Default value for 'RoslynSandbox.FooControl<T>.BarProperty' must be of type T");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Default value for 'RoslynSandbox.FooControl<T>.BarProperty' must be of type T"), testCode);
         }
 
         [TestCase("int", "new PropertyMetadata(↓default(double))")]

@@ -39,10 +39,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0032",
-                "Property 'Bar' must access same dependency property in getter and setter");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), testCode);
         }
 
         [Test]
@@ -110,10 +108,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0032",
-                "Property 'Bar' must access same dependency property in getter and setter");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), testCode);
         }
     }
 }

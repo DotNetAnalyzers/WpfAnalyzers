@@ -57,10 +57,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0035",
-                "Use SetValue in setter.");
-            AnalyzerAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, testCode, fixedCode);
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use SetValue in setter."), testCode, fixedCode);
         }
 
         [Test]

@@ -40,10 +40,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0034",
-                "Use [AttachedPropertyBrowsableForType(typeof(UIElement)]");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use [AttachedPropertyBrowsableForType(typeof(UIElement)]"), testCode);
         }
 
         [Test]

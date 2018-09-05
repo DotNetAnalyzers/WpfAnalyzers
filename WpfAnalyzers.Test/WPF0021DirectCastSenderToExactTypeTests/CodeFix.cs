@@ -41,10 +41,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0021",
-                "Sender is of type FooControl.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), testCode);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]

@@ -42,10 +42,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0103",
-                "Add uses: 'ValueChangedEvent', remove uses: 'Value2ChangedEvent'.");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add uses: 'ValueChangedEvent', remove uses: 'Value2ChangedEvent'."), testCode);
         }
 
         [Test]

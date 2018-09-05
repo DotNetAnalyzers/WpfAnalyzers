@@ -38,10 +38,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.Create(
-                "WPF0004",
-                "Method 'GetError' must be named 'GetBar'");
-            AnalyzerAssert.Diagnostics(Analyzer, expectedDiagnostic, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'GetError' must be named 'GetBar'"), testCode);
         }
 
         [Test]
