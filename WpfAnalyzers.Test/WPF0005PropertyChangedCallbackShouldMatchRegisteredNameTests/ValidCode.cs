@@ -47,6 +47,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
+        [TestCase("new FrameworkPropertyMetadata(coerceValueCallback: CoerceBar, propertyChangedCallback: OnBarChanged)")]
         public void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
@@ -280,6 +281,55 @@ namespace RoslynSandbox
 
         private static void Meh(DependencyObject o)
         {
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void UsedByMoreThanOnePropertyMatchingNeither()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int), Meh));
+
+        /// <summary>Identifies the <see cref=""Baz""/> dependency property.</summary>
+        public static readonly DependencyProperty BazProperty = DependencyProperty.Register(
+            nameof(Baz),
+            typeof(int),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1, propertyChangedCallback: Meh));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        public int Baz
+        {
+            get => (int)this.GetValue(BazProperty);
+            set => this.SetValue(BazProperty, value);
+        }
+
+        private static void Meh(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if ((int)e.NewValue > 0)
+            {
+                d.ClearValue(BackgroundProperty);
+            }
         }
     }
 }";
