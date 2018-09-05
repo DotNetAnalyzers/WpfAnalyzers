@@ -49,8 +49,7 @@ namespace WpfAnalyzers
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         WPF0001BackingFieldShouldMatchRegisteredName.Descriptor,
-                                        BackingFieldOrProperty.FindIdentifier(memberDeclaration)
-                                                              .GetLocation(),
+                                        BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Property"),
                                         backingMember.Name,
                                         registeredName));
@@ -62,8 +61,7 @@ namespace WpfAnalyzers
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         WPF0002BackingFieldShouldMatchRegisteredName.Descriptor,
-                                        BackingFieldOrProperty.FindIdentifier(memberDeclaration)
-                                                              .GetLocation(),
+                                        BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "PropertyKey"),
                                         backingMember.Name,
                                         registeredName));
@@ -78,8 +76,7 @@ namespace WpfAnalyzers
                                     Diagnostic.Create(
                                         WPF0060DocumentDependencyPropertyBackingMember.Descriptor,
                                         comment == null
-                                            ? BackingFieldOrProperty.FindIdentifier(memberDeclaration)
-                                                                    .GetLocation()
+                                            ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
                                             : comment.GetLocation()));
                             }
                         }

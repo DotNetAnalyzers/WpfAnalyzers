@@ -7,7 +7,7 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.CSharp;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMemberCodeFixProvider))]
     [Shared]
@@ -37,21 +37,9 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                  .FirstAncestorOrSelf<MemberDeclarationSyntax>();
-                if (memberDeclaration == null ||
-                    memberDeclaration.IsMissing)
-                {
-                    continue;
-                }
-
-                if (diagnostic.Properties.TryGetValue("ExpectedName", out var registeredName))
+                if (syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is var token &&
+                    token.IsKind(SyntaxKind.IdentifierToken) &&
+                    diagnostic.Properties.TryGetValue("ExpectedName", out var registeredName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
