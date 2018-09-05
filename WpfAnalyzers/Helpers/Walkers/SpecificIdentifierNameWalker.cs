@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -16,6 +17,7 @@ namespace WpfAnalyzers
 
         internal IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
+        /// <inheritdoc />
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             if (node.Identifier.ValueText == this.name)
@@ -32,6 +34,11 @@ namespace WpfAnalyzers
             walker.name = name;
             walker.Visit(node);
             return walker;
+        }
+
+        internal void RemoveAll(Predicate<IdentifierNameSyntax> match)
+        {
+            this.identifierNames.RemoveAll(match);
         }
 
         protected override void Clear()
