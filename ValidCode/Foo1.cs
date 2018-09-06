@@ -25,7 +25,7 @@ namespace ValidCode
         private static readonly DependencyPropertyKey ReadOnlyPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "ReadOnly",
             typeof(bool),
-            typeof(Foo),
+            typeof(Foo1),
             new PropertyMetadata(default(bool)));
 
         /// <summary>Identifies the <see cref="ReadOnlyProperty"/> dependency property.</summary>

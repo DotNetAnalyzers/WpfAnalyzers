@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanBoxes.cs" />
+    <Compile Include="CommonValidation.cs" />
     <Compile Include="Foo1.cs" />
     <Compile Include="FooControl.cs" />
     <Compile Include="TemplateParts\FooControl.cs" />

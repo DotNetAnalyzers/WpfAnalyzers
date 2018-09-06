@@ -11,7 +11,7 @@ namespace ValidCode
         public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(
             nameof(DoubleValue),
             typeof(double),
-            typeof(TemplateParts.FooControl));
+            typeof(FooControl1));
 
         /// <summary>Identifies the <see cref="IntValue"/> dependency property.</summary>
         public static readonly DependencyProperty IntValueProperty = DependencyProperty.Register(
@@ -26,7 +26,7 @@ namespace ValidCode
             ValidateIntValue);
 
         /// <summary>Identifies the <see cref="Bar"/> dependency property.</summary>
-        public static readonly DependencyProperty BarProperty = Foo1.BarProperty.AddOwner(typeof(TemplateParts.FooControl));
+        public static readonly DependencyProperty BarProperty = Foo1.BarProperty.AddOwner(typeof(FooControl1));
 
         private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
             "ReadOnlyValue",
@@ -41,7 +41,7 @@ namespace ValidCode
         public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
             nameof(Brush),
             typeof(Brush),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl1),
             new PropertyMetadata(default(Brush)));
 
         public double DoubleValue

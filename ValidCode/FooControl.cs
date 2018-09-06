@@ -9,20 +9,20 @@ namespace ValidCode
         public static readonly DependencyProperty Bar1Property = DependencyProperty.Register(
             nameof(Bar1),
             typeof(int),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         /// <summary>Identifies the <see cref="Bar2"/> dependency property.</summary>
         public static DependencyProperty Bar2Property { get; } = DependencyProperty.Register(
             "Bar2",
             typeof(int),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         private static readonly DependencyPropertyKey Bar3PropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Bar3),
             typeof(int),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         /// <summary>Identifies the <see cref="Bar3"/> dependency property.</summary>
@@ -31,20 +31,20 @@ namespace ValidCode
         public static readonly DependencyProperty Bar4Property = DependencyProperty.RegisterAttached(
             "Bar4",
             typeof(int),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         private static readonly DependencyPropertyKey Bar5PropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "Bar5",
             typeof(int),
-            typeof(TemplateParts.FooControl),
+            typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         public static readonly DependencyProperty Bar5Property = Bar5PropertyKey.DependencyProperty;
 
         static FooControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TemplateParts.FooControl), new FrameworkPropertyMetadata(typeof(TemplateParts.FooControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(FooControl), new FrameworkPropertyMetadata(typeof(FooControl)));
         }
 
         public int Bar1
