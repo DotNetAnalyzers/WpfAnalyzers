@@ -28,14 +28,9 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is INamedTypeSymbol type &&
-                (type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation) ||
-                 type.IsAssignableTo(KnownSymbol.IMultiValueConverter, context.Compilation)) &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is INamedTypeSymbol type &&
+                type.IsAssignableToEither(KnownSymbol.IValueConverter, KnownSymbol.IMultiValueConverter, context.Compilation) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
                 type.DeclaredAccessibility != Accessibility.Private &&
