@@ -48,6 +48,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooleanBoxes.cs" />
+    <Compile Include="Foo1.cs" />
+    <Compile Include="FooControl.cs" />
     <Compile Include="TemplateParts\FooControl.cs" />
     <Compile Include="WithSetMarkupExtensionAttribute.cs" />
     <Compile Include="WithValidateValueCallback.cs" />
@@ -58,7 +61,7 @@
     </Page>
     <Compile Include="Commands.cs" />
     <Compile Include="Foo.cs" />
-    <Compile Include="FooControl.cs">
+    <Compile Include="FooControl1.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
