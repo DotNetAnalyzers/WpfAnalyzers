@@ -21,11 +21,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.1.7.0</Version>
+    <Version>2.1.7.1</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>FEATURE: New analyzers WPF0130, WPF0131, WPF0132, WPF0140, WPF0141</PackageReleaseNotes>
+    <PackageReleaseNotes>BUGFIX: WPF0007 when using callback in helper class.</PackageReleaseNotes>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
