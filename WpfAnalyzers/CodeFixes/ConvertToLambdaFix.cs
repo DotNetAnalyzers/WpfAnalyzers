@@ -132,7 +132,7 @@ namespace WpfAnalyzers
         private static void RemoveMethod(DocumentEditor editor, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             if (method.DeclaredAccessibility == Accessibility.Private &&
-                method.IsInvokedOnce(declaration.Parent, editor.SemanticModel, cancellationToken))
+                method.IsInvokedOnce(editor.SemanticModel, cancellationToken))
             {
                 editor.RemoveNode(declaration);
             }

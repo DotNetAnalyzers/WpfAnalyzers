@@ -32,13 +32,17 @@ namespace WpfAnalyzers
             base.VisitIdentifierName(node);
         }
 
-        internal static InvocationWalker Borrow(IMethodSymbol method, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static InvocationWalker InContainingClass(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var walker = Borrow(() => new InvocationWalker());
             walker.method = method;
             walker.semanticModel = semanticModel;
             walker.cancellationToken = cancellationToken;
-            walker.Visit(node);
+            foreach (var reference in method.ContainingType.DeclaringSyntaxReferences)
+            {
+                walker.Visit(reference.GetSyntax(cancellationToken));
+            }
+
             return walker;
         }
 

@@ -39,10 +39,9 @@ namespace WpfAnalyzers
                         Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
                     {
                         if (!target.Name.IsParts("On", registeredName, "Changed") &&
-                            target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected) &&
-                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax containingType))
+                            target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
                         {
-                            using (var walker = InvocationWalker.Borrow(target, containingType, context.SemanticModel, context.CancellationToken))
+                            using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
                             {
                                 if (walker.IdentifierNames.Count == 1)
                                 {
@@ -86,10 +85,9 @@ namespace WpfAnalyzers
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
                         Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
-                        if (!target.Name.IsParts("Coerce", registeredName) &&
-                            context.Node.TryFirstAncestor(out ClassDeclarationSyntax containingType))
+                        if (!target.Name.IsParts("Coerce", registeredName))
                         {
-                            using (var walker = InvocationWalker.Borrow(target, containingType, context.SemanticModel, context.CancellationToken))
+                            using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
                             {
                                 if (walker.IdentifierNames.Count == 1)
                                 {

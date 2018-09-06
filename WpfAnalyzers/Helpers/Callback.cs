@@ -69,13 +69,11 @@ namespace WpfAnalyzers
                     statement is ReturnStatementSyntax);
         }
 
-        internal static bool IsInvokedOnce(this IMethodSymbol method, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsInvokedOnce(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var walker = InvocationWalker.Borrow(method, scope, semanticModel, cancellationToken))
+            using (var walker = InvocationWalker.InContainingClass(method, semanticModel, cancellationToken))
             {
-                return walker.IdentifierNames.TrySingle(
-                    x => semanticModel.TryGetSymbol(x, cancellationToken, out IMethodSymbol candidate) &&
-                         Equals(candidate, method), out _);
+                return walker.IdentifierNames.Count == 1;
             }
         }
     }

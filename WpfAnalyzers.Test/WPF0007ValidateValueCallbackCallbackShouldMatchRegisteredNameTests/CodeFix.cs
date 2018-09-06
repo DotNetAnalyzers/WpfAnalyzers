@@ -375,5 +375,68 @@ namespace RoslynSandbox
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), testCode);
             AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
         }
+
+        [Test]
+        public void WhenCallbackMatchesOtherPropertyParts()
+        {
+            var part1 = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(double),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1d),
+            ValidateBar);
+
+        public double Bar
+        {
+            get => (double)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+
+        private static bool ValidateBar(object value)
+        {
+            if (value is double d)
+            {
+                return d > 0;
+            }
+
+            return false;
+        }
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+
+    public partial class FooControl
+    {
+        /// <summary>Identifies the <see cref=""Baz""/> dependency property.</summary>
+        public static readonly DependencyProperty BazProperty = DependencyProperty.Register(
+            nameof(Baz),
+            typeof(double),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1d),
+            ↓ValidateBar);
+
+        public double Baz
+        {
+            get => (double)this.GetValue(BazProperty);
+            set => this.SetValue(BazProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), part1, testCode);
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, part1, testCode);
+        }
     }
 }
