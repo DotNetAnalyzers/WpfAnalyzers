@@ -327,5 +327,51 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenUsingMethodInOtherClass()
+        {
+            var commonValidation = @"
+namespace RoslynSandbox
+{
+    internal static class CommonValidation
+    {
+        public static bool ValidateDoubleIsGreaterThanZero(object value)
+        {
+            if (value is double d)
+            {
+                return d > 0;
+            }
+
+            return false;
+        }
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(double),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(1d),
+            CommonValidation.ValidateDoubleIsGreaterThanZero);
+
+        public double Bar
+        {
+            get => (double)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, commonValidation, testCode);
+        }
     }
 }

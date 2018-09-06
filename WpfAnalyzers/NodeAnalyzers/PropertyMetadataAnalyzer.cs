@@ -38,7 +38,8 @@ namespace WpfAnalyzers
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
                         Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
                     {
-                        if (!target.Name.IsParts("On", registeredName, "Changed") &&
+                        if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                            !target.Name.IsParts("On", registeredName, "Changed") &&
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
                         {
                             using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
@@ -85,7 +86,8 @@ namespace WpfAnalyzers
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
                         Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
-                        if (!target.Name.IsParts("Coerce", registeredName))
+                        if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                            !target.Name.IsParts("Coerce", registeredName))
                         {
                             using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
                             {
