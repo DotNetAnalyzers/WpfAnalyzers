@@ -4,7 +4,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>WpfAnalyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
