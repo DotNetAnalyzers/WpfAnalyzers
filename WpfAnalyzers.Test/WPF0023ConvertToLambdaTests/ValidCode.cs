@@ -78,8 +78,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
@@ -120,8 +120,8 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
 
         private static object CoerceValue(DependencyObject d, object basevalue)

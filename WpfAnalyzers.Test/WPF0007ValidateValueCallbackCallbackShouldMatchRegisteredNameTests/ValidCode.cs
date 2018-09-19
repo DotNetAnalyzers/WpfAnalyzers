@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
 
         [TestCase("CommonValidation.ValidateDoubleIsGreaterThanZero")]
         [TestCase("o => CommonValidation.ValidateDoubleIsGreaterThanZero(o)")]
-        [TestCase("new ValidateValueCallback(CommonValidation.ValidateDoubleIsGreaterThanZero))")]
+        [TestCase("new ValidateValueCallback(CommonValidation.ValidateDoubleIsGreaterThanZero)")]
         [TestCase("new ValidateValueCallback(o => CommonValidation.ValidateDoubleIsGreaterThanZero(o))")]
         public void WhenValidationMethodInHelperClass(string callback)
         {

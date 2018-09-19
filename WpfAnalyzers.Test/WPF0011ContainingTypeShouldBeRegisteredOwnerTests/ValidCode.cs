@@ -237,6 +237,9 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
+    using System.Windows;
+    using System.Windows.Controls;
+
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));

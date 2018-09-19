@@ -44,9 +44,8 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [TestCase("public")]
-        [TestCase("private")]
-        public void DependencyPropertyRegisterAttachedExtensionMethods(string accessModifier)
+        [Test]
+        public void DependencyPropertyRegisterAttachedExtensionMethods()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +78,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("    public", $"    {accessModifier}");
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
