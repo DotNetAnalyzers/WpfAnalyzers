@@ -124,16 +124,16 @@ namespace RoslynSandbox
             var newValue = (int)e.NewValue;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             var control = (FooControl)d;
-            var value = (int)basevalue;
+            var value = (int)baseValue;
             return value;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            var notNull = ((int)basevalue) != null;
+            var notNull = ((int)baseValue) != null;
             return notNull;
         }
     }

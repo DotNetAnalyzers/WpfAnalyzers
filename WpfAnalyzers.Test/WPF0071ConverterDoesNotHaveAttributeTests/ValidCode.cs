@@ -69,7 +69,7 @@ namespace RoslynSandbox
     using System.Globalization;
 
     [System.Windows.Data.ValueConversion(typeof(IEnumerable), typeof(int))]
-    public sealed class CountConverter : IValueConverter
+    public sealed class CountConverter : System.Windows.Data.IValueConverter
     {
         public static readonly CountConverter Default = new CountConverter();
 
@@ -99,7 +99,7 @@ namespace RoslynSandbox
             return -1;
         }
 
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        object System.Windows.Data.IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

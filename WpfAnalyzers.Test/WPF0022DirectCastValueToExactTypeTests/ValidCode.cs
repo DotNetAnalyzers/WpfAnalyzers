@@ -66,8 +66,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
@@ -110,18 +110,18 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (string)d.OldValue;
-            var newValue = (string)d.NewValue;
+            var oldValue = (string)e.OldValue;
+            var newValue = (string)e.NewValue;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (string)basevalue;
+            return (string)baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return ((string)basevalue) != null;
+            return ((string)baseValue) != null;
         }
     }
 }";
@@ -163,18 +163,18 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as FooControl;
-            var oldValue = d.OldValue as string;
-            var newValue = d.NewValue as string;
+            var oldValue = e.OldValue as string;
+            var newValue = e.NewValue as string;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return basevalue as string;
+            return baseValue as string;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return (basevalue as string) != null;
+            return (baseValue as string) != null;
         }
     }
 }";
@@ -185,7 +185,7 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("bool", "bool?")]
+        [TestCase("object", "bool")]
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
@@ -225,23 +225,23 @@ namespace RoslynSandbox
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             if (d is FooControl control)
             {
-                if (basevalue is string text)
+                if (baseValue is string text)
                 {
                 }
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            if (basevalue is string text)
+            if (baseValue is string text)
             {
-                return !string.IsNullOrWhiteSpace(text);
+                return !object.Equals(text, null);
             }
 
             return false;
@@ -256,7 +256,7 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("bool", "bool?")]
+        [TestCase("object", "bool")]
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
@@ -306,13 +306,13 @@ namespace RoslynSandbox
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             switch (d)
             {
                 case FooControl control:
                 {
-                    switch (basevalue)
+                    switch (baseValue)
                     {
                         case string oldText:
                             break;
@@ -321,15 +321,15 @@ namespace RoslynSandbox
                     break;
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            switch (basevalue)
+            switch (baseValue)
             {
                 case string text:
-                    return !string.IsNullOrWhiteSpace(text);
+                    return !object.Equals(text, null);
                 default:
                     return false;
             }
@@ -369,8 +369,8 @@ namespace RoslynSandbox
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (double)e.OldValue;
+            var newValue = (double)e.NewValue;
         }
     }
 }";
@@ -399,9 +399,9 @@ namespace RoslynSandbox
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var control = (FrameworkElement)d;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
     }
 }";
@@ -434,8 +434,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FrameworkElement)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
     }
 }";
@@ -463,8 +463,8 @@ namespace RoslynSandbox
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)e.OldValue;
-            var newValue = (int)e.NewValue;
+            var oldValue = (System.Windows.Media.Brush)e.OldValue;
+            var newValue = (System.Windows.Media.Brush)e.NewValue;
         }
     }
 }";

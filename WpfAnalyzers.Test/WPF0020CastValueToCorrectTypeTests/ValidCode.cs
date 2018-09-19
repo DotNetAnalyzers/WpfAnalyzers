@@ -66,8 +66,8 @@ namespace RoslynSandbox
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (int)d.OldValue;
-            var newValue = (int)d.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
@@ -114,25 +114,16 @@ namespace RoslynSandbox
             var newValue = (string)e.NewValue;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            if (basevalue is int i &&
-                i > 100)
-            {
-                return 100;
-            }
-
-            return basevalue;
+            var value = (string)baseValue;
+            return value;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            if (basevalue is int i)
-            {
-                return i <= 100;
-            }
-
-            return false;
+            var value = (string)baseValue;
+            return !object.Equals(value, null);
         }
     }
 }";
@@ -178,25 +169,16 @@ namespace RoslynSandbox
             var newValue = e.NewValue as string;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            if (basevalue is int i &&
-                i > 100)
-            {
-                return 100;
-            }
-
-            return basevalue;
+            var value = baseValue as string;
+            return value;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            if (basevalue is int i)
-            {
-                return i <= 100;
-            }
-
-            return false;
+            var value = baseValue as string;
+            return value != null;
         }
     }
 }";
@@ -207,7 +189,7 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("bool", "bool?")]
+        [TestCase("bool", "bool")]
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
@@ -238,32 +220,32 @@ namespace RoslynSandbox
         {
             if (d is FooControl control)
             {
-                if (e.OldValue is string oldText)
+                if (e.OldValue is string oldValue)
                 {
                 }
-                if (e.NewValue is string newText)
+                if (e.NewValue is string newValue)
                 {
                 }
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             if (d is FooControl control)
             {
-                if (basevalue is string text)
+                if (baseValue is string text)
                 {
                 }
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            if (basevalue is string text)
+            if (baseValue is string text)
             {
-                return !string.IsNullOrWhiteSpace(text);
+                return !object.Equals(text, null);
             }
 
             return false;
@@ -278,7 +260,7 @@ namespace RoslynSandbox
 
         [TestCase("object", "string")]
         [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("bool", "bool?")]
+        [TestCase("bool", "bool")]
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
@@ -328,13 +310,13 @@ namespace RoslynSandbox
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             switch (d)
             {
                 case FooControl control:
                 {
-                    switch (basevalue)
+                    switch (baseValue)
                     {
                         case string oldText:
                             break;
@@ -343,15 +325,15 @@ namespace RoslynSandbox
                     break;
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            switch (basevalue)
+            switch (baseValue)
             {
                 case string text:
-                    return !string.IsNullOrWhiteSpace(text);
+                    return !object.Equals(text, null);
                 default:
                     return false;
             }

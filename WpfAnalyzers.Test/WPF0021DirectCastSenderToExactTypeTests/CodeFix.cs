@@ -136,10 +136,10 @@ namespace RoslynSandbox
             var control = (↓Control)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             var control = (↓Control)d;
-            return basevalue;
+            return baseValue;
         }
     }
 }";
@@ -169,10 +169,10 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             var control = (FooControl)d;
-            return basevalue;
+            return baseValue;
         }
     }
 }";

@@ -55,8 +55,11 @@ namespace RoslynSandbox
         {
             this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);
         }
-    }";
+    }
+}";
             var fooControlCode = @"
+namespace RoslynSandbox
+{
     using System.Windows;
     using System.Windows.Controls;
 

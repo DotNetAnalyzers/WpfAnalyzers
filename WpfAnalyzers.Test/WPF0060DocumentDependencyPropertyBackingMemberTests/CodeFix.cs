@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
 {
+    using System;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -203,7 +204,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, part1, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
@@ -456,7 +457,7 @@ namespace RoslynSandbox
 
         public static int GetBar(DependencyObject element)
         {
-            return (int) element.GetValue(BarProperty);
+            return (int)element.GetValue(BarProperty);
         }
     }
 }";
@@ -496,7 +497,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fooCode, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
     }

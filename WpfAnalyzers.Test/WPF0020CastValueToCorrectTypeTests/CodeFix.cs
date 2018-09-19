@@ -334,9 +334,9 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (↓string)basevalue;
+            return (↓string)baseValue;
         }
     }
 }";
@@ -366,9 +366,9 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (int)basevalue;
+            return (int)baseValue;
         }
     }
 }";
@@ -407,14 +407,14 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (int)basevalue;
+            return (int)baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return ((↓string)basevalue) > 1;
+            return ((↓string)baseValue) > 1;
         }
     }
 }";
@@ -445,14 +445,14 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (int)basevalue;
+            return (int)baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return ((int)basevalue) > 1;
+            return ((int)baseValue) > 1;
         }
     }
 }";
@@ -561,21 +561,21 @@ namespace RoslynSandbox
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             if (d is FooControl control)
             {
-                if (basevalue is ↓string text)
+                if (baseValue is ↓string text)
                 {
                 }
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            if (basevalue is ↓string text)
+            if (baseValue is ↓string text)
             {
                 return !string.IsNullOrWhiteSpace(text);
             }
@@ -636,13 +636,13 @@ namespace RoslynSandbox
             }
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
             switch (d)
             {
                 case FooControl control:
                 {
-                    switch (basevalue)
+                    switch (baseValue)
                     {
                         case ↓string oldText:
                             break;
@@ -651,12 +651,12 @@ namespace RoslynSandbox
                     break;
             }
 
-            return basevalue;
+            return baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            switch (basevalue)
+            switch (baseValue)
             {
                 case ↓string text:
                     return !string.IsNullOrWhiteSpace(text);

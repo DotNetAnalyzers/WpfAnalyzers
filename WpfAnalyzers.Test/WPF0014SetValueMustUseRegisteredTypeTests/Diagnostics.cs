@@ -182,9 +182,9 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
 
-        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        private static object OnVolumeCoerce(DependencyObject d, object baseValue)
         {
-            return basevalue;
+            return baseValue;
         }
 
         private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -290,9 +290,9 @@ namespace RoslynSandbox
             set { this.SetValue(VolumeProperty, value); }
         }
 
-        private static object OnVolumeCoerce(DependencyObject d, object basevalue)
+        private static object OnVolumeCoerce(DependencyObject d, object baseValue)
         {
-            return basevalue;
+            return baseValue;
         }
 
         private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

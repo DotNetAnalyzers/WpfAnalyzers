@@ -335,9 +335,9 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (↓System.Collections.IEnumerable)basevalue;
+            return (↓System.Collections.IEnumerable)baseValue;
         }
     }
 }";
@@ -367,9 +367,9 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (string)basevalue;
+            return (string)baseValue;
         }
     }
 }";
@@ -408,14 +408,14 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (string)basevalue;
+            return (string)baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return ((↓System.Collections.IEnumerable)basevalue) != null;
+            return ((↓System.Collections.IEnumerable)baseValue) != null;
         }
     }
 }";
@@ -446,14 +446,14 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
 
-        private static object CoerceValue(DependencyObject d, object basevalue)
+        private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (string)basevalue;
+            return (string)baseValue;
         }
 
-        private static bool ValidateValue(object basevalue)
+        private static bool ValidateValue(object baseValue)
         {
-            return ((string)basevalue) != null;
+            return ((string)baseValue) != null;
         }
     }
 }";

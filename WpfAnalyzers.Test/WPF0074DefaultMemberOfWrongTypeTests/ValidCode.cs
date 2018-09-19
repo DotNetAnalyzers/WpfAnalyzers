@@ -221,7 +221,7 @@ namespace RoslynSandbox
     using System.Windows.Markup;
 
     [ValueConversion(typeof(bool?), typeof(Visibility))]
-    public class BooleanToVisibilityConverter : IValueConverter
+    public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter
     {
         public Visibility WhenTrue { get; set; } = Visibility.Visible;
 
@@ -393,6 +393,22 @@ namespace RoslynSandbox
         [Test]
         public void InternalIMultiValueConverterWithDefaultField()
         {
+            var boolBoxes = @"
+namespace Gu.Wpf.ToolTips
+{
+    internal static class BoolBoxes
+    {
+        internal static readonly object True = true;
+        internal static readonly object False = false;
+
+        internal static object Box(bool value)
+        {
+            return value
+                ? True
+                : False;
+        }
+    }
+}";
             var testCode = @"
 namespace Gu.Wpf.ToolTips
 {
@@ -428,7 +444,7 @@ namespace Gu.Wpf.ToolTips
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            AnalyzerAssert.Valid(Analyzer, boolBoxes, testCode);
         }
     }
 }

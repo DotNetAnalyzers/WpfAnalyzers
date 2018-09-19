@@ -190,7 +190,7 @@ namespace RoslynSandbox
     {
         private const string PartBar = ""PART_Bar"";
 
-        private Border bar;
+        private object bar;
 
         public override void OnApplyTemplate()
         {
