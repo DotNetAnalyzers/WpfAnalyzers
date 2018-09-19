@@ -18,8 +18,8 @@ namespace WpfAnalyzers.Test
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
 
-        private static readonly Solution Solution = CodeFactory.CreateSolution(
-            SolutionFile.Find("WpfAnalyzers.sln"),
+        private static readonly Solution AnalyzerProjectSolution = CodeFactory.CreateSolution(
+            ProjectFile.Find("WpfAnalyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
@@ -56,9 +56,9 @@ namespace WpfAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void CurrentSolution(DiagnosticAnalyzer analyzer)
+        public void AnalyzerProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, Solution);
+            AnalyzerAssert.Valid(analyzer, AnalyzerProjectSolution);
         }
     }
 }

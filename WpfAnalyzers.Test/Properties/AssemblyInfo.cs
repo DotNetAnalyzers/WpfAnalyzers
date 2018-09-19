@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Gu.Roslyn.Asserts;
@@ -18,7 +18,8 @@ using Gu.Roslyn.Asserts;
 [assembly: AssemblyInformationalVersion("1.0.0.0-dev")]
 [assembly: MetadataReference(typeof(object), new[] { "global", "mscorlib" })]
 [assembly: MetadataReference(typeof(System.Diagnostics.Debug), new[] { "global", "System" })]
-[assembly:TransitiveMetadataReferences(typeof(Microsoft.CodeAnalysis.CSharp.CSharpCompilation))]
+[assembly: TransitiveMetadataReferences(typeof(Microsoft.CodeAnalysis.CSharp.CSharpCompilation))]
+[assembly:TransitiveMetadataReferences(typeof(Gu.Roslyn.CodeFixExtensions.DocumentEditorCodeFixProvider))]
 [assembly: MetadataReferences(
     typeof(System.Linq.Enumerable),
     typeof(System.Net.WebClient),
