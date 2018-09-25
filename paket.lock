@@ -816,7 +816,7 @@ NUGET
       System.ObjectModel (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
       System.Text.RegularExpressions (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
       System.Threading.Tasks.Parallel (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
-    Microsoft.Diagnostics.Tracing.TraceEvent (2.0.25) - restriction: || (>= net46) (>= netstandard2.0)
+    Microsoft.Diagnostics.Tracing.TraceEvent (2.0.26) - restriction: || (>= net46) (>= netstandard2.0)
     Microsoft.DotNet.InternalAbstractions (1.0) - restriction: || (>= net46) (>= netstandard2.0)
       System.AppContext (>= 4.1) - restriction: && (< net451) (>= netstandard1.3)
       System.Collections (>= 4.0.11) - restriction: && (< net451) (>= netstandard1.3)
@@ -1516,9 +1516,9 @@ NUGET
 GROUP Build
 NUGET
   remote: http://www.nuget.org/api/v2
-    Microsoft.VisualStudio.SDK.Analyzers (15.8.33) - restriction: >= net46
-      Microsoft.VisualStudio.Threading.Analyzers (>= 15.8.122) - restriction: >= netstandard1.1
-    Microsoft.VisualStudio.Threading.Analyzers (15.8.145) - restriction: >= net46
+    Microsoft.VisualStudio.SDK.Analyzers (15.8.36) - restriction: >= net46
+      Microsoft.VisualStudio.Threading.Analyzers (>= 15.8.168) - restriction: >= netstandard1.1
+    Microsoft.VisualStudio.Threading.Analyzers (15.8.168) - restriction: >= net46
     Microsoft.VSSDK.BuildTools (15.8.3252)
       Microsoft.VisualStudio.SDK.Analyzers (>= 15.8.33) - restriction: >= net46
 
