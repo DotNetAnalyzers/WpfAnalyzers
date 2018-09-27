@@ -3,6 +3,7 @@ namespace WpfAnalyzers.Test.Documentation
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -61,10 +62,10 @@ namespace WpfAnalyzers.Test.Documentation
         public void Description(DescriptorInfo descriptorInfo)
         {
             var expected = File.ReadLines(descriptorInfo.DocFileName)
-                               .SkipWhile(l => !l.StartsWith("## Description"))
+                               .SkipWhile(l => !l.StartsWith("## Description", StringComparison.OrdinalIgnoreCase))
                                .Skip(1)
                                .FirstOrDefault(l => !string.IsNullOrWhiteSpace(l));
-            var actual = descriptorInfo.Descriptor.Description.ToString().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).First();
+            var actual = descriptorInfo.Descriptor.Description.ToString(CultureInfo.InvariantCulture).Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).First();
 
             DumpIfDebug(expected);
             DumpIfDebug(actual);
@@ -122,12 +123,12 @@ namespace WpfAnalyzers.Test.Documentation
             var descriptor = descriptorInfo.Descriptor;
             var stub = Properties.Resources.DiagnosticDocTemplate
                              .AssertReplace("{ID}", descriptor.Id)
-                             .AssertReplace("## ADD TITLE HERE", $"## {descriptor.Title.ToString()}")
+                             .AssertReplace("## ADD TITLE HERE", $"## {descriptor.Title.ToString(CultureInfo.InvariantCulture)}")
                              .AssertReplace("{SEVERITY}", descriptor.DefaultSeverity.ToString())
                              .AssertReplace("{ENABLED}", descriptor.IsEnabledByDefault ? "true" : "false")
                              .AssertReplace("{CATEGORY}", descriptor.Category)
-                             .AssertReplace("ADD DESCRIPTION HERE", descriptor.Description.ToString())
-                             .AssertReplace("{TITLE}", descriptor.Title.ToString());
+                             .AssertReplace("ADD DESCRIPTION HERE", descriptor.Description.ToString(CultureInfo.InvariantCulture))
+                             .AssertReplace("{TITLE}", descriptor.Title.ToString(CultureInfo.InvariantCulture));
             if (Analyzers.Count(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)) == 1)
             {
                 return stub.AssertReplace("{TYPENAME}", descriptorInfo.Analyzer.GetType().Name)
