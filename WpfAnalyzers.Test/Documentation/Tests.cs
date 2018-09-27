@@ -206,8 +206,8 @@ namespace WpfAnalyzers.Test.Documentation
 
             public static string GetCodeFileUri(DiagnosticAnalyzer analyzer)
             {
-                string fileName = Directory.EnumerateFiles(SolutionDirectory.FullName, analyzer.GetType().Name + ".cs", SearchOption.AllDirectories)
-                                           .FirstOrDefault();
+                var fileName = Directory.EnumerateFiles(SolutionDirectory.FullName, analyzer.GetType().Name + ".cs", SearchOption.AllDirectories)
+                                        .FirstOrDefault();
                 return fileName != null
                     ? "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" +
                       fileName.Substring(SolutionDirectory.FullName.Length).Replace("\\", "/")
