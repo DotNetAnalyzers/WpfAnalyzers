@@ -2,12 +2,14 @@
 <Project>
   <Import Project="..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.props" Condition="Exists('..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.props')" Label="Paket" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <AssemblyName>WpfAnalyzers.Vsix</AssemblyName>
     <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
+
   <PropertyGroup>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
@@ -17,16 +19,20 @@
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <!-- This property disables extension deployment for command line builds; required for AppVeyor and the build script -->
     <DeployExtension>False</DeployExtension>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include="source.extension.vsixmanifest" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <!-- https://github.com/dotnet/sdk/issues/433 -->
     <ProjectReference Update="@(ProjectReference)" AdditionalProperties="TargetFramework=netstandard1.3" />
@@ -41,6 +47,7 @@
       <VSIXSourceItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' == 'Gu.Roslyn.CodeFixExtensions'" />
     </ItemGroup>
   </Target>
+
   <ItemGroup>
     <Analyzer Include="..\packages\build\Microsoft.VisualStudio.SDK.Analyzers\analyzers\cs\Microsoft.VisualStudio.SDK.Analyzers.dll">
       <Paket>True</Paket>
