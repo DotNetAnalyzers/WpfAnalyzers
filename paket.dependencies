@@ -4,7 +4,7 @@ nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1
 nuget System.Collections.Immutable 1.3.1
 nuget System.Reflection.Metadata 1.4.2
 nuget Microsoft.Composition 1.0.31
-nuget Gu.Roslyn.CodeFixExtensions prerelease
+nuget Gu.Roslyn.Extensions prerelease
 
 group Analyzers
   storage: none
@@ -19,13 +19,15 @@ group Benchmarks
   source http://www.nuget.org/api/v2/
   nuget BenchmarkDotNet.Diagnostics.Windows
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
+  nuget System.Runtime.CompilerServices.Unsafe 4.5.1
   nuget Gu.Roslyn.Asserts
   nuget NUnit
 
 group Test
   storage: none
   source http://www.nuget.org/api/v2/
-  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
+  nuget System.Runtime.CompilerServices.Unsafe 4.5.1
   nuget Gu.Roslyn.Asserts
   nuget NUnit
 

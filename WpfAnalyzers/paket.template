@@ -12,6 +12,5 @@ excludedgroups
   Analyzers
 
 files
-  bin/Release/Gu.Roslyn.AnalyzerExtensions.dll ==> analyzers/dotnet/cs
-  bin/Release/Gu.Roslyn.CodeFixExtensions.dll ==> analyzers/dotnet/cs
+  bin/Release/Gu.Roslyn.Extensions.dll ==> analyzers/dotnet/cs
   ../.paket/tools/*.ps1 ==> tools
