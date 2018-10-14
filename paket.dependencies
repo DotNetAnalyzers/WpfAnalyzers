@@ -11,7 +11,7 @@ group Analyzers
   source http://www.nuget.org/api/v2/
   nuget AsyncUsageAnalyzers
   nuget IDisposableAnalyzers  
-  nuget StyleCop.Analyzers
+  nuget StyleCop.Analyzers prerelease
   nuget Gu.Analyzers
 
 group Benchmarks
