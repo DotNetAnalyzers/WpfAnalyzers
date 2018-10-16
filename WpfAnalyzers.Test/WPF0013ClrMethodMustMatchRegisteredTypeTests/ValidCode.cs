@@ -47,8 +47,8 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace("int", typeName);
+}".AssertReplace("int", typeName);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -93,8 +93,8 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace("int", typeName);
+}".AssertReplace("int", typeName);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

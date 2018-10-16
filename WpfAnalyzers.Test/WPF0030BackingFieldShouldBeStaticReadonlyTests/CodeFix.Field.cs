@@ -36,7 +36,7 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}";
+}".AssertReplace("public static DependencyProperty", before + " DependencyProperty");
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -54,9 +54,8 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}";
-                testCode = testCode.AssertReplace("public static DependencyProperty", before + " DependencyProperty");
-                fixedCode = fixedCode.AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
+}".AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
+
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
@@ -329,7 +328,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
+}".AssertReplace("FooControl", typeName);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -347,9 +346,8 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-                testCode = testCode.AssertReplace("FooControl", typeName);
-                fixedCode = fixedCode.AssertReplace("FooControl", typeName);
+}".AssertReplace("FooControl", typeName);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
             }
         }

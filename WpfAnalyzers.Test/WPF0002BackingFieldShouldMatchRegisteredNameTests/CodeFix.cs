@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0002");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0002BackingFieldShouldMatchRegisteredName.Descriptor);
 
         [Test]
         public void Message()

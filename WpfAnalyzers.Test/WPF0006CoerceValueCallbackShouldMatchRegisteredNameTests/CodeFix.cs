@@ -76,7 +76,7 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -104,9 +104,8 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
+}".AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }

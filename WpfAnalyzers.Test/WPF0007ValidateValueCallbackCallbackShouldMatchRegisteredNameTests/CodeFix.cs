@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RegistrationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0007");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor);
 
         [Test]
         public void Message()
@@ -88,7 +88,7 @@ namespace RoslynSandbox
             return (int)value >= 0;
         }
     }
-}";
+}".AssertReplace("↓WrongName", callback);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -116,9 +116,8 @@ namespace RoslynSandbox
             return (int)value >= 0;
         }
     }
-}";
-            testCode = testCode.AssertReplace("↓WrongName", callback);
-            fixedCode = fixedCode.AssertReplace("ValidateValue);", $"{expected});");
+}".AssertReplace("ValidateValue);", $"{expected});");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

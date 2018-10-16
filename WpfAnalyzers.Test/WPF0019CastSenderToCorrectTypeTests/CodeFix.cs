@@ -73,7 +73,7 @@ namespace RoslynSandbox
             var control = (↓DataGrid)d;
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -100,9 +100,7 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
+}".AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -138,7 +136,7 @@ namespace RoslynSandbox
             var value = (↓DataGrid)d;
         }
     }
-}";
+}".AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -167,9 +165,8 @@ namespace RoslynSandbox
             var value = (FooControl)d;
         }
     }
-}";
-            testCode = testCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
-            fixedCode = fixedCode.AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+}".AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -199,7 +196,7 @@ namespace RoslynSandbox
             set => this.SetValue(ValueProperty, value);
         }
     }
-}";
+}".AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -223,9 +220,8 @@ namespace RoslynSandbox
             set => this.SetValue(ValueProperty, value);
         }
     }
-}";
-            testCode = testCode.AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
-            fixedCode = fixedCode.AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
+}".AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -264,7 +260,7 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -297,9 +293,8 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
+}".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -332,7 +327,7 @@ namespace RoslynSandbox
             var control = (↓DataGrid)d;
         }
     }
-}";
+}".AssertReplace("(↓DataGrid)d", fromCast);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -359,9 +354,7 @@ namespace RoslynSandbox
             var control = (FooControl)d;
         }
     }
-}";
-            testCode = testCode.AssertReplace("(↓DataGrid)d", fromCast);
-            fixedCode = fixedCode.AssertReplace("(FooControl)d", toCast);
+}".AssertReplace("(FooControl)d", toCast);
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }

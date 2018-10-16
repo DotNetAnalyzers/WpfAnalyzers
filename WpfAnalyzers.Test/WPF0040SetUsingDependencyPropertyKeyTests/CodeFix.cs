@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
+namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
             set { SetValue(↓BarProperty, value); }
         }
     }
-}";
+}".AssertReplace("SetValue", method);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -59,9 +59,8 @@ namespace RoslynSandbox
             set { SetValue(BarPropertyKey, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("SetValue", method);
-            fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+}".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+
             AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -93,7 +92,7 @@ namespace RoslynSandbox
             set => SetValue(↓BarProperty, value);
         }
     }
-}";
+}".AssertReplace("SetValue", method);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -117,9 +116,8 @@ namespace RoslynSandbox
             set => SetValue(BarPropertyKey, value);
         }
     }
-}";
-            testCode = testCode.AssertReplace("SetValue", method);
-            fixedCode = fixedCode.AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+}".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+
             AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -152,7 +150,7 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
+}".AssertReplace("SetValue", method);
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -179,7 +177,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("SetValue", method);
+
             AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }

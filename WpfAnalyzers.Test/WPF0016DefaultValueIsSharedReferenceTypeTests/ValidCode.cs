@@ -116,9 +116,9 @@ namespace RoslynSandbox
         private static double CreateDefaultValue() => default(double);
         private static object CreateObjectValue() => default(double);
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata)
-                               .AssertReplace("double", typeName);
+}".AssertReplace("new PropertyMetadata(1)", metadata)
+  .AssertReplace("double", typeName);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

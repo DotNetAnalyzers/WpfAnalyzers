@@ -75,8 +75,8 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+}".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -124,10 +124,9 @@ namespace RoslynSandbox
             return ((string)baseValue) != null;
         }
     }
-}";
+}".AssertReplace("int", type)
+  .AssertReplace("string", type);
 
-            testCode = testCode.AssertReplace("int", type);
-            testCode = testCode.AssertReplace("string", type);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -177,9 +176,9 @@ namespace RoslynSandbox
             return (baseValue as string) != null;
         }
     }
-}";
-            testCode = testCode.AssertReplace("int", type);
-            testCode = testCode.AssertReplace("string", asType);
+}".AssertReplace("int", type)
+  .AssertReplace("string", asType);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -247,10 +246,9 @@ namespace RoslynSandbox
             return false;
         }
     }
-}";
+}".AssertReplace("int", type)
+  .AssertReplace("string", isType);
 
-            testCode = testCode.AssertReplace("int", type);
-            testCode = testCode.AssertReplace("string", isType);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -335,9 +333,9 @@ namespace RoslynSandbox
             }
         }
     }
-}";
-            testCode = testCode.AssertReplace("int", type);
-            testCode = testCode.AssertReplace("string", caseType);
+}".AssertReplace("int", type)
+  .AssertReplace("string", caseType);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

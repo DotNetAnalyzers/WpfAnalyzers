@@ -1,4 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers.Test
 {
     using Gu.Roslyn.Asserts;
@@ -21,7 +21,7 @@ namespace RoslynSandbox
     public class FooConverter : IValueConverter
     {
     }
-}";
+}".AssertReplace("FooConverter", className);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -40,9 +40,8 @@ namespace RoslynSandbox
             throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
         }
     }
-}";
-            testCode = testCode.AssertReplace("FooConverter", className);
-            fixedCode = fixedCode.AssertReplace("FooConverter", className);
+}".AssertReplace("FooConverter", className);
+
             AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 
@@ -126,7 +125,7 @@ namespace RoslynSandbox
     public class FooConverter : IMultiValueConverter
     {
     }
-}";
+}".AssertReplace("FooConverter", className);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -145,9 +144,8 @@ namespace RoslynSandbox
             throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
         }
     }
-}";
-            testCode = testCode.AssertReplace("FooConverter", className);
-            fixedCode = fixedCode.AssertReplace("FooConverter", className);
+}".AssertReplace("FooConverter", className);
+
             AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
         }
 

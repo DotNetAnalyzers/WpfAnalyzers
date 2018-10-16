@@ -84,8 +84,8 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
+}".AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

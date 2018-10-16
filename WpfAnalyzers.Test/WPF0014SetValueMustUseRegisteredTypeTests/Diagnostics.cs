@@ -82,8 +82,8 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, ↓1);
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
+}".AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -126,8 +126,8 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, ↓1.0);
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
+}".AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, testCode);
         }
 
@@ -306,8 +306,8 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, ↓value);
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
+}".AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, testCode);
         }
 
@@ -352,8 +352,8 @@ namespace RoslynSandbox
             // nop
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
+}".AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -389,8 +389,8 @@ namespace RoslynSandbox
             this.SetValue(BarPropertyKey, ↓<value>);
         }
     }
-}";
-            testCode = testCode.AssertReplace("<value>", value);
+}".AssertReplace("<value>", value);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -449,8 +449,8 @@ namespace RoslynSandbox
             textBox.SetValue(TextBox.TextProperty, ↓1);
         }
     }
-}";
-            testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+}".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -473,8 +473,8 @@ namespace RoslynSandbox
             textBox.SetValue(TextElement.FontSizeProperty, ↓1);
         }
     }
-}";
-            testCode = testCode.AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+}".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -510,9 +510,8 @@ namespace RoslynSandbox
             };
         }
     }
-}";
+}".AssertReplace("SetCurrentValue", setMethod);
 
-            testCode = testCode.AssertReplace("SetCurrentValue", setMethod);
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }

@@ -106,8 +106,8 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("FooControl", typeName);
+}".AssertReplace("FooControl", typeName);
+
             AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
         }
 

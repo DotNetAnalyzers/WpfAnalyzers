@@ -65,8 +65,8 @@ namespace RoslynSandbox
             set => this.SetValue(BazProperty, value);
         }
     }
-}";
-            testCode = testCode.AssertReplace("CommonValidation.ValidateDoubleIsGreaterThanZero", callback);
+}".AssertReplace("CommonValidation.ValidateDoubleIsGreaterThanZero", callback);
+
             AnalyzerAssert.Valid(Analyzer, validationCode, testCode);
         }
 
@@ -189,8 +189,8 @@ namespace RoslynSandbox
             return false;
         }
     }
-}";
-            testCode = testCode.AssertReplace("ValidateValue);", metadata);
+}".AssertReplace("ValidateValue);", metadata);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

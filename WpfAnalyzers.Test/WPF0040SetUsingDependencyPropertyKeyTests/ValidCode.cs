@@ -33,9 +33,8 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}";
+}".AssertReplace("SetValue", method);
 
-            testCode = testCode.AssertReplace("SetValue", method);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -95,8 +94,8 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace("SetValue", method);
+}".AssertReplace("SetValue", method);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

@@ -75,8 +75,8 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+}".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -117,8 +117,8 @@ namespace RoslynSandbox
             return value;
         }
     }
-}";
-            testCode = testCode.AssertReplace("(FooControl)", $"({type})");
+}".AssertReplace("(FooControl)", $"({type})");
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

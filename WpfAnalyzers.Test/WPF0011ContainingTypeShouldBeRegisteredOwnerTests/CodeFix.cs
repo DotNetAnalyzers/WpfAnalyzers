@@ -66,7 +66,7 @@ namespace RoslynSandbox
     public class BarControl : Control
     {
     }
-}";
+}".AssertReplace("class BarControl", $"class {typeName}");
 
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
+}".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -113,8 +113,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            barControlCode = barControlCode.AssertReplace("class BarControl", $"class {typeName}");
-            testCode = testCode.AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, testCode }, fixedCode);
         }
 

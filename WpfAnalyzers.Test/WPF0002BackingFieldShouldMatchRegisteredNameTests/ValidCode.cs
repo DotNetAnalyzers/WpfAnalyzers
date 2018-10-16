@@ -35,8 +35,7 @@ namespace RoslynSandbox
             set { SetValue(BarPropertyKey, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("nameof(Bar)", nameof);
+}".AssertReplace("nameof(Bar)", nameof);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -68,8 +67,7 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("nameof(Bar)", nameof);
+}".AssertReplace("nameof(Bar)", nameof);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

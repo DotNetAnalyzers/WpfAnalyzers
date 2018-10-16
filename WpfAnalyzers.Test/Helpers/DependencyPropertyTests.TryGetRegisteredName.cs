@@ -34,8 +34,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-                testCode = testCode.AssertReplace("nameof(Bar)", nameCode);
+}".AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -70,8 +69,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-                testCode = testCode.AssertReplace("nameof(Bar)", nameCode);
+}".AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);

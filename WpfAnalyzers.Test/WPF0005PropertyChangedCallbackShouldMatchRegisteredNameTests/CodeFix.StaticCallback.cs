@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
         {
             private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0005");
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor);
 
             [Test]
             public void Message()
@@ -79,7 +79,7 @@ namespace RoslynSandbox
             // nop
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", oldMetadata);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -106,9 +106,7 @@ namespace RoslynSandbox
             // nop
         }
     }
-}";
-                testCode = testCode.AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", oldMetadata);
-                fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(double), OnValueChanged)", newMetadata);
+}".AssertReplace("new PropertyMetadata(default(double), OnValueChanged)", newMetadata);
 
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
@@ -141,7 +139,7 @@ namespace RoslynSandbox
         {
         }
     }
-}";
+}".AssertReplace("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", before);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -167,9 +165,8 @@ namespace RoslynSandbox
         {
         }
     }
-}";
-                testCode = testCode.AssertReplace("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", before);
-                fixedCode = fixedCode.AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", after);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", after);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
 

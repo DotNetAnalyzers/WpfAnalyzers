@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
+namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -26,7 +26,7 @@ namespace RoslynSandbox
             ↓this.SetCurrentValue(DataContextProperty, 1);
         }
     }
-}";
+}".AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -41,9 +41,8 @@ namespace RoslynSandbox
             this.SetValue(DataContextProperty, 1);
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
-            fixedCode = fixedCode.AssertReplace("this.SetValue(DataContextProperty, 1);", after);
+}".AssertReplace("this.SetValue(DataContextProperty, 1);", after);
+
             AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -65,7 +64,7 @@ namespace RoslynSandbox
             ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
         }
     }
-}";
+}".AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -81,9 +80,8 @@ namespace RoslynSandbox
             control.SetValue(FrameworkElement.DataContextProperty, 1);
         }
     }
-}";
-            testCode = testCode.AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
-            fixedCode = fixedCode.AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
+}".AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
+
             AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }

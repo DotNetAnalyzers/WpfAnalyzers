@@ -75,9 +75,9 @@ namespace RoslynSandbox
             // nop
         }
     }
-}";
-            testCode = testCode.AssertReplace("double", typeName)
-                               .AssertReplace("new PropertyMetadata(↓1)", metadata);
+}".AssertReplace("double", typeName)
+  .AssertReplace("new PropertyMetadata(↓1)", metadata);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 

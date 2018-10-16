@@ -67,8 +67,8 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace("double", typeName);
+}".AssertReplace("double", typeName);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
@@ -161,8 +161,8 @@ namespace RoslynSandbox
             return (double)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace("double", typeName);
+}".AssertReplace("double", typeName);
+
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 

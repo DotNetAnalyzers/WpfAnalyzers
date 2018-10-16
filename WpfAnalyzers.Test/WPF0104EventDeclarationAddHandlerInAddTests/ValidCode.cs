@@ -33,8 +33,8 @@ namespace RoslynSandbox
             remove { this.RemoveHandler(ValueChangedEvent, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("nameof(ValueChanged)", nameof);
+}".AssertReplace("nameof(ValueChanged)", nameof);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }

@@ -45,8 +45,8 @@ namespace RoslynSandbox
             ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata);
+}".AssertReplace("new PropertyMetadata(1)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
@@ -89,8 +89,8 @@ namespace RoslynSandbox
             ValueProperty.OverrideMetadata(typeof(BarControl), new PropertyMetadata(1));
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(1)", metadata);
+}".AssertReplace("new PropertyMetadata(1)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 

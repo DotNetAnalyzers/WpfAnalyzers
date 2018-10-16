@@ -1,6 +1,5 @@
 namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
-    using System.Text.RegularExpressions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -12,10 +11,11 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         private static readonly CodeFixProvider Fix = new UseSetCurrentValueCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0041");
 
-        [TestCase("Bar = 1;")]
-        [TestCase("this.Bar = 1;")]
-        [TestCase("this.Bar = this.CreateValue();")]
-        public void ClrProperty(string setExpression)
+        [TestCase(true, "1")]
+        [TestCase(false, "1")]
+        [TestCase(true, "CreateValue()")]
+        [TestCase(false, "CreateValue()")]
+        public void ClrProperty(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,12 +39,13 @@ namespace RoslynSandbox
 
         public void Meh()
         {
-            ↓Bar = 1;
+            ↓this.Bar = 1;
         }
 
         private int CreateValue() => 4;
     }
-}";
+}".AssertReplace("1", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -73,20 +74,17 @@ namespace RoslynSandbox
 
         private int CreateValue() => 4;
     }
-}";
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
-            var thisPrefix = setExpression.StartsWith("this.")
-                                 ? "this."
-                                 : string.Empty;
-            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
+}".AssertReplace("1", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [TestCase("Bar = 1;")]
-        [TestCase("this.Bar = 1;")]
-        [TestCase("this.Bar = this.CreateValue();")]
-        public void ClrPropertyWithTrivia(string setExpression)
+        [TestCase(false, "1")]
+        [TestCase(true, "1")]
+        [TestCase(false, "CreateValue()")]
+        [TestCase(true, "CreateValue()")]
+        public void ClrPropertyWithTrivia(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -111,13 +109,14 @@ namespace RoslynSandbox
         public void Meh()
         {
             // comment before
-            ↓Bar = 1; // line comment
+            ↓this.Bar = 1; // line comment
             // comment after
         }
 
         private int CreateValue() => 4;
     }
-}";
+}".AssertReplace("1", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -148,13 +147,9 @@ namespace RoslynSandbox
 
         private int CreateValue() => 4;
     }
-}";
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            testCode = testCode.AssertReplace("Bar = 1;", setExpression);
-            var thisPrefix = setExpression.StartsWith("this.")
-                                 ? "this."
-                                 : string.Empty;
-            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {right});");
+}".AssertReplace("1", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -206,7 +201,7 @@ namespace RoslynSandbox
         private static double CreateValue() => 4;
         private static object CreateObjectValue() => 4;
     }
-}";
+}".AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -226,9 +221,8 @@ namespace RoslynSandbox
         private static double CreateValue() => 4;
         private static object CreateObjectValue() => 4;
     }
-}";
-            testCode = testCode.AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
-            fixedCode = fixedCode.AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
+}".AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { testCode, fooControlCode }, fixedCode);
         }
 
@@ -771,10 +765,11 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [TestCase("SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
-        public void SetValue(string setExpression)
+        [TestCase(true, "1")]
+        [TestCase(false, "1")]
+        [TestCase(true, "CreateValue()")]
+        [TestCase(false, "CreateValue()")]
+        public void SetValue(bool underscore, string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -798,12 +793,13 @@ namespace RoslynSandbox
 
         public void Meh()
         {
-            ↓SetValue(BarProperty, 1);
+            ↓this.SetValue(BarProperty, 1);
         }
 
         private int CreateValue() => 4;
     }
-}";
+}".AssertReplace("1", setExpression)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -832,20 +828,17 @@ namespace RoslynSandbox
 
         private int CreateValue() => 4;
     }
-}";
-            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
-            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
-            var thisPrefix = setExpression.StartsWith("this.")
-                                 ? "this."
-                                 : string.Empty;
-            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
+}".AssertReplace("1", setExpression)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [TestCase("SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, this.CreateValue());")]
-        public void SetValueWithTrivia(string setExpression)
+        [TestCase(true, "1")]
+        [TestCase(false, "1")]
+        [TestCase(true, "this.CreateValue()")]
+        [TestCase(false, "this.CreateValue()")]
+        public void SetValueWithTrivia(bool underscore, string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -870,13 +863,14 @@ namespace RoslynSandbox
         public void Meh()
         {
             // comment before
-            ↓SetValue(BarProperty, 1); // line comment
+            ↓this.SetValue(BarProperty, 1); // line comment
             // comment after
         }
 
         private int CreateValue() => 4;
     }
-}";
+}".AssertReplace("1", setExpression)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -907,13 +901,9 @@ namespace RoslynSandbox
 
         private int CreateValue() => 4;
     }
-}";
-            var value = Regex.Match(setExpression, @"(this\.)?SetValue\(BarProperty, (?<value>.+)\);", RegexOptions.ExplicitCapture).Groups["value"].Value;
-            testCode = testCode.AssertReplace("SetValue(BarProperty, 1);", setExpression);
-            var thisPrefix = setExpression.StartsWith("this.")
-                                 ? "this."
-                                 : string.Empty;
-            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(BarProperty, 1);", $"{thisPrefix}SetCurrentValue(BarProperty, {value});");
+}".AssertReplace("1", setExpression)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -1019,10 +1009,11 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [TestCase(@"Text = ""1"";")]
-        [TestCase("Text = CreateValue();")]
-        [TestCase("Text = this.CreateValue();")]
-        public void InheritedTextBoxTexUsingClrProperty(string setExpression)
+        [TestCase(true, "\"1\"")]
+        [TestCase(false, "\"1\"")]
+        [TestCase(true, "CreateValue()")]
+        [TestCase(false, "CreateValue()")]
+        public void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1039,7 +1030,8 @@ namespace RoslynSandbox
 
         private string CreateValue() => ""2"";
     }
-}";
+}".AssertReplace("\"1\"", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1056,10 +1048,9 @@ namespace RoslynSandbox
 
         private string CreateValue() => ""2"";
     }
-}";
-            testCode = testCode.AssertReplace("Text = \"1\";", setExpression);
-            var right = setExpression.Split('=')[1].Trim(' ', ';');
-            fixedCode = fixedCode.AssertReplace("this.SetCurrentValue(TextProperty, \"1\");", $"this.SetCurrentValue(TextProperty, {right});");
+}".AssertReplace("\"1\"", value)
+  .AssertReplace("this.", underscore ? string.Empty : "this.");
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -1082,7 +1073,7 @@ namespace RoslynSandbox
             ↓this.textBox.Text = ""1"";
         }
     }
-}";
+}".AssertReplace("this.", thisExpression);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1099,9 +1090,8 @@ namespace RoslynSandbox
             this.textBox.SetCurrentValue(TextBox.TextProperty, ""1"");
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.", thisExpression);
-            fixedCode = fixedCode.AssertReplace("this.", thisExpression);
+}".AssertReplace("this.", thisExpression);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

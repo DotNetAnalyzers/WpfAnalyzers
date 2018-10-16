@@ -46,7 +46,7 @@ namespace RoslynSandbox
             ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue);
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -72,9 +72,8 @@ namespace RoslynSandbox
         {
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
-            fixedCode = fixedCode.AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }

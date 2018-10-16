@@ -60,7 +60,7 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
+}".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -106,15 +106,14 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
-            fixedCode = fixedCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+}".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+
             AnalyzerAssert.Valid(Analyzer, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
-        public void DependencyPropertyRegisterWithMetadataDifferentParameternames()
+        public void DependencyPropertyRegisterWithMetadataDifferentParameterNames()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -43,7 +43,7 @@ namespace RoslynSandbox
             return (int)value >= 0;
         }
     }
-}";
+}".AssertReplace("ValidateValue);", $"{callback});");
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -66,9 +66,8 @@ namespace RoslynSandbox
             set => this.SetValue(ValueProperty, value);
         }
     }
-}";
-            testCode = testCode.AssertReplace("ValidateValue);", $"{callback});");
-            fixedCode = fixedCode.AssertReplace("value => (int)value >= 0", lambda);
+}".AssertReplace("value => (int)value >= 0", lambda);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Convert to lambda");
         }
     }

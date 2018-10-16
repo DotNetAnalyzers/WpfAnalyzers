@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -32,8 +32,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetValue(BarProperty, value)", call);
+}".AssertReplace("this.SetValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
@@ -73,8 +72,7 @@ namespace RoslynSandbox
             return (int)element.GetValue(BarProperty);
         }
     }
-}";
-            testCode = testCode.AssertReplace(".SetValue", call);
+}".AssertReplace(".SetValue", call);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -111,8 +109,7 @@ namespace RoslynSandbox
             set { this.SetCurrentValue(BarProperty, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
+}".AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
@@ -183,8 +180,7 @@ namespace RoslynSandbox
             set { this.SetValue(BarProperty, value); }
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.GetValue(BarProperty)", call);
+}".AssertReplace("this.GetValue(BarProperty)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
