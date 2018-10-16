@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0012");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor);
 
         [Test]
         public void Message()
@@ -127,27 +127,9 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public void AddOwnerAttachedPropertyInSource()
         {
-            var part1 = @"
-namespace RoslynSandbox
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
-
-        public ↓double Bar
-        {
-            get { return (double) this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
-        }
-    }
-}";
-
-            var part2 = @"
+            var foo = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -174,7 +156,73 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, part1, part2);
+            var fooControl = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
+
+        public ↓double Bar
+        {
+            get { return (double) this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControl, foo);
+        }
+
+        [Test]
+        public void AddOwnerTextElementFontSize()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Documents;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
+
+        public ↓int FontSize
+        {
+            get => (int)this.GetValue(FontSizeProperty);
+            set => this.SetValue(FontSizeProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void AddOwnerBorderBorderThicknessProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public ↓int BorderThickness
+        {
+            get => (int)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
