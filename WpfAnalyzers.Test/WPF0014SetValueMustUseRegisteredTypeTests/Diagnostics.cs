@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0014");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0014SetValueMustUseRegisteredType.Descriptor);
 
         [Test]
         public void Message()
@@ -210,6 +210,58 @@ namespace RoslynSandbox
 }";
             fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
+        }
+
+        [Test]
+        public void AddOwnerTextElementFontSize()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Documents;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
+
+        public double FontSize
+        {
+            get => (double)this.GetValue(FontSizeProperty);
+            set => this.SetValue(FontSizeProperty, value);
+        }
+
+        public void Update(int i) => this.SetValue(FontSizeProperty, ↓i);
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void AddOwnerBorderBorderThicknessProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Thickness BorderThickness
+        {
+            get => (Thickness)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+
+        public void Update(int i) => this.SetValue(BorderThicknessProperty, ↓i);
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
