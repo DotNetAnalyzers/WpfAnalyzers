@@ -52,6 +52,9 @@
     <Compile Include="CommonValidation.cs" />
     <Compile Include="Foo1.cs" />
     <Compile Include="FooControl.cs" />
+    <Compile Include="WithEnum\Foo.cs" />
+    <Compile Include="WithEnum\FooControl.cs" />
+    <Compile Include="WithEnum\FooEnum.cs" />
     <Compile Include="TemplateParts\FooControl.cs" />
     <Compile Include="WithSetMarkupExtensionAttribute.cs" />
     <Compile Include="WithValidateValueCallback.cs" />
