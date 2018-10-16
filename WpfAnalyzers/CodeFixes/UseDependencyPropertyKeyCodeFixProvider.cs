@@ -63,7 +63,7 @@ namespace WpfAnalyzers
                                     null,
                                     keyField.CreateArgument(semanticModel, token.SpanStart),
                                     cancellationToken),
-                                 this.GetType().FullName),
+                                this.GetType().FullName),
                             diagnostic);
                     }
 

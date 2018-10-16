@@ -1,11 +1,13 @@
 namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     internal class ValidCode
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = WPF0019CastSenderToCorrectType.Descriptor;
 
         [Test]
         public void DependencyPropertyRegisterNoMetadata()
@@ -81,8 +83,7 @@ namespace RoslynSandbox
             return baseValue;
         }
     }
-}";
-            testCode = testCode.AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
+}".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -124,9 +125,8 @@ namespace RoslynSandbox
             return value;
         }
     }
-}";
-            testCode = testCode.AssertReplace("(FooControl)", $"({type})");
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic.Create("WPF0019"), testCode);
+}".AssertReplace("(FooControl)", $"({type})");
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
         }
 
         [Test]

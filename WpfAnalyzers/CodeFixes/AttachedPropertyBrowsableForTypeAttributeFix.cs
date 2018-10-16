@@ -15,8 +15,7 @@ namespace WpfAnalyzers
     [Shared]
     internal class AttachedPropertyBrowsableForTypeAttributeFix : DocumentEditorCodeFixProvider
     {
-        private static readonly AttributeSyntax Attribute = SyntaxFactory
-                                                            .Attribute(SyntaxFactory.ParseName("System.Windows.AttachedPropertyBrowsableForTypeAttribute")).WithSimplifiedNames();
+        private static readonly AttributeSyntax Attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("System.Windows.AttachedPropertyBrowsableForTypeAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -67,7 +66,7 @@ namespace WpfAnalyzers
                 classDeclaration,
                 editor.Generator.AddAttributeArguments(
                     Attribute,
-                   new[] { editor.Generator.AttributeArgument(TypeOf(type)) }));
+                    new[] { editor.Generator.AttributeArgument(TypeOf(type)) }));
         }
     }
 }

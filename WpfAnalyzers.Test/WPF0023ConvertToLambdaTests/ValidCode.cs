@@ -1,6 +1,7 @@
 namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
@@ -10,6 +11,8 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly DiagnosticAnalyzer Analyzer = new T();
+        //// ReSharper disable once StaticMemberInGenericType
+        private static readonly DiagnosticDescriptor Descriptor = WPF0023ConvertToLambda.Descriptor;
 
         [Test]
         public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
@@ -42,7 +45,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic.Create("WPF0023"), testCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
         }
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]

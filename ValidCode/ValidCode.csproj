@@ -48,6 +48,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddOwner.cs" />
     <Compile Include="BooleanBoxes.cs" />
     <Compile Include="CommonValidation.cs" />
     <Compile Include="Foo1.cs" />

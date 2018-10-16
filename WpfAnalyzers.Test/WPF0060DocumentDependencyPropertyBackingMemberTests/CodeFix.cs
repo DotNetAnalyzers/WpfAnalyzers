@@ -1,7 +1,7 @@
 namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
 {
-    using System;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
@@ -10,7 +10,8 @@ namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentBackingFieldCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0060");
+        private static readonly DiagnosticDescriptor Descriptor = WPF0060DocumentDependencyPropertyBackingMember.Descriptor;
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 
         [Test]
         public void DependencyPropertyRegisterBackingField()
@@ -51,7 +52,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -94,7 +95,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -145,7 +146,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -204,7 +205,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, part1, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, part1, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
@@ -248,7 +249,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -319,7 +320,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -373,7 +374,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -427,7 +428,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
@@ -497,7 +498,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, fooCode, fixedCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, fooCode, fixedCode);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
         }
     }

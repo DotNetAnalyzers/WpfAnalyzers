@@ -240,10 +240,10 @@ namespace WpfAnalyzers
                 else
                 {
                     result = SyntaxFactory.Argument(
-                            SyntaxFactory.CastExpression(
-                                SyntaxFactory.ParseTypeName(
-                                    assignedType.ToMinimalDisplayString(semanticModel, 0)),
-                                    valueExpression));
+                        SyntaxFactory.CastExpression(
+                            SyntaxFactory.ParseTypeName(
+                                assignedType.ToMinimalDisplayString(semanticModel, 0)),
+                            valueExpression));
                 }
 
                 return result != null;

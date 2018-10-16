@@ -104,6 +104,7 @@
     <Rule Id="SA1615" Action="None" />
     <Rule Id="SA1633" Action="None" />
     <Rule Id="SA1652" Action="None" />
+    <Rule Id="SA0001" Action="None" />
   </Rules>
   <Rules AnalyzerId="Gu.Analyzers.Analyzers" RuleNamespace="Gu.Analyzers.Analyzers">
     <Rule Id="GU0007" Action="None" />

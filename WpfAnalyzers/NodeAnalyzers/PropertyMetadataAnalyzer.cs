@@ -185,7 +185,9 @@ namespace WpfAnalyzers
             switch (defaultValue)
             {
                 case ConditionalExpressionSyntax conditional:
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
                     using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
                     {
                         return visited.Add(defaultValue) &&
                                IsDefaultValueOfRegisteredType(conditional.WhenTrue, registeredType, context, visited) &&
@@ -193,7 +195,9 @@ namespace WpfAnalyzers
                     }
 
                 case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
                     using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
                     {
                         return visited.Add(defaultValue) &&
                                IsDefaultValueOfRegisteredType(binary.Left, registeredType, context, visited) &&
@@ -212,7 +216,9 @@ namespace WpfAnalyzers
                 {
                     if (field.TrySingleDeclaration(context.CancellationToken, out var fieldDeclaration))
                     {
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
                         using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
                         {
                             if (fieldDeclaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
                                 variableDeclaration.Variables.TryLast(out var variable) &&
@@ -236,7 +242,9 @@ namespace WpfAnalyzers
                 {
                     if (property.TrySingleDeclaration(context.CancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
                     {
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
                         using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
                         {
                             if (propertyDeclaration.Initializer is EqualsValueClauseSyntax initializer)
                             {
