@@ -28,12 +28,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (!context.ContainingSymbol.IsStatic &&
+            if (!context.IsExcludedFromAnalysis() &&
+                !context.ContainingSymbol.IsStatic &&
                 context.ContainingSymbol is IPropertySymbol property &&
                 property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
@@ -58,17 +54,15 @@ namespace WpfAnalyzers
                 if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
                     getArg.Expression is IdentifierNameSyntax getIdentifier &&
                     setCall.TryGetArgumentAtIndex(0, out var setArg) &&
-                    setArg.Expression is IdentifierNameSyntax setIdentifier)
+                    setArg.Expression is IdentifierNameSyntax setIdentifier &&
+                    getIdentifier.Identifier.ValueText != setIdentifier.Identifier.ValueText &&
+                    !setIdentifier.Identifier.ValueText.IsParts(getIdentifier.Identifier.ValueText, "Key"))
                 {
-                    if (getIdentifier.Identifier.ValueText != setIdentifier.Identifier.ValueText &&
-                        !setIdentifier.Identifier.ValueText.IsParts(getIdentifier.Identifier.ValueText, "Key"))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
-                                propertyDeclaration.GetLocation(),
-                                context.ContainingSymbol.Name));
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
+                            propertyDeclaration.GetLocation(),
+                            context.ContainingSymbol.Name));
                 }
 
                 if (setCall.TryGetMethodName(out var setCallName) &&
@@ -97,7 +91,7 @@ namespace WpfAnalyzers
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !registeredType.IsSameType(property.Type, context.Compilation))
+                        !registeredType.Equals(property.Type))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(

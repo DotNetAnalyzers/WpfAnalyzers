@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -60,12 +61,8 @@ namespace WpfAnalyzers
                 TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
                 TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
             {
-                if (invocation.TryGetArgumentAtIndex(0, out var nameArg))
-                {
-                    return nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
-                }
-
-                return false;
+                return invocation.TryGetArgumentAtIndex(0, out var nameArg) &&
+                       nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -83,20 +80,23 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetRegisteredName(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetRegisteredName(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(fieldOrProperty, semanticModel, cancellationToken, out var invocation, out _))
+            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out _))
             {
-                if (invocation.TryGetArgumentAtIndex(0, out var arg))
-                {
-                    return arg.TryGetStringValue(semanticModel, cancellationToken, out result);
-                }
-
-                return false;
+                return invocation.TryGetArgumentAtIndex(0, out var arg) &&
+                       arg.TryGetStringValue(semanticModel, cancellationToken, out result);
             }
 
-            if (TryGetPropertyByName(fieldOrProperty, out var property))
+            if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
+                !source.Symbol.Equals(backing.Symbol))
+            {
+                return TryGetRegisteredName(source, semanticModel, cancellationToken, out result);
+            }
+
+            if (backing.Symbol.Locations.All(x => !x.IsInSource) &&
+                TryGetPropertyByName(backing, out var property))
             {
                 result = property.Name;
                 return true;
@@ -105,17 +105,24 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetRegisteredType(BackingFieldOrProperty field, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
+        internal static bool TryGetRegisteredType(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(field, semanticModel, cancellationToken, out var invocation, out _))
+            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out _))
             {
                 return invocation.TryGetArgumentAtIndex(1, out var typeArg) &&
                        typeArg.Expression is TypeOfExpressionSyntax typeOf &&
-                       TypeOf.TryGetType(typeOf, field.ContainingType, semanticModel, cancellationToken, out result);
+                       TypeOf.TryGetType(typeOf, backing.ContainingType, semanticModel, cancellationToken, out result);
             }
 
-            if (TryGetPropertyByName(field, out var property))
+            if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
+               !source.Symbol.Equals(backing.Symbol))
+            {
+                return TryGetRegisteredType(source, semanticModel, cancellationToken, out result);
+            }
+
+            if (backing.Symbol.Locations.All(x => !x.IsInSource) &&
+                TryGetPropertyByName(backing, out var property))
             {
                 result = property.Type;
                 return true;
@@ -124,10 +131,10 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
+        internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default(BackingFieldOrProperty);
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
+            if (backing.TryGetAssignedValue(cancellationToken, out var value) &&
                 semanticModel.TryGetSymbol(value, cancellationToken, out ISymbol symbol))
             {
                 if (symbol is IMethodSymbol method)
@@ -206,7 +213,6 @@ namespace WpfAnalyzers
         internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)
         {
             property = null;
-
             if (IsPotentialDependencyPropertyBackingField(fieldOrProperty) ||
                 IsPotentialDependencyPropertyKeyBackingField(fieldOrProperty))
             {

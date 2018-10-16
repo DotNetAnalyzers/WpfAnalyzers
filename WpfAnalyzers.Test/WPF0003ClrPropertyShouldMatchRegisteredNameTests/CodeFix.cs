@@ -223,7 +223,60 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public void ReadOnlyDependencyProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int ↓Error
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set { this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set { this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void AddOwnerAttachedPropertyInSource()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -291,28 +344,22 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public void AddOwnerTextElementFontSize()
         {
             var testCode = @"
 namespace RoslynSandbox
 {
     using System.Windows;
-    using System.Windows.Controls;
+    using System.Windows.Documents;
 
-    public class FooControl : Control
+    public class FooControl : FrameworkElement
     {
-        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
 
-        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-        public int ↓Error
+        public double ↓Error
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set { this.SetValue(BarPropertyKey, value); }
+            get => (double)this.GetValue(FontSizeProperty);
+            set => this.SetValue(FontSizeProperty, value);
         }
     }
 }";
@@ -321,22 +368,16 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using System.Windows;
-    using System.Windows.Controls;
+    using System.Windows.Documents;
 
-    public class FooControl : Control
+    public class FooControl : FrameworkElement
     {
-        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
 
-        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
-
-        public int Bar
+        public double FontSize
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set { this.SetValue(BarPropertyKey, value); }
+            get => (double)this.GetValue(FontSizeProperty);
+            set => this.SetValue(FontSizeProperty, value);
         }
     }
 }";

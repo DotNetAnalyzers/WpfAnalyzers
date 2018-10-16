@@ -719,7 +719,6 @@ namespace WpfAnalyzers
         private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
         {
             type = null;
-
             if (argument?.Parent is ArgumentListSyntax argumentList)
             {
                 switch (argumentList.Parent)
