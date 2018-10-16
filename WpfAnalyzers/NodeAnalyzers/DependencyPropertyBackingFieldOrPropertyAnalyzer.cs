@@ -94,7 +94,7 @@ namespace WpfAnalyzers
                 }
 
                 if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
-                    DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out var registerInvocation, out _) &&
+                    DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _, out _) &&
                     !candidate.FieldOrProperty.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(
