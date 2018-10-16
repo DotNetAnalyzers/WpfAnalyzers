@@ -111,6 +111,36 @@ namespace RoslynSandbox
                 Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("FontSize", name);
             }
+
+            [Test]
+            public void BorderBorderThicknessPropertyAddOwner()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Size BorderThickness
+        {
+            get => (Size)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+    }
+}";
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
+                var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
+                Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
+                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual("BorderThickness", name);
+            }
         }
     }
 }

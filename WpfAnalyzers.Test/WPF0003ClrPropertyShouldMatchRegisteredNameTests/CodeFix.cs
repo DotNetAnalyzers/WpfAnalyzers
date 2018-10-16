@@ -344,7 +344,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerTextElementFontSize()
+        public void AddOwnerTextElementFontSizeProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -378,6 +378,47 @@ namespace RoslynSandbox
         {
             get => (double)this.GetValue(FontSizeProperty);
             set => this.SetValue(FontSizeProperty, value);
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void AddOwnerBorderBorderThicknessProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Size ↓Error
+        {
+            get => (Size)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Size BorderThickness
+        {
+            get => (Size)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
         }
     }
 }";
