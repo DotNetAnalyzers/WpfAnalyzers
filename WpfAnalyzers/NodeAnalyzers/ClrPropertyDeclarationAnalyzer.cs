@@ -97,6 +97,7 @@ namespace WpfAnalyzers
                             Diagnostic.Create(
                                 WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
                                 propertyDeclaration.Type.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 property,
                                 registeredType));
                     }
