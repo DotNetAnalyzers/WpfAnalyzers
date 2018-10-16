@@ -1,3 +1,9 @@
+#### 2.2.0
+* Fix for WPF0012.
+* WPF0012 when AddOwner.
+* WPF001 require field name to be same as AddOwner source.
+* WPF0003 handle AddOwner when source is not in AST.
+
 #### 2.1.7
 * FEATURE: New analyzers WPF0130, WPF0131, WPF0132, WPF0140, WPF0141
 
