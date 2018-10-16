@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0001");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0001BackingFieldShouldMatchRegisteredName.Descriptor);
 
         [Test]
         public void Message()
@@ -369,6 +369,88 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { testCode, fooCode }, fixedCode);
+        }
+
+        [Test]
+        public void AddOwnerTextElementFontSizeProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Documents;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty ↓Error = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
+
+        public double FontSize
+        {
+            get => (double)this.GetValue(Error);
+            set => this.SetValue(Error, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Documents;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FooControl));
+
+        public double FontSize
+        {
+            get => (double)this.GetValue(FontSizeProperty);
+            set => this.SetValue(FontSizeProperty, value);
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void AddOwnerBorderBorderThicknessProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty ↓Error = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Size BorderThickness
+        {
+            get => (Size)GetValue(Error);
+            set => SetValue(Error, value);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty.AddOwner(typeof(FooControl));
+
+        public Size BorderThickness
+        {
+            get => (Size)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
