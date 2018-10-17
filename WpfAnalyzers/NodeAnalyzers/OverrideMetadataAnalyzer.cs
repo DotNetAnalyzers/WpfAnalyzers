@@ -25,12 +25,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax invocation &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is InvocationExpressionSyntax invocation &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol candidate) &&

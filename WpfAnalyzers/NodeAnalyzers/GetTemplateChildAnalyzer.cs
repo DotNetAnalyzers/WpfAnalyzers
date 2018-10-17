@@ -26,12 +26,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax invocation &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is InvocationExpressionSyntax invocation &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "GetTemplateChild" &&
                 invocation.ArgumentList is ArgumentListSyntax argumentList &&

@@ -71,7 +71,7 @@ namespace WpfAnalyzers
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
-                !context.ContainingSymbol.ContainingType.IsSameType(ownerType, context.Compilation))
+                !ownerType.Equals(context.ContainingSymbol.ContainingType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }

@@ -29,12 +29,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is MethodDeclarationSyntax methodDeclaration &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
                 method.Parameters.TryElementAt(0, out var parameter) &&

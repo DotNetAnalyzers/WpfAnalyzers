@@ -25,12 +25,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is MemberDeclarationSyntax memberDeclaration &&
+            if (!context.IsExcludedFromAnalysis() && 
+                context.Node is MemberDeclarationSyntax memberDeclaration &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type == KnownSymbol.RoutedEvent)
             {

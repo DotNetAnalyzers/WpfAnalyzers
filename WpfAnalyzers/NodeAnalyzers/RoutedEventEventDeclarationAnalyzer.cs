@@ -27,12 +27,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is IEventSymbol eventSymbol &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is IEventSymbol eventSymbol &&
                 context.Node is EventDeclarationSyntax eventDeclaration &&
                 EventDeclarationWalker.TryGetCalls(eventDeclaration, out var addCall, out var removeCall))
             {

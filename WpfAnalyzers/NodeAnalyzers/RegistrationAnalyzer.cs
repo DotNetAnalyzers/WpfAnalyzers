@@ -24,12 +24,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax registerCall &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is InvocationExpressionSyntax registerCall &&
                 context.ContainingSymbol.IsStatic &&
                 TryGetAnyRegisterCall(registerCall, context, out var registerMethod) &&
                 registerMethod.TryFindParameter(KnownSymbol.ValidateValueCallback, out var parameter) &&
