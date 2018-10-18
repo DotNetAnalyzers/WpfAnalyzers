@@ -32,7 +32,7 @@ namespace WpfAnalyzers
                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol symbol) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
             {
-                if (IsWrongType(fieldOrProperty, valueArg, context, out ITypeSymbol registeredType))
+                if (IsWrongType(fieldOrProperty, valueArg, context, out var registeredType))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
