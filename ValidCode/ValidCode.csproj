@@ -57,6 +57,7 @@
     <Compile Include="WithEnum\FooControl.cs" />
     <Compile Include="WithEnum\FooEnum.cs" />
     <Compile Include="TemplateParts\FooControl.cs" />
+    <Compile Include="WithMultidimensional.cs" />
     <Compile Include="WithSetMarkupExtensionAttribute.cs" />
     <Compile Include="WithValidateValueCallback.cs" />
     <Compile Include="WithXamlSetTypeConverter.cs" />

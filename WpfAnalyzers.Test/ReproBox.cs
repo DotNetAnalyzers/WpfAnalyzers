@@ -20,7 +20,7 @@ namespace WpfAnalyzers.Test
                                .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            new FileInfo("C:\\Git\\Gu.Wpf.NumericInput\\Gu.Wpf.NumericInput\\Gu.Wpf.NumericInput.csproj"),
+            new FileInfo("C:\\Git\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
