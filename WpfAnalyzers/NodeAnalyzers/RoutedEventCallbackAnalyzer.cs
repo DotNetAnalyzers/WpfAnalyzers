@@ -26,7 +26,7 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (!context.IsExcludedFromAnalysis() && 
+            if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ArgumentSyntax argument &&
                 argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
                 objectCreation.TrySingleArgument(out var callbackArg) &&
