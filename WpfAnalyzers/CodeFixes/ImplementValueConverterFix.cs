@@ -12,9 +12,9 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementValueConverterCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementValueConverterFix))]
     [Shared]
-    internal class ImplementValueConverterCodeFixProvider : DocumentEditorCodeFixProvider
+    internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
     {
         private static readonly MethodDeclarationSyntax IValueConverterConvert = ParseMethod(
             @"        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)

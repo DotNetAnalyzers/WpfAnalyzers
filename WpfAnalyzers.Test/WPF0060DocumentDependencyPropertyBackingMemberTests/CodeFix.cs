@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly CodeFixProvider Fix = new DocumentBackingFieldCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new DocumentBackingFieldFix();
         private static readonly DiagnosticDescriptor Descriptor = WPF0060DocumentDependencyPropertyBackingMember.Descriptor;
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 

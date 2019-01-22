@@ -9,9 +9,9 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentBackingFieldCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentBackingFieldFix))]
     [Shared]
-    internal class DocumentBackingFieldCodeFixProvider : DocumentEditorCodeFixProvider
+    internal class DocumentBackingFieldFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

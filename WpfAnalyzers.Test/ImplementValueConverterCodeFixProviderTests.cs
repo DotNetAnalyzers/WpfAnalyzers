@@ -42,7 +42,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
 
         [TestCase("FooConverter")]
@@ -146,7 +146,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll<ImplementValueConverterCodeFixProvider>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
         }
     }
 }

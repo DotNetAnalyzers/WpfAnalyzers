@@ -9,9 +9,9 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMemberCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMemberFix))]
     [Shared]
-    internal class RenameMemberCodeFixProvider : CodeFixProvider
+    internal class RenameMemberFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(

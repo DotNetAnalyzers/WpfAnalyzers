@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0091");
 
         [Test]

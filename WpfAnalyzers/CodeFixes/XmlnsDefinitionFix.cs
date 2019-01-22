@@ -12,9 +12,9 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XmlnsDefinitionCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XmlnsDefinitionFix))]
     [Shared]
-    internal class XmlnsDefinitionCodeFixProvider : CodeFixProvider
+    internal class XmlnsDefinitionFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.DiagnosticId);

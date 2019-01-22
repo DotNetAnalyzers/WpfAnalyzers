@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseSetValueCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new UseSetValueFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0035");
 
         [Test]

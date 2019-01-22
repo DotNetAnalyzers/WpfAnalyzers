@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
-        private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeCodeFixProvider();
+        private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeFix();
         private static readonly CodeFixProvider ComponentResourceKeyFix = new ComponentResourceKeyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0140");
 

@@ -8,8 +8,8 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
-        private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyCodeFixProvider();
-        private static readonly CodeFixProvider PropertyFix = new MakePropertyStaticReadonlyCodeFixProvider();
+        private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyFix();
+        private static readonly CodeFixProvider PropertyFix = new MakePropertyStaticReadonlyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0123");
 
         [Test]

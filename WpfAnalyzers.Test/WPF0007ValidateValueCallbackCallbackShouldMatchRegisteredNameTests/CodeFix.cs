@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RegistrationAnalyzer();
-        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor);
 
         [Test]

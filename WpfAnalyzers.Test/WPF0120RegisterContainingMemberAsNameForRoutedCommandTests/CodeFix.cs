@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0120RegisterContainingMemberAsNameForRoutedComman
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseNameofCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new UseNameofFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0120");
 
         [Test]

@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
-        private static readonly CodeFixProvider Fix = new UseSetCurrentValueCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new UseSetCurrentValueFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0041");
 
         [TestCase(true, "1")]

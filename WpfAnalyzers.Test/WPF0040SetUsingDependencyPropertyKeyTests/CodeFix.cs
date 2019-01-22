@@ -61,7 +61,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -118,7 +118,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -178,7 +178,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

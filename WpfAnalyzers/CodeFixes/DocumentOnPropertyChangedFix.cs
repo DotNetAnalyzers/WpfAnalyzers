@@ -6,16 +6,15 @@ namespace WpfAnalyzers
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameofCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentClrMethodFix))]
     [Shared]
-    internal class UseNameofCodeFixProvider : DocumentEditorCodeFixProvider
+    internal class DocumentOnPropertyChangedFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0120RegisterContainingMemberAsNameForRoutedCommand.DiagnosticId);
+            WPF0062DocumentPropertyChangedCallback.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -23,18 +22,16 @@ namespace WpfAnalyzers
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
-                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
+                    diagnostic.Properties.TryGetValue(nameof(WPF0062DocumentPropertyChangedCallback), out var text) &&
+                    text != null)
                 {
                     context.RegisterCodeFix(
-                        $"Use nameof({name}).",
-                        (editor, _) => editor.ReplaceNode(
-                            argument.Expression,
-                            x => SyntaxFactory.ParseExpression($"nameof({name})")),
-                        "Use containing type.",
+                        "Add standard documentation.",
+                        (editor, _) => editor.ReplaceNode(methodDeclaration, x => x.WithDocumentationText(text)),
+                        this.GetType(),
                         diagnostic);
                 }
             }

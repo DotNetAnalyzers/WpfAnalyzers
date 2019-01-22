@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly CodeFixProvider Fix = new RenameMemberCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0001BackingFieldShouldMatchRegisteredName.Descriptor);
 
         [Test]
