@@ -207,8 +207,7 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, 1);
         }
     }
-}";
-            fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+}".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
         }
 

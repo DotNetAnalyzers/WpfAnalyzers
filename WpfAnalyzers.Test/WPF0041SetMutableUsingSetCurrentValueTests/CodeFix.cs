@@ -241,7 +241,7 @@ namespace RoslynSandbox
             this.fooControl.↓Bar = 1;
         }
     }
-}";
+}".AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
             var fooControlCode = @"
 namespace RoslynSandbox
 {
@@ -282,7 +282,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            fooCode = fooCode.AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, fooControlCode }, fixedCode);
         }
 

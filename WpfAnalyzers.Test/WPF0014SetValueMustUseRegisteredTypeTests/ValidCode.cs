@@ -77,8 +77,7 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, 1);
         }
     }
-}";
-            part2 = part2.AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+}".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
             AnalyzerAssert.Valid(Analyzer, part1, part2);
         }
 
@@ -508,8 +507,7 @@ namespace RoslynSandbox
             this.SetValue(BarProperty, false);
         }
     }
-}";
-            fooControlPart2 = fooControlPart2.AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
+}".AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
             AnalyzerAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
         }
 

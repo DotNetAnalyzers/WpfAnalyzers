@@ -56,7 +56,7 @@ namespace RoslynSandbox
             this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);
         }
     }
-}";
+}".AssertReplace("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);", setExpression);
             var fooControlCode = @"
 namespace RoslynSandbox
 {
@@ -83,9 +83,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            fooCode = fooCode.AssertReplace(
-                "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);",
-                setExpression);
             AnalyzerAssert.Valid(Analyzer, fooCode, fooControlCode);
         }
 
