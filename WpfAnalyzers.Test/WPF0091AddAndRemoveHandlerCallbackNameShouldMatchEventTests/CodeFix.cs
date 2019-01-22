@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0091");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         [Test]
         public void MessageAddHandler()

@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0071");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0071ConverterDoesNotHaveAttribute.Descriptor);
 
         [Test]
         public void AddAttributeDirectCast()

@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0004");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0004ClrMethodShouldMatchRegisteredName.Descriptor);
 
         [Test]
         public void Message()

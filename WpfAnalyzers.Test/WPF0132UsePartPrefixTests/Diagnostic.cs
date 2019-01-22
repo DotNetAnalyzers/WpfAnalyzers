@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
     internal class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0132");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0132UsePartPrefix.Descriptor);
 
         [Test]
         public void MissingPrefix()

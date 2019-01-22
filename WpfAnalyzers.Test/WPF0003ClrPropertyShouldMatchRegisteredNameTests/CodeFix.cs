@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0003");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor);
 
         [Test]
         public void Message()

@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0122RegisterRoutedCommandTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider Fix = new RegisterRoutedCommandFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0122");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0122RegisterRoutedCommand.Descriptor);
 
         [Test]
         public void RoutedCommand()

@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0080MarkupExtensionDoesNotHaveAttribute();
         private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeAttributeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0080");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0080MarkupExtensionDoesNotHaveAttribute.DiagnosticId);
 
         [Test]
         public void Message()

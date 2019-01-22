@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0074");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0074DefaultMemberOfWrongType.Descriptor);
 
         [Test]
         public void DefaultField()

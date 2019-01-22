@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
         private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0011");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId);
 
         [Test]
         public void Message()

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
         {
             private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
             private static readonly CodeFixProvider Fix = new MakePropertyStaticReadonlyFix();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0030");
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0030BackingFieldShouldBeStaticReadonly.Descriptor);
 
             [Test]
             public void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()

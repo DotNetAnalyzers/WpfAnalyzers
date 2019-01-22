@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 
     internal class CodeFix
     {
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0040");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0040SetUsingDependencyPropertyKey.Descriptor);
 
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]

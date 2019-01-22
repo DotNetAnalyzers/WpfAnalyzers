@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0031");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0031FieldOrder.Descriptor);
 
         [Test]
         public void DependencyProperty()

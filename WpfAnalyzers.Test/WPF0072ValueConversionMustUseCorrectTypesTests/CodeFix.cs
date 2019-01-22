@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeArgumentFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0072");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor);
 
         [Test]
         public void MessageWhenWrongSourceType()

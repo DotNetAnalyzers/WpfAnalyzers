@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEv
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0090");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         [Test]
         public void Message()

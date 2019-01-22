@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTest
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0015");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0015RegisteredOwnerTypeMustBeDependencyObject.DiagnosticId);
 
         [Test]
         public void Message()

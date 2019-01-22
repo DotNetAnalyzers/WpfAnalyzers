@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
         private static readonly CodeFixProvider Fix = new ComponentResourceKeyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0141");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0141UseContainingMemberComponentResourceKey.Descriptor);
 
         [Test]
         public void Message()

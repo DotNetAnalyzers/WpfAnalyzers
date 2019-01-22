@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0019");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0019CastSenderToCorrectType.Descriptor);
 
         [Test]
         public void Message()

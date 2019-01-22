@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0121");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor);
 
         [Test]
         public void RoutedCommand()

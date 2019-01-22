@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
         private static readonly CodeFixProvider Fix = new XmlnsDefinitionFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0052");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.DiagnosticId);
 
         [Test]
         public void Message()

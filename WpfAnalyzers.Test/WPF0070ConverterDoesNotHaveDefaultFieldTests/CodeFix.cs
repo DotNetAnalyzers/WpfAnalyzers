@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new AddDefaultMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0070");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor);
 
         [Test]
         public void Message()

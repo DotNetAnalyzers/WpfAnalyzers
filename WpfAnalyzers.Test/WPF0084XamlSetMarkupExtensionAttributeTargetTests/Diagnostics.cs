@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
     internal class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0084");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor);
 
         [Test]
         public void Message()

@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
     internal class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0131");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0131TemplatePartType.Descriptor);
 
         [Test]
         public void CastNotMatching()

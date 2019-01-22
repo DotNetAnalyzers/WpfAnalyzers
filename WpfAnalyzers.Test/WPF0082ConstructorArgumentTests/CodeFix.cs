@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeArgumentFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("WPF0082");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0082ConstructorArgument.Descriptor);
 
         [Test]
         public void Message()
