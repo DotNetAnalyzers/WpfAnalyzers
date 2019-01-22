@@ -1,12 +1,14 @@
 namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new AttachedPropertyBrowsableForTypeAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor);
 
         [Test]
@@ -94,7 +96,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<ClrMethodDeclarationAnalyzer, AttachedPropertyBrowsableForTypeAttributeFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

@@ -2,10 +2,12 @@
 namespace WpfAnalyzers.Test
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using NUnit.Framework;
 
     public class ImplementValueConverterCodeFixProviderTests
     {
+        private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
         // ReSharper disable once InconsistentNaming
         private static readonly ExpectedDiagnostic CS0535 = ExpectedDiagnostic.Create(nameof(CS0535));
 
@@ -42,7 +44,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -80,7 +82,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [TestCase("FooConverter")]
@@ -146,7 +148,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -185,7 +187,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -215,7 +217,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll<ImplementValueConverterFix>(CS0535, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
     }
 }

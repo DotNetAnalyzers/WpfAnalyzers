@@ -1,10 +1,14 @@
 namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseDependencyPropertyKeyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0040SetUsingDependencyPropertyKey.Descriptor);
 
         [TestCase("SetValue")]
@@ -61,7 +65,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -118,7 +122,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -178,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseDependencyPropertyKeyFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

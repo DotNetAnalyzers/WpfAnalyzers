@@ -1,10 +1,14 @@
 namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseSetValueFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0043DontUseSetCurrentValueForDataContext.Descriptor);
 
         [TestCase("this.SetCurrentValue(DataContextProperty, 1);", "this.SetValue(DataContextProperty, 1);")]
@@ -43,7 +47,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(DataContextProperty, 1);", after);
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
@@ -82,7 +86,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
 
-            AnalyzerAssert.CodeFix<SetValueAnalyzer, UseSetValueFix>(ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
