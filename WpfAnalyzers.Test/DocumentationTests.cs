@@ -1,9 +1,10 @@
 #pragma warning disable CA1055 // Uri return values should not be strings
 #pragma warning disable CA1056 // Uri properties should not be strings
 #pragma warning disable CA1721 // Property names should not match get methods
-namespace WpfAnalyzers.Test.Documentation
+namespace WpfAnalyzers.Test
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
@@ -16,7 +17,7 @@ namespace WpfAnalyzers.Test.Documentation
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Tests
+    public class DocumentationTests
     {
         private static readonly IReadOnlyList<DiagnosticAnalyzer> Analyzers = typeof(AnalyzerCategory)
                                                                               .Assembly
@@ -27,24 +28,27 @@ namespace WpfAnalyzers.Test.Documentation
                                                                               .ToArray();
 
         private static readonly IReadOnlyList<DescriptorInfo> DescriptorInfos = Analyzers
-            .SelectMany(DescriptorInfo.Create)
-            .ToArray();
+                                                                                .SelectMany(DescriptorInfo.Create)
+                                                                                .ToArray();
 
-        private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => DescriptorInfos.Where(d => d.DocExists).ToArray();
+        private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => DescriptorInfos.Where(d => d.DocumentationFile.Exists)
+                                                                                           .ToArray();
 
-        private static DirectoryInfo SolutionDirectory => SolutionFile.Find("WpfAnalyzers.sln").Directory;
+        private static DirectoryInfo SolutionDirectory => SolutionFile.Find("WpfAnalyzers.sln")
+                                                                      .Directory;
 
-        private static DirectoryInfo DocumentsDirectory => SolutionDirectory.EnumerateDirectories("documentation", SearchOption.TopDirectoryOnly).Single();
+        private static DirectoryInfo DocumentsDirectory => SolutionDirectory.EnumerateDirectories("documentation", SearchOption.TopDirectoryOnly)
+                                                                            .Single();
 
         [TestCaseSource(nameof(DescriptorInfos))]
         public void MissingDocs(DescriptorInfo descriptorInfo)
         {
-            if (!descriptorInfo.DocExists)
+            if (!descriptorInfo.DocumentationFile.Exists)
             {
                 var descriptor = descriptorInfo.Descriptor;
                 var id = descriptor.Id;
                 DumpIfDebug(CreateStub(descriptorInfo));
-                File.WriteAllText(descriptorInfo.DocFileName + ".generated", CreateStub(descriptorInfo));
+                File.WriteAllText(descriptorInfo.DocumentationFile.Name + ".generated", CreateStub(descriptorInfo));
                 Assert.Fail($"Documentation is missing for {id}");
             }
         }
@@ -52,17 +56,17 @@ namespace WpfAnalyzers.Test.Documentation
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void TitleId(DescriptorInfo descriptorInfo)
         {
-            Assert.AreEqual($"# {descriptorInfo.Descriptor.Id}", File.ReadLines(descriptorInfo.DocFileName).First());
+            Assert.AreEqual($"# {descriptorInfo.Descriptor.Id}", descriptorInfo.DocumentationFile.AllLines[0]);
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Title(DescriptorInfo descriptorInfo)
         {
             var expected = $"## {descriptorInfo.Descriptor.Title}";
-            var actual = File.ReadLines(descriptorInfo.DocFileName)
-                             .Skip(1)
-                             .First()
-                             .Replace("`", string.Empty);
+            var actual = descriptorInfo.DocumentationFile.AllLines
+                                       .Skip(1)
+                                       .First()
+                                       .Replace("`", string.Empty);
             Assert.AreEqual(expected, actual);
         }
 
@@ -74,11 +78,11 @@ namespace WpfAnalyzers.Test.Documentation
                                          .ToString(CultureInfo.InvariantCulture)
                                          .Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
                                          .First();
-            var actual = File.ReadLines(descriptorInfo.DocFileName)
-                             .SkipWhile(l => !l.StartsWith("## Description", StringComparison.OrdinalIgnoreCase))
-                             .Skip(1)
-                             .FirstOrDefault(l => !string.IsNullOrWhiteSpace(l))
-                            ?.Replace("`", string.Empty);
+            var actual = descriptorInfo.DocumentationFile.AllLines
+                                       .SkipWhile(l => !l.StartsWith("## Description", StringComparison.OrdinalIgnoreCase))
+                                       .Skip(1)
+                                       .FirstOrDefault(l => !string.IsNullOrWhiteSpace(l))
+                                       ?.Replace("`", string.Empty);
 
             DumpIfDebug(expected);
             DumpIfDebug(actual);
@@ -90,7 +94,7 @@ namespace WpfAnalyzers.Test.Documentation
         {
             var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
+            var actual = GetTable(descriptorInfo.DocumentationFile.AllText);
             CodeAssert.AreEqual(expected, actual);
         }
 
@@ -99,14 +103,16 @@ namespace WpfAnalyzers.Test.Documentation
         {
             var expected = GetConfigSeverity(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            var actual = GetConfigSeverity(File.ReadAllText(descriptorInfo.DocFileName));
+            var actual = GetConfigSeverity(descriptorInfo.DocumentationFile.AllText);
             CodeAssert.AreEqual(expected, actual);
         }
 
         [TestCaseSource(nameof(DescriptorInfos))]
         public void UniqueIds(DescriptorInfo descriptorInfo)
         {
-            Assert.AreEqual(1, DescriptorInfos.Select(x => x.Descriptor).Distinct().Count(d => d.Id == descriptorInfo.Descriptor.Id));
+            Assert.AreEqual(1, DescriptorInfos.Select(x => x.Descriptor)
+                                              .Distinct()
+                                              .Count(d => d.Id == descriptorInfo.Descriptor.Id));
         }
 
         [Test]
@@ -115,7 +121,9 @@ namespace WpfAnalyzers.Test.Documentation
             var builder = new StringBuilder();
             builder.AppendLine("<!-- start generated table -->")
                    .AppendLine("<table>");
-            foreach (var descriptor in DescriptorsWithDocs.Select(x => x.Descriptor).Distinct().OrderBy(x => x.Id))
+            foreach (var descriptor in DescriptorsWithDocs.Select(x => x.Descriptor)
+                                                          .Distinct()
+                                                          .OrderBy(x => x.Id))
             {
                 builder.AppendLine("  <tr>")
                        .AppendLine($@"    <td><a href=""{descriptor.HelpLinkUri}"">{descriptor.Id}</a></td>")
@@ -204,7 +212,7 @@ Or put this at the top of the file to disable all instances.
             if (Analyzers.Count(x => x.SupportedDiagnostics.Any(d => d.Id == descriptor.Id)) == 1)
             {
                 return stub.AssertReplace("<TYPENAME>", descriptorInfo.Analyzer.GetType().Name)
-                           .AssertReplace("<URL>", descriptorInfo.CodeFileUri);
+                           .AssertReplace("<URL>", descriptorInfo.AnalyzerFile.Uri);
             }
 
             var builder = StringBuilderPool.Borrow();
@@ -212,7 +220,7 @@ Or put this at the top of the file to disable all instances.
             {
                 _ = builder.AppendLine("  <tr>")
                            .AppendLine($"    <td>{(builder.Length <= "  <tr>\r\n".Length ? "Code" : string.Empty)}</td>")
-                           .AppendLine($"    <td><a href=\"{DescriptorInfo.GetCodeFileUri(analyzer)}\">{analyzer.GetType().Name}</a></td>")
+                           .AppendLine($"    <td><a href=\"{CodeFile.Find(analyzer.GetType()).Uri}\">{analyzer.GetType().Name}</a></td>")
                            .AppendLine("  </tr>");
             }
 
@@ -252,36 +260,17 @@ Or put this at the top of the file to disable all instances.
             {
                 this.Analyzer = analyzer;
                 this.Descriptor = descriptor;
-                this.DocFileName = Path.Combine(DocumentsDirectory.FullName, descriptor.Id + ".md");
-                this.CodeFileName = Directory.EnumerateFiles(
-                                                 SolutionDirectory.FullName,
-                                                 analyzer.GetType().Name + ".cs",
-                                                 SearchOption.AllDirectories)
-                                             .FirstOrDefault();
-                this.CodeFileUri = GetCodeFileUri(analyzer);
+                this.DocumentationFile = new MarkdownFile(Path.Combine(DocumentsDirectory.FullName, descriptor.Id + ".md"));
+                this.AnalyzerFile = CodeFile.Find(analyzer.GetType());
             }
 
             public DiagnosticAnalyzer Analyzer { get; }
 
-            public bool DocExists => File.Exists(this.DocFileName);
-
             public DiagnosticDescriptor Descriptor { get; }
 
-            public string DocFileName { get; }
+            public MarkdownFile DocumentationFile { get; }
 
-            public string CodeFileName { get; }
-
-            public string CodeFileUri { get; }
-
-            public static string GetCodeFileUri(DiagnosticAnalyzer analyzer)
-            {
-                var fileName = Directory.EnumerateFiles(SolutionDirectory.FullName, analyzer.GetType().Name + ".cs", SearchOption.AllDirectories)
-                                        .FirstOrDefault();
-                return fileName != null
-                    ? "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" +
-                      fileName.Substring(SolutionDirectory.FullName.Length).Replace("\\", "/")
-                    : "missing";
-            }
+            public CodeFile AnalyzerFile { get; }
 
             public static IEnumerable<DescriptorInfo> Create(DiagnosticAnalyzer analyzer)
             {
@@ -292,6 +281,58 @@ Or put this at the top of the file to disable all instances.
             }
 
             public override string ToString() => this.Descriptor.Id;
+        }
+
+        public class MarkdownFile
+        {
+            public MarkdownFile(string name)
+            {
+                this.Name = name;
+                if (File.Exists(name))
+                {
+                    this.AllText = File.ReadAllText(name);
+                    this.AllLines = File.ReadAllLines(name);
+                }
+            }
+
+            public string Name { get; }
+
+            public bool Exists => File.Exists(this.Name);
+
+            public string AllText { get; }
+
+            public IReadOnlyList<string> AllLines { get; }
+        }
+
+        public class CodeFile
+        {
+            private static readonly ConcurrentDictionary<Type, CodeFile> Cache = new ConcurrentDictionary<Type, CodeFile>();
+
+            public CodeFile(string name)
+            {
+                this.Name = name;
+            }
+
+            public string Name { get; }
+
+            public string Uri => "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" + this.Name.Substring(SolutionDirectory.FullName.Length)
+                                                                                                             .Replace("\\", "/");
+
+            public static CodeFile Find(Type type)
+            {
+                return Cache.GetOrAdd(type, x => FindCore(x.Name + ".cs"));
+            }
+
+            private static CodeFile FindCore(string name)
+            {
+                var fileName = Cache.Values.Select(x => Path.GetDirectoryName(x.Name))
+                                    .Distinct()
+                                    .SelectMany(d => Directory.EnumerateFiles(d, name, SearchOption.TopDirectoryOnly))
+                                    .FirstOrDefault() ??
+                               Directory.EnumerateFiles(SolutionDirectory.FullName, name, SearchOption.AllDirectories)
+                                        .First();
+                return new CodeFile(fileName);
+            }
         }
     }
 }
