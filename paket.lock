@@ -715,7 +715,7 @@ NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
     Gu.Analyzers (1.3.1-dev)
-    IDisposableAnalyzers (2.1)
+    IDisposableAnalyzers (2.1.1)
     StyleCop.Analyzers (1.1.1-beta.61)
       StyleCop.Analyzers.Unstable (>= 1.1.1.61)
     StyleCop.Analyzers.Unstable (1.1.1.61)
