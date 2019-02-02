@@ -9,282 +9,76 @@ Roslyn analyzers for WPF.
 * 1.x versions are for C#6.
 * 2.x versions are for C#7.
 
-<!-- start generated table -->
-<table>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md">WPF0001</a></td>
-    <td>Backing field for a DependencyProperty should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md">WPF0002</a></td>
-    <td>Backing field for a DependencyPropertyKey should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md">WPF0003</a></td>
-    <td>CLR property for a DependencyProperty should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md">WPF0004</a></td>
-    <td>CLR method for a DependencyProperty must match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md">WPF0005</a></td>
-    <td>Name of PropertyChangedCallback should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md">WPF0006</a></td>
-    <td>Name of CoerceValueCallback should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md">WPF0007</a></td>
-    <td>Name of ValidateValueCallback should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md">WPF0010</a></td>
-    <td>Default value type must match registered type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md">WPF0011</a></td>
-    <td>Containing type should be used as registered owner.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md">WPF0012</a></td>
-    <td>CLR property type should match registered type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md">WPF0013</a></td>
-    <td>CLR accessor for attached property must match registered type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md">WPF0014</a></td>
-    <td>SetValue must use registered type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md">WPF0015</a></td>
-    <td>Registered owner type must inherit DependencyObject.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md">WPF0016</a></td>
-    <td>Default value is shared reference type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0017.md">WPF0017</a></td>
-    <td>Metadata must be of same type or super type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0018.md">WPF0018</a></td>
-    <td>Use containing type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0019.md">WPF0019</a></td>
-    <td>Cast sender to correct type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0020.md">WPF0020</a></td>
-    <td>Cast value to correct type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md">WPF0021</a></td>
-    <td>Cast sender to containing type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md">WPF0022</a></td>
-    <td>Cast value to correct type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md">WPF0023</a></td>
-    <td>The callback is trivial, convert to lambda.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md">WPF0030</a></td>
-    <td>Backing field for a DependencyProperty should be static and readonly.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md">WPF0031</a></td>
-    <td>DependencyPropertyKey field must come before DependencyProperty field.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md">WPF0032</a></td>
-    <td>Use same dependency property in get and set.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md">WPF0033</a></td>
-    <td>Add [AttachedPropertyBrowsableForType]</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0034.md">WPF0034</a></td>
-    <td>Use correct argument for [AttachedPropertyBrowsableForType]</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0035.md">WPF0035</a></td>
-    <td>Use SetValue in setter.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0036.md">WPF0036</a></td>
-    <td>Avoid side effects in CLR accessors.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md">WPF0040</a></td>
-    <td>A readonly DependencyProperty must be set with DependencyPropertyKey.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md">WPF0041</a></td>
-    <td>Set mutable dependency properties using SetCurrentValue.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md">WPF0042</a></td>
-    <td>Avoid side effects in CLR accessors.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md">WPF0043</a></td>
-    <td>Don't set DataContext using SetCurrentValue.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md">WPF0050</a></td>
-    <td>XmlnsPrefix must map to the same url as XmlnsDefinition.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md">WPF0051</a></td>
-    <td>XmlnsDefinition must map to existing namespace.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md">WPF0052</a></td>
-    <td>XmlnsDefinitions does not map all namespaces with public types.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md">WPF0060</a></td>
-    <td>Backing member for DependencyProperty must have standard documentation text.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md">WPF0061</a></td>
-    <td>Accessor method for attached property must have standard documentation text.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md">WPF0062</a></td>
-    <td>Property changed callback must have standard documentation text.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md">WPF0070</a></td>
-    <td>Add default field to converter.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md">WPF0071</a></td>
-    <td>Add ValueConversion attribute.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md">WPF0072</a></td>
-    <td>ValueConversion must use correct types.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md">WPF0073</a></td>
-    <td>Add ValueConversion attribute (unknown types).</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md">WPF0074</a></td>
-    <td>Use containing type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md">WPF0080</a></td>
-    <td>Add MarkupExtensionReturnType attribute.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md">WPF0081</a></td>
-    <td>MarkupExtensionReturnType must use correct return type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md">WPF0082</a></td>
-    <td>[ConstructorArgument] must match.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md">WPF0083</a></td>
-    <td>Add [ConstructorArgument].</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0084.md">WPF0084</a></td>
-    <td>Target of [XamlSetMarkupExtension] should exist and have correct signature.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md">WPF0085</a></td>
-    <td>Target of [XamlSetTypeConverter] should exist and have correct signature.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md">WPF0090</a></td>
-    <td>Name the invoked method OnEventName.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md">WPF0091</a></td>
-    <td>Name the invoked method OnEventName.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md">WPF0100</a></td>
-    <td>Backing field for a RoutedEvent should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md">WPF0101</a></td>
-    <td>Containing type should be used as registered owner.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md">WPF0102</a></td>
-    <td>Name of the event should match registered name.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md">WPF0103</a></td>
-    <td>Use same event in add and remove.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md">WPF0104</a></td>
-    <td>Call AddHandler in add.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md">WPF0105</a></td>
-    <td>Call RemoveHandler in remove.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md">WPF0106</a></td>
-    <td>Use the registered handler type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md">WPF0107</a></td>
-    <td>Backing member for a RoutedEvent should be static and readonly.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md">WPF0120</a></td>
-    <td>Register containing member name as name for routed command.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md">WPF0121</a></td>
-    <td>Register containing type as owner for routed command.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md">WPF0122</a></td>
-    <td>Register name and owning type for routed command.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md">WPF0123</a></td>
-    <td>Backing field for a RoutedCommand should be static and readonly.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md">WPF0130</a></td>
-    <td>Add [TemplatePart] to the type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md">WPF0131</a></td>
-    <td>Use correct [TemplatePart] type.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md">WPF0132</a></td>
-    <td>Use PART prefix.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md">WPF0140</a></td>
-    <td>Use containing type when creating a ComponentResourceKey.</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md">WPF0141</a></td>
-    <td>Use containing member as key when creating a ComponentResourceKey.</td>
-  </tr>
-<table>
-<!-- end generated table -->
+| Id       | Title
+| :--      | :--
+| [WPF0001](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md)| Backing field for a DependencyProperty should match registered name.
+| [WPF0002](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md)| Backing field for a DependencyPropertyKey should match registered name.
+| [WPF0003](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md)| CLR property for a DependencyProperty should match registered name.
+| [WPF0004](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md)| CLR method for a DependencyProperty must match registered name.
+| [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name.
+| [WPF0006](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md)| Name of CoerceValueCallback should match registered name.
+| [WPF0007](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md)| Name of ValidateValueCallback should match registered name.
+| [WPF0010](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md)| Default value type must match registered type.
+| [WPF0011](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md)| Containing type should be used as registered owner.
+| [WPF0012](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md)| CLR property type should match registered type.
+| [WPF0013](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md)| CLR accessor for attached property must match registered type.
+| [WPF0014](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md)| SetValue must use registered type.
+| [WPF0015](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md)| Registered owner type must inherit DependencyObject.
+| [WPF0016](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md)| Default value is shared reference type.
+| [WPF0017](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0017.md)| Metadata must be of same type or super type.
+| [WPF0018](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0018.md)| Use containing type.
+| [WPF0019](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0019.md)| Cast sender to correct type.
+| [WPF0020](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0020.md)| Cast value to correct type.
+| [WPF0021](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md)| Cast sender to containing type.
+| [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type.
+| [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda.
+| [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly.
+| [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey field must come before DependencyProperty field.
+| [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set.
+| [WPF0033](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md)| Add [AttachedPropertyBrowsableForType]
+| [WPF0034](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0034.md)| Use correct argument for [AttachedPropertyBrowsableForType]
+| [WPF0035](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0035.md)| Use SetValue in setter.
+| [WPF0036](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0036.md)| Avoid side effects in CLR accessors.
+| [WPF0040](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md)| A readonly DependencyProperty must be set with DependencyPropertyKey.
+| [WPF0041](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md)| Set mutable dependency properties using SetCurrentValue.
+| [WPF0042](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md)| Avoid side effects in CLR accessors.
+| [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext using SetCurrentValue.
+| [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition.
+| [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace.
+| [WPF0052](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md)| XmlnsDefinitions does not map all namespaces with public types.
+| [WPF0060](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md)| Backing member for DependencyProperty must have standard documentation text.
+| [WPF0061](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md)| Accessor method for attached property must have standard documentation text.
+| [WPF0062](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md)| Property changed callback must have standard documentation text.
+| [WPF0070](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md)| Add default field to converter.
+| [WPF0071](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md)| Add ValueConversion attribute.
+| [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types.
+| [WPF0073](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md)| Add ValueConversion attribute (unknown types).
+| [WPF0074](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md)| Use containing type.
+| [WPF0080](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md)| Add MarkupExtensionReturnType attribute.
+| [WPF0081](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md)| MarkupExtensionReturnType must use correct return type.
+| [WPF0082](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md)| [ConstructorArgument] must match.
+| [WPF0083](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md)| Add [ConstructorArgument].
+| [WPF0084](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0084.md)| Target of [XamlSetMarkupExtension] should exist and have correct signature.
+| [WPF0085](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md)| Target of [XamlSetTypeConverter] should exist and have correct signature.
+| [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName.
+| [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName.
+| [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name.
+| [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner.
+| [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name.
+| [WPF0103](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md)| Use same event in add and remove.
+| [WPF0104](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md)| Call AddHandler in add.
+| [WPF0105](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md)| Call RemoveHandler in remove.
+| [WPF0106](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md)| Use the registered handler type.
+| [WPF0107](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md)| Backing member for a RoutedEvent should be static and readonly.
+| [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command.
+| [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command.
+| [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command.
+| [WPF0123](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md)| Backing field for a RoutedCommand should be static and readonly.
+| [WPF0130](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md)| Add [TemplatePart] to the type.
+| [WPF0131](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md)| Use correct [TemplatePart] type.
+| [WPF0132](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md)| Use PART prefix.
+| [WPF0140](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md)| Use containing type when creating a ComponentResourceKey.
+| [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey.
 
 
 ## Using WpfAnalyzers
