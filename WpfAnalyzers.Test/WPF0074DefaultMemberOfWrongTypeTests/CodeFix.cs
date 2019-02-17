@@ -4,7 +4,7 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0074DefaultMemberOfWrongType.Descriptor);

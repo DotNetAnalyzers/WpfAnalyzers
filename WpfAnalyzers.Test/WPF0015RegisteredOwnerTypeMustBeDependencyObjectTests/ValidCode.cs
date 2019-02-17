@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTest
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
 

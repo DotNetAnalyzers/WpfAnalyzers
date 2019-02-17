@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
 

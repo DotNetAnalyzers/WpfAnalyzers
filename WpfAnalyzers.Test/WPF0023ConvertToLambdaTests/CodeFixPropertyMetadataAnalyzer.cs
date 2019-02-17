@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFixPropertyMetadataAnalyzer
+    public class CodeFixPropertyMetadataAnalyzer
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
         private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();

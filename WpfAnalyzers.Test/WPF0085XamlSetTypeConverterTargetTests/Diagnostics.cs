@@ -4,7 +4,7 @@ namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostics
+    public class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0085XamlSetTypeConverterTarget.Descriptor);

@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
         private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeFix();

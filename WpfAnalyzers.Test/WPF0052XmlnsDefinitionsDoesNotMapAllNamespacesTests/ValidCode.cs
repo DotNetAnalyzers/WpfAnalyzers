@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
 

@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0122RegisterRoutedCommandTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider Fix = new RegisterRoutedCommandFix();

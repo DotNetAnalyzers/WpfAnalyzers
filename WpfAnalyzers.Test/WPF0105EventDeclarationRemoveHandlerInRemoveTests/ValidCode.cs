@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
 

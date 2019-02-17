@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
     [TestFixture(typeof(CallbackAnalyzer))]
     [TestFixture(typeof(PropertyMetadataAnalyzer))]
-    internal class ValidCode<T>
+    public class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly DiagnosticAnalyzer Analyzer = new T();

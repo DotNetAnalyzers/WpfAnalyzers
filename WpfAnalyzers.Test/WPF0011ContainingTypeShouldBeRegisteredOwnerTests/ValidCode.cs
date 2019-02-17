@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
 

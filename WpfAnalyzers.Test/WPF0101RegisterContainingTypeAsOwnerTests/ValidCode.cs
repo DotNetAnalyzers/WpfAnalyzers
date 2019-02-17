@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
 

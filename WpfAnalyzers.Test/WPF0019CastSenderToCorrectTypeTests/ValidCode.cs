@@ -4,7 +4,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
     using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = WPF0019CastSenderToCorrectType.Descriptor;

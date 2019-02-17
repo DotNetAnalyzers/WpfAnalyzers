@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();

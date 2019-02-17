@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 

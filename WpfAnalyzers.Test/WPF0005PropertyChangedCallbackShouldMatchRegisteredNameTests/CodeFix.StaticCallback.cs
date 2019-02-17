@@ -5,9 +5,9 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
-        internal class StaticCallback
+        public class StaticCallback
         {
             private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberFix();

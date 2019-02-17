@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
         private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeFix();

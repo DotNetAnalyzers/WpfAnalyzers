@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();

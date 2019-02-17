@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
 
