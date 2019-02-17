@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test
     public class ImplementValueConverterCodeFixProviderTests
     {
         private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
-        // ReSharper disable once InconsistentNaming
+        //// ReSharper disable once InconsistentNaming
         private static readonly ExpectedDiagnostic CS0535 = ExpectedDiagnostic.Create(nameof(CS0535));
 
         [TestCase("FooConverter")]

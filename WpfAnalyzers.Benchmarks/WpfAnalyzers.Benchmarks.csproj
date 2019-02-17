@@ -1,23 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <CodeAnalysisRuleSet>WpfAnalyzers.Benchmarks.ruleset</CodeAnalysisRuleSet>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
   
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Remove="BenchmarkDotNet.Artifacts\**" />
-    <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
-    <None Remove="BenchmarkDotNet.Artifacts\**" />
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />

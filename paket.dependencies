@@ -19,17 +19,18 @@ group Benchmarks
   source http://www.nuget.org/api/v2/
   nuget BenchmarkDotNet.Diagnostics.Windows
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
-  nuget System.Runtime.CompilerServices.Unsafe 4.5.1
   nuget Gu.Roslyn.Asserts
   nuget NUnit
+  nuget NUnit3TestAdapter
 
 group Test
   storage: none
   source http://www.nuget.org/api/v2/
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
-  nuget System.Runtime.CompilerServices.Unsafe 4.5.1
   nuget Gu.Roslyn.Asserts
   nuget NUnit
+  nuget NUnit3TestAdapter
+  nuget Microsoft.NET.Test.Sdk
 
 group Build
   source http://www.nuget.org/api/v2/
