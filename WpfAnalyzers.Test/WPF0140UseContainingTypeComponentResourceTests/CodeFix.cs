@@ -40,8 +40,8 @@ namespace RoslynSandbox
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            AnalyzerAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode);
-            AnalyzerAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), testCode, fixedCode);
+            RoslynAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode);
+            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), testCode, fixedCode);
         }
 
         [Test]
@@ -68,8 +68,8 @@ namespace RoslynSandbox
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(typeof(ResourceKeys), nameof(FooKey));
     }
 }";
-            AnalyzerAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, testCode);
-            AnalyzerAssert.CodeFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, testCode);
+            RoslynAssert.CodeFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -78,7 +78,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Valid(Analyzer, part1, part2);
+            RoslynAssert.Valid(Analyzer, part1, part2);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -114,7 +114,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);")]
@@ -161,7 +161,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("fooControl.SetValue(BarProperty, 1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, meh);")]
@@ -195,7 +195,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, meh);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(ValueProperty, meh);")]
@@ -230,7 +230,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(ValueProperty, meh);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -266,7 +266,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, new Foo());")]
@@ -315,7 +315,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, interfaceCode, fooCode, testCode);
+            RoslynAssert.Valid(Analyzer, interfaceCode, fooCode, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, 1);")]
@@ -359,7 +359,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, fooControlGeneric, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlGeneric, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]
@@ -393,7 +393,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, (object)1);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, value);")]
@@ -428,7 +428,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, value);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, true);")]
@@ -508,7 +508,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
-            AnalyzerAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
+            RoslynAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
         }
 
         [TestCase("this.SetValue(VolumeProperty, 1.0);")]
@@ -554,7 +554,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(VolumeProperty, 2.0);", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
@@ -577,7 +577,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.SetValue(TextBox.TextProperty, \"abc\");", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -612,7 +612,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -646,7 +646,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetCurrentValue", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -681,7 +681,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetCurrentValue", call);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -738,7 +738,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
+            RoslynAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
         }
 
         [Test]
@@ -772,7 +772,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -808,7 +808,7 @@ namespace RoslynSandbox
         Baz
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, testCode, enumCode);
         }
 
         [Test]
@@ -874,7 +874,7 @@ namespace RoslynSandbox
         Baz
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fooCode, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, testCode, enumCode);
         }
     }
 }

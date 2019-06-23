@@ -23,7 +23,7 @@ namespace RoslynSandbox
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

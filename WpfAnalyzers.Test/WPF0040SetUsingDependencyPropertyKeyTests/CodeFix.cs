@@ -65,7 +65,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -122,7 +122,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("SetValue")]
@@ -182,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

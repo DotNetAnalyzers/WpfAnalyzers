@@ -37,7 +37,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
@@ -83,7 +83,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fooCode, fooControlCode);
+            RoslynAssert.Valid(Analyzer, fooCode, fooControlCode);
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace RoslynSandbox
         private static object CreateObjectValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [Test]
@@ -221,7 +221,7 @@ namespace RoslynSandbox
         private int CreateValue() => 4;
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -269,7 +269,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -317,7 +317,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -343,7 +343,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -369,7 +369,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -406,7 +406,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, boolBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, boolBoxesCode, testCode);
         }
 
         [Test]
@@ -438,7 +438,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -480,7 +480,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, boolBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, boolBoxesCode, testCode);
         }
 
         [Test]
@@ -505,7 +505,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -536,7 +536,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -568,7 +568,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -591,7 +591,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -616,7 +616,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
@@ -642,7 +642,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("SetValue")]
@@ -676,7 +676,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetCurrentValue", setValueCall);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -705,7 +705,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -731,7 +731,7 @@ namespace RoslynSandbox
         public int[,] Data2D { get; set; }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

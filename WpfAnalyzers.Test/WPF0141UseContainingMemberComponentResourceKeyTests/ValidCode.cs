@@ -23,7 +23,7 @@ namespace RoslynSandbox
             ""FooKey"");
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             nameof(FooKey));
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("int", "new PropertyMetadata()")]
@@ -127,7 +127,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(1)", metadata)
   .AssertReplace("double", typeName);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -198,7 +198,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -230,7 +230,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -255,7 +255,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -303,7 +303,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
         }
 
         [Test]
@@ -330,7 +330,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -381,7 +381,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode, fooCode);
+            RoslynAssert.Valid(Analyzer, testCode, fooCode);
         }
 
         [Test]
@@ -418,7 +418,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [Test]
@@ -447,7 +447,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -489,7 +489,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -527,7 +527,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -564,8 +564,8 @@ namespace RoslynSandbox
         Baz
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode, enumCode);
-            AnalyzerAssert.Valid(Analyzer, enumCode, testCode);
+            RoslynAssert.Valid(Analyzer, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, enumCode, testCode);
         }
 
         [Test]
@@ -631,12 +631,12 @@ namespace RoslynSandbox
         Baz
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode, enumCode, fooCode);
-            AnalyzerAssert.Valid(Analyzer, testCode, fooCode, enumCode);
-            AnalyzerAssert.Valid(Analyzer, fooCode, testCode, enumCode);
-            AnalyzerAssert.Valid(Analyzer, fooCode, enumCode, testCode);
-            AnalyzerAssert.Valid(Analyzer, enumCode, fooCode, testCode);
-            AnalyzerAssert.Valid(Analyzer, enumCode, testCode, fooCode);
+            RoslynAssert.Valid(Analyzer, testCode, enumCode, fooCode);
+            RoslynAssert.Valid(Analyzer, testCode, fooCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, enumCode, testCode);
+            RoslynAssert.Valid(Analyzer, enumCode, fooCode, testCode);
+            RoslynAssert.Valid(Analyzer, enumCode, testCode, fooCode);
         }
     }
 }

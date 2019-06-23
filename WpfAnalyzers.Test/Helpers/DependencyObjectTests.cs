@@ -35,7 +35,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.SetValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
             Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
@@ -74,7 +74,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(".SetValue", call);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
             Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
@@ -112,7 +112,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetCurrentValue");
             Assert.AreEqual(true, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out var method));
@@ -145,7 +145,7 @@ namespace RoslynSandbox
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetCurrentValue");
             Assert.AreEqual(true, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out var method));
@@ -183,7 +183,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.GetValue(BarProperty)", call);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("GetValue");
             Assert.AreEqual(true, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
@@ -220,7 +220,7 @@ namespace RoslynSandbox
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("GetValue");
             Assert.AreEqual(true, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out var method));

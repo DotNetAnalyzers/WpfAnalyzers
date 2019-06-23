@@ -36,7 +36,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
@@ -71,7 +71,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("nameof(Bar)", nameCode);
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
                 var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
@@ -101,7 +101,7 @@ namespace RoslynSandbox
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
@@ -131,7 +131,7 @@ namespace RoslynSandbox
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, AnalyzerAssert.MetadataReferences);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, RoslynAssert.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);

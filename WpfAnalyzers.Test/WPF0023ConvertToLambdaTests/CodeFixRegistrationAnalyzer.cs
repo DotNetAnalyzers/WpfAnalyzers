@@ -68,7 +68,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("value => (int)value >= 0", lambda);
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Convert to lambda");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Convert to lambda");
         }
     }
 }

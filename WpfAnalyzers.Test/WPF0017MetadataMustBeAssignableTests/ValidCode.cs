@@ -47,7 +47,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [TestCase("new PropertyMetadata(1)")]
@@ -91,7 +91,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            AnalyzerAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

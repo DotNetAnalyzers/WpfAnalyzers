@@ -57,7 +57,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid(Analyzer, controlCode, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode, testCode);
         }
 
         [Test]
@@ -134,7 +134,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid(Analyzer, testCode, control1Code, control2Code);
+            RoslynAssert.Valid(Analyzer, testCode, control1Code, control2Code);
         }
 
         [Test]
@@ -213,7 +213,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            AnalyzerAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
         }
 
         [Test]
@@ -244,7 +244,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

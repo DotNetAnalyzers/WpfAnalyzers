@@ -57,7 +57,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            AnalyzerAssert.Valid(Analyzer, controlCode, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode, testCode);
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace Gu.Wpf.Geometry.Balloons
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

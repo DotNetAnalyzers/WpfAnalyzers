@@ -38,7 +38,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly."), testCode);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -194,7 +194,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

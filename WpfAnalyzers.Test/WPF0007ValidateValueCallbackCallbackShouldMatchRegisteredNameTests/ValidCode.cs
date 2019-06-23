@@ -67,7 +67,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("CommonValidation.ValidateDoubleIsGreaterThanZero", callback);
 
-            AnalyzerAssert.Valid(Analyzer, validationCode, testCode);
+            RoslynAssert.Valid(Analyzer, validationCode, testCode);
         }
 
         [Test]
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -149,7 +149,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("ValidateValue);")]
@@ -191,7 +191,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("ValidateValue);", metadata);
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -277,7 +277,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -325,7 +325,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -371,7 +371,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, commonValidation, testCode);
+            RoslynAssert.Valid(Analyzer, commonValidation, testCode);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(DataContextProperty, 1);", after);
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
@@ -86,7 +86,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

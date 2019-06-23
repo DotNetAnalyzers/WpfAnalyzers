@@ -38,7 +38,7 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist."), testCode);
         }
 
         [Test]
@@ -70,7 +70,7 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist."), testCode);
         }
     }
 }

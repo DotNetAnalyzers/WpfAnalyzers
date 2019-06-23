@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("nameof(Bar)", nameof);
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("\"Bar\"")]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("nameof(Bar)", nameof);
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, statusCode, testCode);
+            RoslynAssert.Valid(Analyzer, statusCode, testCode);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, testCode);
         }
     }
 }

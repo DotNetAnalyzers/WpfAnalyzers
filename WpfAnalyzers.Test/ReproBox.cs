@@ -22,12 +22,12 @@ namespace WpfAnalyzers.Test
         private static readonly Solution Solution = CodeFactory.CreateSolution(
             new FileInfo("C:\\Git\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
             AllAnalyzers,
-            AnalyzerAssert.MetadataReferences);
+            RoslynAssert.MetadataReferences);
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, Solution);
+            RoslynAssert.Valid(analyzer, Solution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -41,7 +41,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(analyzer, testCode);
+            RoslynAssert.Valid(analyzer, testCode);
         }
     }
 }

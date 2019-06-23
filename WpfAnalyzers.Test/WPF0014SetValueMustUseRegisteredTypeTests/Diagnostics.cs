@@ -44,7 +44,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), testCode);
         }
 
         [TestCase("SetValue(BarProperty, ↓1.0)")]
@@ -84,7 +84,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1.0);")]
@@ -128,7 +128,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, testCode);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1);")]
@@ -208,7 +208,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -260,7 +260,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -307,7 +307,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, testCode);
         }
 
         [TestCase("SetValue")]
@@ -353,7 +353,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("1.0")]
@@ -390,7 +390,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("<value>", value);
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -427,7 +427,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -450,7 +450,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -474,7 +474,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [TestCase("SetValue")]
@@ -511,7 +511,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetCurrentValue", setMethod);
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }
 }

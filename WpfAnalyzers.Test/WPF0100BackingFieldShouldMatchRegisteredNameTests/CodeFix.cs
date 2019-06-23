@@ -37,7 +37,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'"), testCode);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

@@ -21,12 +21,12 @@ namespace WpfAnalyzers.Test
         private static readonly Solution AnalyzerProjectSolution = CodeFactory.CreateSolution(
             ProjectFile.Find("WpfAnalyzers.csproj"),
             AllAnalyzers,
-            AnalyzerAssert.MetadataReferences);
+            RoslynAssert.MetadataReferences);
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
             ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
-            AnalyzerAssert.MetadataReferences);
+            RoslynAssert.MetadataReferences);
 
         [SetUp]
         public void Setup()
@@ -52,13 +52,13 @@ namespace WpfAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public void ValidCodeProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, ValidCodeProjectSln);
+            RoslynAssert.Valid(analyzer, ValidCodeProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzerProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, AnalyzerProjectSolution);
+            RoslynAssert.Valid(analyzer, AnalyzerProjectSolution);
         }
     }
 }

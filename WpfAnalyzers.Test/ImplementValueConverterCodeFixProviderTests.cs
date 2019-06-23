@@ -44,7 +44,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [TestCase("FooConverter")]
@@ -148,7 +148,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
         }
 
         [Test]
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
         }
     }
 }
