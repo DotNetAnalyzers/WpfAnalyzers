@@ -4,6 +4,7 @@ group Benchmarks
   Gu.Roslyn.Asserts
   NUnit
   NUnit3TestAdapter
+  Microsoft.NET.Test.Sdk
 
 group Analyzers
   AsyncUsageAnalyzers

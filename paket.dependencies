@@ -22,6 +22,7 @@ group Benchmarks
   nuget Gu.Roslyn.Asserts
   nuget NUnit
   nuget NUnit3TestAdapter
+  nuget Microsoft.NET.Test.Sdk
 
 group Test
   storage: none
