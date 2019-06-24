@@ -206,7 +206,7 @@ namespace RoslynSandbox
     }
 }";
             RoslynAssert.Valid(Analyzer, Descriptor, part1, fixedCode);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, part2 }, new[] { part1, fixedCode });
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, part2 }, fixedCode);
         }
 
         [Test]
