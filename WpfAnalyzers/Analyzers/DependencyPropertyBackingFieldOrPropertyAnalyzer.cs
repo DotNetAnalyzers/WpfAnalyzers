@@ -76,7 +76,7 @@ namespace WpfAnalyzers
                     if (context.Node is FieldDeclarationSyntax fieldDeclaration &&
                         DependencyProperty.TryGetDependencyPropertyKeyField(
                             backingMember, context.SemanticModel, context.CancellationToken, out var keyField) &&
-                        backingMember.ContainingType == keyField.ContainingType &&
+                        Equals(backingMember.ContainingType, keyField.ContainingType) &&
                         keyField.TryGetSyntaxReference(out var reference))
                     {
                         var keyNode = reference.GetSyntax(context.CancellationToken);
