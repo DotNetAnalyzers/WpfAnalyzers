@@ -159,6 +159,8 @@ namespace RoslynSandbox
     using System.Windows;
     using System.Windows.Controls;
 
+    public class Part1 { }
+
     public partial class FooControl : Control
     {
         private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -174,6 +176,8 @@ namespace RoslynSandbox
 {
     using System.Windows;
     using System.Windows.Controls;
+
+    public class Part2 { }
 
     public partial class FooControl
     {
@@ -192,6 +196,8 @@ namespace RoslynSandbox
 {
     using System.Windows;
     using System.Windows.Controls;
+
+    public class Part2 { }
 
     public partial class FooControl
     {
