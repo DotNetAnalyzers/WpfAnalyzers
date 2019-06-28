@@ -1727,7 +1727,7 @@ GROUP Test
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.Asserts (2.7.1)
+    Gu.Roslyn.Asserts (2.8)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     Microsoft.CodeAnalysis.Analyzers (2.9.3) - restriction: >= netstandard1.3
     Microsoft.CodeAnalysis.Common (2.10)
