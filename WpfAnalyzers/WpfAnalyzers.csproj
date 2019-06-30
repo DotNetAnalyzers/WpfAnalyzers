@@ -20,14 +20,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.2.0.2</Version>
+    <Version>2.2.0.3</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>Fix for WPF0012.
-WPF0012 when AddOwner.
-WPF001 require field name to be same as AddOwner source.
-WPF0003 handle AddOwner when source is not in AST.</PackageReleaseNotes>
+    <PackageReleaseNotes>BUGFIX: WPF0080 when generic type</PackageReleaseNotes>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>

@@ -2,10 +2,7 @@
 developmentDependency true
 
 releaseNotes
-  Fix for WPF0012.
-  WPF0012 when AddOwner.
-  WPF001 require field name to be same as AddOwner source.
-  WPF0003 handle AddOwner when source is not in AST.
+  BUGFIX: WPF0080 when generic type
 
 projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT

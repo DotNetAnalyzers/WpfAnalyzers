@@ -1,3 +1,6 @@
+#### 2.2.0.3
+* BUGFIX: WPF0080 when generic type
+
 #### 2.2.0
 * Fix for WPF0012.
 * WPF0012 when AddOwner.
