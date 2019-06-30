@@ -40,7 +40,8 @@ namespace WpfAnalyzers
                 return;
             }
 
-            if (context.ContainingSymbol is ITypeSymbol type &&
+            if (context.ContainingSymbol is INamedTypeSymbol type &&
+                !type.IsGenericType &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
                 type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.IServiceProvider, out _) &&
