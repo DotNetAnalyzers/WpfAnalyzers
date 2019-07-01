@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new UseSetValueFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0035ClrPropertyUseSetValueInSetter.Descriptor);
 
         [Test]
-        public void DependencyProperty()
+        public static void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyExpressionBodyAccessors()
+        public static void DependencyPropertyExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAndReadOnlyDependencyProperty()
+        public static void DependencyPropertyAndReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

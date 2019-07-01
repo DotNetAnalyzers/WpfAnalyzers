@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNoAttribute()
+        public static void WhenNoAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox

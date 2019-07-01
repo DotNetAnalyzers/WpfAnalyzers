@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
         private static readonly CodeFixProvider Fix = new UseSetValueFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
         [TestCase("this.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "this.SetValue(FrameworkElement.DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(DataContextProperty, 1);", "SetValue(DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public void ThisSetCurrentValue(string before, string after)
+        public static void ThisSetCurrentValue(string before, string after)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
         [TestCase("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "control.SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public void ControlSetCurrentValue(string before, string after)
+        public static void ControlSetCurrentValue(string before, string after)
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostic
+    public static class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0103EventDeclarationAddRemove.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventManagerRegisterRoutedEvent()
+        public static void EventManagerRegisterRoutedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventManagerRegisterRoutedEventExpressionBodies()
+        public static void EventManagerRegisterRoutedEventExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox

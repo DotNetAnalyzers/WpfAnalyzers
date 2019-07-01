@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor);
 
         [Test]
-        public void RoutedCommand()
+        public static void RoutedCommand()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommand()
+        public static void RoutedUICommand()
         {
             var testCode = @"
 namespace RoslynSandbox

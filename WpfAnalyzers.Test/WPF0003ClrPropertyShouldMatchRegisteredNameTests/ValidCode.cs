@@ -3,14 +3,14 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyOneLine(string nameof)
+        public static void DependencyPropertyOneLine(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyFormatted()
+        public static void DependencyPropertyFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyFormattedExpressionBodies()
+        public static void DependencyPropertyFormattedExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWithThis()
+        public static void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyPartial()
+        public static void DependencyPropertyPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -163,7 +163,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -214,7 +214,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadonlyDependencyProperty()
+        public static void ReadonlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

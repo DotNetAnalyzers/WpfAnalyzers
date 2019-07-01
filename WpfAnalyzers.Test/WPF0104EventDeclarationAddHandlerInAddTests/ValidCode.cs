@@ -3,14 +3,14 @@ namespace WpfAnalyzers.Test.WPF0104EventDeclarationAddHandlerInAddTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void EventManagerRegisterRoutedEvent(string nameof)
+        public static void EventManagerRegisterRoutedEvent(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox

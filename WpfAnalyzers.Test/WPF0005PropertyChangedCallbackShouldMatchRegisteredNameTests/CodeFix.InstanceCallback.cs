@@ -5,9 +5,9 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        public class InstanceCallback
+        public static class InstanceCallback
         {
             private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
             [TestCase("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue))")]
-            public void DependencyPropertyRegisterInstanceMethodOldBeforeNew(string before, string after)
+            public static void DependencyPropertyRegisterInstanceMethodOldBeforeNew(string before, string after)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -78,7 +78,7 @@ namespace RoslynSandbox
 
             [TestCase("(d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
-            public void DependencyPropertyRegisterInstanceMethodNewBeforeOld(string before, string after)
+            public static void DependencyPropertyRegisterInstanceMethodNewBeforeOld(string before, string after)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -136,7 +136,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstance()
+            public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstance()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -225,7 +225,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempCast()
+            public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempCast()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -316,7 +316,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempPatternMathc()
+            public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempPatternMathc()
             {
                 var testCode = @"
 namespace RoslynSandbox

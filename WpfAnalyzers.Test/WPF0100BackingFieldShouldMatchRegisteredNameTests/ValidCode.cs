@@ -3,14 +3,14 @@ namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void DependencyPropertyRegisterBackingField(string nameof)
+        public static void DependencyPropertyRegisterBackingField(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
+        public static void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox

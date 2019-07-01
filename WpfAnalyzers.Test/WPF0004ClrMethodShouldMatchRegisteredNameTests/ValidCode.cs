@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedExtensionMethods()
+        public static void DependencyPropertyRegisterAttachedExtensionMethods()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -83,7 +83,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedExpressionBody()
+        public static void DependencyPropertyRegisterAttachedExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -114,7 +114,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -147,7 +147,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenSetMethodIsNotUsingValue()
+        public static void IgnoresWhenSetMethodIsNotUsingValue()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -182,7 +182,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenSetMethodHasTooManyArguments()
+        public static void IgnoresWhenSetMethodHasTooManyArguments()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenSetMethodIsNotVoid()
+        public static void IgnoresWhenSetMethodIsNotVoid()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,7 +253,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenGetMethodIsVoid()
+        public static void IgnoresWhenGetMethodIsVoid()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -287,7 +287,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenGetMethodHasTooManyArguments()
+        public static void IgnoresWhenGetMethodHasTooManyArguments()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenSetMethodIsNotStatic()
+        public static void IgnoresWhenSetMethodIsNotStatic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -356,7 +356,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenGetMethodIsNotStatic()
+        public static void IgnoresWhenGetMethodIsNotStatic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -390,7 +390,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenSetMethodIsNotSettingElement()
+        public static void IgnoresWhenSetMethodIsNotSettingElement()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -427,7 +427,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenGetMethodIsNotGettingElement()
+        public static void IgnoresWhenGetMethodIsNotGettingElement()
         {
             var testCode = @"
 namespace RoslynSandbox

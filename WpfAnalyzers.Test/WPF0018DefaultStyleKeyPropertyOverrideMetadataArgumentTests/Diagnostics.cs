@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgume
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new OverrideMetadataAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument.Descriptor);
 
         [Test]
-        public void DefaultStyleKeyPropertyOverrideMetadata()
+        public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox

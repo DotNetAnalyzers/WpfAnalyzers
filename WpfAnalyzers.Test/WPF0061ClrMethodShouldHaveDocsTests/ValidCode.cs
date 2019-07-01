@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -86,7 +86,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
+        public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -119,7 +119,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnlyBackingFields()
+        public static void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -149,7 +149,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnlyBackingProperties()
+        public static void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -179,7 +179,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterBackingField()
+        public static void DependencyPropertyRegisterBackingField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -261,7 +261,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterBackingProperty()
+        public static void DependencyPropertyRegisterBackingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterFormatted()
+        public static void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -314,7 +314,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterPartial()
+        public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox

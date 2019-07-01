@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeArgumentFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0082ConstructorArgument.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenWrongArgument()
+        public static void WhenWrongArgument()
         {
             var testCode = @"
 namespace RoslynSandbox

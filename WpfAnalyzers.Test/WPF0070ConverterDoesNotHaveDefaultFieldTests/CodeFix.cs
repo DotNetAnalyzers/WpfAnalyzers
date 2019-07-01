@@ -6,14 +6,14 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new AddDefaultMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0070ConverterDoesNotHaveDefaultField.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -65,7 +65,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IValueConverterAddDefaultFieldPublic()
+        public static void IValueConverterAddDefaultFieldPublic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -164,7 +164,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IValueConverterAddDefaultFieldInternal()
+        public static void IValueConverterAddDefaultFieldInternal()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -263,7 +263,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IValueConverterAddDefaultFieldWhenSealedIssue225()
+        public static void IValueConverterAddDefaultFieldWhenSealedIssue225()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -308,7 +308,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IMultiValueConverterAddDefaultField()
+        public static void IMultiValueConverterAddDefaultField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -349,7 +349,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddDefaultFieldWithDocs()
+        public static void AddDefaultFieldWithDocs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -449,7 +449,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddDefaultProperty()
+        public static void AddDefaultProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -548,7 +548,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddDefaultPropertyWithDocs()
+        public static void AddDefaultPropertyWithDocs()
         {
             var testCode = @"
 namespace RoslynSandbox

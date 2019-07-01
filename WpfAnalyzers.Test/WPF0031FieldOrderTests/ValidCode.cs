@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PropertyKeyInOtherClass()
+        public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox

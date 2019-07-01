@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
         private static readonly CodeFixProvider Fix = new XmlnsDefinitionFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.DiagnosticId);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 using System.Reflection;
@@ -91,7 +91,7 @@ namespace Gu.Wpf.Geometry
         }
 
         [Test]
-        public void WhenMissingNamespace()
+        public static void WhenMissingNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -238,7 +238,7 @@ namespace Gu.Wpf.Geometry.Meh
         }
 
         [Test]
-        public void WhenMissingNamespaceWithNameColon()
+        public static void WhenMissingNamespaceWithNameColon()
         {
             var testCode = @"
 using System.Reflection;

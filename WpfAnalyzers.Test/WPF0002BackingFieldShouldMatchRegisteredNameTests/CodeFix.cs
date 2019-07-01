@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0002BackingFieldShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnlyBackingFields()
+        public static void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnlyBackingProperties()
+        public static void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -148,7 +148,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyBackingFields()
+        public static void DependencyPropertyRegisterAttachedReadOnlyBackingFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -207,7 +207,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyBackingProperties()
+        public static void DependencyPropertyRegisterAttachedReadOnlyBackingProperties()
         {
             var testCode = @"
 namespace RoslynSandbox

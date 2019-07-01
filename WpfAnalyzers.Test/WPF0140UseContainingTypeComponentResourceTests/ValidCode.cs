@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
 
         [Test]
-        public void WhenExpectedArguments()
+        public static void WhenExpectedArguments()
         {
             var testCode = @"
 namespace RoslynSandbox

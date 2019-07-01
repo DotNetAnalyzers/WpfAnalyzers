@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
         private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0083UseConstructorArgumentAttribute.DiagnosticId);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenMissing()
+        public static void WhenMissing()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenMissingAssigningBackingField()
+        public static void WhenMissingAssigningBackingField()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
 
         [Test]
-        public void WhenXmlnsDefinitionMatches()
+        public static void WhenXmlnsDefinitionMatches()
         {
             var testCode = @"
 using System.Reflection;
@@ -41,7 +41,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenTwoXmlnsDefinitions()
+        public static void WhenTwoXmlnsDefinitions()
         {
             var testCode = @"
 using System.Reflection;

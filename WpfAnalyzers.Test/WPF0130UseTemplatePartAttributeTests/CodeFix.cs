@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
         private static readonly CodeFixProvider Fix = new AddTemplatePartAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0130UseTemplatePartAttribute.Descriptor);
 
         [Test]
-        public void StringLiteralNoCast()
+        public static void StringLiteralNoCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CastStringLiteral()
+        public static void CastStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IsPatternStringLiteral()
+        public static void IsPatternStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CastConstant()
+        public static void CastConstant()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -180,7 +180,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CastNameof()
+        public static void CastNameof()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -218,7 +218,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenWrongAttributeCastStringLiteral()
+        public static void WhenWrongAttributeCastStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox

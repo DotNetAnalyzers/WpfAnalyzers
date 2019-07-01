@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyFix();
@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0107BackingMemberShouldBeStaticReadonly.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void MutableInstanceField()
+        public static void MutableInstanceField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void MutableInstanceProperty()
+        public static void MutableInstanceProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -146,7 +146,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionBodyeProperty()
+        public static void ExpressionBodyeProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

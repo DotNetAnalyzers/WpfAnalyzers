@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void DependencyPropertyRegisterAttached(string typeName)
+        public static void DependencyPropertyRegisterAttached(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         [TestCase("int?[]")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
+        public static void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWhenBoxed()
+        public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -154,7 +154,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedSettingValueInCallback()
+        public static void DependencyPropertyRegisterAttachedSettingValueInCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -199,7 +199,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

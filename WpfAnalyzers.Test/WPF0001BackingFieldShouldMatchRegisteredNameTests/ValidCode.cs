@@ -3,14 +3,14 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
 
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyRegisterBackingField(string nameof)
+        public static void DependencyPropertyRegisterBackingField(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]
         [TestCase("nameof(FooControl.Bar)")]
-        public void DependencyPropertyRegisterBackingProperty(string nameof)
+        public static void DependencyPropertyRegisterBackingProperty(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterFormatted()
+        public static void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterPartial()
+        public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -130,7 +130,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -161,7 +161,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox

@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFixRegistrationAnalyzer
+    public static class CodeFixRegistrationAnalyzer
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RegistrationAnalyzer();
         private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         [TestCase("x => ValidateValue(x)", "value => (int)value >= 0")]
         [TestCase("new ValidateValueCallback(ValidateValue)", "new ValidateValueCallback(value => (int)value >= 0)")]
         [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(value => (int)value >= 0)")]
-        public void RemoveMethod(string callback, string lambda)
+        public static void RemoveMethod(string callback, string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox

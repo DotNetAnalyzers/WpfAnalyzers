@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
 
         [Test]
-        public void StringLiterals()
+        public static void StringLiterals()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -31,7 +31,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Constant()
+        public static void Constant()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TemplatePartAttribute()
+        public static void TemplatePartAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -77,7 +77,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BaseClassLiteral()
+        public static void BaseClassLiteral()
         {
             var baseCode = @"
 namespace RoslynSandbox
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BaseClassConstant()
+        public static void BaseClassConstant()
         {
             var baseCode = @"
 namespace RoslynSandbox
@@ -144,7 +144,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IsPatternStringLiteral()
+        public static void IsPatternStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -177,7 +177,7 @@ namespace RoslynSandbox
         [TestCase("as FrameworkElement")]
         [TestCase("as UIElement")]
         [TestCase("as Control")]
-        public void AsCastStringLiteral(string cast)
+        public static void AsCastStringLiteral(string cast)
         {
             var testCode = @"
 namespace RoslynSandbox

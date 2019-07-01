@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0122RegisterRoutedCommandTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
 
         [Test]
-        public void RoutedCommand()
+        public static void RoutedCommand()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -25,7 +25,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommand()
+        public static void RoutedUICommand()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
         [TestCase("int[]")]
         [TestCase("int?[]")]
         [TestCase("ObservableCollection<int>")]
-        public void DependencyProperty(string typeName)
+        public static void DependencyProperty(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWithThis()
+        public static void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyGeneric()
+        public static void DependencyPropertyGeneric()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         [TestCase("int[]")]
         [TestCase("int?[]")]
         [TestCase("ObservableCollection<int>")]
-        public void ReadOnlyDependencyProperty(string typeName)
+        public static void ReadOnlyDependencyProperty(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -187,7 +187,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumIssue211()
+        public static void EnumIssue211()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -223,7 +223,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumAddOwnerIssue211()
+        public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
 namespace RoslynSandbox

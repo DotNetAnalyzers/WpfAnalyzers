@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegister()
+        public static void DependencyPropertyRegister()
         {
             var testCode = @"
 namespace RoslynSandbox

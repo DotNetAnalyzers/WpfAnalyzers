@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0102EventDeclarationName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventManagerRegisterRoutedEvent()
+        public static void EventManagerRegisterRoutedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventManagerRegisterRoutedEventExpressionBodies()
+        public static void EventManagerRegisterRoutedEventExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox

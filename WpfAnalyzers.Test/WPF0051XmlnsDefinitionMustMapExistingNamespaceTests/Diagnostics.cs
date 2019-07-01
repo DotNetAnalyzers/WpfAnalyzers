@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor);
 
         [Test]
-        public void WhenNoNamespace()
+        public static void WhenNoNamespace()
         {
             var testCode = @"
 using System.Reflection;
@@ -42,7 +42,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenMissingNamespace()
+        public static void WhenMissingNamespace()
         {
             var testCode = @"
 using System.Reflection;

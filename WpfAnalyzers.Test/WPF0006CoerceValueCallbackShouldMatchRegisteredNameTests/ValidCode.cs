@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
-        public void DependencyPropertyNoMetadata()
+        public static void DependencyPropertyNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         [TestCase("new PropertyMetadata(default(int), null, CoerceBar)")]
         [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
-        public void DependencyPropertyWithMetadata(string metadata)
+        public static void DependencyPropertyWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -130,7 +130,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -166,7 +166,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [Test]
-        public void DependencyProperty()
+        public static void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyExpressionBodyAccessors()
+        public static void DependencyPropertyExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -64,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWithThis()
+        public static void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -92,7 +92,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -122,7 +122,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -153,7 +153,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedExpressionBodies()
+        public static void DependencyPropertyRegisterAttachedExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -178,7 +178,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -211,7 +211,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyExpressionBodies()
+        public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox

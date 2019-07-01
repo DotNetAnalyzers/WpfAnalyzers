@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventCallbackAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
 
         [Test]
-        public void AddHandlerSizeChangedEvent()
+        public static void AddHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RemoveHandlerSizeChangedEvent()
+        public static void RemoveHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddHandlerManipulationStartingEvent()
+        public static void AddHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RemoveHandlerManipulationStartingEvent()
+        public static void RemoveHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddHandlerMouseDownEvent()
+        public static void AddHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RemoveHandlerMouseDownEvent()
+        public static void RemoveHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -160,7 +160,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddPreviewMouseDownHandlerNewHandler()
+        public static void AddPreviewMouseDownHandlerNewHandler()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -185,7 +185,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddPreviewMouseDownHandlerMethodGroup()
+        public static void AddPreviewMouseDownHandlerMethodGroup()
         {
             var testCode = @"
 namespace RoslynSandbox

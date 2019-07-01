@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0014SetValueMustUseRegisteredType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         [TestCase("SetCurrentValue(BarProperty, ↓null)")]
         [TestCase("SetValue(BarProperty, ↓\"abc\")")]
         [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
-        public void DependencyProperty(string setCall)
+        public static void DependencyProperty(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, ↓1.0);")]
         [TestCase("this.SetCurrentValue(BarProperty, ↓1.0);")]
-        public void DependencyPropertyGeneric(string setValueCall)
+        public static void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
 namespace RoslynSandbox
@@ -133,7 +133,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, ↓1);")]
         [TestCase("this.SetCurrentValue(BarProperty, ↓1);")]
-        public void DependencyPropertyAddOwner(string setValueCall)
+        public static void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -212,7 +212,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerTextElementFontSize()
+        public static void AddOwnerTextElementFontSize()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -238,7 +238,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerBorderBorderThicknessProperty()
+        public static void AddOwnerBorderBorderThicknessProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -265,7 +265,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void DependencyPropertyOfInterfaceType(string methodName)
+        public static void DependencyPropertyOfInterfaceType(string methodName)
         {
             var iFooCode = @"
 namespace RoslynSandbox
@@ -312,7 +312,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
+        public static void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -359,7 +359,7 @@ namespace RoslynSandbox
         [TestCase("1.0")]
         [TestCase("null")]
         [TestCase("\"abc\"")]
-        public void ReadOnlyDependencyProperty(string value)
+        public static void ReadOnlyDependencyProperty(string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -394,7 +394,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -432,7 +432,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void TextBoxTextProperty(string setMethod)
+        public static void TextBoxTextProperty(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -455,7 +455,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void TextElementFontSizeProperty(string setMethod)
+        public static void TextElementFontSizeProperty(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -479,7 +479,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void SetCurrentValueInLambda(string setMethod)
+        public static void SetCurrentValueInLambda(string setMethod)
         {
             var testCode = @"
 namespace RoslynSandbox

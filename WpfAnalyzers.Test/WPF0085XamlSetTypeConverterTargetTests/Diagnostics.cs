@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0085XamlSetTypeConverterTarget.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -32,7 +32,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenReturningInt()
+        public static void WhenReturningInt()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -54,7 +54,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNoParameters()
+        public static void WhenNoParameters()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenMOreThanTwoParameters()
+        public static void WhenMOreThanTwoParameters()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenFirstParameterIsInt()
+        public static void WhenFirstParameterIsInt()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSecondParameterIsInt()
+        public static void WhenSecondParameterIsInt()
         {
             var testCode = @"
 namespace RoslynSandbox

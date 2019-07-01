@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
         private static readonly CodeFixProvider Fix = new UseSetCurrentValueFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         [TestCase(false, "1")]
         [TestCase(true, "CreateValue()")]
         [TestCase(false, "CreateValue()")]
-        public void ClrProperty(bool underscore, string value)
+        public static void ClrProperty(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         [TestCase(true, "1")]
         [TestCase(false, "CreateValue()")]
         [TestCase(true, "CreateValue()")]
-        public void ClrPropertyWithTrivia(bool underscore, string value)
+        public static void ClrPropertyWithTrivia(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         [TestCase("Bar = CreateValue();", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateValue());", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateObjectValue());", "SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
-        public void FromOutside(string before, string after)
+        public static void FromOutside(string before, string after)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -227,7 +227,7 @@ namespace RoslynSandbox
         }
 
         [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);")]
-        public void DependencyPropertyFromOutsideConditional(string setExpression)
+        public static void DependencyPropertyFromOutsideConditional(string setExpression)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -286,7 +286,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyObject()
+        public static void ClrPropertyObject()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -347,7 +347,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyWhenFieldNameIsNotMatching()
+        public static void ClrPropertyWhenFieldNameIsNotMatching()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -405,7 +405,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InternalClrProperty()
+        public static void InternalClrProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -463,7 +463,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertySetInGenericClass()
+        public static void ClrPropertySetInGenericClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -521,7 +521,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyWithGenericBaseClass()
+        public static void ClrPropertyWithGenericBaseClass()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -577,7 +577,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyOnGenericClass()
+        public static void ClrPropertyOnGenericClass()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -636,7 +636,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyWithImplicitCastInt()
+        public static void ClrPropertyWithImplicitCastInt()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -693,7 +693,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ClrPropertyInBaseclass()
+        public static void ClrPropertyInBaseclass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -729,7 +729,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetValueInBaseclass()
+        public static void SetValueInBaseclass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -768,7 +768,7 @@ namespace RoslynSandbox
         [TestCase(false, "1")]
         [TestCase(true, "CreateValue()")]
         [TestCase(false, "CreateValue()")]
-        public void SetValue(bool underscore, string setExpression)
+        public static void SetValue(bool underscore, string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -837,7 +837,7 @@ namespace RoslynSandbox
         [TestCase(false, "1")]
         [TestCase(true, "this.CreateValue()")]
         [TestCase(false, "this.CreateValue()")]
-        public void SetValueWithTrivia(bool underscore, string setExpression)
+        public static void SetValueWithTrivia(bool underscore, string setExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -907,7 +907,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetValueInCallback()
+        public static void SetValueInCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1012,7 +1012,7 @@ namespace RoslynSandbox
         [TestCase(false, "\"1\"")]
         [TestCase(true, "CreateValue()")]
         [TestCase(false, "CreateValue()")]
-        public void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
+        public static void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1055,7 +1055,7 @@ namespace RoslynSandbox
 
         [TestCase("this.")]
         [TestCase("")]
-        public void TextBoxFieldTexUsingClrProperty(string thisExpression)
+        public static void TextBoxFieldTexUsingClrProperty(string thisExpression)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1095,7 +1095,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetValueInLambda()
+        public static void SetValueInLambda()
         {
             var testCode = @"
 namespace RoslynSandbox

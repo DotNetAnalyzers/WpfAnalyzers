@@ -3,13 +3,13 @@ namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly OverrideMetadataAnalyzer Analyzer = new OverrideMetadataAnalyzer();
 
         [TestCase("new PropertyMetadata(1)")]
         [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
+        public static void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1)")]
         [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public void DependencyPropertyOverrideMetadataWithSameType(string metadata)
+        public static void DependencyPropertyOverrideMetadataWithSameType(string metadata)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DefaultStyleKeyPropertyOverrideMetadata()
+        public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox

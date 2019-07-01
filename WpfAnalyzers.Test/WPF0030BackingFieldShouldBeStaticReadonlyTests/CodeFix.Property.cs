@@ -5,16 +5,16 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class Property
+        internal static class Property
         {
             private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
             private static readonly CodeFixProvider Fix = new MakePropertyStaticReadonlyFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0030BackingFieldShouldBeStaticReadonly.Descriptor);
 
             [Test]
-            public void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
+            public static void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterBackingPropertyGetSet()
+            public static void DependencyPropertyRegisterBackingPropertyGetSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -98,7 +98,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterBackingPropertyExpressionBody()
+            public static void DependencyPropertyRegisterBackingPropertyExpressionBody()
             {
                 var testCode = @"
 namespace RoslynSandbox

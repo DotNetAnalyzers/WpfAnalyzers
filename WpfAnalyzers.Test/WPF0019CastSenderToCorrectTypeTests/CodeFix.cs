@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0019CastSenderToCorrectType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -107,7 +107,7 @@ namespace RoslynSandbox
 
         [TestCase("(d, e) => OnValueChanged(d, e)")]
         [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -172,7 +172,7 @@ namespace RoslynSandbox
 
         [TestCase("(d, e) => (({0})d).InvalidateArrange()")]
         [TestCase("new PropertyChangedCallback((d, e) => (({0})d).InvalidateArrange())")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -227,7 +227,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
-        public void DependencyPropertyRegisterCoerceValueCallback(string metadata)
+        public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -300,7 +300,7 @@ namespace RoslynSandbox
 
         [TestCase("(↓DataGrid)d", "(FooControl)d")]
         [TestCase("d as ↓DataGrid", "d as FooControl")]
-        public void DependencyPropertyRegisterCast(string fromCast, string toCast)
+        public static void DependencyPropertyRegisterCast(string fromCast, string toCast)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -360,7 +360,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -423,7 +423,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -468,7 +468,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox

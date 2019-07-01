@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         [Test]
-        public void MessageAddHandler()
+        public static void MessageAddHandler()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void MessageRemoveHandler()
+        public static void MessageRemoveHandler()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -64,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameAddHandlerSizeChangedEvent()
+        public static void WhenCorrectNameAddHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -109,7 +109,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerSizeChangedEvent()
+        public static void WhenCorrectNameRemoveHandlerSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -154,7 +154,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameAddHandlerManipulationStartingEvent()
+        public static void WhenCorrectNameAddHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -201,7 +201,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
+        public static void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -248,7 +248,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameAddHandlerMouseDownEvent()
+        public static void WhenCorrectNameAddHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -293,7 +293,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameRemoveHandlerMouseDownEvent()
+        public static void WhenCorrectNameRemoveHandlerMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox

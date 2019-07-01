@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
 
     [TestFixture(typeof(RegistrationAnalyzer))]
     [TestFixture(typeof(PropertyMetadataAnalyzer))]
-    public class ValidCode<T>
+    public static class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly DiagnosticAnalyzer Analyzer = new T();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         private static readonly DiagnosticDescriptor Descriptor = WPF0023ConvertToLambda.Descriptor;
 
         [Test]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
+        public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
+        public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -146,7 +146,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterOnPropertyChangedIf()
+        public static void DependencyPropertyRegisterOnPropertyChangedIf()
         {
             var testCode = @"
 namespace RoslynSandbox

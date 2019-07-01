@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
 
         [Test]
-        public void WhenDefaultField()
+        public static void WhenDefaultField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenTwoFields()
+        public static void WhenTwoFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -108,7 +108,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenDefaultProperty()
+        public static void WhenDefaultProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenMarkupExtension()
+        public static void WhenMarkupExtension()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -209,7 +209,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenIValueConverterHasMutableMembers()
+        public static void WhenIValueConverterHasMutableMembers()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -258,7 +258,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenIMultiValueConverterHasMutableProperty()
+        public static void WhenIMultiValueConverterHasMutableProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -282,7 +282,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenAbstract()
+        public static void WhenAbstract()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -331,7 +331,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenVirtual()
+        public static void WhenVirtual()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -380,7 +380,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenConstructorWithParameters()
+        public static void WhenConstructorWithParameters()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -415,7 +415,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InternalIMultiValueConverterWithDefaultField()
+        public static void InternalIMultiValueConverterWithDefaultField()
         {
             var boolBoxes = @"
 namespace Gu.Wpf.ToolTips
@@ -473,7 +473,7 @@ namespace Gu.Wpf.ToolTips
         }
 
         [Test]
-        public void WhenConstructorParameter()
+        public static void WhenConstructorParameter()
         {
             var testCode = @"
 namespace RoslynSandbox

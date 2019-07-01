@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
-        public void WhenXmlnsDefinitionMatches()
+        public static void WhenXmlnsDefinitionMatches()
         {
             var controlCode = @"namespace Gu.Wpf.Geometry
 {
@@ -61,7 +61,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenTwoXmlnsDefinitions()
+        public static void WhenTwoXmlnsDefinitions()
         {
             var testCode = @"
 using System.Reflection;

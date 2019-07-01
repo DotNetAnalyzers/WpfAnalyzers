@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeArgumentFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReturnThis()
+        public static void ReturnThis()
         {
             var testCode = @"
 namespace RoslynSandbox

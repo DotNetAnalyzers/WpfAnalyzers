@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyFix();
@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0123BackingMemberShouldBeStaticReadonly.Descriptor);
 
         [Test]
-        public void RoutedCommandNotReadonlyField()
+        public static void RoutedCommandNotReadonlyField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedCommandNotStaticField()
+        public static void RoutedCommandNotStaticField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -67,7 +67,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedCommandMutableField()
+        public static void RoutedCommandMutableField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommandStaticMutableProperty()
+        public static void RoutedUICommandStaticMutableProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -121,7 +121,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommandStaticExpressionBody()
+        public static void RoutedUICommandStaticExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -148,7 +148,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommandInstanceExpressionBody()
+        public static void RoutedUICommandInstanceExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -175,7 +175,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommandInstanceProperty()
+        public static void RoutedUICommandInstanceProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RoutedUICommandMutableInstanceProperty()
+        public static void RoutedUICommandMutableInstanceProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

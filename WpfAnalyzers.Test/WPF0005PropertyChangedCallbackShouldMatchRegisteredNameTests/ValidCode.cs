@@ -6,13 +6,13 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
     [TestFixture(typeof(CallbackAnalyzer))]
     [TestFixture(typeof(PropertyMetadataAnalyzer))]
-    public class ValidCode<T>
+    public static class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly DiagnosticAnalyzer Analyzer = new T();
 
         [Test]
-        public void DependencyPropertyRegisterNoMetadata()
+        public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -48,7 +48,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         [TestCase("new FrameworkPropertyMetadata(coerceValueCallback: CoerceBar, propertyChangedCallback: OnBarChanged)")]
-        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -164,7 +164,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -196,7 +196,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -222,7 +222,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -248,7 +248,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void LambdaCallingMethodCalledInOtherPlaces()
+        public static void LambdaCallingMethodCalledInOtherPlaces()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -288,7 +288,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void UsedByMoreThanOnePropertyMatchingNeither()
+        public static void UsedByMoreThanOnePropertyMatchingNeither()
         {
             var testCode = @"
 namespace RoslynSandbox

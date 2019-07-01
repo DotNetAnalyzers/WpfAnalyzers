@@ -3,13 +3,13 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public void DependencyProperty(string setValueCall)
+        public static void DependencyProperty(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public void DependencyPropertyPartial(string setValueCall)
+        public static void DependencyPropertyPartial(string setValueCall)
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public void DependencyPropertyOfTypeNullableInt(string setValueCall)
+        public static void DependencyPropertyOfTypeNullableInt(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -121,7 +121,7 @@ namespace RoslynSandbox
         [TestCase("fooControl.SetValue(FooControl.BarProperty, null);")]
         [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
         [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, null);")]
-        public void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
+        public static void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -166,7 +166,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, meh);")]
         [TestCase("this.SetCurrentValue(BarProperty, meh);")]
-        public void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
+        public static void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -200,7 +200,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(ValueProperty, meh);")]
         [TestCase("this.SetCurrentValue(ValueProperty, meh);")]
-        public void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
+        public static void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         [TestCase("this.SetValue(BarProperty, null);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public void DependencyPropertyOfTypeObject(string setValueCall)
+        public static void DependencyPropertyOfTypeObject(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -271,7 +271,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, new Foo());")]
         [TestCase("this.SetCurrentValue(BarProperty, new Foo());")]
-        public void DependencyPropertyOfInterfaceType(string setValueCall)
+        public static void DependencyPropertyOfInterfaceType(string setValueCall)
         {
             var interfaceCode = @"
 namespace RoslynSandbox
@@ -320,7 +320,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public void DependencyPropertyGeneric(string setValueCall)
+        public static void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
 namespace RoslynSandbox
@@ -364,7 +364,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, (object)1);")]
         [TestCase("this.SetCurrentValue(BarProperty, (object)1);")]
-        public void DependencyPropertySetValueOfTypeObject(string setValueCall)
+        public static void DependencyPropertySetValueOfTypeObject(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -398,7 +398,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, value);")]
         [TestCase("this.SetCurrentValue(BarProperty, value);")]
-        public void DependencyPropertySetValueOfTypeObject2(string setValueCall)
+        public static void DependencyPropertySetValueOfTypeObject2(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -433,7 +433,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(BarProperty, true);")]
         [TestCase("this.SetCurrentValue(BarProperty, true);")]
-        public void DependencyPropertyAddOwner(string setValueCall)
+        public static void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -513,7 +513,7 @@ namespace RoslynSandbox
 
         [TestCase("this.SetValue(VolumeProperty, 1.0);")]
         [TestCase("this.SetCurrentValue(VolumeProperty, 1.0);")]
-        public void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
+        public static void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -559,7 +559,7 @@ namespace RoslynSandbox
 
         [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
         [TestCase("textBox.SetCurrentValue(TextBox.TextProperty, \"abc\");")]
-        public void TextBoxText(string setValueCall)
+        public static void TextBoxText(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -581,7 +581,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetCurrentValueInLambda()
+        public static void SetCurrentValueInLambda()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -617,7 +617,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void IgnoredPropertyAsParameter(string setValueCall)
+        public static void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -651,7 +651,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void IgnoresFreezable(string call)
+        public static void IgnoresFreezable(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -685,7 +685,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PropertyKeyInOtherClass()
+        public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox
@@ -742,7 +742,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CastIntToDouble()
+        public static void CastIntToDouble()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -776,7 +776,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumIssue211()
+        public static void EnumIssue211()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -812,7 +812,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumAddOwnerIssue211()
+        public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
 namespace RoslynSandbox

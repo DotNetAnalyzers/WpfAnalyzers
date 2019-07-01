@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
 
         [Test]
-        public void WhenXmlnsDefinitionMatches()
+        public static void WhenXmlnsDefinitionMatches()
         {
             var controlCode = @"
 namespace Gu.Wpf.Geometry
@@ -61,7 +61,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenTwoPublicTypesInSameNamespace()
+        public static void WhenTwoPublicTypesInSameNamespace()
         {
             var control1Code = @"
 namespace Gu.Wpf.Geometry
@@ -138,7 +138,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenTwoXmlnsDefinitions()
+        public static void WhenTwoXmlnsDefinitions()
         {
             var controlCode1 = @"
 namespace Gu.Wpf.Geometry
@@ -217,7 +217,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenNoNamespace()
+        public static void WhenNoNamespace()
         {
             var testCode = @"
 using System.Reflection;

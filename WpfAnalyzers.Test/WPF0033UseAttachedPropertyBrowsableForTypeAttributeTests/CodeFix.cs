@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new AttachedPropertyBrowsableForTypeAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddAttribute()
+        public static void AddAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox

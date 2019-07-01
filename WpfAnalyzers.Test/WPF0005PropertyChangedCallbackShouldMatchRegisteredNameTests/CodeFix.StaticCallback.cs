@@ -5,16 +5,16 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        public class StaticCallback
+        public static class StaticCallback
         {
             private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor);
 
             [Test]
-            public void Message()
+            public static void Message()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
             [TestCase("new PropertyMetadata(default(double), FooControl.↓WrongName)", "new PropertyMetadata(default(double), FooControl.OnValueChanged)")]
             [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(↓WrongName))", "new PropertyMetadata(default(double), new PropertyChangedCallback(OnValueChanged))")]
             [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.↓WrongName))", "new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.OnValueChanged))")]
-            public void DependencyPropertyRegister(string oldMetadata, string newMetadata)
+            public static void DependencyPropertyRegister(string oldMetadata, string newMetadata)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -113,7 +113,7 @@ namespace RoslynSandbox
 
             [TestCase("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
-            public void DependencyPropertyRegisterInstanceMethod(string before, string after)
+            public static void DependencyPropertyRegisterInstanceMethod(string before, string after)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -171,7 +171,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterReadOnly()
+            public static void DependencyPropertyRegisterReadOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -234,7 +234,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterAttached()
+            public static void DependencyPropertyRegisterAttached()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -287,7 +287,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterAttachedReadOnly()
+            public static void DependencyPropertyRegisterAttachedReadOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -344,7 +344,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyOverrideMetadata()
+            public static void DependencyPropertyOverrideMetadata()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -391,7 +391,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyAddOwner()
+            public static void DependencyPropertyAddOwner()
             {
                 var testCode = @"
 namespace RoslynSandbox

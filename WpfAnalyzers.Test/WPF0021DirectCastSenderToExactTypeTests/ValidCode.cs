@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterNoMetadata()
+        public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -81,7 +81,7 @@ namespace RoslynSandbox
         }
 
         [TestCase("FooControl")]
-        public void DependencyPropertyRegisterDirectCast(string type)
+        public static void DependencyPropertyRegisterDirectCast(string type)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -123,7 +123,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -191,7 +191,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -225,7 +225,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,7 +253,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEv
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventCallbackAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
 
         [Test]
-        public void WhenCorrectNameSizeChangedEvent()
+        public static void WhenCorrectNameSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameSizeChangedEventHandledEventsToo()
+        public static void WhenCorrectNameSizeChangedEventHandledEventsToo()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameManipulationStartingEvent()
+        public static void WhenCorrectNameManipulationStartingEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameMouseDownEvent()
+        public static void WhenCorrectNameMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox

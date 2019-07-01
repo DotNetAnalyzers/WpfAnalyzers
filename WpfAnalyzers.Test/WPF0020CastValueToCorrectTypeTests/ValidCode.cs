@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterNoMetadata()
+        public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         [TestCase("System.IO.Stream", "IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
-        public void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
+        public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
+        public static void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -192,7 +192,7 @@ namespace RoslynSandbox
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
+        public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -262,7 +262,7 @@ namespace RoslynSandbox
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
+        public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -344,7 +344,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -380,7 +380,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -412,7 +412,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -446,7 +446,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -474,7 +474,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -502,7 +502,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumIssue211()
+        public static void EnumIssue211()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -538,7 +538,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumAddOwnerIssue211()
+        public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
 namespace RoslynSandbox

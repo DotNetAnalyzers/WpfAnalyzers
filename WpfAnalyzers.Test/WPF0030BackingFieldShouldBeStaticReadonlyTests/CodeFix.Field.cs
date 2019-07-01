@@ -5,9 +5,9 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class Field
+        internal static class Field
         {
             private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
             private static readonly CodeFixProvider Fix = new MakeFieldStaticReadonlyFix();
@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
             [TestCase("public readonly", "public static readonly")]
             [TestCase("private static", "private static readonly")]
             [TestCase("private", "private static readonly")]
-            public void DependencyPropertyRegisterBackingField(string before, string after)
+            public static void DependencyPropertyRegisterBackingField(string before, string after)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ReadOnlyDependencyProperty()
+            public static void ReadOnlyDependencyProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -113,7 +113,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterAttached()
+            public static void DependencyPropertyRegisterAttached()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -168,7 +168,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterAttachedReadOnlyKeyField()
+            public static void DependencyPropertyRegisterAttachedReadOnlyKeyField()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -227,7 +227,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
+            public static void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -283,7 +283,7 @@ namespace RoslynSandbox
 
             [TestCase("FooControl")]
             [TestCase("FooControl<T>")]
-            public void DependencyPropertyAddOwner(string typeName)
+            public static void DependencyPropertyAddOwner(string typeName)
             {
                 var fooCode = @"
 namespace RoslynSandbox

@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0071ConverterDoesNotHaveAttribute.Descriptor);
 
         [Test]
-        public void AddAttributeDirectCast()
+        public static void AddAttributeDirectCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddAttributeAsCast()
+        public static void AddAttributeAsCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddAttributeIsPattern()
+        public static void AddAttributeIsPattern()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -184,7 +184,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddAttributeSwitchPattern()
+        public static void AddAttributeSwitchPattern()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -246,7 +246,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenReturningThisObjectFields()
+        public static void WhenReturningThisObjectFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -352,7 +352,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Issue188()
+        public static void Issue188()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -460,7 +460,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Issue189()
+        public static void Issue189()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -558,7 +558,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NotNullReturnsTrueConverter()
+        public static void NotNullReturnsTrueConverter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -611,7 +611,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NullToVisibiltyConverter()
+        public static void NullToVisibiltyConverter()
         {
             var testCode = @"
 namespace RoslynSandbox

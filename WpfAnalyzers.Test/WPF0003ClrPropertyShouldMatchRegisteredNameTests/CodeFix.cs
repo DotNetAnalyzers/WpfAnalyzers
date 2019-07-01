@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyStatementBodyAccessors()
+        public static void DependencyPropertyStatementBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyExpressionBodyAccessors()
+        public static void DependencyPropertyExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -122,7 +122,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWithThis()
+        public static void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -165,7 +165,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyPartial()
+        public static void DependencyPropertyPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -223,7 +223,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerAttachedPropertyInSource()
+        public static void AddOwnerAttachedPropertyInSource()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -344,7 +344,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerTextElementFontSizeProperty()
+        public static void AddOwnerTextElementFontSizeProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -385,7 +385,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerBorderBorderThicknessProperty()
+        public static void AddOwnerBorderBorderThicknessProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

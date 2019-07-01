@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0022DirectCastValueToExactType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -107,7 +107,7 @@ namespace RoslynSandbox
 
         [TestCase("OnValueChanged")]
         [TestCase("new PropertyChangedCallback(OnValueChanged)")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackMethodGroupCallingInstanceMethod(string callback)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackMethodGroupCallingInstanceMethod(string callback)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -176,7 +176,7 @@ namespace RoslynSandbox
 
         [TestCase("(d, e) => OnValueChanged(d, e)")]
         [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambda(string lambda)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackLambda(string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -241,7 +241,7 @@ namespace RoslynSandbox
 
         [TestCase("(d, e) => ((FooControl)d).OnValueChanged((↓↓System.Collections.IEnumerable)e.OldValue, (string)e.NewValue)")]
         [TestCase("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (↓↓System.Collections.IEnumerable)e.NewValue)")]
-        public void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
+        public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -304,7 +304,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
-        public void DependencyPropertyRegisterCoerceValueCallback(string metadata)
+        public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -375,7 +375,7 @@ namespace RoslynSandbox
 
         [TestCase("ValidateValue")]
         [TestCase("new ValidateValueCallback(ValidateValue)")]
-        public void DependencyPropertyRegisterValidateValue(string validateValue)
+        public static void DependencyPropertyRegisterValidateValue(string validateValue)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -458,7 +458,7 @@ namespace RoslynSandbox
 
         [TestCase("(↓System.Collections.IEnumerable)e.NewValue", "(string)e.NewValue")]
         [TestCase("(↓System.Collections.IEnumerable)e.OldValue", "(string)e.OldValue")]
-        public void DependencyPropertyRegisterCast(string cast, string expectedCast)
+        public static void DependencyPropertyRegisterCast(string cast, string expectedCast)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -518,7 +518,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -581,7 +581,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -634,7 +634,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -691,7 +691,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -778,7 +778,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox

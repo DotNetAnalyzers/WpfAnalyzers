@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -51,7 +51,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertySideEffectInGetter()
+        public static void DependencyPropertySideEffectInGetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -92,7 +92,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertySideEffectInSetter()
+        public static void DependencyPropertySideEffectInSetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

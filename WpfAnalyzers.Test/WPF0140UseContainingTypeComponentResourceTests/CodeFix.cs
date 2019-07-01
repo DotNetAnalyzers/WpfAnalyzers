@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
         private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeFix();
@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0140UseContainingTypeComponentResourceKey.Descriptor);
 
         [Test]
-        public void WhenNotContainingType()
+        public static void WhenNotContainingType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNoArguments()
+        public static void WhenNoArguments()
         {
             var testCode = @"
 namespace RoslynSandbox

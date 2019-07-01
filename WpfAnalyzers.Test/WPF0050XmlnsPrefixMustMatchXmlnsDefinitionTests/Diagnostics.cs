@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0050XmlnsPrefixMustMatchXmlnsDefinition.DiagnosticId);
 
         [Test]
-        public void WhenNoXmlnsDefinition()
+        public static void WhenNoXmlnsDefinition()
         {
             var testCode = @"
 using System.Reflection;
@@ -42,7 +42,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenNoXmlnsPrefix()
+        public static void WhenNoXmlnsPrefix()
         {
             var testCode = @"
 using System.Reflection;
@@ -74,7 +74,7 @@ using System.Windows.Markup;
         }
 
         [Test]
-        public void WhenXmlnsDefinitionIsNotMatching()
+        public static void WhenXmlnsDefinitionIsNotMatching()
         {
             var testCode = @"
 using System.Reflection;

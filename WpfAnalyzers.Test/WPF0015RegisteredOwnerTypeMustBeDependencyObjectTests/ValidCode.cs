@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTest
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
 
         [Test]
-        public void DependencyProperty()
+        public static void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyFormatted()
+        public static void DependencyPropertyFormatted()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -63,7 +63,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyPartial()
+        public static void DependencyPropertyPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -154,7 +154,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -228,7 +228,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadonlyDependencyProperty()
+        public static void ReadonlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -258,7 +258,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

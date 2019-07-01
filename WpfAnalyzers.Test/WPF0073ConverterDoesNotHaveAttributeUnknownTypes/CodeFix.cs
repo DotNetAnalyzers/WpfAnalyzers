@@ -6,14 +6,14 @@ namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
     using NUnit.Framework;
     using WPF0073ConverterDoesNotHaveAttributeUnknownTypes = WpfAnalyzers.WPF0073ConverterDoesNotHaveAttributeUnknownTypes;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor);
 
         [Test]
-        public void AddAttributeDirectCast()
+        public static void AddAttributeDirectCast()
         {
             var testCode = @"
 namespace Gu.Wpf.PropertyGrid

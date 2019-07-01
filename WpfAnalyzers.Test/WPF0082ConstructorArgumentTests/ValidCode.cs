@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
-        public void WhenPropertyHasAttribute()
+        public static void WhenPropertyHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenPropertyWithBackingFieldHasAttribute()
+        public static void WhenPropertyWithBackingFieldHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenPropertyWithBackingFieldAssignedBackingFieldHasAttribute()
+        public static void WhenPropertyWithBackingFieldAssignedBackingFieldHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -111,7 +111,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNoAttribute()
+        public static void WhenNoAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Issue185()
+        public static void Issue185()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -185,7 +185,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Issue185WithEnsure()
+        public static void Issue185WithEnsure()
         {
             var ensureCode = @"
 namespace RoslynSandbox

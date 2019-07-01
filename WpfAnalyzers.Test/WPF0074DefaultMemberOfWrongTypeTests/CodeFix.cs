@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0074DefaultMemberOfWrongType.Descriptor);
 
         [Test]
-        public void DefaultField()
+        public static void DefaultField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -64,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DefaultProperty()
+        public static void DefaultProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

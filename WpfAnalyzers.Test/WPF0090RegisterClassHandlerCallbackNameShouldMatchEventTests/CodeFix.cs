@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEv
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenWrongNameSizeChangedEvent()
+        public static void WhenWrongNameSizeChangedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -83,7 +83,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenWrongNameSizeChangedEventHandledEventsToo()
+        public static void WhenWrongNameSizeChangedEventHandledEventsToo()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -128,7 +128,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCorrectNameMouseDownEvent()
+        public static void WhenCorrectNameMouseDownEvent()
         {
             var testCode = @"
 namespace RoslynSandbox

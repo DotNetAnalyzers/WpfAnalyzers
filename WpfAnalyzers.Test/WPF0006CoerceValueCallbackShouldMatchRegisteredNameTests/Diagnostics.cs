@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void UsedByMoreThanOnePropertyMatchingNeither()
+        public static void UsedByMoreThanOnePropertyMatchingNeither()
         {
             var testCode = @"
 namespace RoslynSandbox

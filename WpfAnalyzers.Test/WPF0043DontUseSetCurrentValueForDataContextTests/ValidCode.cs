@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
         [Test]
-        public void IgnoreSetDataContext()
+        public static void IgnoreSetDataContext()
         {
             var testCode = @"
 namespace RoslynSandbox

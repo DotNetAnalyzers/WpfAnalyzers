@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
         [Test]
-        public void DependencyPropertyRegisterNoMetadata()
+        public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
+        public static void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -86,7 +86,7 @@ namespace RoslynSandbox
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
         [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
-        public void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
         {
             var testCode = @"
 #pragma warning disable WPF0016 // Default value is shared reference type.
@@ -131,7 +131,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterWhenGenericContainingType()
+        public static void DependencyPropertyRegisterWhenGenericContainingType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -158,7 +158,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterWhenBoxed()
+        public static void DependencyPropertyRegisterWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -234,7 +234,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -259,7 +259,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWhenBoxed()
+        public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -307,7 +307,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -334,7 +334,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -385,7 +385,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -422,7 +422,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CastIntToDouble()
+        public static void CastIntToDouble()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -451,7 +451,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void FontFamilyConverterConvertFromString()
+        public static void FontFamilyConverterConvertFromString()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -493,7 +493,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BoxedBool()
+        public static void BoxedBool()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -531,7 +531,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumIssue211()
+        public static void EnumIssue211()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -569,7 +569,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EnumAddOwnerIssue211()
+        public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
 namespace RoslynSandbox

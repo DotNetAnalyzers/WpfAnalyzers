@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
         private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0011ContainingTypeShouldBeRegisteredOwner.DiagnosticId);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var barControlCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
 
         [TestCase("BarControl")]
         [TestCase("BarControl<T>")]
-        public void DependencyPropertyRegister(string typeName)
+        public static void DependencyPropertyRegister(string typeName)
         {
             var barControlCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var barControlCode = @"
 namespace RoslynSandbox
@@ -184,7 +184,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -247,7 +247,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedQualifiedTypeNames()
+        public static void DependencyPropertyRegisterAttachedQualifiedTypeNames()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -306,7 +306,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -373,7 +373,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -453,7 +453,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox

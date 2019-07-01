@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -30,7 +30,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenReturnTypeIsObjectAndAttributeIsMoreSpecific()
+        public static void WhenReturnTypeIsObjectAndAttributeIsMoreSpecific()
         {
             var testCode = @"
 namespace RoslynSandbox

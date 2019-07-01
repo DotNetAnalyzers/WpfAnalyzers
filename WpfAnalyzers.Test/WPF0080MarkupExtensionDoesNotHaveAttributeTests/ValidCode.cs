@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0080MarkupExtensionDoesNotHaveAttribute();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -30,7 +30,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotOverridingProvideValue()
+        public static void WhenNotOverridingProvideValue()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenAbstract()
+        public static void WhenAbstract()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenIsGeneric()
+        public static void WhenIsGeneric()
         {
             var testCode = @"
 namespace RoslynSandbox

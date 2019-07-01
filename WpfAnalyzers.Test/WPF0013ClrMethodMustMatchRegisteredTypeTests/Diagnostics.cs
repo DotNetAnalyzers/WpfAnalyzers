@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0013ClrMethodMustMatchRegisteredType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void DependencyPropertyRegisterAttachedSetMethod(string typeName)
+        public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -73,7 +73,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
+        public static void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -104,7 +104,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlySetMethod()
+        public static void DependencyPropertyRegisterAttachedReadOnlySetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         [TestCase("int?")]
         [TestCase("Nullable<int>")]
         [TestCase("ObservableCollection<int>")]
-        public void DependencyPropertyRegisterAttachedGetMethod(string typeName)
+        public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -167,7 +167,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
+        public static void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
         {
             var testCode = @"
 namespace RoslynSandbox

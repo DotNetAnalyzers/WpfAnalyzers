@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
 
         [Test]
-        public void WhenCorrectSignature()
+        public static void WhenCorrectSignature()
         {
             var testCode = @"
 namespace RoslynSandbox

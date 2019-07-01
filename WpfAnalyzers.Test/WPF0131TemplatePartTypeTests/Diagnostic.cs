@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostic
+    public static class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0131TemplatePartType.Descriptor);
 
         [Test]
-        public void CastNotMatching()
+        public static void CastNotMatching()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -32,7 +32,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IsPatternNotMatching()
+        public static void IsPatternNotMatching()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AsCastNotMatching()
+        public static void AsCastNotMatching()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenMissingType()
+        public static void WhenMissingType()
         {
             var testCode = @"
 namespace RoslynSandbox

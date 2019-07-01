@@ -3,13 +3,13 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void DependencyPropertyRegister(string typeName)
+        public static void DependencyPropertyRegister(string typeName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -179,7 +179,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
+        public static void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -205,7 +205,7 @@ namespace RoslynSandbox
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]
-        public void DependencyPropertyAddOwner(string typeName)
+        public static void DependencyPropertyAddOwner(string typeName)
         {
             var fooCode = @"
 namespace RoslynSandbox

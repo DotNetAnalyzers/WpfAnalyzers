@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0034AttachedPropertyBrowsableForTypeAttributeArgu
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasAttributeForMoreSpecificType()
+        public static void WhenHasAttributeForMoreSpecificType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasTwoAttributesForMoreSpecificTypes()
+        public static void WhenHasTwoAttributesForMoreSpecificTypes()
         {
             var testCode = @"
 namespace RoslynSandbox

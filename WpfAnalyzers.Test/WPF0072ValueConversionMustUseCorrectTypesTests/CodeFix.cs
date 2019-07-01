@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeArgumentFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0072ValueConversionMustUseCorrectTypes.Descriptor);
 
         [Test]
-        public void MessageWhenWrongSourceType()
+        public static void MessageWhenWrongSourceType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void MessageWhenWrongTargetType()
+        public static void MessageWhenWrongTargetType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DirectCastWrongSourceType()
+        public static void DirectCastWrongSourceType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -121,7 +121,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DirectCastWrongSourceTypeFullyQualified()
+        public static void DirectCastWrongSourceTypeFullyQualified()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -170,7 +170,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
+        public static void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -219,7 +219,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DirectCastWrongTargetType()
+        public static void DirectCastWrongTargetType()
         {
             var testCode = @"
 namespace RoslynSandbox

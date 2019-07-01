@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentClrMethodFix();
@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 
         [Test]
-        public void DependencyPropertyRegisterAttachedBothMissingDocs()
+        public static void DependencyPropertyRegisterAttachedBothMissingDocs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -76,7 +76,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedBothMissingDocsDifferentTypeAndParameterName()
+        public static void DependencyPropertyRegisterAttachedBothMissingDocsDifferentTypeAndParameterName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedGetMethodMissingDocs()
+        public static void DependencyPropertyRegisterAttachedGetMethodMissingDocs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -187,7 +187,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedSetMethodMissingDocs()
+        public static void DependencyPropertyRegisterAttachedSetMethodMissingDocs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -236,7 +236,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWithAttachedPropertyBrowsableForType()
+        public static void DependencyPropertyRegisterAttachedWithAttachedPropertyBrowsableForType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -303,7 +303,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedNotStandardTextGetMethod()
+        public static void DependencyPropertyRegisterAttachedNotStandardTextGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -371,7 +371,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedNotStandardTextSetMethod()
+        public static void DependencyPropertyRegisterAttachedNotStandardTextSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -439,7 +439,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
+        public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -495,7 +495,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox

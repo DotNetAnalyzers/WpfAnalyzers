@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [Test]
-        public void DependencyProperty()
+        public static void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyWithThis()
+        public static void DependencyPropertyWithThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -64,7 +64,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PropertyKeyInOtherClass()
+        public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
 namespace RoslynSandbox

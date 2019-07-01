@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostic
+    public static class Diagnostic
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0132UsePartPrefix.Descriptor);
 
         [Test]
-        public void MissingPrefix()
+        public static void MissingPrefix()
         {
             var testCode = @"
 namespace RoslynSandbox

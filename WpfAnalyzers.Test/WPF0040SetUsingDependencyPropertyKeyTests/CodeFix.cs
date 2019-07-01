@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
         private static readonly CodeFixProvider Fix = new UseDependencyPropertyKeyFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
         [TestCase("this.SetCurrentValue")]
-        public void ReadOnlyDependencyProperty(string method)
+        public static void ReadOnlyDependencyProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
         [TestCase("this.SetCurrentValue")]
-        public void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
+        public static void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -127,7 +127,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void DependencyPropertyRegisterAttachedReadOnly(string method)
+        public static void DependencyPropertyRegisterAttachedReadOnly(string method)
         {
             var testCode = @"
 namespace RoslynSandbox

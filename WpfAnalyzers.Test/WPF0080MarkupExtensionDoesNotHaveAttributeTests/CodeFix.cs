@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0080MarkupExtensionDoesNotHaveAttribute();
         private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeAttributeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0080MarkupExtensionDoesNotHaveAttribute.DiagnosticId);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DirectCastWrongSourceType()
+        public static void DirectCastWrongSourceType()
         {
             var testCode = @"
 namespace RoslynSandbox

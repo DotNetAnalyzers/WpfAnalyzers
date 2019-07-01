@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
 
@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
         [TestCase("this.SetValue")]
         [TestCase("SetCurrentValue")]
         [TestCase("this.SetCurrentValue")]
-        public void DependencyProperty(string method)
+        public static void DependencyProperty(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -69,7 +69,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void DependencyPropertyRegisterAttached(string method)
+        public static void DependencyPropertyRegisterAttached(string method)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

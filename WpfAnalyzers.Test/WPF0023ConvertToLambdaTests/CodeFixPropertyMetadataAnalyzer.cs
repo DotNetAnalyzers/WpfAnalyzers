@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFixPropertyMetadataAnalyzer
+    public static class CodeFixPropertyMetadataAnalyzer
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
         private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();
@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         [TestCase("new PropertyMetadata(default(string), (d, e) => OnValueChanged(d, e))", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
         [TestCase("new PropertyMetadata(default(string), new PropertyChangedCallback(OnValueChanged))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
         [TestCase("new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => OnValueChanged(d, e)))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
-        public void DependencyPropertyRegisterPropertyChangedCallback(string metadata, string callback)
+        public static void DependencyPropertyRegisterPropertyChangedCallback(string metadata, string callback)
         {
             var testCode = @"
 namespace RoslynSandbox

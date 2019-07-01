@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
+        public static void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
+        public static void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -118,7 +118,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
+        public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
+        public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox

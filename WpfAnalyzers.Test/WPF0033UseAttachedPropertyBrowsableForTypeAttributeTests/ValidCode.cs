@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox

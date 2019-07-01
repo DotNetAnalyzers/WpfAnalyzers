@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
         private static readonly CodeFixProvider Fix = new ComponentResourceKeyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0141UseContainingMemberComponentResourceKey.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -30,7 +30,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotUsingNameofContainingMember()
+        public static void WhenNotUsingNameofContainingMember()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingWrongStringLiteral()
+        public static void WhenUsingWrongStringLiteral()
         {
             var testCode = @"
 namespace RoslynSandbox

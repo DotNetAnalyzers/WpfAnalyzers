@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
 
         [Test]
-        public void EventManagerRegisterRoutedEvent()
+        public static void EventManagerRegisterRoutedEvent()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventManagerRegisterRoutedEventCustomHandler()
+        public static void EventManagerRegisterRoutedEventCustomHandler()
         {
             var eventArgsCode = @"namespace RoslynSandbox
 {

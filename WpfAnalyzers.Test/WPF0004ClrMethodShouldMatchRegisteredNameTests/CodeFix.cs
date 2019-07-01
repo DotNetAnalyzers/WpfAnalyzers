@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0004ClrMethodShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedGetMethod()
+        public static void DependencyPropertyRegisterAttachedGetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -98,7 +98,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedGetMethodExpressionBody()
+        public static void DependencyPropertyRegisterAttachedGetMethodExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -141,7 +141,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedSetMethod()
+        public static void DependencyPropertyRegisterAttachedSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -196,7 +196,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedSetMethodExpressionBody()
+        public static void DependencyPropertyRegisterAttachedSetMethodExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox

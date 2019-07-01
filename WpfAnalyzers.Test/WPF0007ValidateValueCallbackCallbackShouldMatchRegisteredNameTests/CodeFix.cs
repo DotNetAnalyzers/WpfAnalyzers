@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RegistrationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
         [TestCase("new ValidateValueCallback(FooControl.↓WrongName)", "new ValidateValueCallback(FooControl.ValidateValue)")]
         [TestCase("new ValidateValueCallback(x => ↓WrongName(x))", "new ValidateValueCallback(x => ValidateValue(x))")]
         [TestCase("new ValidateValueCallback(x => FooControl.↓WrongName(x))", "new ValidateValueCallback(x => FooControl.ValidateValue(x))")]
-        public void DependencyPropertyWithCallback(string callback, string expected)
+        public static void DependencyPropertyWithCallback(string callback, string expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -122,7 +122,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -252,7 +252,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCallbackMatchesOtherProperty()
+        public static void WhenCallbackMatchesOtherProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -376,7 +376,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCallbackMatchesOtherPropertyParts()
+        public static void WhenCallbackMatchesOtherPropertyParts()
         {
             var part1 = @"
 namespace RoslynSandbox

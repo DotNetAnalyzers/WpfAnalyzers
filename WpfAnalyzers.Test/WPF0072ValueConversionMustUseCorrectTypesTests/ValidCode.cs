@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly ValueConverterAnalyzer Analyzer = new ValueConverterAnalyzer();
 
         [Test]
-        public void WhenHasAttribute()
+        public static void WhenHasAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -59,7 +59,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasFullyQualifiedAttribute()
+        public static void WhenHasFullyQualifiedAttribute()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -109,7 +109,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenHasAttributeNegatedNullableBoolean()
+        public static void WhenHasAttributeNegatedNullableBoolean()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenReturningUnderscoreObjectFields()
+        public static void WhenReturningUnderscoreObjectFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -194,7 +194,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenReturningThisObjectFields()
+        public static void WhenReturningThisObjectFields()
         {
             var testCode = @"
 namespace RoslynSandbox

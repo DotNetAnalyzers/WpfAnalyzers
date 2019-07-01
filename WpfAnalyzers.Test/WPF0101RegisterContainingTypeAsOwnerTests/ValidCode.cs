@@ -3,14 +3,14 @@ namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void EventManagerRegisterRoutedEvent(string nameof)
+        public static void EventManagerRegisterRoutedEvent(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
         [TestCase("nameof(FooControl.ValueChanged)")]
-        public void EventManagerRegisterRoutedEventExpressionBodies(string nameof)
+        public static void EventManagerRegisterRoutedEventExpressionBodies(string nameof)
         {
             var testCode = @"
 namespace RoslynSandbox

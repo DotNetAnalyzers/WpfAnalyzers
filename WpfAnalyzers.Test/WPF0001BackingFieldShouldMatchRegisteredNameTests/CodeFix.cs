@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0001BackingFieldShouldMatchRegisteredName.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegister()
+        public static void DependencyPropertyRegister()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterPartial()
+        public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -245,7 +245,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -304,7 +304,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -372,7 +372,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerTextElementFontSizeProperty()
+        public static void AddOwnerTextElementFontSizeProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -413,7 +413,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AddOwnerBorderBorderThicknessProperty()
+        public static void AddOwnerBorderBorderThicknessProperty()
         {
             var testCode = @"
 namespace RoslynSandbox

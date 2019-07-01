@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
 
         [Test]
-        public void WhenPartPrefix()
+        public static void WhenPartPrefix()
         {
             var testCode = @"
 namespace RoslynSandbox

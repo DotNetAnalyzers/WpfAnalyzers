@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Remove()
+        public static void Remove()
         {
             var testCode = @"
 namespace RoslynSandbox

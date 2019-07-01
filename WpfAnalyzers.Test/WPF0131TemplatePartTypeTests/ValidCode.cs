@@ -4,12 +4,12 @@ namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
 
         [Test]
-        public void WhenCastingToSameType()
+        public static void WhenCastingToSameType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -31,7 +31,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCastingToSameTypeFullyQualified()
+        public static void WhenCastingToSameTypeFullyQualified()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCastingToLessSpecificType()
+        public static void WhenCastingToLessSpecificType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -74,7 +74,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenIsPatternSameType()
+        public static void WhenIsPatternSameType()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -106,7 +106,7 @@ namespace RoslynSandbox
         [TestCase("as FrameworkElement")]
         [TestCase("as UIElement")]
         [TestCase("as Control")]
-        public void AsCastStringLiteral(string cast)
+        public static void AsCastStringLiteral(string cast)
         {
             var testCode = @"
 namespace RoslynSandbox

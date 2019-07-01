@@ -3,7 +3,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly RegistrationAnalyzer Analyzer = new RegistrationAnalyzer();
 
@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
         [TestCase("o => CommonValidation.ValidateDoubleIsGreaterThanZero(o)")]
         [TestCase("new ValidateValueCallback(CommonValidation.ValidateDoubleIsGreaterThanZero)")]
         [TestCase("new ValidateValueCallback(o => CommonValidation.ValidateDoubleIsGreaterThanZero(o))")]
-        public void WhenValidationMethodInHelperClass(string callback)
+        public static void WhenValidationMethodInHelperClass(string callback)
         {
             var validationCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenValidationMethodIsUsedMoreThanOnce()
+        public static void WhenValidationMethodIsUsedMoreThanOnce()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyNoCallback()
+        public static void DependencyPropertyNoCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         [TestCase("o => ValidateValue(o));")]
         [TestCase("new ValidateValueCallback(ValidateValue));")]
         [TestCase("o => (int)o >= 0);")]
-        public void DependencyPropertyWithCallback(string metadata)
+        public static void DependencyPropertyWithCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -240,7 +240,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -281,7 +281,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedReadOnly()
+        public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -329,7 +329,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingMethodInOtherClass()
+        public static void WhenUsingMethodInOtherClass()
         {
             var commonValidation = @"
 namespace RoslynSandbox

@@ -4,13 +4,13 @@ namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new OverrideMetadataAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor);
 
         [Test]
-        public void DependencyPropertyOverrideMetadataWithBaseType()
+        public static void DependencyPropertyOverrideMetadataWithBaseType()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadataWithBaseTypeFullyQualified()
+        public static void DependencyPropertyOverrideMetadataWithBaseTypeFullyQualified()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DefaultStyleKeyPropertyOverrideMetadata()
+        public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox

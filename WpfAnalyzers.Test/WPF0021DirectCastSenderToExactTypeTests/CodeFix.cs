@@ -5,14 +5,14 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0021DirectCastSenderToExactType.Descriptor);
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
-        public void DependencyPropertyRegisterPropertyChangedCallback(string metadata)
+        public static void DependencyPropertyRegisterPropertyChangedCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -107,7 +107,7 @@ namespace RoslynSandbox
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
-        public void DependencyPropertyRegisterCoerceValueCallback(string metadata)
+        public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -179,7 +179,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterCast()
+        public static void DependencyPropertyRegisterCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -238,7 +238,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterReadOnly()
+        public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -301,7 +301,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyOverrideMetadata()
+        public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -348,7 +348,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyAddOwner()
+        public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
 namespace RoslynSandbox

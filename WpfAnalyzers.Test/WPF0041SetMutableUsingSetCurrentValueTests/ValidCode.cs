@@ -3,12 +3,12 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
 
         [Test]
-        public void DependencyProperty()
+        public static void DependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
 
         [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
         [TestCase("this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
-        public void DependencyPropertyFromOutside(string setExpression)
+        public static void DependencyPropertyFromOutside(string setExpression)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -87,7 +87,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -130,7 +130,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyPropertyFromOutside()
+        public static void ReadOnlyDependencyPropertyFromOutside()
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -182,7 +182,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ReadOnlyDependencyPropertyThis()
+        public static void ReadOnlyDependencyPropertyThis()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -225,7 +225,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttached()
+        public static void DependencyPropertyRegisterAttached()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -273,7 +273,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterAttachedWhenBoxed()
+        public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
 namespace RoslynSandbox
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredDependencyPropertyInClrProperty()
+        public static void IgnoredDependencyPropertyInClrProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -347,7 +347,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredDependencyPropertyInClrPropertyWithAsCast()
+        public static void IgnoredDependencyPropertyInClrPropertyWithAsCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -373,7 +373,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredDependencyPropertyInClrPropertyBoxed()
+        public static void IgnoredDependencyPropertyInClrPropertyBoxed()
         {
             var boolBoxesCode = @"
 namespace RoslynSandbox
@@ -410,7 +410,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredAttachedPropertyInClrSetMethod()
+        public static void IgnoredAttachedPropertyInClrSetMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -442,7 +442,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
+        public static void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
         {
             var boolBoxesCode = @"
 namespace RoslynSandbox
@@ -484,7 +484,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredClrPropertyInObjectInitializer()
+        public static void IgnoredClrPropertyInObjectInitializer()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -509,7 +509,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredClrPropertyInConstructor()
+        public static void IgnoredClrPropertyInConstructor()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -540,7 +540,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoredSetValueInConstructor()
+        public static void IgnoredSetValueInConstructor()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -573,7 +573,7 @@ namespace RoslynSandbox
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public void IgnoredWhenCreatedInScope(string setCall)
+        public static void IgnoredWhenCreatedInScope(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -596,7 +596,7 @@ namespace RoslynSandbox
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
+        public static void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -621,7 +621,7 @@ namespace RoslynSandbox
 
         [TestCase("textBox.Visibility = Visibility.Hidden;")]
         [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public void IgnoredWhenCreatedInScopeWithIf(string setCall)
+        public static void IgnoredWhenCreatedInScopeWithIf(string setCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -647,7 +647,7 @@ namespace RoslynSandbox
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
-        public void IgnoredPropertyAsParameter(string setValueCall)
+        public static void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -680,7 +680,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreSetDataContext()
+        public static void IgnoreSetDataContext()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -709,7 +709,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Issue240()
+        public static void Issue240()
         {
             var code = @"
 namespace RoslynSandbox

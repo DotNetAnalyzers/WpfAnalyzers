@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentOnPropertyChangedFix();
@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
         [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public void DependencyPropertyRegisterWithMetadata(string metadata)
+        public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterWithMetadataDifferentParameterNames()
+        public static void DependencyPropertyRegisterWithMetadataDifferentParameterNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -209,7 +209,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterMissingDocsOldValueAndNewValue()
+        public static void DependencyPropertyRegisterMissingDocsOldValueAndNewValue()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterSummaryNotStandard()
+        public static void DependencyPropertyRegisterSummaryNotStandard()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -346,7 +346,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterOldValueNotStandard()
+        public static void DependencyPropertyRegisterOldValueNotStandard()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -416,7 +416,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterNewValueNotStandard()
+        public static void DependencyPropertyRegisterNewValueNotStandard()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -486,7 +486,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterMissingDocsNewValueBeforeOldValue()
+        public static void DependencyPropertyRegisterMissingDocsNewValueBeforeOldValue()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -553,7 +553,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterMissingDocsOnlyNewValue()
+        public static void DependencyPropertyRegisterMissingDocsOnlyNewValue()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -619,7 +619,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterMissingDocsNoParameters()
+        public static void DependencyPropertyRegisterMissingDocsNoParameters()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -684,7 +684,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterMissingDocsExplicitCallback()
+        public static void DependencyPropertyRegisterMissingDocsExplicitCallback()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -751,7 +751,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DependencyPropertyRegisterStaticCallbackCallingInstance()
+        public static void DependencyPropertyRegisterStaticCallbackCallingInstance()
         {
             var testCode = @"
 namespace RoslynSandbox
