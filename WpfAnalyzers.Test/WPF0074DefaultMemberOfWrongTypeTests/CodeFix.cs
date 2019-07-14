@@ -18,6 +18,7 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
+    using System.Windows.Controls;
     using System.Windows.Data;
 
     [ValueConversion(typeof(IEnumerable), typeof(int))]
@@ -72,6 +73,7 @@ namespace RoslynSandbox
     using System;
     using System.Collections;
     using System.Globalization;
+    using System.Windows.Controls;
     using System.Windows.Data;
 
     [ValueConversion(typeof(IEnumerable), typeof(int))]

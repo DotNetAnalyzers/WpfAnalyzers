@@ -21,10 +21,7 @@ namespace RoslynSandbox
     [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
     public class FooControl : Control
     {
-        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
-        {
-            return int;
-        }
+        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs) => 1;
     }
 }";
 
@@ -43,10 +40,7 @@ namespace RoslynSandbox
     [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
     public class FooControl : Control
     {
-        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
-        {
-            return int;
-        }
+        public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs) => 1;
     }
 }";
 

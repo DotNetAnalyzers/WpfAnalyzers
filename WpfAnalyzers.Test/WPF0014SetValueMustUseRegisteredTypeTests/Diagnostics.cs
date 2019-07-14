@@ -270,8 +270,9 @@ namespace RoslynSandbox
             var iFooCode = @"
 namespace RoslynSandbox
 {
-namespace RoslynSandbox
-{
+    public interface IFoo
+    {
+    }
 }";
 
             var iMehCode = @"
