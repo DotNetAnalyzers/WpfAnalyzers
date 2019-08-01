@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0019CastSenderToCorrectType
     {
-        public const string DiagnosticId = "WPF0019";
+        internal const string DiagnosticId = "WPF0019";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

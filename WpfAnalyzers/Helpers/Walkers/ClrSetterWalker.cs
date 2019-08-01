@@ -14,26 +14,17 @@ namespace WpfAnalyzers
         {
         }
 
-        public bool IsSuccess => !this.HasError && this.Arguments != null;
+        internal bool IsSuccess => !this.HasError && this.Arguments != null;
 
-        public bool HasError { get; private set; }
+        internal bool HasError { get; private set; }
 
-        public InvocationExpressionSyntax SetValue { get; private set; }
+        internal InvocationExpressionSyntax SetValue { get; private set; }
 
-        public InvocationExpressionSyntax SetCurrentValue { get; private set; }
+        internal InvocationExpressionSyntax SetCurrentValue { get; private set; }
 
-        public ArgumentListSyntax Arguments => this.SetValue?.ArgumentList ?? this.SetCurrentValue?.ArgumentList;
+        internal ArgumentListSyntax Arguments => this.SetValue?.ArgumentList ?? this.SetCurrentValue?.ArgumentList;
 
-        public ArgumentSyntax Property => this.Arguments?.Arguments[0];
-
-        public static ClrSetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
-        {
-            var walker = Borrow(() => new ClrSetterWalker());
-            walker.semanticModel = semanticModel;
-            walker.cancellationToken = cancellationToken;
-            walker.Visit(setter);
-            return walker;
-        }
+        internal ArgumentSyntax Property => this.Arguments?.Arguments[0];
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
@@ -76,6 +67,15 @@ namespace WpfAnalyzers
             }
 
             base.Visit(node);
+        }
+
+        internal static ClrSetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode setter)
+        {
+            var walker = Borrow(() => new ClrSetterWalker());
+            walker.semanticModel = semanticModel;
+            walker.cancellationToken = cancellationToken;
+            walker.Visit(setter);
+            return walker;
         }
 
         protected override void Clear()

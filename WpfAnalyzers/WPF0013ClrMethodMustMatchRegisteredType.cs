@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0013ClrMethodMustMatchRegisteredType
     {
-        public const string DiagnosticId = "WPF0013";
+        internal const string DiagnosticId = "WPF0013";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

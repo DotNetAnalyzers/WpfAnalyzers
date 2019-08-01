@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0005PropertyChangedCallbackShouldMatchRegisteredName
     {
-        public const string DiagnosticId = "WPF0005";
+        internal const string DiagnosticId = "WPF0005";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

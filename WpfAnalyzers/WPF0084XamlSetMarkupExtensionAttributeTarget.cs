@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal class WPF0084XamlSetMarkupExtensionAttributeTarget
     {
-        public const string DiagnosticId = "WPF0084";
+        internal const string DiagnosticId = "WPF0084";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

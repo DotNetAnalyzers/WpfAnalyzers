@@ -14,7 +14,7 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0052";
+        internal const string DiagnosticId = "WPF0052";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
@@ -72,7 +72,7 @@ namespace WpfAnalyzers
             {
             }
 
-            public IReadOnlyList<string> NotMapped
+            internal IReadOnlyList<string> NotMapped
             {
                 get
                 {
@@ -91,27 +91,6 @@ namespace WpfAnalyzers
 
                     return notMapped;
                 }
-            }
-
-            public static Walker Create(Compilation compilation, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                var walker = Borrow(() => new Walker());
-                walker.semanticModel = semanticModel;
-                walker.cancellationToken = cancellationToken;
-                foreach (var tree in compilation.SyntaxTrees)
-                {
-                    if (tree.FilePath.EndsWith(".g.cs"))
-                    {
-                        continue;
-                    }
-
-                    if (tree.TryGetRoot(out var root))
-                    {
-                        walker.Visit(root);
-                    }
-                }
-
-                return walker;
             }
 
             public override void VisitClassDeclaration(ClassDeclarationSyntax node)
@@ -142,6 +121,27 @@ namespace WpfAnalyzers
                 }
             }
 
+            internal static Walker Create(Compilation compilation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
+                foreach (var tree in compilation.SyntaxTrees)
+                {
+                    if (tree.FilePath.EndsWith(".g.cs"))
+                    {
+                        continue;
+                    }
+
+                    if (tree.TryGetRoot(out var root))
+                    {
+                        walker.Visit(root);
+                    }
+                }
+
+                return walker;
+            }
+
             protected override void Clear()
             {
                 this.namespaces.Clear();
@@ -152,7 +152,7 @@ namespace WpfAnalyzers
 
             private class NameSyntaxComparer : IEqualityComparer<NameSyntax>
             {
-                public static readonly NameSyntaxComparer Default = new NameSyntaxComparer();
+                internal static readonly NameSyntaxComparer Default = new NameSyntaxComparer();
 
                 private NameSyntaxComparer()
                 {
@@ -195,7 +195,7 @@ namespace WpfAnalyzers
                                RecursiveEquals(xName.Left, yName.Left);
                     }
 
-                    throw new NotImplementedException("Don't think we can ever get here.");
+                    throw new NotSupportedException("Don't think we can ever get here.");
                 }
             }
         }

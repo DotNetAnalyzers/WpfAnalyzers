@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0060DocumentDependencyPropertyBackingMember
     {
-        public const string DiagnosticId = "WPF0060";
+        internal const string DiagnosticId = "WPF0060";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

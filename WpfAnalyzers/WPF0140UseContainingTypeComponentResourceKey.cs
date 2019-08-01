@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0140UseContainingTypeComponentResourceKey
     {
-        public const string DiagnosticId = "WPF0140";
+        internal const string DiagnosticId = "WPF0140";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

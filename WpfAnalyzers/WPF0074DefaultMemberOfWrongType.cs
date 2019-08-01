@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0074DefaultMemberOfWrongType
     {
-        public const string DiagnosticId = "WPF0074";
+        internal const string DiagnosticId = "WPF0074";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

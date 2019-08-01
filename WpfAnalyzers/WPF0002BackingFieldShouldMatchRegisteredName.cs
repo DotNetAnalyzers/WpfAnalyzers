@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0002BackingFieldShouldMatchRegisteredName
     {
-        public const string DiagnosticId = "WPF0002";
+        internal const string DiagnosticId = "WPF0002";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

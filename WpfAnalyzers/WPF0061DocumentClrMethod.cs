@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0061DocumentClrMethod
     {
-        public const string DiagnosticId = "WPF0061";
+        internal const string DiagnosticId = "WPF0061";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

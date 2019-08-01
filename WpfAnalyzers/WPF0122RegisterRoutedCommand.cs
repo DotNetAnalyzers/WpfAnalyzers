@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0122RegisterRoutedCommand
     {
-        public const string DiagnosticId = "WPF0122";
+        internal const string DiagnosticId = "WPF0122";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0123BackingMemberShouldBeStaticReadonly
     {
-        public const string DiagnosticId = "WPF0123";
+        internal const string DiagnosticId = "WPF0123";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

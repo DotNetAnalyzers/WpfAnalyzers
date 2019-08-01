@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0131TemplatePartType
     {
-        public const string DiagnosticId = "WPF0131";
+        internal const string DiagnosticId = "WPF0131";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

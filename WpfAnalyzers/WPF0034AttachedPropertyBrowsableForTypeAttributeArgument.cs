@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0034AttachedPropertyBrowsableForTypeAttributeArgument
     {
-        public const string DiagnosticId = "WPF0034";
+        internal const string DiagnosticId = "WPF0034";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

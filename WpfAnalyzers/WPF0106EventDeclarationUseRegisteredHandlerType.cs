@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0106EventDeclarationUseRegisteredHandlerType
     {
-        public const string DiagnosticId = "WPF0106";
+        internal const string DiagnosticId = "WPF0106";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

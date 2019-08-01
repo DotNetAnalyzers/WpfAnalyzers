@@ -56,7 +56,7 @@ namespace WpfAnalyzers
 
         private class SetValueRewriter : CSharpSyntaxRewriter
         {
-            public static readonly SetValueRewriter Default = new SetValueRewriter();
+            internal static readonly SetValueRewriter Default = new SetValueRewriter();
             private static readonly NameSyntax SetValueIdentifier = SyntaxFactory.ParseName("SetValue").WithAdditionalAnnotations(Formatter.Annotation);
 
             private SetValueRewriter()

@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0035ClrPropertyUseSetValueInSetter
     {
-        public const string DiagnosticId = "WPF0035";
+        internal const string DiagnosticId = "WPF0035";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

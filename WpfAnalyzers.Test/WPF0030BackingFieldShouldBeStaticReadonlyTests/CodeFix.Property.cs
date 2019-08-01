@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 
     public static partial class CodeFix
     {
-        internal static class Property
+        public static class Property
         {
             private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
             private static readonly CodeFixProvider Fix = new MakePropertyStaticReadonlyFix();

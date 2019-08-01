@@ -15,9 +15,9 @@ namespace WpfAnalyzers
             this.FieldOrProperty = fieldOrProperty;
         }
 
-        public FieldOrProperty FieldOrProperty { get; }
+        internal FieldOrProperty FieldOrProperty { get; }
 
-        public ISymbol Symbol => this.FieldOrProperty.Symbol;
+        internal ISymbol Symbol => this.FieldOrProperty.Symbol;
 
         internal ITypeSymbol Type => this.FieldOrProperty.Type;
 
@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            result = default(BackingFieldOrProperty);
+            result = default;
             return false;
         }
 
@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            result = default(BackingFieldOrProperty);
+            result = default;
             return false;
         }
 

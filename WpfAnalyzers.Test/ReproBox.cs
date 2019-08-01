@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test
     using NUnit.Framework;
 
     [Explicit]
-    internal class ReproBox
+    public static class ReproBox
     {
         // ReSharper disable once UnusedMember.Local
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
@@ -25,13 +25,13 @@ namespace WpfAnalyzers.Test
             RoslynAssert.MetadataReferences);
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void SolutionRepro(DiagnosticAnalyzer analyzer)
+        public static void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
             RoslynAssert.Valid(analyzer, Solution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void Repro(DiagnosticAnalyzer analyzer)
+        public static void Repro(DiagnosticAnalyzer analyzer)
         {
             var testCode = @"
 namespace RoslynSandbox

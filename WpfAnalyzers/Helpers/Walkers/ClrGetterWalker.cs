@@ -14,22 +14,13 @@ namespace WpfAnalyzers
         {
         }
 
-        public bool IsSuccess => !this.HasError && this.GetValue != null;
+        internal bool IsSuccess => !this.HasError && this.GetValue != null;
 
-        public bool HasError { get; private set; }
+        internal bool HasError { get; private set; }
 
-        public InvocationExpressionSyntax GetValue { get; private set; }
+        internal InvocationExpressionSyntax GetValue { get; private set; }
 
-        public ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
-
-        public static ClrGetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
-        {
-            var walker = Borrow(() => new ClrGetterWalker());
-            walker.semanticModel = semanticModel;
-            walker.cancellationToken = cancellationToken;
-            walker.Visit(getter);
-            return walker;
-        }
+        internal ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
@@ -57,6 +48,15 @@ namespace WpfAnalyzers
             }
 
             base.Visit(node);
+        }
+
+        internal static ClrGetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
+        {
+            var walker = Borrow(() => new ClrGetterWalker());
+            walker.semanticModel = semanticModel;
+            walker.cancellationToken = cancellationToken;
+            walker.Visit(getter);
+            return walker;
         }
 
         protected override void Clear()

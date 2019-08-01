@@ -11,7 +11,7 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0041";
+        internal const string DiagnosticId = "WPF0041";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

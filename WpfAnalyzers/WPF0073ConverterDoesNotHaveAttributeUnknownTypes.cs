@@ -4,7 +4,7 @@
 
     internal static class WPF0073ConverterDoesNotHaveAttributeUnknownTypes
     {
-        public const string DiagnosticId = "WPF0073";
+        internal const string DiagnosticId = "WPF0073";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

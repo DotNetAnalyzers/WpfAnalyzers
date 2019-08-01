@@ -4,7 +4,7 @@
 
     internal static class WPF0100BackingFieldShouldMatchRegisteredName
     {
-        public const string DiagnosticId = "WPF0100";
+        internal const string DiagnosticId = "WPF0100";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

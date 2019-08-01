@@ -6,12 +6,12 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Exposes helper methods for working with CLR-properties for DependencyProperty
+    /// Exposes helper methods for working with CLR-properties for DependencyProperty.
     /// </summary>
     internal static class ClrProperty
     {
         /// <summary>
-        /// Check if the <paramref name="property"/> can be an accessor for a DependencyProperty
+        /// Check if the <paramref name="property"/> can be an accessor for a DependencyProperty.
         /// </summary>
         internal static bool IsPotentialClrProperty(this IPropertySymbol property, Compilation compilation)
         {
@@ -24,7 +24,7 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty
+        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty.
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
@@ -34,7 +34,7 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty
+        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty.
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
@@ -82,7 +82,7 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Get the backing fields for the <paramref name="propertyDeclaration"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field
+        /// Get the backing fields for the <paramref name="propertyDeclaration"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field.
         /// </summary>
         internal static bool TryGetBackingFields(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {
@@ -139,7 +139,7 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field
+        /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field.
         /// </summary>
         private static bool TryGetBackingFields(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {

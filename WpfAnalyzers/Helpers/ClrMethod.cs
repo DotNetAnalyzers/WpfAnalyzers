@@ -9,7 +9,7 @@ namespace WpfAnalyzers
     internal static class ClrMethod
     {
         /// <summary>
-        /// Check if <paramref name="method"/> is a potential accessor for an attached property
+        /// Check if <paramref name="method"/> is a potential accessor for an attached property.
         /// </summary>
         internal static bool IsPotentialClrSetMethod(IMethodSymbol method, Compilation compilation)
         {
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
         }
 
         /// <summary>
-        /// Check if <paramref name="method"/> is a potential accessor for an attached property
+        /// Check if <paramref name="method"/> is a potential accessor for an attached property.
         /// </summary>
         internal static bool IsPotentialClrGetMethod(IMethodSymbol method, Compilation compilation)
         {

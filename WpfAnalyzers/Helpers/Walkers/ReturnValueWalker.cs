@@ -13,9 +13,7 @@ namespace WpfAnalyzers
         {
         }
 
-        public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
-
-        public static ReturnValueWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnValueWalker());
+        internal IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
@@ -28,6 +26,8 @@ namespace WpfAnalyzers
             this.returnValues.Add(node.Expression);
             base.VisitArrowExpressionClause(node);
         }
+
+        internal static ReturnValueWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnValueWalker());
 
         protected override void Clear()
         {

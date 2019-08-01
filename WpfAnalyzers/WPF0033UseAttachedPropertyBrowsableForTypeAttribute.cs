@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0033UseAttachedPropertyBrowsableForTypeAttribute
     {
-        public const string DiagnosticId = "WPF0033";
+        internal const string DiagnosticId = "WPF0033";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

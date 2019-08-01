@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0062DocumentPropertyChangedCallback
     {
-        public const string DiagnosticId = "WPF0062";
+        internal const string DiagnosticId = "WPF0062";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0132UsePartPrefix
     {
-        public const string DiagnosticId = "WPF0132";
+        internal const string DiagnosticId = "WPF0132";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

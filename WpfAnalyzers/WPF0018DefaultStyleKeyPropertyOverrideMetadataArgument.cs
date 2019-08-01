@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument
     {
-        public const string DiagnosticId = "WPF0018";
+        internal const string DiagnosticId = "WPF0018";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

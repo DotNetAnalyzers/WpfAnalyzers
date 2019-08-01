@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0070ConverterDoesNotHaveDefaultField
     {
-        public const string DiagnosticId = "WPF0070";
+        internal const string DiagnosticId = "WPF0070";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

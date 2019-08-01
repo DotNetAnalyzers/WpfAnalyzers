@@ -4,7 +4,7 @@
 
     internal static class WPF0072ValueConversionMustUseCorrectTypes
     {
-        public const string DiagnosticId = "WPF0072";
+        internal const string DiagnosticId = "WPF0072";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

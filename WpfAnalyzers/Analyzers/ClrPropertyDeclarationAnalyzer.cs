@@ -110,16 +110,6 @@ namespace WpfAnalyzers
             private InvocationExpressionSyntax getCall;
             private InvocationExpressionSyntax setCall;
 
-            public static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax getCall, out InvocationExpressionSyntax setCall)
-            {
-                using (var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker()))
-                {
-                    getCall = walker.getCall;
-                    setCall = walker.setCall;
-                    return getCall != null || setCall != null;
-                }
-            }
-
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
                 if (node.TryGetMethodName(out var name) &&
@@ -137,6 +127,16 @@ namespace WpfAnalyzers
                 }
 
                 base.VisitInvocationExpression(node);
+            }
+
+            internal static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax getCall, out InvocationExpressionSyntax setCall)
+            {
+                using (var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker()))
+                {
+                    getCall = walker.getCall;
+                    setCall = walker.setCall;
+                    return getCall != null || setCall != null;
+                }
             }
 
             protected override void Clear()

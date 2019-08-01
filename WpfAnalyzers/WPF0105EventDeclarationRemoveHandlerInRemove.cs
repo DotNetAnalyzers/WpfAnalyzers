@@ -4,7 +4,7 @@
 
     internal static class WPF0105EventDeclarationRemoveHandlerInRemove
     {
-        public const string DiagnosticId = "WPF0105";
+        internal const string DiagnosticId = "WPF0105";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

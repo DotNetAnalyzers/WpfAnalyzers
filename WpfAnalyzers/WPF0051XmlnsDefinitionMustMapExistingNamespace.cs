@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0051XmlnsDefinitionMustMapExistingNamespace
     {
-        public const string DiagnosticId = "WPF0051";
+        internal const string DiagnosticId = "WPF0051";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

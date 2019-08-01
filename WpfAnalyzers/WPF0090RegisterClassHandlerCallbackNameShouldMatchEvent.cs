@@ -4,7 +4,7 @@
 
     internal static class WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent
     {
-        public const string DiagnosticId = "WPF0090";
+        internal const string DiagnosticId = "WPF0090";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

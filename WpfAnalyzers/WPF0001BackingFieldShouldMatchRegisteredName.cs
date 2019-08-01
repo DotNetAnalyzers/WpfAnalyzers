@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0001BackingFieldShouldMatchRegisteredName
     {
-        public const string DiagnosticId = "WPF0001";
+        internal const string DiagnosticId = "WPF0001";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

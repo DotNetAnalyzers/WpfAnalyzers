@@ -10,7 +10,7 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0080MarkupExtensionDoesNotHaveAttribute : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0080";
+        internal const string DiagnosticId = "WPF0080";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -148,18 +148,18 @@ namespace WpfAnalyzers
 
         private struct Fix
         {
-            public static readonly Fix Empty = new Fix(null, null);
+            internal static readonly Fix Empty = new Fix(null, null);
 
-            public readonly ExpressionSyntax OldNode;
-            public readonly InvocationExpressionSyntax SetCurrentValueCall;
+            internal readonly ExpressionSyntax OldNode;
+            internal readonly InvocationExpressionSyntax SetCurrentValueCall;
 
-            public Fix(ExpressionSyntax oldNode, InvocationExpressionSyntax setCurrentValueCall)
+            internal Fix(ExpressionSyntax oldNode, InvocationExpressionSyntax setCurrentValueCall)
             {
                 this.OldNode = oldNode;
                 this.SetCurrentValueCall = setCurrentValueCall;
             }
 
-            public bool IsEmpty => this.SetCurrentValueCall == null;
+            internal bool IsEmpty => this.SetCurrentValueCall == null;
         }
 
         private static class SetCurrentValueExpression

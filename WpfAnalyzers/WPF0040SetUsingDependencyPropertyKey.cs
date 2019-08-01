@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0040SetUsingDependencyPropertyKey
     {
-        public const string DiagnosticId = "WPF0040";
+        internal const string DiagnosticId = "WPF0040";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

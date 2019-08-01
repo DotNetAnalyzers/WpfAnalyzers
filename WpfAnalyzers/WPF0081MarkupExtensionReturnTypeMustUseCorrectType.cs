@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0081MarkupExtensionReturnTypeMustUseCorrectType
     {
-        public const string DiagnosticId = "WPF0081";
+        internal const string DiagnosticId = "WPF0081";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

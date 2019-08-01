@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0036AvoidSideEffectsInClrAccessors
     {
-        public const string DiagnosticId = "WPF0036";
+        internal const string DiagnosticId = "WPF0036";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

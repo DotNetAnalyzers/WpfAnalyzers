@@ -22,17 +22,9 @@ namespace WpfAnalyzers
 
         private class MakeSealedRewriter : CSharpSyntaxRewriter
         {
-            public static readonly MakeSealedRewriter Default = new MakeSealedRewriter();
+            internal static readonly MakeSealedRewriter Default = new MakeSealedRewriter();
 
             private static readonly ThreadLocal<ClassDeclarationSyntax> CurrentClass = new ThreadLocal<ClassDeclarationSyntax>();
-
-            public SyntaxNode Visit(SyntaxNode node, ClassDeclarationSyntax classDeclaration)
-            {
-                CurrentClass.Value = classDeclaration;
-                var updated = this.Visit(node);
-                CurrentClass.Value = null;
-                return updated;
-            }
 
             public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
             {
@@ -132,6 +124,14 @@ namespace WpfAnalyzers
                 }
 
                 return base.VisitMethodDeclaration(node);
+            }
+
+            internal SyntaxNode Visit(SyntaxNode node, ClassDeclarationSyntax classDeclaration)
+            {
+                CurrentClass.Value = classDeclaration;
+                var updated = this.Visit(node);
+                CurrentClass.Value = null;
+                return updated;
             }
         }
     }

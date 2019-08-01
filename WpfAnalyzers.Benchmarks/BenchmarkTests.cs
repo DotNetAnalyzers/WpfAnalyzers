@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Benchmarks
     using NUnit.Framework;
     using WpfAnalyzers.Benchmarks.Benchmarks;
 
-    internal class BenchmarkTests
+    public static class BenchmarkTests
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
                                                                                                     .GetTypes()
@@ -21,7 +21,7 @@ namespace WpfAnalyzers.Benchmarks
             .ToArray();
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public static void OneTimeSetUp()
         {
             foreach (var benchmark in AllBenchmarks)
             {
@@ -30,13 +30,13 @@ namespace WpfAnalyzers.Benchmarks
         }
 
         [TestCaseSource(nameof(AllBenchmarks))]
-        public void Run(Gu.Roslyn.Asserts.Benchmark benchmark)
+        public static void Run(Gu.Roslyn.Asserts.Benchmark benchmark)
         {
             benchmark.Run();
         }
 
         [Test]
-        public void BenchmarksDirectoryExists()
+        public static void BenchmarksDirectoryExists()
         {
             Assert.AreEqual(true, Directory.Exists(Program.BenchmarksDirectory), Program.BenchmarksDirectory);
         }

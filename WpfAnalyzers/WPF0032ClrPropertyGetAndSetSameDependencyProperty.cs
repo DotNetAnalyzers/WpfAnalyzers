@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0032ClrPropertyGetAndSetSameDependencyProperty
     {
-        public const string DiagnosticId = "WPF0032";
+        internal const string DiagnosticId = "WPF0032";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

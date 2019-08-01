@@ -9,7 +9,7 @@ namespace WpfAnalyzers
 
         internal readonly QualifiedProperty AssemblyName;
 
-        public XmlnsDefinitionAttributeType()
+        internal XmlnsDefinitionAttributeType()
             : base("System.Windows.Markup.XmlnsDefinitionAttribute")
         {
             this.AssemblyName = new QualifiedProperty(this, nameof(this.AssemblyName));

@@ -10,7 +10,7 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0015RegisteredOwnerTypeMustBeDependencyObject : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0015";
+        internal const string DiagnosticId = "WPF0015";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

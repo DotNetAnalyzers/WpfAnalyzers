@@ -4,7 +4,7 @@
 
     internal static class WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent
     {
-        public const string DiagnosticId = "WPF0091";
+        internal const string DiagnosticId = "WPF0091";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

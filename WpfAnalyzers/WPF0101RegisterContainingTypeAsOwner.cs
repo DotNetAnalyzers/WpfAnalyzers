@@ -4,7 +4,7 @@
 
     internal static class WPF0101RegisterContainingTypeAsOwner
     {
-        public const string DiagnosticId = "WPF0101";
+        internal const string DiagnosticId = "WPF0101";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

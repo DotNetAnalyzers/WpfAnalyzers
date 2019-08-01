@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0010DefaultValueMustMatchRegisteredType
     {
-        public const string DiagnosticId = "WPF0010";
+        internal const string DiagnosticId = "WPF0010";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

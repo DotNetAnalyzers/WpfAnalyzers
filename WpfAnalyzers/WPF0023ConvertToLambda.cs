@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0023ConvertToLambda
     {
-        public const string DiagnosticId = "WPF0023";
+        internal const string DiagnosticId = "WPF0023";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal class WPF0085XamlSetTypeConverterTarget
     {
-        public const string DiagnosticId = "WPF0085";
+        internal const string DiagnosticId = "WPF0085";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

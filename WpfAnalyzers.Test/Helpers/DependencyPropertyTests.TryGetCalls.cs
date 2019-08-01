@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test
+namespace WpfAnalyzers.Test
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public partial class DependencyPropertyTests
+    public static partial class DependencyPropertyTests
     {
-        internal class TryGetCalls
+        public static class TryGetCalls
         {
             [Test]
-            public void TryGetRegisterCall()
+            public static void TryGetRegisterCall()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -45,7 +45,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetRegisterReadOnlyCall()
+            public static void TryGetRegisterReadOnlyCall()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -82,7 +82,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetRegisterAttachedCall()
+            public static void TryGetRegisterAttachedCall()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -120,7 +120,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetRegisterAttachedCallFullyQualified()
+            public static void TryGetRegisterAttachedCallFullyQualified()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -155,7 +155,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetRegisterAttachedReadOnlyCall()
+            public static void TryGetRegisterAttachedReadOnlyCall()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -189,7 +189,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetAddOwnerCall()
+            public static void TryGetAddOwnerCall()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -241,7 +241,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void TryGetOverrideMetadataCall()
+            public static void TryGetOverrideMetadataCall()
             {
                 var testCode = @"
 namespace RoslynSandbox

@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class WPF0016DefaultValueIsSharedReferenceType
     {
-        public const string DiagnosticId = "WPF0016";
+        internal const string DiagnosticId = "WPF0016";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -4,7 +4,7 @@ namespace WpfAnalyzers
 
     internal static class WPF0082ConstructorArgument
     {
-        public const string DiagnosticId = "WPF0082";
+        internal const string DiagnosticId = "WPF0082";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

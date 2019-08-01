@@ -99,16 +99,6 @@ namespace WpfAnalyzers
             private InvocationExpressionSyntax addCall;
             private InvocationExpressionSyntax removeCall;
 
-            public static bool TryGetCalls(EventDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax addCall, out InvocationExpressionSyntax removeCall)
-            {
-                using (var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker()))
-                {
-                    addCall = walker.addCall;
-                    removeCall = walker.removeCall;
-                    return addCall != null || removeCall != null;
-                }
-            }
-
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
                 if (node.TryGetMethodName(out var name) &&
@@ -128,6 +118,16 @@ namespace WpfAnalyzers
                 base.VisitInvocationExpression(node);
             }
 
+            internal static bool TryGetCalls(EventDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax addCall, out InvocationExpressionSyntax removeCall)
+            {
+                using (var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker()))
+                {
+                    addCall = walker.addCall;
+                    removeCall = walker.removeCall;
+                    return addCall != null || removeCall != null;
+                }
+            }
+
             protected override void Clear()
             {
                 this.addCall = null;
@@ -141,7 +141,28 @@ namespace WpfAnalyzers
             private PropertyDeclarationSyntax backingProperty;
             private string memberName;
 
-            public static bool TryGetRegistration(TypeDeclarationSyntax typeDeclaration, string memberName, out InvocationExpressionSyntax registration)
+            public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+            {
+                if (node.Declaration.Variables.TrySingle(out var variable) &&
+                    variable.Identifier.ValueText == this.memberName)
+                {
+                    this.backingField = variable;
+                }
+
+                base.VisitFieldDeclaration(node);
+            }
+
+            public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+            {
+                if (node.Identifier.ValueText == this.memberName)
+                {
+                    this.backingProperty = node;
+                }
+
+                base.VisitPropertyDeclaration(node);
+            }
+
+            internal static bool TryGetRegistration(TypeDeclarationSyntax typeDeclaration, string memberName, out InvocationExpressionSyntax registration)
             {
                 registration = null;
                 if (typeDeclaration == null ||
@@ -176,27 +197,6 @@ namespace WpfAnalyzers
                            registration.TryGetMethodName(out var name) &&
                            name == "RegisterRoutedEvent";
                 }
-            }
-
-            public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
-            {
-                if (node.Declaration.Variables.TrySingle(out var variable) &&
-                    variable.Identifier.ValueText == this.memberName)
-                {
-                    this.backingField = variable;
-                }
-
-                base.VisitFieldDeclaration(node);
-            }
-
-            public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
-            {
-                if (node.Identifier.ValueText == this.memberName)
-                {
-                    this.backingProperty = node;
-                }
-
-                base.VisitPropertyDeclaration(node);
             }
 
             protected override void Clear()

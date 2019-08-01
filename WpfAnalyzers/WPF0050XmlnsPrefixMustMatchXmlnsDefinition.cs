@@ -10,7 +10,7 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0050XmlnsPrefixMustMatchXmlnsDefinition : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF0050";
+        internal const string DiagnosticId = "WPF0050";
         private const string XmlnsPrefix = "XmlnsPrefix";
         private const string XmlnsDefinition = "XmlnsDefinition";
 

@@ -1,10 +1,10 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
     internal static class Virtual
     {
-        public static bool HasVirtualOrAbstractOrProtectedMembers(ITypeSymbol type)
+        internal static bool HasVirtualOrAbstractOrProtectedMembers(ITypeSymbol type)
         {
             if (type == null ||
                 type.IsStatic ||
