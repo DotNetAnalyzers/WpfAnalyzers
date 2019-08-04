@@ -12,7 +12,7 @@ namespace WpfAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
-            WPF0023ConvertToLambda.Descriptor);
+            Descriptors.WPF0023ConvertToLambda);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -72,7 +72,7 @@ namespace WpfAnalyzers
                 if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                     Callback.IsSingleExpression(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, validateValueCallback.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, validateValueCallback.GetLocation()));
                 }
             }
         }

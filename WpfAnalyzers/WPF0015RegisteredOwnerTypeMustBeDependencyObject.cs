@@ -10,17 +10,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0015RegisteredOwnerTypeMustBeDependencyObject : DiagnosticAnalyzer
     {
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: "WPF0015",
-            title: "Registered owner type must inherit DependencyObject.",
-            messageFormat: "Maybe you intended to use '{0}'?",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true,
-            description: "When registering a DependencyProperty owner type must be a subclass of DependencyObject.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -60,7 +51,7 @@ namespace WpfAnalyzers
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
                 !ownerType.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
             }
         }
     }

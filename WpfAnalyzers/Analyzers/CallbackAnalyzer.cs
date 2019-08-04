@@ -13,10 +13,10 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-            WPF0019CastSenderToCorrectType.Descriptor,
-            WPF0020CastValueToCorrectType.Descriptor,
-            WPF0021DirectCastSenderToExactType.Descriptor,
-            WPF0022DirectCastValueToExactType.Descriptor,
+            Descriptors.WPF0019CastSenderToCorrectType,
+            Descriptors.WPF0020CastValueToCorrectType,
+            Descriptors.WPF0021DirectCastSenderToExactType,
+            Descriptors.WPF0022DirectCastValueToExactType,
             WPF0062DocumentPropertyChangedCallback.Descriptor);
 
         /// <inheritdoc/>
@@ -45,12 +45,12 @@ namespace WpfAnalyzers
                             {
                                 if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
                                 {
-                                    HandleCasts(context, methodDeclaration, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                                    HandleCasts(context, methodDeclaration, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
                                 }
 
                                 if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
                                 {
-                                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                                    HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                                 }
                             }
                         }
@@ -63,7 +63,7 @@ namespace WpfAnalyzers
                             {
                                 if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
                                 {
-                                    HandleCasts(context, methodDeclaration, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                                    HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                                 }
                             }
                         }
@@ -116,18 +116,18 @@ namespace WpfAnalyzers
                 {
                     if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
                     {
-                        HandleCasts(context, lambda, senderParameter, senderType, WPF0019CastSenderToCorrectType.Descriptor, WPF0021DirectCastSenderToExactType.Descriptor);
+                        HandleCasts(context, lambda, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
                     }
 
                     if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
                     {
-                        HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                        HandleCasts(context, lambda, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                     }
                 }
                 else if (TryMatchValidateValueCallback(method, out argParameter) &&
                          TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
                 {
-                    HandleCasts(context, lambda, argParameter, valueType, WPF0020CastValueToCorrectType.Descriptor, WPF0022DirectCastValueToExactType.Descriptor);
+                    HandleCasts(context, lambda, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                 }
             }
         }

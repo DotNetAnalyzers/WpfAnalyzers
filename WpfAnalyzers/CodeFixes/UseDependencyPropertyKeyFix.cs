@@ -17,7 +17,7 @@ namespace WpfAnalyzers
     internal class UseDependencyPropertyKeyFix : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0040SetUsingDependencyPropertyKey.Descriptor.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

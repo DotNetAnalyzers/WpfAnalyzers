@@ -15,7 +15,7 @@ namespace WpfAnalyzers
     internal class UseRegisteredTypeFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor.Id);
+            Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

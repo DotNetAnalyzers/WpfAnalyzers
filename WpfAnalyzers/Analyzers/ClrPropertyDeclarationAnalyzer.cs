@@ -13,10 +13,10 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
-            WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
-            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
-            WPF0035ClrPropertyUseSetValueInSetter.Descriptor,
-            WPF0036AvoidSideEffectsInClrAccessors.Descriptor);
+            Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+            Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
+            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
+            Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
                     setter.Body != null &&
                     setter.Body.Statements.TryFirst(x => !x.Contains(setCall), out var statement))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                 }
 
                 if (getCall != null &&
@@ -48,7 +48,7 @@ namespace WpfAnalyzers
                     getter.Body != null &&
                     getter.Body.Statements.TryFirst(x => !x.Contains(getCall), out statement))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                 }
 
                 if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
@@ -60,7 +60,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
+                            Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
                             propertyDeclaration.GetLocation(),
                             context.ContainingSymbol.Name));
                 }
@@ -71,7 +71,7 @@ namespace WpfAnalyzers
                     //// ReSharper disable once PossibleNullReferenceException
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0035ClrPropertyUseSetValueInSetter.Descriptor,
+                            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
                             setCall.GetLocation(),
                             context.ContainingSymbol.Name));
                 }
@@ -95,7 +95,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
+                                Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
                                 propertyDeclaration.Type.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 property,

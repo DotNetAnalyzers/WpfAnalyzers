@@ -11,17 +11,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: "WPF0041",
-            title: "Set mutable dependency properties using SetCurrentValue.",
-            messageFormat: "Use SetCurrentValue({0}, {1})",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "Prefer setting mutable dependency properties using SetCurrentValue.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -61,7 +52,7 @@ namespace WpfAnalyzers
                     }
 
                     var propertyArg = fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart);
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation(), propertyArg, assignment.Right));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue, assignment.GetLocation(), propertyArg, assignment.Right));
                 }
             }
         }
@@ -108,7 +99,7 @@ namespace WpfAnalyzers
                     return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation(), propertyMember, invocation.ArgumentList.Arguments[1]));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue, invocation.GetLocation(), propertyMember, invocation.ArgumentList.Arguments[1]));
             }
         }
 

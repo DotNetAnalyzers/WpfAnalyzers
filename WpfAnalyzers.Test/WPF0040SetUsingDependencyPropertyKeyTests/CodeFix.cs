@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
         private static readonly CodeFixProvider Fix = new UseDependencyPropertyKeyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0040SetUsingDependencyPropertyKey.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey);
 
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]

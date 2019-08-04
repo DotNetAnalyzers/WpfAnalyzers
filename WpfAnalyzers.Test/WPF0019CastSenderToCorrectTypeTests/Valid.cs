@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
     public static class Valid
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = WPF0019CastSenderToCorrectType.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0019CastSenderToCorrectType;
 
         [Test]
         public static void DependencyPropertyRegisterNoMetadata()

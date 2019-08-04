@@ -17,7 +17,7 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             WPF0043DontUseSetCurrentValueForDataContext.Descriptor.Id,
-            WPF0035ClrPropertyUseSetValueInSetter.Descriptor.Id);
+            Descriptors.WPF0035ClrPropertyUseSetValueInSetter.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

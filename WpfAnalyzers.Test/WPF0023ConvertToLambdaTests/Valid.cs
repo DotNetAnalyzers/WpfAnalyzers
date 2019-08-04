@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new T();
         //// ReSharper disable once StaticMemberInGenericType
-        private static readonly DiagnosticDescriptor Descriptor = WPF0023ConvertToLambda.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0023ConvertToLambda;
 
         [Test]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()

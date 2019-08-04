@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0036AvoidSideEffectsInClrAccessors.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
         [Test]
         public static void Message()

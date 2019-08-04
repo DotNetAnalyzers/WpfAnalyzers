@@ -15,8 +15,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
             Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
             Descriptors.WPF0010DefaultValueMustMatchRegisteredType,
-            WPF0016DefaultValueIsSharedReferenceType.Descriptor,
-            WPF0023ConvertToLambda.Descriptor);
+            Descriptors.WPF0016DefaultValueIsSharedReferenceType,
+            Descriptors.WPF0023ConvertToLambda);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -79,7 +79,7 @@ namespace WpfAnalyzers
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.IsSingleExpression(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, propertyChangedCallback.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
                         }
                     }
 
@@ -125,7 +125,7 @@ namespace WpfAnalyzers
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.IsSingleExpression(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0023ConvertToLambda.Descriptor, propertyChangedCallback.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
                         }
                     }
                 }
@@ -154,7 +154,7 @@ namespace WpfAnalyzers
                             if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
                                 IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0016DefaultValueIsSharedReferenceType.Descriptor, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
                             }
                         }
                     }

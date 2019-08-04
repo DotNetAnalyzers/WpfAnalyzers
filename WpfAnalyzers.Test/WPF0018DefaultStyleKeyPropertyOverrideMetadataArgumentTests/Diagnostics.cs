@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgume
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new OverrideMetadataAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument);
 
         [Test]
         public static void DefaultStyleKeyPropertyOverrideMetadata()

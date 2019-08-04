@@ -15,8 +15,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0001BackingFieldShouldMatchRegisteredName,
             Descriptors.WPF0002BackingFieldShouldMatchRegisteredName,
             WPF0060DocumentDependencyPropertyBackingMember.Descriptor,
-            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
-            WPF0031FieldOrder.Descriptor);
+            Descriptors.WPF0030BackingFieldShouldBeStaticReadonly,
+            Descriptors.WPF0031FieldOrder);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -85,7 +85,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0031FieldOrder.Descriptor,
+                                    Descriptors.WPF0031FieldOrder,
                                     fieldDeclaration.GetLocation(),
                                     keyField.Name,
                                     backingMember.Name));
@@ -99,7 +99,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0030BackingFieldShouldBeStaticReadonly.Descriptor,
+                            Descriptors.WPF0030BackingFieldShouldBeStaticReadonly,
                             BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
                             candidate.Name,
                             candidate.Type.Name));

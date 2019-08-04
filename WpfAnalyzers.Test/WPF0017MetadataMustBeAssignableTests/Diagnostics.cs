@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new OverrideMetadataAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable);
 
         [Test]
         public static void DependencyPropertyOverrideMetadataWithBaseType()

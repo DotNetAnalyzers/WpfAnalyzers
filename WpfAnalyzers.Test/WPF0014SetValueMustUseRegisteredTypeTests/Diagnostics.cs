@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0014SetValueMustUseRegisteredType.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0014SetValueMustUseRegisteredType);
 
         [Test]
         public static void Message()

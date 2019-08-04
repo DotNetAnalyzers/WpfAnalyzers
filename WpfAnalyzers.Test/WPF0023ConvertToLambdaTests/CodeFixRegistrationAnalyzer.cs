@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RegistrationAnalyzer();
         private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0023ConvertToLambda.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
 
         [TestCase("ValidateValue", "value => (int)value >= 0")]
         [TestCase("x => ValidateValue(x)", "value => (int)value >= 0")]

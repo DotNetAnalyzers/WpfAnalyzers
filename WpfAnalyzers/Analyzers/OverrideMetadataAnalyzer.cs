@@ -12,8 +12,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0017MetadataMustBeAssignable.Descriptor,
-            WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument.Descriptor);
+            Descriptors.WPF0017MetadataMustBeAssignable,
+            Descriptors.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -48,7 +48,7 @@ namespace WpfAnalyzers
                             context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
                             !type.IsAssignableTo(registeredType, context.Compilation))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable, metadataArg.GetLocation()));
                         }
                     }
                 }
@@ -57,14 +57,14 @@ namespace WpfAnalyzers
                 {
                     if (!context.SemanticModel.TryGetSymbol(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.CancellationToken, out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0017MetadataMustBeAssignable.Descriptor, metadataArg.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable, metadataArg.GetLocation()));
                     }
                     else if (metadataCreation.TrySingleArgument(out var typeArg) &&
                              typeArg.Expression is TypeOfExpressionSyntax typeOf &&
                              typeOf.Type is IdentifierNameSyntax typeName &&
                              typeName.Identifier.ValueText != context.ContainingSymbol.ContainingType.MetadataName)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument.Descriptor, typeArg.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument, typeArg.GetLocation()));
                     }
                 }
             }

@@ -13,10 +13,10 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
-            WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
-            WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
-            WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
-            WPF0042AvoidSideEffectsInClrAccessors.Descriptor,
+            Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
+            Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute,
+            Descriptors.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument,
+            Descriptors.WPF0042AvoidSideEffectsInClrAccessors,
             WPF0061DocumentClrMethod.Descriptor);
 
         /// <inheritdoc/>
@@ -55,7 +55,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
                                 methodDeclaration.ReturnType.GetLocation(),
                                 "Return type",
                                 registeredType));
@@ -70,7 +70,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
+                                    Descriptors.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument,
                                     argument.GetLocation(),
                                     parameter.Type.ToMinimalDisplayString(
                                         context.SemanticModel,
@@ -81,7 +81,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                    WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
+                                    Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute,
                                     methodDeclaration.Identifier.GetLocation(),
                                     parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
                     }
@@ -89,7 +89,7 @@ namespace WpfAnalyzers
                     if (methodDeclaration.Body is BlockSyntax body &&
                         body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                     }
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
@@ -118,7 +118,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
+                                Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
                                 methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
                                 "Value type",
                                 registeredType));
@@ -127,7 +127,7 @@ namespace WpfAnalyzers
                     if (methodDeclaration.Body is BlockSyntax body &&
                         body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0042AvoidSideEffectsInClrAccessors.Descriptor, statement.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                     }
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
