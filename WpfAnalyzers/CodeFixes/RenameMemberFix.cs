@@ -43,7 +43,7 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            $"Rename to: {registeredName}.",
+                            $"Rename to: '{registeredName}'.",
                             cancellationToken => ApplyFixAsync(context.Document, token, registeredName, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);

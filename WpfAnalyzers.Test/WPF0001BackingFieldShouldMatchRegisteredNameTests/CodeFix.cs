@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -33,7 +33,26 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' should be named 'BarProperty'."), testCode);
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' should be named 'BarProperty'.");
+            RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Rename to: 'BarProperty'.");
         }
 
         [Test]
