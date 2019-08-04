@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test
 
     using NUnit.Framework;
 
-    public class ValidWithALl
+    public class ValidWithAll
     {
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbol)
             .Assembly.GetTypes()
