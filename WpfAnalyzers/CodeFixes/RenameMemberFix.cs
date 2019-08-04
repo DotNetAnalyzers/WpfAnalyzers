@@ -22,10 +22,10 @@ namespace WpfAnalyzers
             Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Id,
             Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName.Id,
             Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Id,
-            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor.Id,
-            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor.Id,
-            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor.Id,
-            WPF0102EventDeclarationName.Descriptor.Id);
+            Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Id,
+            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Id,
+            Descriptors.WPF0100BackingFieldShouldMatchRegisteredName.Id,
+            Descriptors.WPF0102EventDeclarationName.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

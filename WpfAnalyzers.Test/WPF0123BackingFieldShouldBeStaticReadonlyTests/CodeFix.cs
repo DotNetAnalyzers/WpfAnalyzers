@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
         private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyFix();
         private static readonly CodeFixProvider PropertyFix = new MakePropertyStaticReadonlyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0123BackingMemberShouldBeStaticReadonly.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0123BackingMemberShouldBeStaticReadonly);
 
         [Test]
         public static void RoutedCommandNotReadonlyField()

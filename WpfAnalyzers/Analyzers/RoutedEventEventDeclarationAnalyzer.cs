@@ -11,11 +11,11 @@ namespace WpfAnalyzers
     internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0102EventDeclarationName.Descriptor,
-            WPF0103EventDeclarationAddRemove.Descriptor,
-            WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
-            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor,
-            WPF0106EventDeclarationUseRegisteredHandlerType.Descriptor);
+            Descriptors.WPF0102EventDeclarationName,
+            Descriptors.WPF0103EventDeclarationAddRemove,
+            Descriptors.WPF0104EventDeclarationAddHandlerInAdd,
+            Descriptors.WPF0105EventDeclarationRemoveHandlerInRemove,
+            Descriptors.WPF0106EventDeclarationUseRegisteredHandlerType);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -37,7 +37,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0104EventDeclarationAddHandlerInAdd.Descriptor,
+                            Descriptors.WPF0104EventDeclarationAddHandlerInAdd,
                             addCall.GetLocation()));
                 }
 
@@ -46,7 +46,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0105EventDeclarationRemoveHandlerInRemove.Descriptor,
+                            Descriptors.WPF0105EventDeclarationRemoveHandlerInRemove,
                             removeCall.GetLocation()));
                 }
 
@@ -59,7 +59,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0103EventDeclarationAddRemove.Descriptor,
+                                Descriptors.WPF0103EventDeclarationAddRemove,
                                 eventDeclaration.Identifier.GetLocation(),
                                 addIdentifier.Identifier.ValueText,
                                 removeIdentifier.Identifier.ValueText));
@@ -73,7 +73,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0102EventDeclarationName.Descriptor,
+                                    Descriptors.WPF0102EventDeclarationName,
                                     eventDeclaration.Identifier.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName),
                                     registeredName));
@@ -85,7 +85,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0106EventDeclarationUseRegisteredHandlerType.Descriptor,
+                                    Descriptors.WPF0106EventDeclarationUseRegisteredHandlerType,
                                     eventDeclaration.Type.GetLocation(),
                                     registeredHandlerType.MetadataName));
                         }

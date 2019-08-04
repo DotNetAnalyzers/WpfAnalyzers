@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
         private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeFix();
         private static readonly CodeFixProvider ComponentResourceKeyFix = new ComponentResourceKeyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0140UseContainingTypeComponentResourceKey.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0140UseContainingTypeComponentResourceKey);
 
         [Test]
         public static void WhenNotContainingType()

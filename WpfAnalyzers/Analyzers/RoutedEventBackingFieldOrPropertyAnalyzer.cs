@@ -11,9 +11,9 @@ namespace WpfAnalyzers
     internal class RoutedEventBackingFieldOrPropertyAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
-            WPF0101RegisterContainingTypeAsOwner.Descriptor,
-            WPF0107BackingMemberShouldBeStaticReadonly.Descriptor);
+            Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
+            Descriptors.WPF0101RegisterContainingTypeAsOwner,
+            Descriptors.WPF0107BackingMemberShouldBeStaticReadonly);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -35,7 +35,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor,
+                            Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
                             FindIdentifier(context.Node).GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
                             fieldOrProperty.Name,
@@ -47,7 +47,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0101RegisterContainingTypeAsOwner.Descriptor,
+                            Descriptors.WPF0101RegisterContainingTypeAsOwner,
                             typeArg.GetLocation(),
                             fieldOrProperty.ContainingType.Name,
                             registeredName));
@@ -57,7 +57,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0107BackingMemberShouldBeStaticReadonly.Descriptor,
+                            Descriptors.WPF0107BackingMemberShouldBeStaticReadonly,
                             BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
                 }
             }

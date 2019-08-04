@@ -13,8 +13,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0130UseTemplatePartAttribute.Descriptor,
-            WPF0131TemplatePartType.Descriptor);
+            Descriptors.WPF0130UseTemplatePartAttribute,
+            Descriptors.WPF0131TemplatePartType);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -48,12 +48,12 @@ namespace WpfAnalyzers
                                 context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
                                 !IsValidCast(partType, castType, cast, context.Compilation))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(WPF0131TemplatePartType.Descriptor, invocation.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0131TemplatePartType, invocation.GetLocation()));
                             }
                         }
                         else
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(WPF0131TemplatePartType.Descriptor, invocation.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0131TemplatePartType, invocation.GetLocation()));
                         }
                     }
                 }
@@ -67,7 +67,7 @@ namespace WpfAnalyzers
                     {
                         var attributeText = $"[System.Windows.TemplatePartAttribute(Name = {partNameArg}, Type = typeof({partType}))]";
                         context.ReportDiagnostic(Diagnostic.Create(
-                                                     WPF0130UseTemplatePartAttribute.Descriptor,
+                                                     Descriptors.WPF0130UseTemplatePartAttribute,
                                                      invocation.GetLocation(),
                                                      ImmutableDictionary<string, string>.Empty.Add(nameof(AttributeListSyntax), attributeText),
                                                      attributeText));
@@ -76,7 +76,7 @@ namespace WpfAnalyzers
                     {
                         var attributeText = $"[System.Windows.TemplatePartAttribute(Name = {partNameArg})]";
                         context.ReportDiagnostic(Diagnostic.Create(
-                                                     WPF0130UseTemplatePartAttribute.Descriptor,
+                                                     Descriptors.WPF0130UseTemplatePartAttribute,
                                                      invocation.GetLocation(),
                                                      ImmutableDictionary<string, string>.Empty.Add(nameof(AttributeListSyntax), attributeText),
                                                      attributeText));

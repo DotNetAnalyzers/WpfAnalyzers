@@ -13,10 +13,10 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
-            WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
-            WPF0122RegisterRoutedCommand.Descriptor,
-            WPF0123BackingMemberShouldBeStaticReadonly.Descriptor);
+            Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
+            Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand,
+            Descriptors.WPF0122RegisterRoutedCommand,
+            Descriptors.WPF0123BackingMemberShouldBeStaticReadonly);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0121RegisterContainingTypeAsOwnerForRoutedCommand.Descriptor,
+                                Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand,
                                 ownerTypeArg.GetLocation(),
                                 context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
                     }
@@ -56,7 +56,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0120RegisterContainingMemberAsNameForRoutedCommand.Descriptor,
+                                    Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
                                     nameArg.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                     fieldOrProperty.Name));
@@ -66,7 +66,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0122RegisterRoutedCommand.Descriptor,
+                                Descriptors.WPF0122RegisterRoutedCommand,
                                 objectCreation.ArgumentList.GetLocation(),
                                 ImmutableDictionary.CreateRange(new[]
                                 {
@@ -77,7 +77,7 @@ namespace WpfAnalyzers
 
                     if (!fieldOrProperty.IsStaticReadOnly())
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0123BackingMemberShouldBeStaticReadonly.Descriptor, BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0123BackingMemberShouldBeStaticReadonly, BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
                     }
                 }
             }

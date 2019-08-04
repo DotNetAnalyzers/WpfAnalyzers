@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider FieldFix = new MakeFieldStaticReadonlyFix();
         private static readonly CodeFixProvider PropertyFix = new MakePropertyStaticReadonlyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0107BackingMemberShouldBeStaticReadonly.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0107BackingMemberShouldBeStaticReadonly);
 
         [Test]
         public static void Message()

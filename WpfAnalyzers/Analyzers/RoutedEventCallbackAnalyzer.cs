@@ -13,8 +13,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor,
-            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
+            Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
+            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -37,13 +37,13 @@ namespace WpfAnalyzers
                 if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(1, out var eventArgument))
                 {
-                    HandleCallback(context, eventArgument, callbackArg, WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor);
+                    HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent);
                 }
                 else if ((TryGetAddHandlerCall(invocation, context, out _) ||
                           TryGetRemoveHandlerCall(invocation, context, out _)) &&
                           invocation.TryGetArgumentAtIndex(0, out eventArgument))
                 {
-                    HandleCallback(context, eventArgument, callbackArg, WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor);
+                    HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
                 }
             }
         }

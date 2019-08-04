@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0104EventDeclarationAddHandlerInAddTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0104EventDeclarationAddHandlerInAdd.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0104EventDeclarationAddHandlerInAdd);
 
         [Test]
         public static void Message()

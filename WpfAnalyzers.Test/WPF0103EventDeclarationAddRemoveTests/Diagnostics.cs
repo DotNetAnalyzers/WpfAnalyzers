@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0103EventDeclarationAddRemove.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0103EventDeclarationAddRemove);
 
         [Test]
         public static void Message()

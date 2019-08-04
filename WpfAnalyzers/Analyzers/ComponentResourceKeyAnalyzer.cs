@@ -12,8 +12,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0140UseContainingTypeComponentResourceKey.Descriptor,
-            WPF0141UseContainingMemberComponentResourceKey.Descriptor);
+            Descriptors.WPF0140UseContainingTypeComponentResourceKey,
+            Descriptors.WPF0141UseContainingMemberComponentResourceKey);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -38,7 +38,7 @@ namespace WpfAnalyzers
                     var argumentListText = $"typeof({containingTypeString}), nameof({fieldOrProperty.Name})";
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0140UseContainingTypeComponentResourceKey.Descriptor,
+                            Descriptors.WPF0140UseContainingTypeComponentResourceKey,
                             argumentList.GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add(nameof(ArgumentListSyntax), argumentListText),
                             argumentListText));
@@ -52,7 +52,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0140UseContainingTypeComponentResourceKey.Descriptor,
+                                Descriptors.WPF0140UseContainingTypeComponentResourceKey,
                                 arg.GetLocation(),
                                 context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
                     }
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                         var keyText = $"nameof({fieldOrProperty.Name})";
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0141UseContainingMemberComponentResourceKey.Descriptor,
+                                Descriptors.WPF0141UseContainingMemberComponentResourceKey,
                                 arg.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add(nameof(ArgumentSyntax), keyText),
                                 keyText));

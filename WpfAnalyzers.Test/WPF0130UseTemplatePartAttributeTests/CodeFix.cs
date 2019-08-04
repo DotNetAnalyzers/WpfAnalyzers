@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
         private static readonly CodeFixProvider Fix = new AddTemplatePartAttributeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0130UseTemplatePartAttribute.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0130UseTemplatePartAttribute);
 
         [Test]
         public static void StringLiteralNoCast()

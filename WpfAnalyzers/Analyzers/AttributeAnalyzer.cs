@@ -19,7 +19,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0082ConstructorArgument,
             Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget,
             Descriptors.WPF0085XamlSetTypeConverterTarget,
-            WPF0132UsePartPrefix.Descriptor);
+            Descriptors.WPF0132UsePartPrefix);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -89,7 +89,7 @@ namespace WpfAnalyzers
                          context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string partName) &&
                          !partName.StartsWith("PART_"))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0132UsePartPrefix.Descriptor, arg.Expression.GetLocation(), arg));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, arg.Expression.GetLocation(), arg));
                 }
             }
         }

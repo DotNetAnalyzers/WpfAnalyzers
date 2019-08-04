@@ -446,6 +446,177 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Target of [XamlSetTypeConverter] should exist and have correct signature.");
 
+        internal static readonly DiagnosticDescriptor WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent = Create(
+            id: "WPF0090",
+            title: "Name the invoked method OnEventName.",
+            messageFormat: "Rename to {0} to match the event.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Name the invoked method OnEventName.");
+
+        internal static readonly DiagnosticDescriptor WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent = Create(
+            id: "WPF0091",
+            title: "Name the invoked method OnEventName.",
+            messageFormat: "Rename to {0} to match the event.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Name the invoked method OnEventName.");
+
+        internal static readonly DiagnosticDescriptor WPF0100BackingFieldShouldMatchRegisteredName = Create(
+            id: "WPF0100",
+            title: "Backing field for a RoutedEvent should match registered name.",
+            messageFormat: "Field '{0}' that is backing field for the RoutedEvent registered as '{1}' must be named '{1}Event'",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "A routed event's backing field should be named with the name it is registered with suffixed by 'Event'");
+
+        internal static readonly DiagnosticDescriptor WPF0101RegisterContainingTypeAsOwner = Create(
+            id: "WPF0101",
+            title: "Containing type should be used as registered owner.",
+            messageFormat: "Register containing type: '{0}' as owner.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "When registering a RoutedEvent register containing type as owner type.");
+
+        internal static readonly DiagnosticDescriptor WPF0102EventDeclarationName = Create(
+            id: "WPF0102",
+            title: "Name of the event should match registered name.",
+            messageFormat: "Rename to: '{0}'.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Name of the event should match registered name.");
+
+        internal static readonly DiagnosticDescriptor WPF0103EventDeclarationAddRemove = Create(
+            id: "WPF0103",
+            title: "Use same event in add and remove.",
+            messageFormat: "Add uses: '{0}', remove uses: '{1}'.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use same event in add and remove.");
+
+        internal static readonly DiagnosticDescriptor WPF0104EventDeclarationAddHandlerInAdd = Create(
+            id: "WPF0104",
+            title: "Call AddHandler in add.",
+            messageFormat: "Call AddHandler in add.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Call AddHandler in add.");
+
+        internal static readonly DiagnosticDescriptor WPF0105EventDeclarationRemoveHandlerInRemove = Create(
+            id: "WPF0105",
+            title: "Call RemoveHandler in remove.",
+            messageFormat: "Call RemoveHandler in remove.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Call RemoveHandler in remove.");
+
+        internal static readonly DiagnosticDescriptor WPF0106EventDeclarationUseRegisteredHandlerType = Create(
+            id: "WPF0106",
+            title: "Use the registered handler type.",
+            messageFormat: "Use the registered handler type {0}.",
+            category: AnalyzerCategory.RoutedEvent,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use the registered handler type.");
+
+        internal static readonly DiagnosticDescriptor WPF0107BackingMemberShouldBeStaticReadonly = Create(
+            id: "WPF0107",
+            title: "Backing member for a RoutedEvent should be static and readonly.",
+            messageFormat: "Backing member for a RoutedEvent and should be static and readonly.",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Backing member for a RoutedEvent should be static and readonly.");
+
+        internal static readonly DiagnosticDescriptor WPF0120RegisterContainingMemberAsNameForRoutedCommand = Create(
+            id: "WPF0120",
+            title: "Register containing member name as name for routed command.",
+            messageFormat: "Register {0} as name.",
+            category: AnalyzerCategory.RoutedCommand,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Register containing member name as name for routed command.");
+
+        internal static readonly DiagnosticDescriptor WPF0121RegisterContainingTypeAsOwnerForRoutedCommand = Create(
+            id: "WPF0121",
+            title: "Register containing type as owner for routed command.",
+            messageFormat: "Register {0} as owner.",
+            category: AnalyzerCategory.RoutedCommand,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Register containing type as owner for routed command.");
+
+        internal static readonly DiagnosticDescriptor WPF0122RegisterRoutedCommand = Create(
+            id: "WPF0122",
+            title: "Register name and owning type for routed command.",
+            messageFormat: "Register name and owning type for routed command.",
+            category: AnalyzerCategory.RoutedCommand,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Register containing type as owner for routed command.");
+
+        internal static readonly DiagnosticDescriptor WPF0123BackingMemberShouldBeStaticReadonly = Create(
+            id: "WPF0123",
+            title: "Backing field for a RoutedCommand should be static and readonly.",
+            messageFormat: "Backing member for a RoutedCommand and should be static and readonly.",
+            category: AnalyzerCategory.RoutedCommand,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Backing field for a RoutedCommand should be static and readonly.");
+
+        internal static readonly DiagnosticDescriptor WPF0130UseTemplatePartAttribute = Create(
+            id: "WPF0130",
+            title: "Add [TemplatePart] to the type.",
+            messageFormat: "Add {0} to the type.",
+            category: AnalyzerCategory.TemplatePart,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Add [TemplatePart] to the type.");
+
+        internal static readonly DiagnosticDescriptor WPF0131TemplatePartType = Create(
+            id: "WPF0131",
+            title: "Use correct [TemplatePart] type.",
+            messageFormat: "Use correct [TemplatePart] type.",
+            category: AnalyzerCategory.TemplatePart,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use correct [TemplatePart] type.");
+
+        internal static readonly DiagnosticDescriptor WPF0132UsePartPrefix = Create(
+            id: "WPF0132",
+            title: "Use PART prefix.",
+            messageFormat: "Use PART prefix.",
+            category: AnalyzerCategory.TemplatePart,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use PART prefix.");
+
+        internal static readonly DiagnosticDescriptor WPF0140UseContainingTypeComponentResourceKey = Create(
+            id: "WPF0140",
+            title: "Use containing type when creating a ComponentResourceKey.",
+            messageFormat: "Use containing type: {0}.",
+            category: AnalyzerCategory.ComponentResourceKey,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use containing type when creating a ComponentResourceKey.");
+
+        internal static readonly DiagnosticDescriptor WPF0141UseContainingMemberComponentResourceKey = Create(
+            id: "WPF0141",
+            title: "Use containing member as key when creating a ComponentResourceKey.",
+            messageFormat: "Use containing member: {0}.",
+            category: AnalyzerCategory.ComponentResourceKey,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use containing member as key when creating a ComponentResourceKey.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,
@@ -460,7 +631,7 @@ namespace WpfAnalyzers
         /// <param name="isEnabledByDefault">True if the diagnostic is enabled by default.</param>
         /// <param name="description">An optional longer description of the diagnostic.</param>
         /// <param name="customTags">Optional custom tags for the diagnostic. See <see cref="T:Microsoft.CodeAnalysis.WellKnownDiagnosticTags" /> for some well known tags.</param>
-        internal static DiagnosticDescriptor Create(
+        private static DiagnosticDescriptor Create(
           string id,
           string title,
           string messageFormat,

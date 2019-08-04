@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameMemberFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0102EventDeclarationName.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0102EventDeclarationName);
 
         [Test]
         public static void Message()
