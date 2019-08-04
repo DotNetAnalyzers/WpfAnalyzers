@@ -24,7 +24,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(WrongName));
+            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, RoutedEventArgs e)
@@ -50,7 +50,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.RemoveHandler(SizeChangedEvent, new RoutedEventHandler(WrongName));
+            this.RemoveHandler(SizeChangedEvent, new RoutedEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, RoutedEventArgs e)
@@ -76,7 +76,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(WrongName));
+            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, RoutedEventArgs e)
@@ -121,7 +121,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(WrongName));
+            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, RoutedEventArgs e)
@@ -167,7 +167,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.AddHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(WrongName));
+            this.AddHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(↓WrongName));
         }
 
         private static void WrongName(object sender, ManipulationStartingEventArgs e)
@@ -214,7 +214,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.RemoveHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(WrongName));
+            this.RemoveHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(↓WrongName));
         }
 
         private static void WrongName(object sender, ManipulationStartingEventArgs e)
@@ -260,7 +260,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler(WrongName));
+            this.AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, MouseButtonEventArgs e)
@@ -305,7 +305,7 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.RemoveHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler(WrongName));
+            this.RemoveHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler(↓WrongName));
         }
 
         private static void WrongName(object sender, MouseButtonEventArgs e)

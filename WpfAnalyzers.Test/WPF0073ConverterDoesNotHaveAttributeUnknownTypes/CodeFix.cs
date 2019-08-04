@@ -24,7 +24,7 @@ namespace Gu.Wpf.PropertyGrid
     using System.Windows.Markup;
 
     [MarkupExtensionReturnType(typeof(MultiplyConverter))]
-    public class MultiplyConverter : MarkupExtension, IValueConverter
+    public class ↓MultiplyConverter : MarkupExtension, IValueConverter
     {
         public MultiplyConverter(double factor)
         {

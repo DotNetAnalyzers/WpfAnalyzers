@@ -23,7 +23,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         /// <summary>Identifies the ValueChanged event</summary>
-        public static readonly RoutedEvent WrongName = EventManager.RegisterRoutedEvent(
+        public static readonly RoutedEvent ↓WrongName = EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),

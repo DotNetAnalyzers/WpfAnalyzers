@@ -110,7 +110,7 @@ namespace RoslynSandbox
             typeof(RoutedEventHandler),
             typeof(FooControl));
 
-        public event RoutedEventHandler WrongName
+        public event RoutedEventHandler ↓WrongName
         {
             add => this.AddHandler(ValueChangedEvent, value);
             remove => this.RemoveHandler(ValueChangedEvent, value);

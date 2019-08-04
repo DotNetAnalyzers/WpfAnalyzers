@@ -204,10 +204,10 @@ namespace RoslynSandbox
     {
         public FooControl()
         {
-            this.SetValue(BarProperty, 1);
+            this.SetValue(BarProperty, ↓1);
         }
     }
-}".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
+}".AssertReplace("this.SetValue(BarProperty, ↓1);", setValueCall);
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
         }
 

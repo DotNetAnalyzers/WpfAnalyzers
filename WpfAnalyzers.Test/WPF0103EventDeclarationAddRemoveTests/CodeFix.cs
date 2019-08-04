@@ -109,7 +109,7 @@ namespace RoslynSandbox
         public event RoutedEventHandler Value1Changed
         {
             add => this.AddHandler(Value1ChangedEvent, value);
-            remove => this.RemoveHandler(Value2ChangedEvent, value);
+            remove => this.RemoveHandler(↓Value2ChangedEvent, value);
         }
     }
 }";

@@ -53,7 +53,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         /// <summary>Identifies the ValueChanged event</summary>
-        public RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
+        public RoutedEvent ↓ValueChangedEvent = EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
@@ -105,7 +105,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         /// <summary>Identifies the ValueChanged event</summary>
-        public RoutedEvent ValueChangedEvent { get; set; } = EventManager.RegisterRoutedEvent(
+        public RoutedEvent ↓ValueChangedEvent { get; set; } = EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
@@ -157,7 +157,7 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         /// <summary>Identifies the ValueChanged event</summary>
-        public RoutedEvent ValueChangedEvent => EventManager.RegisterRoutedEvent(
+        public RoutedEvent ↓ValueChangedEvent => EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),

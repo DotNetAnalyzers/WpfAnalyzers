@@ -362,7 +362,7 @@ namespace RoslynSandbox
     using System.Globalization;
     using System.Windows.Data;
 
-    internal class DecimalDigitsToStringFormatConverter : IValueConverter
+    internal class ↓DecimalDigitsToStringFormatConverter : IValueConverter
     {
         internal static readonly DecimalDigitsToStringFormatConverter Default = new DecimalDigitsToStringFormatConverter();
         private static readonly Dictionary<int, string> Cache = new Dictionary<int, string>();
@@ -471,7 +471,7 @@ namespace RoslynSandbox
     using System.Windows.Controls;
     using System.Windows.Data;
 
-    internal class FormattedTextBlockMarginConverter : IValueConverter
+    internal class ↓FormattedTextBlockMarginConverter : IValueConverter
     {
         internal static readonly FormattedTextBlockMarginConverter Default = new FormattedTextBlockMarginConverter();
 
@@ -567,7 +567,7 @@ namespace RoslynSandbox
     using System.Globalization;
     using System.Windows.Data;
 
-    public sealed class NotNullReturnsTrueConverter : IValueConverter
+    public sealed class ↓NotNullReturnsTrueConverter : IValueConverter
     {
         public static readonly NotNullReturnsTrueConverter Default = new NotNullReturnsTrueConverter();
 
@@ -611,7 +611,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void NullToVisibiltyConverter()
+        public static void NullToVisibilityConverter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -621,7 +621,7 @@ namespace RoslynSandbox
     using System.Windows;
     using System.Windows.Data;
 
-    public sealed class NullToVisibiltyConverter : IValueConverter
+    public sealed class ↓NullToVisibiltyConverter : IValueConverter
     {
         public static readonly NullToVisibiltyConverter VisibleWhenNull = new NullToVisibiltyConverter(Visibility.Visible, Visibility.Hidden);
         public static readonly NullToVisibiltyConverter HiddenWhenNull = new NullToVisibiltyConverter(Visibility.Hidden, Visibility.Visible);

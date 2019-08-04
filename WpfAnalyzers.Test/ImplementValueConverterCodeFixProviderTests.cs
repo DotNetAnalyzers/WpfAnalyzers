@@ -55,7 +55,7 @@ namespace RoslynSandbox
 {
     using System.Windows.Data;
 
-    public class FooConverter : IValueConverter
+    public class FooConverter : ↓IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -91,7 +91,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class FooConverter : System.Windows.Data.IValueConverter
+    public class FooConverter : ↓System.Windows.Data.IValueConverter
     {
     }
 }";
@@ -159,7 +159,7 @@ namespace RoslynSandbox
 {
     using System.Windows.Data;
 
-    public class FooConverter : IMultiValueConverter
+    public class FooConverter : ↓IMultiValueConverter
     {
         public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -196,7 +196,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class FooConverter : System.Windows.Data.IMultiValueConverter
+    public class FooConverter : ↓System.Windows.Data.IMultiValueConverter
     {
     }
 }";

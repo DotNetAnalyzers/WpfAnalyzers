@@ -232,7 +232,7 @@ namespace RoslynSandbox
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            var bar = (Border)this.GetTemplateChild(""PART_Baz"");
+            var bar = (Border)↓this.GetTemplateChild(""PART_Baz"");
         }
     }
 }";

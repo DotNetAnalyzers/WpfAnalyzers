@@ -578,7 +578,7 @@ namespace RoslynSandbox
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged(double newValue)
+        protected virtual void ↓OnValueChanged(double newValue)
         {
         }
     }
@@ -644,7 +644,7 @@ namespace RoslynSandbox
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged()
+        protected virtual void ↓OnValueChanged()
         {
         }
     }
