@@ -1,4 +1,5 @@
-namespace WpfAnalyzers.Test
+// ReSharper disable InconsistentNaming
+namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
