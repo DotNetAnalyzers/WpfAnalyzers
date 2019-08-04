@@ -71,13 +71,15 @@ namespace WpfAnalyzers
             public override SyntaxNode VisitAccessorDeclaration(AccessorDeclarationSyntax node)
             {
                 if (node.TryFirstAncestor(out BasePropertyDeclarationSyntax parent) &&
-                    parent.Modifiers.Any(SyntaxKind.ProtectedKeyword) &&
+                    parent.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
                     node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier))
                 {
                     return node.WithModifiers(node.Modifiers.Remove(modifier));
                 }
 
-                return node;
+                return TryUpdate(node.Modifiers, out var modifiers)
+                    ? node.WithModifiers(modifiers)
+                    : node;
             }
 
             public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
