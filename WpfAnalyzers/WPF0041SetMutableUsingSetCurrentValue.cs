@@ -11,10 +11,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0041";
-
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+            id: "WPF0041",
             title: "Set mutable dependency properties using SetCurrentValue.",
             messageFormat: "Use SetCurrentValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperty,

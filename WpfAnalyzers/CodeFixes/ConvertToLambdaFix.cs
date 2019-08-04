@@ -18,7 +18,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF0023ConvertToLambda.DiagnosticId);
+            ImmutableArray.Create(WPF0023ConvertToLambda.Descriptor.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

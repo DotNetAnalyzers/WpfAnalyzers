@@ -15,8 +15,8 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0140UseContainingTypeComponentResourceKey.DiagnosticId,
-            WPF0141UseContainingMemberComponentResourceKey.DiagnosticId);
+            WPF0140UseContainingTypeComponentResourceKey.Descriptor.Id,
+            WPF0141UseContainingMemberComponentResourceKey.Descriptor.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -26,7 +26,7 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Id == WPF0140UseContainingTypeComponentResourceKey.DiagnosticId &&
+                if (diagnostic.Id == WPF0140UseContainingTypeComponentResourceKey.Descriptor.Id &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ObjectCreationExpressionSyntax objectCreation) &&
                     objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
                     argumentList.Arguments.Count == 0 &&
@@ -41,7 +41,7 @@ namespace WpfAnalyzers
                         diagnostic);
                 }
 
-                if (diagnostic.Id == WPF0141UseContainingMemberComponentResourceKey.DiagnosticId &&
+                if (diagnostic.Id == WPF0141UseContainingMemberComponentResourceKey.Descriptor.Id &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument) &&
                     diagnostic.Properties.TryGetValue(nameof(ArgumentSyntax), out var argumentString))
                 {

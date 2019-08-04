@@ -12,7 +12,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
+            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
             WPF0013ClrMethodMustMatchRegisteredType.Descriptor,
             WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Descriptor,
             WPF0034AttachedPropertyBrowsableForTypeAttributeArgument.Descriptor,
@@ -43,7 +43,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
+                            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
                             methodDeclaration.Identifier.GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Get" + registeredName),
                             method.Name,
@@ -105,7 +105,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0004ClrMethodShouldMatchRegisteredName.Descriptor,
+                            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
                             methodDeclaration.Identifier.GetLocation(),
                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
                             method.Name,

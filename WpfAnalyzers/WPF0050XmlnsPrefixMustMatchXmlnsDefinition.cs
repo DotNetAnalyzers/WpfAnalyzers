@@ -10,12 +10,11 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0050XmlnsPrefixMustMatchXmlnsDefinition : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0050";
         private const string XmlnsPrefix = "XmlnsPrefix";
         private const string XmlnsDefinition = "XmlnsDefinition";
 
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+            id: "WPF0050",
             title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
             messageFormat: "There is no [{0}] mapping to '{1}'",
             category: AnalyzerCategory.XmlnsDefinition,

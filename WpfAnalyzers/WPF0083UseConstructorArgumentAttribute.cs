@@ -11,10 +11,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0083UseConstructorArgumentAttribute : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0083";
-
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+            id: "WPF0083",
             title: "Add [ConstructorArgument].",
             messageFormat: "Add [ConstructorArgument(\"{0}\"]",
             category: AnalyzerCategory.MarkupExtension,

@@ -4,10 +4,8 @@ namespace WpfAnalyzers
 
     internal static class WPF0105EventDeclarationRemoveHandlerInRemove
     {
-        internal const string DiagnosticId = "WPF0105";
-
         internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+            id: "WPF0105",
             title: "Call RemoveHandler in remove.",
             messageFormat: "Call RemoveHandler in remove.",
             category: AnalyzerCategory.RoutedEvent,

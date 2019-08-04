@@ -12,7 +12,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
+            Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
             WPF0012ClrPropertyShouldMatchRegisteredType.Descriptor,
             WPF0032ClrPropertyGetAndSetSameDependencyProperty.Descriptor,
             WPF0035ClrPropertyUseSetValueInSetter.Descriptor,
@@ -83,7 +83,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0003ClrPropertyShouldMatchRegisteredName.Descriptor,
+                                Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
                                 propertyDeclaration.Identifier.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName),
                                 property.Name,

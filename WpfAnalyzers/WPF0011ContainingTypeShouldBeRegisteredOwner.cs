@@ -10,19 +10,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0011ContainingTypeShouldBeRegisteredOwner : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0011";
-
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
-            title: "Containing type should be used as registered owner.",
-            messageFormat: "Register containing type: '{0}' as owner.",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "When registering a DependencyProperty register containing type as owner type.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -72,7 +61,7 @@ namespace WpfAnalyzers
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
                 !ownerType.Equals(context.ContainingSymbol.ContainingType))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), context.ContainingSymbol.ContainingType));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }
         }
     }

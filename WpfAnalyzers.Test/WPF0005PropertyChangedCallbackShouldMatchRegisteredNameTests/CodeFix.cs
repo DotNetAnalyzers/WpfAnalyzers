@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
         {
             private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberFix();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor);
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName);
 
             [TestCase("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue))")]

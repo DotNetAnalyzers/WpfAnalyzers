@@ -22,7 +22,7 @@ namespace WpfAnalyzers
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0070ConverterDoesNotHaveDefaultField.DiagnosticId);
+            WPF0070ConverterDoesNotHaveDefaultField.Descriptor.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)

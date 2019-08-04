@@ -12,9 +12,9 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
-            WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
-            WPF0010DefaultValueMustMatchRegisteredType.Descriptor,
+            Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
+            Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
+            Descriptors.WPF0010DefaultValueMustMatchRegisteredType,
             WPF0016DefaultValueIsSharedReferenceType.Descriptor,
             WPF0023ConvertToLambda.Descriptor);
 
@@ -48,7 +48,7 @@ namespace WpfAnalyzers
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
-                                            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                            Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
                                             callbackIdentifier.GetLocation(),
                                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
                                             callbackIdentifier,
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                                         {
                                             context.ReportDiagnostic(
                                                 Diagnostic.Create(
-                                                    WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                                    Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
                                                     callbackIdentifier.GetLocation(),
                                                     callbackIdentifier,
                                                     $"On{registeredName}Changed"));
@@ -95,7 +95,7 @@ namespace WpfAnalyzers
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
-                                            WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
+                                            Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
                                             callbackIdentifier.GetLocation(),
                                             ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
                                             callbackIdentifier,
@@ -111,7 +111,7 @@ namespace WpfAnalyzers
                                         {
                                             context.ReportDiagnostic(
                                                 Diagnostic.Create(
-                                                    WPF0006CoerceValueCallbackShouldMatchRegisteredName.Descriptor,
+                                                    Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
                                                     callbackIdentifier.GetLocation(),
                                                     callbackIdentifier,
                                                     $"Coerce{registeredName}"));
@@ -138,7 +138,7 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                WPF0010DefaultValueMustMatchRegisteredType.Descriptor,
+                                Descriptors.WPF0010DefaultValueMustMatchRegisteredType,
                                 defaultValueArg.GetLocation(),
                                 fieldOrProperty.Symbol,
                                 registeredType));

@@ -16,7 +16,7 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0052";
 
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "XmlnsDefinitions does not map all namespaces with public types.",
             messageFormat: "XmlnsDefinitions does not map all namespaces with public types.\r\nThe following namespaces are not mapped:\r\n{0}",

@@ -12,7 +12,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+            Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
             WPF0019CastSenderToCorrectType.Descriptor,
             WPF0020CastValueToCorrectType.Descriptor,
             WPF0021DirectCastSenderToExactType.Descriptor,
@@ -79,7 +79,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor,
+                                    Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
                                     methodDeclaration.Identifier.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
                                     methodDeclaration.Identifier,

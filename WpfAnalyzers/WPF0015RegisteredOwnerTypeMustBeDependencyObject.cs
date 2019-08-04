@@ -10,10 +10,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0015RegisteredOwnerTypeMustBeDependencyObject : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0015";
-
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+            id: "WPF0015",
             title: "Registered owner type must inherit DependencyObject.",
             messageFormat: "Maybe you intended to use '{0}'?",
             category: AnalyzerCategory.DependencyProperty,

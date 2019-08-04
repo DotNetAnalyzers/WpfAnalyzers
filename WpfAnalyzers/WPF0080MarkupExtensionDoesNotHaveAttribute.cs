@@ -10,10 +10,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0080MarkupExtensionDoesNotHaveAttribute : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0080";
-
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
+            id: "WPF0080",
             title: "Add MarkupExtensionReturnType attribute.",
             messageFormat: "Add MarkupExtensionReturnType attribute.",
             category: AnalyzerCategory.MarkupExtension,

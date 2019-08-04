@@ -11,7 +11,7 @@ namespace WpfAnalyzers
     internal class RegistrationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+            Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
             WPF0023ConvertToLambda.Descriptor);
 
         /// <inheritdoc/>
@@ -42,7 +42,7 @@ namespace WpfAnalyzers
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+                                    Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
                                     callBackIdentifier.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
                                     callBackIdentifier,
@@ -58,7 +58,7 @@ namespace WpfAnalyzers
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
-                                            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Descriptor,
+                                            Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
                                             callBackIdentifier.GetLocation(),
                                             callBackIdentifier,
                                             $"Validate{registeredName}"));

@@ -16,16 +16,16 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0001BackingFieldShouldMatchRegisteredName.Id,
-            WPF0002BackingFieldShouldMatchRegisteredName.DiagnosticId,
-            WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId,
-            WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,
-            WPF0005PropertyChangedCallbackShouldMatchRegisteredName.DiagnosticId,
-            WPF0006CoerceValueCallbackShouldMatchRegisteredName.DiagnosticId,
-            WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.DiagnosticId,
-            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.DiagnosticId,
-            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.DiagnosticId,
-            WPF0100BackingFieldShouldMatchRegisteredName.DiagnosticId,
-            WPF0102EventDeclarationName.DiagnosticId);
+            Descriptors.WPF0002BackingFieldShouldMatchRegisteredName.Id,
+            Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName.Id,
+            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName.Id,
+            Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Id,
+            Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName.Id,
+            Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Id,
+            WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Descriptor.Id,
+            WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Descriptor.Id,
+            WPF0100BackingFieldShouldMatchRegisteredName.Descriptor.Id,
+            WPF0102EventDeclarationName.Descriptor.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
         {
             private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
             private static readonly CodeFixProvider Fix = new RenameMemberFix();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0005PropertyChangedCallbackShouldMatchRegisteredName.Descriptor);
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName);
 
             [Test]
             public static void Message()
