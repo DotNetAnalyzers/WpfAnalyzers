@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
         public static void RoutedCommandNotReadonlyField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -27,7 +27,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         public static void RoutedCommandNotStaticField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -54,7 +54,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         public static void RoutedCommandMutableField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -81,7 +81,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         public static void RoutedUICommandStaticMutableProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -108,7 +108,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         public static void RoutedUICommandStaticExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -135,7 +135,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public static void RoutedUICommandInstanceExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -162,7 +162,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -178,7 +178,7 @@ namespace RoslynSandbox
         public static void RoutedUICommandInstanceProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -189,7 +189,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -205,7 +205,7 @@ namespace RoslynSandbox
         public static void RoutedUICommandMutableInstanceProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -216,7 +216,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 

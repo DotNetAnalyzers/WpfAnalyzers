@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEv
         public static void WhenCorrectNameSizeChangedEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameSizeChangedEventHandledEventsToo()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameManipulationStartingEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameMouseDownEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

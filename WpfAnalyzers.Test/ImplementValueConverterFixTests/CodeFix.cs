@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
         public void IValueConverterConvertBack()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -28,7 +28,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -52,7 +52,7 @@ namespace RoslynSandbox
         public void IMultiValueConverterConvertBack()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -66,7 +66,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 

@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
         public static void CastNotMatching()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         public static void IsPatternNotMatching()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -65,7 +65,7 @@ namespace RoslynSandbox
         public static void AsCastNotMatching()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -91,7 +91,7 @@ namespace RoslynSandbox
         public static void WhenMissingType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

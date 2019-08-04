@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
         public void IValueConverter(string className)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -25,7 +25,7 @@ namespace RoslynSandbox
 }".AssertReplace("FooConverter", className);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         public void FullyQualifiedIValueConverter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class FooConverter : ↓System.Windows.Data.IValueConverter
     {
@@ -58,7 +58,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class FooConverter : System.Windows.Data.IValueConverter
     {
@@ -81,7 +81,7 @@ namespace RoslynSandbox
         public void IMultiValueConverter(string className)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -91,7 +91,7 @@ namespace RoslynSandbox
 }".AssertReplace("FooConverter", className);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Data;
 
@@ -116,7 +116,7 @@ namespace RoslynSandbox
         public void FullyQualifiedIMultiValueConverter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class FooConverter : ↓System.Windows.Data.IMultiValueConverter
     {
@@ -124,7 +124,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class FooConverter : System.Windows.Data.IMultiValueConverter
     {

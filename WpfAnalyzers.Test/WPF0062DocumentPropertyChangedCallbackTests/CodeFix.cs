@@ -20,7 +20,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
         public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -115,7 +115,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithMetadataDifferentParameterNames()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -158,7 +158,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -210,7 +210,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterMissingDocsOldValueAndNewValue()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -239,7 +239,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterSummaryNotStandard()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -308,7 +308,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -345,7 +345,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterOldValueNotStandard()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -377,7 +377,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -414,7 +414,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterNewValueNotStandard()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -446,7 +446,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -483,7 +483,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterMissingDocsNewValueBeforeOldValue()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -512,7 +512,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -549,7 +549,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterMissingDocsOnlyNewValue()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -578,7 +578,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -614,7 +614,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterMissingDocsNoParameters()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -643,7 +643,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -678,7 +678,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterMissingDocsExplicitCallback()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -707,7 +707,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -744,7 +744,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterStaticCallbackCallingInstance()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -778,7 +778,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

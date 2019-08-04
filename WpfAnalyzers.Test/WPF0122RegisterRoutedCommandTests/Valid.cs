@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0122RegisterRoutedCommandTests
         public static void RoutedCommand()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -28,7 +28,7 @@ namespace RoslynSandbox
         public static void RoutedUICommand()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 

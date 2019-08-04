@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
         public static void DependencyPropertyRegisterBackingField(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterBackingProperty(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -92,7 +92,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -108,7 +108,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -133,7 +133,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -164,7 +164,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -190,7 +190,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

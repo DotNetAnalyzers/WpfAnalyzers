@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
         public static void MessageAddHandler()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         public static void MessageRemoveHandler()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -67,7 +67,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameAddHandlerSizeChangedEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameRemoveHandlerSizeChangedEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -132,7 +132,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -157,7 +157,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameAddHandlerManipulationStartingEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -178,7 +178,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -204,7 +204,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -225,7 +225,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -251,7 +251,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameAddHandlerMouseDownEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -271,7 +271,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -296,7 +296,7 @@ namespace RoslynSandbox
         public static void WhenCorrectNameRemoveHandlerMouseDownEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -316,7 +316,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
         public static void WhenCastingToSameType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         public static void WhenCastingToSameTypeFullyQualified()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         public static void WhenCastingToLessSpecificType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -77,7 +77,7 @@ namespace RoslynSandbox
         public static void WhenIsPatternSameType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -109,7 +109,7 @@ namespace RoslynSandbox
         public static void AsCastStringLiteral(string cast)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

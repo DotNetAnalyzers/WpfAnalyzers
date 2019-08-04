@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
         public static void DependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyFullyQualified()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class FooControl : System.Windows.Controls.Control
     {
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner(string typeName)
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -90,7 +90,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -115,7 +115,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -146,7 +146,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
         public static void DependencyProperty(string method)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached(string method)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

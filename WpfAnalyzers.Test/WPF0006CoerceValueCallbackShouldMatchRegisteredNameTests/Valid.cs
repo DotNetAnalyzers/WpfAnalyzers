@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
         public static void DependencyPropertyNoMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithMetadata(string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -133,7 +133,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -169,7 +169,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

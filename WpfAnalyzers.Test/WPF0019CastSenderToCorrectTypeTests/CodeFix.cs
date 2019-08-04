@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -76,7 +76,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -139,7 +139,7 @@ namespace RoslynSandbox
 }".AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -175,7 +175,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -199,7 +199,7 @@ namespace RoslynSandbox
 }".AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -230,7 +230,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -263,7 +263,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -303,7 +303,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterCast(string fromCast, string toCast)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -330,7 +330,7 @@ namespace RoslynSandbox
 }".AssertReplace("(↓DataGrid)d", fromCast);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -363,7 +363,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -392,7 +392,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -426,7 +426,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -446,7 +446,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -471,7 +471,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -492,7 +492,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

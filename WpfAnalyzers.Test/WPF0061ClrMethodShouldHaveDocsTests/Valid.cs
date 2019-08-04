@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -122,7 +122,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -152,7 +152,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -182,7 +182,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -215,7 +215,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -240,7 +240,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterBackingField()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -264,7 +264,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterBackingProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -288,7 +288,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterFormatted()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -317,7 +317,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -333,7 +333,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

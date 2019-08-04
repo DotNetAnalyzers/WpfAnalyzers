@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void AddAttribute()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -71,7 +71,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

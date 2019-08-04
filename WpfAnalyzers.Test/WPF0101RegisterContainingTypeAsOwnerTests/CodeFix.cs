@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void EventManagerRegisterRoutedEvent()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -67,7 +67,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

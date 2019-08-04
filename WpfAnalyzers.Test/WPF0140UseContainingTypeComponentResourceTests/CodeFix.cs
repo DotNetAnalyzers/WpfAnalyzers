@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         public static void WhenNotContainingType()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -29,7 +29,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -48,7 +48,7 @@ namespace RoslynSandbox
         public static void WhenNoArguments()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -59,7 +59,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

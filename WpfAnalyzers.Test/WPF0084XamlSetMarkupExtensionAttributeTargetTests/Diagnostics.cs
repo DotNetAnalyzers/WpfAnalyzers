@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         public static void WhenReturningInt()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;
@@ -57,7 +57,7 @@ namespace RoslynSandbox
         public static void WhenNoParameters()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;
@@ -78,7 +78,7 @@ namespace RoslynSandbox
         public static void WhenMOreThanTwoParameters()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         public static void WhenFirstParameterIsInt()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         public static void WhenSecondParameterIsInt()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;

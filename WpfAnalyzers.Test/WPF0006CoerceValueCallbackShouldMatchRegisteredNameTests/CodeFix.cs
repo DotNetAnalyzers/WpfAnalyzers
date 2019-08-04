@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegister(string metadata)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -78,7 +78,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -114,7 +114,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -143,7 +143,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -177,7 +177,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -201,7 +201,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -230,7 +230,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -256,7 +256,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -287,7 +287,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -308,7 +308,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -334,7 +334,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -355,7 +355,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

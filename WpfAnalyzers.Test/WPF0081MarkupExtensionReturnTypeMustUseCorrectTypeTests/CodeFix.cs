@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTe
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -30,14 +30,14 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type. Expected: RoslynSandbox.FooExtension"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type. Expected: N.FooExtension"), testCode);
         }
 
         [Test]
         public static void ReturnThis()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -53,7 +53,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;

@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         public static void DependencyPropertyRegisterPropertyChangedCallback(string metadata, string callback)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

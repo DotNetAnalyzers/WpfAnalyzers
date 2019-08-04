@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
         public static void Message()
         {
             var barControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -26,7 +26,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'RoslynSandbox.FooControl' as owner."), barControlCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner."), barControlCode, testCode);
         }
 
         [TestCase("BarControl")]
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegister(string typeName)
         {
             var barControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -69,7 +69,7 @@ namespace RoslynSandbox
 }".AssertReplace("class BarControl", $"class {typeName}");
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -92,7 +92,7 @@ namespace RoslynSandbox
 }".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var barControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -131,7 +131,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -156,7 +156,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -187,14 +187,14 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -219,7 +219,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -250,14 +250,14 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedQualifiedTypeNames()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public static class Foo
     {
@@ -280,7 +280,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public static class Foo
     {
@@ -309,7 +309,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -317,7 +317,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -344,7 +344,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -376,7 +376,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -404,7 +404,7 @@ namespace RoslynSandbox
 }";
 
             var barControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -414,7 +414,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -432,7 +432,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -456,7 +456,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -478,7 +478,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -493,7 +493,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

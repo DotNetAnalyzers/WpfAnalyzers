@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
         public static void EventManagerRegisterRoutedEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -38,7 +38,7 @@ namespace RoslynSandbox
         [Test]
         public static void EventManagerRegisterRoutedEventCustomHandler()
         {
-            var eventArgsCode = @"namespace RoslynSandbox
+            var eventArgsCode = @"namespace N
 {
     using System.Windows;
 
@@ -70,12 +70,12 @@ namespace RoslynSandbox
     }
 }";
 
-            var delegateCode = @"namespace RoslynSandbox
+            var delegateCode = @"namespace N
 {
     public delegate void ValueChangedEventHandler<T>(object sender, ValueChangedEventArgs<T> e);
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

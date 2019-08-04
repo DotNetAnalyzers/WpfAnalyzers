@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void WhenNoAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;

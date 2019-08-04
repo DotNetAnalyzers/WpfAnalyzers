@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test
         public void TryGetInvokedMethodName(string code, string expected)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

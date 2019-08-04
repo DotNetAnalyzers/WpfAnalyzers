@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithCallback(string callback, string expected)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -91,7 +91,7 @@ namespace RoslynSandbox
 }".AssertReplace("↓WrongName", callback);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -125,7 +125,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -160,7 +160,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -200,7 +200,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -225,7 +225,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -255,7 +255,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -287,7 +287,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -324,7 +324,7 @@ namespace RoslynSandbox
         public static void WhenCallbackMatchesOtherProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -379,7 +379,7 @@ namespace RoslynSandbox
         public static void WhenCallbackMatchesOtherPropertyParts()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -412,7 +412,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

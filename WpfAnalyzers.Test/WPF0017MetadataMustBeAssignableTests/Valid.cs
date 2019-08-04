@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
         public static void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -33,7 +33,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadataWithSameType(string metadata)
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -77,7 +77,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -98,7 +98,7 @@ namespace RoslynSandbox
         public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

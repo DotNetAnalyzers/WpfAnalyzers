@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
         public static void DependencyPropertyRegisterReadOnlyBackingFields(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingProperties(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyRepro()
         {
             var statusCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public enum Status
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTest
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         public static void DependencyRegister()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -67,7 +67,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -91,7 +91,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -103,7 +103,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -136,7 +136,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -152,7 +152,7 @@ namespace RoslynSandbox
 }";
 
             var barControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

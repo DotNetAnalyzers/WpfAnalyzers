@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeT
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

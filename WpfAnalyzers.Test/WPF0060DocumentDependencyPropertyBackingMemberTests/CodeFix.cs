@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
         public static void DependencyPropertyRegisterBackingField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -59,7 +59,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterBackingProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -77,7 +77,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -101,7 +101,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterFormatted()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -123,7 +123,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterPartial()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -169,7 +169,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -189,7 +189,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -216,7 +216,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterNotStandardText()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -235,7 +235,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -259,7 +259,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -291,7 +291,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -329,7 +329,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -352,7 +352,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -382,7 +382,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -405,7 +405,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -435,7 +435,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -462,7 +462,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -480,7 +480,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
         public static void DependencyPropertyRegisterAttachedBothMissingDocs()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -42,7 +42,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -78,7 +78,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedBothMissingDocsDifferentTypeAndParameterName()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -103,7 +103,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -139,7 +139,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedGetMethodMissingDocs()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -159,7 +159,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -187,7 +187,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSetMethodMissingDocs()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -207,7 +207,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -235,7 +235,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWithAttachedPropertyBrowsableForType()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -264,7 +264,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -301,7 +301,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedNotStandardTextGetMethod()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -332,7 +332,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -368,7 +368,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedNotStandardTextSetMethod()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -399,7 +399,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -435,7 +435,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -457,7 +457,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -490,7 +490,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -517,7 +517,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

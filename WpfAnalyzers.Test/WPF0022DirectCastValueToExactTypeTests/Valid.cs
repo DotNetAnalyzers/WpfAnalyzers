@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
         public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -139,7 +139,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -191,7 +191,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -343,7 +343,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -379,7 +379,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -411,7 +411,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -445,7 +445,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -473,7 +473,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

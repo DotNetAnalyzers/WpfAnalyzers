@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
         public static void StringLiterals()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         public static void Constant()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void TemplatePartAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         public static void BaseClassLiteral()
         {
             var baseCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -92,7 +92,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
 
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         public static void BaseClassConstant()
         {
             var baseCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -126,7 +126,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
 
@@ -147,7 +147,7 @@ namespace RoslynSandbox
         public static void IsPatternStringLiteral()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -180,7 +180,7 @@ namespace RoslynSandbox
         public static void AsCastStringLiteral(string cast)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

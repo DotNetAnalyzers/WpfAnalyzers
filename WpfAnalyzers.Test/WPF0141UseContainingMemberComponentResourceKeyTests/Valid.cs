@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
         public static void WhenExpectedLiteral()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -30,7 +30,7 @@ namespace RoslynSandbox
         public static void WhenExpectedNameof()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

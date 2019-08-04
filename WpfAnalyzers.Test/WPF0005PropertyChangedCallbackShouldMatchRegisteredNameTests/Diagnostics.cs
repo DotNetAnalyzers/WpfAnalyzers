@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
         public static void UsedByMoreThanOnePropertyMatchingNeither()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

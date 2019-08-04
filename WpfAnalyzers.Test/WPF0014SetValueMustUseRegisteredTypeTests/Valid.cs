@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
         public static void DependencyProperty(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyPartial(string setValueCall)
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -68,7 +68,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     public partial class FooControl
     {
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfTypeNullableInt(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -146,7 +146,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -169,7 +169,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -203,7 +203,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -240,7 +240,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfTypeObject(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -274,7 +274,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfInterfaceType(string setValueCall)
         {
             var interfaceCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public interface IFoo
     {
@@ -282,14 +282,14 @@ namespace RoslynSandbox
 }";
 
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : IFoo
     {
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -323,7 +323,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -345,7 +345,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -367,7 +367,7 @@ namespace RoslynSandbox
         public static void DependencyPropertySetValueOfTypeObject(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -401,7 +401,7 @@ namespace RoslynSandbox
         public static void DependencyPropertySetValueOfTypeObject2(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -436,7 +436,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -461,7 +461,7 @@ namespace RoslynSandbox
 }";
 
             var fooControlPart1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -495,7 +495,7 @@ namespace RoslynSandbox
 }";
 
             var fooControlPart2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -516,7 +516,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -562,7 +562,7 @@ namespace RoslynSandbox
         public static void TextBoxText(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -584,7 +584,7 @@ namespace RoslynSandbox
         public static void SetCurrentValueInLambda()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -620,7 +620,7 @@ namespace RoslynSandbox
         public static void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -654,7 +654,7 @@ namespace RoslynSandbox
         public static void IgnoresFreezable(string call)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -688,7 +688,7 @@ namespace RoslynSandbox
         public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -700,7 +700,7 @@ namespace RoslynSandbox
 }";
 
             var modernLinksCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -721,7 +721,7 @@ namespace RoslynSandbox
 }";
 
             var linkGroupCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -745,7 +745,7 @@ namespace RoslynSandbox
         public static void CastIntToDouble()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -779,7 +779,7 @@ namespace RoslynSandbox
         public static void EnumIssue211()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -800,7 +800,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -815,7 +815,7 @@ namespace RoslynSandbox
         public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -845,7 +845,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -866,7 +866,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"namespace N
 {
     public enum FooEnum
     {

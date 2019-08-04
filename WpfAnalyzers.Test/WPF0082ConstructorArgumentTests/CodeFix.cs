@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void WhenWrongArgument()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -71,7 +71,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;

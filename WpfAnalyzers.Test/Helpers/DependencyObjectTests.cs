@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test
         public void TryGetSetValueCall(string call)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         public void TryGetSetValueCallInstance(string call)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         public void TryGetSetCurrentValueCall(string call)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -126,7 +126,7 @@ namespace RoslynSandbox
         public void TryGetSetCurrentValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -161,7 +161,7 @@ namespace RoslynSandbox
         public void TryGetGetValueCall(string call)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         public void TryGetSetValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgume
         public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
         public static void DependencyPropertyRegister()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

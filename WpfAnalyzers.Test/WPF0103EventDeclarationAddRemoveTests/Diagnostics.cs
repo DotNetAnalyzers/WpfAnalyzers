@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void EventManagerRegisterRoutedEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         public static void EventManagerRegisterRoutedEventExpressionBodies()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

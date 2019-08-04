@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test
         public void TryGetConversionTypesDirectCast()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -48,7 +48,7 @@ namespace RoslynSandbox
         public void TryGetConversionTypesAsCast()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -91,7 +91,7 @@ namespace RoslynSandbox
         public void TryGetConversionTypesTwoAsCastWhenOneIsOther()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public void TryGetConversionTypesTwoAsCastListAndArray()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;

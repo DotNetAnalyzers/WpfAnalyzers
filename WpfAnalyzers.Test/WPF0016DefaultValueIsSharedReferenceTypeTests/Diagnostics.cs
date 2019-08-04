@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
         public static void DependencyProperty(string typeName, string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -81,7 +81,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -108,7 +108,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;

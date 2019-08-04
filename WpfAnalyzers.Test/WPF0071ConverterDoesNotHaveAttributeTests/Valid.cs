@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         public static void WhenHasFullyQualifiedAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         public static void IgnorePrivateClass()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -147,7 +147,7 @@ namespace RoslynSandbox
         public static void IgnoreProtectedClass()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;

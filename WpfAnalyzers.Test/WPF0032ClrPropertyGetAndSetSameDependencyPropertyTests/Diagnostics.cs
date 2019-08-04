@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTes
         public static void DependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -47,7 +47,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyExpressionBodyAccessors()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAndReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

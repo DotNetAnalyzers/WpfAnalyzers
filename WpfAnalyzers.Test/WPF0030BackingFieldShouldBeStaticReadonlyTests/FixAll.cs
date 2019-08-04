@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -21,7 +21,7 @@
             public static void DependencyPropertyRegisterBackingField(string modifiersBefore, string modifiersAfter)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -39,7 +39,7 @@ namespace RoslynSandbox
 }".AssertReplace("public static DependencyProperty", modifiersBefore + " DependencyProperty");
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

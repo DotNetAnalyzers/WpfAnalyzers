@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test
             public static void TryGetRegisterCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -48,7 +48,7 @@ namespace RoslynSandbox
             public static void TryGetRegisterReadOnlyCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -85,7 +85,7 @@ namespace RoslynSandbox
             public static void TryGetRegisterAttachedCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -123,7 +123,7 @@ namespace RoslynSandbox
             public static void TryGetRegisterAttachedCallFullyQualified()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     public static class Foo
     {
@@ -158,7 +158,7 @@ namespace RoslynSandbox
             public static void TryGetRegisterAttachedReadOnlyCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -192,7 +192,7 @@ namespace RoslynSandbox
             public static void TryGetAddOwnerCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -244,7 +244,7 @@ namespace RoslynSandbox
             public static void TryGetOverrideMetadataCall()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

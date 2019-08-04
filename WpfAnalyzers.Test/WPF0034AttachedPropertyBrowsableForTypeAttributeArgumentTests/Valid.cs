@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0034AttachedPropertyBrowsableForTypeAttributeArgu
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void WhenHasAttributeForMoreSpecificType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         public static void WhenHasTwoAttributesForMoreSpecificTypes()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

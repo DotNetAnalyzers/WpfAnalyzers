@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
         public static void DependencyPropertyRegisterNoMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -41,7 +41,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         {
             var testCode = @"
 #pragma warning disable WPF0016 // Default value is shared reference type.
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWhenGenericContainingType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -161,7 +161,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -178,7 +178,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -205,7 +205,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -262,7 +262,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -279,7 +279,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -310,7 +310,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -337,7 +337,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -364,7 +364,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -388,7 +388,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOverrideMetadata()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -404,7 +404,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -425,7 +425,7 @@ namespace RoslynSandbox
         public static void CastIntToDouble()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -454,7 +454,7 @@ namespace RoslynSandbox
         public static void FontFamilyConverterConvertFromString()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Media;
@@ -496,7 +496,7 @@ namespace RoslynSandbox
         public static void BoxedBool()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -534,7 +534,7 @@ namespace RoslynSandbox
         public static void EnumIssue211()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -556,7 +556,7 @@ namespace RoslynSandbox
     }
 }";
             var enumCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public enum FooEnum
     {
@@ -572,7 +572,7 @@ namespace RoslynSandbox
         public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -602,7 +602,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -623,7 +623,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"namespace N
 {
     public enum FooEnum
     {

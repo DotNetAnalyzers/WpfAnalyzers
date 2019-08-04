@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         public static void DependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyFromOutside(string setExpression)
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -58,7 +58,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);", setExpression);
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -133,7 +133,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyPropertyFromOutside()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -157,7 +157,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -185,7 +185,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyPropertyThis()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -228,7 +228,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -245,7 +245,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -293,7 +293,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -324,7 +324,7 @@ namespace RoslynSandbox
         public static void IgnoredDependencyPropertyInClrProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -350,7 +350,7 @@ namespace RoslynSandbox
         public static void IgnoredDependencyPropertyInClrPropertyWithAsCast()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -376,7 +376,7 @@ namespace RoslynSandbox
         public static void IgnoredDependencyPropertyInClrPropertyBoxed()
         {
             var boolBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public static class BooleanBoxes
     {
@@ -386,7 +386,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -413,7 +413,7 @@ namespace RoslynSandbox
         public static void IgnoredAttachedPropertyInClrSetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -445,7 +445,7 @@ namespace RoslynSandbox
         public static void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
         {
             var boolBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public static class BooleanBoxes
     {
@@ -455,7 +455,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -487,7 +487,7 @@ namespace RoslynSandbox
         public static void IgnoredClrPropertyInObjectInitializer()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -512,7 +512,7 @@ namespace RoslynSandbox
         public static void IgnoredClrPropertyInConstructor()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -543,7 +543,7 @@ namespace RoslynSandbox
         public static void IgnoredSetValueInConstructor()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -576,7 +576,7 @@ namespace RoslynSandbox
         public static void IgnoredWhenCreatedInScope(string setCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -599,7 +599,7 @@ namespace RoslynSandbox
         public static void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -624,7 +624,7 @@ namespace RoslynSandbox
         public static void IgnoredWhenCreatedInScopeWithIf(string setCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -650,7 +650,7 @@ namespace RoslynSandbox
         public static void IgnoredPropertyAsParameter(string setValueCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -683,7 +683,7 @@ namespace RoslynSandbox
         public static void IgnoreSetDataContext()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -712,7 +712,7 @@ namespace RoslynSandbox
         public static void Issue240()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

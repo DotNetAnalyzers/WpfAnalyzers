@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
         public static void DependencyProperty(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithThis()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -74,7 +74,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyGeneric()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -102,7 +102,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -158,7 +158,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         public static void EnumIssue211()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -211,7 +211,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -226,7 +226,7 @@ namespace RoslynSandbox
         public static void EnumAddOwnerIssue211()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -256,7 +256,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -277,7 +277,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var enumCode = @"namespace RoslynSandbox
+            var enumCode = @"namespace N
 {
     public enum FooEnum
     {

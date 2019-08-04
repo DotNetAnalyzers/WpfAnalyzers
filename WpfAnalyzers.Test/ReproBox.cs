@@ -34,7 +34,7 @@ namespace WpfAnalyzers.Test
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class Foo
     {

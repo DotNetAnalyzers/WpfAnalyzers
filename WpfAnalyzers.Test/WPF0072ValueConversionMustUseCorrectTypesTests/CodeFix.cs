@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
         public static void MessageWhenWrongSourceType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void MessageWhenWrongTargetType()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -73,7 +73,7 @@ namespace RoslynSandbox
         public static void DirectCastWrongSourceType()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -96,7 +96,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -124,7 +124,7 @@ namespace RoslynSandbox
         public static void DirectCastWrongSourceTypeFullyQualified()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -146,7 +146,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -173,7 +173,7 @@ namespace RoslynSandbox
         public static void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -195,7 +195,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -222,7 +222,7 @@ namespace RoslynSandbox
         public static void DirectCastWrongTargetType()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -245,7 +245,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;

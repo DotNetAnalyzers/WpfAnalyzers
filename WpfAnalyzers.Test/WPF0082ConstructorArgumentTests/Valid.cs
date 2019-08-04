@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
         public static void WhenPropertyHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void WhenPropertyWithBackingFieldHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -78,7 +78,7 @@ namespace RoslynSandbox
         public static void WhenPropertyWithBackingFieldAssignedBackingFieldHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -114,7 +114,7 @@ namespace RoslynSandbox
         public static void WhenNoAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         public static void Issue185()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -188,7 +188,7 @@ namespace RoslynSandbox
         public static void Issue185WithEnsure()
         {
             var ensureCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Diagnostics;
@@ -229,7 +229,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;

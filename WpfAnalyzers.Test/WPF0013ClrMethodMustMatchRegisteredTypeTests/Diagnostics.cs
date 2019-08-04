@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -76,7 +76,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -107,7 +107,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlySetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -170,7 +170,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

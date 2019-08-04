@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test
             public void DependencyPropertyBackingField(string nameCode)
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
             public void DependencyPropertyBackingProperty(string nameCode)
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -84,7 +84,7 @@ namespace RoslynSandbox
             public void TextElementFontSizePropertyAddOwner()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Documents;
@@ -114,7 +114,7 @@ namespace RoslynSandbox
             public void BorderBorderThicknessPropertyAddOwner()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

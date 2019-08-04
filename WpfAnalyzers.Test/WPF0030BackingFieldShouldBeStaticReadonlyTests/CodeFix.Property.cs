@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
             public static void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterBackingPropertyGetSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -77,7 +77,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -101,7 +101,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterBackingPropertyExpressionBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -121,7 +121,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

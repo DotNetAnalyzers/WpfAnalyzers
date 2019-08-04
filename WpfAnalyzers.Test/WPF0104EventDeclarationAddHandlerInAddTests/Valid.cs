@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0104EventDeclarationAddHandlerInAddTests
         public static void EventManagerRegisterRoutedEvent(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

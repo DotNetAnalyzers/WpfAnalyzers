@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         public static void DependencyPropertyRegisterAttached(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -102,7 +102,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -119,7 +119,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -157,7 +157,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSettingValueInCallback()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

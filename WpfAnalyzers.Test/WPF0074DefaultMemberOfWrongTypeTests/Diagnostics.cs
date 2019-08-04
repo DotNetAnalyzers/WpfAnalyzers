@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
         public static void DefaultField()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         public static void DefaultProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;

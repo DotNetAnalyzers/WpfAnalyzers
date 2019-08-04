@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
         public static void AddHandlerSizeChangedEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -36,7 +36,7 @@ namespace RoslynSandbox
         public static void RemoveHandlerSizeChangedEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public static void AddHandlerManipulationStartingEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace RoslynSandbox
         public static void RemoveHandlerManipulationStartingEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Controls;
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         public static void AddHandlerMouseDownEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         public static void RemoveHandlerMouseDownEvent()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -163,7 +163,7 @@ namespace RoslynSandbox
         public static void AddPreviewMouseDownHandlerNewHandler()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -188,7 +188,7 @@ namespace RoslynSandbox
         public static void AddPreviewMouseDownHandlerMethodGroup()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Input;

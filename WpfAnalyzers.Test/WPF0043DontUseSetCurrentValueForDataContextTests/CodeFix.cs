@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
         public static void ThisSetCurrentValue(string statementBefore, string statementAfter)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -33,7 +33,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", statementBefore);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         public static void ControlSetCurrentValue(string expressionBefore, string expressionAfter)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -71,7 +71,7 @@ namespace RoslynSandbox
 }".AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", expressionBefore);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

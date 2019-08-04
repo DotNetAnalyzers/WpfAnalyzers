@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -121,7 +121,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

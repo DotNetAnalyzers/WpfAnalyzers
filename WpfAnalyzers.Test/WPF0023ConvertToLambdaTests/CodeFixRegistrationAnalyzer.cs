@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         public static void RemoveMethod(string callback, string lambda)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 }".AssertReplace("ValidateValue);", $"{callback});");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
             public static void DependencyPropertyRegisterInstanceMethodOldBeforeNew(string lambdaBefore, string lambdaAfter)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 }".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", lambdaBefore);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterInstanceMethodNewBeforeOld(string lambdaBefore, string lambdaAfter)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -107,7 +107,7 @@ namespace RoslynSandbox
 }".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue)", lambdaBefore);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -139,7 +139,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstance()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -181,7 +181,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -228,7 +228,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempCast()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -271,7 +271,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -319,7 +319,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterWithMetadataStaticCallbackCallingInstanceOnTempPatternMathc()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -364,7 +364,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

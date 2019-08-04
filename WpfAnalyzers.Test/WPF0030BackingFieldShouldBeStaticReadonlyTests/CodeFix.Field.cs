@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
             public static void ReadOnlyDependencyProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -41,7 +41,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -70,7 +70,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterAttached()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -95,7 +95,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -125,7 +125,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterAttachedReadOnlyKeyField()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -152,7 +152,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -184,7 +184,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     public static class Foo
@@ -209,7 +209,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     public static class Foo
@@ -240,7 +240,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyAddOwner(string typeName)
             {
                 var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -267,7 +267,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -285,7 +285,7 @@ namespace RoslynSandbox
 }".AssertReplace("FooControl", typeName);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

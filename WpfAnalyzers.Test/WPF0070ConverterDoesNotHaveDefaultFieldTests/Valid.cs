@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
         public static void WhenDefaultField()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
         public static void WhenTwoFields()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -111,7 +111,7 @@ namespace RoslynSandbox
         public static void WhenDefaultProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -162,7 +162,7 @@ namespace RoslynSandbox
         public static void WhenMarkupExtension()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -212,7 +212,7 @@ namespace RoslynSandbox
         public static void WhenIValueConverterHasMutableMembers()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
         public static void WhenIMultiValueConverterHasMutableProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         public static void WhenAbstract()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -334,7 +334,7 @@ namespace RoslynSandbox
         public static void WhenVirtual()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -383,7 +383,7 @@ namespace RoslynSandbox
         public static void WhenConstructorWithParameters()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -476,7 +476,7 @@ namespace Gu.Wpf.ToolTips
         public static void WhenConstructorParameter()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;

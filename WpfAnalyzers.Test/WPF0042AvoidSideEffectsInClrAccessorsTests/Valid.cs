@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
         public static void DependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyExpressionBodyAccessors()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -67,7 +67,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithThis()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -125,7 +125,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -163,7 +163,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedExpressionBodies()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -235,7 +235,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodies()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

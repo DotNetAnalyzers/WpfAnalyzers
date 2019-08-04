@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void DependencyProperty(string setCall)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -92,7 +92,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyGeneric(string setValueCall)
         {
             var fooControlGeneric = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -114,7 +114,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -136,7 +136,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner(string setValueCall)
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -161,7 +161,7 @@ namespace RoslynSandbox
 }";
 
             var fooControlPart1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -195,7 +195,7 @@ namespace RoslynSandbox
 }";
 
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -215,7 +215,7 @@ namespace RoslynSandbox
         public static void AddOwnerTextElementFontSize()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Documents;
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         public static void AddOwnerBorderBorderThicknessProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -268,7 +268,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyOfInterfaceType(string methodName)
         {
             var iFooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public interface IFoo
     {
@@ -276,14 +276,14 @@ namespace RoslynSandbox
 }";
 
             var iMehCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public interface IMeh
     {
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -316,7 +316,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -363,7 +363,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty(string value)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -398,7 +398,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -436,7 +436,7 @@ namespace RoslynSandbox
         public static void TextBoxTextProperty(string setMethod)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -459,7 +459,7 @@ namespace RoslynSandbox
         public static void TextElementFontSizeProperty(string setMethod)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -483,7 +483,7 @@ namespace RoslynSandbox
         public static void SetCurrentValueInLambda(string setMethod)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

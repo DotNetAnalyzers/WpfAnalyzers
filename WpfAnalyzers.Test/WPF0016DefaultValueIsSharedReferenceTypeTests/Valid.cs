@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
         public static void DependencyPropertyNoMetadata()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyMetadataWithCallbackOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithMetadata(string typeName, string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -126,7 +126,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -143,7 +143,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -170,7 +170,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -227,7 +227,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
             var booleanBoxesCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class BooleanBoxes
     {
@@ -244,7 +244,7 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows;
@@ -275,7 +275,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -302,7 +302,7 @@ namespace RoslynSandbox
         public static void IgnoreFontFamily()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -330,7 +330,7 @@ namespace RoslynSandbox
         public static void IgnoreFontFamilyAddOwner()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

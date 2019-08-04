@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
         public static void DependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void Attached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

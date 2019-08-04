@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -59,7 +59,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -149,7 +149,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterOnPropertyChangedIf()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

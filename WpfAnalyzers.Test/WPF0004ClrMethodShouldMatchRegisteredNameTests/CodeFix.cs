@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedGetMethod()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -70,7 +70,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -101,7 +101,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedGetMethodExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -120,7 +120,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -144,7 +144,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSetMethod()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -169,7 +169,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -199,7 +199,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedSetMethodExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -218,7 +218,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
         public static void DependencyPropertyOneLine(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -37,7 +37,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyFormatted()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyFormattedExpressionBodies()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithThis()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -127,7 +127,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyPartial()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -143,7 +143,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -166,7 +166,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyAddOwner()
         {
             var part1 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -184,7 +184,7 @@ namespace RoslynSandbox
 }";
 
             var part2 = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         public static void ReadonlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
         public static void EventManagerRegisterRoutedEvent(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void EventManagerRegisterRoutedEventExpressionBodies(string nameof)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

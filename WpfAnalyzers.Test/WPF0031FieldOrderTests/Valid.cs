@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
         public static void DependencyPropertyRegisterReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
             var modernLinksCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -106,7 +106,7 @@ namespace RoslynSandbox
 }";
 
             var linkGroupCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

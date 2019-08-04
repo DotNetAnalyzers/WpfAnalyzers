@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
+namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -16,7 +16,7 @@
         public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

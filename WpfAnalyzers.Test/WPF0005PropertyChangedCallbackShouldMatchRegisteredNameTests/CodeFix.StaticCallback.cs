@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
             public static void Message()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -55,7 +55,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegister(string oldMetadata, string newMetadata)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -82,7 +82,7 @@ namespace RoslynSandbox
 }".AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", oldMetadata);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -116,7 +116,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterInstanceMethod(string lambdaBefore, string lambdaAfter)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -142,7 +142,7 @@ namespace RoslynSandbox
 }".AssertReplace("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", lambdaBefore);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -174,7 +174,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterReadOnly()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -203,7 +203,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -237,7 +237,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterAttached()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -261,7 +261,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -290,7 +290,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyRegisterAttachedReadOnly()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -316,7 +316,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -347,7 +347,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyOverrideMetadata()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -368,7 +368,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -394,7 +394,7 @@ namespace RoslynSandbox
             public static void DependencyPropertyAddOwner()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -415,7 +415,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

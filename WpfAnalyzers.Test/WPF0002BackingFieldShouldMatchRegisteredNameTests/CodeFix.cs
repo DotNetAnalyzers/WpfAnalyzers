@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -45,7 +45,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingFields()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -69,7 +69,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -98,7 +98,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterReadOnlyBackingProperties()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -122,7 +122,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyBackingFields()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -178,7 +178,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -210,7 +210,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnlyBackingProperties()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -237,7 +237,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
         public static void AddAttributeDirectCast()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -37,7 +37,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -65,7 +65,7 @@ namespace RoslynSandbox
         public static void AddAttributeAsCast()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -127,7 +127,7 @@ namespace RoslynSandbox
         public static void AddAttributeIsPattern()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -154,7 +154,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -187,7 +187,7 @@ namespace RoslynSandbox
         public static void AddAttributeSwitchPattern()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -215,7 +215,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -249,7 +249,7 @@ namespace RoslynSandbox
         public static void WhenReturningThisObjectFields()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -299,7 +299,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -355,7 +355,7 @@ namespace RoslynSandbox
         public static void Issue188()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -406,7 +406,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -463,7 +463,7 @@ namespace RoslynSandbox
         public static void Issue189()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -509,7 +509,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -561,7 +561,7 @@ namespace RoslynSandbox
         public static void NotNullReturnsTrueConverter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -584,7 +584,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -614,7 +614,7 @@ namespace RoslynSandbox
         public static void NullToVisibilityConverter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -648,7 +648,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;

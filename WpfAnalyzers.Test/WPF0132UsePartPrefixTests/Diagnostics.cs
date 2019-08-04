@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
         public static void MissingPrefix()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Windows.Markup;
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         public static void WhenNotOverridingProvideValue()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Reflection;
     using System.Windows;
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         public static void WhenAbstract()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Markup;
 
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         public static void WhenIsGeneric()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;

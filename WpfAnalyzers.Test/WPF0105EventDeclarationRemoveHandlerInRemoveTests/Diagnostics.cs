@@ -13,7 +13,7 @@ namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void Remove()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

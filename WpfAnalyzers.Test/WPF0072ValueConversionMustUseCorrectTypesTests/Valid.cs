@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
         public static void WhenHasAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         public static void WhenHasFullyQualifiedAttribute()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         public static void WhenHasAttributeNegatedNullableBoolean()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -141,7 +141,7 @@ namespace RoslynSandbox
         public static void WhenReturningUnderscoreObjectFields()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         public static void WhenReturningThisObjectFields()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;

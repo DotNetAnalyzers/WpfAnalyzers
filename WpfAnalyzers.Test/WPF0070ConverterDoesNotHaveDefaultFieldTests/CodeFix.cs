@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         public static void IValueConverterAddDefaultFieldPublic()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -114,7 +114,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -167,7 +167,7 @@ namespace RoslynSandbox
         public static void IValueConverterAddDefaultFieldInternal()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -213,7 +213,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -266,7 +266,7 @@ namespace RoslynSandbox
         public static void IValueConverterAddDefaultFieldWhenSealedIssue225()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -285,7 +285,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -311,7 +311,7 @@ namespace RoslynSandbox
         public static void IMultiValueConverterAddDefaultField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓FooConverter : System.Windows.Data.IMultiValueConverter
     {
@@ -328,7 +328,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class FooConverter : System.Windows.Data.IMultiValueConverter
     {
@@ -352,7 +352,7 @@ namespace RoslynSandbox
         public static void AddDefaultFieldWithDocs()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -398,7 +398,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -452,7 +452,7 @@ namespace RoslynSandbox
         public static void AddDefaultProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -498,7 +498,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -551,7 +551,7 @@ namespace RoslynSandbox
         public static void AddDefaultPropertyWithDocs()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;
@@ -597,7 +597,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections;

@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
         public static void Message()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -36,7 +36,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'RoslynSandbox.FooControl.Bar' must be of type int"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'N.FooControl.Bar' must be of type int"), testCode);
         }
 
         [TestCase("double")]
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void DependencyProperty(string typeName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -70,7 +70,7 @@ namespace RoslynSandbox
 }".AssertReplace("double", typeName);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.ObjectModel;
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithThis()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -122,7 +122,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -150,7 +150,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyExpressionBodyAccessors()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -172,7 +172,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -200,7 +200,7 @@ namespace RoslynSandbox
         public static void AddOwnerAttachedPropertyInSource()
         {
             var foo = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -227,7 +227,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -245,7 +245,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -269,7 +269,7 @@ namespace RoslynSandbox
         public static void AddOwnerTextElementFontSize()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Documents;
@@ -287,7 +287,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Documents;
@@ -311,7 +311,7 @@ namespace RoslynSandbox
         public static void AddOwnerBorderBorderThicknessProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -329,7 +329,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -353,7 +353,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -377,7 +377,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

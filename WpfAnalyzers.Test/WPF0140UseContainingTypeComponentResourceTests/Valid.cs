@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         public static void WhenExpectedArguments()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
         public static void WhenCorrectSignature()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Controls;
     using System.Windows.Markup;

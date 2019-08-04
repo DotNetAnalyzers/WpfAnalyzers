@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
         public static void ReadOnlyDependencyProperty(string method)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -42,7 +42,7 @@ namespace RoslynSandbox
 }".AssertReplace("SetValue", method);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -99,7 +99,7 @@ namespace RoslynSandbox
 }".AssertReplace("SetValue", method);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -130,7 +130,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly(string method)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -156,7 +156,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method);
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 

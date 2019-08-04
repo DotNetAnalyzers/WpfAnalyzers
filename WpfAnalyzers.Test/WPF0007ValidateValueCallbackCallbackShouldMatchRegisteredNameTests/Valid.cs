@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
         public static void WhenValidationMethodInHelperClass(string callback)
         {
             var validationCode = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class CommonValidation
     {
@@ -30,7 +30,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -74,7 +74,7 @@ namespace RoslynSandbox
         public static void WhenValidationMethodIsUsedMoreThanOnce()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -127,7 +127,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyNoCallback()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyWithCallback(string metadata)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -198,7 +198,7 @@ namespace RoslynSandbox
         public static void ReadOnlyDependencyProperty()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -243,7 +243,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttached()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -284,7 +284,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -332,7 +332,7 @@ namespace RoslynSandbox
         public static void WhenUsingMethodInOtherClass()
         {
             var commonValidation = @"
-namespace RoslynSandbox
+namespace N
 {
     internal static class CommonValidation
     {
@@ -348,7 +348,7 @@ namespace RoslynSandbox
     }
 }";
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
         public static void IgnoreSetDataContext()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

@@ -18,7 +18,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         public static void ClrProperty(bool underscore, string value)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -48,7 +48,7 @@ namespace RoslynSandbox
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace RoslynSandbox
         public static void ClrPropertyWithTrivia(bool underscore, string value)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -119,7 +119,7 @@ namespace RoslynSandbox
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -162,7 +162,7 @@ namespace RoslynSandbox
         public static void FromOutside(string expressionBefore, string expressionAfter)
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -184,7 +184,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -204,7 +204,7 @@ namespace RoslynSandbox
 }".AssertReplace("FooControl.Bar = 1;", "FooControl." + expressionBefore);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -230,7 +230,7 @@ namespace RoslynSandbox
         public static void DependencyPropertyFromOutsideConditional(string setExpression)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -243,7 +243,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -270,7 +270,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -289,7 +289,7 @@ namespace RoslynSandbox
         public static void ClrPropertyObject()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -317,7 +317,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -350,7 +350,7 @@ namespace RoslynSandbox
         public static void ClrPropertyWhenFieldNameIsNotMatching()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -376,7 +376,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -408,7 +408,7 @@ namespace RoslynSandbox
         public static void InternalClrProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -434,7 +434,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -466,7 +466,7 @@ namespace RoslynSandbox
         public static void ClrPropertySetInGenericClass()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -492,7 +492,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -524,7 +524,7 @@ namespace RoslynSandbox
         public static void ClrPropertyWithGenericBaseClass()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -545,7 +545,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -560,7 +560,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -580,7 +580,7 @@ namespace RoslynSandbox
         public static void ClrPropertyOnGenericClass()
         {
             var fooControlCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -600,7 +600,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -617,7 +617,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -639,7 +639,7 @@ namespace RoslynSandbox
         public static void ClrPropertyWithImplicitCastInt()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -665,7 +665,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -696,7 +696,7 @@ namespace RoslynSandbox
         public static void ClrPropertyInBaseclass()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -711,7 +711,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -732,7 +732,7 @@ namespace RoslynSandbox
         public static void SetValueInBaseclass()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -747,7 +747,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -771,7 +771,7 @@ namespace RoslynSandbox
         public static void SetValue(bool underscore, string setExpression)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -801,7 +801,7 @@ namespace RoslynSandbox
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -840,7 +840,7 @@ namespace RoslynSandbox
         public static void SetValueWithTrivia(bool underscore, string setExpression)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -872,7 +872,7 @@ namespace RoslynSandbox
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -910,7 +910,7 @@ namespace RoslynSandbox
         public static void SetValueInCallback()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -958,7 +958,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
 
@@ -1015,7 +1015,7 @@ namespace RoslynSandbox
         public static void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -1033,7 +1033,7 @@ namespace RoslynSandbox
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -1058,7 +1058,7 @@ namespace RoslynSandbox
         public static void TextBoxFieldTexUsingClrProperty(string thisExpression)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -1075,7 +1075,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.", thisExpression);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -1098,7 +1098,7 @@ namespace RoslynSandbox
         public static void SetValueInLambda()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -1128,7 +1128,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

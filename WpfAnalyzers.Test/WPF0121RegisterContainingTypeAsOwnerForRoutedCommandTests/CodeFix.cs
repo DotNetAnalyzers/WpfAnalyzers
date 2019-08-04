@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
         public static void RoutedCommand()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -26,7 +26,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         public static void RoutedUICommand()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
@@ -53,7 +53,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows.Input;
 
