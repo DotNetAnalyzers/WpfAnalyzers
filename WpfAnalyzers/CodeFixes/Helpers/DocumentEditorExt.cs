@@ -40,30 +40,19 @@ namespace WpfAnalyzers
 
             public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
             {
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+                if (TryUpdate(node.Modifiers, out var modifiers))
                 {
-                    node = node.WithModifiers(node.Modifiers.Remove(modifier));
+                    return node.WithModifiers(modifiers);
                 }
 
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier))
-                {
-                    node = node.WithModifiers(node.Modifiers.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
-                }
-
-                return base.VisitFieldDeclaration(node);
+                return node;
             }
 
             public override SyntaxNode VisitEventDeclaration(EventDeclarationSyntax node)
             {
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+                if (TryUpdate(node.Modifiers, out var modifiers))
                 {
-                    node = node.WithModifiers(node.Modifiers.Remove(modifier));
-                }
-
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier) &&
-                    !node.Modifiers.Any(SyntaxKind.OverrideKeyword))
-                {
-                    node = node.WithModifiers(node.Modifiers.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+                    node = node.WithModifiers(modifiers);
                 }
 
                 return base.VisitEventDeclaration(node);
@@ -71,15 +60,9 @@ namespace WpfAnalyzers
 
             public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
             {
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+                if (TryUpdate(node.Modifiers, out var modifiers))
                 {
-                    node = node.WithModifiers(node.Modifiers.Remove(modifier));
-                }
-
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier) &&
-                    !node.Modifiers.Any(SyntaxKind.OverrideKeyword))
-                {
-                    node = node.WithModifiers(node.Modifiers.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+                    node = node.WithModifiers(modifiers);
                 }
 
                 return base.VisitPropertyDeclaration(node);
@@ -87,43 +70,24 @@ namespace WpfAnalyzers
 
             public override SyntaxNode VisitAccessorDeclaration(AccessorDeclarationSyntax node)
             {
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+                if (node.TryFirstAncestor(out BasePropertyDeclarationSyntax parent) &&
+                    parent.Modifiers.Any(SyntaxKind.ProtectedKeyword) &&
+                    node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier))
                 {
-                    node = node.WithModifiers(node.Modifiers.Remove(modifier));
+                    return node.WithModifiers(node.Modifiers.Remove(modifier));
                 }
 
-                var parentModifiers = node.FirstAncestor<BasePropertyDeclarationSyntax>()?.Modifiers;
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier) &&
-                    parentModifiers?.Any(SyntaxKind.OverrideKeyword) == false)
-                {
-                    node = node.WithModifiers(node.Modifiers.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
-                }
-
-                if (parentModifiers?.TrySingle(x => x.IsKind(SyntaxKind.PrivateKeyword), out modifier) == true)
-                {
-                    if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.PrivateKeyword), out modifier))
-                    {
-                        node = node.WithModifiers(node.Modifiers.Remove(modifier));
-                    }
-                }
-
-                return base.VisitAccessorDeclaration(node);
+                return node;
             }
 
             public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
             {
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+                if (TryUpdate(node.Modifiers, out var modifiers))
                 {
-                    node = node.WithModifiers(node.Modifiers.Remove(modifier));
+                    return node.WithModifiers(modifiers);
                 }
 
-                if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier) &&
-                    !node.Modifiers.Any(SyntaxKind.OverrideKeyword))
-                {
-                    node = node.WithModifiers(node.Modifiers.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
-                }
-
-                return base.VisitMethodDeclaration(node);
+                return node;
             }
 
             internal SyntaxNode Visit(SyntaxNode node, ClassDeclarationSyntax classDeclaration)
@@ -132,6 +96,22 @@ namespace WpfAnalyzers
                 var updated = this.Visit(node);
                 CurrentClass.Value = null;
                 return updated;
+            }
+
+            private static bool TryUpdate(SyntaxTokenList modifiers, out SyntaxTokenList result)
+            {
+                result = modifiers;
+                if (modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
+                {
+                    result = modifiers.Remove(modifier);
+                }
+
+                if (result.TrySingle(x => x.IsKind(SyntaxKind.ProtectedKeyword), out modifier))
+                {
+                    result = result.Replace(modifier, SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+                }
+
+                return result != modifiers;
             }
         }
     }
