@@ -22,7 +22,7 @@ namespace WpfAnalyzers.Test
         private static readonly Solution Solution = CodeFactory.CreateSolution(
             new FileInfo("C:\\Git\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
             AllAnalyzers,
-            RoslynAssert.MetadataReferences);
+            MetadataReferences.FromAttributes());
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SolutionRepro(DiagnosticAnalyzer analyzer)
