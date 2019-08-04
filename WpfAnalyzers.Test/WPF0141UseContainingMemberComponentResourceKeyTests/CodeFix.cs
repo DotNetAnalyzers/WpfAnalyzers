@@ -23,7 +23,7 @@ namespace RoslynSandbox
     {
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
             typeof(string),
-            nameof(ResourceKeys));
+            ↓nameof(ResourceKeys));
     }
 }";
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)."), testCode);

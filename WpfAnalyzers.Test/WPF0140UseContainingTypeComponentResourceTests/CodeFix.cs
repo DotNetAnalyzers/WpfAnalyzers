@@ -54,7 +54,7 @@ namespace RoslynSandbox
 
     public static class ResourceKeys
     {
-        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey();
+        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey↓();
     }
 }";
 
