@@ -18,7 +18,7 @@ namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : ↓IValueConverter
+    public class C : ↓IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -32,7 +32,7 @@ namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IValueConverter
+    public class C : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -41,7 +41,7 @@ namespace N
 
         object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
 }";
@@ -56,7 +56,7 @@ namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : ↓IMultiValueConverter
+    public class C : ↓IMultiValueConverter
     {
         public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -70,7 +70,7 @@ namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IMultiValueConverter
+    public class C : IMultiValueConverter
     {
         public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -79,7 +79,7 @@ namespace N
 
         object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
 }";

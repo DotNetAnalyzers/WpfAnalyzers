@@ -10,26 +10,25 @@ namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
         private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
-        [TestCase("FooConverter")]
-        [TestCase("BarConverter")]
-        public void IValueConverter(string className)
+        [Test]
+        public void IValueConverter()
         {
-            var testCode = @"
+            var before = @"
 namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IValueConverter
+    public class C : ↓IValueConverter
     {
     }
-}".AssertReplace("FooConverter", className);
+}";
 
             var after = @"
 namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IValueConverter
+    public class C : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -38,12 +37,12 @@ namespace N
 
         object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
-}".AssertReplace("FooConverter", className);
+}";
 
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -52,7 +51,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class FooConverter : ↓System.Windows.Data.IValueConverter
+    public class C : ↓System.Windows.Data.IValueConverter
     {
     }
 }";
@@ -60,7 +59,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class FooConverter : System.Windows.Data.IValueConverter
+    public class C : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -69,33 +68,32 @@ namespace N
 
         object System.Windows.Data.IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
 }";
             RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("FooConverter")]
-        [TestCase("BarConverter")]
-        public void IMultiValueConverter(string className)
+        [Test]
+        public void IMultiValueConverter()
         {
-            var testCode = @"
+            var before = @"
 namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IMultiValueConverter
+    public class C : ↓IMultiValueConverter
     {
     }
-}".AssertReplace("FooConverter", className);
+}";
 
             var after = @"
 namespace N
 {
     using System.Windows.Data;
 
-    public class FooConverter : IMultiValueConverter
+    public class C : IMultiValueConverter
     {
         public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -104,12 +102,12 @@ namespace N
 
         object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
-}".AssertReplace("FooConverter", className);
+}";
 
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -118,7 +116,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class FooConverter : ↓System.Windows.Data.IMultiValueConverter
+    public class C : ↓System.Windows.Data.IMultiValueConverter
     {
     }
 }";
@@ -126,7 +124,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class FooConverter : System.Windows.Data.IMultiValueConverter
+    public class C : System.Windows.Data.IMultiValueConverter
     {
         public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -135,7 +133,7 @@ namespace N
 
         object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotSupportedException($""{nameof(FooConverter)} can only be used in OneWay bindings"");
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
         }
     }
 }";
