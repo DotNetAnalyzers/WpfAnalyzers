@@ -159,7 +159,7 @@ namespace RoslynSandbox
         [TestCase("Bar = CreateValue();", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateValue());", "SetCurrentValue(FooControl.BarProperty, CreateValue());")]
         [TestCase("SetValue(FooControl.BarProperty, CreateObjectValue());", "SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
-        public static void FromOutside(string before, string after)
+        public static void FromOutside(string expressionBefore, string expressionAfter)
         {
             var fooControlCode = @"
 namespace RoslynSandbox
@@ -183,7 +183,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -201,9 +201,9 @@ namespace RoslynSandbox
         private static double CreateValue() => 4;
         private static object CreateObjectValue() => 4;
     }
-}".AssertReplace("FooControl.Bar = 1;", "FooControl." + before);
+}".AssertReplace("FooControl.Bar = 1;", "FooControl." + expressionBefore);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -221,9 +221,9 @@ namespace RoslynSandbox
         private static double CreateValue() => 4;
         private static object CreateObjectValue() => 4;
     }
-}".AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + after);
+}".AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", "FooControl." + expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { testCode, fooControlCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, fooControlCode }, after);
         }
 
         [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);")]

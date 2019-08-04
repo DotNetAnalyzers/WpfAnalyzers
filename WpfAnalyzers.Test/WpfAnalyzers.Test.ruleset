@@ -115,8 +115,5 @@
     <Rule Id="SA1652" Action="None" />
     <Rule Id="SA0001" Action="None" />
   </Rules>
-  <Rules AnalyzerId="Gu.Roslyn.Asserts.Analyzers" RuleNamespace="Gu.Roslyn.Asserts.Analyzers">
-    <Rule Id="GURA01" Action="Warning" />
-    <Rule Id="GURA04" Action="Warning" />
-  </Rules>
+  <Rules AnalyzerId="Gu.Roslyn.Asserts.Analyzers" RuleNamespace="Gu.Roslyn.Asserts.Analyzers" />
 </RuleSet>

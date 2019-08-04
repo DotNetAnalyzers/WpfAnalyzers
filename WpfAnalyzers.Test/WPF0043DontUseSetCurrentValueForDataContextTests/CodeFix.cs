@@ -15,9 +15,9 @@ namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
         [TestCase("this.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "this.SetValue(FrameworkElement.DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(DataContextProperty, 1);", "SetValue(DataContextProperty, 1);")]
         [TestCase("SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public static void ThisSetCurrentValue(string before, string after)
+        public static void ThisSetCurrentValue(string statementBefore, string statementAfter)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -30,9 +30,9 @@ namespace RoslynSandbox
             ↓this.SetCurrentValue(DataContextProperty, 1);
         }
     }
-}".AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", before);
+}".AssertReplace("this.SetCurrentValue(DataContextProperty, 1);", statementBefore);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -45,16 +45,16 @@ namespace RoslynSandbox
             this.SetValue(DataContextProperty, 1);
         }
     }
-}".AssertReplace("this.SetValue(DataContextProperty, 1);", after);
+}".AssertReplace("this.SetValue(DataContextProperty, 1);", statementAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("control.SetCurrentValue(DataContextProperty, 1);", "control.SetValue(DataContextProperty, 1);")]
         [TestCase("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", "control.SetValue(FrameworkElement.DataContextProperty, 1);")]
-        public static void ControlSetCurrentValue(string before, string after)
+        public static void ControlSetCurrentValue(string expressionBefore, string expressionAfter)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -68,9 +68,9 @@ namespace RoslynSandbox
             ↓control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);
         }
     }
-}".AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", before);
+}".AssertReplace("control.SetCurrentValue(FrameworkElement.DataContextProperty, 1);", expressionBefore);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -84,9 +84,9 @@ namespace RoslynSandbox
             control.SetValue(FrameworkElement.DataContextProperty, 1);
         }
     }
-}".AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", after);
+}".AssertReplace("control.SetValue(FrameworkElement.DataContextProperty, 1);", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

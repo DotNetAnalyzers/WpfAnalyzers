@@ -30,7 +30,7 @@ namespace RoslynSandbox
         public event RoutedEventHandler ValueChanged
         {
             add { this.AddHandler(ValueChangedEvent, value); }
-            remove { this.AddHandler(ValueChangedEvent, value); }
+            remove { ↓this.AddHandler(ValueChangedEvent, value); }
         }
     }
 }";

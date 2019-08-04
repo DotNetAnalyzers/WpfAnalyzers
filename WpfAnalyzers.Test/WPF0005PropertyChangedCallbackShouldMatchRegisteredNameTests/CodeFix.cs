@@ -15,9 +15,9 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
 
             [TestCase("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue))")]
-            public static void DependencyPropertyRegisterInstanceMethodOldBeforeNew(string before, string after)
+            public static void DependencyPropertyRegisterInstanceMethodOldBeforeNew(string lambdaBefore, string lambdaAfter)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -43,9 +43,9 @@ namespace RoslynSandbox
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", before);
+}".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.OldValue, (double)e.NewValue)", lambdaBefore);
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -71,16 +71,16 @@ namespace RoslynSandbox
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue)", after);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.OldValue, (double)e.NewValue)", lambdaAfter);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [TestCase("(d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
             [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
-            public static void DependencyPropertyRegisterInstanceMethodNewBeforeOld(string before, string after)
+            public static void DependencyPropertyRegisterInstanceMethodNewBeforeOld(string lambdaBefore, string lambdaAfter)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -104,9 +104,9 @@ namespace RoslynSandbox
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue)", before);
+}".AssertReplace("(d, e) => ((FooControl)d).WrongName((double)e.NewValue, (double)e.OldValue)", lambdaBefore);
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -130,9 +130,9 @@ namespace RoslynSandbox
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", after);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", lambdaAfter);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]

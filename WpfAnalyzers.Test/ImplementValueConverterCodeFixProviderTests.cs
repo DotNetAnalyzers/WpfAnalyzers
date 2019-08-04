@@ -8,8 +8,7 @@ namespace WpfAnalyzers.Test
     public class ImplementValueConverterCodeFixProviderTests
     {
         private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
-        //// ReSharper disable once InconsistentNaming
-        private static readonly ExpectedDiagnostic CS0535 = ExpectedDiagnostic.Create(nameof(CS0535));
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
         [TestCase("FooConverter")]
         [TestCase("BarConverter")]
@@ -44,7 +43,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            RoslynAssert.FixAll(Fix, CS0535, testCode, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -82,7 +81,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS0535, before, after);
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -112,7 +111,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, CS0535, before, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("FooConverter")]
@@ -148,7 +147,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            RoslynAssert.FixAll(Fix, CS0535, testCode, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -187,7 +186,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Fix, CS0535, before, after);
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -217,7 +216,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, CS0535, before, after);
+            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

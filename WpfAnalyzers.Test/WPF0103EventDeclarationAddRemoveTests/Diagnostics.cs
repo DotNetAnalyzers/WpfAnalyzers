@@ -84,7 +84,7 @@ namespace RoslynSandbox
         [Test]
         public static void EventManagerRegisterRoutedEventExpressionBodies()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -106,15 +106,15 @@ namespace RoslynSandbox
             typeof(RoutedEventHandler),
             typeof(FooControl));
 
-        public event RoutedEventHandler Value1Changed
+        public event RoutedEventHandler ↓Value1Changed
         {
             add => this.AddHandler(Value1ChangedEvent, value);
-            remove => this.RemoveHandler(↓Value2ChangedEvent, value);
+            remove => this.RemoveHandler(Value2ChangedEvent, value);
         }
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

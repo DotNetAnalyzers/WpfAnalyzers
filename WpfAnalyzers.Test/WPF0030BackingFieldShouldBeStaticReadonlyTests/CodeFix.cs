@@ -18,9 +18,9 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
             [TestCase("public readonly", "public static readonly")]
             [TestCase("private static", "private static readonly")]
             [TestCase("private", "private static readonly")]
-            public static void DependencyPropertyRegisterBackingField(string before, string after)
+            public static void DependencyPropertyRegisterBackingField(string modifiersBefore, string modifiersAfter)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -36,9 +36,9 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("public static DependencyProperty", before + " DependencyProperty");
+}".AssertReplace("public static DependencyProperty", modifiersBefore + " DependencyProperty");
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -54,9 +54,9 @@ namespace RoslynSandbox
             set { SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("public static readonly DependencyProperty", after + " DependencyProperty");
+}".AssertReplace("public static readonly DependencyProperty", modifiersAfter + " DependencyProperty");
 
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
