@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand
         [Test]
         public static void RoutedCommand()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -25,7 +25,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -35,13 +35,13 @@ namespace RoslynSandbox
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommand()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -52,7 +52,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace RoslynSandbox
             [Test]
             public static void ReadOnlyDependencyProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -86,7 +86,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -109,13 +109,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void DependencyPropertyRegisterAttached()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -140,7 +140,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -164,13 +164,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void DependencyPropertyRegisterAttachedReadOnlyKeyField()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -223,13 +223,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void DependencyPropertyRegisterAttachedReadOnlyPropertyField()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -254,7 +254,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -278,7 +278,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [TestCase("FooControl")]
@@ -312,7 +312,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -330,7 +330,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooControl", typeName);
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -348,7 +348,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooControl", typeName);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, before }, after);
             }
         }
     }

@@ -25,7 +25,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -44,13 +44,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, after);
         }
 
         [Test]
         public void IValueConverterConvertBack()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -64,7 +64,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -82,13 +82,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.CodeFix(Fix, CS0535, before, after);
         }
 
         [Test]
         public void FullyQualifiedIValueConverter()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class FooConverter : ↓System.Windows.Data.IValueConverter
@@ -96,7 +96,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class FooConverter : System.Windows.Data.IValueConverter
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, before, after);
         }
 
         [TestCase("FooConverter")]
@@ -129,7 +129,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -148,13 +148,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace("FooConverter", className);
 
-            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, testCode, after);
         }
 
         [Test]
         public void IMultiValueConverterConvertBack()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -168,7 +168,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Data;
@@ -187,13 +187,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.CodeFix(Fix, CS0535, before, after);
         }
 
         [Test]
         public void FullyQualifiedIMultiValueConverter()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class FooConverter : ↓System.Windows.Data.IMultiValueConverter
@@ -201,7 +201,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class FooConverter : System.Windows.Data.IMultiValueConverter
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, CS0535, testCode, fixedCode);
+            RoslynAssert.FixAll(Fix, CS0535, before, after);
         }
     }
 }

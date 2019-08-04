@@ -67,7 +67,7 @@ namespace RoslynSandbox
         [Test]
         public static void IValueConverterAddDefaultFieldPublic()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -113,7 +113,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -160,13 +160,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
         }
 
         [Test]
         public static void IValueConverterAddDefaultFieldInternal()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -212,7 +212,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -259,13 +259,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
         }
 
         [Test]
         public static void IValueConverterAddDefaultFieldWhenSealedIssue225()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -284,7 +284,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -304,13 +304,13 @@ namespace RoslynSandbox
             => throw new NotImplementedException();
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
         }
 
         [Test]
         public static void IMultiValueConverterAddDefaultField()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓FooConverter : System.Windows.Data.IMultiValueConverter
@@ -327,7 +327,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public sealed class FooConverter : System.Windows.Data.IMultiValueConverter
@@ -345,13 +345,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
         }
 
         [Test]
         public static void AddDefaultFieldWithDocs()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -397,7 +397,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -445,13 +445,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default field with docs.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field with docs.");
         }
 
         [Test]
         public static void AddDefaultProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -497,7 +497,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -544,13 +544,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default property.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property.");
         }
 
         [Test]
         public static void AddDefaultPropertyWithDocs()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -596,7 +596,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -644,7 +644,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, "Add default property with docs.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property with docs.");
         }
     }
 }

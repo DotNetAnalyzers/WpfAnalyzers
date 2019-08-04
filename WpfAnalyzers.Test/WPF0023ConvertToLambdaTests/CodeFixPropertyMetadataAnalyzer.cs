@@ -48,7 +48,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -74,7 +74,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
     }
 }

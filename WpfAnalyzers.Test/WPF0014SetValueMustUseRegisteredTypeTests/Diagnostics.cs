@@ -194,7 +194,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fooControlPart2 = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -208,7 +208,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1);", setValueCall);
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, fooControlPart2);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, code);
         }
 
         [Test]

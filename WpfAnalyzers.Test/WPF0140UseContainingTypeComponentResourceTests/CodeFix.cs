@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         [Test]
         public static void WhenNotContainingType()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -28,7 +28,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -40,14 +40,14 @@ namespace RoslynSandbox
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            RoslynAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode);
-            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), testCode, fixedCode);
+            RoslynAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, before);
+            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), before, after);
         }
 
         [Test]
         public static void WhenNoArguments()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -68,8 +68,8 @@ namespace RoslynSandbox
         public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(typeof(ResourceKeys), nameof(FooKey));
     }
 }";
-            RoslynAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, testCode);
-            RoslynAssert.CodeFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.NoFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, before);
+            RoslynAssert.CodeFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, before, after);
         }
     }
 }

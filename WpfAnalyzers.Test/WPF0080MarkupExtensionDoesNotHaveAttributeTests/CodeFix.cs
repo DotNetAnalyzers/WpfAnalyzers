@@ -35,7 +35,7 @@ namespace RoslynSandbox
         [Test]
         public static void DirectCastWrongSourceType()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System;
@@ -65,7 +65,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

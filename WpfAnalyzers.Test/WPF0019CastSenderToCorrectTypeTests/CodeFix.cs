@@ -48,7 +48,7 @@ namespace RoslynSandbox
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged))")]
         public static void DependencyPropertyRegisterPropertyChangedCallbackMethodGroup(string metadata)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -75,7 +75,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -102,14 +102,14 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged)", metadata);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("(d, e) => OnValueChanged(d, e)")]
         [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))")]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingStatic(string lambda)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -138,7 +138,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -167,7 +167,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(d, e) => OnValueChanged(d, e)", lambda);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("(d, e) => (({0})d).InvalidateArrange()")]
@@ -198,7 +198,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -222,14 +222,14 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
         [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
         public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -262,7 +262,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -295,14 +295,14 @@ namespace RoslynSandbox
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("(↓DataGrid)d", "(FooControl)d")]
         [TestCase("d as ↓DataGrid", "d as FooControl")]
         public static void DependencyPropertyRegisterCast(string fromCast, string toCast)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -329,7 +329,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(↓DataGrid)d", fromCast);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -356,13 +356,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace("(FooControl)d", toCast);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void DependencyPropertyRegisterReadOnly()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -391,7 +391,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -419,13 +419,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void DependencyPropertyOverrideMetadata()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -445,7 +445,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -464,13 +464,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void DependencyPropertyAddOwner()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -491,7 +491,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -511,7 +511,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

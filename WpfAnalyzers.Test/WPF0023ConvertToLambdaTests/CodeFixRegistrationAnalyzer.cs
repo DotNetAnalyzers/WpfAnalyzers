@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(value => (int)value >= 0)")]
         public static void RemoveMethod(string callback, string lambda)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -45,7 +45,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("ValidateValue);", $"{callback});");
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -68,7 +68,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("value => (int)value >= 0", lambda);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Convert to lambda");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Convert to lambda");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
         [Test]
         public static void RoutedCommandNotReadonlyField()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -26,7 +26,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -36,13 +36,13 @@ namespace RoslynSandbox
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedCommandNotStaticField()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -53,7 +53,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -63,13 +63,13 @@ namespace RoslynSandbox
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedCommandMutableField()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -80,7 +80,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -90,13 +90,13 @@ namespace RoslynSandbox
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommandStaticMutableProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -107,7 +107,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -117,13 +117,13 @@ namespace RoslynSandbox
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommandStaticExpressionBody()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -134,7 +134,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -144,13 +144,13 @@ namespace RoslynSandbox
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommandInstanceExpressionBody()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -161,7 +161,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -171,13 +171,13 @@ namespace RoslynSandbox
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommandInstanceProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -188,7 +188,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -198,13 +198,13 @@ namespace RoslynSandbox
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void RoutedUICommandMutableInstanceProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -215,7 +215,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows.Input;
@@ -225,7 +225,7 @@ namespace RoslynSandbox
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
         }
     }
 }

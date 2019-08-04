@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
         [Test]
         public static void AddAttributeDirectCast()
         {
-            var testCode = @"
+            var before = @"
 namespace Gu.Wpf.PropertyGrid
 {
     using System;
@@ -122,7 +122,7 @@ namespace Gu.Wpf.PropertyGrid
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace Gu.Wpf.PropertyGrid
 {
     using System;
@@ -229,7 +229,7 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, allowCompilationErrors: AllowCompilationErrors.Yes);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, allowCompilationErrors: AllowCompilationErrors.Yes);
         }
     }
 }

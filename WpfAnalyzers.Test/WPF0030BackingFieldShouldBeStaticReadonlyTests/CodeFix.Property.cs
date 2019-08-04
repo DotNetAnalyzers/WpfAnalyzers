@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
             [Test]
             public static void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -51,13 +51,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void DependencyPropertyRegisterBackingPropertyGetSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -76,7 +76,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -94,13 +94,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void DependencyPropertyRegisterBackingPropertyExpressionBody()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -139,7 +139,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
         }
     }

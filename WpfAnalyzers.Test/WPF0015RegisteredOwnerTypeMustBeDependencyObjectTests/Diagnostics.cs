@@ -90,7 +90,7 @@ namespace RoslynSandbox
         [Test]
         public static void DependencyPropertyAddOwner()
         {
-            var part1 = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -129,7 +129,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, part1, part2);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code, part2);
         }
 
         [Test]

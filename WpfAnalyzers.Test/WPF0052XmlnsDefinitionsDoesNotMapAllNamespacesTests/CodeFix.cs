@@ -93,7 +93,7 @@ namespace Gu.Wpf.Geometry
         [Test]
         public static void WhenMissingNamespace()
         {
-            var testCode = @"
+            var before = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -163,7 +163,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -234,13 +234,13 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenMissingNamespaceWithNameColon()
         {
-            var testCode = @"
+            var before = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -310,7 +310,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -381,7 +381,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

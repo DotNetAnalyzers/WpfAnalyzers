@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
         [TestCase("this.SetCurrentValue")]
         public static void ReadOnlyDependencyProperty(string method)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -41,7 +41,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -65,7 +65,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("SetValue")]
@@ -74,7 +74,7 @@ namespace RoslynSandbox
         [TestCase("this.SetCurrentValue")]
         public static void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -98,7 +98,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -122,14 +122,14 @@ namespace RoslynSandbox
     }
 }".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public static void DependencyPropertyRegisterAttachedReadOnly(string method)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("SetValue", method);
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -182,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }
