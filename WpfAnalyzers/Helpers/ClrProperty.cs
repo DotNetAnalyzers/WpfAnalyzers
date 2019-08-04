@@ -47,7 +47,7 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool TrySingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = default(BackingFieldOrProperty);
+            result = default;
             BackingFieldOrProperty getter;
             BackingFieldOrProperty setter;
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
@@ -86,8 +86,8 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool TryGetBackingFields(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {
-            getField = default(BackingFieldOrProperty);
-            setField = default(BackingFieldOrProperty);
+            getField = default;
+            setField = default;
             if (propertyDeclaration.TryGetGetter(out var getAccessor) &&
                 propertyDeclaration.TryGetSetter(out var setAccessor))
             {
@@ -120,7 +120,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetRegisterField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = default(BackingFieldOrProperty);
+            result = default;
             if (TryGetBackingFields(property, semanticModel, cancellationToken, out var getter, out var setter))
             {
                 if (DependencyProperty.TryGetDependencyPropertyKeyField(getter, semanticModel, cancellationToken, out var keyField))
@@ -143,8 +143,8 @@ namespace WpfAnalyzers
         /// </summary>
         private static bool TryGetBackingFields(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
         {
-            getField = default(BackingFieldOrProperty);
-            setField = default(BackingFieldOrProperty);
+            getField = default;
+            setField = default;
 
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
                 property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
@@ -170,8 +170,8 @@ namespace WpfAnalyzers
         /// </summary>
         private static bool TryGetBackingFieldsByName(IPropertySymbol property, Compilation compilation, out BackingFieldOrProperty getter, out BackingFieldOrProperty setter)
         {
-            getter = default(BackingFieldOrProperty);
-            setter = default(BackingFieldOrProperty);
+            getter = default;
+            setter = default;
             if (property == null ||
                 !property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, compilation))
             {

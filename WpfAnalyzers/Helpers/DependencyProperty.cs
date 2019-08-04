@@ -133,7 +133,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = default(BackingFieldOrProperty);
+            result = default;
             if (backing.TryGetAssignedValue(cancellationToken, out var value) &&
                 semanticModel.TryGetSymbol(value, cancellationToken, out ISymbol symbol))
             {
@@ -161,7 +161,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
-            result = default(BackingFieldOrProperty);
+            result = default;
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbol.DependencyProperty.AddOwner, cancellationToken, out _))

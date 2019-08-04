@@ -85,7 +85,7 @@ namespace WpfAnalyzers
 
         private static bool TryGetBackingMember(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context, out FieldOrProperty fieldOrProperty, out MemberDeclarationSyntax memberDeclaration)
         {
-            fieldOrProperty = default(FieldOrProperty);
+            fieldOrProperty = default;
             memberDeclaration = null;
             switch (objectCreation.Parent)
             {

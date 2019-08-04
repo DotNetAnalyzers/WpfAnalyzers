@@ -24,7 +24,7 @@ namespace WpfAnalyzers
 
         internal static bool IsAttachedSet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
         {
-            setField = default(BackingFieldOrProperty);
+            setField = default;
             if (!IsPotentialClrSetMethod(method, semanticModel.Compilation))
             {
                 return false;
@@ -54,7 +54,7 @@ namespace WpfAnalyzers
 
         internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
         {
-            getField = default(BackingFieldOrProperty);
+            getField = default;
             return IsPotentialClrGetMethod(method, semanticModel.Compilation) &&
                    method.TrySingleMethodDeclaration(cancellationToken, out var declaration) &&
                    IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
@@ -63,7 +63,7 @@ namespace WpfAnalyzers
         internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)
         {
             setValueCall = null;
-            setField = default(BackingFieldOrProperty);
+            setField = default;
             if (method == null ||
                 method.ParameterList.Parameters.Count != 2 ||
                 !method.ReturnType.IsVoid() ||
@@ -122,7 +122,7 @@ namespace WpfAnalyzers
         internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty getField)
         {
             call = null;
-            getField = default(BackingFieldOrProperty);
+            getField = default;
             if (method == null ||
                 method.ParameterList.Parameters.Count != 1 ||
                 method.ReturnType.IsVoid() ||

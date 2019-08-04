@@ -48,7 +48,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)
         {
-            fieldOrProperty = default(BackingFieldOrProperty);
+            fieldOrProperty = default;
             var invocation = objectCreation.FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (invocation == null)
             {
