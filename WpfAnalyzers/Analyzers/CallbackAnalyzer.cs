@@ -17,7 +17,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0020CastValueToCorrectType,
             Descriptors.WPF0021DirectCastSenderToExactType,
             Descriptors.WPF0022DirectCastValueToExactType,
-            WPF0062DocumentPropertyChangedCallback.Descriptor);
+            Descriptors.WPF0062DocumentPropertyChangedCallback);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -90,9 +90,9 @@ namespace WpfAnalyzers
                             HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(
-                                                         WPF0062DocumentPropertyChangedCallback.Descriptor,
+                                                         Descriptors.WPF0062DocumentPropertyChangedCallback,
                                                          location,
-                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
+                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
                         }
                     }
                 }

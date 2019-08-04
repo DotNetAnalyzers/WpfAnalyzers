@@ -14,7 +14,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0062DocumentPropertyChangedCallback.Descriptor.Id);
+            Descriptors.WPF0062DocumentPropertyChangedCallback.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -25,7 +25,7 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
-                    diagnostic.Properties.TryGetValue(nameof(WPF0062DocumentPropertyChangedCallback), out var text) &&
+                    diagnostic.Properties.TryGetValue(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), out var text) &&
                     text != null)
                 {
                     context.RegisterCodeFix(

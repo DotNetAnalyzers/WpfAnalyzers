@@ -266,6 +266,186 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "A readonly DependencyProperty must be set with DependencyPropertyKey.");
 
+        internal static readonly DiagnosticDescriptor WPF0041SetMutableUsingSetCurrentValue = Create(
+            id: "WPF0041",
+            title: "Set mutable dependency properties using SetCurrentValue.",
+            messageFormat: "Use SetCurrentValue({0}, {1})",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Prefer setting mutable dependency properties using SetCurrentValue.");
+
+        internal static readonly DiagnosticDescriptor WPF0042AvoidSideEffectsInClrAccessors = Create(
+            id: "WPF0042",
+            title: "Avoid side effects in CLR accessors.",
+            messageFormat: "Avoid side effects in CLR accessors.",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Avoid side effects in CLR accessors.");
+
+        internal static readonly DiagnosticDescriptor WPF0043DoNotUseSetCurrentValueForDataContext = Create(
+            id: "WPF0043",
+            title: "Don't set DataContext using SetCurrentValue.",
+            messageFormat: "Use SetValue({0}, {1})",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Set DataContext using SetValue.");
+
+        internal static readonly DiagnosticDescriptor WPF0050XmlnsPrefixMustMatchXmlnsDefinition = Create(
+            id: "WPF0050",
+            title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
+            messageFormat: "There is no [{0}] mapping to '{1}'",
+            category: AnalyzerCategory.XmlnsDefinition,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.");
+
+        internal static readonly DiagnosticDescriptor WPF0051XmlnsDefinitionMustMapExistingNamespace = Create(
+            id: "WPF0051",
+            title: "XmlnsDefinition must map to existing namespace.",
+            messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist.",
+            category: AnalyzerCategory.XmlnsDefinition,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true,
+            description: "XmlnsDefinition must map to existing namespace.");
+
+        internal static readonly DiagnosticDescriptor WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces = Create(
+            id: "WPF0052",
+            title: "XmlnsDefinitions does not map all namespaces with public types.",
+            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.\r\nThe following namespaces are not mapped:\r\n{0}",
+            category: AnalyzerCategory.XmlnsDefinition,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "XmlnsDefinitions does not map all namespaces with public types.");
+
+        internal static readonly DiagnosticDescriptor WPF0060DocumentDependencyPropertyBackingMember = Create(
+            id: "WPF0060",
+            title: "Backing member for DependencyProperty must have standard documentation text.",
+            messageFormat: "Backing member for DependencyProperty must have standard documentation text.",
+            category: AnalyzerCategory.Documentation,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Backing member for DependencyProperty must have standard documentation text.");
+
+        internal static readonly DiagnosticDescriptor WPF0061DocumentClrMethod = Create(
+            id: "WPF0061",
+            title: "Accessor method for attached property must have standard documentation text.",
+            messageFormat: "Accessor method for attached property must have standard documentation text.",
+            category: AnalyzerCategory.Documentation,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Accessor method for attached property must have standard documentation text.");
+
+        internal static readonly DiagnosticDescriptor WPF0062DocumentPropertyChangedCallback = Create(
+            id: "WPF0062",
+            title: "Property changed callback must have standard documentation text.",
+            messageFormat: "Property changed callback must have standard documentation text.",
+            category: AnalyzerCategory.Documentation,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Property changed callback must have standard documentation text.");
+
+        internal static readonly DiagnosticDescriptor WPF0070ConverterDoesNotHaveDefaultField = Create(
+            id: "WPF0070",
+            title: "Add default field to converter.",
+            messageFormat: "Add default field to converter.",
+            category: AnalyzerCategory.IValueConverter,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Add default field to converter.");
+
+        internal static readonly DiagnosticDescriptor WPF0071ConverterDoesNotHaveAttribute = Create(
+            id: "WPF0071",
+            title: "Add ValueConversion attribute.",
+            messageFormat: "Add ValueConversion attribute.",
+            category: AnalyzerCategory.IValueConverter,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Add ValueConversion attribute.");
+
+        internal static readonly DiagnosticDescriptor WPF0072ValueConversionMustUseCorrectTypes = Create(
+            id: "WPF0072",
+            title: "ValueConversion must use correct types.",
+            messageFormat: "ValueConversion must use correct types. Expected: {0}",
+            category: AnalyzerCategory.IValueConverter,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "ValueConversion must use correct types.");
+
+        internal static readonly DiagnosticDescriptor WPF0073ConverterDoesNotHaveAttributeUnknownTypes = Create(
+            id: "WPF0073",
+            title: "Add ValueConversion attribute (unknown types).",
+            messageFormat: "Add ValueConversion attribute (unknown types).",
+            category: AnalyzerCategory.IValueConverter,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Add ValueConversion attribute (unknown types).");
+
+        internal static readonly DiagnosticDescriptor WPF0074DefaultMemberOfWrongType = Create(
+            id: "WPF0074",
+            title: "Use containing type.",
+            messageFormat: "Use containing type.",
+            category: AnalyzerCategory.IValueConverter,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use containing type.");
+
+        internal static readonly DiagnosticDescriptor WPF0080MarkupExtensionDoesNotHaveAttribute = Create(
+            id: "WPF0080",
+            title: "Add MarkupExtensionReturnType attribute.",
+            messageFormat: "Add MarkupExtensionReturnType attribute.",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Add MarkupExtensionReturnType attribute.");
+
+        internal static readonly DiagnosticDescriptor WPF0081MarkupExtensionReturnTypeMustUseCorrectType = Create(
+            id: "WPF0081",
+            title: "MarkupExtensionReturnType must use correct return type.",
+            messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "MarkupExtensionReturnType must use correct return type.");
+
+        internal static readonly DiagnosticDescriptor WPF0082ConstructorArgument = Create(
+            id: "WPF0082",
+            title: "[ConstructorArgument] must match.",
+            messageFormat: "[ConstructorArgument] must match. Expected: {0}",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "[ConstructorArgument] must match the name of the constructor parameter.");
+
+        internal static readonly DiagnosticDescriptor WPF0083UseConstructorArgumentAttribute = Create(
+            id: "WPF0083",
+            title: "Add [ConstructorArgument].",
+            messageFormat: "Add [ConstructorArgument(\"{0}\"]",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Add [ConstructorArgument] for the property.");
+
+        internal static readonly DiagnosticDescriptor WPF0084XamlSetMarkupExtensionAttributeTarget = Create(
+            id: "WPF0084",
+            title: "Target of [XamlSetMarkupExtension] should exist and have correct signature.",
+            messageFormat: "Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs).",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Target of [XamlSetMarkupExtension] should exist and have correct signature.");
+
+        internal static readonly DiagnosticDescriptor WPF0085XamlSetTypeConverterTarget = Create(
+            id: "WPF0085",
+            title: "Target of [XamlSetTypeConverter] should exist and have correct signature.",
+            messageFormat: "Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs).",
+            category: AnalyzerCategory.MarkupExtension,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Target of [XamlSetTypeConverter] should exist and have correct signature.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,
@@ -301,23 +481,5 @@ namespace WpfAnalyzers
                 helpLinkUri: $"https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/{id}.md",
                 customTags: customTags);
         }
-
-        internal static readonly DiagnosticDescriptor WPF0041SetMutableUsingSetCurrentValue = Descriptors.Create(
-            id: "WPF0041",
-            title: "Set mutable dependency properties using SetCurrentValue.",
-            messageFormat: "Use SetCurrentValue({0}, {1})",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "Prefer setting mutable dependency properties using SetCurrentValue.");
-
-        internal static readonly DiagnosticDescriptor WPF0042AvoidSideEffectsInClrAccessors = Descriptors.Create(
-            id: "WPF0042",
-            title: "Avoid side effects in CLR accessors.",
-            messageFormat: "Avoid side effects in CLR accessors.",
-            category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "Avoid side effects in CLR accessors.");
     }
 }

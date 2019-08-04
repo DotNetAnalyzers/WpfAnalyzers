@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0074DefaultMemberOfWrongType.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0074DefaultMemberOfWrongType);
 
         [Test]
         public static void DefaultField()

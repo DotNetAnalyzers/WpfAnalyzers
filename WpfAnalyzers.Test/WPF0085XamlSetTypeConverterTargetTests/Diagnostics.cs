@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0085XamlSetTypeConverterTarget.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget);
 
         [Test]
         public static void Message()

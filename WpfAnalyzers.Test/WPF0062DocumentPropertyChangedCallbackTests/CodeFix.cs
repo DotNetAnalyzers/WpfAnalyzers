@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentOnPropertyChangedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0062DocumentPropertyChangedCallback.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0062DocumentPropertyChangedCallback);
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]
         [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]

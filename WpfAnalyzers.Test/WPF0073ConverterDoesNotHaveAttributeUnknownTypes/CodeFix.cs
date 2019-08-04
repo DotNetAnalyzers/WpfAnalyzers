@@ -4,13 +4,12 @@ namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
-    using WPF0073ConverterDoesNotHaveAttributeUnknownTypes = WpfAnalyzers.WPF0073ConverterDoesNotHaveAttributeUnknownTypes;
 
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
         private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes);
 
         [Test]
         public static void AddAttributeDirectCast()

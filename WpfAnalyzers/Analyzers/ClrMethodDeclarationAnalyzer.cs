@@ -17,7 +17,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute,
             Descriptors.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument,
             Descriptors.WPF0042AvoidSideEffectsInClrAccessors,
-            WPF0061DocumentClrMethod.Descriptor);
+            Descriptors.WPF0061DocumentClrMethod);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -95,7 +95,7 @@ namespace WpfAnalyzers
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                         !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
                     }
                 }
                 else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
@@ -133,7 +133,7 @@ namespace WpfAnalyzers
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                         !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(WPF0061DocumentClrMethod.Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
                     }
                 }
             }

@@ -14,19 +14,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "WPF0052";
-
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: DiagnosticId,
-            title: "XmlnsDefinitions does not map all namespaces with public types.",
-            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.\r\nThe following namespaces are not mapped:\r\n{0}",
-            category: AnalyzerCategory.XmlnsDefinition,
-            defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: true,
-            description: "XmlnsDefinitions does not map all namespaces with public types.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -51,7 +40,7 @@ namespace WpfAnalyzers
                     if (walker.NotMapped.Count != 0)
                     {
                         var missing = ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation(), missing, string.Join(Environment.NewLine, walker.NotMapped)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, attribute.GetLocation(), missing, string.Join(Environment.NewLine, walker.NotMapped)));
                     }
                 }
             }

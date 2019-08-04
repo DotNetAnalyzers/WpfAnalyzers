@@ -14,7 +14,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0014SetValueMustUseRegisteredType,
             Descriptors.WPF0040SetUsingDependencyPropertyKey,
-            WPF0043DontUseSetCurrentValueForDataContext.Descriptor);
+            Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -59,7 +59,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0043DontUseSetCurrentValueForDataContext.Descriptor,
+                            Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext,
                             invocation.GetLocation(),
                             setField.Name,
                             invocation.ArgumentList.Arguments[1]));

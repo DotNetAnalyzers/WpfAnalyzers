@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentBackingFieldFix();
-        private static readonly DiagnosticDescriptor Descriptor = WPF0060DocumentDependencyPropertyBackingMember.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0060DocumentDependencyPropertyBackingMember;
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 
         [Test]

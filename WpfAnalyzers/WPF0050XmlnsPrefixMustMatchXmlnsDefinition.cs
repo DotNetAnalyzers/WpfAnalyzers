@@ -13,17 +13,8 @@ namespace WpfAnalyzers
         private const string XmlnsPrefix = "XmlnsPrefix";
         private const string XmlnsDefinition = "XmlnsDefinition";
 
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: "WPF0050",
-            title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
-            messageFormat: "There is no [{0}] mapping to '{1}'",
-            category: AnalyzerCategory.XmlnsDefinition,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -94,7 +85,7 @@ namespace WpfAnalyzers
                 var attributeName = ReferenceEquals(correspondingType, KnownSymbol.XmlnsPrefixAttribute)
                                         ? XmlnsPrefix
                                         : XmlnsDefinition;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, arg.GetLocation(), attributeName, xmlNamespace));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition, arg.GetLocation(), attributeName, xmlNamespace));
             }
         }
     }

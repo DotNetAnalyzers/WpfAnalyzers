@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new DocumentClrMethodFix();
-        private static readonly DiagnosticDescriptor Descriptor = WPF0061DocumentClrMethod.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0061DocumentClrMethod;
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 
         [Test]

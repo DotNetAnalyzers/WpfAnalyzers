@@ -17,7 +17,7 @@ namespace WpfAnalyzers
     internal class XmlnsDefinitionFix : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.Descriptor.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

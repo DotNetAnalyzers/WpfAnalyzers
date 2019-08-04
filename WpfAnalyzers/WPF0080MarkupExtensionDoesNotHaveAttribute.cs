@@ -10,17 +10,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0080MarkupExtensionDoesNotHaveAttribute : DiagnosticAnalyzer
     {
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: "WPF0080",
-            title: "Add MarkupExtensionReturnType attribute.",
-            messageFormat: "Add MarkupExtensionReturnType attribute.",
-            category: AnalyzerCategory.MarkupExtension,
-            defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: true,
-            description: "Add MarkupExtensionReturnType attribute.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -44,7 +35,7 @@ namespace WpfAnalyzers
                 type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.IServiceProvider, out _) &&
                 !Attribute.TryFind(classDeclaration, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute, classDeclaration.Identifier.GetLocation()));
             }
         }
     }

@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(WPF0050XmlnsPrefixMustMatchXmlnsDefinition.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition);
 
         [Test]
         public static void WhenNoXmlnsDefinition()

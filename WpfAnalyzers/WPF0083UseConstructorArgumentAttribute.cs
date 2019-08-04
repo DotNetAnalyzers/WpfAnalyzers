@@ -11,17 +11,8 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0083UseConstructorArgumentAttribute : DiagnosticAnalyzer
     {
-        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
-            id: "WPF0083",
-            title: "Add [ConstructorArgument].",
-            messageFormat: "Add [ConstructorArgument(\"{0}\"]",
-            category: AnalyzerCategory.MarkupExtension,
-            defaultSeverity: DiagnosticSeverity.Info,
-            isEnabledByDefault: true,
-            description: "Add [ConstructorArgument] for the property.");
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0083UseConstructorArgumentAttribute);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -41,8 +32,7 @@ namespace WpfAnalyzers
                 ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
             {
                 context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptor,
+                    Diagnostic.Create(Descriptors.WPF0083UseConstructorArgumentAttribute,
                         propertyDeclaration.Identifier.GetLocation(),
                         ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
                         parameterName));

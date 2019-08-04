@@ -14,11 +14,11 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor,
-            WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor,
-            WPF0082ConstructorArgument.Descriptor,
-            WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor,
-            WPF0085XamlSetTypeConverterTarget.Descriptor,
+            Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace,
+            Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType,
+            Descriptors.WPF0082ConstructorArgument,
+            Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget,
+            Descriptors.WPF0085XamlSetTypeConverterTarget,
             WPF0132UsePartPrefix.Descriptor);
 
         /// <inheritdoc/>
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
                     context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
                            .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0051XmlnsDefinitionMustMapExistingNamespace.Descriptor, arg.GetLocation(), arg));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace, arg.GetLocation(), arg));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
                          context.ContainingSymbol is ITypeSymbol containingType &&
@@ -54,7 +54,7 @@ namespace WpfAnalyzers
                          context.SemanticModel.TryGetType(typeOf.Type, context.CancellationToken, out var argType) &&
                          !ReferenceEquals(argType, returnType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0081MarkupExtensionReturnTypeMustUseCorrectType.Descriptor, arg.GetLocation(), returnType));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType, arg.GetLocation(), returnType));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
                          ConstructorArgument.TryGetArgumentName(attribute, out var argument, out var argumentName) &&
@@ -65,7 +65,7 @@ namespace WpfAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            WPF0082ConstructorArgument.Descriptor,
+                            Descriptors.WPF0082ConstructorArgument,
                             argument.GetLocation(),
                             ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
                             parameterName));
@@ -75,14 +75,14 @@ namespace WpfAnalyzers
                          context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string target) &&
                          !(context.ContainingSymbol as ITypeSymbol).TryFindFirstMethodRecursive(target, m => IsMarkupExtensionHandler(m), out _))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0084XamlSetMarkupExtensionAttributeTarget.Descriptor, arg.Expression.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget, arg.Expression.GetLocation()));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.XamlSetTypeConverterAttribute, context.SemanticModel, context.CancellationToken) &&
                          Attribute.TryFindArgument(attribute, 0, "xamlSetTypeConverterHandler", out arg) &&
                          context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out target) &&
                          !(context.ContainingSymbol as ITypeSymbol).TryFindFirstMethodRecursive(target, m => IsTypeConverterHandler(m), out _))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(WPF0085XamlSetTypeConverterTarget.Descriptor, arg.Expression.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget, arg.Expression.GetLocation()));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.TemplatePartAttribute, context.SemanticModel, context.CancellationToken) &&
                          Attribute.TryFindArgument(attribute, 0, "Name", out arg) &&
