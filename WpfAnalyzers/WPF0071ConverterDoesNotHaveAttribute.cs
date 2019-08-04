@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -6,14 +6,13 @@
     {
         internal const string DiagnosticId = "WPF0071";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Add ValueConversion attribute.",
             messageFormat: "Add ValueConversion attribute.",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Add ValueConversion attribute.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Add ValueConversion attribute.");
     }
 }

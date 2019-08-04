@@ -6,14 +6,13 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0033";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Add [AttachedPropertyBrowsableForType]",
             messageFormat: "Add [AttachedPropertyBrowsableForType(typeof({0}))]",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Add [AttachedPropertyBrowsableForType]",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Add [AttachedPropertyBrowsableForType]");
     }
 }

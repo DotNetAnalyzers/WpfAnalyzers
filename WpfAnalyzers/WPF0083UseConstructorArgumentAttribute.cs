@@ -13,15 +13,14 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0083";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Add [ConstructorArgument].",
             messageFormat: "Add [ConstructorArgument(\"{0}\"]",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Add [ConstructorArgument] for the property.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Add [ConstructorArgument] for the property.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

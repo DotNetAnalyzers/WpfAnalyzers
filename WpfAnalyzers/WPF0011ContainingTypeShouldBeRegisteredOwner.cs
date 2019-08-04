@@ -12,15 +12,14 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0011";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Containing type should be used as registered owner.",
             messageFormat: "Register containing type: '{0}' as owner.",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "When registering a DependencyProperty register containing type as owner type.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "When registering a DependencyProperty register containing type as owner type.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

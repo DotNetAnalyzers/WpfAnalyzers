@@ -13,15 +13,14 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0041";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Set mutable dependency properties using SetCurrentValue.",
             messageFormat: "Use SetCurrentValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Prefer setting mutable dependency properties using SetCurrentValue.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Prefer setting mutable dependency properties using SetCurrentValue.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

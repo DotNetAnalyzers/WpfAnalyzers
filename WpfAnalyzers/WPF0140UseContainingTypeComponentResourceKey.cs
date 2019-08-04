@@ -6,14 +6,13 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0140";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Use containing type when creating a ComponentResourceKey.",
             messageFormat: "Use containing type: {0}.",
             category: AnalyzerCategory.ComponentResourceKey,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use containing type when creating a ComponentResourceKey.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Use containing type when creating a ComponentResourceKey.");
     }
 }

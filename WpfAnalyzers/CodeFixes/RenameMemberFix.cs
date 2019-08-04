@@ -15,7 +15,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF0001BackingFieldShouldMatchRegisteredName.DiagnosticId,
+            Descriptors.WPF0001BackingFieldShouldMatchRegisteredName.Id,
             WPF0002BackingFieldShouldMatchRegisteredName.DiagnosticId,
             WPF0003ClrPropertyShouldMatchRegisteredName.DiagnosticId,
             WPF0004ClrMethodShouldMatchRegisteredName.DiagnosticId,

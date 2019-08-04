@@ -6,14 +6,13 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0082";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "[ConstructorArgument] must match.",
             messageFormat: "[ConstructorArgument] must match. Expected: {0}",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "[ConstructorArgument] must match the name of the constructor parameter.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "[ConstructorArgument] must match the name of the constructor parameter.");
     }
 }

@@ -14,15 +14,14 @@ namespace WpfAnalyzers
         private const string XmlnsPrefix = "XmlnsPrefix";
         private const string XmlnsDefinition = "XmlnsDefinition";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
             messageFormat: "There is no [{0}] mapping to '{1}'",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "[XmlnsPrefix] must have a corresponding [XmlnsDefinition] mapping to the same url.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

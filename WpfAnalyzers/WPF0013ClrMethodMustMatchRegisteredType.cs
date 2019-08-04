@@ -6,14 +6,13 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0013";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "CLR accessor for attached property must match registered type.",
             messageFormat: "{0} must match registered type {1}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "CLR accessor for attached property must match registered type.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "CLR accessor for attached property must match registered type.");
     }
 }

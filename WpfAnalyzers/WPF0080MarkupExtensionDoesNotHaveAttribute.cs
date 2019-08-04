@@ -12,15 +12,14 @@ namespace WpfAnalyzers
     {
         internal const string DiagnosticId = "WPF0080";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Add MarkupExtensionReturnType attribute.",
             messageFormat: "Add MarkupExtensionReturnType attribute.",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Add MarkupExtensionReturnType attribute.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Add MarkupExtensionReturnType attribute.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);

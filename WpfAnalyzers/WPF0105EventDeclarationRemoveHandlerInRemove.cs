@@ -1,4 +1,4 @@
-﻿namespace WpfAnalyzers
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -6,14 +6,13 @@
     {
         internal const string DiagnosticId = "WPF0105";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = Descriptors.Create(
             id: DiagnosticId,
             title: "Call RemoveHandler in remove.",
             messageFormat: "Call RemoveHandler in remove.",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Call RemoveHandler in remove.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
+            description: "Call RemoveHandler in remove.");
     }
 }
