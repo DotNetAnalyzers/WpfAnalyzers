@@ -5,10 +5,10 @@ namespace WpfAnalyzers.Test
     using NUnit.Framework;
 
     [Explicit]
-    public class Sandbox
+    public static class Sandbox
     {
         [Test]
-        public void Test()
+        public static void Test()
         {
             var metaDataType = typeof(System.Windows.PropertyMetadata);
             foreach (var type in AppDomain.CurrentDomain

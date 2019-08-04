@@ -5,10 +5,10 @@ namespace WpfAnalyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class ValueConverterTests
+    public static class ValueConverterTests
     {
         [Test]
-        public void TryGetConversionTypesDirectCast()
+        public static void TryGetConversionTypesDirectCast()
         {
             var testCode = @"
 namespace N
@@ -45,7 +45,7 @@ namespace N
         }
 
         [Test]
-        public void TryGetConversionTypesAsCast()
+        public static void TryGetConversionTypesAsCast()
         {
             var testCode = @"
 namespace N
@@ -88,7 +88,7 @@ namespace N
         }
 
         [Test]
-        public void TryGetConversionTypesTwoAsCastWhenOneIsOther()
+        public static void TryGetConversionTypesTwoAsCastWhenOneIsOther()
         {
             var testCode = @"
 namespace N
@@ -148,7 +148,7 @@ namespace N
         }
 
         [Test]
-        public void TryGetConversionTypesTwoAsCastListAndArray()
+        public static void TryGetConversionTypesTwoAsCastListAndArray()
         {
             var testCode = @"
 namespace N

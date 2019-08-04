@@ -5,13 +5,13 @@ namespace WpfAnalyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class InvocationExpressionSyntaxExtTests
+    public static class InvocationExpressionSyntaxExtTests
     {
         [TestCase("Method1()", "Method1")]
         [TestCase("this.Method1()", "Method1")]
         [TestCase("new Foo()?.Method1()", "Method1")]
         [TestCase("this.Method2<int>()", "Method2")]
-        public void TryGetInvokedMethodName(string code, string expected)
+        public static void TryGetInvokedMethodName(string code, string expected)
         {
             var testCode = @"
 namespace N

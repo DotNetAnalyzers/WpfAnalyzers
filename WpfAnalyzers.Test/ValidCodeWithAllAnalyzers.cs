@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test
 
     using NUnit.Framework;
 
-    public class ValidWithAll
+    public static class ValidWithAll
     {
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbol)
             .Assembly.GetTypes()
@@ -29,7 +29,7 @@ namespace WpfAnalyzers.Test
             MetadataReferences.FromAttributes());
 
         [SetUp]
-        public void Setup()
+        public static void Setup()
         {
             // The cache will be enabled when running in VS.
             // It speeds up the tests and makes them more realistic
@@ -37,26 +37,26 @@ namespace WpfAnalyzers.Test
         }
 
         [TearDown]
-        public void TearDown()
+        public static void TearDown()
         {
             Cache<SyntaxTree, SemanticModel>.End();
         }
 
         [Test]
-        public void NotEmpty()
+        public static void NotEmpty()
         {
             CollectionAssert.IsNotEmpty(AllAnalyzers);
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void ValidCodeProject(DiagnosticAnalyzer analyzer)
+        public static void ValidCodeProject(DiagnosticAnalyzer analyzer)
         {
             RoslynAssert.Valid(analyzer, ValidCodeProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void AnalyzerProject(DiagnosticAnalyzer analyzer)
+        public static void AnalyzerProject(DiagnosticAnalyzer analyzer)
         {
             RoslynAssert.Valid(analyzer, AnalyzerProjectSolution);
         }

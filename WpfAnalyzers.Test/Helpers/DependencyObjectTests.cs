@@ -5,12 +5,12 @@ namespace WpfAnalyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class DependencyObjectTests
+    public static class DependencyObjectTests
     {
         [TestCase("SetValue(BarProperty, value)")]
         [TestCase("this.SetValue(BarProperty, value)")]
         [TestCase("base.SetValue(BarProperty, value)")]
-        public void TryGetSetValueCall(string call)
+        public static void TryGetSetValueCall(string call)
         {
             var testCode = @"
 namespace N
@@ -47,7 +47,7 @@ namespace N
 
         [TestCase(".SetValue")]
         [TestCase("?.SetValue")]
-        public void TryGetSetValueCallInstance(string call)
+        public static void TryGetSetValueCallInstance(string call)
         {
             var testCode = @"
 namespace N
@@ -87,7 +87,7 @@ namespace N
         [TestCase("SetCurrentValue(BarProperty, value)")]
         [TestCase("this.SetCurrentValue(BarProperty, value)")]
         [TestCase("base.SetCurrentValue(BarProperty, value)")]
-        public void TryGetSetCurrentValueCall(string call)
+        public static void TryGetSetCurrentValueCall(string call)
         {
             var testCode = @"
 namespace N
@@ -123,7 +123,7 @@ namespace N
         }
 
         [Test]
-        public void TryGetSetCurrentValueCallInstance()
+        public static void TryGetSetCurrentValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
@@ -158,7 +158,7 @@ namespace N
         [TestCase("GetValue(BarProperty)")]
         [TestCase("this.GetValue(BarProperty)")]
         [TestCase("base.GetValue(BarProperty)")]
-        public void TryGetGetValueCall(string call)
+        public static void TryGetGetValueCall(string call)
         {
             var testCode = @"
 namespace N
@@ -194,7 +194,7 @@ namespace N
         }
 
         [Test]
-        public void TryGetSetValueCallInstance()
+        public static void TryGetSetValueCallInstance()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N

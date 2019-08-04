@@ -5,13 +5,13 @@ namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
     using Microsoft.CodeAnalysis.CodeFixes;
     using NUnit.Framework;
 
-    public class CodeFix
+    public static class CodeFix
     {
         private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
         [Test]
-        public void IValueConverterConvertBack()
+        public static void IValueConverterConvertBack()
         {
             var before = @"
 namespace N
@@ -49,7 +49,7 @@ namespace N
         }
 
         [Test]
-        public void IMultiValueConverterConvertBack()
+        public static void IMultiValueConverterConvertBack()
         {
             var before = @"
 namespace N

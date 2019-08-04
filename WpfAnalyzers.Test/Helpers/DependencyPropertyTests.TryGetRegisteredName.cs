@@ -6,13 +6,13 @@ namespace WpfAnalyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public partial class DependencyPropertyTests
+    public static partial class DependencyPropertyTests
     {
-        public class TryGetRegisteredName
+        public static class TryGetRegisteredName
         {
             [TestCase("nameof(Bar)")]
             [TestCase("\"Bar\"")]
-            public void DependencyPropertyBackingField(string nameCode)
+            public static void DependencyPropertyBackingField(string nameCode)
             {
                 var testCode = @"
 namespace N
@@ -47,7 +47,7 @@ namespace N
 
             [TestCase("nameof(Bar)")]
             [TestCase("\"Bar\"")]
-            public void DependencyPropertyBackingProperty(string nameCode)
+            public static void DependencyPropertyBackingProperty(string nameCode)
             {
                 var testCode = @"
 namespace N
@@ -81,7 +81,7 @@ namespace N
             }
 
             [Test]
-            public void TextElementFontSizePropertyAddOwner()
+            public static void TextElementFontSizePropertyAddOwner()
             {
                 var testCode = @"
 namespace N
@@ -111,7 +111,7 @@ namespace N
             }
 
             [Test]
-            public void BorderBorderThicknessPropertyAddOwner()
+            public static void BorderBorderThicknessPropertyAddOwner()
             {
                 var testCode = @"
 namespace N
