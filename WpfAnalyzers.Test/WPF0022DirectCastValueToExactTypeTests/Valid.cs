@@ -80,11 +80,13 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("int", "int")]
-        [TestCase("System.IO.Stream", "IDisposable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
-        public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
+        [TestCase("int")]
+        [TestCase("string")]
+        [TestCase("System.IO.Stream")]
+        [TestCase("System.Collections.IEnumerable")]
+        [TestCase("System.Collections.IList")]
+        [TestCase("System.Collections.Generic.IEnumerable<int>")]
+        public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
         {
             var code = @"
 namespace N
@@ -110,22 +112,21 @@ namespace N
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (FooControl)d;
-            var oldValue = (string)e.OldValue;
-            var newValue = (string)e.NewValue;
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
         }
 
         private static object CoerceValue(DependencyObject d, object baseValue)
         {
-            return (string)baseValue;
+            return (int)baseValue;
         }
 
         private static bool ValidateValue(object baseValue)
         {
-            return ((string)baseValue) != null;
+            return ((int)baseValue) != null;
         }
     }
-}".AssertReplace("int", type)
-  .AssertReplace("string", type);
+}".AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }

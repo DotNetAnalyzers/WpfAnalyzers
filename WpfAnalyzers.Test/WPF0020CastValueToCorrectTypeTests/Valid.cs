@@ -1,11 +1,13 @@
 namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static class Valid
     {
         private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0020CastValueToCorrectType;
 
         [Test]
         public static void DependencyPropertyRegisterNoMetadata()
@@ -81,7 +83,7 @@ namespace N
         }
 
         [TestCase("int", "int")]
-        [TestCase("System.IO.Stream", "IDisposable")]
+        [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
         [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
         public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
@@ -127,9 +129,9 @@ namespace N
         }
     }
 }".AssertReplace("int", type)
-  .AssertReplace("string", type);
+  .AssertReplace("string", toType);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [TestCase("object", "string")]
