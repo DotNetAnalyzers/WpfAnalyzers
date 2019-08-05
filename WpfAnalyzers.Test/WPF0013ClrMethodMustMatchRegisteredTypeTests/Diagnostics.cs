@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -33,7 +33,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type int"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type int"), code);
         }
 
         [TestCase("double")]
@@ -42,7 +42,7 @@ namespace N
         [TestCase("ObservableCollection<int>")]
         public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -69,13 +69,13 @@ namespace N
     }
 }".AssertReplace("double", typeName);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -100,13 +100,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnlySetMethod()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -127,7 +127,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("double")]
@@ -136,7 +136,7 @@ namespace N
         [TestCase("ObservableCollection<int>")]
         public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -163,13 +163,13 @@ namespace N
     }
 }".AssertReplace("double", typeName);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -194,7 +194,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

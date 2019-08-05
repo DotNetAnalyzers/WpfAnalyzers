@@ -33,7 +33,7 @@ namespace WpfAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     public sealed class Foo
@@ -41,7 +41,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(analyzer, testCode);
+            RoslynAssert.Valid(analyzer, code);
         }
     }
 }

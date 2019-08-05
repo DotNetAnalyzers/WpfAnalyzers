@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegis
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -49,7 +49,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'ValidateValue'"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'ValidateValue'"), code);
         }
 
         [TestCase("↓WrongName", "ValidateValue")]
@@ -323,7 +323,7 @@ namespace N
         [Test]
         public static void WhenCallbackMatchesOtherProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -371,8 +371,8 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), testCode);
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), code);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
 
         [Test]
@@ -411,7 +411,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -434,8 +434,8 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), part1, testCode);
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, part1, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), part1, code);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, part1, code);
         }
     }
 }

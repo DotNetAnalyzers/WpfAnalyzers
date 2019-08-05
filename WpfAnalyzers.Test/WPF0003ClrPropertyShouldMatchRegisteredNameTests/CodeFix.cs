@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,7 +32,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Error' must be named 'Bar'"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Error' must be named 'Bar'"), code);
         }
 
         [Test]

@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
         [Test]
         public static void DependencyPropertyNoMetadata()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -33,7 +33,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]
@@ -48,7 +48,7 @@ namespace N
         [TestCase("new PropertyMetadata(default(int), null, new CoerceValueCallback(CoerceBar))")]
         public static void DependencyPropertyWithMetadata(string metadata)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -86,13 +86,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), null, CoerceBar)", metadata);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void ReadOnlyDependencyProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -126,13 +126,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -162,13 +162,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -205,7 +205,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

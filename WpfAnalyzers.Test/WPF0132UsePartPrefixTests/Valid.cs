@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
         [Test]
         public static void WhenPartPrefix()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -27,7 +27,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

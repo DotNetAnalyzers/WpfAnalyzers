@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
         [Test]
         public static void WhenDefaultField()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -56,13 +56,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenTwoFields()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -104,13 +104,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenDefaultProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -155,13 +155,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenMarkupExtension()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -205,13 +205,13 @@ namespace N
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenIValueConverterHasMutableMembers()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -254,13 +254,13 @@ namespace N
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenIMultiValueConverterHasMutableProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -278,13 +278,13 @@ namespace N
             => throw new NotImplementedException();
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenAbstract()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -327,13 +327,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenVirtual()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -376,13 +376,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenConstructorWithParameters()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -411,7 +411,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -434,7 +434,7 @@ namespace Gu.Wpf.ToolTips
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace Gu.Wpf.ToolTips
 {
     using System;
@@ -469,13 +469,13 @@ namespace Gu.Wpf.ToolTips
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, boolBoxes, testCode);
+            RoslynAssert.Valid(Analyzer, boolBoxes, code);
         }
 
         [Test]
         public static void WhenConstructorParameter()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -498,7 +498,7 @@ namespace N
             => throw new NotImplementedException();
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

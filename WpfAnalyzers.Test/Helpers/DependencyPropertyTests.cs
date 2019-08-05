@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test
             [Test]
             public static void TryGetRegisterCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -33,7 +33,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Register");
@@ -47,7 +47,7 @@ namespace N
             [Test]
             public static void TryGetRegisterReadOnlyCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -70,7 +70,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterReadOnly");
@@ -84,7 +84,7 @@ namespace N
             [Test]
             public static void TryGetRegisterAttachedCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -108,7 +108,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterAttached");
@@ -157,7 +157,7 @@ namespace N
             [Test]
             public static void TryGetRegisterAttachedReadOnlyCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -177,7 +177,7 @@ namespace N
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterAttachedReadOnly");
@@ -191,7 +191,7 @@ namespace N
             [Test]
             public static void TryGetAddOwnerCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -229,7 +229,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("AddOwner");
@@ -243,7 +243,7 @@ namespace N
             [Test]
             public static void TryGetOverrideMetadataCall()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -272,7 +272,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("OverrideMetadata");

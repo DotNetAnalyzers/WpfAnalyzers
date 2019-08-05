@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
         [Test]
         public static void MessageWhenWrongSourceType()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -37,13 +37,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: System.Collections.ICollection"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: System.Collections.ICollection"), code);
         }
 
         [Test]
         public static void MessageWhenWrongTargetType()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -66,7 +66,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: int"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: int"), code);
         }
 
         [Test]

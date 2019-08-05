@@ -25,7 +25,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -50,7 +50,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner."), barControlCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner."), barControlCode, code);
         }
 
         [TestCase("BarControl")]

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
         [Test]
         public static void WhenPropertyHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -35,13 +35,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenPropertyWithBackingFieldHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -71,13 +71,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenPropertyWithBackingFieldAssignedBackingFieldHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -107,13 +107,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenNoAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -131,13 +131,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void Issue185()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -181,7 +181,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -277,7 +277,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, ensureCode, testCode);
+            RoslynAssert.Valid(Analyzer, ensureCode, code);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         [TestCase("new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => OnValueChanged(d, e)))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
         public static void DependencyPropertyRegisterPropertyChangedCallback(string metadata, string callback)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -74,7 +74,7 @@ namespace N
     }
 }".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
     }
 }

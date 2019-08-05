@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
         [Test]
         public static void WhenExpectedArguments()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -23,7 +23,7 @@ namespace N
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
             [Test]
             public static void Message()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System;
@@ -45,7 +45,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'OnValueChanged'"), testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'OnValueChanged'"), code);
             }
 
             [TestCase("new PropertyMetadata(default(double), ↓WrongName)", "new PropertyMetadata(default(double), OnValueChanged)")]

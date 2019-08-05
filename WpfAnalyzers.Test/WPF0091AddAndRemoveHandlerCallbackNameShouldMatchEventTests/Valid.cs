@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEve
         [Test]
         public static void AddHandlerSizeChangedEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -29,13 +29,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void RemoveHandlerSizeChangedEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -54,13 +54,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void AddHandlerManipulationStartingEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -80,13 +80,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void RemoveHandlerManipulationStartingEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -106,13 +106,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void AddHandlerMouseDownEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -131,13 +131,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void RemoveHandlerMouseDownEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -156,13 +156,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void AddPreviewMouseDownHandlerNewHandler()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -181,13 +181,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void AddPreviewMouseDownHandlerMethodGroup()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -206,7 +206,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

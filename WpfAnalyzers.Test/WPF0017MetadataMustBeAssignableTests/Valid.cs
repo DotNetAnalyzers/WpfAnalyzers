@@ -32,7 +32,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -47,7 +47,7 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, code);
         }
 
         [TestCase("new PropertyMetadata(1)")]
@@ -76,7 +76,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -91,13 +91,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, code);
         }
 
         [Test]
         public static void DefaultStyleKeyPropertyOverrideMetadata()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -112,7 +112,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

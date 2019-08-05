@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0084XamlSetMarkupExtensionAttributeTargetTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -28,13 +28,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs)."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs)."), code);
         }
 
         [Test]
         public static void WhenReturningInt()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -50,13 +50,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void WhenNoParameters()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -71,13 +71,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void WhenMOreThanTwoParameters()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -92,13 +92,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void WhenFirstParameterIsInt()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -113,13 +113,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void WhenSecondParameterIsInt()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -134,7 +134,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

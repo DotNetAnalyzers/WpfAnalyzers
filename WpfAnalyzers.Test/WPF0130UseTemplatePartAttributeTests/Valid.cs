@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
         [Test]
         public static void StringLiterals()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void Constant()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -51,13 +51,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void TemplatePartAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -73,7 +73,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -105,8 +105,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, baseCode, testCode);
-            RoslynAssert.Valid(Analyzer, testCode, baseCode);
+            RoslynAssert.Valid(Analyzer, baseCode, code);
+            RoslynAssert.Valid(Analyzer, code, baseCode);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -139,14 +139,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, baseCode, testCode);
-            RoslynAssert.Valid(Analyzer, testCode, baseCode);
+            RoslynAssert.Valid(Analyzer, baseCode, code);
+            RoslynAssert.Valid(Analyzer, code, baseCode);
         }
 
         [Test]
         public static void IsPatternStringLiteral()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -171,7 +171,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("as FrameworkElement")]
@@ -179,7 +179,7 @@ namespace N
         [TestCase("as Control")]
         public static void AsCastStringLiteral(string cast)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -200,7 +200,7 @@ namespace N
     }
 }".AssertReplace("as FrameworkElement", cast);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

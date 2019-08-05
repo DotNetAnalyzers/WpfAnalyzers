@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -39,7 +39,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[ConstructorArgument] must match. Expected: text"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[ConstructorArgument] must match. Expected: text"), code);
         }
 
         [Test]

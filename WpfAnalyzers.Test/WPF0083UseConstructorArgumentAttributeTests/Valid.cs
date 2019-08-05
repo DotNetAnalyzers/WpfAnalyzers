@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
         [Test]
         public static void WhenHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -35,13 +35,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenNoAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -59,7 +59,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

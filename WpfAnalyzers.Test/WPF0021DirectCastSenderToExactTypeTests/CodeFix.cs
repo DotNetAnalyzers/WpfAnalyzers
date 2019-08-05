@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,7 +41,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), code);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
         [Test]
         public static void DependencyPropertyRegisterNoMetadata()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,13 +34,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -66,7 +66,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("int", "new PropertyMetadata()")]
@@ -88,7 +88,7 @@ namespace N
         [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
         public static void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
         {
-            var testCode = @"
+            var code = @"
 #pragma warning disable WPF0016 // Default value is shared reference type.
 namespace N
 {
@@ -127,13 +127,13 @@ namespace N
 }".AssertReplace("new PropertyMetadata(1)", metadata)
   .AssertReplace("double", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterWhenGenericContainingType()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -154,7 +154,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -198,13 +198,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -230,13 +230,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -255,7 +255,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -278,7 +278,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -303,13 +303,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -330,7 +330,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -363,7 +363,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -381,7 +381,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode, fooCode);
+            RoslynAssert.Valid(Analyzer, code, fooCode);
         }
 
         [Test]
@@ -403,7 +403,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -418,13 +418,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooControlCode, code);
         }
 
         [Test]
         public static void CastIntToDouble()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -447,13 +447,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void FontFamilyConverterConvertFromString()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -489,13 +489,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void BoxedBool()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -527,13 +527,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void EnumIssue211()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -564,8 +564,8 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode, enumCode);
-            RoslynAssert.Valid(Analyzer, enumCode, testCode);
+            RoslynAssert.Valid(Analyzer, code, enumCode);
+            RoslynAssert.Valid(Analyzer, enumCode, code);
         }
 
         [Test]
@@ -601,7 +601,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -631,12 +631,12 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode, enumCode, fooCode);
-            RoslynAssert.Valid(Analyzer, testCode, fooCode, enumCode);
-            RoslynAssert.Valid(Analyzer, fooCode, testCode, enumCode);
-            RoslynAssert.Valid(Analyzer, fooCode, enumCode, testCode);
-            RoslynAssert.Valid(Analyzer, enumCode, fooCode, testCode);
-            RoslynAssert.Valid(Analyzer, enumCode, testCode, fooCode);
+            RoslynAssert.Valid(Analyzer, code, enumCode, fooCode);
+            RoslynAssert.Valid(Analyzer, code, fooCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, enumCode, code);
+            RoslynAssert.Valid(Analyzer, enumCode, fooCode, code);
+            RoslynAssert.Valid(Analyzer, enumCode, code, fooCode);
         }
     }
 }

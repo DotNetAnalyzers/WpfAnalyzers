@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
         [Test]
         public static void DependencyPropertyRegisterNoMetadata()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -30,7 +30,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]
@@ -43,7 +43,7 @@ namespace N
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -77,7 +77,7 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("int", "int")]
@@ -86,7 +86,7 @@ namespace N
         [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
         public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type, string toType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -129,7 +129,7 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", type);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("object", "string")]
@@ -137,10 +137,10 @@ namespace N
         [TestCase("bool", "bool?")]
         [TestCase("System.IO.Stream", "System.IDisposable")]
         [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+        [TestCase("System.Collections.IList", "System.Collections.IEnumerable")]
         public static void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -183,7 +183,7 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", asType);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("object", "string")]
@@ -194,7 +194,7 @@ namespace N
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
         public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -253,7 +253,7 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", isType);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("object", "string")]
@@ -264,7 +264,7 @@ namespace N
         [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
         public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -340,13 +340,13 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", caseType);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -376,13 +376,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -408,13 +408,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -442,13 +442,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyOverrideMetadata()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -470,13 +470,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyAddOwner()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -498,13 +498,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void EnumIssue211()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -534,7 +534,7 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, code, enumCode);
         }
 
         [Test]
@@ -570,7 +570,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -600,7 +600,7 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -57,13 +57,13 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, controlCode, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode, code);
         }
 
         [Test]
         public static void WhenTwoXmlnsDefinitions()
         {
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -134,7 +134,7 @@ namespace Gu.Wpf.Geometry.Balloons
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

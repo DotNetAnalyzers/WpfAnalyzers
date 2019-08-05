@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
         [Test]
         public static void DefaultField()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -61,13 +61,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DefaultProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -116,7 +116,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -67,13 +67,13 @@ namespace N
     }
 }".AssertReplace("CommonValidation.ValidateDoubleIsGreaterThanZero", callback);
 
-            RoslynAssert.Valid(Analyzer, validationCode, testCode);
+            RoslynAssert.Valid(Analyzer, validationCode, code);
         }
 
         [Test]
         public static void WhenValidationMethodIsUsedMoreThanOnce()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -120,13 +120,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyNoCallback()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -149,7 +149,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("ValidateValue);")]
@@ -158,7 +158,7 @@ namespace N
         [TestCase("o => (int)o >= 0);")]
         public static void DependencyPropertyWithCallback(string metadata)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -191,13 +191,13 @@ namespace N
     }
 }".AssertReplace("ValidateValue);", metadata);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void ReadOnlyDependencyProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -236,13 +236,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -277,13 +277,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -325,7 +325,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -347,7 +347,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -371,7 +371,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, commonValidation, testCode);
+            RoslynAssert.Valid(Analyzer, commonValidation, code);
         }
     }
 }

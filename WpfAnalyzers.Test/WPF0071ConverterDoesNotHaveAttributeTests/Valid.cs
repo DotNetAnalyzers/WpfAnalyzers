@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
         [Test]
         public static void WhenHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -55,13 +55,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenHasFullyQualifiedAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -105,13 +105,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void IgnorePrivateClass()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -140,13 +140,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void IgnoreProtectedClass()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -175,7 +175,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

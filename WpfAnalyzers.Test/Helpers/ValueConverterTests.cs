@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test
         [Test]
         public static void TryGetConversionTypesDirectCast()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -35,7 +35,7 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
@@ -47,7 +47,7 @@ namespace N
         [Test]
         public static void TryGetConversionTypesAsCast()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -78,7 +78,7 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
@@ -90,7 +90,7 @@ namespace N
         [Test]
         public static void TryGetConversionTypesTwoAsCastWhenOneIsOther()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -138,7 +138,7 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
@@ -150,7 +150,7 @@ namespace N
         [Test]
         public static void TryGetConversionTypesTwoAsCastListAndArray()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -199,7 +199,7 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");

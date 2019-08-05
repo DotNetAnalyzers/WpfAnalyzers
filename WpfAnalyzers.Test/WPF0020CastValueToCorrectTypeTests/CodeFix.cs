@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,7 +41,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type int."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type int."), code);
         }
 
         [TestCase("OnValueChanged")]
@@ -174,7 +174,7 @@ namespace N
         [TestCase("(d, e) => ((FooControl)d).OnValueChanged((int)e.OldValue, (↓string)e.NewValue)")]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -230,7 +230,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase("OnValueChanged")]
@@ -520,7 +520,7 @@ namespace N
         [TestCase("int", "string")]
         public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -579,13 +579,13 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", isType);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("int", "string")]
         public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -661,7 +661,7 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", caseType);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]

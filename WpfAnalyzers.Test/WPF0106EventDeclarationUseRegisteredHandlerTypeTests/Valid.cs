@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
         [Test]
         public static void EventManagerRegisterRoutedEvent()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,7 +32,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace N
 {
     public delegate void ValueChangedEventHandler<T>(object sender, ValueChangedEventArgs<T> e);
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -96,7 +96,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, eventArgsCode, delegateCode, testCode);
+            RoslynAssert.Valid(Analyzer, eventArgsCode, delegateCode, code);
         }
     }
 }

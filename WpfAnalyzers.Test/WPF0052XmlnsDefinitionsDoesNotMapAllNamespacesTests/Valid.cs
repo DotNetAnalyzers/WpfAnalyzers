@@ -32,7 +32,7 @@ namespace Gu.Wpf.Geometry
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -57,7 +57,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, controlCode, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode, code);
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -134,7 +134,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, testCode, control1Code, control2Code);
+            RoslynAssert.Valid(Analyzer, code, control1Code, control2Code);
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace Gu.Wpf.Geometry.Balloons
     }
 }";
 
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -213,13 +213,13 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            RoslynAssert.Valid(Analyzer, controlCode1, controlCode2, testCode);
+            RoslynAssert.Valid(Analyzer, controlCode1, controlCode2, code);
         }
 
         [Test]
         public static void WhenNoNamespace()
         {
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -244,7 +244,7 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

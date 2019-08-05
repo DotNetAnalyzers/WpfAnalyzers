@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
         [TestCase("nameof(FooControl.ValueChanged)")]
         public static void EventManagerRegisterRoutedEvent(string nameof)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,7 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

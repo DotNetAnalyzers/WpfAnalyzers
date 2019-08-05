@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0120RegisterContainingMemberAsNameForRoutedComman
         [Test]
         public static void RoutedCommand()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -21,13 +21,13 @@ namespace N
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void RoutedUICommand()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -37,7 +37,7 @@ namespace N
         public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

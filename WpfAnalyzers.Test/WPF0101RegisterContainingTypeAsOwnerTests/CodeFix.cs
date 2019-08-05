@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -37,7 +37,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'FooControl' as owner."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'FooControl' as owner."), code);
         }
 
         [Test]

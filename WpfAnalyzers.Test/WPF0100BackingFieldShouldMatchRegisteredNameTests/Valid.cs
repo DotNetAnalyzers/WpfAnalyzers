@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
         [TestCase("nameof(FooControl.ValueChanged)")]
         public static void DependencyPropertyRegisterBackingField(string nameof)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,7 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("\"ValueChanged\"")]
@@ -43,7 +43,7 @@ namespace N
         [TestCase("nameof(FooControl.ValueChanged)")]
         public static void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -66,7 +66,7 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

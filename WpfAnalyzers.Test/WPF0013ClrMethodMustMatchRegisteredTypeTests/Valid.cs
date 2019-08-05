@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
         [TestCase("ObservableCollection<int>")]
         public static void DependencyPropertyRegisterAttached(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -49,7 +49,7 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("int")]
@@ -60,7 +60,7 @@ namespace N
         [TestCase("ObservableCollection<int>")]
         public static void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -95,7 +95,7 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -150,13 +150,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, testCode);
+            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedSettingValueInCallback()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -195,13 +195,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -229,7 +229,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
         [TestCase("nameof(FooControl.Bar)")]
         public static void DependencyPropertyRegisterReadOnlyBackingFields(string nameof)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -36,7 +36,7 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", nameof);
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("\"Bar\"")]
@@ -44,7 +44,7 @@ namespace N
         [TestCase("nameof(FooControl.Bar)")]
         public static void DependencyPropertyRegisterReadOnlyBackingProperties(string nameof)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -68,7 +68,7 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", nameof);
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace N
         Updating
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -113,13 +113,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, statusCode, testCode);
+            RoslynAssert.Valid(Analyzer, statusCode, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -146,7 +146,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -44,7 +44,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), code);
         }
 
         [TestCase("SetValue(BarProperty, ↓1.0)")]
@@ -57,7 +57,7 @@ namespace N
         [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
         public static void DependencyProperty(string setCall)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -84,7 +84,7 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1.0);")]
@@ -113,7 +113,7 @@ namespace N
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -128,7 +128,7 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, code);
         }
 
         [TestCase("this.SetValue(BarProperty, ↓1);")]
@@ -214,7 +214,7 @@ namespace N
         [Test]
         public static void AddOwnerTextElementFontSize()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -234,13 +234,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void AddOwnerBorderBorderThicknessProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -260,7 +260,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("SetValue")]
@@ -282,7 +282,7 @@ namespace N
     {
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -308,14 +308,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, code);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public static void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -354,7 +354,7 @@ namespace N
     }
 }".AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("1.0")]
@@ -362,7 +362,7 @@ namespace N
         [TestCase("\"abc\"")]
         public static void ReadOnlyDependencyProperty(string value)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -391,13 +391,13 @@ namespace N
     }
 }".AssertReplace("<value>", value);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -428,14 +428,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public static void TextBoxTextProperty(string setMethod)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -451,14 +451,14 @@ namespace N
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public static void TextElementFontSizeProperty(string setMethod)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -475,14 +475,14 @@ namespace N
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [TestCase("SetValue")]
         [TestCase("SetCurrentValue")]
         public static void SetCurrentValueInLambda(string setMethod)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -512,7 +512,7 @@ namespace N
     }
 }".AssertReplace("SetCurrentValue", setMethod);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

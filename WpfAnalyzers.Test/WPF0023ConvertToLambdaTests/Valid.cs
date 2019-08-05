@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         [Test]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -45,7 +45,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]
@@ -58,7 +58,7 @@ namespace N
         [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
         public static void DependencyPropertyRegisterWithMetadata(string metadata)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -93,13 +93,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -142,13 +142,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterOnPropertyChangedIf()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -177,7 +177,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

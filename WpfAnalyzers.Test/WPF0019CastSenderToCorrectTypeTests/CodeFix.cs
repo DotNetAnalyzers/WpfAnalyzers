@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,7 +41,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), code);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]
@@ -174,7 +174,7 @@ namespace N
         [TestCase("new PropertyChangedCallback((d, e) => (({0})d).InvalidateArrange())")]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -222,7 +222,7 @@ namespace N
     }
 }".AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]

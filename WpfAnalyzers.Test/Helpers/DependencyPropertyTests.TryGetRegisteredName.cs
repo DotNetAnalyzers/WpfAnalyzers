@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test
             [TestCase("\"Bar\"")]
             public static void DependencyPropertyBackingField(string nameCode)
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,7 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", nameCode);
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
@@ -49,7 +49,7 @@ namespace N
             [TestCase("\"Bar\"")]
             public static void DependencyPropertyBackingProperty(string nameCode)
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -70,7 +70,7 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", nameCode);
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
@@ -83,7 +83,7 @@ namespace N
             [Test]
             public static void TextElementFontSizePropertyAddOwner()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -100,7 +100,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
@@ -113,7 +113,7 @@ namespace N
             [Test]
             public static void BorderBorderThicknessPropertyAddOwner()
             {
-                var testCode = @"
+                var code = @"
 namespace N
 {
     using System.Windows;
@@ -130,7 +130,7 @@ namespace N
         }
     }
 }";
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");

@@ -15,7 +15,7 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
         [TestCase("ObservableCollection<int>")]
         public static void DependencyProperty(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -39,13 +39,13 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyWithThis()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -67,13 +67,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyGeneric()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -95,7 +95,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace N
         [TestCase("ObservableCollection<int>")]
         public static void ReadOnlyDependencyProperty(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -183,13 +183,13 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void EnumIssue211()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -219,7 +219,7 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, code, enumCode);
         }
 
         [Test]
@@ -255,7 +255,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -285,7 +285,7 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, testCode, enumCode);
+            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
         }
     }
 }

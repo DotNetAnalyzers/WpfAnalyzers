@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
         [Test]
         public static void WhenHasAttribute()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -26,13 +26,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenNotOverridingProvideValue()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Reflection;
@@ -49,13 +49,13 @@ namespace N
         public override Assembly Assembly => typeof(Foo).Assembly;
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenAbstract()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Markup;
@@ -64,13 +64,13 @@ namespace N
     {
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void WhenIsGeneric()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -93,7 +93,7 @@ namespace N
         public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

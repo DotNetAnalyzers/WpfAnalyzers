@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test
         [TestCase("base.SetValue(BarProperty, value)")]
         public static void TryGetSetValueCall(string call)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,7 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, value)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
@@ -49,7 +49,7 @@ namespace N
         [TestCase("?.SetValue")]
         public static void TryGetSetValueCallInstance(string call)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -73,7 +73,7 @@ namespace N
         }
     }
 }".AssertReplace(".SetValue", call);
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
@@ -89,7 +89,7 @@ namespace N
         [TestCase("base.SetCurrentValue(BarProperty, value)")]
         public static void TryGetSetCurrentValueCall(string call)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -111,7 +111,7 @@ namespace N
     }
 }".AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetCurrentValue");
@@ -160,7 +160,7 @@ namespace N
         [TestCase("base.GetValue(BarProperty)")]
         public static void TryGetGetValueCall(string call)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -182,7 +182,7 @@ namespace N
     }
 }".AssertReplace("this.GetValue(BarProperty)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("GetValue");

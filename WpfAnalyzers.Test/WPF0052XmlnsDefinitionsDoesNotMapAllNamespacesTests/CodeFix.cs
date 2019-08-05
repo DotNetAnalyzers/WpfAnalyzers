@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -87,7 +87,7 @@ namespace Gu.Wpf.Geometry
             var message = "XmlnsDefinitions does not map all namespaces with public types.\r\n" +
                           "The following namespaces are not mapped:\r\n" +
                           "Gu.Wpf.Geometry.Meh";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), code);
         }
 
         [Test]

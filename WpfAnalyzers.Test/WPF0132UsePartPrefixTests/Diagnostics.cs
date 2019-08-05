@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
         [Test]
         public static void MissingPrefix()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -28,7 +28,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use PART prefix."), testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use PART prefix."), code);
         }
     }
 }

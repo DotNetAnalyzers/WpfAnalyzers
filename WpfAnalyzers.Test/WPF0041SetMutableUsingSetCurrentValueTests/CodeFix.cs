@@ -17,7 +17,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         [TestCase(false, "CreateValue()")]
         public static void ClrProperty(bool underscore, string value)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -77,7 +77,7 @@ namespace N
 }".AssertReplace("1", value)
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase(false, "1")]
@@ -86,7 +86,7 @@ namespace N
         [TestCase(true, "CreateValue()")]
         public static void ClrPropertyWithTrivia(bool underscore, string value)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -150,7 +150,7 @@ namespace N
 }".AssertReplace("1", value)
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase("Bar = 1;", "SetCurrentValue(FooControl.BarProperty, (double)1);")]
@@ -770,7 +770,7 @@ namespace N
         [TestCase(false, "CreateValue()")]
         public static void SetValue(bool underscore, string setExpression)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -830,7 +830,7 @@ namespace N
 }".AssertReplace("1", setExpression)
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase(true, "1")]
@@ -839,7 +839,7 @@ namespace N
         [TestCase(false, "this.CreateValue()")]
         public static void SetValueWithTrivia(bool underscore, string setExpression)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -903,7 +903,7 @@ namespace N
 }".AssertReplace("1", setExpression)
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [Test]
@@ -1014,7 +1014,7 @@ namespace N
         [TestCase(false, "CreateValue()")]
         public static void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -1050,7 +1050,7 @@ namespace N
 }".AssertReplace("\"1\"", value)
   .AssertReplace("this.", underscore ? string.Empty : "this.");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [TestCase("this.")]

@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
         [TestCase("FooControl<T>")]
         public static void DependencyPropertyRegister(string typeName)
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -36,13 +36,13 @@ namespace N
     }
 }".AssertReplace("FooControl", typeName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -67,13 +67,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -99,13 +99,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedReadOnly()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -133,7 +133,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace N
         [Test]
         public static void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
         {
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Globalization;
@@ -200,7 +200,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("FooControl")]
@@ -234,7 +234,7 @@ namespace N
         }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -252,7 +252,7 @@ namespace N
     }
 }".AssertReplace("FooControl", typeName);
 
-            RoslynAssert.Valid(Analyzer, fooCode, testCode);
+            RoslynAssert.Valid(Analyzer, fooCode, code);
         }
     }
 }
