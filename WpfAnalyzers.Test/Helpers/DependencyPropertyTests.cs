@@ -41,7 +41,7 @@ namespace N
                 Assert.AreEqual("Register", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetRegisterCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetRegisterCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -78,7 +78,7 @@ namespace N
                 Assert.AreEqual("RegisterReadOnly", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -116,7 +116,7 @@ namespace N
                 Assert.AreEqual("RegisterAttached", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -151,7 +151,7 @@ namespace N
                 Assert.AreEqual("RegisterAttached", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -185,7 +185,7 @@ namespace N
                 Assert.AreEqual("RegisterAttachedReadOnly", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -237,7 +237,7 @@ namespace N
                 Assert.AreEqual("AddOwner", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -280,7 +280,7 @@ namespace N
                 Assert.AreEqual("OverrideMetadata", method.Name);
 
                 invocation = syntaxTree.FindInvocation("GetValue");
-                Assert.AreEqual(false, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out method));
+                Assert.AreEqual(false, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out _));
             }
         }
     }

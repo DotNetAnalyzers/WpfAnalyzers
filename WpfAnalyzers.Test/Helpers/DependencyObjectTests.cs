@@ -42,7 +42,7 @@ namespace N
             Assert.AreEqual("SetValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
 
         [TestCase(".SetValue")]
@@ -81,7 +81,7 @@ namespace N
             Assert.AreEqual("SetValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
 
         [TestCase("SetCurrentValue(BarProperty, value)")]
@@ -119,7 +119,7 @@ namespace N
             Assert.AreEqual("SetCurrentValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace N
             Assert.AreEqual("SetCurrentValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("RegisterAttached");
-            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
 
         [TestCase("GetValue(BarProperty)")]
@@ -190,7 +190,7 @@ namespace N
             Assert.AreEqual("GetValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
 
         [Test]
@@ -227,7 +227,7 @@ namespace N
             Assert.AreEqual("GetValue", method.Name);
 
             invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out method));
+            Assert.AreEqual(false, DependencyObject.TryGetGetValueCall(invocation, semanticModel, CancellationToken.None, out _));
         }
     }
 }
