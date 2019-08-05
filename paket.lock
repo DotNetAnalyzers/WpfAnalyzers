@@ -746,7 +746,7 @@ NUGET
     Gu.Roslyn.Asserts (3.2.2)
       Gu.Roslyn.Asserts.Analyzers (>= 3.2.2)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
-    Gu.Roslyn.Asserts.Analyzers (3.2.2)
+    Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
     Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0
@@ -1618,7 +1618,7 @@ NUGET
     Gu.Roslyn.Asserts (3.2.2)
       Gu.Roslyn.Asserts.Analyzers (>= 3.2.2)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
-    Gu.Roslyn.Asserts.Analyzers (3.2.2)
+    Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
     Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0

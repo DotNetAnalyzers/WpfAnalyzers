@@ -4,7 +4,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <AssemblyName>WpfAnalyzers.Vsix</AssemblyName>
     <NoWarn>NU1605</NoWarn>
