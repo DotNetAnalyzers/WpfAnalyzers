@@ -32,7 +32,8 @@ namespace WpfAnalyzers
                 ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
             {
                 context.ReportDiagnostic(
-                    Diagnostic.Create(Descriptors.WPF0083UseConstructorArgumentAttribute,
+                    Diagnostic.Create(
+                        Descriptors.WPF0083UseConstructorArgumentAttribute,
                         propertyDeclaration.Identifier.GetLocation(),
                         ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
                         parameterName));

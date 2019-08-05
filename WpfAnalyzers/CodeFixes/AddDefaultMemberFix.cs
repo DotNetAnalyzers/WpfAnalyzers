@@ -74,7 +74,7 @@ namespace WpfAnalyzers
         private static DocumentEditor AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             return editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)))
-                         .MakeSealed(containingType);
+                         .Seal(containingType);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -85,14 +85,14 @@ namespace WpfAnalyzers
                                         .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             return editor.AddField(containingType, ParseField(code))
-                         .MakeSealed(containingType);
+                         .Seal(containingType);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
             return editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
-                         .MakeSealed(containingType);
+                         .Seal(containingType);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -103,7 +103,7 @@ namespace WpfAnalyzers
                                         .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             return editor.AddProperty(containingType, ParseProperty(code))
-                         .MakeSealed(containingType);
+                         .Seal(containingType);
         }
 
         private static FieldDeclarationSyntax ParseField(string code)
