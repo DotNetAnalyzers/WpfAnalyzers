@@ -102,7 +102,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (!Arguments.TryCreateValue(assignment, semanticModel, cancellationToken, out var value))
+            if (!Arguments.TryCreateValue(assignment, semanticModel, out var value))
             {
                 return false;
             }
@@ -222,7 +222,7 @@ namespace WpfAnalyzers
                 return result != null;
             }
 
-            internal static bool TryCreateValue(AssignmentExpressionSyntax assignment, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax result)
+            internal static bool TryCreateValue(AssignmentExpressionSyntax assignment, SemanticModel semanticModel, out ArgumentSyntax result)
             {
                 var assignedType = semanticModel.GetTypeInfo(assignment.Left)
                                               .Type;
@@ -233,7 +233,7 @@ namespace WpfAnalyzers
                 }
 
                 var valueExpression = assignment.Right;
-                if (semanticModel.IsRepresentationPreservingConversion(valueExpression, assignedType, cancellationToken))
+                if (semanticModel.IsRepresentationPreservingConversion(valueExpression, assignedType))
                 {
                     result = SyntaxFactory.Argument(valueExpression);
                 }

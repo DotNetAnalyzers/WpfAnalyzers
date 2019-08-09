@@ -194,7 +194,7 @@ namespace WpfAnalyzers
                 if (singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                     MemberPath.TrySingle(memberAccess.Expression, out var pathItem))
                 {
-                    if (pathItem.Identifier.ValueText == senderParameter.Name)
+                    if (pathItem.ValueText == senderParameter.Name)
                     {
                         return true;
                     }
@@ -212,8 +212,8 @@ namespace WpfAnalyzers
 
                         using (var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name))
                         {
-                            return walker.IdentifierNames.TrySingle(out pathItem) &&
-                                   context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out IParameterSymbol symbol) &&
+                            return walker.IdentifierNames.TrySingle(out var identifierName) &&
+                                   context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IParameterSymbol symbol) &&
                                    symbol.Name == senderParameter.Name;
                         }
                     }

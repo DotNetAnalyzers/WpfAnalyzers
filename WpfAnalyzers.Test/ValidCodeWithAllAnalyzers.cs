@@ -3,7 +3,6 @@ namespace WpfAnalyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -27,20 +26,6 @@ namespace WpfAnalyzers.Test
             ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
             MetadataReferences.FromAttributes());
-
-        [SetUp]
-        public static void Setup()
-        {
-            // The cache will be enabled when running in VS.
-            // It speeds up the tests and makes them more realistic
-            Cache<SyntaxTree, SemanticModel>.Begin();
-        }
-
-        [TearDown]
-        public static void TearDown()
-        {
-            Cache<SyntaxTree, SemanticModel>.End();
-        }
 
         [Test]
         public static void NotEmpty()

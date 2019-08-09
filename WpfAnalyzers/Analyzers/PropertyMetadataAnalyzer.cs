@@ -205,7 +205,7 @@ namespace WpfAnalyzers
                     }
             }
 
-            if (context.SemanticModel.IsRepresentationPreservingConversion(defaultValue, registeredType, context.CancellationToken))
+            if (context.SemanticModel.IsRepresentationPreservingConversion(defaultValue, registeredType))
             {
                 return true;
             }
