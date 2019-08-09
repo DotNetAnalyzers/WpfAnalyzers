@@ -1,7 +1,7 @@
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.Extensions (0.5.5-dev)
+    Gu.Roslyn.Extensions (0.6.0-dev)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.3.1) - restriction: >= netstandard1.3
       NETStandard.Library (>= 1.6.1) - restriction: >= netstandard1.3
     ManagedEsent (1.9.4) - restriction: >= net46
@@ -748,7 +748,7 @@ NUGET
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
     Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0
       System.Collections.Immutable (>= 1.5) - restriction: >= netstandard2.0
       System.Memory (>= 4.5.2) - restriction: >= netstandard2.0
@@ -756,18 +756,18 @@ NUGET
       System.Runtime.CompilerServices.Unsafe (>= 4.5.2) - restriction: >= netstandard2.0
       System.Text.Encoding.CodePages (>= 4.5.1) - restriction: >= netstandard2.0
       System.Threading.Tasks.Extensions (>= 4.5.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.CSharp (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.CSharp.Workspaces (3.2)
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.CSharp (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Workspaces.Common (3.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.Workspaces.Common (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.CSharp (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.CSharp.Workspaces (3.2.1)
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.CSharp (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Workspaces.Common (3.2.1) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.Workspaces.Common (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       System.Composition (>= 1.0.31) - restriction: >= netstandard2.0
     Microsoft.CodeCoverage (16.2) - restriction: || (>= net45) (>= netcoreapp1.0)
     Microsoft.CSharp (4.5) - restriction: || (&& (< netstandard1.3) (>= uap10.0)) (&& (< netstandard2.0) (>= uap10.0))
-    Microsoft.Diagnostics.Tracing.TraceEvent (2.0.44) - restriction: >= netstandard2.0
+    Microsoft.Diagnostics.Tracing.TraceEvent (2.0.45) - restriction: >= netstandard2.0
     Microsoft.DotNet.InternalAbstractions (1.0) - restriction: >= netcoreapp1.0
       System.AppContext (>= 4.1) - restriction: && (< net451) (>= netstandard1.3)
       System.Collections (>= 4.0.11) - restriction: && (< net451) (>= netstandard1.3)
@@ -879,7 +879,7 @@ NUGET
       NETStandard.Library (>= 2.0) - restriction: && (< net35) (>= netstandard2.0)
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
       System.Reflection.TypeExtensions (>= 4.4) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
-    NUnit3TestAdapter (3.13)
+    NUnit3TestAdapter (3.14)
       Microsoft.DotNet.InternalAbstractions (>= 1.0) - restriction: >= netcoreapp1.0
       System.ComponentModel.EventBasedAsync (>= 4.3) - restriction: >= netcoreapp1.0
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: >= netcoreapp1.0
@@ -1620,7 +1620,7 @@ NUGET
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
     Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0
       System.Collections.Immutable (>= 1.5) - restriction: >= netstandard2.0
       System.Memory (>= 4.5.2) - restriction: >= netstandard2.0
@@ -1628,14 +1628,14 @@ NUGET
       System.Runtime.CompilerServices.Unsafe (>= 4.5.2) - restriction: >= netstandard2.0
       System.Text.Encoding.CodePages (>= 4.5.1) - restriction: >= netstandard2.0
       System.Threading.Tasks.Extensions (>= 4.5.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.CSharp (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.CSharp.Workspaces (3.2)
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.CSharp (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Workspaces.Common (3.2) - restriction: >= netstandard2.0
-    Microsoft.CodeAnalysis.Workspaces.Common (3.2) - restriction: >= netstandard2.0
-      Microsoft.CodeAnalysis.Common (3.2) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.CSharp (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.CSharp.Workspaces (3.2.1)
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.CSharp (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Workspaces.Common (3.2.1) - restriction: >= netstandard2.0
+    Microsoft.CodeAnalysis.Workspaces.Common (3.2.1) - restriction: >= netstandard2.0
+      Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       System.Composition (>= 1.0.31) - restriction: >= netstandard2.0
     Microsoft.CodeCoverage (16.2) - restriction: || (>= net45) (>= netcoreapp1.0)
     Microsoft.CSharp (4.5) - restriction: || (&& (< netstandard1.3) (>= uap10.0)) (&& (< netstandard2.0) (>= uap10.0))
@@ -1741,7 +1741,7 @@ NUGET
       NETStandard.Library (>= 2.0) - restriction: && (< net35) (>= netstandard2.0)
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
       System.Reflection.TypeExtensions (>= 4.4) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
-    NUnit3TestAdapter (3.13)
+    NUnit3TestAdapter (3.14)
       Microsoft.DotNet.InternalAbstractions (>= 1.0) - restriction: >= netcoreapp1.0
       System.ComponentModel.EventBasedAsync (>= 4.3) - restriction: >= netcoreapp1.0
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: >= netcoreapp1.0
