@@ -44,14 +44,9 @@ namespace WpfAnalyzers
         private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, int expectedArgs, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
             method = null;
-            if (invocation == null ||
-                invocation.ArgumentList == null ||
-                invocation.ArgumentList.Arguments.Count != expectedArgs)
-            {
-                return false;
-            }
-
-            return semanticModel.TryGetSymbol(invocation, qualifiedMethod, cancellationToken, out method);
+            return invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                   argumentList.Arguments.Count == expectedArgs &&
+                   semanticModel.TryGetSymbol(invocation, qualifiedMethod, cancellationToken, out method);
         }
     }
 }

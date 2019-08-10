@@ -25,53 +25,37 @@ namespace WpfAnalyzers
 
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is AssignmentExpressionSyntax assignment &&
+                !IsInObjectInitializer(assignment) &&
+                !IsInConstructor(assignment) &&
+                context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out IPropertySymbol property) &&
+                property != KnownSymbol.FrameworkElement.DataContext &&
+                ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
+                !IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
-                return;
-            }
-
-            if (context.Node is AssignmentExpressionSyntax assignment)
-            {
-                if (IsInObjectInitializer(assignment) ||
-                    IsInConstructor(assignment))
-                {
-                    return;
-                }
-
-                var property = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) as IPropertySymbol;
-                if (property == KnownSymbol.FrameworkElement.DataContext)
-                {
-                    return;
-                }
-
-                if (ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty))
-                {
-                    if (IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
-                    {
-                        return;
-                    }
-
-                    var propertyArg = fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart);
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue, assignment.GetLocation(), propertyArg, assignment.Right));
-                }
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptors.WPF0041SetMutableUsingSetCurrentValue,
+                        assignment.GetLocation(),
+                        fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart),
+                        assignment.Right));
             }
         }
 
         private static void HandleInvocation(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax invocation &&
-                !IsInObjectInitializer(invocation) &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is InvocationExpressionSyntax invocation &&
                 !IsInConstructor(invocation) &&
-                DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _))
+                invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                argumentList.Arguments.Count == 2 &&
+                argumentList.Arguments.TryElementAt(0, out var propertyArg) &&
+                DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) &&
+                !IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
-                var propertyArg = invocation.ArgumentList.Arguments[0];
-                if (!BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) ||
-                    propertyMember.Type == KnownSymbol.DependencyPropertyKey)
+                if (propertyMember.Type == KnownSymbol.DependencyPropertyKey)
                 {
                     return;
                 }
@@ -94,12 +78,12 @@ namespace WpfAnalyzers
                     return;
                 }
 
-                if (IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
-                {
-                    return;
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue, invocation.GetLocation(), propertyMember, invocation.ArgumentList.Arguments[1]));
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptors.WPF0041SetMutableUsingSetCurrentValue,
+                        invocation.GetLocation(),
+                        propertyMember,
+                        invocation.ArgumentList.Arguments[1]));
             }
         }
 

@@ -11,6 +11,67 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         private static readonly CodeFixProvider Fix = new UseSetCurrentValueFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue);
 
+        [Test]
+        public static void Messages()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void M()
+        {
+            ↓this.Bar = 1;
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+
+        public void M()
+        {
+            this.SetCurrentValue(BarProperty, 1);
+        }
+    }
+}";
+
+            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Use SetCurrentValue(BarProperty, 1)");
+            RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "this.SetCurrentValue(BarProperty,1)");
+        }
+
         [TestCase(true, "1")]
         [TestCase(false, "1")]
         [TestCase(true, "CreateValue()")]
