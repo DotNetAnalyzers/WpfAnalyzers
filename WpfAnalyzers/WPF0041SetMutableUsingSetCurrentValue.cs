@@ -38,6 +38,9 @@ namespace WpfAnalyzers
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         assignment.GetLocation(),
+                        properties: ImmutableDictionary<string, string>.Empty.Add(
+                            nameof(BackingFieldOrProperty),
+                            $"{fieldOrProperty.Symbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)}.{fieldOrProperty.Name}"),
                         fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart),
                         assignment.Right));
             }
@@ -52,15 +55,15 @@ namespace WpfAnalyzers
                 argumentList.Arguments.Count == 2 &&
                 argumentList.Arguments.TryElementAt(0, out var propertyArg) &&
                 DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var propertyMember) &&
+                BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var backingFieldOrProperty) &&
                 !IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
-                if (propertyMember.Type == KnownSymbol.DependencyPropertyKey)
+                if (backingFieldOrProperty.Type == KnownSymbol.DependencyPropertyKey)
                 {
                     return;
                 }
 
-                if (propertyMember.Symbol is IFieldSymbol field &&
+                if (backingFieldOrProperty.Symbol is IFieldSymbol field &&
                     field == KnownSymbol.FrameworkElement.DataContextProperty)
                 {
                     return;
@@ -73,7 +76,7 @@ namespace WpfAnalyzers
                 }
 
                 var clrMethod = context.ContainingSymbol as IMethodSymbol;
-                if (ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out propertyMember))
+                if (ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out backingFieldOrProperty))
                 {
                     return;
                 }
@@ -82,7 +85,7 @@ namespace WpfAnalyzers
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         invocation.GetLocation(),
-                        propertyMember,
+                        backingFieldOrProperty,
                         invocation.ArgumentList.Arguments[1]));
             }
         }
