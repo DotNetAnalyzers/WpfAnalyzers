@@ -34,14 +34,15 @@ namespace WpfAnalyzers
                 ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
                 !IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
+                var propertyArgument = fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         assignment.GetLocation(),
                         properties: ImmutableDictionary<string, string>.Empty.Add(
                             nameof(BackingFieldOrProperty),
-                            $"{fieldOrProperty.Symbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)}.{fieldOrProperty.Name}"),
-                        fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart),
+                            propertyArgument),
+                        propertyArgument,
                         assignment.Right));
             }
         }

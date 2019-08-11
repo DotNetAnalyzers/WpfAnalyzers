@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
+    using System;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,8 +11,7 @@ namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
         private static readonly DiagnosticAnalyzer Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
         private static readonly CodeFixProvider Fix = new UseSetCurrentValueFix();
 
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic =
-            ExpectedDiagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0041SetMutableUsingSetCurrentValue);
 
         [Test]
         public static void Messages()
@@ -71,13 +71,12 @@ namespace N
 }";
 
             var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Use SetCurrentValue(BarProperty, 1)");
-            RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after,
-                                 fixTitle: "this.SetCurrentValue(BarProperty,1)");
+            RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "this.SetCurrentValue(BarProperty, 1)");
         }
 
-        [TestCase(true, "1")]
+        [TestCase(true,  "1")]
         [TestCase(false, "1")]
-        [TestCase(true, "CreateValue()")]
+        [TestCase(true,  "CreateValue()")]
         [TestCase(false, "CreateValue()")]
         public static void ClrProperty(bool underscore, string value)
         {
@@ -101,7 +100,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             ↓this.Bar = 1;
         }
@@ -131,7 +130,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             this.SetCurrentValue(BarProperty, 1);
         }
@@ -145,9 +144,9 @@ namespace N
         }
 
         [TestCase(false, "1")]
-        [TestCase(true, "1")]
+        [TestCase(true,  "1")]
         [TestCase(false, "CreateValue()")]
-        [TestCase(true, "CreateValue()")]
+        [TestCase(true,  "CreateValue()")]
         public static void ClrPropertyWithTrivia(bool underscore, string value)
         {
             var code = @"
@@ -170,7 +169,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             // comment before
             ↓this.Bar = 1; // line comment
@@ -202,7 +201,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             // comment before
             this.SetCurrentValue(BarProperty, 1); // line comment
@@ -217,16 +216,16 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
-        [TestCase("FooControl.Bar = 1;", "FooControl.SetCurrentValue(FooControl.BarProperty, (double)1);")]
-        [TestCase("FooControl.Bar = 1.0;", "FooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
-        [TestCase("FooControl.SetValue(FooControl.BarProperty, 1.0);", "FooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
-        [TestCase("FooControl?.SetValue(FooControl.BarProperty, 1.0);", "FooControl?.SetCurrentValue(FooControl.BarProperty, 1.0);")]
-        [TestCase("FooControl.Bar = CreateValue();", "FooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
-        [TestCase("FooControl.SetValue(FooControl.BarProperty, CreateValue());", "FooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
-        [TestCase("FooControl.SetValue(FooControl.BarProperty, CreateObjectValue());", "FooControl.SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
-        public static void FromOutside(string statementBefore, string statementAfter)
+        [TestCase("↓FooControl.Bar = 1;",                                               "FooControl.SetCurrentValue(FooControl.BarProperty, (double)1);")]
+        [TestCase("↓FooControl.Bar = 1.0;",                                             "FooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
+        [TestCase("↓FooControl.SetValue(FooControl.BarProperty, 1.0);",                 "FooControl.SetCurrentValue(FooControl.BarProperty, 1.0);")]
+        [TestCase("FooControl?↓.SetValue(FooControl.BarProperty, 1.0);",                "FooControl?.SetCurrentValue(FooControl.BarProperty, 1.0);")]
+        [TestCase("↓FooControl.Bar = CreateValue();",                                   "FooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
+        [TestCase("↓FooControl.SetValue(FooControl.BarProperty, CreateValue());",       "FooControl.SetCurrentValue(FooControl.BarProperty, CreateValue());")]
+        [TestCase("↓FooControl.SetValue(FooControl.BarProperty, CreateObjectValue());", "FooControl.SetCurrentValue(FooControl.BarProperty, CreateObjectValue());")]
+        public static void StaticMemberFromOutside(string statementBefore, string statementAfter)
         {
-            var fooControlCode = @"
+            var fooControl = @"
 namespace N
 {
     using System.Windows;
@@ -258,7 +257,7 @@ namespace N
     {
         private static readonly FooControl FooControl = new FooControl();
 
-        public static void Meh()
+        public static void M()
         {
             ↓FooControl.Bar = 1;
         }
@@ -266,7 +265,7 @@ namespace N
         private static double CreateValue() => 4;
         private static object CreateObjectValue() => 4;
     }
-}".AssertReplace("FooControl.Bar = 1;", statementBefore);
+}".AssertReplace("↓FooControl.Bar = 1;", statementBefore);
 
             var after = @"
 namespace N
@@ -278,7 +277,7 @@ namespace N
     {
         private static readonly FooControl FooControl = new FooControl();
 
-        public static void Meh()
+        public static void M()
         {
             FooControl.SetCurrentValue(FooControl.BarProperty, 1);
         }
@@ -288,26 +287,17 @@ namespace N
     }
 }".AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", statementAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, fooControlCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {before, fooControl}, after);
         }
 
-        [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);")]
-        public static void DependencyPropertyFromOutsideConditional(string setExpression)
+        [TestCase("↓fooControl.Bar = 1;",                                   "fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("↓this.fooControl.Bar = 1;",                              "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("↓fooControl.SetValue(FooControl.BarProperty, 1);",       "fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("↓this.fooControl.SetValue(FooControl.BarProperty, 1);",  "this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+        [TestCase("this.fooControl?↓.SetValue(FooControl.BarProperty, 1);", "this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
+        public static void InstanceMemberFromOutside(string statementBefore, string statementAfter)
         {
-            var before = @"
-namespace N
-{
-    public class Foo
-    {
-        private readonly FooControl fooControl = new FooControl();
-
-        public void Meh()
-        {
-            this.fooControl.↓Bar = 1;
-        }
-    }
-}".AssertReplace("this.fooControl.↓Bar = 1;", setExpression);
-            var fooControlCode = @"
+            var fooControl = @"
 namespace N
 {
     using System.Windows;
@@ -327,12 +317,26 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             this.SetCurrentValue(BarProperty, 1);
         }
     }
 }";
+
+            var before = @"
+namespace N
+{
+    public class Foo
+    {
+        private readonly FooControl fooControl = new FooControl();
+
+        public void M()
+        {
+            ↓this.fooControl.Bar = 1;
+        }
+    }
+}".AssertReplace("↓this.fooControl.Bar = 1;", statementBefore);
 
             var after = @"
 namespace N
@@ -341,13 +345,13 @@ namespace N
     {
         private readonly FooControl fooControl = new FooControl();
 
-        public void Meh()
+        public void M()
         {
-            this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);
+            this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);
         }
     }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, fooControlCode }, after);
+}".AssertReplace("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);", statementAfter);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {before, fooControl}, after);
         }
 
         [Test]
@@ -373,7 +377,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             var value = GetValue(BarProperty);
             ↓SetValue(BarProperty, value);
@@ -401,7 +405,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             var value = GetValue(BarProperty);
             SetCurrentValue(BarProperty, value);
@@ -638,7 +642,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {fooControlCode, before}, after);
         }
 
         [Test]
@@ -697,7 +701,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {fooControlCode, before}, after);
         }
 
         [Test]
@@ -758,7 +762,7 @@ namespace N
         }
 
         [Test]
-        public static void ClrPropertyInBaseclass()
+        public static void ClrPropertyInBaseClass()
         {
             var before = @"
 namespace N
@@ -794,7 +798,7 @@ namespace N
         }
 
         [Test]
-        public static void SetValueInBaseclass()
+        public static void SetValueInBaseClass()
         {
             var before = @"
 namespace N
@@ -829,9 +833,9 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase(true, "1")]
+        [TestCase(true,  "1")]
         [TestCase(false, "1")]
-        [TestCase(true, "CreateValue()")]
+        [TestCase(true,  "CreateValue()")]
         [TestCase(false, "CreateValue()")]
         public static void SetValue(bool underscore, string setExpression)
         {
@@ -855,7 +859,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             ↓this.SetValue(BarProperty, 1);
         }
@@ -885,7 +889,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             this.SetCurrentValue(BarProperty, 1);
         }
@@ -898,9 +902,9 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
-        [TestCase(true, "1")]
+        [TestCase(true,  "1")]
         [TestCase(false, "1")]
-        [TestCase(true, "this.CreateValue()")]
+        [TestCase(true,  "this.CreateValue()")]
         [TestCase(false, "this.CreateValue()")]
         public static void SetValueWithTrivia(bool underscore, string setExpression)
         {
@@ -924,7 +928,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             // comment before
             ↓this.SetValue(BarProperty, 1); // line comment
@@ -956,7 +960,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
 
-        public void Meh()
+        public void M()
         {
             // comment before
             this.SetCurrentValue(BarProperty, 1); // line comment
@@ -1073,9 +1077,9 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase(true, "\"1\"")]
+        [TestCase(true,  "\"1\"")]
         [TestCase(false, "\"1\"")]
-        [TestCase(true, "CreateValue()")]
+        [TestCase(true,  "CreateValue()")]
         [TestCase(false, "CreateValue()")]
         public static void InheritedTextBoxTexUsingClrProperty(bool underscore, string value)
         {
@@ -1087,7 +1091,7 @@ namespace N
 
     public class FooControl : TextBox
     {
-        public void Meh()
+        public void M()
         {
             ↓this.Text = ""1"";
         }
@@ -1105,7 +1109,7 @@ namespace N
 
     public class FooControl : TextBox
     {
-        public void Meh()
+        public void M()
         {
             this.SetCurrentValue(TextProperty, ""1"");
         }
@@ -1132,7 +1136,7 @@ namespace N
     {
         private readonly TextBox textBox = new TextBox();
 
-        public void Meh()
+        public void M()
         {
             ↓this.textBox.Text = ""1"";
         }
@@ -1149,7 +1153,7 @@ namespace N
     {
         private readonly TextBox textBox = new TextBox();
 
-        public void Meh()
+        public void M()
         {
             this.textBox.SetCurrentValue(TextBox.TextProperty, ""1"");
         }
