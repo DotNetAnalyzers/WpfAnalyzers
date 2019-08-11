@@ -19,11 +19,11 @@ group Benchmarks
   source http://www.nuget.org/api/v2/
   nuget Microsoft.NET.Test.Sdk
   nuget BenchmarkDotNet.Diagnostics.Windows
+  nuget CommandLineParser 2.4.3
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
   nuget Gu.Roslyn.Asserts
   nuget NUnit
   nuget NUnit3TestAdapter
-
 
 group Test
   storage: none

@@ -742,7 +742,7 @@ NUGET
     BenchmarkDotNet.Diagnostics.Windows (0.11.5)
       BenchmarkDotNet (>= 0.11.5) - restriction: >= netstandard2.0
       Microsoft.Diagnostics.Tracing.TraceEvent (>= 2.0.34) - restriction: >= netstandard2.0
-    CommandLineParser (2.6) - restriction: >= netstandard2.0
+    CommandLineParser (2.4.3)
     Gu.Roslyn.Asserts (3.2.2)
       Gu.Roslyn.Asserts.Analyzers (>= 3.2.2)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
