@@ -49,6 +49,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\DirectoryInfoStringConverter.cs" />
     <Compile Include="DependencyProperties\AddOwner.cs" />
     <Compile Include="DependencyProperties\BooleanBoxes.cs" />
     <Compile Include="DependencyProperties\CommonValidation.cs" />
