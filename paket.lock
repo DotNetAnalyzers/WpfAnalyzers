@@ -1569,7 +1569,7 @@ NUGET
       Microsoft.VisualStudio.Threading.Analyzers (>= 16.3.13) - restriction: >= netstandard1.3
       NETStandard.Library (>= 1.6.1) - restriction: >= netstandard1.3
     Microsoft.VisualStudio.Threading.Analyzers (16.3.13) - restriction: >= net46
-    Microsoft.VSSDK.BuildTools (16.3.1066)
+    Microsoft.VSSDK.BuildTools (16.3.2093)
       Microsoft.VisualStudio.SDK.Analyzers (>= 15.8.33) - restriction: >= net46
     Microsoft.Win32.Primitives (4.3) - restriction: || (&& (< net45) (>= net46) (>= netstandard1.4) (< netstandard1.5)) (&& (< net45) (>= net46) (>= netstandard1.5) (< netstandard1.6)) (&& (< net45) (>= net46) (>= netstandard1.6) (< netstandard2.0)) (&& (>= net46) (< netstandard1.4)) (&& (>= net46) (< netstandard1.5) (>= uap10.0))
     NETStandard.Library (2.0.3) - restriction: >= net46
