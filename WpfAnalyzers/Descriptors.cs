@@ -68,6 +68,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Name of ValidateValueCallback should match registered name.");
 
+        internal static readonly DiagnosticDescriptor WPF0008DependsOnTarget = Create(
+            id: "WPF0008",
+            title: "[DependsOn(target)] must exist.",
+            messageFormat: "[DependsOn(target)] must exist.",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "[DependsOn(target)] must exist.");
+
         internal static readonly DiagnosticDescriptor WPF0010DefaultValueMustMatchRegisteredType = Create(
             id: "WPF0010",
             title: "Default value type must match registered type.",

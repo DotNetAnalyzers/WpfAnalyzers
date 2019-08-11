@@ -41,6 +41,7 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType XamlSetTypeConverterEventArgs = Create("System.Windows.Markup.XamlSetTypeConverterEventArgs");
         internal static readonly QualifiedType MarkupExtensionReturnTypeAttribute = Create("System.Windows.Markup.MarkupExtensionReturnTypeAttribute");
         internal static readonly QualifiedType ConstructorArgumentAttribute = Create("System.Windows.Markup.ConstructorArgumentAttribute");
+        internal static readonly QualifiedType DependsOnAttribute = Create("System.Windows.Markup.DependsOnAttribute");
         internal static readonly QualifiedType XmlnsPrefixAttribute = new QualifiedType("System.Windows.Markup.XmlnsPrefixAttribute");
 
         internal static readonly QualifiedType IValueConverter = Create("System.Windows.Data.IValueConverter");

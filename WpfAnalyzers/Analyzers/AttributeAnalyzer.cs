@@ -14,6 +14,7 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            Descriptors.WPF0008DependsOnTarget,
             Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace,
             Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType,
             Descriptors.WPF0082ConstructorArgument,
@@ -34,7 +35,14 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AttributeSyntax attribute)
             {
-                if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
+                if (Attribute.IsType(attribute, KnownSymbol.DependsOnAttribute, context.SemanticModel, context.CancellationToken) &&
+                    attribute.TrySingleArgument(out var nameArg) &&
+                    context.SemanticModel.TryGetConstantValue(nameArg.Expression, context.CancellationToken, out string name) &&
+                    !context.ContainingProperty().ContainingType.TryFindPropertyRecursive(name, out _))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0008DependsOnTarget, nameArg.GetLocation()));
+                }
+                else if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
                     Attribute.TryFindArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg) &&
                     context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string @namespace) &&
                     context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)

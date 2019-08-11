@@ -18,6 +18,7 @@ Roslyn analyzers for WPF.
 | [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name.
 | [WPF0006](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md)| Name of CoerceValueCallback should match registered name.
 | [WPF0007](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md)| Name of ValidateValueCallback should match registered name.
+| [WPF0008](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0008.md)| [DependsOn(target)] must exist.
 | [WPF0010](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md)| Default value type must match registered type.
 | [WPF0011](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md)| Containing type should be used as registered owner.
 | [WPF0012](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md)| CLR property type should match registered type.
