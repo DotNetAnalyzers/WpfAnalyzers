@@ -286,7 +286,7 @@ namespace N
     }
 }".AssertReplace("FooControl.SetCurrentValue(FooControl.BarProperty, 1);", statementAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {before, fooControl}, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, fooControl }, after);
         }
 
         [TestCase("↓fooControl.Bar = 1;",                                   "fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
@@ -350,7 +350,7 @@ namespace N
         }
     }
 }".AssertReplace("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);", statementAfter);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {before, fooControl}, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, fooControl }, after);
         }
 
         [Test]
@@ -641,7 +641,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {fooControlCode, before}, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
         }
 
         [Test]
@@ -700,7 +700,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] {fooControlCode, before}, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
         }
 
         [Test]
