@@ -17,19 +17,21 @@ namespace WpfAnalyzers
             {
                 foreach (var member in type.GetMembers())
                 {
-                    if (member is IFieldSymbol field &&
-                        !field.IsStatic &&
-                        !field.IsConst &&
-                        !field.IsReadOnly)
+                    if (FieldOrProperty.TryCreate(member, out var fieldOrProperty) &&
+                        !fieldOrProperty.IsStatic)
                     {
-                        return true;
-                    }
+                        switch (member)
+                        {
+                            case IFieldSymbol field when !field.IsConst && !field.IsReadOnly:
+                            case IPropertySymbol property when property.SetMethod != null:
+                                return true;
+                        }
 
-                    if (member is IPropertySymbol property &&
-                        !property.IsStatic &&
-                        !property.IsGetOnly())
-                    {
-                        return true;
+                        if (fieldOrProperty.Type.Is(KnownSymbol.IEnumerable) &&
+                            fieldOrProperty.Type.TryFindFirstMethod("Add", out _))
+                        {
+                            return true;
+                        }
                     }
                 }
 
