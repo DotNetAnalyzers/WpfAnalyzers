@@ -49,26 +49,26 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddOwner.cs" />
-    <Compile Include="BooleanBoxes.cs" />
-    <Compile Include="CommonValidation.cs" />
-    <Compile Include="Foo1.cs" />
-    <Compile Include="FooControl.cs" />
+    <Compile Include="DependencyProperties\AddOwner.cs" />
+    <Compile Include="DependencyProperties\BooleanBoxes.cs" />
+    <Compile Include="DependencyProperties\CommonValidation.cs" />
+    <Compile Include="DependencyProperties\Foo1.cs" />
+    <Compile Include="DependencyProperties\FooControl.cs" />
     <Compile Include="WithEnum\Foo.cs" />
     <Compile Include="WithEnum\FooControl.cs" />
     <Compile Include="WithEnum\FooEnum.cs" />
     <Compile Include="TemplateParts\FooControl.cs" />
-    <Compile Include="WithMultidimensional.cs" />
+    <Compile Include="DependencyProperties\WithMultidimensional.cs" />
     <Compile Include="WithSetMarkupExtensionAttribute.cs" />
-    <Compile Include="WithValidateValueCallback.cs" />
-    <Compile Include="WithXamlSetTypeConverter.cs" />
+    <Compile Include="DependencyProperties\WithValidateValueCallback.cs" />
+    <Compile Include="DependencyProperties\WithXamlSetTypeConverter.cs" />
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Commands.cs" />
-    <Compile Include="Foo.cs" />
-    <Compile Include="FooControl1.cs">
+    <Compile Include="DependencyProperties\Foo.cs" />
+    <Compile Include="DependencyProperties\FooControl1.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

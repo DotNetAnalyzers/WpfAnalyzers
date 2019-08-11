@@ -1,4 +1,4 @@
-namespace ValidCode
+namespace ValidCode.DependencyProperties
 {
     internal static class BooleanBoxes
     {

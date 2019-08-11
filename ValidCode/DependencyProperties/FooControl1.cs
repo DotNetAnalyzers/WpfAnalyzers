@@ -1,6 +1,6 @@
 // ReSharper disable All
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-namespace ValidCode
+namespace ValidCode.DependencyProperties
 {
     using System.Windows;
     using System.Windows.Media;

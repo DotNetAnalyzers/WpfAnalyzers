@@ -1,4 +1,4 @@
-namespace ValidCode
+namespace ValidCode.DependencyProperties
 {
     public class WithMultidimensional
     {
