@@ -103,7 +103,9 @@ namespace WpfAnalyzers
             if (registeredType.TypeKind == TypeKind.Enum)
             {
                 return semanticModel.TryGetType(value, cancellationToken, out var valueType) &&
-                       Equals(registeredType, valueType);
+                       valueType.MetadataName == registeredType.MetadataName &&
+                       Equals(valueType.ContainingType, registeredType.ContainingType) &&
+                       NamespaceSymbolComparer.Equals(valueType.ContainingNamespace, registeredType.ContainingNamespace);
             }
 
             if (semanticModel.IsRepresentationPreservingConversion(value, registeredType))
