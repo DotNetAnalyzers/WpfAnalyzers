@@ -70,7 +70,7 @@ namespace WpfAnalyzers
         private static bool IsWrongType(BackingFieldOrProperty fieldOrProperty, ArgumentSyntax argument, SyntaxNodeAnalysisContext context, out ITypeSymbol registeredType)
         {
             if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out registeredType) &&
-                !context.SemanticModel.IsRepresentationPreservingConversion(argument.Expression, registeredType))
+                !PropertyMetadata.IsValueValidForRegisteredType(argument.Expression, registeredType, context.SemanticModel, context.CancellationToken))
             {
                 if (context.SemanticModel.TryGetType(argument.Expression, context.CancellationToken, out var type))
                 {
