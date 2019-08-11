@@ -14,6 +14,10 @@ group Analyzers
   nuget StyleCop.Analyzers prerelease
   nuget Gu.Analyzers
 
+group WpfAnalyzers
+  source http://www.nuget.org/api/v2/
+  nuget WpfAnalyzers
+
 group Benchmarks
   storage: none
   source http://www.nuget.org/api/v2/
