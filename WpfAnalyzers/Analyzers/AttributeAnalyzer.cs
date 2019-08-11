@@ -52,7 +52,7 @@ namespace WpfAnalyzers
                          Attribute.TryFindArgument(attribute, 0, "returnType", out arg) &&
                          arg.Expression is TypeOfExpressionSyntax typeOf &&
                          context.SemanticModel.TryGetType(typeOf.Type, context.CancellationToken, out var argType) &&
-                         !ReferenceEquals(argType, returnType))
+                         !returnType.IsAssignableTo(argType, context.Compilation))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType, arg.GetLocation(), returnType));
                 }

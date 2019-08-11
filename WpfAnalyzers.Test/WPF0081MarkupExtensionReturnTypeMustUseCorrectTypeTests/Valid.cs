@@ -51,5 +51,55 @@ namespace N
 }";
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable))]")]
+        [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable<int>))]")]
+        public static void EnumerableExtension(string attribute)
+        {
+            var code = @"
+namespace N
+{
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows.Markup;
+
+    [MarkupExtensionReturnType(typeof(IEnumerable))]
+    public class EnumerableExtension : MarkupExtension
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return Enumerable.Empty<int>();
+        }
+    }
+}".AssertReplace("[MarkupExtensionReturnType(typeof(IEnumerable))]", attribute);
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [TestCase("[MarkupExtensionReturnType(typeof(IdExtension))]")]
+        [TestCase("[MarkupExtensionReturnType(typeof(MarkupExtension))]")]
+        [TestCase("[MarkupExtensionReturnType(typeof(IDisposable))]")]
+        public static void IdExtension(string attribute)
+        {
+            var code = @"
+namespace N
+{
+    using System;
+    using System.Windows.Markup;
+
+    [MarkupExtensionReturnType(typeof(IdExtension))]
+    public class IdExtension : MarkupExtension, IDisposable
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
+        public void Dispose() { }
+    }
+}".AssertReplace("[MarkupExtensionReturnType(typeof(IdExtension))]", attribute);
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }
