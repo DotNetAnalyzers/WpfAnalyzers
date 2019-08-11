@@ -16,9 +16,7 @@ namespace WpfAnalyzers.Benchmarks
 
     public class Program
     {
-        public static string ProjectDirectory { get; } = ProjectFile.Find("WpfAnalyzers.Benchmarks.csproj").DirectoryName;
-
-        public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
+        public static string BenchmarksDirectory { get; } = Path.Combine(ProjectFile.Find("WpfAnalyzers.Benchmarks.csproj").DirectoryName, "Benchmarks");
 
         public static void Main()
         {
@@ -65,14 +63,39 @@ namespace WpfAnalyzers.Benchmarks
 
         private static void CopyResult(Summary summary)
         {
-            Console.WriteLine($"DestinationDirectory: {BenchmarksDirectory}");
-            if (Directory.Exists(BenchmarksDirectory))
+            var name = summary.Title.Split('.').LastOrDefault()?.Split('-').FirstOrDefault();
+            if (name == null)
             {
-                var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath)
-                                              .Single(x => x.EndsWith(summary.Title + "-report-github.md"));
-                var destinationFileName = Path.Combine(BenchmarksDirectory, summary.Title.Split('.').Last() + ".md");
-                Console.WriteLine($"Copy: {sourceFileName} -> {destinationFileName}");
-                File.Copy(sourceFileName, destinationFileName, overwrite: true);
+                Console.WriteLine("Did not find name in: " + summary.Title);
+                Console.WriteLine("Press any key to exit.");
+                _ = Console.ReadKey();
+                return;
+            }
+
+            var pattern = $"*{name}-report-github.md";
+            var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, pattern)
+                                          .SingleOrDefault();
+            if (sourceFileName == null)
+            {
+                Console.WriteLine("Did not find a file matching the pattern: " + pattern);
+                Console.WriteLine("Press any key to exit.");
+                _ = Console.ReadKey();
+                return;
+            }
+
+            var destinationFileName = Path.ChangeExtension(FindCsFile(), ".md");
+            Console.WriteLine($"Copy:");
+            Console.WriteLine($"Source: {sourceFileName}");
+            Console.WriteLine($"Target: {destinationFileName}");
+            File.Copy(sourceFileName, destinationFileName, overwrite: true);
+
+            string FindCsFile()
+            {
+                return Directory.EnumerateFiles(
+                                    AppDomain.CurrentDomain.BaseDirectory.Split(new[] { "\\bin\\" }, StringSplitOptions.RemoveEmptyEntries).First(),
+                                    $"{name}.cs",
+                                    SearchOption.AllDirectories)
+                                .Single();
             }
         }
     }
