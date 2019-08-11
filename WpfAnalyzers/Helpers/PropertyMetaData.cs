@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class PropertyMetadata
@@ -84,6 +85,141 @@ namespace WpfAnalyzers
             }
 
             return false;
+        }
+
+        internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<SyntaxNode> visited = null)
+        {
+            switch (value)
+            {
+                case ConditionalExpressionSyntax conditional:
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
+                    using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
+                    {
+                        return visited.Add(value) &&
+                               IsValueValidForRegisteredType(conditional.WhenTrue, registeredType, semanticModel, cancellationToken, visited) &&
+                               IsValueValidForRegisteredType(conditional.WhenFalse, registeredType, semanticModel, cancellationToken, visited);
+                    }
+
+                case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
+                    using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
+                    {
+                        return visited.Add(value) &&
+                               IsValueValidForRegisteredType(binary.Left, registeredType, semanticModel, cancellationToken, visited) &&
+                               IsValueValidForRegisteredType(binary.Right, registeredType, semanticModel, cancellationToken, visited);
+                    }
+            }
+
+            if (registeredType.TypeKind == TypeKind.Enum)
+            {
+                return semanticModel.TryGetType(value, cancellationToken, out var defaultValueType) &&
+                       Equals(defaultValueType, registeredType);
+            }
+
+            if (semanticModel.IsRepresentationPreservingConversion(value, registeredType))
+            {
+                return true;
+            }
+
+            if (semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
+            {
+                if (symbol is IFieldSymbol field)
+                {
+                    if (field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration))
+                    {
+                        if (fieldDeclaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
+                            variableDeclaration.Variables.TryLast(out var variable) &&
+                            variable.Initializer is EqualsValueClauseSyntax initializer &&
+                            !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
+                        {
+                            return false;
+                        }
+
+                        return IsAssignedValueOfRegisteredType(symbol, fieldDeclaration);
+                    }
+
+                    return field.Type == KnownSymbol.Object;
+                }
+
+                if (symbol is IPropertySymbol property)
+                {
+                    if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+                    {
+                        if (propertyDeclaration.Initializer is EqualsValueClauseSyntax initializer &&
+                            !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
+                        {
+                            return false;
+                        }
+
+                        if (property.SetMethod == null &&
+                            property.GetMethod is IMethodSymbol getMethod)
+                        {
+                            return IsReturnValueOfRegisteredType(getMethod);
+                        }
+
+                        return IsAssignedValueOfRegisteredType(symbol, propertyDeclaration);
+                    }
+
+                    return property.Type == KnownSymbol.Object;
+                }
+
+                if (symbol is IMethodSymbol method)
+                {
+                    return IsReturnValueOfRegisteredType(method);
+                }
+            }
+
+            return false;
+
+            bool IsAssignedValueOfRegisteredType(ISymbol memberSymbol, MemberDeclarationSyntax declaration)
+            {
+                if (declaration.TryFirstAncestor(out TypeDeclarationSyntax typeDeclaration))
+                {
+                    using (var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, Scope.Type, semanticModel, cancellationToken))
+                    {
+                        foreach (var assignment in walker.Assignments)
+                        {
+                            if (!IsValueValidForRegisteredType(assignment.Right, registeredType, semanticModel, cancellationToken, visited))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            } 
+
+            bool IsReturnValueOfRegisteredType(IMethodSymbol method)
+            {
+                if (method.TrySingleMethodDeclaration(cancellationToken, out var target))
+                {
+#pragma warning disable IDISP003 // Dispose previous before re-assigning.
+                    using (visited = visited.IncrementUsage())
+#pragma warning restore IDISP003 // Dispose previous before re-assigning.
+                    {
+                        if (visited.Add(target))
+                        {
+                            using (var walker = ReturnValueWalker.Borrow(target))
+                            {
+                                foreach (var returnValue in walker.ReturnValues)
+                                {
+                                    if (!IsValueValidForRegisteredType(returnValue, registeredType, semanticModel, cancellationToken, visited))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+
+                return method.ReturnType == KnownSymbol.Object;
+            }
         }
 
         private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)

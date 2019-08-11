@@ -134,7 +134,7 @@ namespace WpfAnalyzers
                     DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                     PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
-                    if (!IsDefaultValueOfRegisteredType(defaultValueArg.Expression, registeredType, context))
+                    if (!PropertyMetadata.IsValueValidForRegisteredType(defaultValueArg.Expression, registeredType, context.SemanticModel, context.CancellationToken))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -178,130 +178,6 @@ namespace WpfAnalyzers
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);
-        }
-
-        private static bool IsDefaultValueOfRegisteredType(ExpressionSyntax defaultValue, ITypeSymbol registeredType, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
-        {
-            switch (defaultValue)
-            {
-                case ConditionalExpressionSyntax conditional:
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                    using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                    {
-                        return visited.Add(defaultValue) &&
-                               IsDefaultValueOfRegisteredType(conditional.WhenTrue, registeredType, context, visited) &&
-                               IsDefaultValueOfRegisteredType(conditional.WhenFalse, registeredType, context, visited);
-                    }
-
-                case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                    using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                    {
-                        return visited.Add(defaultValue) &&
-                               IsDefaultValueOfRegisteredType(binary.Left, registeredType, context, visited) &&
-                               IsDefaultValueOfRegisteredType(binary.Right, registeredType, context, visited);
-                    }
-            }
-
-            if (registeredType.TypeKind == TypeKind.Enum)
-            {
-                return context.SemanticModel.TryGetType(defaultValue, context.CancellationToken, out var defaultValueType) &&
-                       Equals(defaultValueType, registeredType);
-            }
-
-            if (context.SemanticModel.IsRepresentationPreservingConversion(defaultValue, registeredType))
-            {
-                return true;
-            }
-
-            if (context.SemanticModel.TryGetSymbol(defaultValue, context.CancellationToken, out ISymbol symbol))
-            {
-                if (symbol is IFieldSymbol field)
-                {
-                    if (field.TrySingleDeclaration(context.CancellationToken, out var fieldDeclaration))
-                    {
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                        using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                        {
-                            if (fieldDeclaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
-                                variableDeclaration.Variables.TryLast(out var variable) &&
-                                variable.Initializer is EqualsValueClauseSyntax initializer)
-                            {
-                                return visited.Add(initializer.Value) &&
-                                       IsDefaultValueOfRegisteredType(initializer.Value, registeredType, context, visited);
-                            }
-
-                            return fieldDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration) &&
-                                   AssignmentExecutionWalker.SingleFor(symbol, typeDeclaration, Scope.Instance, context.SemanticModel, context.CancellationToken, out var assignedValue) &&
-                                   visited.Add(assignedValue) &&
-                                   IsDefaultValueOfRegisteredType(assignedValue, registeredType, context, visited);
-                        }
-                    }
-
-                    return field.Type == KnownSymbol.Object;
-                }
-
-                if (symbol is IPropertySymbol property)
-                {
-                    if (property.TrySingleDeclaration(context.CancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
-                    {
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                        using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                        {
-                            if (propertyDeclaration.Initializer is EqualsValueClauseSyntax initializer)
-                            {
-                                return visited.Add(initializer.Value) &&
-                                       IsDefaultValueOfRegisteredType(initializer.Value, registeredType, context, visited);
-                            }
-
-                            if (property.SetMethod == null &&
-                                property.GetMethod is IMethodSymbol getMethod)
-                            {
-                                return IsReturnValueOfRegisteredType(getMethod, visited);
-                            }
-
-                            return propertyDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration) &&
-                                   AssignmentExecutionWalker.SingleFor(symbol, typeDeclaration, Scope.Instance, context.SemanticModel, context.CancellationToken, out var assignedValue) &&
-                                   visited.Add(assignedValue) &&
-                                   IsDefaultValueOfRegisteredType(assignedValue, registeredType, context, visited);
-                        }
-                    }
-
-                    return property.Type == KnownSymbol.Object;
-                }
-
-                if (symbol is IMethodSymbol method)
-                {
-                    return IsReturnValueOfRegisteredType(method, visited);
-                }
-            }
-
-            return false;
-
-            bool IsReturnValueOfRegisteredType(IMethodSymbol method, PooledSet<SyntaxNode> v)
-            {
-                if (method.TrySingleMethodDeclaration(context.CancellationToken, out var target))
-                {
-                    using (var walker = ReturnValueWalker.Borrow(target))
-                    {
-                        foreach (var returnValue in walker.ReturnValues)
-                        {
-                            if (!IsDefaultValueOfRegisteredType(returnValue, registeredType, context, v))
-                            {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    }
-                }
-
-                return method.ReturnType == KnownSymbol.Object;
-            }
         }
 
         private static bool IsNonEmptyArrayCreation(ArrayCreationExpressionSyntax arrayCreation, SyntaxNodeAnalysisContext context)
