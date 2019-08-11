@@ -205,6 +205,12 @@ namespace WpfAnalyzers
                     }
             }
 
+            if (registeredType.TypeKind == TypeKind.Enum)
+            {
+                return context.SemanticModel.TryGetType(defaultValue, context.CancellationToken, out var defaultValueType) &&
+                       Equals(defaultValueType, registeredType);
+            }
+
             if (context.SemanticModel.IsRepresentationPreservingConversion(defaultValue, registeredType))
             {
                 return true;

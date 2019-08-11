@@ -1,6 +1,5 @@
 namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
-    using System;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
