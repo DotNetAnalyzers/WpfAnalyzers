@@ -92,30 +92,18 @@ namespace WpfAnalyzers
             switch (value)
             {
                 case ConditionalExpressionSyntax conditional:
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                    using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                    {
-                        return visited.Add(value) &&
-                               IsValueValidForRegisteredType(conditional.WhenTrue, registeredType, semanticModel, cancellationToken, visited) &&
-                               IsValueValidForRegisteredType(conditional.WhenFalse, registeredType, semanticModel, cancellationToken, visited);
-                    }
+                    return IsValueValidForRegisteredType(conditional.WhenTrue, registeredType, semanticModel, cancellationToken, visited) &&
+                           IsValueValidForRegisteredType(conditional.WhenFalse, registeredType, semanticModel, cancellationToken, visited);
 
                 case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                    using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
-                    {
-                        return visited.Add(value) &&
-                               IsValueValidForRegisteredType(binary.Left, registeredType, semanticModel, cancellationToken, visited) &&
-                               IsValueValidForRegisteredType(binary.Right, registeredType, semanticModel, cancellationToken, visited);
-                    }
+                    return IsValueValidForRegisteredType(binary.Left, registeredType, semanticModel, cancellationToken, visited) &&
+                           IsValueValidForRegisteredType(binary.Right, registeredType, semanticModel, cancellationToken, visited);
             }
 
             if (registeredType.TypeKind == TypeKind.Enum)
             {
-                return semanticModel.TryGetType(value, cancellationToken, out var defaultValueType) &&
-                       Equals(defaultValueType, registeredType);
+                return semanticModel.TryGetType(value, cancellationToken, out var valueType) &&
+                       Equals(registeredType, valueType);
             }
 
             if (semanticModel.IsRepresentationPreservingConversion(value, registeredType))
@@ -190,7 +178,7 @@ namespace WpfAnalyzers
                 }
 
                 return true;
-            } 
+            }
 
             bool IsReturnValueOfRegisteredType(IMethodSymbol method)
             {
