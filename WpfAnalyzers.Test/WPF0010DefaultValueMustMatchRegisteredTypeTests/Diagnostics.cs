@@ -276,5 +276,43 @@ namespace N
 
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, code);
         }
+
+        [Test]
+        public static void IntWhenTypeIsEnum()
+        {
+            var e = @"
+namespace N
+{
+    public enum E
+    {
+        M1,
+        M2
+    }
+}";
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""E""/> dependency property.</summary>
+        public static readonly DependencyProperty EProperty = DependencyProperty.Register(
+            nameof(E),
+            typeof(E),
+            typeof(FooControl),
+            new PropertyMetadata(↓1));
+
+        public E E
+        {
+            get => (E) this.GetValue(EProperty);
+            set => this.SetValue(EProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, e, code);
+        }
     }
 }
