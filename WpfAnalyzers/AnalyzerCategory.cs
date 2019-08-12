@@ -14,6 +14,7 @@ namespace WpfAnalyzers
         internal const string IValueConverter = "WpfAnalyzers.IValueConverter";
         internal const string RoutedEvent = "WpfAnalyzers.RoutedEvent";
         internal const string RoutedCommand = "WpfAnalyzers.RoutedCommand";
+        internal const string StyleTypedProperty = "WpfAnalyzers.StyleTypedProperty";
         internal const string TemplatePart = "WpfAnalyzers.TemplatePart";
         internal const string XmlnsDefinition = "WpfAnalyzers.XmlnsDefinition";
     }

@@ -24,7 +24,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0085XamlSetTypeConverterTarget,
             Descriptors.WPF0132UsePartPrefix,
             Descriptors.WPF0133ContentPropertyTarget,
-            Descriptors.WPF0150UseNameof);
+            Descriptors.WPF0150UseNameof,
+            Descriptors.WPF0170StyleTypedPropertyTarget);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -40,32 +41,31 @@ namespace WpfAnalyzers
                 context.Node is AttributeSyntax attribute)
             {
                 if (Attribute.IsType(attribute, KnownSymbols.DependsOnAttribute, context.SemanticModel, context.CancellationToken) &&
-                    attribute.TrySingleArgument(out var argument))
+                    TryFindStringArgument(attribute, 0, "name", out var expression, out string text))
                 {
-                    if (TryFindPropertyRecursive(context.ContainingSymbol.ContainingType, argument, out var property))
+                    if (TryFindPropertyRecursive(context.ContainingSymbol.ContainingType, text, out var property))
                     {
-                        if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameof,
-                                    argument.GetLocation(),
+                                    expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0008DependsOnTarget, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0008DependsOnTarget, expression.GetLocation()));
                     }
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
-                         Attribute.TryFindArgument(attribute, 1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out argument) &&
-                         context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string @namespace) &&
-                         context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && @namespace.EndsWith(x), SymbolFilter.Namespace)
-                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != @namespace))
+                         TryFindStringArgument(attribute, 1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out expression, out text) &&
+                         context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && text.EndsWith(x), SymbolFilter.Namespace)
+                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != text))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace, argument.GetLocation(), argument));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace, expression.GetLocation(), expression));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken) &&
                          context.ContainingSymbol is ITypeSymbol containingType &&
@@ -74,7 +74,7 @@ namespace WpfAnalyzers
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                          returnType != KnownSymbols.Object &&
-                         Attribute.TryFindArgument(attribute, 0, "returnType", out argument) &&
+                         Attribute.TryFindArgument(attribute, 0, "returnType", out var argument) &&
                          argument.Expression is TypeOfExpressionSyntax typeOf &&
                          context.SemanticModel.TryGetType(typeOf.Type, context.CancellationToken, out var argType) &&
                          !returnType.IsAssignableTo(argType, context.Compilation))
@@ -94,43 +94,43 @@ namespace WpfAnalyzers
                             parameterName));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.XamlSetMarkupExtensionAttribute, context.SemanticModel, context.CancellationToken) &&
-                         Attribute.TryFindArgument(attribute, 0, "xamlSetMarkupExtensionHandler", out argument))
+                         TryFindStringArgument(attribute, 0, "xamlSetMarkupExtensionHandler", out expression, out text))
                 {
-                    if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, argument, m => IsMarkupExtensionHandler(m), out var method))
+                    if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, text, m => IsMarkupExtensionHandler(m), out var method))
                     {
-                        if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameof,
-                                    argument.GetLocation(),
+                                    expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget, argument.Expression.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget, expression.GetLocation()));
                     }
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.XamlSetTypeConverterAttribute, context.SemanticModel, context.CancellationToken) &&
-                         Attribute.TryFindArgument(attribute, 0, "xamlSetTypeConverterHandler", out argument))
+                         TryFindStringArgument(attribute, 0, "xamlSetTypeConverterHandler", out expression, out text))
                 {
-                    if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, argument, m => IsTypeConverterHandler(m), out var method))
+                    if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, text, m => IsTypeConverterHandler(m), out var method))
                     {
-                        if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameof,
-                                    argument.GetLocation(),
+                                    expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget, argument.Expression.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget, expression.GetLocation()));
                     }
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.TemplatePartAttribute, context.SemanticModel, context.CancellationToken) &&
@@ -141,40 +141,84 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, argument.Expression.GetLocation(), argument));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.ContentPropertyAttribute, context.SemanticModel, context.CancellationToken) &&
-                         attribute.TrySingleArgument(out argument))
+                         TryFindStringArgument(attribute, 0, "name", out expression, out text))
                 {
-                    if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, argument, out var property))
+                    if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
                     {
-                        if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameof,
-                                    argument.GetLocation(),
+                                    expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0133ContentPropertyTarget, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0133ContentPropertyTarget, expression.GetLocation()));
+                    }
+                }
+                else if (Attribute.IsType(attribute, KnownSymbols.StyleTypedPropertyAttribute, context.SemanticModel, context.CancellationToken) &&
+                         TryFindStringArgument(attribute, 0, "Property", out expression, out text))
+                {
+                    if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
+                    {
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0150UseNameof,
+                                    expression.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                    property.Name));
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0170StyleTypedPropertyTarget, expression.GetLocation()));
                     }
                 }
             }
 
-            bool TryFindPropertyRecursive(ITypeSymbol type, AttributeArgumentSyntax argument, out IPropertySymbol result)
+            bool TryFindStringArgument(AttributeSyntax candidate, int index, string name, out ExpressionSyntax expression, out string text)
+            {
+                expression = null;
+                text = null;
+                return Attribute.TryFindArgument(candidate, index, name, out var argument) &&
+                       TryFindExpression(out expression) &&
+                       context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out text);
+
+                bool TryFindExpression(out ExpressionSyntax result)
+                {
+                    switch (argument.Expression)
+                    {
+                        case LiteralExpressionSyntax literal:
+                            result = literal;
+                            return true;
+                        case InvocationExpressionSyntax invocation when invocation.IsNameOf() &&
+                                                                        invocation.TrySingleArgument(out var nameArg):
+                            result = nameArg.Expression;
+                            return true;
+                        default:
+                            result = null;
+                            return false;
+                    }
+                }
+            }
+
+            bool TryFindPropertyRecursive(ITypeSymbol type, string name, out IPropertySymbol result)
             {
                 result = null;
                 return type != null &&
-                       context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string name) &&
                        type.TryFindPropertyRecursive(name, out result);
             }
 
-            bool TryFindMethodRecursive(ITypeSymbol type, AttributeArgumentSyntax argument, Func<IMethodSymbol, bool> selector, out IMethodSymbol result)
+            bool TryFindMethodRecursive(ITypeSymbol type, string name, Func<IMethodSymbol, bool> selector, out IMethodSymbol result)
             {
                 result = null;
                 return type != null &&
-                       context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string name) &&
                        type.TryFindFirstMethodRecursive(name, selector, out result);
             }
         }
