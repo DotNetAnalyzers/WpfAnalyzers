@@ -30,7 +30,7 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
-                (objectCreation.Type == KnownSymbol.RoutedCommand || objectCreation.Type == KnownSymbol.RoutedUICommand) &&
+                (objectCreation.Type == KnownSymbols.RoutedCommand || objectCreation.Type == KnownSymbols.RoutedUICommand) &&
                 context.SemanticModel.TryGetSymbol(objectCreation, context.CancellationToken, out var ctor))
             {
                 if (ctor.TryFindParameter("ownerType", out var parameter))

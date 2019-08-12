@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0150UseNameofTests
         [Test]
         public static void DependencyPropertyRegisterWhenNoProperty()
         {
-            var before = @"
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -24,7 +24,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(new DependencyPropertyBackingFieldOrPropertyAnalyzer(), before);
+            RoslynAssert.Valid(new DependencyPropertyBackingFieldOrPropertyAnalyzer(), code);
         }
     }
 }

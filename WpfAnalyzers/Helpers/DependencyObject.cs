@@ -12,7 +12,7 @@ namespace WpfAnalyzers
         {
             return TryGetCall(
                 invocation,
-                KnownSymbol.DependencyObject.SetValue,
+                KnownSymbols.DependencyObject.SetValue,
                 2,
                 semanticModel,
                 cancellationToken,
@@ -23,7 +23,7 @@ namespace WpfAnalyzers
         {
             return TryGetCall(
                 invocation,
-                KnownSymbol.DependencyObject.SetCurrentValue,
+                KnownSymbols.DependencyObject.SetCurrentValue,
                 2,
                 semanticModel,
                 cancellationToken,
@@ -34,7 +34,7 @@ namespace WpfAnalyzers
         {
             return TryGetCall(
                 invocation,
-                KnownSymbol.DependencyObject.GetValue,
+                KnownSymbols.DependencyObject.GetValue,
                 1,
                 semanticModel,
                 cancellationToken,

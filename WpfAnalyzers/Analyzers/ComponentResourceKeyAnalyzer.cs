@@ -28,8 +28,8 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ObjectCreationExpressionSyntax objectCreation &&
                 objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
-                objectCreation.Type == KnownSymbol.ComponentResourceKey &&
-                context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.ComponentResourceKey, context.CancellationToken, out var constructor) &&
+                objectCreation.Type == KnownSymbols.ComponentResourceKey &&
+                context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbols.ComponentResourceKey, context.CancellationToken, out var constructor) &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
             {
                 if (constructor.Parameters.Length == 0)

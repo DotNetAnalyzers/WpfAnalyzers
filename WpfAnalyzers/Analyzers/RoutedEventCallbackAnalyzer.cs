@@ -101,7 +101,7 @@ namespace WpfAnalyzers
             }
 
             return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
+                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbols.RoutedEvent;
         }
 
         private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
@@ -120,7 +120,7 @@ namespace WpfAnalyzers
             }
 
             return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbol.RoutedEvent;
+                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbols.RoutedEvent;
         }
     }
 }

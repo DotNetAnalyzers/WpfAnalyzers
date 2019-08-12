@@ -35,7 +35,7 @@ namespace WpfAnalyzers
                 {
                     if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
-                        if (backingMember.Type == KnownSymbol.DependencyProperty &&
+                        if (backingMember.Type == KnownSymbols.DependencyProperty &&
                             !backingMember.Name.IsParts(registeredName, "Property"))
                         {
                             context.ReportDiagnostic(
@@ -47,7 +47,7 @@ namespace WpfAnalyzers
                                     registeredName));
                         }
 
-                        if (backingMember.Type == KnownSymbol.DependencyPropertyKey &&
+                        if (backingMember.Type == KnownSymbols.DependencyPropertyKey &&
                             !backingMember.Name.IsParts(registeredName, "PropertyKey"))
                         {
                             context.ReportDiagnostic(

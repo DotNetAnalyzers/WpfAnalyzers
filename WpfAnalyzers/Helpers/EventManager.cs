@@ -11,7 +11,7 @@ namespace WpfAnalyzers
         {
             return TryGetCall(
                 invocation,
-                KnownSymbol.EventManager.RegisterClassHandler,
+                KnownSymbols.EventManager.RegisterClassHandler,
                 semanticModel,
                 cancellationToken,
                 out method);

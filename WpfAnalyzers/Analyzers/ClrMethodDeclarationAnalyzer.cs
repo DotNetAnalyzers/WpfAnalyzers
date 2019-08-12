@@ -34,7 +34,7 @@ namespace WpfAnalyzers
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.IsStatic &&
                 method.Parameters.TryElementAt(0, out var parameter) &&
-                parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
+                parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
             {
                 if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var fieldOrProperty))
                 {
@@ -61,7 +61,7 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (Attribute.TryFind(methodDeclaration, KnownSymbol.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(methodDeclaration, KnownSymbols.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&

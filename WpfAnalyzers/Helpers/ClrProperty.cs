@@ -20,7 +20,7 @@ namespace WpfAnalyzers
                    !property.IsReadOnly &&
                    !property.IsWriteOnly &&
                    !property.IsStatic &&
-                   property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
+                   property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace WpfAnalyzers
                     out setter))
                 {
                     if (ReferenceEquals(setter.Symbol, getter.Symbol) &&
-                        setter.Type == KnownSymbol.DependencyProperty)
+                        setter.Type == KnownSymbols.DependencyProperty)
                     {
                         result = setter;
                         return true;
@@ -74,7 +74,7 @@ namespace WpfAnalyzers
                 if (ReferenceEquals(getter.Symbol, setter.Symbol))
                 {
                     result = getter;
-                    return result.Type == KnownSymbol.DependencyProperty;
+                    return result.Type == KnownSymbols.DependencyProperty;
                 }
             }
 
@@ -173,7 +173,7 @@ namespace WpfAnalyzers
             getter = default;
             setter = default;
             if (property == null ||
-                !property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, compilation))
+                !property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, compilation))
             {
                 return false;
             }

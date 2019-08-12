@@ -31,7 +31,7 @@ namespace WpfAnalyzers
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol candidate) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
-                method.TryFindParameter(KnownSymbol.PropertyMetadata, out var parameter) &&
+                method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))
             {
                 if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
@@ -42,7 +42,7 @@ namespace WpfAnalyzers
                         DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
                     {
-                        if (registerMethod.TryFindParameter(KnownSymbol.PropertyMetadata, out var registerParameter) &&
+                        if (registerMethod.TryFindParameter(KnownSymbols.PropertyMetadata, out var registerParameter) &&
                             registerInvocation.TryFindArgument(registerParameter, out var registeredMetadataArg) &&
                             context.SemanticModel.TryGetType(metadataArg.Expression, context.CancellationToken, out var type) &&
                             context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
@@ -52,10 +52,10 @@ namespace WpfAnalyzers
                         }
                     }
                 }
-                else if (fieldOrProperty.Symbol == KnownSymbol.FrameworkElement.DefaultStyleKeyProperty &&
+                else if (fieldOrProperty.Symbol == KnownSymbols.FrameworkElement.DefaultStyleKeyProperty &&
                          metadataArg.Expression is ObjectCreationExpressionSyntax metadataCreation)
                 {
-                    if (!context.SemanticModel.TryGetSymbol(metadataCreation, KnownSymbol.FrameworkPropertyMetadata, context.CancellationToken, out _))
+                    if (!context.SemanticModel.TryGetSymbol(metadataCreation, KnownSymbols.FrameworkPropertyMetadata, context.CancellationToken, out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable, metadataArg.GetLocation()));
                     }

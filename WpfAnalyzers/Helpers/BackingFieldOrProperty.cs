@@ -30,7 +30,7 @@ namespace WpfAnalyzers
             if (symbol != null &&
                 symbol.IsStatic &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
+                fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
             {
                 result = new BackingFieldOrProperty(fieldOrProperty);
                 return true;
@@ -44,7 +44,7 @@ namespace WpfAnalyzers
         {
             if (symbol != null &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type.IsEither(KnownSymbol.DependencyProperty, KnownSymbol.DependencyPropertyKey))
+                fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
             {
                 result = new BackingFieldOrProperty(fieldOrProperty);
                 return true;

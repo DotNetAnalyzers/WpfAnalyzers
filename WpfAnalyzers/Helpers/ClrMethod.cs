@@ -19,7 +19,7 @@ namespace WpfAnalyzers
                    method.Name.StartsWith("Set") &&
                    method.Parameters.Length == 2 &&
                    method.Parameters.TryElementAt(0, out var parameter) &&
-                   parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
+                   parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }
 
         internal static bool IsAttachedSet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
@@ -49,7 +49,7 @@ namespace WpfAnalyzers
                    !method.ReturnsVoid &&
                    method.Name.StartsWith("Get") &&
                    method.Parameters.TrySingle(out var parameter) &&
-                   parameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, compilation);
+                   parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }
 
         internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)

@@ -13,7 +13,7 @@ namespace WpfAnalyzers
             }
 
             while (type != null &&
-                   type != KnownSymbol.Object)
+                   type != KnownSymbols.Object)
             {
                 foreach (var member in type.GetMembers())
                 {
@@ -27,7 +27,7 @@ namespace WpfAnalyzers
                                 return true;
                         }
 
-                        if (fieldOrProperty.Type.Is(KnownSymbol.IEnumerable) &&
+                        if (fieldOrProperty.Type.Is(KnownSymbols.IEnumerable) &&
                             fieldOrProperty.Type.TryFindFirstMethod("Add", out _))
                         {
                             return true;

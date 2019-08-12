@@ -31,9 +31,9 @@ namespace WpfAnalyzers
             if (context.ContainingSymbol is INamedTypeSymbol type &&
                 !type.IsGenericType &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
-                type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
-                type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.IServiceProvider, out _) &&
-                !Attribute.TryFind(classDeclaration, KnownSymbol.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
+                type.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
+                type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbols.IServiceProvider, out _) &&
+                !Attribute.TryFind(classDeclaration, KnownSymbols.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute, classDeclaration.Identifier.GetLocation()));
             }

@@ -21,7 +21,7 @@ namespace WpfAnalyzers
                 while (containingType != null)
                 {
                     if (containingType.IsGenericType &&
-                        containingType != KnownSymbol.Object)
+                        containingType != KnownSymbols.Object)
                     {
                         var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
                         if (index >= 0)

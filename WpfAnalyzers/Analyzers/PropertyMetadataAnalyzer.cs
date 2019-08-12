@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                 if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                 {
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
-                        Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
+                        Callback.TryGetTarget(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
                     {
                         if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                             !target.Name.IsParts("On", registeredName, "Changed") &&
@@ -84,7 +84,7 @@ namespace WpfAnalyzers
                     }
 
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
-                        Callback.TryGetTarget(coerceValueCallback, KnownSymbol.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
+                        Callback.TryGetTarget(coerceValueCallback, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
                         if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                             !target.Name.IsParts("Coerce", registeredName))
@@ -149,7 +149,7 @@ namespace WpfAnalyzers
                         var defaultValue = defaultValueArg.Expression;
                         if (defaultValue != null &&
                             !defaultValue.IsKind(SyntaxKind.NullLiteralExpression) &&
-                            registeredType != KnownSymbol.FontFamily)
+                            registeredType != KnownSymbols.FontFamily)
                         {
                             if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
                                 IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))

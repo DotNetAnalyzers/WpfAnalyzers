@@ -33,7 +33,7 @@ namespace WpfAnalyzers
             }
 
             if (context.Node is AttributeSyntax attribute &&
-                Gu.Roslyn.AnalyzerExtensions.Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
+                Gu.Roslyn.AnalyzerExtensions.Attribute.IsType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
             {
                 using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
                 {
@@ -97,9 +97,9 @@ namespace WpfAnalyzers
 
             public override void VisitAttribute(AttributeSyntax node)
             {
-                if (Gu.Roslyn.AnalyzerExtensions.Attribute.IsType(node, KnownSymbol.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken))
+                if (Gu.Roslyn.AnalyzerExtensions.Attribute.IsType(node, KnownSymbols.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken))
                 {
-                    if (Gu.Roslyn.AnalyzerExtensions.Attribute.TryFindArgument(node, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
+                    if (Gu.Roslyn.AnalyzerExtensions.Attribute.TryFindArgument(node, 1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
                         if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
                         {

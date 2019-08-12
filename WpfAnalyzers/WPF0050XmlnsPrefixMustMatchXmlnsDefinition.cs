@@ -35,22 +35,22 @@ namespace WpfAnalyzers
             {
                 QualifiedType correspondingType;
                 AttributeSyntax xmlnsAttribute;
-                if (Attribute.IsType(attribute, KnownSymbol.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken))
+                if (Attribute.IsType(attribute, KnownSymbols.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken))
                 {
                     xmlnsAttribute = attribute;
-                    correspondingType = KnownSymbol.XmlnsDefinitionAttribute;
+                    correspondingType = KnownSymbols.XmlnsDefinitionAttribute;
                 }
-                else if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
+                else if (Attribute.IsType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
                 {
                     xmlnsAttribute = attribute;
-                    correspondingType = KnownSymbol.XmlnsPrefixAttribute;
+                    correspondingType = KnownSymbols.XmlnsPrefixAttribute;
                 }
                 else
                 {
                     return;
                 }
 
-                if (!Attribute.TryFindArgument(xmlnsAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var arg))
+                if (!Attribute.TryFindArgument(xmlnsAttribute, 0, KnownSymbols.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var arg))
                 {
                     return;
                 }
@@ -68,7 +68,7 @@ namespace WpfAnalyzers
 
                 foreach (var correspondingAttribute in AttributeExt.FindAttributes(compilation, correspondingType, context.SemanticModel, context.CancellationToken))
                 {
-                    if (Attribute.TryFindArgument(correspondingAttribute, 0, KnownSymbol.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
+                    if (Attribute.TryFindArgument(correspondingAttribute, 0, KnownSymbols.XmlnsDefinitionAttribute.XmlNamespaceArgumentName, out var correspondingArg))
                     {
                         if (!context.SemanticModel.TryGetConstantValue(correspondingArg.Expression, context.CancellationToken, out string mappedNameSpace))
                         {
@@ -82,7 +82,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                var attributeName = ReferenceEquals(correspondingType, KnownSymbol.XmlnsPrefixAttribute)
+                var attributeName = ReferenceEquals(correspondingType, KnownSymbols.XmlnsPrefixAttribute)
                                         ? XmlnsPrefix
                                         : XmlnsDefinition;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition, arg.GetLocation(), attributeName, xmlNamespace));

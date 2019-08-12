@@ -30,7 +30,7 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MemberDeclarationSyntax memberDeclaration &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type == KnownSymbol.RoutedEvent)
+                fieldOrProperty.Type == KnownSymbols.RoutedEvent)
             {
                 if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
                 {

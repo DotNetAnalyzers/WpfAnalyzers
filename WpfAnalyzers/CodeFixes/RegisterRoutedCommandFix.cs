@@ -29,7 +29,7 @@ namespace WpfAnalyzers
                     diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
                     diagnostic.Properties.TryGetValue(nameof(TypeOfExpressionSyntax), out var type))
                 {
-                    if (objectCreation.Type == KnownSymbol.RoutedCommand)
+                    if (objectCreation.Type == KnownSymbols.RoutedCommand)
                     {
                         context.RegisterCodeFix(
                             "Register with containing type and containing member.",
@@ -42,7 +42,7 @@ namespace WpfAnalyzers
                             diagnostic);
                     }
 
-                    if (objectCreation.Type == KnownSymbol.RoutedUICommand)
+                    if (objectCreation.Type == KnownSymbols.RoutedUICommand)
                     {
                         context.RegisterCodeFix(
                             "Register with containing type and containing member.",

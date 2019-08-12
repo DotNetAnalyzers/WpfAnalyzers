@@ -10,9 +10,9 @@ namespace WpfAnalyzers
     {
         internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol constructor)
         {
-            return semanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyMetadata, cancellationToken, out constructor) ||
-                   semanticModel.TryGetSymbol(objectCreation, KnownSymbol.UIPropertyMetadata, cancellationToken, out constructor) ||
-                   semanticModel.TryGetSymbol(objectCreation, KnownSymbol.FrameworkPropertyMetadata, cancellationToken, out constructor);
+            return semanticModel.TryGetSymbol(objectCreation, KnownSymbols.PropertyMetadata, cancellationToken, out constructor) ||
+                   semanticModel.TryGetSymbol(objectCreation, KnownSymbols.UIPropertyMetadata, cancellationToken, out constructor) ||
+                   semanticModel.TryGetSymbol(objectCreation, KnownSymbols.FrameworkPropertyMetadata, cancellationToken, out constructor);
         }
 
         internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax defaultValueArg)
@@ -26,18 +26,18 @@ namespace WpfAnalyzers
 
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
                    constructor.Parameters.TryFirst(out var parameter) &&
-                   parameter.Type == KnownSymbol.Object &&
+                   parameter.Type == KnownSymbols.Object &&
                    objectCreation.ArgumentList.Arguments.TryFirst(out defaultValueArg);
         }
 
         internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
-            return TryGetCallback(objectCreation, KnownSymbol.PropertyChangedCallback, semanticModel, cancellationToken, out callback);
+            return TryGetCallback(objectCreation, KnownSymbols.PropertyChangedCallback, semanticModel, cancellationToken, out callback);
         }
 
         internal static bool TryGetCoerceValueCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax callback)
         {
-            return TryGetCallback(objectCreation, KnownSymbol.CoerceValueCallback, semanticModel, cancellationToken, out callback);
+            return TryGetCallback(objectCreation, KnownSymbols.CoerceValueCallback, semanticModel, cancellationToken, out callback);
         }
 
         internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string registeredName)
@@ -132,7 +132,7 @@ namespace WpfAnalyzers
                         return IsAssignedValueOfRegisteredType(symbol, fieldDeclaration);
                     }
 
-                    return field.Type == KnownSymbol.Object;
+                    return field.Type == KnownSymbols.Object;
                 }
 
                 if (symbol is IPropertySymbol property)
@@ -154,7 +154,7 @@ namespace WpfAnalyzers
                         return IsAssignedValueOfRegisteredType(symbol, propertyDeclaration);
                     }
 
-                    return property.Type == KnownSymbol.Object;
+                    return property.Type == KnownSymbols.Object;
                 }
 
                 if (symbol is IMethodSymbol method)
@@ -210,7 +210,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                return method.ReturnType == KnownSymbol.Object;
+                return method.ReturnType == KnownSymbols.Object;
             }
         }
 

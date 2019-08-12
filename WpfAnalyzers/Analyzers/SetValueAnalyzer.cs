@@ -42,7 +42,7 @@ namespace WpfAnalyzers
                             registeredType));
                 }
 
-                if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
+                if (fieldOrProperty.Type == KnownSymbols.DependencyProperty &&
                     DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
                 {
                     context.ReportDiagnostic(
@@ -53,9 +53,9 @@ namespace WpfAnalyzers
                             keyField.CreateArgument(context.SemanticModel, propertyArg.SpanStart)));
                 }
 
-                if (target == KnownSymbol.DependencyObject.SetCurrentValue &&
+                if (target == KnownSymbols.DependencyObject.SetCurrentValue &&
                     fieldOrProperty.Symbol is IFieldSymbol setField &&
-                    setField == KnownSymbol.FrameworkElement.DataContextProperty)
+                    setField == KnownSymbols.FrameworkElement.DataContextProperty)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -74,13 +74,13 @@ namespace WpfAnalyzers
             {
                 if (context.SemanticModel.TryGetType(argument.Expression, context.CancellationToken, out var type))
                 {
-                    if (type == KnownSymbol.Object)
+                    if (type == KnownSymbols.Object)
                     {
                         return false;
                     }
 
-                    if (registeredType.IsAssignableTo(KnownSymbol.Freezable, context.Compilation) &&
-                        type.IsAssignableTo(KnownSymbol.Freezable, context.Compilation))
+                    if (registeredType.IsAssignableTo(KnownSymbols.Freezable, context.Compilation) &&
+                        type.IsAssignableTo(KnownSymbols.Freezable, context.Compilation))
                     {
                         return false;
                     }
@@ -96,11 +96,11 @@ namespace WpfAnalyzers
         {
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                var propertyParameter = QualifiedParameter.Create(KnownSymbol.DependencyProperty);
-                var valueParameter = QualifiedParameter.Create(KnownSymbol.Object);
-                return invocation.TryGetTarget(KnownSymbol.DependencyObject.SetValue, propertyParameter, valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg) ||
-                       invocation.TryGetTarget(KnownSymbol.DependencyObject.SetValue, QualifiedParameter.Create(KnownSymbol.DependencyPropertyKey), valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg) ||
-                       invocation.TryGetTarget(KnownSymbol.DependencyObject.SetCurrentValue, propertyParameter, valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg);
+                var propertyParameter = QualifiedParameter.Create(KnownSymbols.DependencyProperty);
+                var valueParameter = QualifiedParameter.Create(KnownSymbols.Object);
+                return invocation.TryGetTarget(KnownSymbols.DependencyObject.SetValue, propertyParameter, valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg) ||
+                       invocation.TryGetTarget(KnownSymbols.DependencyObject.SetValue, QualifiedParameter.Create(KnownSymbols.DependencyPropertyKey), valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg) ||
+                       invocation.TryGetTarget(KnownSymbols.DependencyObject.SetCurrentValue, propertyParameter, valueParameter, context.SemanticModel, context.CancellationToken, out target, out propertyArg, out valueArg);
             }
 
             target = null;

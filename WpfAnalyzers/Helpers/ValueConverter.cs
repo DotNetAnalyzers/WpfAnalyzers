@@ -19,8 +19,8 @@ namespace WpfAnalyzers
                      member.DeclaredAccessibility == Accessibility.Internal))
                 {
                     if (FieldOrProperty.TryCreate(member, out var fieldOrProperty) &&
-                        (fieldOrProperty.Type.IsAssignableTo(KnownSymbol.IValueConverter, compilation) ||
-                         fieldOrProperty.Type.IsAssignableTo(KnownSymbol.IMultiValueConverter, compilation)))
+                        (fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IValueConverter, compilation) ||
+                         fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IMultiValueConverter, compilation)))
                     {
                         if (temp == null)
                         {
@@ -86,14 +86,14 @@ namespace WpfAnalyzers
                     case IdentifierNameSyntax _:
                     case MemberAccessExpressionSyntax _:
                         var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
-                        if (type == KnownSymbol.Object &&
+                        if (type == KnownSymbols.Object &&
                             semanticModel.GetSymbolSafe(returnValue, cancellationToken) is ISymbol symbol &&
                             symbol.IsEither<IFieldSymbol, IPropertySymbol>())
                         {
                             switch (symbol)
                             {
                                 case IFieldSymbol field:
-                                    if (field.Type == KnownSymbol.Object &&
+                                    if (field.Type == KnownSymbols.Object &&
                                         field.DeclaredAccessibility == Accessibility.Private &&
                                         returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
                                     {

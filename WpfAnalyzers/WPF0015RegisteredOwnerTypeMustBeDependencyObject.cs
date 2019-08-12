@@ -49,9 +49,9 @@ namespace WpfAnalyzers
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
-                !ownerType.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
+                !ownerType.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject, argument.GetLocation(), KnownSymbol.DependencyProperty.RegisterAttached.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject, argument.GetLocation(), KnownSymbols.DependencyProperty.RegisterAttached.Name));
             }
         }
     }

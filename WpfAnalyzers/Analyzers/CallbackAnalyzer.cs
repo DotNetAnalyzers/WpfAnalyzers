@@ -138,9 +138,9 @@ namespace WpfAnalyzers
             return methodSymbol.Parameters.Length == 2 &&
                    methodSymbol.ReturnsVoid &&
                    methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
                    methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
-                   argParameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs;
+                   argParameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs;
         }
 
         private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
@@ -148,20 +148,20 @@ namespace WpfAnalyzers
             senderParameter = null;
             argParameter = null;
             return candidate.Parameters.Length == 2 &&
-                   candidate.ReturnType == KnownSymbol.Object &&
+                   candidate.ReturnType == KnownSymbols.Object &&
                    candidate.Parameters.TryElementAt(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
                    candidate.Parameters.TryElementAt(1, out argParameter) &&
-                   argParameter.Type == KnownSymbol.Object;
+                   argParameter.Type == KnownSymbols.Object;
         }
 
         private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, out IParameterSymbol argParameter)
         {
             argParameter = null;
             return candidate.Parameters.Length == 1 &&
-                   candidate.ReturnType == KnownSymbol.Boolean &&
+                   candidate.ReturnType == KnownSymbols.Boolean &&
                    candidate.Parameters.TryElementAt(0, out argParameter) &&
-                   argParameter.Type == KnownSymbol.Object;
+                   argParameter.Type == KnownSymbols.Object;
         }
 
         private static bool TryGetDpFromInstancePropertyChanged(InvocationExpressionSyntax singleInvocation, SyntaxNodeAnalysisContext context, out BackingFieldOrProperty fieldOrProperty)
@@ -278,7 +278,7 @@ namespace WpfAnalyzers
                 foreach (var identifierName in walker.IdentifierNames)
                 {
                     var parent = identifierName.Parent;
-                    if (parameter.Type == KnownSymbol.DependencyPropertyChangedEventArgs &&
+                    if (parameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs &&
                         parent is MemberAccessExpressionSyntax memberAccess &&
                         (memberAccess.Name.Identifier.ValueText == "NewValue" ||
                          memberAccess.Name.Identifier.ValueText == "OldValue"))
@@ -330,7 +330,7 @@ namespace WpfAnalyzers
                     }
 
                     if (parent is IsPatternExpressionSyntax isPattern &&
-                        expectedType != KnownSymbol.Object &&
+                        expectedType != KnownSymbols.Object &&
                         isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
                         context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
                         isType.TypeKind != TypeKind.Interface &&
@@ -351,7 +351,7 @@ namespace WpfAnalyzers
 
                     if (parent is SwitchStatementSyntax switchStatement &&
                         expectedType.TypeKind != TypeKind.Interface &&
-                        expectedType != KnownSymbol.Object)
+                        expectedType != KnownSymbols.Object)
                     {
                         foreach (var section in switchStatement.Sections)
                         {
@@ -670,9 +670,9 @@ namespace WpfAnalyzers
             if (candidate.Parent is ArgumentListSyntax argumentList &&
                 argumentList.Parent is ObjectCreationExpressionSyntax callbackCreation &&
                 callbackCreation.Parent is ArgumentSyntax parent &&
-                (callbackCreation.Type == KnownSymbol.PropertyChangedCallback ||
-                 callbackCreation.Type == KnownSymbol.CoerceValueCallback ||
-                 callbackCreation.Type == KnownSymbol.ValidateValueCallback))
+                (callbackCreation.Type == KnownSymbols.PropertyChangedCallback ||
+                 callbackCreation.Type == KnownSymbols.CoerceValueCallback ||
+                 callbackCreation.Type == KnownSymbols.ValidateValueCallback))
             {
                 result = parent;
             }

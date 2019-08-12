@@ -51,7 +51,7 @@ namespace WpfAnalyzers
                     continue;
                 }
 
-                if (HasInterface(classDeclaration, KnownSymbol.IValueConverter))
+                if (HasInterface(classDeclaration, KnownSymbols.IValueConverter))
                 {
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IValueConverter.Convert(object, Type, object, CultureInfo)'"))
@@ -74,7 +74,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (HasInterface(classDeclaration, KnownSymbol.IMultiValueConverter))
+                if (HasInterface(classDeclaration, KnownSymbols.IMultiValueConverter))
                 {
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
                                   .Contains("does not implement interface member 'IMultiValueConverter.Convert(object[], Type, object, CultureInfo)'"))

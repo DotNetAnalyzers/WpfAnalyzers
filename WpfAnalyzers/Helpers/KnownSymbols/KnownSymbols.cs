@@ -3,7 +3,7 @@ namespace WpfAnalyzers
 {
     using Gu.Roslyn.AnalyzerExtensions;
 
-    internal static class KnownSymbol
+    internal static class KnownSymbols
     {
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");

@@ -27,8 +27,8 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property &&
-                property.ContainingType.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) &&
-                !Attribute.TryFind(propertyDeclaration, KnownSymbol.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
+                property.ContainingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
+                !Attribute.TryFind(propertyDeclaration, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
                 ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
             {
                 context.ReportDiagnostic(

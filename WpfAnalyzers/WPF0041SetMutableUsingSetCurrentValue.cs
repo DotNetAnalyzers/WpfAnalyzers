@@ -30,7 +30,7 @@ namespace WpfAnalyzers
                 !IsInObjectInitializer(assignment) &&
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out IPropertySymbol property) &&
-                property != KnownSymbol.FrameworkElement.DataContext &&
+                property != KnownSymbols.FrameworkElement.DataContext &&
                 ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
                 !IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
@@ -59,13 +59,13 @@ namespace WpfAnalyzers
                 BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var backingFieldOrProperty) &&
                 !IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
             {
-                if (backingFieldOrProperty.Type == KnownSymbol.DependencyPropertyKey)
+                if (backingFieldOrProperty.Type == KnownSymbols.DependencyPropertyKey)
                 {
                     return;
                 }
 
                 if (backingFieldOrProperty.Symbol is IFieldSymbol field &&
-                    field == KnownSymbol.FrameworkElement.DataContextProperty)
+                    field == KnownSymbols.FrameworkElement.DataContextProperty)
                 {
                     return;
                 }

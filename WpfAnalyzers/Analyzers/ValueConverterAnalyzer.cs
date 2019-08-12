@@ -30,13 +30,13 @@ namespace WpfAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is INamedTypeSymbol type &&
-                type.IsAssignableToEither(KnownSymbol.IValueConverter, KnownSymbol.IMultiValueConverter, context.Compilation) &&
+                type.IsAssignableToEither(KnownSymbols.IValueConverter, KnownSymbols.IMultiValueConverter, context.Compilation) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !type.IsAbstract &&
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
-                if (!type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation))
+                if (!type.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation))
                 {
                     if (ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out var defaults))
                     {
@@ -58,9 +58,9 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation))
+                if (type.IsAssignableTo(KnownSymbols.IValueConverter, context.Compilation))
                 {
-                    if (Attribute.TryFind(classDeclaration, KnownSymbol.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(classDeclaration, KnownSymbols.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {

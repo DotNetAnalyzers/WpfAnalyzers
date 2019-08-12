@@ -11,7 +11,7 @@ namespace WpfAnalyzers.Test
 
     public static class ValidWithAll
     {
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbol)
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbols)
             .Assembly.GetTypes()
             .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))

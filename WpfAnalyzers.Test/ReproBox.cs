@@ -14,7 +14,7 @@ namespace WpfAnalyzers.Test
     {
         // ReSharper disable once UnusedMember.Local
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
-            typeof(KnownSymbol).Assembly.GetTypes()
+            typeof(KnownSymbols).Assembly.GetTypes()
                                .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
                                .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                .ToArray();

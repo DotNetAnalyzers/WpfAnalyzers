@@ -92,7 +92,7 @@ namespace WpfAnalyzers
                 string Cast(AssignmentExpressionSyntax assignment)
                 {
                     if (semanticModel.TryGetType(assignment.Left, context.CancellationToken, out var type) &&
-                        type != KnownSymbol.Object &&
+                        type != KnownSymbols.Object &&
                         !assignment.Right.IsRepresentationPreservingConversion(type, semanticModel))
                     {
                         return $"({type.ToMinimalDisplayString(semanticModel, assignment.SpanStart)})";

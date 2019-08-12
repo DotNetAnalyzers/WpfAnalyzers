@@ -89,14 +89,14 @@ namespace WpfAnalyzers
         {
             attribute = null;
             if (type == null ||
-                type == KnownSymbol.Object)
+                type == KnownSymbols.Object)
             {
                 return false;
             }
 
             foreach (var candidate in type.GetAttributes())
             {
-                if (candidate.AttributeClass == KnownSymbol.TemplatePartAttribute &&
+                if (candidate.AttributeClass == KnownSymbols.TemplatePartAttribute &&
                     candidate.NamedArguments.TryFirst(x => IsMatch(x), out _))
                 {
                     attribute = candidate;

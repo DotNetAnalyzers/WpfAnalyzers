@@ -9,7 +9,7 @@ namespace WpfAnalyzers
     {
         internal static bool TryGetRegisterCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return semanticModel.TryGetSymbol(invocation, KnownSymbol.EventManager.RegisterRoutedEvent, cancellationToken, out method);
+            return semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterRoutedEvent, cancellationToken, out method);
         }
 
         internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string result)

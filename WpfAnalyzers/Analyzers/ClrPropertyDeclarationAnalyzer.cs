@@ -31,7 +31,7 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 !context.ContainingSymbol.IsStatic &&
                 context.ContainingSymbol is IPropertySymbol property &&
-                property.ContainingType.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation) &&
+                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
