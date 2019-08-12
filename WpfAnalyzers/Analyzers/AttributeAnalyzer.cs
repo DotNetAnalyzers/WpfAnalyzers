@@ -27,7 +27,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0150UseNameof,
             Descriptors.WPF0170StyleTypedPropertyTarget,
             Descriptors.WPF0171StyleTypedPropertyType,
-            Descriptors.WPF0172StyleTypedPropertyProvided);
+            Descriptors.WPF0172StyleTypedPropertyProvided,
+            Descriptors.WPF0173StyleTypedPropertyStyleTargetType);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -76,15 +77,13 @@ namespace WpfAnalyzers
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                          returnType != KnownSymbols.Object &&
-                         Attribute.TryFindArgument(attribute, 0, "returnType", out var argument) &&
-                         argument.Expression is TypeOfExpressionSyntax typeOf &&
-                         context.SemanticModel.TryGetType(typeOf.Type, context.CancellationToken, out var argType) &&
-                         !returnType.IsAssignableTo(argType, context.Compilation))
+                         TryFindTypeArgument(attribute, 0, "returnType", out var expressiont, out var argumentType) &&
+                         !returnType.IsAssignableTo(argumentType, context.Compilation))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType, argument.GetLocation(), returnType));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType, expressiont.GetLocation(), returnType));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
-                         ConstructorArgument.TryGetArgumentName(attribute, out argument, out var argumentName) &&
+                         ConstructorArgument.TryGetArgumentName(attribute, out var argument, out var argumentName) &&
                          ConstructorArgument.TryGetParameterName(context.ContainingProperty(), context.SemanticModel, context.CancellationToken, out var parameterName) &&
                          argumentName != parameterName)
                 {
@@ -192,6 +191,12 @@ namespace WpfAnalyzers
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0172StyleTypedPropertyProvided, expression.GetLocation()));
                     }
+
+                    if (TryFindTypeArgument(attribute, 1, "StyleTargetType", out expression, out argumentType) &&
+                        !argumentType.TryFindPropertyRecursive("Style", out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0173StyleTypedPropertyStyleTargetType, expression.GetLocation()));
+                    }
                 }
             }
 
@@ -229,6 +234,28 @@ namespace WpfAnalyzers
                         case InvocationExpressionSyntax invocation when invocation.IsNameOf() &&
                                                                         invocation.TrySingleArgument(out var nameArg):
                             result = nameArg.Expression;
+                            return true;
+                        default:
+                            result = null;
+                            return false;
+                    }
+                }
+            }
+
+            bool TryFindTypeArgument(AttributeSyntax candidate, int index, string name, out ExpressionSyntax expression, out ITypeSymbol type)
+            {
+                expression = null;
+                type = null;
+                return Attribute.TryFindArgument(candidate, index, name, out var argument) &&
+                       TryFindExpression(out expression) &&
+                       context.SemanticModel.TryGetType(expression, context.CancellationToken, out type);
+
+                bool TryFindExpression(out ExpressionSyntax result)
+                {
+                    switch (argument.Expression)
+                    {
+                        case TypeOfExpressionSyntax typeOf:
+                            result = typeOf.Type;
                             return true;
                         default:
                             result = null;

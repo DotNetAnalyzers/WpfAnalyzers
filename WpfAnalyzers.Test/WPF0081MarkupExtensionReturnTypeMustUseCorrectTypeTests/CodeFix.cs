@@ -20,7 +20,7 @@ namespace N
     using System;
     using System.Windows.Markup;
 
-    [MarkupExtensionReturnType(↓typeof(int))]
+    [MarkupExtensionReturnType(typeof(↓int))]
     public class FooExtension : MarkupExtension
     {
         public override object ProvideValue(IServiceProvider serviceProvider)
@@ -42,7 +42,7 @@ namespace N
     using System;
     using System.Windows.Markup;
 
-    [MarkupExtensionReturnType(↓typeof(int))]
+    [MarkupExtensionReturnType(typeof(↓int))]
     public class FooExtension : MarkupExtension
     {
         public override object ProvideValue(IServiceProvider serviceProvider)
