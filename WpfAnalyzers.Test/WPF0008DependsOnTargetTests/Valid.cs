@@ -30,7 +30,9 @@ namespace N
             typeof(string),
             typeof(WithDependsOn));
 
+#pragma warning disable WPF0150 // Use nameof().
         [DependsOn(nameof(Value2))]
+#pragma warning restore WPF0150 // Use nameof().
         public string Value1
         {
             get => (string)this.GetValue(Value1Property);

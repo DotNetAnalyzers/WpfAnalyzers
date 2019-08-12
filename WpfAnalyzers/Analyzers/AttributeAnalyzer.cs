@@ -20,7 +20,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0082ConstructorArgument,
             Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget,
             Descriptors.WPF0085XamlSetTypeConverterTarget,
-            Descriptors.WPF0132UsePartPrefix);
+            Descriptors.WPF0132UsePartPrefix,
+            Descriptors.WPF0150UseNameof);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -37,10 +38,24 @@ namespace WpfAnalyzers
             {
                 if (Attribute.IsType(attribute, KnownSymbol.DependsOnAttribute, context.SemanticModel, context.CancellationToken) &&
                     attribute.TrySingleArgument(out var nameArg) &&
-                    context.SemanticModel.TryGetConstantValue(nameArg.Expression, context.CancellationToken, out string name) &&
-                    !context.ContainingProperty().ContainingType.TryFindPropertyRecursive(name, out _))
+                    context.SemanticModel.TryGetConstantValue(nameArg.Expression, context.CancellationToken, out string name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0008DependsOnTarget, nameArg.GetLocation()));
+                    if (context.ContainingProperty().ContainingType.TryFindPropertyRecursive(name, out var property))
+                    {
+                        if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0150UseNameof,
+                                    nameArg.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                    property.Name));
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0008DependsOnTarget, nameArg.GetLocation()));
+                    }
                 }
                 else if (Attribute.IsType(attribute, KnownSymbol.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
                     Attribute.TryFindArgument(attribute, 1, KnownSymbol.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg) &&

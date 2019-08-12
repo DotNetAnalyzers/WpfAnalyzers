@@ -30,25 +30,19 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText) || token.IsMissing)
-                {
-                    continue;
-                }
-
-                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax argument &&
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax expression) &&
                     diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name))
                 {
                     context.RegisterCodeFix(
                         $"Use nameof({name})",
-                        (editor, cancellationToken) => FixAsync(editor, argument, name, cancellationToken),
+                        (editor, cancellationToken) => FixAsync(editor, expression, name, cancellationToken),
                         this.GetType().FullName,
                         diagnostic);
                 }
             }
         }
 
-        private static async Task FixAsync(DocumentEditor editor, ArgumentSyntax argument, string name, CancellationToken cancellationToken)
+        private static async Task FixAsync(DocumentEditor editor, ExpressionSyntax argument, string name, CancellationToken cancellationToken)
         {
             if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None)
             {
@@ -62,13 +56,13 @@ namespace WpfAnalyzers
                 await Qualify(member).ConfigureAwait(false) != CodeStyleResult.No)
             {
                 editor.ReplaceNode(
-                    argument.Expression,
+                    argument,
                     (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})").WithTriviaFrom(x));
             }
             else
             {
                 editor.ReplaceNode(
-                    argument.Expression,
+                    argument,
                     (x, _) => SyntaxFactory.ParseExpression($"nameof({name})").WithTriviaFrom(x));
             }
 

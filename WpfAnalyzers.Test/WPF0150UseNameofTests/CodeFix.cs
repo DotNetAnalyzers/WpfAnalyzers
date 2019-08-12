@@ -203,5 +203,78 @@ namespace N
 }";
             RoslynAssert.CodeFix(new RoutedEventBackingFieldOrPropertyAnalyzer(), Fix, ExpectedDiagnostic, before, after);
         }
+
+        [Test]
+        public static void DependsOn()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public class WithDependsOn : FrameworkElement
+    {
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(string),
+            typeof(WithDependsOn));
+
+        public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
+            nameof(Value2),
+            typeof(string),
+            typeof(WithDependsOn));
+
+
+        [DependsOn(↓""Value2"")]
+        public string Value1
+        {
+            get => (string)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public string Value2
+        {
+            get => (string)this.GetValue(Value2Property);
+            set => this.SetValue(Value2Property, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public class WithDependsOn : FrameworkElement
+    {
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(string),
+            typeof(WithDependsOn));
+
+        public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
+            nameof(Value2),
+            typeof(string),
+            typeof(WithDependsOn));
+
+
+        [DependsOn(nameof(Value2))]
+        public string Value1
+        {
+            get => (string)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public string Value2
+        {
+            get => (string)this.GetValue(Value2Property);
+            set => this.SetValue(Value2Property, value);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+        }
     }
 }
