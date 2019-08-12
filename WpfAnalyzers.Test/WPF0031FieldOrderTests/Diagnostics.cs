@@ -1,18 +1,20 @@
 namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
+        private static readonly CodeFixProvider Fix = new MoveFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0031FieldOrder);
 
         [Test]
         public static void Messages()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -37,13 +39,38 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("'BarPropertyKey' must be declared before 'BarProperty'"), code);
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        // referencing field initialize below
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set {  this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("'BarPropertyKey' must be declared before 'BarProperty'"), before, after, fixTitle: "Move");
         }
 
         [Test]
         public static void DependencyProperty()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -68,13 +95,37 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        // referencing field initialize below
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set {  this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void Attached()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -101,7 +152,33 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public static void SetBar(DependencyObject element, int value)
+        {
+            element.SetValue(BarPropertyKey, value);
+        }
+
+        public static int GetBar(DependencyObject element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

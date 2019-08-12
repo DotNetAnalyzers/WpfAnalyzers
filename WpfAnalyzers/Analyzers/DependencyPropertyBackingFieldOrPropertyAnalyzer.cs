@@ -82,6 +82,7 @@ namespace WpfAnalyzers
                             Diagnostic.Create(
                                 Descriptors.WPF0031FieldOrder,
                                 reference.GetSyntax(context.CancellationToken).GetLocation(),
+                                additionalLocations: new[] { context.Node.GetLocation() },
                                 keyMember.Name,
                                 backingMember.Name));
                     }
