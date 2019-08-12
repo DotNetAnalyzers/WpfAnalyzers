@@ -6,6 +6,7 @@ namespace WpfAnalyzers
     /// </summary>
     internal static class AnalyzerCategory
     {
+        internal const string Correctness = "WpfAnalyzers.Correctness";
         internal const string ComponentResourceKey = "WpfAnalyzers.ComponentResourceKey";
         internal const string DependencyProperty = "WpfAnalyzers.DependencyProperty";
         internal const string Documentation = "WpfAnalyzers.Documentation";

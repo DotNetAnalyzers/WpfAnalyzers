@@ -630,7 +630,7 @@ namespace WpfAnalyzers
             id: "WPF0150",
             title: "Use nameof().",
             messageFormat: "Use nameof({0}).",
-            category: AnalyzerCategory.ComponentResourceKey,
+            category: AnalyzerCategory.Correctness,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use nameof() as it is less fragile than string literal.");

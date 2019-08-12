@@ -5,7 +5,7 @@ namespace ValidCode.RoutedEvents
 
     public class FooControl : Control
     {
-        /// <summary>Identifies the ValueChanged event</summary>
+        /// <summary>Identifies the <see cref="ValueChanged"/> event</summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
             RoutingStrategy.Direct,
