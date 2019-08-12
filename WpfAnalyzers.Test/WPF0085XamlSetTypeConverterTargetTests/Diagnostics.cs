@@ -18,7 +18,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs) => 1;
@@ -37,7 +37,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static int ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs) => 1;
@@ -56,7 +56,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static void ReceiveTypeConverter()
@@ -77,7 +77,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static void ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs, int i)
@@ -98,7 +98,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static void ReceiveTypeConverter(int targetObject, XamlSetTypeConverterEventArgs eventArgs)
@@ -119,7 +119,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetTypeConverter(↓nameof(ReceiveTypeConverter))]
+    [XamlSetTypeConverter(nameof(↓ReceiveTypeConverter))]
     public class FooControl : Control
     {
         public static void ReceiveTypeConverter(object targetObject, int eventArgs)

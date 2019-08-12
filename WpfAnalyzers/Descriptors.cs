@@ -662,6 +662,24 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "StyleTypedProperty must exist.");
 
+        internal static readonly DiagnosticDescriptor WPF0171StyleTypedPropertyType = Create(
+            id: "WPF0171",
+            title: "StyleTypedProperty must point to a property of type Style.",
+            messageFormat: "StyleTypedProperty must point to a property of type Style.",
+            category: AnalyzerCategory.StyleTypedProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "StyleTypedProperty must point to a property of type Style.");
+
+        internal static readonly DiagnosticDescriptor WPF0172StyleTypedPropertyProvided = Create(
+            id: "WPF0172",
+            title: "StyleTypedProperty specify property.",
+            messageFormat: "StyleTypedProperty specify property.",
+            category: AnalyzerCategory.StyleTypedProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "StyleTypedProperty specify property.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

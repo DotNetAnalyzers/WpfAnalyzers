@@ -18,7 +18,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static int ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
@@ -40,7 +40,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static int ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
@@ -62,7 +62,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static void ReceiveMarkupExtension()
@@ -83,7 +83,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static void ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs, int i)
@@ -104,7 +104,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static void ReceiveMarkupExtension(int targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
@@ -125,7 +125,7 @@ namespace N
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    [XamlSetMarkupExtension(↓nameof(ReceiveMarkupExtension))]
+    [XamlSetMarkupExtension(nameof(↓ReceiveMarkupExtension))]
     public class WithSetMarkupExtensionAttribute : Control
     {
         public static void ReceiveMarkupExtension(object targetObject, int eventArgs)

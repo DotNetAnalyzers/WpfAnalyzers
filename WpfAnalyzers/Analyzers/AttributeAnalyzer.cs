@@ -25,7 +25,9 @@ namespace WpfAnalyzers
             Descriptors.WPF0132UsePartPrefix,
             Descriptors.WPF0133ContentPropertyTarget,
             Descriptors.WPF0150UseNameof,
-            Descriptors.WPF0170StyleTypedPropertyTarget);
+            Descriptors.WPF0170StyleTypedPropertyTarget,
+            Descriptors.WPF0171StyleTypedPropertyType,
+            Descriptors.WPF0172StyleTypedPropertyProvided);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -160,24 +162,30 @@ namespace WpfAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0133ContentPropertyTarget, expression.GetLocation()));
                     }
                 }
-                else if (Attribute.IsType(attribute, KnownSymbols.StyleTypedPropertyAttribute, context.SemanticModel, context.CancellationToken) &&
-                         TryFindStringArgument(attribute, 0, "Property", out expression, out text))
+                else if (Attribute.IsType(attribute, KnownSymbols.StyleTypedPropertyAttribute, context.SemanticModel, context.CancellationToken))
                 {
-                    if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
+                    if (TryFindStringArgument(attribute, 0, "Property", out expression, out text))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
                         {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameof,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                                    property.Name));
+                            if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0150UseNameof,
+                                        expression.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                        property.Name));
+                            }
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0170StyleTypedPropertyTarget, expression.GetLocation()));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0170StyleTypedPropertyTarget, expression.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0172StyleTypedPropertyProvided, expression.GetLocation()));
                     }
                 }
             }
@@ -186,9 +194,25 @@ namespace WpfAnalyzers
             {
                 expression = null;
                 text = null;
-                return Attribute.TryFindArgument(candidate, index, name, out var argument) &&
-                       TryFindExpression(out expression) &&
-                       context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out text);
+                if (Attribute.TryFindArgument(candidate, index, name, out var argument) &&
+                    NameEquals())
+                {
+                    return TryFindExpression(out expression) &&
+                           context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out text);
+                }
+
+                expression = candidate.Name;
+                return false;
+
+                bool NameEquals()
+                {
+                    if (argument.NameEquals is NameEqualsSyntax nameEquals)
+                    {
+                        return nameEquals.Name.Identifier.ValueText == name;
+                    }
+
+                    return true;
+                }
 
                 bool TryFindExpression(out ExpressionSyntax result)
                 {

@@ -84,6 +84,8 @@ Roslyn analyzers for WPF.
 | [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey.
 | [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof().
 | [WPF0170](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0170.md)| StyleTypedProperty must exist.
+| [WPF0171](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0171.md)| StyleTypedProperty must point to a property of type Style.
+| [WPF0172](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0172.md)| StyleTypedProperty specify property.
 
 
 ## Using WpfAnalyzers

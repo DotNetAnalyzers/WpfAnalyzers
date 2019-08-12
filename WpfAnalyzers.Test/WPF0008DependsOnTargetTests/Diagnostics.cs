@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0008DependsOnTarget);
 
-        [TestCase("[DependsOn(↓nameof(WithDependsOn))]")]
+        [TestCase("[DependsOn(nameof(↓WithDependsOn))]")]
         [TestCase("[DependsOn(↓\"MISSING\")]")]
         public static void WhenMissing(string attribute)
         {
