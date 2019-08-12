@@ -40,11 +40,13 @@ namespace WpfAnalyzers
             return TryGetCallback(objectCreation, KnownSymbol.CoerceValueCallback, semanticModel, cancellationToken, out callback);
         }
 
-        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string registeredName)
         {
+            nameArg = null;
             registeredName = null;
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
-                   DependencyProperty.TryGetRegisteredName(objectCreation?.FirstAncestorOrSelf<InvocationExpressionSyntax>(), semanticModel, cancellationToken, out registeredName);
+                   objectCreation.TryFirstAncestor(out InvocationExpressionSyntax invocation) &&
+                   DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken, out nameArg, out registeredName);
         }
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)

@@ -48,20 +48,22 @@ namespace WpfAnalyzers
             return fieldOrProperty.Type == KnownSymbol.DependencyPropertyKey;
         }
 
-        internal static bool TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string registeredName)
+        internal static bool TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string registeredName)
         {
+            nameArg = null;
             registeredName = null;
             if (invocation == null)
             {
                 return false;
             }
 
-            if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
-                TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
-                TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
-                TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
+            if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out var method) ||
+                TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out method) ||
+                TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out method) ||
+                TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out method))
             {
-                return invocation.TryGetArgumentAtIndex(0, out var nameArg) &&
+                return method.TryFindParameter("name", out var parameter) &&
+                       invocation.TryFindArgument(parameter, out nameArg) &&
                        nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
             }
 
@@ -69,9 +71,10 @@ namespace WpfAnalyzers
                 (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
-                if (BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken), out var fieldOrProperty))
+                if (semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var symbol) &&
+                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
                 {
-                    return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out registeredName);
+                    return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out nameArg, out registeredName);
                 }
 
                 return false;
@@ -80,19 +83,21 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetRegisteredName(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetRegisteredName(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string result)
         {
+            nameArg = null;
             result = null;
-            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out _))
+            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out var method))
             {
-                return invocation.TryGetArgumentAtIndex(0, out var arg) &&
-                       arg.TryGetStringValue(semanticModel, cancellationToken, out result);
+                return method.TryFindParameter("name", out var parameter) &&
+                       invocation.TryFindArgument(parameter, out nameArg) &&
+                       nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
             }
 
             if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
                 !source.Symbol.Equals(backing.Symbol))
             {
-                return TryGetRegisteredName(source, semanticModel, cancellationToken, out result);
+                return TryGetRegisteredName(source, semanticModel, cancellationToken, out nameArg, out result);
             }
 
             if (backing.Symbol.Locations.All(x => !x.IsInSource) &&

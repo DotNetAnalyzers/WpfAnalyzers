@@ -34,7 +34,7 @@ namespace WpfAnalyzers
             {
                 if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                     !MatchesValidateValueCallbackName(validateValueCallback, target, context) &&
-                    DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var registeredName))
+                    DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                 {
                     using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
                     {
@@ -83,7 +83,7 @@ namespace WpfAnalyzers
                    argumentList.Parent is InvocationExpressionSyntax invocation &&
                    TryGetAnyRegisterCall(invocation, context, out _) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
-                   DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.Name.IsParts("Validate", registeredName);
         }
 

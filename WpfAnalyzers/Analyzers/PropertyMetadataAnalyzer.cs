@@ -33,7 +33,7 @@ namespace WpfAnalyzers
                 context.ContainingSymbol.IsStatic &&
                 PropertyMetadata.TryGetConstructor(objectCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName))
+                if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                 {
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
                         Callback.TryGetTarget(propertyChangedCallback, KnownSymbol.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
@@ -166,7 +166,7 @@ namespace WpfAnalyzers
         {
             return propertyChangedCallback.Parent is ArgumentListSyntax argumentList &&
                    argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
-                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
         }
@@ -175,7 +175,7 @@ namespace WpfAnalyzers
         {
             return coerceValueCallback.Parent is ArgumentListSyntax argumentList &&
                    argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
-                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);
         }

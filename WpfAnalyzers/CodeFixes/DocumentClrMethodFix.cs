@@ -31,7 +31,7 @@ namespace WpfAnalyzers
                     semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method))
                 {
                     if (ClrMethod.IsAttachedGet(method, semanticModel, context.CancellationToken, out var fieldOrProperty) &&
-                        DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var registeredName))
+                        DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         var parameter = method.Parameters[0];
                         var text = StringBuilderPool.Borrow()
@@ -46,7 +46,7 @@ namespace WpfAnalyzers
                             diagnostic);
                     }
                     else if (ClrMethod.IsAttachedSet(method, semanticModel, context.CancellationToken, out fieldOrProperty) &&
-                             DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out registeredName))
+                             DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out _, out registeredName))
                     {
                         var parameter = method.Parameters[0];
                         var text = StringBuilderPool.Borrow()

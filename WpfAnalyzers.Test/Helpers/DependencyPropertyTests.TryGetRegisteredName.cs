@@ -12,7 +12,7 @@ namespace WpfAnalyzers.Test
         {
             [TestCase("nameof(Bar)")]
             [TestCase("\"Bar\"")]
-            public static void DependencyPropertyBackingField(string nameCode)
+            public static void DependencyPropertyBackingField(string argument)
             {
                 var code = @"
 namespace N
@@ -34,20 +34,21 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("nameof(Bar)", nameCode);
+}".AssertReplace("nameof(Bar)", argument);
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
                 Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var arg, out var name));
+                Assert.AreEqual(argument, arg.ToString());
                 Assert.AreEqual("Bar", name);
             }
 
             [TestCase("nameof(Bar)")]
             [TestCase("\"Bar\"")]
-            public static void DependencyPropertyBackingProperty(string nameCode)
+            public static void DependencyPropertyBackingProperty(string argument)
             {
                 var code = @"
 namespace N
@@ -69,14 +70,15 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("nameof(Bar)", nameCode);
+}".AssertReplace("nameof(Bar)", argument);
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
                 var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
                 Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var arg, out var name));
+                Assert.AreEqual(argument, arg.ToString());
                 Assert.AreEqual("Bar", name);
             }
 
@@ -106,7 +108,8 @@ namespace N
                 var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
                 Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var arg, out var name));
+                Assert.AreEqual(null, arg);
                 Assert.AreEqual("FontSize", name);
             }
 
@@ -136,7 +139,8 @@ namespace N
                 var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
                 var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
                 Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual(true, DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, CancellationToken.None, out var arg, out var name));
+                Assert.AreEqual(null, arg);
                 Assert.AreEqual("BorderThickness", name);
             }
         }

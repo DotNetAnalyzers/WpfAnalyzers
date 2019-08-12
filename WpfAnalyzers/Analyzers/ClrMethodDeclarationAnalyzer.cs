@@ -38,7 +38,7 @@ namespace WpfAnalyzers
             {
                 if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                         !method.Name.IsParts("Get", registeredName))
                     {
                         context.ReportDiagnostic(
@@ -100,7 +100,7 @@ namespace WpfAnalyzers
                 }
                 else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                         !method.Name.IsParts("Set", registeredName))
                     {
                         context.ReportDiagnostic(

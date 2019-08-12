@@ -33,7 +33,7 @@ namespace WpfAnalyzers
             {
                 if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backingMember))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
                     {
                         if (backingMember.Type == KnownSymbol.DependencyProperty &&
                             !backingMember.Name.IsParts(registeredName, "Property"))

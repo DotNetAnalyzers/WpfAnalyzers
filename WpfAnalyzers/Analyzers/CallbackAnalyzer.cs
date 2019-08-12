@@ -74,7 +74,7 @@ namespace WpfAnalyzers
                     if (TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
                         TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
                     {
-                        if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                        if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                             !method.Name.IsParts("On", registeredName, "Changed"))
                         {
                             context.ReportDiagnostic(

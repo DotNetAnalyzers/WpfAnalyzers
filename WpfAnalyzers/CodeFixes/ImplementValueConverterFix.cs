@@ -1,11 +1,9 @@
 // ReSharper disable InconsistentNaming
 namespace WpfAnalyzers
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Globalization;
-    using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;

@@ -36,7 +36,7 @@ namespace WpfAnalyzers
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
                     semanticModel.TryGetSymbol(member, context.CancellationToken, out ISymbol symbol) &&
                     BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
-                    DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out var name))
+                    DependencyProperty.TryGetRegisteredName(fieldOrProperty, semanticModel, context.CancellationToken, out _, out var name))
                 {
                     context.RegisterCodeFix(
                         "Add standard documentation.",
