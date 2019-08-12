@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0172StyleTypedPropertyProvidedTests
+namespace WpfAnalyzers.Test.WPF0171StyleTypedPropertyTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0172StyleTypedPropertyProvidedTests
     public static class Valid
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0172StyleTypedPropertyProvided;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0171StyleTypedPropertyType;
 
         [Test]
         public static void WhenExists()
