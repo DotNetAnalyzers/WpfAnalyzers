@@ -28,7 +28,7 @@ namespace N
             typeof(WithStyleTypedProperty),
             new PropertyMetadata(default(Style)));
 
-        public DataTemplate BarStyle
+        public Style BarStyle
         {
             get => (Style)this.GetValue(BarStyleProperty);
             set => this.SetValue(BarStyleProperty, value);

@@ -18,19 +18,19 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    [StyleTypedProperty(Property = nameof(↓WithStyleTypedProperty), StyleTargetType = typeof(Control))]
+    [StyleTypedProperty(Property = nameof(↓BarStyle), StyleTargetType = typeof(Control))]
     public class WithStyleTypedProperty : Control
     {
         /// <summary>Identifies the <see cref=""BarStyle""/> dependency property.</summary>
         public static readonly DependencyProperty BarStyleProperty = DependencyProperty.Register(
             nameof(BarStyle),
-            typeof(Style),
+            typeof(DataTemplate),
             typeof(WithStyleTypedProperty),
-            new PropertyMetadata(default(Style)));
+            new PropertyMetadata(default(DataTemplate)));
 
-        public Style BarStyle
+        public DataTemplate BarStyle
         {
-            get => (Style)this.GetValue(BarStyleProperty);
+            get => (DataTemplate)this.GetValue(BarStyleProperty);
             set => this.SetValue(BarStyleProperty, value);
         }
     }

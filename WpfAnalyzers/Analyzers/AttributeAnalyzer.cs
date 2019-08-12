@@ -177,6 +177,11 @@ namespace WpfAnalyzers
                                         ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                         property.Name));
                             }
+
+                            if (!property.Type.Is(KnownSymbols.Style))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0171StyleTypedPropertyType, expression.GetLocation()));
+                            }
                         }
                         else
                         {
