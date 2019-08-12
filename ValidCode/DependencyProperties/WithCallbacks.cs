@@ -7,7 +7,7 @@ namespace ValidCode.DependencyProperties
     {
         /// <summary>Identifies the <see cref="P1"/> dependency property.</summary>
         public static readonly DependencyProperty P1Property = DependencyProperty.Register(
-            "P1",
+            nameof(P1),
             typeof(int),
             typeof(WithCallbacks),
             new PropertyMetadata(
@@ -16,6 +16,7 @@ namespace ValidCode.DependencyProperties
                 (d, o) => (int)o > 0 ? (int)o : 0),
             o => true);
 
+#pragma warning disable WPF0150 // Use nameof().
         /// <summary>Identifies the <see cref="P2"/> dependency property.</summary>
         public static readonly DependencyProperty P2Property = DependencyProperty.Register(
             "P2",
@@ -26,6 +27,7 @@ namespace ValidCode.DependencyProperties
                 (d, e) => d.CoerceValue(P1Property),
                 CoerceP2),
             o => true);
+#pragma warning restore WPF0150 // Use nameof().
 
         public int P2
         {

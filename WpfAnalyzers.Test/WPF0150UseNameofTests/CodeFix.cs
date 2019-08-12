@@ -62,5 +62,95 @@ namespace N
 }";
             RoslynAssert.CodeFix(new RoutedCommandCreationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
         }
+
+        [Test]
+        public static void DependencyPropertyRegister()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(↓""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void DependencyPropertyRegisterArgumentPerLine()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ↓""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+        }
     }
 }

@@ -28,11 +28,13 @@ namespace ValidCode.DependencyProperties
         /// <summary>Identifies the <see cref="Bar"/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = Foo1.BarProperty.AddOwner(typeof(FooControl1));
 
+#pragma warning disable WPF0150 // Use nameof().
         private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
             "ReadOnlyValue",
             typeof(string),
             typeof(FooControl1),
             new PropertyMetadata(default(string)));
+#pragma warning restore WPF0150 // Use nameof().
 
         /// <summary>Identifies the <see cref="ReadOnlyValue"/> dependency property.</summary>
         public static readonly DependencyProperty ReadOnlyValueProperty = ReadOnlyValuePropertyKey.DependencyProperty;

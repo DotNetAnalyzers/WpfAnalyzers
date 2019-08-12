@@ -12,6 +12,7 @@ namespace ValidCode.DependencyProperties
             new PropertyMetadata(default(int)),
             o => (int)o > 0);
 
+#pragma warning disable WPF0150 // Use nameof().
         /// <summary>Identifies the <see cref="Value2"/> dependency property.</summary>
         public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
             "Value2",
@@ -19,6 +20,7 @@ namespace ValidCode.DependencyProperties
             typeof(WithValidateValueCallback),
             new PropertyMetadata(default(int)),
             ValidateValue2);
+#pragma warning disable WPF0150 // Use nameof().
 
         /// <summary>Identifies the <see cref="Value3"/> dependency property.</summary>
         public static readonly DependencyProperty Value3Property = DependencyProperty.Register(

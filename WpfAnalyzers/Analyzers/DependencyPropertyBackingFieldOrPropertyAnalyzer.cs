@@ -33,7 +33,7 @@ namespace WpfAnalyzers
             {
                 if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backingMember))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         if (backingMember.Type == KnownSymbol.DependencyProperty &&
                             !backingMember.Name.IsParts(registeredName, "Property"))
@@ -59,18 +59,16 @@ namespace WpfAnalyzers
                                     registeredName));
                         }
 
-                        if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
+                        if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
+                            context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                            !HasStandardText(memberDeclaration, registeredName, out var comment))
                         {
-                            if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                                !HasStandardText(memberDeclaration, registeredName, out var comment))
-                            {
-                                context.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
-                                        comment == null
-                                            ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
-                                            : comment.GetLocation()));
-                            }
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
+                                    comment == null
+                                        ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
+                                        : comment.GetLocation()));
                         }
                     }
 

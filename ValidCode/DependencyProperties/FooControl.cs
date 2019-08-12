@@ -12,12 +12,14 @@ namespace ValidCode.DependencyProperties
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
+#pragma warning disable WPF0150 // Use nameof().
         /// <summary>Identifies the <see cref="Bar2"/> dependency property.</summary>
         public static DependencyProperty Bar2Property { get; } = DependencyProperty.Register(
             "Bar2",
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
+#pragma warning restore WPF0150 // Use nameof().
 
         private static readonly DependencyPropertyKey Bar3PropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Bar3),
@@ -28,6 +30,7 @@ namespace ValidCode.DependencyProperties
         /// <summary>Identifies the <see cref="Bar3"/> dependency property.</summary>
         public static readonly DependencyProperty Bar3Property = Bar3PropertyKey.DependencyProperty;
 
+#pragma warning disable WPF0150 // Use nameof().
         public static readonly DependencyProperty Bar4Property = DependencyProperty.RegisterAttached(
             "Bar4",
             typeof(int),
@@ -39,6 +42,7 @@ namespace ValidCode.DependencyProperties
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
+#pragma warning restore WPF0150 // Use nameof().
 
         public static readonly DependencyProperty Bar5Property = Bar5PropertyKey.DependencyProperty;
 
