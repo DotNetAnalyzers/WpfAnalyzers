@@ -79,6 +79,7 @@ Roslyn analyzers for WPF.
 | [WPF0130](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md)| Add [TemplatePart] to the type.
 | [WPF0131](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md)| Use correct [TemplatePart] type.
 | [WPF0132](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md)| Use PART prefix.
+| [WPF0133](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0133.md)| ContentProperty target does not exist.
 | [WPF0140](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md)| Use containing type when creating a ComponentResourceKey.
 | [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey.
 | [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof().

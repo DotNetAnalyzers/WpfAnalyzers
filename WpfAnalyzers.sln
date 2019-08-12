@@ -86,6 +86,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6
 		documentation\WPF0130.md = documentation\WPF0130.md
 		documentation\WPF0131.md = documentation\WPF0131.md
 		documentation\WPF0132.md = documentation\WPF0132.md
+		documentation\WPF0133.md = documentation\WPF0133.md
 		documentation\WPF0140.md = documentation\WPF0140.md
 		documentation\WPF0141.md = documentation\WPF0141.md
 		documentation\WPF0150.md = documentation\WPF0150.md

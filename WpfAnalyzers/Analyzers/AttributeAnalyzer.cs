@@ -21,6 +21,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0084XamlSetMarkupExtensionAttributeTarget,
             Descriptors.WPF0085XamlSetTypeConverterTarget,
             Descriptors.WPF0132UsePartPrefix,
+            Descriptors.WPF0133ContentPropertyTarget,
             Descriptors.WPF0150UseNameof);
 
         /// <inheritdoc/>
@@ -40,7 +41,7 @@ namespace WpfAnalyzers
                     attribute.TrySingleArgument(out var nameArg) &&
                     context.SemanticModel.TryGetConstantValue(nameArg.Expression, context.CancellationToken, out string name))
                 {
-                    if (context.ContainingProperty().ContainingType.TryFindPropertyRecursive(name, out var property))
+                    if (context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(name, out var property))
                     {
                         if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
                         {
@@ -113,6 +114,28 @@ namespace WpfAnalyzers
                          !partName.StartsWith("PART_"))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, arg.Expression.GetLocation(), arg));
+                }
+                else if (Attribute.IsType(attribute, KnownSymbols.ContentPropertyAttribute, context.SemanticModel, context.CancellationToken) &&
+                         attribute.TrySingleArgument(out nameArg) &&
+                         context.SemanticModel.TryGetConstantValue(nameArg.Expression, context.CancellationToken, out name) &&
+                         context.ContainingSymbol is INamedTypeSymbol contentPropertyType)
+                {
+                    if (contentPropertyType.TryFindPropertyRecursive(name, out property))
+                    {
+                        if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0150UseNameof,
+                                    nameArg.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                    property.Name));
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0133ContentPropertyTarget, nameArg.GetLocation()));
+                    }
                 }
             }
         }

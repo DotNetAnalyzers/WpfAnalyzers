@@ -617,6 +617,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Use PART prefix.");
 
+        internal static readonly DiagnosticDescriptor WPF0133ContentPropertyTarget = Create(
+            id: "WPF0133",
+            title: "ContentProperty target does not exist.",
+            messageFormat: "ContentProperty target does not exist.",
+            category: AnalyzerCategory.Correctness,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "ContentProperty target does not exist.");
+
         internal static readonly DiagnosticDescriptor WPF0140UseContainingTypeComponentResourceKey = Create(
             id: "WPF0140",
             title: "Use containing type when creating a ComponentResourceKey.",
