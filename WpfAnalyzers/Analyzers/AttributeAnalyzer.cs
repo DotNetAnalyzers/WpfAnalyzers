@@ -77,10 +77,15 @@ namespace WpfAnalyzers
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                          returnType != KnownSymbols.Object &&
-                         TryFindTypeArgument(attribute, 0, "returnType", out var expressiont, out var argumentType) &&
+                         TryFindTypeArgument(attribute, 0, "returnType", out expression, out var argumentType) &&
                          !returnType.IsAssignableTo(argumentType, context.Compilation))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType, expressiont.GetLocation(), returnType));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType,
+                            expression.GetLocation(),
+                            properties: ImmutableDictionary<string, string>.Empty.Add(nameof(ITypeSymbol), returnType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                            returnType));
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken) &&
                          ConstructorArgument.TryGetArgumentName(attribute, out var argument, out var argumentName) &&

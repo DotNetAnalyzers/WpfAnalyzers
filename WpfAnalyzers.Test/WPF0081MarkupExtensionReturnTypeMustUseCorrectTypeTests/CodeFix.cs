@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTe
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly CodeFixProvider Fix = new MarkupExtensionReturnTypeArgumentFix();
+        private static readonly CodeFixProvider Fix = new ChangeTypeofFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType);
 
         [Test]
