@@ -68,7 +68,8 @@ namespace WpfAnalyzers
                                     Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
                                     comment == null
                                         ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
-                                        : comment.GetLocation()));
+                                        : comment.GetLocation(),
+                                    properties: ImmutableDictionary<string, string>.Empty.Add(nameof(CrefParameterSyntax), registeredName)));
                         }
                     }
 

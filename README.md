@@ -71,6 +71,7 @@ Roslyn analyzers for WPF.
 | [WPF0105](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md)| Call RemoveHandler in remove.
 | [WPF0106](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md)| Use the registered handler type.
 | [WPF0107](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md)| Backing member for a RoutedEvent should be static and readonly.
+| [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent must have standard documentation text.
 | [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command.
 | [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command.
 | [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command.

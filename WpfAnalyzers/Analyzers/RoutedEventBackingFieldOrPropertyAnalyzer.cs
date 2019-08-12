@@ -14,6 +14,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
             Descriptors.WPF0101RegisterContainingTypeAsOwner,
             Descriptors.WPF0107BackingMemberShouldBeStaticReadonly,
+            Descriptors.WPF0108DocumentRoutedEventBackingMember,
             Descriptors.WPF0150UseNameof);
 
         /// <inheritdoc/>
@@ -54,6 +55,19 @@ namespace WpfAnalyzers
                                 ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
                                 eventSymbol.Name));
                     }
+
+                    if (context.ContainingSymbol.ContainingType.TryFindEvent(registeredName, out _) &&
+                        context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                        !HasStandardText(memberDeclaration, registeredName, out var comment))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0108DocumentRoutedEventBackingMember,
+                                comment == null
+                                    ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
+                                    : comment.GetLocation(),
+                                properties: ImmutableDictionary<string, string>.Empty.Add(nameof(CrefParameterSyntax), registeredName)));
+                    }
                 }
 
                 if (RoutedEvent.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
@@ -93,6 +107,13 @@ namespace WpfAnalyzers
             }
 
             return node.GetFirstToken();
+        }
+
+        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, out DocumentationCommentTriviaSyntax comment)
+        {
+            return memberDeclaration.TryGetDocumentationComment(out comment) &&
+                   comment.TryGetSummary(out var summary) &&
+                   summary.ToString().IsParts("<summary>Identifies the <see cref=\"", name, "\"/> routed event.</summary>");
         }
     }
 }

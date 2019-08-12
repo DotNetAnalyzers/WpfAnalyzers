@@ -545,6 +545,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Backing member for a RoutedEvent should be static and readonly.");
 
+        internal static readonly DiagnosticDescriptor WPF0108DocumentRoutedEventBackingMember = Create(
+            id: "WPF0108",
+            title: "Backing member for RoutedEvent must have standard documentation text.",
+            messageFormat: "Backing member for RoutedEvent must have standard documentation text.",
+            category: AnalyzerCategory.Documentation,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Backing member for RoutedEvent must have standard documentation text.");
+
         internal static readonly DiagnosticDescriptor WPF0120RegisterContainingMemberAsNameForRoutedCommand = Create(
             id: "WPF0120",
             title: "Register containing member name as name for routed command.",
