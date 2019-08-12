@@ -16,7 +16,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
             Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand,
             Descriptors.WPF0122RegisterRoutedCommand,
-            Descriptors.WPF0123BackingMemberShouldBeStaticReadonly);
+            Descriptors.WPF0123BackingMemberShouldBeStaticReadonly,
+            Descriptors.WPF0150UseNameof);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -51,15 +52,26 @@ namespace WpfAnalyzers
                     if (ctor.TryFindParameter("name", out var nameParameter))
                     {
                         if (objectCreation.TryFindArgument(nameParameter, out var nameArg) &&
-                            nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                            registeredName != fieldOrProperty.Name)
+                            nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName))
                         {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
-                                    nameArg.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
-                                    fieldOrProperty.Name));
+                            if (registeredName != fieldOrProperty.Name)
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
+                                        nameArg.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        fieldOrProperty.Name));
+                            }
+                            else if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0150UseNameof,
+                                        nameArg.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        fieldOrProperty.Name));
+                            }
                         }
                     }
                     else

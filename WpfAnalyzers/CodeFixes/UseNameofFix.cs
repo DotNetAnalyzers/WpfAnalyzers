@@ -1,13 +1,17 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameofFix))]
     [Shared]
@@ -15,29 +19,88 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand.Id);
+            Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand.Id,
+            Descriptors.WPF0150UseNameof.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                          .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
-                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument))
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (string.IsNullOrEmpty(token.ValueText) || token.IsMissing)
+                {
+                    continue;
+                }
+
+                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax argument &&
+                    diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name))
                 {
                     context.RegisterCodeFix(
-                        $"Use nameof({name}).",
-                        (editor, _) => editor.ReplaceNode(
-                            argument.Expression,
-                            x => SyntaxFactory.ParseExpression($"nameof({name})")),
-                        "Use containing type.",
+                        $"Use nameof({name})",
+                        (editor, cancellationToken) => FixAsync(editor, argument, name, cancellationToken),
+                        this.GetType().FullName,
                         diagnostic);
                 }
             }
+        }
+
+        private static async Task FixAsync(DocumentEditor editor, ArgumentSyntax argument, string name, CancellationToken cancellationToken)
+        {
+            if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None)
+            {
+                name = "@" + name;
+            }
+
+            if (!IsStaticContext(argument, editor.SemanticModel, cancellationToken) &&
+                editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
+                (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
+                !member.IsStatic &&
+                await Qualify(member).ConfigureAwait(false) != CodeStyleResult.No)
+            {
+                editor.ReplaceNode(
+                    argument.Expression,
+                    (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})").WithTriviaFrom(x));
+            }
+            else
+            {
+                editor.ReplaceNode(
+                    argument.Expression,
+                    (x, _) => SyntaxFactory.ParseExpression($"nameof({name})").WithTriviaFrom(x));
+            }
+
+            Task<CodeStyleResult> Qualify(ISymbol symbol)
+            {
+                switch (symbol.Kind)
+                {
+                    case SymbolKind.Field:
+                        return editor.QualifyFieldAccessAsync(cancellationToken);
+                    case SymbolKind.Event:
+                        return editor.QualifyEventAccessAsync(cancellationToken);
+                    case SymbolKind.Property:
+                        return editor.QualifyPropertyAccessAsync(cancellationToken);
+                    case SymbolKind.Method:
+                        return editor.QualifyMethodAccessAsync(cancellationToken);
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        private static bool IsStaticContext(SyntaxNode context, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var accessor = context.FirstAncestor<AccessorDeclarationSyntax>();
+            if (accessor != null)
+            {
+                return semanticModel.GetDeclaredSymbolSafe(accessor.FirstAncestor<PropertyDeclarationSyntax>(), cancellationToken)
+                                    ?.IsStatic != false;
+            }
+
+            var methodDeclaration = context.FirstAncestor<MethodDeclarationSyntax>();
+            return semanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken)?.IsStatic != false;
         }
     }
 }

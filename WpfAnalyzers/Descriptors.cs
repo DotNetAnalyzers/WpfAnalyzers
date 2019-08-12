@@ -626,6 +626,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Use containing member as key when creating a ComponentResourceKey.");
 
+        internal static readonly DiagnosticDescriptor WPF0150UseNameof = Create(
+            id: "WPF0150",
+            title: "Use nameof().",
+            messageFormat: "Use nameof({0}).",
+            category: AnalyzerCategory.ComponentResourceKey,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use nameof() as it is less fragile than string literal.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

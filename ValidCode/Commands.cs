@@ -4,9 +4,11 @@ namespace ValidCode
 
     public static class Commands
     {
-        public static readonly RoutedCommand Bar1Command = new RoutedCommand(nameof(Bar1Command), typeof(Commands));
-        public static readonly RoutedCommand Bar2Command = new RoutedCommand("Bar2Command", typeof(Commands));
-        public static readonly RoutedUICommand Bar3Command = new RoutedUICommand("Some text", nameof(Bar3Command), typeof(Commands));
-        public static readonly RoutedUICommand Bar4Command = new RoutedUICommand("Some text", "Bar4Command", typeof(Commands));
+        public static readonly RoutedCommand Command1 = new RoutedCommand(nameof(Command1), typeof(Commands));
+        public static readonly RoutedUICommand Command2 = new RoutedUICommand("Some text", nameof(Command2), typeof(Commands));
+#pragma warning disable WPF0150 // Use nameof().
+        public static readonly RoutedCommand Command3 = new RoutedCommand("Command3", typeof(Commands));
+        public static readonly RoutedUICommand Command4 = new RoutedUICommand("Some text", "Command4", typeof(Commands));
+#pragma warning restore WPF0150 // Use nameof().
     }
 }
