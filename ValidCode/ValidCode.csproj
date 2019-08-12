@@ -62,6 +62,7 @@
     <Compile Include="MarkupExtensions\GenericExtension.cs" />
     <Compile Include="MarkupExtensions\Id2Extension.cs" />
     <Compile Include="MarkupExtensions\IdExtension.cs" />
+    <Compile Include="RoutedEvents\FooControl.cs" />
     <Compile Include="WithEnum\Foo.cs" />
     <Compile Include="WithEnum\FooControl.cs" />
     <Compile Include="WithEnum\FooEnum.cs" />
@@ -97,4 +98,5 @@
       <Paket>True</Paket>
     </Analyzer>
   </ItemGroup>
+  <ItemGroup />
 </Project>
