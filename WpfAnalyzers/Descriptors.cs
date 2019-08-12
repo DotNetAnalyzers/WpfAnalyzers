@@ -214,12 +214,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0031FieldOrder = Create(
             id: "WPF0031",
-            title: "DependencyPropertyKey field must come before DependencyProperty field.",
-            messageFormat: "Field '{0}' must come before '{1}'",
+            title: "DependencyPropertyKey member must be declared before DependencyProperty member.",
+            messageFormat: "'{0}' must be declared before '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "DependencyPropertyKey field must come before DependencyProperty field.");
+            description: "DependencyPropertyKey member must be declared before DependencyProperty member.");
 
         internal static readonly DiagnosticDescriptor WPF0032ClrPropertyGetAndSetSameDependencyProperty = Create(
             id: "WPF0032",

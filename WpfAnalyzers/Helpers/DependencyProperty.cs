@@ -131,7 +131,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetDependencyPropertyKeyField(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
+        internal static bool TryGetDependencyPropertyKeyFieldOrProperty(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default;
             if (backing.TryGetAssignedValue(cancellationToken, out var value) &&
@@ -144,7 +144,7 @@ namespace WpfAnalyzers
                            invocation.Expression is MemberAccessExpressionSyntax member &&
                            semanticModel.TryGetSymbol(member.Expression, cancellationToken, out ISymbol candidate) &&
                            BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result) &&
-                           TryGetDependencyPropertyKeyField(result, semanticModel, cancellationToken, out result);
+                           TryGetDependencyPropertyKeyFieldOrProperty(result, semanticModel, cancellationToken, out result);
                 }
                 else
                 {
@@ -197,7 +197,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetRegisterInvocationRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax result, out IMethodSymbol symbol)
         {
-            if (TryGetDependencyPropertyKeyField(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
+            if (TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
             {
                 return TryGetRegisterInvocationRecursive(keyField, semanticModel, cancellationToken, out result, out symbol);
             }

@@ -43,7 +43,7 @@ namespace WpfAnalyzers
                 }
 
                 if (fieldOrProperty.Type == KnownSymbol.DependencyProperty &&
-                    DependencyProperty.TryGetDependencyPropertyKeyField(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
+                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

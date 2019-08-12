@@ -59,37 +59,33 @@ namespace WpfAnalyzers
                                     registeredName));
                         }
 
-                        if (context.ContainingSymbol.DeclaredAccessibility.IsEither(
-                                Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                            context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
-                            !HasStandardText(memberDeclaration, registeredName, out var comment))
+                        if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _))
                         {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
-                                    comment == null
-                                        ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
-                                        : comment.GetLocation()));
+                            if (context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                                !HasStandardText(memberDeclaration, registeredName, out var comment))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
+                                        comment == null
+                                            ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
+                                            : comment.GetLocation()));
+                            }
                         }
                     }
 
-                    if (context.Node is FieldDeclarationSyntax fieldDeclaration &&
-                        DependencyProperty.TryGetDependencyPropertyKeyField(
-                            backingMember, context.SemanticModel, context.CancellationToken, out var keyField) &&
-                        Equals(backingMember.ContainingType, keyField.ContainingType) &&
-                        keyField.TryGetSyntaxReference(out var reference))
+                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backingMember, context.SemanticModel, context.CancellationToken, out var keyMember) &&
+                        Equals(backingMember.ContainingType, keyMember.ContainingType) &&
+                        keyMember.TryGetSyntaxReference(out var reference) &&
+                        ReferenceEquals(reference.SyntaxTree, context.Node.SyntaxTree) &&
+                        reference.Span.Start > context.Node.SpanStart)
                     {
-                        var keyNode = reference.GetSyntax(context.CancellationToken);
-                        if (ReferenceEquals(fieldDeclaration.SyntaxTree, keyNode.SyntaxTree) &&
-                            fieldDeclaration.SpanStart < keyNode.SpanStart)
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0031FieldOrder,
-                                    fieldDeclaration.GetLocation(),
-                                    keyField.Name,
-                                    backingMember.Name));
-                        }
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0031FieldOrder,
+                                reference.GetSyntax(context.CancellationToken).GetLocation(),
+                                keyMember.Name,
+                                backingMember.Name));
                     }
                 }
 

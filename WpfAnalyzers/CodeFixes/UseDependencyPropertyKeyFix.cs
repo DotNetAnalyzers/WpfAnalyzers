@@ -48,7 +48,7 @@ namespace WpfAnalyzers
                 if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
                     BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out var fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(
                         fieldOrProperty,
                         semanticModel,
                         context.CancellationToken,
@@ -73,7 +73,7 @@ namespace WpfAnalyzers
                 if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
                     BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetDependencyPropertyKeyField(
+                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(
                         fieldOrProperty,
                         semanticModel,
                         context.CancellationToken,

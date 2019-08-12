@@ -123,7 +123,7 @@ namespace WpfAnalyzers
             result = default;
             if (TryGetBackingFields(property, semanticModel, cancellationToken, out var getter, out var setter))
             {
-                if (DependencyProperty.TryGetDependencyPropertyKeyField(getter, semanticModel, cancellationToken, out var keyField))
+                if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(getter, semanticModel, cancellationToken, out var keyField))
                 {
                     getter = keyField;
                 }

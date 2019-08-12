@@ -34,7 +34,7 @@ Roslyn analyzers for WPF.
 | [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type.
 | [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda.
 | [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly.
-| [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey field must come before DependencyProperty field.
+| [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey member must be declared before DependencyProperty member.
 | [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set.
 | [WPF0033](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md)| Add [AttachedPropertyBrowsableForType]
 | [WPF0034](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0034.md)| Use correct argument for [AttachedPropertyBrowsableForType]

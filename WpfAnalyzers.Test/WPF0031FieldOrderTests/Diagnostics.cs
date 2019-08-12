@@ -10,6 +10,37 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0031FieldOrder);
 
         [Test]
+        public static void Messages()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        // referencing field initialize below
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set {  this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("'BarPropertyKey' must be declared before 'BarProperty'"), code);
+        }
+
+        [Test]
         public static void DependencyProperty()
         {
             var code = @"
@@ -21,9 +52,9 @@ namespace N
     public class FooControl : Control
     {
         // referencing field initialize below
-        ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+        private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterReadOnly(
             ""Bar"",
             typeof(int),
             typeof(FooControl),
@@ -50,9 +81,9 @@ namespace N
 
     public static class Foo
     {
-        ↓public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             ""Bar"",
             typeof(int),
             typeof(Foo),
