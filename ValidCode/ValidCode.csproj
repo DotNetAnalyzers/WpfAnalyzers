@@ -59,6 +59,7 @@
     <Compile Include="DependencyProperties\Issue210.cs" />
     <Compile Include="DependencyProperties\WithCallbacks.cs" />
     <Compile Include="DependencyProperties\WithDependsOn.cs" />
+    <Compile Include="DependencyProperties\WithStyleTypedProperty.cs" />
     <Compile Include="MarkupExtensions\EnumerableExtension.cs" />
     <Compile Include="MarkupExtensions\GenericExtension.cs" />
     <Compile Include="MarkupExtensions\Id2Extension.cs" />
