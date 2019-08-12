@@ -673,12 +673,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0172StyleTypedPropertyProvided = Create(
             id: "WPF0172",
-            title: "StyleTypedProperty specify property.",
-            messageFormat: "StyleTypedProperty specify property.",
+            title: "StyleTypedProperty must specify property.",
+            messageFormat: "StyleTypedProperty must specify property.",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "StyleTypedProperty specify property.");
+            description: "StyleTypedProperty must specify property.");
 
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
