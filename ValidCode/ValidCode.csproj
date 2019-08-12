@@ -56,6 +56,7 @@
     <Compile Include="DependencyProperties\CommonValidation.cs" />
     <Compile Include="DependencyProperties\Foo1.cs" />
     <Compile Include="DependencyProperties\FooControl.cs" />
+    <Compile Include="DependencyProperties\Issue210.cs" />
     <Compile Include="DependencyProperties\WithCallbacks.cs" />
     <Compile Include="DependencyProperties\WithDependsOn.cs" />
     <Compile Include="MarkupExtensions\EnumerableExtension.cs" />

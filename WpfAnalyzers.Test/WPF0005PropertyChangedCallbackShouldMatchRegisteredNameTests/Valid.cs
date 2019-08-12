@@ -335,5 +335,41 @@ namespace N
 }";
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [Test]
+        public static void Issue210()
+        {
+            var code = @"
+namespace ValidCode.DependencyProperties
+{
+    using System.Windows;
+
+    public class FooControl : FrameworkElement
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(string),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(OnBarChanged));
+
+        public void UpdateMagic() // <-- Error WPF0005 Method 'UpdateMagic' should be named 'OnBarChanged'
+        {
+        }
+
+        public void Refresh() // <-- Error WPF0005 Method 'Refresh' should be named 'OnBarChanged'
+        {
+        }
+
+        static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            control.UpdateMagic();
+            control.Refresh();
+        }
+    }
+}
+";
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

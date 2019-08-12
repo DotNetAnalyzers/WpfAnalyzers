@@ -69,31 +69,30 @@ namespace WpfAnalyzers
                         }
                     }
                 }
-                else if (method.ReturnsVoid)
+                else if (method.ReturnsVoid &&
+                         method.IsVirtual &&
+                         TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
+                         TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
                 {
-                    if (TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
-                        TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                        !method.Name.IsParts("On", registeredName, "Changed"))
                     {
-                        if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
-                            !method.Name.IsParts("On", registeredName, "Changed"))
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-                                    methodDeclaration.Identifier.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
-                                    methodDeclaration.Identifier,
-                                    $"On{registeredName}Changed"));
-                        }
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
+                                methodDeclaration.Identifier.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                methodDeclaration.Identifier,
+                                $"On{registeredName}Changed"));
+                    }
 
-                        if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                            HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(
-                                                         Descriptors.WPF0062DocumentPropertyChangedCallback,
-                                                         location,
-                                                         ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
-                        }
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                        HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                                                     Descriptors.WPF0062DocumentPropertyChangedCallback,
+                                                     location,
+                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
                     }
                 }
             }
