@@ -1,11 +1,13 @@
 namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static class Valid
     {
         private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0100BackingFieldShouldMatchRegisteredName;
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]
@@ -35,7 +37,7 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [TestCase("\"ValueChanged\"")]
@@ -66,7 +68,7 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
     }
 }

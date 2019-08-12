@@ -12,14 +12,15 @@ namespace WpfAnalyzers
             return semanticModel.TryGetSymbol(invocation, KnownSymbol.EventManager.RegisterRoutedEvent, cancellationToken, out method);
         }
 
-        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
+        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string result)
         {
+            nameArg = null;
             result = null;
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
-                    invocation.TryGetArgumentAtIndex(0, out var nameArg))
+                    invocation.TryGetArgumentAtIndex(0, out nameArg))
                 {
                     return nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
                 }

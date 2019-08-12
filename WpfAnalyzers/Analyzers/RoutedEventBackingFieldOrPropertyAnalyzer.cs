@@ -13,7 +13,8 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
             Descriptors.WPF0101RegisterContainingTypeAsOwner,
-            Descriptors.WPF0107BackingMemberShouldBeStaticReadonly);
+            Descriptors.WPF0107BackingMemberShouldBeStaticReadonly,
+            Descriptors.WPF0150UseNameof);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -30,16 +31,29 @@ namespace WpfAnalyzers
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type == KnownSymbol.RoutedEvent)
             {
-                if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredName) &&
-                    !fieldOrProperty.Name.IsParts(registeredName, "Event"))
+                if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
-                            FindIdentifier(context.Node).GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
-                            fieldOrProperty.Name,
-                            registeredName));
+                    if (!fieldOrProperty.Name.IsParts(registeredName, "Event"))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
+                                FindIdentifier(context.Node).GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
+                                fieldOrProperty.Name,
+                                registeredName));
+                    }
+
+                    if (nameArg.Expression is LiteralExpressionSyntax &&
+                        fieldOrProperty.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0150UseNameof,
+                                nameArg.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
+                                eventSymbol.Name));
+                    }
                 }
 
                 if (RoutedEvent.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
