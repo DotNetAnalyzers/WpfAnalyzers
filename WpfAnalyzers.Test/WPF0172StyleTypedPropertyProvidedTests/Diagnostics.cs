@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0172StyleTypedPropertyProvidedTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0172StyleTypedPropertyProvided);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0172StyleTypedPropertyPropertySpecified);
 
         [Test]
         public static void WhenMissing()

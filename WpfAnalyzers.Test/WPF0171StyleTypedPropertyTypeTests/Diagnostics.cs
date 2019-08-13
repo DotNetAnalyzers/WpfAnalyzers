@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0171StyleTypedPropertyTypeTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0171StyleTypedPropertyType);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0171StyleTypedPropertyPropertyType);
 
         [Test]
         public static void WhenWrong()

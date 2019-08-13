@@ -25,9 +25,9 @@ namespace WpfAnalyzers
             Descriptors.WPF0132UsePartPrefix,
             Descriptors.WPF0133ContentPropertyTarget,
             Descriptors.WPF0150UseNameof,
-            Descriptors.WPF0170StyleTypedPropertyTarget,
-            Descriptors.WPF0171StyleTypedPropertyType,
-            Descriptors.WPF0172StyleTypedPropertyProvided,
+            Descriptors.WPF0170StyleTypedPropertyPropertyTarget,
+            Descriptors.WPF0171StyleTypedPropertyPropertyType,
+            Descriptors.WPF0172StyleTypedPropertyPropertySpecified,
             Descriptors.WPF0173StyleTypedPropertyStyleTargetType);
 
         /// <inheritdoc/>
@@ -184,17 +184,17 @@ namespace WpfAnalyzers
 
                             if (!property.Type.Is(KnownSymbols.Style))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0171StyleTypedPropertyType, expression.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0171StyleTypedPropertyPropertyType, expression.GetLocation()));
                             }
                         }
                         else
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0170StyleTypedPropertyTarget, expression.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0170StyleTypedPropertyPropertyTarget, expression.GetLocation()));
                         }
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0172StyleTypedPropertyProvided, expression.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0172StyleTypedPropertyPropertySpecified, expression.GetLocation()));
                     }
 
                     if (TryFindTypeArgument(attribute, 1, "StyleTargetType", out expression, out argumentType) &&

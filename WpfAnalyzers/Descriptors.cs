@@ -653,32 +653,32 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Use nameof() as it is less fragile than string literal.");
 
-        internal static readonly DiagnosticDescriptor WPF0170StyleTypedPropertyTarget = Create(
+        internal static readonly DiagnosticDescriptor WPF0170StyleTypedPropertyPropertyTarget = Create(
             id: "WPF0170",
-            title: "StyleTypedProperty must exist.",
-            messageFormat: "StyleTypedProperty must exist.",
+            title: "StyleTypedProperty.Property must exist.",
+            messageFormat: "StyleTypedProperty.Property must exist.",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "StyleTypedProperty must exist.");
+            description: "StyleTypedProperty.Property must exist.");
 
-        internal static readonly DiagnosticDescriptor WPF0171StyleTypedPropertyType = Create(
+        internal static readonly DiagnosticDescriptor WPF0171StyleTypedPropertyPropertyType = Create(
             id: "WPF0171",
-            title: "StyleTypedProperty must point to a property of type Style.",
-            messageFormat: "StyleTypedProperty must point to a property of type Style.",
+            title: "StyleTypedProperty.Property must specify a property of type Style.",
+            messageFormat: "StyleTypedProperty.Property must specify a property of type Style.",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "StyleTypedProperty must point to a property of type Style.");
+            description: "StyleTypedProperty.Property must specify a property of type Style.");
 
-        internal static readonly DiagnosticDescriptor WPF0172StyleTypedPropertyProvided = Create(
+        internal static readonly DiagnosticDescriptor WPF0172StyleTypedPropertyPropertySpecified = Create(
             id: "WPF0172",
-            title: "StyleTypedProperty must specify property.",
-            messageFormat: "StyleTypedProperty must specify property.",
+            title: "StyleTypedProperty.Property must be specified.",
+            messageFormat: "StyleTypedProperty.Property must be specified.",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "StyleTypedProperty must specify property.");
+            description: "StyleTypedProperty.Property must be specified.");
 
         internal static readonly DiagnosticDescriptor WPF0173StyleTypedPropertyStyleTargetType = Create(
             id: "WPF0173",

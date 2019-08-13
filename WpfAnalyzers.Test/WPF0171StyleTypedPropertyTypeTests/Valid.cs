@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0171StyleTypedPropertyTypeTests
     public static class Valid
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0171StyleTypedPropertyType;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0171StyleTypedPropertyPropertyType;
 
         [Test]
         public static void WhenExists()
