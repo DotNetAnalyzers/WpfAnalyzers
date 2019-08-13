@@ -3,7 +3,6 @@ namespace WpfAnalyzers
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -65,8 +64,7 @@ namespace WpfAnalyzers
                 }
                 else if (Attribute.IsType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken) &&
                          TryFindStringArgument(attribute, 1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out expression, out text) &&
-                         context.Compilation.GetSymbolsWithName(x => !string.IsNullOrEmpty(x) && text.EndsWith(x), SymbolFilter.Namespace)
-                           .All(x => x.ToMinimalDisplayString(context.SemanticModel, 0) != text))
+                         !TryFindNamespaceRecursive(text, out _))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace, expression.GetLocation(), expression));
                 }
@@ -209,8 +207,7 @@ namespace WpfAnalyzers
             {
                 expression = null;
                 text = null;
-                if (Attribute.TryFindArgument(candidate, index, name, out var argument) &&
-                    NameEquals())
+                if (Attribute.TryFindArgument(candidate, index, name, out var argument))
                 {
                     return TryFindExpression(out expression) &&
                            context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out text);
@@ -218,16 +215,6 @@ namespace WpfAnalyzers
 
                 expression = candidate.Name;
                 return false;
-
-                bool NameEquals()
-                {
-                    if (argument.NameEquals is NameEqualsSyntax nameEquals)
-                    {
-                        return nameEquals.Name.Identifier.ValueText == name;
-                    }
-
-                    return true;
-                }
 
                 bool TryFindExpression(out ExpressionSyntax result)
                 {
@@ -267,6 +254,21 @@ namespace WpfAnalyzers
                             return false;
                     }
                 }
+            }
+
+            bool TryFindNamespaceRecursive(string name, out INamespaceSymbol result)
+            {
+                foreach (var ns in context.Compilation.GlobalNamespace.GetNamespaceMembers())
+                {
+                    if (NamespaceSymbolComparer.Equals(ns, name))
+                    {
+                        result = ns;
+                        return true;
+                    }
+                }
+
+                result = null;
+                return false;
             }
 
             bool TryFindPropertyRecursive(ITypeSymbol type, string name, out IPropertySymbol result)
