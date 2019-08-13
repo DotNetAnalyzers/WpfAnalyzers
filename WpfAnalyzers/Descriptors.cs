@@ -682,8 +682,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0173StyleTypedPropertyStyleTargetType = Create(
             id: "WPF0173",
-            title: "StyleTypedProperty.StyleTargetType must be assignable to FrameworkElement.",
-            messageFormat: "StyleTypedProperty.StyleTargetType must be assignable to FrameworkElement.",
+            title: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.",
+            messageFormat: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
