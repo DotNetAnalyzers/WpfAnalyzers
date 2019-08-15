@@ -64,6 +64,8 @@
     <Compile Include="MarkupExtensions\GenericExtension.cs" />
     <Compile Include="MarkupExtensions\Id2Extension.cs" />
     <Compile Include="MarkupExtensions\IdExtension.cs" />
+    <Compile Include="Recursion\MarkupExtension.cs" />
+    <Compile Include="Recursion\RecursiveConverter.cs" />
     <Compile Include="Recursion\WithDependencyProperties.cs" />
     <Compile Include="RoutedEvents\FooControl.cs" />
     <Compile Include="WithEnum\Foo.cs" />

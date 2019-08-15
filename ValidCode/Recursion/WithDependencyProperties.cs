@@ -18,13 +18,15 @@ namespace ValidCode.Recursion
            ValidateP1);
 #pragma warning restore WPF0023 // The callback is trivial, convert to lambda.
 
-
         /// <summary>Identifies the <see cref="P2"/> dependency property.</summary>
         public static readonly DependencyProperty P2Property = DependencyProperty.Register(
             nameof(P2),
             typeof(int),
             typeof(WithDependencyProperties),
             new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty P3Property = DependencyProperty.RegisterAttached(
+            "P3", typeof(int), typeof(WithDependencyProperties), new PropertyMetadata(default(int)));
 
         public int P1
         {
@@ -39,6 +41,10 @@ namespace ValidCode.Recursion
             set { this.P2 = value; }
 #pragma warning restore WPF0041 // Set mutable dependency properties using SetCurrentValue.
         }
+
+        public static void SetP3(DependencyObject element, int value) => SetP3(element, value);
+
+        public static int GetP3(DependencyObject element) => GetP3(element);
 
         private static int CreateDefault() => CreateDefault();
 
