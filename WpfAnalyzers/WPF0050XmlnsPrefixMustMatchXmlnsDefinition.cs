@@ -35,12 +35,12 @@ namespace WpfAnalyzers
             {
                 QualifiedType correspondingType;
                 AttributeSyntax xmlnsAttribute;
-                if (Attribute.IsType(attribute, KnownSymbols.XmlnsPrefixAttribute, context.SemanticModel, context.CancellationToken))
+                if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XmlnsPrefixAttribute, context.CancellationToken, out _))
                 {
                     xmlnsAttribute = attribute;
                     correspondingType = KnownSymbols.XmlnsDefinitionAttribute;
                 }
-                else if (Attribute.IsType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.SemanticModel, context.CancellationToken))
+                else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.CancellationToken, out _))
                 {
                     xmlnsAttribute = attribute;
                     correspondingType = KnownSymbols.XmlnsPrefixAttribute;

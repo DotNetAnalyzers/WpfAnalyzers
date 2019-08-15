@@ -325,8 +325,8 @@ namespace WpfAnalyzers
                         foreach (var candidate in list.Attributes)
                         {
                             if (!ReferenceEquals(candidate, attribute) &&
-                                context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.StyleTypedPropertyAttribute, context.CancellationToken, out _) &&
-                                TryFindStringArgument(attribute, 0, "Property", out _, out var text) &&
+                                context.SemanticModel.TryGetNamedType(candidate, KnownSymbols.StyleTypedPropertyAttribute, context.CancellationToken, out _) &&
+                                TryFindStringArgument(candidate, 0, "Property", out _, out var text) &&
                                 text == property)
                             {
                                 return true;
