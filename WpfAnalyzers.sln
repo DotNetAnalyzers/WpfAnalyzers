@@ -95,6 +95,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6
 		documentation\WPF0172.md = documentation\WPF0172.md
 		documentation\WPF0173.md = documentation\WPF0173.md
 		documentation\WPF0174.md = documentation\WPF0174.md
+		documentation\WPF0175.md = documentation\WPF0175.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{AB970A83-4723-44EA-95EC-D591AF6EC75D}"

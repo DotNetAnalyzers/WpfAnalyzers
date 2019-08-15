@@ -27,7 +27,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0171StyleTypedPropertyPropertyType,
             Descriptors.WPF0172StyleTypedPropertyPropertySpecified,
             Descriptors.WPF0173StyleTypedPropertyStyleTargetType,
-            Descriptors.WPF0174StyleTypedPropertyStyleSpecified);
+            Descriptors.WPF0174StyleTypedPropertyStyleSpecified,
+            Descriptors.WPF0175StyleTypedPropertyPropertyUnique);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -184,6 +185,11 @@ namespace WpfAnalyzers
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0171StyleTypedPropertyPropertyType, expression.GetLocation()));
                             }
+
+                            if (FindDuplicateStyleTypedProperty(property.Name))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0175StyleTypedPropertyPropertyUnique, expression.GetLocation()));
+                            }
                         }
                         else
                         {
@@ -308,6 +314,28 @@ namespace WpfAnalyzers
                 result = null;
                 return type != null &&
                        type.TryFindFirstMethodRecursive(name, selector, out result);
+            }
+
+            bool FindDuplicateStyleTypedProperty(string property)
+            {
+                if (attribute.TryFirstAncestor(out TypeDeclarationSyntax containingType))
+                {
+                    foreach (var list in containingType.AttributeLists)
+                    {
+                        foreach (var candidate in list.Attributes)
+                        {
+                            if (!ReferenceEquals(candidate, attribute) &&
+                                context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.StyleTypedPropertyAttribute, context.CancellationToken, out _) &&
+                                TryFindStringArgument(attribute, 0, "Property", out _, out var text) &&
+                                text == property)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
             }
         }
 

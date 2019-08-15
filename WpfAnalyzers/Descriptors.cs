@@ -698,6 +698,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "StyleTypedProperty.StyleTargetType must be specified.");
 
+        internal static readonly DiagnosticDescriptor WPF0175StyleTypedPropertyPropertyUnique = Create(
+            id: "WPF0175",
+            title: "StyleTypedProperty.Property must be specified only once.",
+            messageFormat: "StyleTypedProperty.Property must be specified only once.",
+            category: AnalyzerCategory.StyleTypedProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "StyleTypedProperty.Property must be specified only once.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

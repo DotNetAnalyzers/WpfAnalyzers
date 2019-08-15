@@ -88,6 +88,7 @@ Roslyn analyzers for WPF.
 | [WPF0172](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0172.md)| StyleTypedProperty.Property must be specified.
 | [WPF0173](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0173.md)| StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.
 | [WPF0174](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0174.md)| StyleTypedProperty.StyleTargetType must be specified.
+| [WPF0175](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0175.md)| StyleTypedProperty.Property must be specified only once.
 
 ## Using WpfAnalyzers
 
