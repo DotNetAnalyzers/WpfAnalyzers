@@ -8,8 +8,44 @@ namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
-        private static readonly CodeFixProvider Fix = new AddTemplatePartAttributeFix();
+        private static readonly CodeFixProvider Fix = new AddAttributeListFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0130UseTemplatePartAttribute);
+
+        [Test]
+        public static void StringLiteralFullyQualified()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = ↓this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows.Controls;
+
+    [System.Windows.TemplatePart(Name = ""PART_Bar"")]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
         [Test]
         public static void StringLiteralNoCast()
@@ -36,6 +72,48 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
+    [TemplatePart(Name = ""PART_Bar"")]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void StringLiteralNoCastWhenHasOtherAttribute()
+        {
+            var before = @"
+namespace N
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [Obsolete]
+    public class FooControl : Control
+    {
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            var bar = ↓this.GetTemplateChild(""PART_Bar"");
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    [Obsolete]
     [TemplatePart(Name = ""PART_Bar"")]
     public class FooControl : Control
     {
