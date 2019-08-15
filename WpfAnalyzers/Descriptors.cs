@@ -707,6 +707,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "StyleTypedProperty.Property must be specified only once.");
 
+        internal static readonly DiagnosticDescriptor WPF0176StyleTypedPropertyMissing = Create(
+            id: "WPF0176",
+            title: "StyleTypedProperty is missing.",
+            messageFormat: "StyleTypedProperty should be specified for {0}.",
+            category: AnalyzerCategory.StyleTypedProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "StyleTypedProperty is missing.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

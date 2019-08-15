@@ -15,13 +15,13 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0130UseTemplatePartAttribute.Id);
+            Descriptors.WPF0130UseTemplatePartAttribute.Id,
+            Descriptors.WPF0176StyleTypedPropertyMissing.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {

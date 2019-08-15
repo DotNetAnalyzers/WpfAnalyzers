@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -16,7 +17,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0002BackingFieldShouldMatchRegisteredName,
             Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
             Descriptors.WPF0030BackingFieldShouldBeStaticReadonly,
-            Descriptors.WPF0031FieldOrder);
+            Descriptors.WPF0031FieldOrder,
+            Descriptors.WPF0176StyleTypedPropertyMissing);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -71,6 +73,21 @@ namespace WpfAnalyzers
                                         : comment.GetLocation(),
                                     properties: ImmutableDictionary<string, string>.Empty.Add(nameof(CrefParameterSyntax), registeredName)));
                         }
+
+                        if (DependencyProperty.TryGetRegisteredType(backingMember, context.SemanticModel, context.CancellationToken, out var type) &&
+                            type.Is(KnownSymbols.Style) &&
+                            !TryFindStyleTypedPropertyAttribute(memberDeclaration, registeredName, context.SemanticModel, context.CancellationToken) &&
+                            backingMember.FieldOrProperty.Symbol.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0176StyleTypedPropertyMissing,
+                                    BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(
+                                        nameof(AttributeListSyntax),
+                                        $"[StyleTypedProperty(Property = {(context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) ? $"nameof({registeredName})" : $"\"{registeredName}\"")}, StyleTargetType = typeof(TYPE))]"),
+                                    backingMember.Name));
+                        }
                     }
 
                     if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backingMember, context.SemanticModel, context.CancellationToken, out var keyMember) &&
@@ -101,6 +118,28 @@ namespace WpfAnalyzers
                             candidate.Type.Name));
                 }
             }
+        }
+
+        private static bool TryFindStyleTypedPropertyAttribute(MemberDeclarationSyntax memberDeclaration, string registeredName, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (memberDeclaration.Parent is TypeDeclarationSyntax containingType)
+            {
+                foreach (var list in containingType.AttributeLists)
+                {
+                    foreach (var candidate in list.Attributes)
+                    {
+                        if (semanticModel.TryGetNamedType(candidate, KnownSymbols.StyleTypedPropertyAttribute, cancellationToken, out _) &&
+                            candidate.TryFindArgument(0, "Property", out var argument) &&
+                            semanticModel.TryGetConstantValue(argument.Expression, cancellationToken, out string text) &&
+                            text == registeredName)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, out DocumentationCommentTriviaSyntax comment)
