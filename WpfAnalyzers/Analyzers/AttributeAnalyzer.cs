@@ -26,7 +26,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0170StyleTypedPropertyPropertyTarget,
             Descriptors.WPF0171StyleTypedPropertyPropertyType,
             Descriptors.WPF0172StyleTypedPropertyPropertySpecified,
-            Descriptors.WPF0173StyleTypedPropertyStyleTargetType);
+            Descriptors.WPF0173StyleTypedPropertyStyleTargetType,
+            Descriptors.WPF0174StyleTypedPropertyStyleSpecified);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -194,10 +195,16 @@ namespace WpfAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0172StyleTypedPropertyPropertySpecified, expression.GetLocation()));
                     }
 
-                    if (TryFindTypeArgument(attribute, 1, "StyleTargetType", out expression, out argumentType) &&
-                        !argumentType.TryFindPropertyRecursive("Style", out _))
+                    if (TryFindTypeArgument(attribute, 1, "StyleTargetType", out expression, out argumentType))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0173StyleTypedPropertyStyleTargetType, expression.GetLocation()));
+                        if (!argumentType.TryFindPropertyRecursive("Style", out _))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0173StyleTypedPropertyStyleTargetType, expression.GetLocation()));
+                        }
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0174StyleTypedPropertyStyleSpecified, attribute.GetLocation()));
                     }
                 }
             }
