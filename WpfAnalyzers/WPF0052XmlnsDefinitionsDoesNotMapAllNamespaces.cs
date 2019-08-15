@@ -99,7 +99,7 @@ namespace WpfAnalyzers
             {
                 if (Gu.Roslyn.AnalyzerExtensions.Attribute.IsType(node, KnownSymbols.XmlnsDefinitionAttribute, this.semanticModel, this.cancellationToken))
                 {
-                    if (Gu.Roslyn.AnalyzerExtensions.Attribute.TryFindArgument(node, 1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
+                    if (node.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
                         if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
                         {

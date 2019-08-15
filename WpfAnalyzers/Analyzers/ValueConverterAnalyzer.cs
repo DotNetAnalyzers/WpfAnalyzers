@@ -66,7 +66,7 @@ namespace WpfAnalyzers
                         {
                             if (sourceType != null &&
                                 sourceType != QualifiedType.System.Object &&
-                                Attribute.TryFindArgument(attribute, 0, "sourceType", out var arg) &&
+                                attribute.TryFindArgument(0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
                                 TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
                                 !Equals(argType, sourceType))
@@ -74,7 +74,7 @@ namespace WpfAnalyzers
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes, arg.GetLocation(), sourceType));
                             }
 
-                            if (Attribute.TryFindArgument(attribute, 1, "targetType", out arg) &&
+                            if (attribute.TryFindArgument(1, "targetType", out arg) &&
                                 arg.Expression is TypeOfExpressionSyntax targetTypeOf &&
                                 TypeOf.TryGetType(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
                                 !Equals(argType, targetType))

@@ -10,7 +10,7 @@ namespace WpfAnalyzers
         internal static bool TryGetArgumentName(AttributeSyntax attribute, out AttributeArgumentSyntax argument, out string argumentName)
         {
             argumentName = null;
-            if (Attribute.TryFindArgument(attribute, 0, "argumentName", out argument) &&
+            if (attribute.TryFindArgument( 0, "argumentName", out argument) &&
                 argument.Expression is LiteralExpressionSyntax literal)
             {
                 argumentName = literal.Token.ValueText;
