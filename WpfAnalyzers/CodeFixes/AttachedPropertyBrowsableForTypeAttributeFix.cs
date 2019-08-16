@@ -27,46 +27,24 @@ namespace WpfAnalyzers
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan).TryFirstAncestorOrSelf<MethodDeclarationSyntax>(out var methodDeclaration) &&
-                    semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method) &&
-                    method.Parameters.TrySingle(out var parameter))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
+                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                   parameterList.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
-                        $"Add [AttachedPropertyBrowsableForTypeAttribute(typeof({parameter.Type})))].",
-                        (e, _) => AddAttribute(e, methodDeclaration, parameter.Type),
+                        $"Add [AttachedPropertyBrowsableForType(typeof({parameter.Type}))].",
+                        (editor, _) => editor.AddAttribute(
+                            methodDeclaration,
+                            editor.Generator.AddAttributeArguments(
+                                Attribute,
+                                new[] { editor.Generator.AttributeArgument(editor.Generator.TypeOfExpression(parameter.Type)) })),
                         this.GetType().FullName,
                         diagnostic);
                 }
             }
-        }
-
-        private static void AddAttribute(DocumentEditor editor, MethodDeclarationSyntax classDeclaration, ITypeSymbol type)
-        {
-            TypeOfExpressionSyntax TypeOf(ITypeSymbol t)
-            {
-                if (t != null)
-                {
-                    return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(t));
-                }
-
-                return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(SyntaxFactory.ParseTypeName("TYPE"));
-            }
-
-            editor.AddAttribute(
-                classDeclaration,
-                editor.Generator.AddAttributeArguments(
-                    Attribute,
-                    new[] { editor.Generator.AttributeArgument(TypeOf(type)) }));
         }
     }
 }
