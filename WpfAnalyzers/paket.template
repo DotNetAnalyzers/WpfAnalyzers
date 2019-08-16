@@ -2,7 +2,10 @@
 developmentDependency true
 
 releaseNotes
-  BUGFIX: WPF0080 when generic type
+  NEW RULES: WPF0171-176
+  FEATURE: Use nameof() fix.
+  BUGFIX: WPF005 warn only on virtual.
+  BUGFIX WPF0070 when list.
 
 projectUrl https://github.com/DotNetAnalyzers/WpfAnalyzers
 licenseUrl http://opensource.org/licenses/MIT

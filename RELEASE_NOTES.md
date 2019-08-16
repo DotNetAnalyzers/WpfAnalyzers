@@ -1,3 +1,9 @@
+#### 2.3
+* NEW RULES: WPF0171-176
+* FEATURE: Use nameof() fix.
+* BUGFIX: WPF005 warn only on virtual.
+* BUGFIX WPF0070 when list.
+
 #### 2.2.0.3
 * BUGFIX: WPF0080 when generic type
 

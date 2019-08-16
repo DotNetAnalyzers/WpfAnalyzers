@@ -20,11 +20,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.2.0.3</Version>
+    <Version>2.3.0</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>BUGFIX: WPF0080 when generic type</PackageReleaseNotes>
+    <PackageReleaseNotes>NEW RULES: WPF0171-176
+FEATURE: Use nameof() fix.
+BUGFIX: WPF005 warn only on virtual.
+BUGFIX WPF0070 when list.</PackageReleaseNotes>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
