@@ -8,7 +8,6 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AttachedPropertyBrowsableForTypeArgumentFix))]
     [Shared]
@@ -24,35 +23,22 @@ namespace WpfAnalyzers
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan).TryFirstAncestorOrSelf<AttributeArgumentSyntax>(out var argument) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax argument) &&
                     argument.TryFirstAncestor<MethodDeclarationSyntax>(out var methodDeclaration) &&
-                    semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method) &&
-                    method.Parameters.TrySingle(out var parameter))
+                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                    parameterList.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
                         $"Change type to {parameter.Type}.",
-                        (e, _) => Fix(e, argument, parameter.Type),
+                        (editor, _) => editor.ReplaceNode(
+                            argument.Expression,
+                            editor.Generator.TypeOfExpression(parameter.Type)),
                         this.GetType(),
                         diagnostic);
                 }
             }
-        }
-
-        private static void Fix(DocumentEditor editor, AttributeArgumentSyntax argument, ITypeSymbol returnType)
-        {
-            editor.ReplaceNode(
-                argument.Expression,
-                editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType)));
         }
     }
 }
