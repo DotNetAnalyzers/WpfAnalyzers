@@ -20,7 +20,7 @@ namespace WpfAnalyzers.Test
                                .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            new FileInfo("C:\\Git\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
+            new FileInfo("C:\\Git\\_GuOrg\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
             AllAnalyzers,
             MetadataReferences.FromAttributes());
 
@@ -36,8 +36,15 @@ namespace WpfAnalyzers.Test
             var code = @"
 namespace N
 {
-    public sealed class Foo
+    using System;
+    using Window = System.Windows.Window;
+
+    class C
     {
+        [Obsolete]
+        void M()
+        {
+        }
     }
 }";
 

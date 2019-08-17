@@ -38,5 +38,22 @@ namespace N
 }";
             RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
+
+        [Test]
+        public static void OtherAttributeAndAlias()
+        {
+            var code = @"
+    using System;
+    using Window = System.Windows.Window;
+
+    class C
+    {
+        [Obsolete]
+        void M(Window _)
+        {
+        }
+    }";
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
     }
 }
