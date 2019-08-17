@@ -2408,4 +2408,4 @@ NUGET
 GROUP WpfAnalyzers
 NUGET
   remote: http://www.nuget.org/api/v2
-    WpfAnalyzers (2.2.0.3)
+    WpfAnalyzers (2.3.1)
