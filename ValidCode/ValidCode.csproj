@@ -50,6 +50,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DirectoryInfoStringConverter.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="DependencyProperties\AddOwner.cs" />
