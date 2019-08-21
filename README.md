@@ -82,7 +82,8 @@ Roslyn analyzers for WPF.
 | [WPF0133](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0133.md)| ContentProperty target does not exist.
 | [WPF0140](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md)| Use containing type when creating a ComponentResourceKey.
 | [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey.
-| [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof().
+| [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof() instead of literal.
+| [WPF0151](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0151.md)| Use nameof() instead of constant.
 | [WPF0170](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0170.md)| StyleTypedProperty.Property must exist.
 | [WPF0171](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0171.md)| StyleTypedProperty.Property must specify a property of type Style.
 | [WPF0172](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0172.md)| StyleTypedProperty.Property must be specified.

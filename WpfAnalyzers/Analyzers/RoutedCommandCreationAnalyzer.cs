@@ -17,7 +17,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand,
             Descriptors.WPF0122RegisterRoutedCommand,
             Descriptors.WPF0123BackingMemberShouldBeStaticReadonly,
-            Descriptors.WPF0150UseNameof);
+            Descriptors.WPF0150UseNameofInsteadOfLiteral,
+            Descriptors.WPF0151UseNameofInsteadOfConstant);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -67,7 +68,16 @@ namespace WpfAnalyzers
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
-                                        Descriptors.WPF0150UseNameof,
+                                        Descriptors.WPF0150UseNameofInsteadOfLiteral,
+                                        nameArg.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        fieldOrProperty.Name));
+                            }
+                            else if (!nameArg.Expression.IsNameof())
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0151UseNameofInsteadOfConstant,
                                         nameArg.GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                         fieldOrProperty.Name));

@@ -15,7 +15,8 @@ namespace WpfAnalyzers
             Descriptors.WPF0101RegisterContainingTypeAsOwner,
             Descriptors.WPF0107BackingMemberShouldBeStaticReadonly,
             Descriptors.WPF0108DocumentRoutedEventBackingMember,
-            Descriptors.WPF0150UseNameof);
+            Descriptors.WPF0150UseNameofInsteadOfLiteral,
+            Descriptors.WPF0151UseNameofInsteadOfConstant);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -45,15 +46,26 @@ namespace WpfAnalyzers
                                 registeredName));
                     }
 
-                    if (nameArg.Expression is LiteralExpressionSyntax &&
-                        fieldOrProperty.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
+                    if (fieldOrProperty.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0150UseNameof,
-                                nameArg.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
-                                eventSymbol.Name));
+                        if (nameArg.Expression is LiteralExpressionSyntax)
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
+                                    nameArg.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
+                                    eventSymbol.Name));
+                        }
+                        else if (!nameArg.Expression.IsNameof())
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    nameArg.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
+                                    eventSymbol.Name));
+                        }
                     }
 
                     if (context.ContainingSymbol.ContainingType.TryFindEvent(registeredName, out _) &&

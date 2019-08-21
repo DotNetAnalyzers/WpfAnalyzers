@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0150UseNameofTests
+namespace WpfAnalyzers.Test.WPF0151UseNameofInsteadOfConstantTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -7,7 +7,7 @@ namespace WpfAnalyzers.Test.WPF0150UseNameofTests
     public static class CodeFix
     {
         private static readonly CodeFixProvider Fix = new UseNameofFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0150UseNameof);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0151UseNameofInsteadOfConstant);
 
         [Test]
         public static void RoutedCommand()
@@ -19,7 +19,8 @@ namespace N
 
     public static class Foo
     {
-        public static readonly RoutedCommand Bar = new RoutedCommand(↓""Bar"", typeof(Foo));
+	    const string BarName = ""Bar"";
+        public static readonly RoutedCommand Bar = new RoutedCommand(↓BarName, typeof(Foo));
     }
 }";
 
@@ -30,6 +31,7 @@ namespace N
 
     public static class Foo
     {
+	    const string BarName = ""Bar"";
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
@@ -46,7 +48,8 @@ namespace N
 
     public static class Foo
     {
-        public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", ↓""Bar"", typeof(Foo));
+	    const string BarName = ""Bar"";
+        public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", ↓BarName, typeof(Foo));
     }
 }";
 
@@ -57,6 +60,7 @@ namespace N
 
     public static class Foo
     {
+	    const string BarName = ""Bar"";
         public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
@@ -74,7 +78,8 @@ namespace N
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(↓""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+	    const string BarName = ""Bar"";
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(↓BarName, typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
         {
@@ -92,6 +97,7 @@ namespace N
 
     public class FooControl : Control
     {
+	    const string BarName = ""Bar"";
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -115,8 +121,10 @@ namespace N
 
     public class FooControl : Control
     {
+	    const string BarName = ""Bar"";
+
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            ↓""Bar"",
+            ↓BarName,
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
@@ -137,6 +145,8 @@ namespace N
 
     public class FooControl : Control
     {
+	    const string BarName = ""Bar"";
+
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             nameof(Bar),
             typeof(int),
@@ -164,9 +174,11 @@ namespace N
 
     public class FooControl : Control
     {
+	    const string ValueChangedName = ""ValueChanged"";
+
         /// <summary>Identifies the <see cref=""ValueChanged""/> event</summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
-            ↓""ValueChanged"",
+            ↓ValueChangedName,
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
             typeof(FooControl));
@@ -187,6 +199,8 @@ namespace N
 
     public class FooControl : Control
     {
+	    const string ValueChangedName = ""ValueChanged"";
+
         /// <summary>Identifies the <see cref=""ValueChanged""/> event</summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
             nameof(ValueChanged),
@@ -205,7 +219,7 @@ namespace N
         }
 
         [Test]
-        public static void DependsOn()
+        public static void DependsOnWhenConstLiteral()
         {
             var before = @"
 namespace N
@@ -215,6 +229,8 @@ namespace N
 
     public class WithDependsOn : FrameworkElement
     {
+	    const string Wrong = ""Value2"";
+
         public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
             nameof(Value1),
             typeof(string),
@@ -226,7 +242,7 @@ namespace N
             typeof(WithDependsOn));
 
 
-        [DependsOn(↓""Value2"")]
+        [DependsOn(↓Wrong)]
         public string Value1
         {
             get => (string)this.GetValue(Value1Property);
@@ -249,6 +265,85 @@ namespace N
 
     public class WithDependsOn : FrameworkElement
     {
+	    const string Wrong = ""Value2"";
+
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(string),
+            typeof(WithDependsOn));
+
+        public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
+            nameof(Value2),
+            typeof(string),
+            typeof(WithDependsOn));
+
+
+        [DependsOn(nameof(Value2))]
+        public string Value1
+        {
+            get => (string)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public string Value2
+        {
+            get => (string)this.GetValue(Value2Property);
+            set => this.SetValue(Value2Property, value);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void DependsOnWhenConstNameof()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public class WithDependsOn : FrameworkElement
+    {
+	    const string Wrong = nameof(Value2);
+
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(string),
+            typeof(WithDependsOn));
+
+        public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
+            nameof(Value2),
+            typeof(string),
+            typeof(WithDependsOn));
+
+
+        [DependsOn(↓Wrong)]
+        public string Value1
+        {
+            get => (string)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public string Value2
+        {
+            get => (string)this.GetValue(Value2Property);
+            set => this.SetValue(Value2Property, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Markup;
+
+    public class WithDependsOn : FrameworkElement
+    {
+	    const string Wrong = nameof(Value2);
+
         public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
             nameof(Value1),
             typeof(string),
@@ -290,10 +385,12 @@ namespace N
     using System.Windows.Data;
     using System.Windows.Markup;
 
-    [ContentProperty(↓""Converters"")]
+    [ContentProperty(↓ConvertersName)]
     [ValueConversion(typeof(object), typeof(object))]
     public class ValueConverterGroup : IValueConverter
     {
+	    const string ConvertersName = ""Converters"";
+
         public List<IValueConverter> Converters { get; } = new List<IValueConverter>();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -319,6 +416,8 @@ namespace N
     [ValueConversion(typeof(object), typeof(object))]
     public class ValueConverterGroup : IValueConverter
     {
+	    const string ConvertersName = ""Converters"";
+
         public List<IValueConverter> Converters { get; } = new List<IValueConverter>();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

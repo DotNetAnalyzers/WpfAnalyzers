@@ -13,7 +13,8 @@ namespace WpfAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
             Descriptors.WPF0023ConvertToLambda,
-            Descriptors.WPF0150UseNameof);
+            Descriptors.WPF0150UseNameofInsteadOfLiteral,
+            Descriptors.WPF0151UseNameofInsteadOfConstant);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -78,15 +79,28 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (nameArg?.Expression is LiteralExpressionSyntax &&
+                if (nameArg.Expression is ExpressionSyntax nameExpression &&
+                    nameExpression.IsNameof() == false &&
                     context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out var property))
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0150UseNameof,
-                            nameArg.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                            property.Name));
+                    if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0150UseNameofInsteadOfLiteral,
+                                nameArg.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                property.Name));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                nameExpression.GetLocation(),
+                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                property.Name));
+                    }
                 }
             }
         }

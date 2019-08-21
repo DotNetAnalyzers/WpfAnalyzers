@@ -644,14 +644,23 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Use containing member as key when creating a ComponentResourceKey.");
 
-        internal static readonly DiagnosticDescriptor WPF0150UseNameof = Create(
+        internal static readonly DiagnosticDescriptor WPF0150UseNameofInsteadOfLiteral = Create(
             id: "WPF0150",
-            title: "Use nameof().",
+            title: "Use nameof() instead of literal.",
             messageFormat: "Use nameof({0}).",
             category: AnalyzerCategory.Correctness,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use nameof() as it is less fragile than string literal.");
+
+        internal static readonly DiagnosticDescriptor WPF0151UseNameofInsteadOfConstant = Create(
+            id: "WPF0151",
+            title: "Use nameof() instead of constant.",
+            messageFormat: "Use nameof({0}).",
+            category: AnalyzerCategory.Correctness,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Use nameof() as it is less fragile than constant.");
 
         internal static readonly DiagnosticDescriptor WPF0170StyleTypedPropertyPropertyTarget = Create(
             id: "WPF0170",
