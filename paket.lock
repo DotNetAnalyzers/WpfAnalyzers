@@ -743,10 +743,10 @@ NUGET
       BenchmarkDotNet (>= 0.11.5) - restriction: >= netstandard2.0
       Microsoft.Diagnostics.Tracing.TraceEvent (>= 2.0.34) - restriction: >= netstandard2.0
     CommandLineParser (2.4.3)
-    Gu.Roslyn.Asserts (3.2.2)
-      Gu.Roslyn.Asserts.Analyzers (>= 3.2.2)
+    Gu.Roslyn.Asserts (3.2.3)
+      Gu.Roslyn.Asserts.Analyzers (>= 3.2.3)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
-    Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
+    Gu.Roslyn.Asserts.Analyzers (3.2.3)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
     Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0
@@ -1569,7 +1569,7 @@ NUGET
       Microsoft.VisualStudio.Threading.Analyzers (>= 16.3.13) - restriction: >= netstandard1.3
       NETStandard.Library (>= 1.6.1) - restriction: >= netstandard1.3
     Microsoft.VisualStudio.Threading.Analyzers (16.3.13) - restriction: >= net46
-    Microsoft.VSSDK.BuildTools (16.3.2093)
+    Microsoft.VSSDK.BuildTools (16.3.2099)
       Microsoft.VisualStudio.SDK.Analyzers (>= 15.8.33) - restriction: >= net46
     Microsoft.Win32.Primitives (4.3) - restriction: || (&& (< net45) (>= net46) (>= netstandard1.4) (< netstandard1.5)) (&& (< net45) (>= net46) (>= netstandard1.5) (< netstandard1.6)) (&& (< net45) (>= net46) (>= netstandard1.6) (< netstandard2.0)) (&& (>= net46) (< netstandard1.4)) (&& (>= net46) (< netstandard1.5) (>= uap10.0))
     NETStandard.Library (2.0.3) - restriction: >= net46
@@ -1615,10 +1615,10 @@ GROUP Test
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.Asserts (3.2.2)
-      Gu.Roslyn.Asserts.Analyzers (>= 3.2.2)
+    Gu.Roslyn.Asserts (3.2.3)
+      Gu.Roslyn.Asserts.Analyzers (>= 3.2.3)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 3.0)
-    Gu.Roslyn.Asserts.Analyzers (3.2.2.1)
+    Gu.Roslyn.Asserts.Analyzers (3.2.3)
     Microsoft.CodeAnalysis.Analyzers (2.9.4) - restriction: >= netstandard2.0
     Microsoft.CodeAnalysis.Common (3.2.1) - restriction: >= netstandard2.0
       Microsoft.CodeAnalysis.Analyzers (>= 2.9.3) - restriction: >= netstandard2.0

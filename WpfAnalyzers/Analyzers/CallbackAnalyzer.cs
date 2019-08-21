@@ -539,7 +539,6 @@ namespace WpfAnalyzers
 
             bool TryGetNewValue(out ParameterSyntax parameter, out string standardText)
             {
-                parameter = null;
                 standardText = null;
                 if (TryFindParameter("NewValue", out parameter))
                 {
@@ -552,7 +551,6 @@ namespace WpfAnalyzers
 
             bool TryGetOldValue(out ParameterSyntax parameter, out string standardText)
             {
-                parameter = null;
                 standardText = null;
                 if (TryFindParameter("OldValue", out parameter))
                 {
