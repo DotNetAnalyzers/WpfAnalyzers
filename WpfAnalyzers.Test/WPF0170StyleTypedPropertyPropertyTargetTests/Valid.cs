@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyTests
+namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyPropertyTargetTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -10,8 +10,10 @@ namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyTests
         private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0170StyleTypedPropertyPropertyTarget;
 
-        [Test]
-        public static void WhenExists()
+        [TestCase("[StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]")]
+        [TestCase("[StyleTypedProperty(Property = \"BarStyle\", StyleTargetType = typeof(Control))]")]
+        [TestCase("[StyleTypedProperty(Property = BarStyleName, StyleTargetType = typeof(Control))]")]
+        public static void WhenExists(string attribute)
         {
             var code = @"
 namespace N
@@ -22,6 +24,8 @@ namespace N
     [StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]
     public class WithStyleTypedProperty : Control
     {
+        const string BarStyleName = nameof(BarStyle);
+
         /// <summary>Identifies the <see cref=""BarStyle""/> dependency property.</summary>
         public static readonly DependencyProperty BarStyleProperty = DependencyProperty.Register(
             nameof(BarStyle),
@@ -35,7 +39,7 @@ namespace N
             set => this.SetValue(BarStyleProperty, value);
         }
     }
-}";
+}".AssertReplace("[StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]", attribute);
             RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 

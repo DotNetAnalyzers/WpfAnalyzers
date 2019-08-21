@@ -222,7 +222,7 @@ namespace WpfAnalyzers
                 if (candidate.TryFindArgument(index, name, out var argument))
                 {
                     return TryFindExpression(out expression) &&
-                           context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out text);
+                           argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out text);
                 }
 
                 expression = candidate.Name;
@@ -240,8 +240,8 @@ namespace WpfAnalyzers
                             result = nameArg.Expression;
                             return true;
                         default:
-                            result = null;
-                            return false;
+                            result = argument.Expression;
+                            return result != null;
                     }
                 }
             }
