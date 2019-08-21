@@ -97,7 +97,7 @@ namespace WpfAnalyzers
                                         field.DeclaredAccessibility == Accessibility.Private &&
                                         returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
                                     {
-                                        using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, Scope.Instance, semanticModel, cancellationToken))
+                                        using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, SearchScope.Instance, semanticModel, cancellationToken))
                                         {
                                             foreach (var assignment in walker.Assignments)
                                             {

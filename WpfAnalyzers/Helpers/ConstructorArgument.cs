@@ -52,7 +52,7 @@ namespace WpfAnalyzers
         private static bool TryGetParameterName(ISymbol member, TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out string parameterName)
         {
             parameterName = null;
-            using (var walker = AssignmentExecutionWalker.For(member, typeDeclaration, Scope.Member, semanticModel, cancellationToken))
+            using (var walker = AssignmentExecutionWalker.For(member, typeDeclaration, SearchScope.Member, semanticModel, cancellationToken))
             {
                 foreach (var assignment in walker.Assignments)
                 {

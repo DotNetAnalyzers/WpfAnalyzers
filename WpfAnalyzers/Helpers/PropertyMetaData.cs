@@ -169,7 +169,7 @@ namespace WpfAnalyzers
             {
                 if (declaration.TryFirstAncestor(out TypeDeclarationSyntax typeDeclaration))
                 {
-                    using (var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, Scope.Type, semanticModel, cancellationToken))
+                    using (var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, semanticModel, cancellationToken))
                     {
                         foreach (var assignment in walker.Assignments)
                         {

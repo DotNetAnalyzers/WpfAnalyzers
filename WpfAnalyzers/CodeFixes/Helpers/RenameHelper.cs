@@ -28,8 +28,6 @@ namespace WpfAnalyzers
                              : semanticModel.GetDeclaredSymbolSafe(annotatedToken.Parent, cancellationToken);
 
             var newSolution = await Renamer.RenameSymbolAsync(annotatedSolution, symbol, newName, null, cancellationToken).ConfigureAwait(false);
-
-            // TODO: return annotatedSolution instead of newSolution if newSolution contains any new errors (for any project)
             return newSolution;
         }
     }
