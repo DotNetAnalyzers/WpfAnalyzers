@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.3.1</Version>
+    <Version>2.4</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
