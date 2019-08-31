@@ -5,7 +5,7 @@ namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public static class Diagnostics
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
         private static readonly CodeFixProvider Fix = new MoveFix();
@@ -68,7 +68,7 @@ namespace N
         }
 
         [Test]
-        public static void DependencyProperty()
+        public static void ReadOnlyDependencyProperty()
         {
             var before = @"
 namespace N
@@ -78,19 +78,18 @@ namespace N
 
     public class FooControl : Control
     {
-        // referencing field initialize below
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         public int Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set {  this.SetValue(BarPropertyKey, value); }
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
         }
     }
 }";
@@ -104,18 +103,17 @@ namespace N
     public class FooControl : Control
     {
         private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        // referencing field initialize below
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         public int Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set {  this.SetValue(BarPropertyKey, value); }
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
         }
     }
 }";
@@ -123,7 +121,64 @@ namespace N
         }
 
         [Test]
-        public static void Attached()
+        public static void ReadOnlyDependencyPropertyWithComment()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        // DependencyProperty
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        // DependencyPropertyKey
+        private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        // DependencyPropertyKey
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        // DependencyProperty
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void ReadOnlyAttachedProperty()
         {
             var before = @"
 namespace N
