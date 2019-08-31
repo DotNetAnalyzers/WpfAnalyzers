@@ -1,7 +1,7 @@
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.Extensions (0.7.2-dev)
+    Gu.Roslyn.Extensions (0.7.3-dev)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.3.1) - restriction: >= netstandard1.3
       NETStandard.Library (>= 1.6.1) - restriction: >= netstandard1.3
     ManagedEsent (1.9.4) - restriction: >= net46
@@ -879,7 +879,7 @@ NUGET
       NETStandard.Library (>= 2.0) - restriction: && (< net35) (>= netstandard2.0)
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
       System.Reflection.TypeExtensions (>= 4.4) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
-    NUnit3TestAdapter (3.14)
+    NUnit3TestAdapter (3.15.1)
       Microsoft.DotNet.InternalAbstractions (>= 1.0) - restriction: >= netcoreapp1.0
       System.ComponentModel.EventBasedAsync (>= 4.3) - restriction: >= netcoreapp1.0
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: >= netcoreapp1.0
@@ -1741,7 +1741,7 @@ NUGET
       NETStandard.Library (>= 2.0) - restriction: && (< net35) (>= netstandard2.0)
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
       System.Reflection.TypeExtensions (>= 4.4) - restriction: && (< net35) (>= netstandard1.4) (< netstandard2.0)
-    NUnit3TestAdapter (3.14)
+    NUnit3TestAdapter (3.15.1)
       Microsoft.DotNet.InternalAbstractions (>= 1.0) - restriction: >= netcoreapp1.0
       System.ComponentModel.EventBasedAsync (>= 4.3) - restriction: >= netcoreapp1.0
       System.ComponentModel.TypeConverter (>= 4.3) - restriction: >= netcoreapp1.0
@@ -2408,4 +2408,4 @@ NUGET
 GROUP WpfAnalyzers
 NUGET
   remote: http://www.nuget.org/api/v2
-    WpfAnalyzers (2.3.1)
+    WpfAnalyzers (2.4)
