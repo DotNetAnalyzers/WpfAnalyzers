@@ -48,10 +48,9 @@ namespace WpfAnalyzers
 
                                     MemberDeclarationSyntax Member()
                                     {
-                                        if (fromIndex == 0 &&
-                                            toIndex > 0)
+                                        if (fromIndex == 0)
                                         {
-                                            return member.WithLeadingElasticLineFeed();
+                                            return member.WithLeadingLineFeed();
                                         }
 
                                         if (toIndex == 0)
@@ -66,7 +65,7 @@ namespace WpfAnalyzers
                                     {
                                         if (toIndex == 0)
                                         {
-                                            return other.WithLeadingElasticLineFeed();
+                                            return other.WithLeadingLineFeed();
                                         }
 
                                         return other;
