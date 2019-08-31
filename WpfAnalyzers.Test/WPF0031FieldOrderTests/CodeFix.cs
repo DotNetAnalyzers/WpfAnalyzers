@@ -22,19 +22,18 @@ namespace N
 
     public class FooControl : Control
     {
-        // referencing field initialize below
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         private static readonly DependencyPropertyKey ↓BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         public int Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set {  this.SetValue(BarPropertyKey, value); }
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
         }
     }
 }";
@@ -48,18 +47,17 @@ namespace N
     public class FooControl : Control
     {
         private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
-            ""Bar"",
+            nameof(Bar),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        // referencing field initialize below
         public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
 
         public int Bar
         {
-            get { return (int)this.GetValue(BarProperty); }
-            protected set {  this.SetValue(BarPropertyKey, value); }
+            get => (int)this.GetValue(BarProperty);
+            protected set => this.SetValue(BarPropertyKey, value);
         }
     }
 }";
@@ -121,7 +119,7 @@ namespace N
         }
 
         [Test]
-        public static void ReadOnlyDependencyPropertyWithComment()
+        public static void ReadOnlyDependencyPropertyWithComments()
         {
             var before = @"
 namespace N

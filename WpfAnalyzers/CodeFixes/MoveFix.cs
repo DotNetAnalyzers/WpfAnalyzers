@@ -2,11 +2,13 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MoveFix))]
@@ -26,7 +28,7 @@ namespace WpfAnalyzers
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
-                    syntaxRoot.FindNode(additionalLocation.SourceSpan)?.FirstAncestorOrSelf<MemberDeclarationSyntax>() is MemberDeclarationSyntax other &&
+                    syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax other) &&
                     member.SharesAncestor(other, out ClassDeclarationSyntax type))
                 {
                     context.RegisterCodeFix(
@@ -40,12 +42,40 @@ namespace WpfAnalyzers
                                     x.Members.IndexOf(m => m.IsEquivalentTo(other)) is var toIndex &&
                                     toIndex < fromIndex)
                                 {
-                                    return x.WithMembers(x.Members.RemoveAt(fromIndex).Insert(toIndex, member.WithLeadingElasticLineFeed().WithTrailingLineFeed()));
+                                    return x.WithMembers(x.Members.Replace(x.Members[toIndex], Other())
+                                                                  .RemoveAt(fromIndex)
+                                                                  .Insert(toIndex, Member()));
+
+                                    MemberDeclarationSyntax Member()
+                                    {
+                                        if (fromIndex == 0 &&
+                                            toIndex > 0)
+                                        {
+                                            return member.WithLeadingElasticLineFeed();
+                                        }
+
+                                        if (toIndex == 0)
+                                        {
+                                            return member.WithLeadingTrivia(member.GetLeadingTrivia().SkipWhile(t => t.IsKind(SyntaxKind.EndOfLineTrivia)));
+                                        }
+
+                                        return member;
+                                    }
+
+                                    MemberDeclarationSyntax Other()
+                                    {
+                                        if (toIndex == 0)
+                                        {
+                                            return other.WithLeadingElasticLineFeed();
+                                        }
+
+                                        return other;
+                                    }
                                 }
 
                                 return x;
                             }),
-                        this.GetType(),
+                        nameof(MoveFix),
                         diagnostic);
                 }
             }
