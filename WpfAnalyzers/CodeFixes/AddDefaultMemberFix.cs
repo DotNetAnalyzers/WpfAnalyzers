@@ -18,7 +18,7 @@ namespace WpfAnalyzers
     {
         private const string DefaultFieldFormat = "{0} static readonly {1} Default = new {1}();";
         private const string DefaultDocs = "/// <summary> Gets the default instance </summary>";
-        private const string DefaulPropertyFormat = "{0} static {1} Default {{ get; }} = new {1}();";
+        private const string DefaultPropertyFormat = "{0} static {1} Default {{ get; }} = new {1}();";
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -91,7 +91,7 @@ namespace WpfAnalyzers
         // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            return editor.AddProperty(containingType, ParseProperty(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
+            return editor.AddProperty(containingType, ParseProperty(string.Format(DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
                          .Seal(containingType);
         }
 
@@ -100,7 +100,7 @@ namespace WpfAnalyzers
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
-                                        .AppendLine(string.Format(DefaulPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
+                                        .AppendLine(string.Format(DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             return editor.AddProperty(containingType, ParseProperty(code))
                          .Seal(containingType);
