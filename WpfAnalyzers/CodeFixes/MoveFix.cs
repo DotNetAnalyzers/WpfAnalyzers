@@ -2,14 +2,13 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MoveFix))]
     [Shared]
@@ -26,58 +25,50 @@ namespace WpfAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax toMove) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
-                    syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax other) &&
-                    member.SharesAncestor(other, out ClassDeclarationSyntax type))
+                    syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax member))
                 {
                     context.RegisterCodeFix(
                         $"Move",
-                        (e, _) => e.ReplaceNode(
-                            type,
-                            x => Move(x)),
+                        (e, _) => Move(e),
                         nameof(MoveFix),
                         diagnostic);
 
-                    SyntaxNode Move(ClassDeclarationSyntax x)
+                    void Move(DocumentEditor editor)
                     {
-                        if (x.Members.IndexOf(m => m.IsEquivalentTo(member)) is var fromIndex &&
-                            fromIndex >= 0 &&
-                            x.Members.IndexOf(m => m.IsEquivalentTo(other)) is var toIndex &&
-                            toIndex < fromIndex)
+                        editor.RemoveNode(toMove);
+                        editor.InsertBefore(member, ToMove());
+                        editor.ReplaceNode(member, Member());
+
+                        MemberDeclarationSyntax ToMove()
                         {
-                            return x.WithMembers(x.Members.Replace(x.Members[toIndex], Other())
-                                                  .RemoveAt(fromIndex)
-                                                  .Insert(toIndex, Member()));
-
-                            MemberDeclarationSyntax Member()
+                            if (toMove.Parent is TypeDeclarationSyntax type)
                             {
-                                if (fromIndex == 0)
+                                if (type.Members.IndexOf(toMove) == 0)
                                 {
-                                    return member.WithLeadingLineFeed();
+                                    return toMove.WithLeadingLineFeed();
                                 }
 
-                                if (toIndex == 0)
+                                if (type.Members.IndexOf(member) == 0)
                                 {
-                                    return member.WithLeadingTrivia(member.GetLeadingTrivia()
-                                                                          .SkipWhile(t => t.IsKind(SyntaxKind.EndOfLineTrivia)));
+                                    return toMove.WithoutLeadingLineFeed();
                                 }
-
-                                return member;
                             }
 
-                            MemberDeclarationSyntax Other()
-                            {
-                                if (toIndex == 0)
-                                {
-                                    return other.WithLeadingLineFeed();
-                                }
-
-                                return other;
-                            }
+                            return member;
                         }
 
-                        return x;
+                        MemberDeclarationSyntax Member()
+                        {
+                            if (member.Parent is TypeDeclarationSyntax type &&
+                                type.Members.IndexOf(member) == 0)
+                            {
+                                return member.WithLeadingLineFeed();
+                            }
+
+                            return member;
+                        }
                     }
                 }
             }
