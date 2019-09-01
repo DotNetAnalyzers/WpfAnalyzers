@@ -35,47 +35,50 @@ namespace WpfAnalyzers
                         $"Move",
                         (e, _) => e.ReplaceNode(
                             type,
-                            x =>
-                            {
-                                if (x.Members.IndexOf(m => m.IsEquivalentTo(member)) is var fromIndex &&
-                                    fromIndex >= 0 &&
-                                    x.Members.IndexOf(m => m.IsEquivalentTo(other)) is var toIndex &&
-                                    toIndex < fromIndex)
-                                {
-                                    return x.WithMembers(x.Members.Replace(x.Members[toIndex], Other())
-                                                                  .RemoveAt(fromIndex)
-                                                                  .Insert(toIndex, Member()));
-
-                                    MemberDeclarationSyntax Member()
-                                    {
-                                        if (fromIndex == 0)
-                                        {
-                                            return member.WithLeadingLineFeed();
-                                        }
-
-                                        if (toIndex == 0)
-                                        {
-                                            return member.WithLeadingTrivia(member.GetLeadingTrivia().SkipWhile(t => t.IsKind(SyntaxKind.EndOfLineTrivia)));
-                                        }
-
-                                        return member;
-                                    }
-
-                                    MemberDeclarationSyntax Other()
-                                    {
-                                        if (toIndex == 0)
-                                        {
-                                            return other.WithLeadingLineFeed();
-                                        }
-
-                                        return other;
-                                    }
-                                }
-
-                                return x;
-                            }),
+                            x => Move(x)),
                         nameof(MoveFix),
                         diagnostic);
+
+                    SyntaxNode Move(ClassDeclarationSyntax x)
+                    {
+                        if (x.Members.IndexOf(m => m.IsEquivalentTo(member)) is var fromIndex &&
+                            fromIndex >= 0 &&
+                            x.Members.IndexOf(m => m.IsEquivalentTo(other)) is var toIndex &&
+                            toIndex < fromIndex)
+                        {
+                            return x.WithMembers(x.Members.Replace(x.Members[toIndex], Other())
+                                                  .RemoveAt(fromIndex)
+                                                  .Insert(toIndex, Member()));
+
+                            MemberDeclarationSyntax Member()
+                            {
+                                if (fromIndex == 0)
+                                {
+                                    return member.WithLeadingLineFeed();
+                                }
+
+                                if (toIndex == 0)
+                                {
+                                    return member.WithLeadingTrivia(member.GetLeadingTrivia()
+                                                                          .SkipWhile(t => t.IsKind(SyntaxKind.EndOfLineTrivia)));
+                                }
+
+                                return member;
+                            }
+
+                            MemberDeclarationSyntax Other()
+                            {
+                                if (toIndex == 0)
+                                {
+                                    return other.WithLeadingLineFeed();
+                                }
+
+                                return other;
+                            }
+                        }
+
+                        return x;
+                    }
                 }
             }
         }
