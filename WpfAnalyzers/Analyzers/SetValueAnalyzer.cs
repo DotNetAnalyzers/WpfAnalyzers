@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -92,7 +93,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static bool TryGetArgs(SyntaxNodeAnalysisContext context, out IMethodSymbol target, out ArgumentSyntax propertyArg, out ArgumentSyntax valueArg)
+        private static bool TryGetArgs(SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IMethodSymbol? target, [NotNullWhen(true)] out ArgumentSyntax? propertyArg, [NotNullWhen(true)] out ArgumentSyntax? valueArg)
         {
             if (context.Node is InvocationExpressionSyntax invocation)
             {

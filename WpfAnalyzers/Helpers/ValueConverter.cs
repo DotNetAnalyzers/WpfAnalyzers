@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -9,9 +10,9 @@ namespace WpfAnalyzers
 
     internal static class ValueConverter
     {
-        internal static bool TryGetDefaultFieldsOrProperties(ITypeSymbol type, Compilation compilation, out IReadOnlyList<FieldOrProperty> defaults)
+        internal static bool TryGetDefaultFieldsOrProperties(ITypeSymbol type, Compilation compilation, [NotNullWhen(true)] out IReadOnlyList<FieldOrProperty>? defaults)
         {
-            List<FieldOrProperty> temp = null;
+            List<FieldOrProperty>? temp = null;
             foreach (var member in type.GetMembers())
             {
                 if (member.IsStatic &&
@@ -36,7 +37,7 @@ namespace WpfAnalyzers
             return defaults != null;
         }
 
-        internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol sourceType, out ITypeSymbol targetType)
+        internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? sourceType, [NotNullWhen(true)] out ITypeSymbol? targetType)
         {
             sourceType = null;
             targetType = null;

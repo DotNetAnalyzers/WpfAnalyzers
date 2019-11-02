@@ -94,7 +94,7 @@ namespace WpfAnalyzers
                     if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
                         method.ParameterList.Parameters.TryElementAt(1, out var parameter) &&
                         walker.Property is { } property &&
-                        property.Expression is {} expression)
+                        property.Expression is { } expression)
                     {
                         if (arg.Expression is IdentifierNameSyntax argIdentifier &&
                             argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)

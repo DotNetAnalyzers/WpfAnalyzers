@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -7,7 +8,7 @@ namespace WpfAnalyzers
 
     internal static class ConstructorArgument
     {
-        internal static bool TryGetArgumentName(AttributeSyntax attribute, out AttributeArgumentSyntax argument, out string argumentName)
+        internal static bool TryGetArgumentName(AttributeSyntax attribute, out AttributeArgumentSyntax argument, [NotNullWhen(true)] out string? argumentName)
         {
             argumentName = null;
             if (attribute.TryFindArgument(0, "argumentName", out argument) &&
@@ -19,10 +20,10 @@ namespace WpfAnalyzers
             return argumentName != null;
         }
 
-        internal static bool TryGetParameterName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out string parameterName)
+        internal static bool TryGetParameterName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? parameterName)
         {
             parameterName = null;
-            if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
+            if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
                 propertyDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration))
             {
 #pragma warning disable GU0011 // Don't ignore the return value.
@@ -49,7 +50,7 @@ namespace WpfAnalyzers
             return parameterName != null;
         }
 
-        private static bool TryGetParameterName(ISymbol member, TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out string parameterName)
+        private static bool TryGetParameterName(ISymbol member, TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? parameterName)
         {
             parameterName = null;
             using (var walker = AssignmentExecutionWalker.For(member, typeDeclaration, SearchScope.Member, semanticModel, cancellationToken))

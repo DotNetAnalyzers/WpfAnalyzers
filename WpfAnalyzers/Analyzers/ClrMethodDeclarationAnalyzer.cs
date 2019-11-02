@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -86,7 +87,7 @@ namespace WpfAnalyzers
                                     parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
                     }
 
-                    if (methodDeclaration.Body is BlockSyntax body &&
+                    if (methodDeclaration.Body is { } body &&
                         body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
@@ -124,7 +125,7 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (methodDeclaration.Body is BlockSyntax body &&
+                    if (methodDeclaration.Body is { } body &&
                         body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
@@ -139,10 +140,10 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backingField, string registeredName, out Location location)
+        private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backingField, string registeredName, [NotNullWhen(true)] out Location? location)
         {
             location = null;
-            if (methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+            if (methodDeclaration.ParameterList is { } parameterList &&
                 parameterList.Parameters.TryElementAt(0, out var parameter))
             {
                 if (parameterList.Parameters.Count == 1)

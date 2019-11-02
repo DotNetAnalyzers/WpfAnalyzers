@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -108,7 +109,7 @@ namespace WpfAnalyzers
             if (context.Node is ParenthesizedLambdaExpressionSyntax lambda &&
                 lambda.Parent is ArgumentSyntax argument &&
                 TryGetCallbackArgument(argument, out var callbackArgument) &&
-                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol method))
+                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol? method))
             {
                 if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
                     TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
@@ -131,7 +132,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IParameterSymbol? senderParameter, [NotNullWhen(true)] out IParameterSymbol? argParameter)
         {
             senderParameter = null;
             argParameter = null;
@@ -143,7 +144,7 @@ namespace WpfAnalyzers
                    argParameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs;
         }
 
-        private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, out IParameterSymbol senderParameter, out IParameterSymbol argParameter)
+        private static bool TryMatchCoerceValueCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IParameterSymbol? senderParameter, [NotNullWhen(true)] out IParameterSymbol? argParameter)
         {
             senderParameter = null;
             argParameter = null;
@@ -155,7 +156,7 @@ namespace WpfAnalyzers
                    argParameter.Type == KnownSymbols.Object;
         }
 
-        private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, out IParameterSymbol argParameter)
+        private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, [NotNullWhen(true)] out IParameterSymbol? argParameter)
         {
             argParameter = null;
             return candidate.Parameters.Length == 1 &&
@@ -179,7 +180,7 @@ namespace WpfAnalyzers
             if (singleInvocation.TryFirstAncestor(out MethodDeclarationSyntax? staticCallback) &&
                context.SemanticModel.TryGetSymbol(staticCallback, context.CancellationToken, out var staticMethod) &&
                staticMethod.IsStatic &&
-                TryGetStaticCallbackArgument(staticMethod, staticCallback, out callbackArgument) &&
+               TryGetStaticCallbackArgument(staticMethod, staticCallback, out callbackArgument) &&
                TryMatchPropertyChangedCallback(staticMethod, context, out senderParameter, out argParameter) &&
                 Try(out fieldOrProperty))
             {
@@ -248,7 +249,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            bool TryGetStaticCallbackArgument(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax result)
+            bool TryGetStaticCallbackArgument(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax? result)
             {
                 using (var usages = GetCallbackArguments(context, method, methodDeclaration))
                 {
@@ -519,7 +520,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            static bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
             {
                 if (comment.TryGetSummary(out var summary))
                 {
@@ -564,7 +565,7 @@ namespace WpfAnalyzers
             bool TryFindParameter(string propertyName, out ParameterSyntax parameter)
             {
                 parameter = null;
-                if (invocation.ArgumentList is ArgumentListSyntax argumentList)
+                if (invocation.ArgumentList is { } argumentList)
                 {
                     foreach (var argument in argumentList.Arguments)
                     {
@@ -601,7 +602,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, out InvocationExpressionSyntax invocation)
+        private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
         {
             invocation = null;
             if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
@@ -663,7 +664,7 @@ namespace WpfAnalyzers
             return callbacks;
         }
 
-        private static bool TryGetCallbackArgument(ArgumentSyntax candidate, out ArgumentSyntax result)
+        private static bool TryGetCallbackArgument(ArgumentSyntax candidate, [NotNullWhen(true)] out ArgumentSyntax? result)
         {
             if (candidate.Parent is ArgumentListSyntax argumentList &&
                 argumentList.Parent is ObjectCreationExpressionSyntax callbackCreation &&
@@ -682,7 +683,7 @@ namespace WpfAnalyzers
             return true;
         }
 
-        private static bool TryGetSenderType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol senderType)
+        private static bool TryGetSenderType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? senderType)
         {
             senderType = null;
             if (argument == null)
@@ -709,7 +710,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, out ITypeSymbol type)
+        private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? type)
         {
             type = null;
             if (argument?.Parent is ArgumentListSyntax argumentList)

@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -8,7 +9,7 @@ namespace WpfAnalyzers
 
     internal static class Callback
     {
-        internal static bool TryGetTarget(ArgumentSyntax callback, QualifiedType handlerType, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax identifier, out IMethodSymbol method)
+        internal static bool TryGetTarget(ArgumentSyntax callback, QualifiedType handlerType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? identifier, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             identifier = null;
             method = null;
@@ -63,7 +64,7 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            return method.Body is BlockSyntax body &&
+            return method.Body is { } body &&
                    body.Statements.TrySingle(out var statement) &&
                    (statement is ExpressionStatementSyntax ||
                     statement is ReturnStatementSyntax);

@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -7,12 +8,12 @@ namespace WpfAnalyzers
 
     internal static class RoutedEvent
     {
-        internal static bool TryGetRegisterCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static bool TryGetRegisterCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             return semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterRoutedEvent, cancellationToken, out method);
         }
 
-        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string result)
+        internal static bool TryGetRegisteredName(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg, [NotNullWhen(true)] out string? result)
         {
             nameArg = null;
             result = null;
@@ -29,7 +30,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool TryGetRegisteredType(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax typeArg, out ITypeSymbol result)
+        internal static bool TryGetRegisteredType(FieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? typeArg, [NotNullWhen(true)] out ITypeSymbol? result)
         {
             typeArg = null;
             result = null;
