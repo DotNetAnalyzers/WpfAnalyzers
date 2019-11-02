@@ -108,8 +108,7 @@ namespace WpfAnalyzers
 
         private static bool MatchesValidateValueCallbackName(ArgumentSyntax validateValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
-            return validateValueCallback.Parent is ArgumentListSyntax argumentList &&
-                   argumentList.Parent is InvocationExpressionSyntax invocation &&
+            return validateValueCallback.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
                    TryGetAnyRegisterCall(invocation, context, out _) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&

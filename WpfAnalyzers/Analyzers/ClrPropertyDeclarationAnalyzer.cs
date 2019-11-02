@@ -29,8 +29,7 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                !context.ContainingSymbol.IsStatic &&
-                context.ContainingSymbol is IPropertySymbol property &&
+                context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
                 property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
