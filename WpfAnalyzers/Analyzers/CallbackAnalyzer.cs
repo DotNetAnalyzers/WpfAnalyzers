@@ -197,8 +197,8 @@ namespace WpfAnalyzers
                     {
                         if (declaration is SingleVariableDesignationSyntax { Parent: DeclarationPatternSyntax { Parent: IsPatternExpressionSyntax isPattern } })
                         {
-                            return isPattern.Expression is IdentifierNameSyntax identifier &&
-                                   identifier.Identifier.ValueText == senderParameter.Name;
+                            return isPattern.Expression is IdentifierNameSyntax { Identifier: { } identifier } &&
+                                   identifier.ValueText == senderParameter.Name;
                         }
 
                         using (var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name))
@@ -270,9 +270,9 @@ namespace WpfAnalyzers
                 {
                     var parent = identifierName.Parent;
                     if (parameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs &&
-                        parent is MemberAccessExpressionSyntax memberAccess &&
-                        (memberAccess.Name.Identifier.ValueText == "NewValue" ||
-                         memberAccess.Name.Identifier.ValueText == "OldValue"))
+                        parent is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax { Identifier: { } identifier } } memberAccess &&
+                        (identifier.ValueText == "NewValue" ||
+                         identifier.ValueText == "OldValue"))
                     {
                         parent = memberAccess.Parent;
                     }
@@ -689,9 +689,9 @@ namespace WpfAnalyzers
         private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? type)
         {
             type = null;
-            if (argument?.Parent is ArgumentListSyntax argumentList)
+            if (argument is { Parent: ArgumentListSyntax { Parent: { } parent } })
             {
-                switch (argumentList.Parent)
+                switch (parent)
                 {
                     case ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArgument }:
                         return TryGetValueType(parentArgument, containingType, context, out type);
