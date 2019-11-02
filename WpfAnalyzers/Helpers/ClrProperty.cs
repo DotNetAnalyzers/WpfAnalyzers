@@ -15,11 +15,7 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool IsPotentialClrProperty(this IPropertySymbol property, Compilation compilation)
         {
-            return property != null &&
-                   !property.IsIndexer &&
-                   !property.IsReadOnly &&
-                   !property.IsWriteOnly &&
-                   !property.IsStatic &&
+            return property is { IsIndexer: false, IsReadOnly: false, IsWriteOnly: false, IsStatic: false } &&
                    property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }
 
@@ -102,15 +98,19 @@ namespace WpfAnalyzers
                         }
 
                         if (getterWalker.IsSuccess &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(getterWalker.Property.Expression, cancellationToken), out getField) &&
+                            getterWalker.Property?.Expression is { } getExpression &&
+                            semanticModel.TryGetSymbol(getExpression, cancellationToken, out var symbol) &&
+                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField) &&
                             setterWalker.IsSuccess &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(setterWalker.Property.Expression, cancellationToken), out setField))
+                            setterWalker.Property?.Expression is { } setExpression &&
+                            semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
+                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField))
                         {
                             return true;
                         }
 
-                        var property = semanticModel.GetSymbolSafe(propertyDeclaration, cancellationToken) as IPropertySymbol;
-                        return TryGetBackingFieldsByName(property, semanticModel.Compilation, out getField, out setField);
+                        return semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property) &&
+                               TryGetBackingFieldsByName(property, semanticModel.Compilation, out getField, out setField);
                     }
                 }
             }

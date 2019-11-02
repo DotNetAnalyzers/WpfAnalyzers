@@ -146,9 +146,8 @@ namespace WpfAnalyzers
                 if (symbol is IMethodSymbol method)
                 {
                     return method == KnownSymbols.DependencyProperty.AddOwner &&
-                           value is InvocationExpressionSyntax invocation &&
-                           invocation.Expression is MemberAccessExpressionSyntax member &&
-                           semanticModel.TryGetSymbol(member.Expression, cancellationToken, out ISymbol? candidate) &&
+                           value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } &&
+                           semanticModel.TryGetSymbol(expression, cancellationToken, out ISymbol? candidate) &&
                            BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result) &&
                            TryGetDependencyPropertyKeyFieldOrProperty(result, semanticModel, cancellationToken, out result);
                 }
@@ -156,8 +155,8 @@ namespace WpfAnalyzers
                 {
                     return symbol is IPropertySymbol property &&
                            property == KnownSymbols.DependencyPropertyKey.DependencyProperty &&
-                           value is MemberAccessExpressionSyntax memberAccess &&
-                           semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol? candidate) &&
+                           value is MemberAccessExpressionSyntax { Expression: { } expression } &&
+                           semanticModel.TryGetSymbol(expression, cancellationToken, out ISymbol? candidate) &&
                            BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result);
                 }
             }
@@ -168,17 +167,12 @@ namespace WpfAnalyzers
         internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
         {
             result = default;
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                value is InvocationExpressionSyntax invocation &&
-                semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _))
-            {
-                var addOwner = (MemberAccessExpressionSyntax)invocation.Expression;
-                return BackingFieldOrProperty.TryCreateForDependencyProperty(
-                    semanticModel.GetSymbolSafe(addOwner.Expression, cancellationToken),
-                    out result);
-            }
 
-            return false;
+            return fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
+                   value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol) &&
+                   BackingFieldOrProperty.TryCreateForDependencyProperty(addOwnerSymbol, out result);
         }
 
         internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? result, [NotNullWhen(true)] out IMethodSymbol? symbol)

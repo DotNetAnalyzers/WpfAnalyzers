@@ -8,7 +8,7 @@ namespace WpfAnalyzers
 
     internal static class ConstructorArgument
     {
-        internal static bool TryGetArgumentName(AttributeSyntax attribute, out AttributeArgumentSyntax argument, [NotNullWhen(true)] out string? argumentName)
+        internal static bool TryGetArgumentName(AttributeSyntax attribute, [NotNullWhen(true)] out AttributeArgumentSyntax? argument, [NotNullWhen(true)] out string? argumentName)
         {
             argumentName = null;
             if (attribute.TryFindArgument(0, "argumentName", out argument) &&
@@ -22,59 +22,41 @@ namespace WpfAnalyzers
 
         internal static bool TryGetParameterName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? parameterName)
         {
-            parameterName = null;
             if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
                 propertyDeclaration.TryFirstAncestor<TypeDeclarationSyntax>(out var typeDeclaration))
             {
-#pragma warning disable GU0011 // Don't ignore the return value.
-                TryGetParameterName(property, typeDeclaration, semanticModel, cancellationToken, out parameterName);
-#pragma warning restore GU0011 // Don't ignore the return value.
-
-                if (propertyDeclaration.TryGetBackingField(out var backingField) &&
-                    semanticModel.TryGetSymbol(backingField, cancellationToken, out var field))
+                if (TryGetParameterName(property, typeDeclaration, semanticModel, cancellationToken, out parameterName))
                 {
-                    if (TryGetParameterName(field, typeDeclaration, semanticModel, cancellationToken, out var candidate))
-                    {
-                        if (parameterName == null)
-                        {
-                            parameterName = candidate;
-                        }
-                        else if (parameterName != candidate)
-                        {
-                            return false;
-                        }
-                    }
+                    return true;
                 }
+
+                return propertyDeclaration.TryGetBackingField(out var backingField) &&
+                       semanticModel.TryGetSymbol(backingField, cancellationToken, out var field) &&
+                       TryGetParameterName(field, typeDeclaration, semanticModel, cancellationToken, out parameterName);
             }
 
-            return parameterName != null;
+            parameterName = null;
+            return false;
         }
 
         private static bool TryGetParameterName(ISymbol member, TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? parameterName)
         {
-            parameterName = null;
             using (var walker = AssignmentExecutionWalker.For(member, typeDeclaration, SearchScope.Member, semanticModel, cancellationToken))
             {
                 foreach (var assignment in walker.Assignments)
                 {
-                    if (assignment.Right is IdentifierNameSyntax identifierName &&
+                    if (assignment.Right is IdentifierNameSyntax { Identifier: { } identifier } &&
                         assignment.TryFirstAncestor<ConstructorDeclarationSyntax>(out var ctor) &&
-                        ctor.TryFindParameter(identifierName.Identifier.ValueText, out _))
+                        ctor.TryFindParameter(identifier.ValueText, out var parameter))
                     {
-                        if (parameterName == null)
-                        {
-                            parameterName = identifierName.Identifier.ValueText;
-                        }
-                        else if (parameterName != identifierName.Identifier.ValueText)
-                        {
-                            parameterName = null;
-                            return false;
-                        }
+                        parameterName = parameter.Identifier.ValueText;
+                        return true;
                     }
                 }
             }
 
-            return parameterName != null;
+            parameterName = null;
+            return false;
         }
     }
 }
