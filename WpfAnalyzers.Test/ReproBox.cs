@@ -27,6 +27,7 @@ namespace WpfAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
+            Assert.Inconclusive("VS does not understand [Explicit]");
             RoslynAssert.Valid(analyzer, Solution);
         }
 
