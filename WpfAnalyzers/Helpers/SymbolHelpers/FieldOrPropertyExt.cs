@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -7,7 +8,7 @@ namespace WpfAnalyzers
 
     internal static class FieldOrPropertyExt
     {
-        internal static bool TryGetAssignedValue(this FieldOrProperty fieldOrProperty, CancellationToken cancellationToken, out ExpressionSyntax value)
+        internal static bool TryGetAssignedValue(this FieldOrProperty fieldOrProperty, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
         {
             value = null;
             if (fieldOrProperty.Symbol is IFieldSymbol field)

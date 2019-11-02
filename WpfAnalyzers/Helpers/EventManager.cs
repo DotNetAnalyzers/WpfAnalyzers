@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -8,7 +9,7 @@ namespace WpfAnalyzers
 
     internal static class EventManager
     {
-        internal static bool TryGetRegisterClassHandlerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static bool TryGetRegisterClassHandlerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             return TryGetCall(
                 invocation,
@@ -20,14 +21,8 @@ namespace WpfAnalyzers
 
         internal static bool? IsMatch(string handlerName, string eventName)
         {
-            if (handlerName == null ||
-                eventName == null ||
-                !eventName.EndsWith("Event", StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            if (!handlerName.StartsWith("On", StringComparison.Ordinal) ||
+            if (!eventName.EndsWith("Event", StringComparison.Ordinal) ||
+                !handlerName.StartsWith("On", StringComparison.Ordinal) ||
                 handlerName.Length != eventName.Length - 3)
             {
                 return false;
@@ -44,7 +39,7 @@ namespace WpfAnalyzers
             return true;
         }
 
-        internal static bool TryGetExpectedCallbackName(string eventName, out string expectedName)
+        internal static bool TryGetExpectedCallbackName(string eventName, [NotNullWhen(true)] out string? expectedName)
         {
             if (eventName.EndsWith("Event", StringComparison.Ordinal))
             {
@@ -56,17 +51,12 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        private static bool TryGetCall(InvocationExpressionSyntax invocation, QualifiedMethod qualifiedMethod, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             method = null;
-            if (invocation?.ArgumentList == null ||
-                invocation.ArgumentList.Arguments.Count < 3 ||
-                invocation.ArgumentList.Arguments.Count > 4)
-            {
-                return false;
-            }
-
-            return semanticModel.TryGetSymbol(invocation, qualifiedMethod, cancellationToken, out method);
+            return invocation is { ArgumentList: { Arguments: { } arguments } } &&
+                   (arguments.Count == 3 || arguments.Count == 4) &&
+                   semanticModel.TryGetSymbol(invocation, qualifiedMethod, cancellationToken, out method);
         }
     }
 }
