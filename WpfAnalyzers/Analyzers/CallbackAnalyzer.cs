@@ -101,13 +101,8 @@ namespace WpfAnalyzers
 
         private static void HandleLambda(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is ParenthesizedLambdaExpressionSyntax lambda &&
-                lambda.Parent is ArgumentSyntax argument &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is ParenthesizedLambdaExpressionSyntax { Parent: ArgumentSyntax argument } lambda &&
                 TryGetCallbackArgument(argument, out var callbackArgument) &&
                 context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol? method))
             {
@@ -132,15 +127,14 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryMatchPropertyChangedCallback(IMethodSymbol methodSymbol, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IParameterSymbol? senderParameter, [NotNullWhen(true)] out IParameterSymbol? argParameter)
+        private static bool TryMatchPropertyChangedCallback(IMethodSymbol candidate, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IParameterSymbol? senderParameter, [NotNullWhen(true)] out IParameterSymbol? argParameter)
         {
             senderParameter = null;
             argParameter = null;
-            return methodSymbol.Parameters.Length == 2 &&
-                   methodSymbol.ReturnsVoid &&
-                   methodSymbol.Parameters.TryElementAt(0, out senderParameter) &&
+            return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } parameters } &&
+                   parameters.TryElementAt(0, out senderParameter) &&
                    senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
-                   methodSymbol.Parameters.TryElementAt(1, out argParameter) &&
+                   parameters.TryElementAt(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs;
         }
 
@@ -148,27 +142,26 @@ namespace WpfAnalyzers
         {
             senderParameter = null;
             argParameter = null;
-            return candidate.Parameters.Length == 2 &&
+            return candidate is { ReturnsVoid: false, Parameters: { Length: 2 } parameters } &&
                    candidate.ReturnType == KnownSymbols.Object &&
-                   candidate.Parameters.TryElementAt(0, out senderParameter) &&
+                   parameters.TryElementAt(0, out senderParameter) &&
                    senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
-                   candidate.Parameters.TryElementAt(1, out argParameter) &&
+                   parameters.TryElementAt(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.Object;
         }
 
         private static bool TryMatchValidateValueCallback(IMethodSymbol candidate, [NotNullWhen(true)] out IParameterSymbol? argParameter)
         {
             argParameter = null;
-            return candidate.Parameters.Length == 1 &&
+            return candidate is { ReturnsVoid: false, Parameters: { Length: 1 } parameters } &&
                    candidate.ReturnType == KnownSymbols.Boolean &&
-                   candidate.Parameters.TryElementAt(0, out argParameter) &&
+                   parameters.TryElementAt(0, out argParameter) &&
                    argParameter.Type == KnownSymbols.Object;
         }
 
         private static bool TryGetDpFromInstancePropertyChanged(InvocationExpressionSyntax singleInvocation, SyntaxNodeAnalysisContext context, out BackingFieldOrProperty fieldOrProperty)
         {
-            if (singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
-                lambda.Parent is ArgumentSyntax lambdaArg &&
+            if (singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax { Parent: ArgumentSyntax lambdaArg } lambda &&
                 TryGetCallbackArgument(lambdaArg, out var callbackArgument) &&
                 context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol? lambdaMethod) &&
                 TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
@@ -202,9 +195,7 @@ namespace WpfAnalyzers
                     if (context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out ILocalSymbol? local) &&
                         local.TrySingleDeclaration(context.CancellationToken, out var declaration))
                     {
-                        if (declaration is SingleVariableDesignationSyntax singleVariableDesignation &&
-                            singleVariableDesignation.Parent is DeclarationPatternSyntax pattern &&
-                            pattern.Parent is IsPatternExpressionSyntax isPattern)
+                        if (declaration is SingleVariableDesignationSyntax { Parent: DeclarationPatternSyntax { Parent: IsPatternExpressionSyntax isPattern } })
                         {
                             return isPattern.Expression is IdentifierNameSyntax identifier &&
                                    identifier.Identifier.ValueText == senderParameter.Name;
@@ -261,8 +252,7 @@ namespace WpfAnalyzers
             {
                 return IsCalledOnSender() &&
                        ArgsUsesParameter() &&
-                       callbackArgument.Parent is ArgumentListSyntax metadataCreationArgs &&
-                       metadataCreationArgs.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
+                       callbackArgument.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax metaDataCreation } &&
                        PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out backing);
             }
         }
@@ -330,9 +320,8 @@ namespace WpfAnalyzers
                                 expectedTypeName));
                     }
 
-                    if (parent is IsPatternExpressionSyntax isPattern &&
+                    if (parent is IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax isDeclaration } &&
                         expectedType != KnownSymbols.Object &&
-                        isPattern.Pattern is DeclarationPatternSyntax isDeclaration &&
                         context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
                         isType.TypeKind != TypeKind.Interface &&
                         expectedType.TypeKind != TypeKind.Interface &&
@@ -340,7 +329,7 @@ namespace WpfAnalyzers
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(
                             context.SemanticModel,
-                            isPattern.SpanStart,
+                            isDeclaration.SpanStart,
                             SymbolDisplayFormat.MinimallyQualifiedFormat);
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -358,9 +347,8 @@ namespace WpfAnalyzers
                         {
                             foreach (var label in section.Labels)
                             {
-                                if (label is CasePatternSwitchLabelSyntax patternLabel &&
-                                    patternLabel.Pattern is DeclarationPatternSyntax labelDeclaration &&
-                                    context.SemanticModel.TryGetType(labelDeclaration.Type, context.CancellationToken, out var caseType) &&
+                                if (label is CasePatternSwitchLabelSyntax { Pattern: DeclarationPatternSyntax { Type: { } type } } &&
+                                    context.SemanticModel.TryGetType(type, context.CancellationToken, out var caseType) &&
                                     caseType.TypeKind != TypeKind.Interface &&
                                     !(caseType.IsAssignableTo(expectedType, context.Compilation) ||
                                       expectedType.IsAssignableTo(caseType, context.Compilation)))
@@ -372,7 +360,7 @@ namespace WpfAnalyzers
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
                                             wrongTypeDescriptor,
-                                            labelDeclaration.Type.GetLocation(),
+                                            type.GetLocation(),
                                             ImmutableDictionary<string, string>.Empty.Add(
                                                 "ExpectedType",
                                                 expectedTypeName),
@@ -611,8 +599,7 @@ namespace WpfAnalyzers
                 {
                     foreach (var identifierName in walker.IdentifierNames)
                     {
-                        if (identifierName.Parent is MemberAccessExpressionSyntax memberAccess &&
-                            memberAccess.Parent is InvocationExpressionSyntax candidate &&
+                        if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
                             context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
                             Equals(symbol, method))
                         {
@@ -646,13 +633,12 @@ namespace WpfAnalyzers
                         {
                             switch (identifierName.Parent)
                             {
-                                case ArgumentSyntax argument when TryGetCallbackArgument(argument, out var callbackArg):
+                                case ArgumentSyntax argument
+                                    when TryGetCallbackArgument(argument, out var callbackArg):
                                     callbacks.Add(callbackArg);
                                     break;
-                                case InvocationExpressionSyntax invocation when
-                                    invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
-                                    lambda.Parent is ArgumentSyntax argument &&
-                                    TryGetCallbackArgument(argument, out var callbackArg):
+                                case InvocationExpressionSyntax { Parent: ParenthesizedLambdaExpressionSyntax { Parent: ArgumentSyntax argument } }
+                                    when TryGetCallbackArgument(argument, out var callbackArg):
                                     callbacks.Add(callbackArg);
                                     break;
                             }
@@ -666,9 +652,7 @@ namespace WpfAnalyzers
 
         private static bool TryGetCallbackArgument(ArgumentSyntax candidate, [NotNullWhen(true)] out ArgumentSyntax? result)
         {
-            if (candidate.Parent is ArgumentListSyntax argumentList &&
-                argumentList.Parent is ObjectCreationExpressionSyntax callbackCreation &&
-                callbackCreation.Parent is ArgumentSyntax parent &&
+            if (candidate.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parent } callbackCreation } &&
                 (callbackCreation.Type == KnownSymbols.PropertyChangedCallback ||
                  callbackCreation.Type == KnownSymbols.CoerceValueCallback ||
                  callbackCreation.Type == KnownSymbols.ValidateValueCallback))

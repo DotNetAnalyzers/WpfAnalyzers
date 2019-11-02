@@ -22,8 +22,8 @@ namespace WpfAnalyzers
                     {
                         switch (member)
                         {
-                            case IFieldSymbol field when !field.IsConst && !field.IsReadOnly:
-                            case IPropertySymbol property when property.SetMethod != null:
+                            case IFieldSymbol { IsConst: false, IsReadOnly: false }:
+                            case IPropertySymbol { SetMethod: { } }:
                                 return true;
                         }
 

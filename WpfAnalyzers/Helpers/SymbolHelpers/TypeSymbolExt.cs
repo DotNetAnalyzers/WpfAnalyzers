@@ -9,7 +9,7 @@ namespace WpfAnalyzers
     {
         internal static IEnumerable<ITypeSymbol> RecursiveBaseTypes(this ITypeSymbol type)
         {
-            while (type != null)
+            while (type is { })
             {
                 foreach (var @interface in type.AllInterfaces)
                 {
@@ -17,7 +17,7 @@ namespace WpfAnalyzers
                 }
 
                 type = type.BaseType;
-                if (type != null)
+                if (type is { })
                 {
                     yield return type;
                 }

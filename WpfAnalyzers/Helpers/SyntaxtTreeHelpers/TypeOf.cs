@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -7,18 +8,12 @@ namespace WpfAnalyzers
 
     internal static class TypeOf
     {
-        internal static bool TryGetType(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol type)
+        internal static bool TryGetType(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? type)
         {
-            type = null;
-            if (expression == null)
+            if (semanticModel.TryGetType(expression.Type, cancellationToken, out type) &&
+                type.Kind == SymbolKind.TypeParameter)
             {
-                return false;
-            }
-
-            type = semanticModel.GetTypeInfoSafe(expression.Type, cancellationToken).Type;
-            if (type.Kind == SymbolKind.TypeParameter)
-            {
-                while (containingType != null)
+                while (containingType is { })
                 {
                     if (containingType.IsGenericType &&
                         containingType != KnownSymbols.Object)
