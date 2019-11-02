@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -39,16 +40,24 @@ namespace WpfAnalyzers
             {
                 if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
-                        !method.Name.IsParts("Get", registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
-                        context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
-                            methodDeclaration.Identifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Get" + registeredName),
-                            method.Name,
-                            "Get" + registeredName));
+                        if (!method.Name.IsParts("Get", registeredName))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
+                                    methodDeclaration.Identifier.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Get" + registeredName),
+                                    method.Name,
+                                    "Get" + registeredName));
+                        }
+
+                        if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                            !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
+                        }
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
@@ -88,29 +97,31 @@ namespace WpfAnalyzers
                     }
 
                     if (methodDeclaration.Body is { } body &&
-                        body.Statements.TryFirst(x => !x.Contains(getValueCall), out var statement))
+                        TryGetSideEffect(body, getValueCall, out var sideEffect))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
-                    }
-
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
                 }
                 else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
-                        !method.Name.IsParts("Set", registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
-                        context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
-                            methodDeclaration.Identifier.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
-                            method.Name,
-                            "Set" + registeredName));
+                        if (!method.Name.IsParts("Set", registeredName))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
+                                    methodDeclaration.Identifier.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
+                                    method.Name,
+                                    "Set" + registeredName));
+                        }
+
+                        if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
+                            !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
+                        }
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
@@ -126,18 +137,49 @@ namespace WpfAnalyzers
                     }
 
                     if (methodDeclaration.Body is { } body &&
-                        body.Statements.TryFirst(x => !x.Contains(setValueCall), out var statement))
+                        TryGetSideEffect(body, setValueCall, out var sideEffect))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, statement.GetLocation()));
-                    }
-
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !HasStandardText(methodDeclaration, fieldOrProperty, registeredName, out var location))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0061DocumentClrMethod, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
                 }
             }
+        }
+
+        private static bool TryGetSideEffect(BlockSyntax body, InvocationExpressionSyntax getOrSet, [NotNullWhen(true)] out StatementSyntax? sideEffect)
+        {
+            foreach (var statement in body.Statements)
+            {
+                switch (statement)
+                {
+                    case ExpressionStatementSyntax { Expression: { } expression }
+                        when expression == getOrSet:
+                        continue;
+                    case ReturnStatementSyntax { Expression: { } expression }
+                        when expression == getOrSet:
+                        continue;
+                    case ReturnStatementSyntax { Expression: CastExpressionSyntax { Expression: { } expression } }
+                        when expression == getOrSet:
+                        continue;
+                    case IfStatementSyntax { Condition: { } condition, Statement: ThrowStatementSyntax { }, Else: null }
+                        when NullCheck.IsNullCheck(condition, null, CancellationToken.None, out _):
+                        continue;
+                    case IfStatementSyntax { Condition: { } condition, Statement: BlockSyntax { Statements: { Count: 0 } }, Else: null }
+                        when NullCheck.IsNullCheck(condition, null, CancellationToken.None, out _):
+                        continue;
+                    case IfStatementSyntax { Condition: { } condition, Statement: BlockSyntax { Statements: { Count: 1 } statements }, Else: null }
+                        when statements[0] is ThrowStatementSyntax &&
+                             NullCheck.IsNullCheck(condition, null, CancellationToken.None, out _):
+                        continue;
+                    case IfStatementSyntax { Statement: null, Else: null }:
+                        continue;
+                    default:
+                        sideEffect = statement;
+                        return true;
+                }
+            }
+
+            sideEffect = null;
+            return false;
         }
 
         private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backingField, string registeredName, [NotNullWhen(true)] out Location? location)
