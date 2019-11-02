@@ -91,9 +91,9 @@ namespace WpfAnalyzers
             if (propertyDeclaration.TryGetGetter(out var getAccessor) &&
                 propertyDeclaration.TryGetSetter(out var setAccessor))
             {
-                using (var getterWalker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, getAccessor))
+                using (var getterWalker = ClrGetterWalker.Borrow(semanticModel, getAccessor, cancellationToken))
                 {
-                    using (var setterWalker = ClrSetterWalker.Borrow(semanticModel, cancellationToken, setAccessor))
+                    using (var setterWalker = ClrSetterWalker.Borrow(semanticModel, setAccessor, cancellationToken))
                     {
                         if (getterWalker.HasError ||
                             setterWalker.HasError)

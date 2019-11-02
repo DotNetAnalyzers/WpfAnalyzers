@@ -121,7 +121,7 @@ namespace N
             set => SetValue(BarPropertyKey, value);
         }
     }
-}".AssertReplace("SetValue", method.StartsWith("this.") ? "this.SetValue" : "SetValue");
+}".AssertReplace("SetValue", method.StartsWith("this.", StringComparison.Ordinal) ? "this.SetValue" : "SetValue");
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }

@@ -80,7 +80,7 @@ namespace WpfAnalyzers
                     case SymbolKind.Method:
                         return editor.QualifyMethodAccessAsync(cancellationToken);
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(nameof(symbol));
                 }
             }
         }

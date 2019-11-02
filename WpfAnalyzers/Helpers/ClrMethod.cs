@@ -73,7 +73,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            using (var walker = ClrSetterWalker.Borrow(semanticModel, cancellationToken, method))
+            using (var walker = ClrSetterWalker.Borrow(semanticModel, method, cancellationToken))
             {
                 if (!walker.IsSuccess)
                 {
@@ -132,7 +132,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            using (var walker = ClrGetterWalker.Borrow(semanticModel, cancellationToken, method))
+            using (var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken))
             {
                 call = walker.GetValue;
                 var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;

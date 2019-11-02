@@ -50,7 +50,7 @@ namespace WpfAnalyzers
             base.Visit(node);
         }
 
-        internal static ClrGetterWalker Borrow(SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxNode getter)
+        internal static ClrGetterWalker Borrow(SemanticModel semanticModel, SyntaxNode getter, CancellationToken cancellationToken)
         {
             var walker = Borrow(() => new ClrGetterWalker());
             walker.semanticModel = semanticModel;
