@@ -41,6 +41,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
+    <AssemblyName>ressi</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -21,39 +21,34 @@ namespace WpfAnalyzers
 
             switch (callback.Expression)
             {
-                case IdentifierNameSyntax identifierName when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                case IdentifierNameSyntax identifierName
+                    when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
                     identifier = identifierName;
                     return true;
-                case MemberAccessExpressionSyntax memberAccess when
-                    memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-                    memberAccess.Name is IdentifierNameSyntax candidate &&
-                    semanticModel.TryGetSymbol(candidate, cancellationToken, out method):
+                case MemberAccessExpressionSyntax { Name: IdentifierNameSyntax candidate } memberAccess
+                    when memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                         semanticModel.TryGetSymbol(candidate, cancellationToken, out method):
                     identifier = candidate;
                     return true;
-                case LambdaExpressionSyntax candidate when
-                    candidate.Body is InvocationExpressionSyntax invocation:
+                case LambdaExpressionSyntax { Body: InvocationExpressionSyntax invocation }:
+                    switch (invocation.Expression)
                     {
-                        switch (invocation.Expression)
-                        {
-                            case IdentifierNameSyntax identifierName when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                                identifier = identifierName;
-                                return true;
-                            case MemberAccessExpressionSyntax memberAccess when
-                                memberAccess.Name is IdentifierNameSyntax identifierName &&
-                                semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                                {
-                                    identifier = identifierName;
-                                    return true;
-                                }
-                        }
-
-                        break;
+                        case IdentifierNameSyntax identifierName
+                            when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                            identifier = identifierName;
+                            return true;
+                        case MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName }
+                            when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
+                            identifier = identifierName;
+                            return true;
                     }
+
+                    break;
             }
 
-            return callback.Expression is ObjectCreationExpressionSyntax creation &&
+            return callback.Expression is ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } creation &&
                    semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == handlerType &&
-                   creation.ArgumentList.Arguments.TrySingle(out var arg) &&
+                   arguments.TrySingle(out var arg) &&
                    TryGetTarget(arg, handlerType, semanticModel, cancellationToken, out identifier, out method);
         }
 
@@ -64,7 +59,7 @@ namespace WpfAnalyzers
                 return true;
             }
 
-            return method.Body is { } body &&
+            return method.Body is { Statements: { Count: 1 } } body &&
                    body.Statements.TrySingle(out var statement) &&
                    (statement is ExpressionStatementSyntax ||
                     statement is ReturnStatementSyntax);

@@ -26,10 +26,9 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is InvocationExpressionSyntax invocation &&
+                context.Node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
-                invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol? candidate) &&
+                context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out ISymbol? candidate) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
                 method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))
@@ -60,9 +59,8 @@ namespace WpfAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable, metadataArg.GetLocation()));
                     }
                     else if (metadataCreation.TrySingleArgument(out var typeArg) &&
-                             typeArg.Expression is TypeOfExpressionSyntax typeOf &&
-                             typeOf.Type is IdentifierNameSyntax typeName &&
-                             typeName.Identifier.ValueText != context.ContainingSymbol.ContainingType.MetadataName)
+                             typeArg is { Expression: TypeOfExpressionSyntax { Type: IdentifierNameSyntax { Identifier: { } identifier } } } &&
+                             identifier.ValueText != context.ContainingSymbol.ContainingType.MetadataName)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument, typeArg.GetLocation()));
                     }

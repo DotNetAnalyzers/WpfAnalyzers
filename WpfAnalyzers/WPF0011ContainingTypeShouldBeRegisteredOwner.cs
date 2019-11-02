@@ -23,12 +23,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is InvocationExpressionSyntax invocation &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol.IsStatic)
             {
                 if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
@@ -46,8 +42,9 @@ namespace WpfAnalyzers
                         HandleArgument(context, argument);
                     }
                     else if (DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
-                             invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                             BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                             invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
+                             context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
+                             BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
                              context.ContainingSymbol.ContainingType.IsAssignableTo(fieldOrProperty.ContainingType, context.Compilation))
                     {
                         HandleArgument(context, argument);

@@ -33,8 +33,7 @@ namespace WpfAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
-                context.ContainingSymbol is IMethodSymbol method &&
-                method.IsStatic &&
+                context.ContainingSymbol is IMethodSymbol { IsStatic: true } method &&
                 method.Parameters.TryElementAt(0, out var parameter) &&
                 parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
             {

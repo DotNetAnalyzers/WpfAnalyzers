@@ -26,8 +26,7 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ObjectCreationExpressionSyntax objectCreation &&
-                objectCreation.ArgumentList is { } argumentList &&
+                context.Node is ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation &&
                 objectCreation.Type == KnownSymbols.ComponentResourceKey &&
                 context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbols.ComponentResourceKey, context.CancellationToken, out var constructor) &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))

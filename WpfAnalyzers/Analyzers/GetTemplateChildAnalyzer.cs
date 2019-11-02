@@ -28,16 +28,13 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is InvocationExpressionSyntax invocation &&
+                context.Node is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 1, } arguments } } invocation &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "GetTemplateChild" &&
-                invocation.ArgumentList is { } argumentList &&
-                argumentList.Arguments.TrySingle(out var argument) &&
-                context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string? partName) &&
-                context.ContainingSymbol is IMethodSymbol containingMethod &&
-                containingMethod.Name == "OnApplyTemplate" &&
-                containingMethod.IsOverride &&
-                containingMethod.Parameters.Length == 0)
+                arguments.TrySingle(out var argument) &&
+                argument.Expression is { } expression &&
+                context.SemanticModel.TryGetConstantValue(expression, context.CancellationToken, out string partName) &&
+                context.ContainingSymbol is IMethodSymbol { Name: "OnApplyTemplate", IsOverride: true, Parameters: { Length: 0 } } containingMethod)
             {
                 if (TryFindAttribute(containingMethod.ContainingType, partName, out var attribute))
                 {

@@ -15,11 +15,8 @@ namespace WpfAnalyzers
         /// </summary>
         internal static bool IsPotentialClrSetMethod(IMethodSymbol method, Compilation compilation)
         {
-            return method != null &&
-                   method.IsStatic &&
-                   method.ReturnsVoid &&
+            return method is { IsStatic: true, ReturnsVoid: true, Parameters: { Length: 2 } } &&
                    method.Name.StartsWith("Set", StringComparison.Ordinal) &&
-                   method.Parameters.Length == 2 &&
                    method.Parameters.TryElementAt(0, out var parameter) &&
                    parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }
@@ -92,8 +89,7 @@ namespace WpfAnalyzers
 
                     if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
                         method.ParameterList.Parameters.TryElementAt(1, out var parameter) &&
-                        walker.Property is { } property &&
-                        property.Expression is { } expression)
+                        walker.Property is { Expression: { } expression })
                     {
                         if (arg.Expression is IdentifierNameSyntax argIdentifier &&
                             argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
@@ -111,9 +107,8 @@ namespace WpfAnalyzers
                                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
                         }
 
-                        if (arg.Expression is ConditionalExpressionSyntax ternary &&
-                            ternary.Condition is IdentifierNameSyntax conditionIdentifier &&
-                            conditionIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
+                        if (arg.Expression is ConditionalExpressionSyntax { Condition: IdentifierNameSyntax { Identifier: { } identifier } } &&
+                            identifier.ValueText == parameter.Identifier.ValueText)
                         {
                             return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
                                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
