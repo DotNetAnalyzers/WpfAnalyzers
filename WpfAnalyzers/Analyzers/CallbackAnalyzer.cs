@@ -646,14 +646,14 @@ namespace WpfAnalyzers
                         {
                             switch (identifierName.Parent)
                             {
-                                case ArgumentSyntax argument when TryGetCallbackArgument(argument, out argument):
-                                    callbacks.Add(argument);
+                                case ArgumentSyntax argument when TryGetCallbackArgument(argument, out var callbackArg):
+                                    callbacks.Add(callbackArg);
                                     break;
                                 case InvocationExpressionSyntax invocation when
                                     invocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
                                     lambda.Parent is ArgumentSyntax argument &&
-                                    TryGetCallbackArgument(argument, out argument):
-                                    callbacks.Add(argument);
+                                    TryGetCallbackArgument(argument, out var callbackArg):
+                                    callbacks.Add(callbackArg);
                                     break;
                             }
                         }

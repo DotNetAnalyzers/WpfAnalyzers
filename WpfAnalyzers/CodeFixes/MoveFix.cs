@@ -25,9 +25,9 @@ namespace WpfAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax toMove) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? toMove) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
-                    syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax member))
+                    syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax? member))
                 {
                     context.RegisterCodeFix(
                         $"Move",

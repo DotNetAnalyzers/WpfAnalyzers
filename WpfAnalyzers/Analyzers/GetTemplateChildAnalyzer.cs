@@ -115,7 +115,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryFindTemplatePartType(AttributeData attribute, out INamedTypeSymbol type)
+        private static bool TryFindTemplatePartType(AttributeData attribute, [NotNullWhen(true)] out INamedTypeSymbol? type)
         {
             type = null;
             if (attribute.NamedArguments.TrySingle(x => x.Key == "Type", out var arg))

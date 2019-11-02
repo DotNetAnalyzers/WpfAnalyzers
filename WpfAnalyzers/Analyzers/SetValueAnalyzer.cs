@@ -30,7 +30,7 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 TryGetArgs(context, out var target, out var propertyArg, out var valueArg) &&
-                context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol symbol) &&
+                context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out ISymbol? symbol) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
             {
                 if (IsWrongType(fieldOrProperty, valueArg, context, out var registeredType))

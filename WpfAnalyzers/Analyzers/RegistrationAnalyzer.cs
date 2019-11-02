@@ -56,7 +56,7 @@ namespace WpfAnalyzers
                             {
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {
-                                    if (identifierName.TryFirstAncestor(out ArgumentSyntax argument) &&
+                                    if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
                                         argument != validateValueCallback &&
                                         MatchesValidateValueCallbackName(argument, target, context))
                                     {

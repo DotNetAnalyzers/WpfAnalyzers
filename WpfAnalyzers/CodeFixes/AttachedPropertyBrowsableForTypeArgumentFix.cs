@@ -25,9 +25,9 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax argument) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax? argument) &&
                     argument.TryFirstAncestor<MethodDeclarationSyntax>(out var methodDeclaration) &&
-                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                    methodDeclaration.ParameterList is { } parameterList &&
                     parameterList.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(

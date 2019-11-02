@@ -131,7 +131,7 @@ namespace WpfAnalyzers
                     {
                         if (semanticModel.TryGetNamedType(candidate, KnownSymbols.StyleTypedPropertyAttribute, cancellationToken, out _) &&
                             candidate.TryFindArgument(0, "Property", out var argument) &&
-                            semanticModel.TryGetConstantValue(argument.Expression, cancellationToken, out string text) &&
+                            semanticModel.TryGetConstantValue(argument.Expression, cancellationToken, out string? text) &&
                             text == registeredName)
                         {
                             return true;

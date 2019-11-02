@@ -30,8 +30,8 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
-                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax? methodDeclaration) &&
+                    methodDeclaration.ParameterList is { } parameterList &&
                    parameterList.Parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
