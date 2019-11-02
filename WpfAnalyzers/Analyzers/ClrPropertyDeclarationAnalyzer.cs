@@ -35,20 +35,33 @@ namespace WpfAnalyzers
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
-                if (setCall != null &&
-                    propertyDeclaration.TryGetSetter(out var setter) &&
-                    setter.Body != null &&
-                    setter.Body.Statements.TryFirst(x => !x.Contains(setCall), out var statement))
+                if (getCall is { } &&
+                    propertyDeclaration.TryGetGetter(out var getter) &&
+                    getter.Body is { Statements: { } getStatements } &&
+                    getStatements.TryFirst(x => !x.Contains(getCall), out var statement))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                 }
 
-                if (getCall != null &&
-                    propertyDeclaration.TryGetGetter(out var getter) &&
-                    getter.Body != null &&
-                    getter.Body.Statements.TryFirst(x => !x.Contains(getCall), out statement))
+                if (setCall is { })
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
+                    if (propertyDeclaration.TryGetSetter(out var setter) &&
+                        setter.Body is { Statements: { } setStatements } &&
+                        setStatements.TryFirst(x => !x.Contains(setCall), out var sideEffect))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
+                    }
+
+                    if (setCall.TryGetMethodName(out var setCallName) &&
+                        setCallName != "SetValue")
+                    {
+                        //// ReSharper disable once PossibleNullReferenceException
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
+                                setCall.GetLocation(),
+                                context.ContainingSymbol.Name));
+                    }
                 }
 
                 if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
@@ -62,17 +75,6 @@ namespace WpfAnalyzers
                         Diagnostic.Create(
                             Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
                             propertyDeclaration.GetLocation(),
-                            context.ContainingSymbol.Name));
-                }
-
-                if (setCall.TryGetMethodName(out var setCallName) &&
-                    setCallName != "SetValue")
-                {
-                    //// ReSharper disable once PossibleNullReferenceException
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
-                            setCall.GetLocation(),
                             context.ContainingSymbol.Name));
                 }
 

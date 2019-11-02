@@ -686,21 +686,13 @@ namespace WpfAnalyzers
         private static bool TryGetSenderType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? senderType)
         {
             senderType = null;
-            if (argument == null)
+            if (argument is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax register } } } metaDataCreation } } &&
+                PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                return false;
-            }
-
-            if (argument.Parent is ArgumentListSyntax argumentList &&
-                argumentList.Parent is ObjectCreationExpressionSyntax metaDataCreation &&
-                PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _) &&
-                metaDataCreation.Parent is ArgumentSyntax metaDataArgument &&
-                metaDataArgument.Parent?.Parent is InvocationExpressionSyntax registerInvocation)
-            {
-                if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
-                    DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
-                    DependencyProperty.TryGetAddOwnerCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _) ||
-                    DependencyProperty.TryGetOverrideMetadataCall(registerInvocation, context.SemanticModel, context.CancellationToken, out _))
+                if (DependencyProperty.TryGetRegisterCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.TryGetRegisterReadOnlyCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.TryGetAddOwnerCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.TryGetOverrideMetadataCall(register, context.SemanticModel, context.CancellationToken, out _))
                 {
                     senderType = containingType;
                     return true;
@@ -730,10 +722,9 @@ namespace WpfAnalyzers
                                    TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
                         }
 
-                    case InvocationExpressionSyntax invocation when
-                        invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
-                        (DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                         DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _)):
+                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when
+                        DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                        DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _):
                         {
                             return context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
                                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&

@@ -5,6 +5,7 @@ namespace WpfAnalyzers
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -25,34 +26,20 @@ namespace WpfAnalyzers
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+                                           .ConfigureAwait(false);
 
             var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
+                    invocation is { ArgumentList: { Arguments: { } arguments } } &&
+                    arguments.FirstOrDefault()?.Expression is { } dp &&
+                    semanticModel.TryGetSymbol(dp, context.CancellationToken, out var symbol) &&
+                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
+                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, context.CancellationToken, out var keyField))
                 {
-                    continue;
-                }
-
-                var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
-
-                if (invocation == null || invocation.IsMissing)
-                {
-                    continue;
-                }
-
-                if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
-                    BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out var fieldOrProperty))
-                {
-                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(
-                        fieldOrProperty,
-                        semanticModel,
-                        context.CancellationToken,
-                        out var keyField))
+                    if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
@@ -61,23 +48,13 @@ namespace WpfAnalyzers
                                     context.Document,
                                     invocation,
                                     null,
-                                    keyField.CreateArgument(semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, invocation.SpanStart),
                                     cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);
                     }
 
-                    continue;
-                }
-
-                if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _) &&
-                    BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, context.CancellationToken), out fieldOrProperty))
-                {
-                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(
-                        fieldOrProperty,
-                        semanticModel,
-                        context.CancellationToken,
-                        out var keyField))
+                    if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
@@ -86,7 +63,7 @@ namespace WpfAnalyzers
                                     context.Document,
                                     invocation,
                                     SetValueExpression(invocation.Expression),
-                                    keyField.CreateArgument(semanticModel, token.SpanStart),
+                                    keyField.CreateArgument(semanticModel, invocation.SpanStart),
                                     cancellationToken),
                                 this.GetType().FullName),
                             diagnostic);

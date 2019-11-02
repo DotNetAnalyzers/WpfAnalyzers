@@ -28,26 +28,14 @@ namespace WpfAnalyzers
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                         .FirstAncestorOrSelf<AttributeArgumentSyntax>();
-                var attribute = argument.FirstAncestor<AttributeSyntax>();
-                if (ValueConverter.TryGetConversionTypes(
-                    attribute.FirstAncestor<ClassDeclarationSyntax>(),
-                    semanticModel,
-                    context.CancellationToken,
-                    out var sourceType,
-                    out var targetType))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AttributeSyntax? attribute) &&
+                    attribute.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
+                    ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, context.CancellationToken, out var sourceType, out var targetType))
                 {
                     context.RegisterCodeFix(
-                        $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
+                        $"[ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         (e, _) => FixArgument(e, attribute, sourceType, targetType),
-                        $"Change to [ValueConversion(typeof({sourceType}), typeof({targetType}))].",
+                        $"[ValueConversion(typeof({sourceType}), typeof({targetType}))].",
                         diagnostic);
                 }
             }
