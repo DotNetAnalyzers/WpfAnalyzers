@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>library</OutputType>
     <TargetFramework>net472</TargetFramework>
-    <NoWarn>IDE0051,IDE0052,IDE0059,IDE0060,IDE0067,IDE0068,IDE0069</NoWarn>
+    <NoWarn>IDE0001,IDE0051,IDE0052,IDE0059,IDE0060,IDE0067,IDE0068,IDE0069</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

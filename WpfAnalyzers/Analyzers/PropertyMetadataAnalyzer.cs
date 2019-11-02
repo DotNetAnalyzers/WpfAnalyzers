@@ -145,18 +145,15 @@ namespace WpfAnalyzers
                                 registeredType));
                     }
 
-                    if (registeredType.IsReferenceType)
+                    if (registeredType.IsReferenceType &&
+                        registeredType != KnownSymbols.FontFamily)
                     {
-                        var defaultValue = defaultValueArg.Expression;
-                        if (defaultValue != null &&
-                            !defaultValue.IsKind(SyntaxKind.NullLiteralExpression) &&
-                            registeredType != KnownSymbols.FontFamily)
+                        if ((defaultValueArg is { Expression: ArrayCreationExpressionSyntax defaultArray } &&
+                             IsNonEmptyArrayCreation(defaultArray, context)) ||
+                            (defaultValueArg is { Expression: ObjectCreationExpressionSyntax defaultInstance } &&
+                             IsReferenceTypeCreation(defaultInstance, context)))
                         {
-                            if (IsNonEmptyArrayCreation(defaultValue as ArrayCreationExpressionSyntax, context) ||
-                                IsReferenceTypeCreation(defaultValue as ObjectCreationExpressionSyntax, context))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
-                            }
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
                         }
                     }
                 }
@@ -181,11 +178,6 @@ namespace WpfAnalyzers
 
         private static bool IsNonEmptyArrayCreation(ArrayCreationExpressionSyntax arrayCreation, SyntaxNodeAnalysisContext context)
         {
-            if (arrayCreation == null)
-            {
-                return false;
-            }
-
             foreach (var rank in arrayCreation.Type.RankSpecifiers)
             {
                 foreach (var size in rank.Sizes)
@@ -205,19 +197,8 @@ namespace WpfAnalyzers
 
         private static bool IsReferenceTypeCreation(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context)
         {
-            if (objectCreation == null)
-            {
-                return false;
-            }
-
-            var type = context.SemanticModel.GetTypeInfoSafe(objectCreation, context.CancellationToken)
-                              .Type;
-            if (type.IsValueType)
-            {
-                return false;
-            }
-
-            return true;
+            return context.SemanticModel.TryGetType(objectCreation, context.CancellationToken, out var type) &&
+                   !type.IsValueType;
         }
     }
 }
