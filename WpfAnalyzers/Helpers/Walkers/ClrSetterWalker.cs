@@ -7,7 +7,7 @@ namespace WpfAnalyzers
 
     internal class ClrSetterWalker : PooledWalker<ClrSetterWalker>
     {
-        private SemanticModel semanticModel;
+        private SemanticModel semanticModel = null!;
         private CancellationToken cancellationToken;
 
         private ClrSetterWalker()
@@ -18,13 +18,13 @@ namespace WpfAnalyzers
 
         internal bool HasError { get; private set; }
 
-        internal InvocationExpressionSyntax SetValue { get; private set; }
+        internal InvocationExpressionSyntax? SetValue { get; private set; }
 
-        internal InvocationExpressionSyntax SetCurrentValue { get; private set; }
+        internal InvocationExpressionSyntax? SetCurrentValue { get; private set; }
 
-        internal ArgumentListSyntax Arguments => this.SetValue?.ArgumentList ?? this.SetCurrentValue?.ArgumentList;
+        internal ArgumentListSyntax? Arguments => this.SetValue?.ArgumentList ?? this.SetCurrentValue?.ArgumentList;
 
-        internal ArgumentSyntax Property => this.Arguments?.Arguments[0];
+        internal ArgumentSyntax? Property => this.Arguments?.Arguments.FirstOrDefault();
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
@@ -80,11 +80,11 @@ namespace WpfAnalyzers
 
         protected override void Clear()
         {
-            this.semanticModel = null;
+            this.semanticModel = null!;
             this.cancellationToken = CancellationToken.None;
             this.HasError = false;
-            this.SetValue = null;
-            this.SetCurrentValue = null;
+            this.SetValue = null!;
+            this.SetCurrentValue = null!;
         }
     }
 }

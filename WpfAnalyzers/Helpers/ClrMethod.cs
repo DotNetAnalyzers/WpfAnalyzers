@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -61,7 +62,7 @@ namespace WpfAnalyzers
                    IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
         }
 
-        internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax setValueCall, out BackingFieldOrProperty setField)
+        internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? setValueCall, out BackingFieldOrProperty setField)
         {
             setValueCall = null;
             setField = default;
@@ -120,7 +121,7 @@ namespace WpfAnalyzers
             }
         }
 
-        internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax call, out BackingFieldOrProperty getField)
+        internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? call, out BackingFieldOrProperty getField)
         {
             call = null;
             getField = default;

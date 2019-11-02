@@ -7,7 +7,7 @@ namespace WpfAnalyzers
 
     internal class ClrGetterWalker : PooledWalker<ClrGetterWalker>
     {
-        private SemanticModel semanticModel;
+        private SemanticModel semanticModel = null!;
         private CancellationToken cancellationToken;
 
         private ClrGetterWalker()
@@ -18,9 +18,9 @@ namespace WpfAnalyzers
 
         internal bool HasError { get; private set; }
 
-        internal InvocationExpressionSyntax GetValue { get; private set; }
+        internal InvocationExpressionSyntax? GetValue { get; private set; }
 
-        internal ArgumentSyntax Property => this.GetValue?.ArgumentList.Arguments[0];
+        internal ArgumentSyntax? Property => this.GetValue?.ArgumentList?.Arguments.FirstOrDefault();
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
@@ -61,10 +61,10 @@ namespace WpfAnalyzers
 
         protected override void Clear()
         {
-            this.semanticModel = null;
+            this.semanticModel = null!;
             this.cancellationToken = CancellationToken.None;
             this.HasError = false;
-            this.GetValue = null;
+            this.GetValue = null!;
         }
     }
 }

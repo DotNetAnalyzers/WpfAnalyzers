@@ -29,7 +29,7 @@ namespace WpfAnalyzers
         internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return property.IsPotentialClrProperty(semanticModel.Compilation) &&
-                   property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
+                   property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
                    IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
         }
 
@@ -147,7 +147,7 @@ namespace WpfAnalyzers
             setField = default;
 
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
-                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
+                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
                 TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
             {
                 if (getField.ContainingType.IsGenericType)

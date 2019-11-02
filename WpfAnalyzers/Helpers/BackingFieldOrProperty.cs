@@ -56,12 +56,12 @@ namespace WpfAnalyzers
 
         internal static SyntaxToken FindIdentifier(MemberDeclarationSyntax member)
         {
-            if (member.TryFirstAncestorOrSelf(out PropertyDeclarationSyntax property))
+            if (member.TryFirstAncestorOrSelf(out PropertyDeclarationSyntax? property))
             {
                 return property.Identifier;
             }
 
-            if (member.TryFirstAncestorOrSelf(out FieldDeclarationSyntax field))
+            if (member.TryFirstAncestorOrSelf(out FieldDeclarationSyntax? field))
             {
                 if (field.Declaration.Variables.TrySingle(out var variable))
                 {

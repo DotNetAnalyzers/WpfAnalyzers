@@ -72,7 +72,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                        .AppendLine("        {")
                        .AppendLine($"            {analyzer.GetType().Name}Benchmark.Run();")
                        .AppendLine("        }");
-                if (!ReferenceEquals(analyzer, AllAnalyzers.Last()))
+                if (!ReferenceEquals(analyzer, AllAnalyzers[AllAnalyzers.Count - 1]))
                 {
                     builder.AppendLine();
                 }

@@ -31,7 +31,7 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax expression) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
                     diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name))
                 {
                     context.RegisterCodeFix(
