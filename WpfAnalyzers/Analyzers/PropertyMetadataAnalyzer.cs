@@ -165,8 +165,7 @@ namespace WpfAnalyzers
 
         private static bool MatchesPropertyChangedCallbackName(ArgumentSyntax propertyChangedCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
-            return propertyChangedCallback.Parent is ArgumentListSyntax argumentList &&
-                   argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
+            return propertyChangedCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
@@ -174,8 +173,7 @@ namespace WpfAnalyzers
 
         private static bool MatchesCoerceValueCallbackName(ArgumentSyntax coerceValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
-            return coerceValueCallback.Parent is ArgumentListSyntax argumentList &&
-                   argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
+            return coerceValueCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);

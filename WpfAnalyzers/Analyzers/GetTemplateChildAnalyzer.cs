@@ -28,7 +28,7 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 1, } arguments } } invocation &&
+                context.Node is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } invocation &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "GetTemplateChild" &&
                 arguments.TrySingle(out var argument) &&
