@@ -50,7 +50,7 @@ namespace WpfAnalyzers
                 name = "@" + name;
             }
 
-            if (!IsStaticContext(argument, editor.SemanticModel, cancellationToken) &&
+            if (!argument.IsInStaticContext() &&
                 editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
                 (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
                 !member.IsStatic &&
@@ -83,19 +83,6 @@ namespace WpfAnalyzers
                         throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        private static bool IsStaticContext(SyntaxNode context, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            var accessor = context.FirstAncestor<AccessorDeclarationSyntax>();
-            if (accessor != null)
-            {
-                return semanticModel.GetDeclaredSymbolSafe(accessor.FirstAncestor<PropertyDeclarationSyntax>(), cancellationToken)
-                                    ?.IsStatic != false;
-            }
-
-            var methodDeclaration = context.FirstAncestor<MethodDeclarationSyntax>();
-            return semanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken)?.IsStatic != false;
         }
     }
 }

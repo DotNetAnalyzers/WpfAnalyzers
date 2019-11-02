@@ -7,19 +7,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Version>2.4</Version>
+    <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
@@ -30,25 +31,20 @@
       BUGFIX: WPF0070 when list.
       BUGFIX: Infinite recursion when alias.
     </PackageReleaseNotes>
-    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gu.Analyzers" Version="1.6.3-dev">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Gu.Analyzers" Version="1.6.3-dev" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Extensions" Version="0.8.2-dev" />
-    <PackageReference Include="IDisposableAnalyzers" Version="2.1.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.3.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\Gu.Roslyn.Extensions.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 </Project>
