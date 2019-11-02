@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -51,7 +52,7 @@ namespace WpfAnalyzers
                                         callBackIdentifier,
                                         $"Validate{registeredName}"));
                             }
-                            else if (target.Name.StartsWith("Validate"))
+                            else if (target.Name.StartsWith("Validate", StringComparison.Ordinal))
                             {
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {

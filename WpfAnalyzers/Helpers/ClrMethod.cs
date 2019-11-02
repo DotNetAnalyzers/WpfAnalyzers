@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -16,7 +17,7 @@ namespace WpfAnalyzers
             return method != null &&
                    method.IsStatic &&
                    method.ReturnsVoid &&
-                   method.Name.StartsWith("Set") &&
+                   method.Name.StartsWith("Set", StringComparison.Ordinal) &&
                    method.Parameters.Length == 2 &&
                    method.Parameters.TryElementAt(0, out var parameter) &&
                    parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
@@ -47,7 +48,7 @@ namespace WpfAnalyzers
             return method != null &&
                    method.IsStatic &&
                    !method.ReturnsVoid &&
-                   method.Name.StartsWith("Get") &&
+                   method.Name.StartsWith("Get", StringComparison.Ordinal) &&
                    method.Parameters.TrySingle(out var parameter) &&
                    parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
         }

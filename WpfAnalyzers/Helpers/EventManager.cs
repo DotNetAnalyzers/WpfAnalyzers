@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -21,12 +22,12 @@ namespace WpfAnalyzers
         {
             if (handlerName == null ||
                 eventName == null ||
-                !eventName.EndsWith("Event"))
+                !eventName.EndsWith("Event", StringComparison.Ordinal))
             {
                 return false;
             }
 
-            if (!handlerName.StartsWith("On") ||
+            if (!handlerName.StartsWith("On", StringComparison.Ordinal) ||
                 handlerName.Length != eventName.Length - 3)
             {
                 return false;
@@ -45,7 +46,7 @@ namespace WpfAnalyzers
 
         internal static bool TryGetExpectedCallbackName(string eventName, out string expectedName)
         {
-            if (eventName.EndsWith("Event"))
+            if (eventName.EndsWith("Event", StringComparison.Ordinal))
             {
                 expectedName = "On" + eventName.Remove(eventName.Length - "Event".Length);
                 return true;

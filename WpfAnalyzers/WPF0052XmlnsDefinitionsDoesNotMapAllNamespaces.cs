@@ -116,7 +116,7 @@ namespace WpfAnalyzers
                 walker.cancellationToken = cancellationToken;
                 foreach (var tree in compilation.SyntaxTrees)
                 {
-                    if (tree.FilePath.EndsWith(".g.cs"))
+                    if (tree.FilePath.EndsWith(".g.cs", StringComparison.Ordinal))
                     {
                         continue;
                     }

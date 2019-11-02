@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Globalization;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -73,7 +74,7 @@ namespace WpfAnalyzers
         // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultField(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            return editor.AddField(containingType, ParseField(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)))
+            return editor.AddField(containingType, ParseField(string.Format(CultureInfo.InvariantCulture, DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText)))
                          .Seal(containingType);
         }
 
@@ -82,7 +83,7 @@ namespace WpfAnalyzers
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
-                                        .AppendLine(string.Format(DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
+                                        .AppendLine(string.Format(CultureInfo.InvariantCulture, DefaultFieldFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             return editor.AddField(containingType, ParseField(code))
                          .Seal(containingType);
@@ -91,7 +92,7 @@ namespace WpfAnalyzers
         // ReSharper disable once UnusedMethodReturnValue.Local
         private static DocumentEditor AddDefaultProperty(DocumentEditor editor, ClassDeclarationSyntax containingType)
         {
-            return editor.AddProperty(containingType, ParseProperty(string.Format(DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
+            return editor.AddProperty(containingType, ParseProperty(string.Format(CultureInfo.InvariantCulture, DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText)))
                          .Seal(containingType);
         }
 
@@ -100,7 +101,7 @@ namespace WpfAnalyzers
         {
             var code = StringBuilderPool.Borrow()
                                         .AppendLine(DefaultDocs)
-                                        .AppendLine(string.Format(DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
+                                        .AppendLine(string.Format(CultureInfo.InvariantCulture, DefaultPropertyFormat, Modifier(containingType), containingType.Identifier.ValueText))
                                         .Return();
             return editor.AddProperty(containingType, ParseProperty(code))
                          .Seal(containingType);

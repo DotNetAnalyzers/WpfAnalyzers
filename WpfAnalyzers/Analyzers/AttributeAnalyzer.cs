@@ -169,7 +169,7 @@ namespace WpfAnalyzers
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.TemplatePartAttribute, context.CancellationToken, out _) &&
                          attribute.TryFindArgument(0, "Name", out argument) &&
                          context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string partName) &&
-                         !partName.StartsWith("PART_"))
+                         !partName.StartsWith("PART_", StringComparison.Ordinal))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, argument.Expression.GetLocation(), argument));
                 }

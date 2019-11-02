@@ -1,5 +1,6 @@
 namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
 {
+    using System.Globalization;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -196,7 +197,7 @@ namespace N
             set => this.SetValue(ValueProperty, value);
         }
     }
-}".AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(lambda, "↓DataGrid"));
+}".AssertReplace("(d, e) => ((DataGrid)d).InvalidateArrange()", string.Format(CultureInfo.InvariantCulture, lambda, "↓DataGrid"));
 
             var after = @"
 namespace N
@@ -220,7 +221,7 @@ namespace N
             set => this.SetValue(ValueProperty, value);
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(lambda, "FooControl"));
+}".AssertReplace("(d, e) => ((FooControl)d).InvalidateArrange()", string.Format(CultureInfo.InvariantCulture, lambda, "FooControl", CultureInfo.InvariantCulture));
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }

@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -54,8 +55,8 @@ namespace WpfAnalyzers
                                             callbackIdentifier,
                                             $"On{registeredName}Changed"));
                                 }
-                                else if (target.Name.StartsWith("On") &&
-                                         target.Name.EndsWith("Changed"))
+                                else if (target.Name.StartsWith("On", StringComparison.Ordinal) &&
+                                         target.Name.EndsWith("Changed", StringComparison.Ordinal))
                                 {
                                     foreach (var identifierName in walker.IdentifierNames)
                                     {
@@ -101,7 +102,7 @@ namespace WpfAnalyzers
                                             callbackIdentifier,
                                             $"Coerce{registeredName}"));
                                 }
-                                else if (target.Name.StartsWith("Coerce"))
+                                else if (target.Name.StartsWith("Coerce", StringComparison.Ordinal))
                                 {
                                     foreach (var identifierName in walker.IdentifierNames)
                                     {
