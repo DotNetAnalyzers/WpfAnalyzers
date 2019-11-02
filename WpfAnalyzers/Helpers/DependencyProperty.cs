@@ -210,37 +210,35 @@ namespace WpfAnalyzers
             return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result, out symbol);
         }
 
-        internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, out IPropertySymbol property)
+        internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, [NotNullWhen(true)] out IPropertySymbol? property)
         {
-            property = null;
-            if (IsPotentialDependencyPropertyBackingField(fieldOrProperty) ||
-                IsPotentialDependencyPropertyKeyBackingField(fieldOrProperty))
+            if (Suffix() is { } suffix)
             {
-                var suffix = IsPotentialDependencyPropertyBackingField(fieldOrProperty)
-                                 ? "Property"
-                                 : "PropertyKey";
-
                 foreach (var symbol in fieldOrProperty.ContainingType.GetMembers())
                 {
-                    if (symbol is IPropertySymbol candidate)
+                    if (symbol is IPropertySymbol candidate &&
+                        fieldOrProperty.Name.IsParts(candidate.Name, suffix))
                     {
-                        if (!fieldOrProperty.Name.IsParts(candidate.Name, suffix))
-                        {
-                            continue;
-                        }
-
-                        if (property != null)
-                        {
-                            property = null;
-                            return false;
-                        }
-
                         property = candidate;
+                        return true;
                     }
                 }
             }
 
-            return property != null;
+            property = null;
+            return false;
+
+            string? Suffix()
+            {
+                if (IsPotentialDependencyPropertyBackingField(fieldOrProperty))
+                {
+                    return "Property";
+                }
+
+                return IsPotentialDependencyPropertyBackingField(fieldOrProperty)
+                    ? "PropertyKey"
+                    : null;
+            }
         }
     }
 }
