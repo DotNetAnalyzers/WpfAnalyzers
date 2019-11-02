@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -103,7 +104,7 @@ namespace WpfAnalyzers
             {
                 if (node.TryGetMethodName(out var name) &&
                     (name == "AddHandler" || name == "RemoveHandler") &&
-                    node.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor)
+                    node.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor)
                 {
                     if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))
                     {
@@ -162,7 +163,7 @@ namespace WpfAnalyzers
                 base.VisitPropertyDeclaration(node);
             }
 
-            internal static bool TryGetRegistration(TypeDeclarationSyntax typeDeclaration, string memberName, out InvocationExpressionSyntax registration)
+            internal static bool TryGetRegistration(TypeDeclarationSyntax typeDeclaration, string memberName, [NotNullWhen(true)] out InvocationExpressionSyntax? registration)
             {
                 registration = null;
                 if (typeDeclaration == null ||

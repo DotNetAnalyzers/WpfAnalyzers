@@ -100,22 +100,19 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (memberAccess.Expression is IdentifierNameSyntax callee)
+            if (memberAccess.Expression is IdentifierNameSyntax callee &&
+                semanticModel.TryGetSymbol(callee, cancellationToken, out var symbol))
             {
-                var symbol = semanticModel.GetSymbolSafe(callee, cancellationToken);
                 if (symbol.Kind != SymbolKind.Local)
                 {
                     return false;
                 }
 
-                if (!symbol.DeclaringSyntaxReferences.TrySingle(out var reference))
+                if (symbol.TrySingleDeclaration(cancellationToken, out VariableDeclaratorSyntax? declaration))
                 {
-                    return false;
+                    return declaration.Initializer is { } initializer &&
+                           initializer.Value is ObjectCreationExpressionSyntax;
                 }
-
-                return reference.GetSyntax(cancellationToken) is VariableDeclaratorSyntax variableDeclarator &&
-                       variableDeclarator.Initializer is EqualsValueClauseSyntax initializer &&
-                       initializer.Value is ObjectCreationExpressionSyntax;
             }
 
             return false;

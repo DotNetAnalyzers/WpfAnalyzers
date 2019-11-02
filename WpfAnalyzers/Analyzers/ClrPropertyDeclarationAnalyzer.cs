@@ -107,8 +107,8 @@ namespace WpfAnalyzers
 
         private class PropertyDeclarationWalker : PooledWalker<PropertyDeclarationWalker>
         {
-            private InvocationExpressionSyntax getCall;
-            private InvocationExpressionSyntax setCall;
+            private InvocationExpressionSyntax? getCall;
+            private InvocationExpressionSyntax? setCall;
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
@@ -129,7 +129,7 @@ namespace WpfAnalyzers
                 base.VisitInvocationExpression(node);
             }
 
-            internal static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax getCall, out InvocationExpressionSyntax setCall)
+            internal static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax? getCall, out InvocationExpressionSyntax? setCall)
             {
                 using (var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker()))
                 {

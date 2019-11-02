@@ -169,14 +169,14 @@ namespace WpfAnalyzers
             if (singleInvocation.Parent is ParenthesizedLambdaExpressionSyntax lambda &&
                 lambda.Parent is ArgumentSyntax lambdaArg &&
                 TryGetCallbackArgument(lambdaArg, out var callbackArgument) &&
-                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol lambdaMethod) &&
+                context.SemanticModel.TryGetSymbol(lambda, context.CancellationToken, out IMethodSymbol? lambdaMethod) &&
                 TryMatchPropertyChangedCallback(lambdaMethod, context, out var senderParameter, out var argParameter) &&
                 Try(out fieldOrProperty))
             {
                 return true;
             }
 
-            if (singleInvocation.TryFirstAncestor(out MethodDeclarationSyntax staticCallback) &&
+            if (singleInvocation.TryFirstAncestor(out MethodDeclarationSyntax? staticCallback) &&
                context.SemanticModel.TryGetSymbol(staticCallback, context.CancellationToken, out var staticMethod) &&
                staticMethod.IsStatic &&
                 TryGetStaticCallbackArgument(staticMethod, staticCallback, out callbackArgument) &&
@@ -198,7 +198,7 @@ namespace WpfAnalyzers
                         return true;
                     }
 
-                    if (context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out ILocalSymbol local) &&
+                    if (context.SemanticModel.TryGetSymbol(pathItem, context.CancellationToken, out ILocalSymbol? local) &&
                         local.TrySingleDeclaration(context.CancellationToken, out var declaration))
                     {
                         if (declaration is SingleVariableDesignationSyntax singleVariableDesignation &&
@@ -212,7 +212,7 @@ namespace WpfAnalyzers
                         using (var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name))
                         {
                             return walker.IdentifierNames.TrySingle(out var identifierName) &&
-                                   context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IParameterSymbol symbol) &&
+                                   context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IParameterSymbol? symbol) &&
                                    symbol.Name == senderParameter.Name;
                         }
                     }
@@ -612,7 +612,7 @@ namespace WpfAnalyzers
                     {
                         if (identifierName.Parent is MemberAccessExpressionSyntax memberAccess &&
                             memberAccess.Parent is InvocationExpressionSyntax candidate &&
-                            context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
+                            context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
                             Equals(symbol, method))
                         {
                             if (invocation != null)
@@ -640,7 +640,7 @@ namespace WpfAnalyzers
                 {
                     foreach (var identifierName in walker.IdentifierNames)
                     {
-                        if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol symbol) &&
+                        if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
                             Equals(symbol, method))
                         {
                             switch (identifierName.Parent)

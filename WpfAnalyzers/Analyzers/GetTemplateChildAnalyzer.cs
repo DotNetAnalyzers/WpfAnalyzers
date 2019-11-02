@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -30,9 +31,9 @@ namespace WpfAnalyzers
                 context.Node is InvocationExpressionSyntax invocation &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "GetTemplateChild" &&
-                invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                invocation.ArgumentList is { } argumentList &&
                 argumentList.Arguments.TrySingle(out var argument) &&
-                context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string partName) &&
+                context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string? partName) &&
                 context.ContainingSymbol is IMethodSymbol containingMethod &&
                 containingMethod.Name == "OnApplyTemplate" &&
                 containingMethod.IsOverride &&
@@ -85,7 +86,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryFindAttribute(INamedTypeSymbol type, string part, out AttributeData attribute)
+        private static bool TryFindAttribute(INamedTypeSymbol type, string part, [NotNullWhen(true)] out AttributeData? attribute)
         {
             attribute = null;
             if (type == null ||
@@ -125,7 +126,7 @@ namespace WpfAnalyzers
             return type != null;
         }
 
-        private static bool TryGetCastType(InvocationExpressionSyntax invocation, out ExpressionSyntax cast, out SyntaxNode type)
+        private static bool TryGetCastType(InvocationExpressionSyntax invocation, [NotNullWhen(true)] out ExpressionSyntax? cast, [NotNullWhen(true)] out SyntaxNode? type)
         {
             switch (invocation.Parent)
             {

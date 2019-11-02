@@ -745,7 +745,7 @@ namespace WpfAnalyzers
           string category,
           DiagnosticSeverity defaultSeverity,
           bool isEnabledByDefault,
-          string description ,
+          string description,
           params string[] customTags)
         {
             return new DiagnosticDescriptor(

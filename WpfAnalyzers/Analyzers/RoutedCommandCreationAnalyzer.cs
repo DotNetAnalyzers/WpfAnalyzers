@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -105,7 +106,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryGetBackingMember(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context, out FieldOrProperty fieldOrProperty, out MemberDeclarationSyntax memberDeclaration)
+        private static bool TryGetBackingMember(ObjectCreationExpressionSyntax objectCreation, SyntaxNodeAnalysisContext context, out FieldOrProperty fieldOrProperty, [NotNullWhen(true)] out MemberDeclarationSyntax? memberDeclaration)
         {
             fieldOrProperty = default;
             memberDeclaration = null;

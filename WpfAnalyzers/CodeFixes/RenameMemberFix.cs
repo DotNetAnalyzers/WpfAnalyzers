@@ -27,7 +27,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0100BackingFieldShouldMatchRegisteredName.Id,
             Descriptors.WPF0102EventDeclarationName.Id);
 
-        public override FixAllProvider GetFixAllProvider() => null;
+        public override FixAllProvider? GetFixAllProvider() => null;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)

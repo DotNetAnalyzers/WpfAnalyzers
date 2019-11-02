@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -142,7 +143,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, out DocumentationCommentTriviaSyntax comment)
+        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, [NotNullWhen(true)] out DocumentationCommentTriviaSyntax? comment)
         {
             return memberDeclaration.TryGetDocumentationComment(out comment) &&
                    comment.TryGetSummary(out var summary) &&
