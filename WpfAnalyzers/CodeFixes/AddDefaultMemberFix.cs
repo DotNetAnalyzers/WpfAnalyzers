@@ -34,37 +34,29 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var classDeclarationSyntax = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                         .FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclarationSyntax != null)
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Add default field.",
-                        (e, _) => AddDefaultField(e, classDeclarationSyntax),
+                        (e, _) => AddDefaultField(e, classDeclaration),
                         "Add default field.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default field with docs.",
-                        (e, _) => AddDefaultFieldWithDocs(e, classDeclarationSyntax),
+                        (e, _) => AddDefaultFieldWithDocs(e, classDeclaration),
                         "Add default field with docs.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default property.",
-                        (e, _) => AddDefaultProperty(e, classDeclarationSyntax),
+                        (e, _) => AddDefaultProperty(e, classDeclaration),
                         "Add default property.",
                         diagnostic);
 
                     context.RegisterCodeFix(
                         "Add default property with docs.",
-                        (e, _) => AddDefaultPropertyWithDocs(e, classDeclarationSyntax),
+                        (e, _) => AddDefaultPropertyWithDocs(e, classDeclaration),
                         "Add default property with docs.",
                         diagnostic);
                 }

@@ -7,7 +7,6 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorArgumentAttributeArgumentFix))]
     [Shared]
@@ -26,22 +25,18 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor<AttributeArgumentSyntax>(diagnostic, out var argument) &&
+                    argument is { Expression: { } expression } &&
                     diagnostic.Properties.TryGetValue(nameof(ConstructorArgument), out var parameterName))
                 {
                     context.RegisterCodeFix(
-                        $"Change to [ConstructorArgument(\"{parameterName})\"))].",
-                        (e, _) => FixArgument(e, argument, parameterName),
+                        $"[ConstructorArgument(\"{parameterName})\"))].",
+                        (e, _) => e.ReplaceNode(
+                            expression,
+                            x => e.Generator.LiteralExpression(parameterName).WithTriviaFrom(x)),
                         this.GetType(),
                         diagnostic);
                 }
             }
-        }
-
-        private static void FixArgument(DocumentEditor editor, AttributeArgumentSyntax argument, string parameterName)
-        {
-            editor.ReplaceNode(
-                argument.Expression,
-                (_, generator) => generator.LiteralExpression(parameterName));
         }
     }
 }

@@ -26,15 +26,14 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax? argument) &&
-                    argument.TryFirstAncestor<MethodDeclarationSyntax>(out var methodDeclaration) &&
-                    methodDeclaration.ParameterList is { } parameterList &&
-                    parameterList.Parameters.TrySingle(out var parameter))
+                    argument is { Expression: TypeOfExpressionSyntax { Type: { } type }, Parent: AttributeArgumentListSyntax { Parent: AttributeSyntax { Parent: AttributeListSyntax { Parent: MethodDeclarationSyntax { ParameterList: { Parameters: { Count: 1 } parameters } } } } } } &&
+                    parameters.TrySingle(out var parameter))
                 {
                     context.RegisterCodeFix(
                         $"Change type to {parameter.Type}.",
                         (editor, _) => editor.ReplaceNode(
-                            argument.Expression,
-                            editor.Generator.TypeOfExpression(parameter.Type)),
+                            type,
+                            x => parameter.Type.WithTriviaFrom(x)),
                         this.GetType(),
                         diagnostic);
                 }

@@ -34,7 +34,7 @@ namespace WpfAnalyzers
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
                     invocation is { ArgumentList: { Arguments: { } arguments } } &&
-                    arguments.FirstOrDefault()?.Expression is { } dp &&
+                    arguments.FirstOrDefault() is { Expression: { } dp } &&
                     semanticModel.TryGetSymbol(dp, context.CancellationToken, out var symbol) &&
                     BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
                     DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, context.CancellationToken, out var keyField))

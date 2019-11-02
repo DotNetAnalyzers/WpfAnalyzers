@@ -30,7 +30,9 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         $"Change type to {returnType}.",
-                        (e, _) => e.ReplaceNode(expression, SyntaxFactory.ParseExpression(returnType)),
+                        (e, _) => e.ReplaceNode(
+                            expression,
+                            x => SyntaxFactory.ParseExpression(returnType).WithTriviaFrom(x)),
                         this.GetType(),
                         diagnostic);
                 }

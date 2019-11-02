@@ -8,7 +8,6 @@ namespace WpfAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MoveFix))]
     [Shared]
@@ -30,46 +29,10 @@ namespace WpfAnalyzers
                     syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax? member))
                 {
                     context.RegisterCodeFix(
-                        $"Move",
-                        (e, _) => Move(e),
+                        "Move",
+                        (e, _) => e.MoveBefore(toMove, member),
                         nameof(MoveFix),
                         diagnostic);
-
-                    void Move(DocumentEditor editor)
-                    {
-                        editor.RemoveNode(toMove);
-                        editor.InsertBefore(member, ToMove());
-                        editor.ReplaceNode(member, Member());
-
-                        MemberDeclarationSyntax ToMove()
-                        {
-                            if (toMove.Parent is TypeDeclarationSyntax type)
-                            {
-                                if (type.Members.IndexOf(toMove) == 0)
-                                {
-                                    return toMove.WithLeadingLineFeed();
-                                }
-
-                                if (type.Members.IndexOf(member) == 0)
-                                {
-                                    return toMove.WithoutLeadingLineFeed();
-                                }
-                            }
-
-                            return member;
-                        }
-
-                        MemberDeclarationSyntax Member()
-                        {
-                            if (member.Parent is TypeDeclarationSyntax type &&
-                                type.Members.IndexOf(member) == 0)
-                            {
-                                return member.WithLeadingLineFeed();
-                            }
-
-                            return member;
-                        }
-                    }
                 }
             }
         }

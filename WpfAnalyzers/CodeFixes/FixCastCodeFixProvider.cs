@@ -33,7 +33,9 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         $"Change type to: {registeredType}.",
-                        (e, _) => e.ReplaceNode(typeSyntax, SyntaxFactory.ParseTypeName(registeredType)),
+                        (e, _) => e.ReplaceNode(
+                            typeSyntax,
+                            x => SyntaxFactory.ParseTypeName(registeredType).WithTriviaFrom(x)),
                         this.GetType().FullName,
                         diagnostic);
                 }

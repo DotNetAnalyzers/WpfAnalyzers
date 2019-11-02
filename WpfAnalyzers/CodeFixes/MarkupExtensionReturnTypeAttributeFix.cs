@@ -31,15 +31,7 @@ namespace WpfAnalyzers
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclaration != null &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration) &&
                     MarkupExtension.TryGetReturnType(classDeclaration, semanticModel, context.CancellationToken, out var returnType))
                 {
                     context.RegisterCodeFix(

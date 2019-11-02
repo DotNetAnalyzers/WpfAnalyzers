@@ -39,61 +39,52 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
                 {
-                    continue;
-                }
-
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclaration == null)
-                {
-                    continue;
-                }
-
-                if (HasInterface(classDeclaration, KnownSymbols.IValueConverter))
-                {
-                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
-                                  .Contains("does not implement interface member 'IValueConverter.Convert(object, Type, object, CultureInfo)'"))
+                    if (HasInterface(classDeclaration, KnownSymbols.IValueConverter))
                     {
-                        context.RegisterCodeFix(
-                            "Implement IValueConverter.Convert for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvert),
-                            "Implement IValueConverter",
-                            diagnostic);
+                        if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                      .Contains("does not implement interface member 'IValueConverter.Convert(object, Type, object, CultureInfo)'"))
+                        {
+                            context.RegisterCodeFix(
+                                "Implement IValueConverter.Convert for one way bindings.",
+                                (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvert),
+                                "Implement IValueConverter",
+                                diagnostic);
+                        }
+
+                        if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                      .Contains("does not implement interface member 'IValueConverter.ConvertBack(object, Type, object, CultureInfo)'"))
+                        {
+                            context.RegisterCodeFix(
+                                "Implement IValueConverter.ConvertBack for one way bindings.",
+                                (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
+                                "Implement IValueConverter",
+                                diagnostic);
+                        }
                     }
 
-                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
-                                  .Contains("does not implement interface member 'IValueConverter.ConvertBack(object, Type, object, CultureInfo)'"))
+                    if (HasInterface(classDeclaration, KnownSymbols.IMultiValueConverter))
                     {
-                        context.RegisterCodeFix(
-                            "Implement IValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
-                            "Implement IValueConverter",
-                            diagnostic);
-                    }
-                }
+                        if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                      .Contains("does not implement interface member 'IMultiValueConverter.Convert(object[], Type, object, CultureInfo)'"))
+                        {
+                            context.RegisterCodeFix(
+                                "Implement IMultiValueConverter.Convert for one way bindings.",
+                                (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvert),
+                                "Implement IMultiValueConverter",
+                                diagnostic);
+                        }
 
-                if (HasInterface(classDeclaration, KnownSymbols.IMultiValueConverter))
-                {
-                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
-                                  .Contains("does not implement interface member 'IMultiValueConverter.Convert(object[], Type, object, CultureInfo)'"))
-                    {
-                        context.RegisterCodeFix(
-                            "Implement IMultiValueConverter.Convert for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvert),
-                            "Implement IMultiValueConverter",
-                            diagnostic);
-                    }
-
-                    if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
-                                  .Contains("does not implement interface member 'IMultiValueConverter.ConvertBack(object, Type[], object, CultureInfo)'"))
-                    {
-                        context.RegisterCodeFix(
-                            "Implement IMultiValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
-                            "Implement IMultiValueConverter",
-                            diagnostic);
+                        if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
+                                      .Contains("does not implement interface member 'IMultiValueConverter.ConvertBack(object, Type[], object, CultureInfo)'"))
+                        {
+                            context.RegisterCodeFix(
+                                "Implement IMultiValueConverter.ConvertBack for one way bindings.",
+                                (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
+                                "Implement IMultiValueConverter",
+                                diagnostic);
+                        }
                     }
                 }
             }
@@ -108,17 +99,11 @@ namespace WpfAnalyzers
 
             foreach (var typeSyntax in classDeclaration.BaseList.Types)
             {
-                if (typeSyntax.Type is SimpleNameSyntax name &&
-                    name.Identifier.ValueText == type.Type)
+                switch (typeSyntax.Type)
                 {
-                    return true;
-                }
-
-                if (typeSyntax.Type is QualifiedNameSyntax qualifiedName &&
-                    qualifiedName.Right is { Identifier: { ValueText: { } valueText } } &&
-                    valueText == type.Type)
-                {
-                    return true;
+                    case SimpleNameSyntax name when name.Identifier.ValueText == type.Type:
+                    case QualifiedNameSyntax { Right: { Identifier: { } right } } when right.ValueText == type.Type:
+                        return true;
                 }
             }
 

@@ -33,20 +33,15 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         "Add ConstructorArgumentAttribute.",
-                        (e, _) => AddAttribute(e, propertyDeclaration, parameterName),
+                        (e, _) => e.AddAttribute(
+                            propertyDeclaration,
+                            e.Generator.AddAttributeArguments(
+                                Attribute,
+                                new[] { e.Generator.AttributeArgument(e.Generator.LiteralExpression(parameterName)) })),
                         "Add ConstructorArgumentAttribute.",
                         diagnostic);
                 }
             }
-        }
-
-        private static void AddAttribute(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, string parameterName)
-        {
-            editor.AddAttribute(
-                propertyDeclaration,
-                editor.Generator.AddAttributeArguments(
-                    Attribute,
-                    new[] { editor.Generator.AttributeArgument(editor.Generator.LiteralExpression(parameterName)) }));
         }
     }
 }

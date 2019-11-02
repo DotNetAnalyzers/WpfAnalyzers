@@ -67,10 +67,10 @@ namespace WpfAnalyzers
             }
 
             var attributeArguments = new[]
-                                     {
-                                         editor.Generator.AttributeArgument(TypeOf(sourceType)),
-                                         editor.Generator.AttributeArgument(TypeOf(targetType)),
-                                     };
+            {
+                editor.Generator.AttributeArgument(TypeOf(sourceType)),
+                editor.Generator.AttributeArgument(TypeOf(targetType)),
+            };
             editor.AddAttribute(
                 classDeclaration,
                 editor.Generator.AddAttributeArguments(

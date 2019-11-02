@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
@@ -38,7 +39,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryGetDocumentation(Diagnostic diagnostic, string name, out string summaryText)
+        private static bool TryGetDocumentation(Diagnostic diagnostic, string name, [NotNullWhen(true)] out string? summaryText)
         {
             if (diagnostic.Id == Descriptors.WPF0060DocumentDependencyPropertyBackingMember.Id)
             {

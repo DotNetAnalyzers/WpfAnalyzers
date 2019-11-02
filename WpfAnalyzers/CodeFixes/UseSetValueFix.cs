@@ -3,6 +3,7 @@ namespace WpfAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -28,24 +29,15 @@ namespace WpfAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation))
                 {
-                    continue;
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            "Use SetValue",
+                            _ => ApplyFixAsync(context.Document, syntaxRoot, invocation),
+                            this.GetType().FullName),
+                        diagnostic);
                 }
-
-                var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                if (invocation == null || invocation.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "Use SetValue",
-                        _ => ApplyFixAsync(context.Document, syntaxRoot, invocation),
-                        this.GetType().FullName),
-                    diagnostic);
             }
         }
 
