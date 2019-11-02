@@ -23,39 +23,9 @@ namespace WpfAnalyzers
 
         internal static bool IsAttachedSet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty setField)
         {
-            setField = default;
-            if (!IsPotentialClrSetMethod(method, semanticModel.Compilation))
-            {
-                return false;
-            }
-
-            if (method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? methodDeclaration))
-            {
-                return IsAttachedSet(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if <paramref name="method"/> is a potential accessor for an attached property.
-        /// </summary>
-        internal static bool IsPotentialClrGetMethod(IMethodSymbol method, Compilation compilation)
-        {
-            return method != null &&
-                   method.IsStatic &&
-                   !method.ReturnsVoid &&
-                   method.Name.StartsWith("Get", StringComparison.Ordinal) &&
-                   method.Parameters.TrySingle(out var parameter) &&
-                   parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
-        }
-
-        internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
-        {
-            getField = default;
-            return IsPotentialClrGetMethod(method, semanticModel.Compilation) &&
-                   method.TrySingleMethodDeclaration(cancellationToken, out var declaration) &&
-                   IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
+            return IsPotentialClrSetMethod(method, semanticModel.Compilation) &&
+                   method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? methodDeclaration) &&
+                   IsAttachedSet(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
         }
 
         internal static bool IsAttachedSet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? setValueCall, out BackingFieldOrProperty setField)
@@ -118,6 +88,25 @@ namespace WpfAnalyzers
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Check if <paramref name="method"/> is a potential accessor for an attached property.
+        /// </summary>
+        internal static bool IsPotentialClrGetMethod(IMethodSymbol method, Compilation compilation)
+        {
+            return method is { IsStatic: true, ReturnsVoid: false, Parameters: { Length: 1 } } &&
+                   method.Name.StartsWith("Get", StringComparison.Ordinal) &&
+                   method.Parameters.TrySingle(out var parameter) &&
+                   parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
+        }
+
+        internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
+        {
+            getField = default;
+            return IsPotentialClrGetMethod(method, semanticModel.Compilation) &&
+                   method.TrySingleMethodDeclaration(cancellationToken, out var declaration) &&
+                   IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
         }
 
         internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? call, out BackingFieldOrProperty getField)

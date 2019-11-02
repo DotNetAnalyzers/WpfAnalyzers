@@ -54,7 +54,7 @@ namespace WpfAnalyzers
                         diagnostic);
                 }
 
-                bool TryGetName(InvocationExpressionSyntax invocation, out SimpleNameSyntax result)
+                static bool TryGetName(InvocationExpressionSyntax invocation, out SimpleNameSyntax result)
                 {
                     switch (invocation.Expression)
                     {
@@ -73,7 +73,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                bool TryCreatePath(AssignmentExpressionSyntax assignment, out string result)
+                static bool TryCreatePath(AssignmentExpressionSyntax assignment, out string result)
                 {
                     switch (assignment.Left)
                     {

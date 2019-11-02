@@ -225,7 +225,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            static bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
             {
                 if (comment.TryGetSummary(out var summary))
                 {
@@ -243,7 +243,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, out Location errorLocation)
+            static bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, out Location errorLocation)
             {
                 if (comment.TryGetParam(current.Identifier.ValueText, out var param))
                 {
@@ -261,7 +261,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            bool HasReturns(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            static bool HasReturns(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
             {
                 if (comment.TryGetReturns(out var returns))
                 {
