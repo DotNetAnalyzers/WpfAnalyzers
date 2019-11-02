@@ -59,7 +59,7 @@ namespace WpfAnalyzers
 
                     if (constructor.TryFindParameter("resourceId", out parameter) &&
                         objectCreation.TryFindArgument(parameter, out arg) &&
-                        context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string name) &&
+                        context.SemanticModel.TryGetConstantValue(arg.Expression, context.CancellationToken, out string? name) &&
                         name != fieldOrProperty.Name)
                     {
                         var keyText = $"nameof({fieldOrProperty.Name})";

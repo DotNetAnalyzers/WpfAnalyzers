@@ -32,9 +32,8 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            if (method.DeclaringSyntaxReferences.TrySingle(out var reference))
+            if (method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? methodDeclaration))
             {
-                var methodDeclaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
                 return IsAttachedSet(methodDeclaration, semanticModel, cancellationToken, out _, out setField);
             }
 
@@ -155,7 +154,9 @@ namespace WpfAnalyzers
                     return false;
                 }
 
-                return BackingFieldOrProperty.TryCreateForDependencyProperty(semanticModel.GetSymbolSafe(walker.Property.Expression, cancellationToken), out getField);
+                return walker.Property?.Expression is { } expression &&
+                       semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                       BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
             }
         }
     }

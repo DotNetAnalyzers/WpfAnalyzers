@@ -19,7 +19,7 @@ namespace WpfAnalyzers
             Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext.Id,
             Descriptors.WPF0035ClrPropertyUseSetValueInSetter.Id);
 
-        public override FixAllProvider GetFixAllProvider() => null;
+        public override FixAllProvider? GetFixAllProvider() => null;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {

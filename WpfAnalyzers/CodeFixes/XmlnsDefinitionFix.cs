@@ -19,7 +19,7 @@ namespace WpfAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.Id);
 
-        public override FixAllProvider GetFixAllProvider() => null;
+        public override FixAllProvider? GetFixAllProvider() => null;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -60,7 +60,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static AttributeListSyntax CreateAttribute(string @namespace, AttributeSyntax attribute)
+        private static AttributeListSyntax? CreateAttribute(string @namespace, AttributeSyntax attribute)
         {
             var list = attribute.FirstAncestorOrSelf<AttributeListSyntax>();
             if (list?.Attributes.Count != 1)
@@ -68,7 +68,7 @@ namespace WpfAnalyzers
                 return null;
             }
 
-            if (!attribute.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax oldArgument))
+            if (!attribute.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax? oldArgument))
             {
                 return null;
             }

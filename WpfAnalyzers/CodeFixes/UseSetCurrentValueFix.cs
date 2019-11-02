@@ -18,7 +18,7 @@ namespace WpfAnalyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0041SetMutableUsingSetCurrentValue.Id);
 
-        protected override DocumentEditorFixAllProvider FixAllProvider() => null;
+        protected override DocumentEditorFixAllProvider? FixAllProvider() => null;
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -29,7 +29,7 @@ namespace WpfAnalyzers
                                        .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax setValue) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
                     TryGetName(setValue, out var identifierName))
                 {
                     context.RegisterCodeFix(
@@ -40,7 +40,7 @@ namespace WpfAnalyzers
                         nameof(UseSetCurrentValueFix),
                         diagnostic);
                 }
-                else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax assignment) &&
+                else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
                          TryCreatePath(assignment, out var path) &&
                          diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))
                 {

@@ -169,7 +169,7 @@ namespace WpfAnalyzers
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.TemplatePartAttribute, context.CancellationToken, out _) &&
                          attribute.TryFindArgument(0, "Name", out argument) &&
-                         context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string? partName) &&
+                         context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string partName) &&
                          !partName.StartsWith("PART_", StringComparison.Ordinal))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, argument.Expression.GetLocation(), argument));
@@ -322,7 +322,7 @@ namespace WpfAnalyzers
             type = null;
             return candidate.TryFindArgument(index, name, out var argument) &&
                    TryFindExpression(out expression) &&
-                   context.SemanticModel.TryGetType(expression, context.CancellationToken, out type);
+                   context.SemanticModel.TryGetType(expression!, context.CancellationToken, out type);
 
             bool TryFindExpression(out ExpressionSyntax? result)
             {
@@ -338,7 +338,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryFindNamespaceRecursive(SyntaxNodeAnalysisContext context, string name, out INamespaceSymbol result)
+        private static bool TryFindNamespaceRecursive(SyntaxNodeAnalysisContext context, string name, [NotNullWhen(true)] out INamespaceSymbol? result)
         {
             foreach (var ns in context.Compilation.GlobalNamespace.GetNamespaceMembers())
             {
@@ -367,7 +367,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                match = null;
+                match = null!;
                 return false;
             }
         }

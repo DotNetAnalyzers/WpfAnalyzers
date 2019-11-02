@@ -5,7 +5,7 @@ namespace WpfAnalyzers
 
     internal static class SyntaxNodeAnalysisContextExt
     {
-        internal static IPropertySymbol ContainingProperty(this SyntaxNodeAnalysisContext context)
+        internal static IPropertySymbol? ContainingProperty(this SyntaxNodeAnalysisContext context)
         {
             var containingSymbol = context.ContainingSymbol;
             if (containingSymbol is IPropertySymbol propertySymbol)
