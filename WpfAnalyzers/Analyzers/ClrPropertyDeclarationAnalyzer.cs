@@ -114,7 +114,7 @@ namespace WpfAnalyzers
             {
                 if (node.TryGetMethodName(out var name) &&
                     (name == "SetValue" || name == "SetCurrentValue" || name == "GetValue") &&
-                    node.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor)
+                    node.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor)
                 {
                     if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
                     {

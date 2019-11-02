@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -40,12 +41,12 @@ namespace WpfAnalyzers
             return TryGetCallback(objectCreation, KnownSymbols.CoerceValueCallback, semanticModel, cancellationToken, out callback);
         }
 
-        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string registeredName)
+        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg, out string registeredName)
         {
             nameArg = null;
             registeredName = null;
             return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
-                   objectCreation.TryFirstAncestor(out InvocationExpressionSyntax invocation) &&
+                   objectCreation.TryFirstAncestor(out InvocationExpressionSyntax? invocation) &&
                    DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken, out nameArg, out registeredName);
         }
 
@@ -81,7 +82,7 @@ namespace WpfAnalyzers
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
-                semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol candidate))
+                semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol? candidate))
             {
                 return BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out fieldOrProperty);
             }
@@ -89,7 +90,7 @@ namespace WpfAnalyzers
             return false;
         }
 
-        internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<SyntaxNode> visited = null)
+        internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<SyntaxNode>? visited = null)
         {
             switch (value)
             {
