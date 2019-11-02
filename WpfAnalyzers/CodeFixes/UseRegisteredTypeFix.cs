@@ -24,7 +24,7 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(nameof(TypeSyntax), out var typeText) &&
-                    syntaxRoot.TryFindNode(diagnostic, out TypeSyntax typeSyntax) &&
+                    syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax) &&
                     typeSyntax.Parent is PropertyDeclarationSyntax property &&
                     property.TryGetGetter(out var getter))
                 {

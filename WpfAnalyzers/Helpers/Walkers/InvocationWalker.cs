@@ -23,7 +23,7 @@ namespace WpfAnalyzers
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             if (node.Identifier.ValueText == this.method.MetadataName &&
-                this.semanticModel.TryGetSymbol(node, this.cancellationToken, out IMethodSymbol candidate) &&
+                this.semanticModel.TryGetSymbol(node, this.cancellationToken, out IMethodSymbol? candidate) &&
                 candidate.Equals(this.method))
             {
                 this.identifierNames.Add(node);

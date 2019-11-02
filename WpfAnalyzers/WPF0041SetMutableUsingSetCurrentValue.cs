@@ -29,7 +29,7 @@ namespace WpfAnalyzers
                 context.Node is AssignmentExpressionSyntax assignment &&
                 !IsInObjectInitializer(assignment) &&
                 !IsInConstructor(assignment) &&
-                context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out IPropertySymbol property) &&
+                context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out IPropertySymbol? property) &&
                 property != KnownSymbols.FrameworkElement.DataContext &&
                 ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
                 !IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
@@ -52,8 +52,7 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 !IsInConstructor(invocation) &&
-                invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                argumentList.Arguments.Count == 2 &&
+                invocation.ArgumentList is { Arguments: { Count: 2 } } argumentList &&
                 argumentList.Arguments.TryElementAt(0, out var propertyArg) &&
                 DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var backingFieldOrProperty) &&

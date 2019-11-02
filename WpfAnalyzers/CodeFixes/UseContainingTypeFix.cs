@@ -32,8 +32,8 @@ namespace WpfAnalyzers
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out TypeOfExpressionSyntax typeofExpression) &&
-                    typeofExpression.TryFirstAncestor(out TypeDeclarationSyntax typeDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out TypeOfExpressionSyntax? typeofExpression) &&
+                    typeofExpression.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration) &&
                     semanticModel.TryGetSymbol(typeDeclaration, context.CancellationToken, out var containingType))
                 {
                     var containingTypeName = containingType.ToMinimalDisplayString(semanticModel, typeofExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);

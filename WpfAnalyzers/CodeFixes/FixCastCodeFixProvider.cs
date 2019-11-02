@@ -28,7 +28,7 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out TypeSyntax typeSyntax) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax) &&
                     diagnostic.Properties.TryGetValue("ExpectedType", out var registeredType))
                 {
                     context.RegisterCodeFix(

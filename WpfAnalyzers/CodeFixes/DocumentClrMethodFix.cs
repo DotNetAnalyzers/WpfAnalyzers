@@ -27,7 +27,7 @@ namespace WpfAnalyzers
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax? methodDeclaration) &&
                     semanticModel.TryGetSymbol(methodDeclaration, context.CancellationToken, out var method))
                 {
                     if (ClrMethod.IsAttachedGet(method, semanticModel, context.CancellationToken, out var fieldOrProperty) &&

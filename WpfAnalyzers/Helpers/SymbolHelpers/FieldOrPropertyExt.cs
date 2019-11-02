@@ -17,7 +17,7 @@ namespace WpfAnalyzers
 
             if (fieldOrProperty.Symbol is IPropertySymbol property)
             {
-                if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax declaration))
+                if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? declaration))
                 {
                     if (declaration.Initializer != null)
                     {

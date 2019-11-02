@@ -27,7 +27,7 @@ namespace WpfAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax propertyDeclaration))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Make static readonly",

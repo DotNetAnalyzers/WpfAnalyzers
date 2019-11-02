@@ -26,7 +26,7 @@ namespace WpfAnalyzers
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument))
                 {
                     switch (argument.Expression)
                     {
@@ -53,7 +53,7 @@ namespace WpfAnalyzers
 
         private static void ConvertToLambda(DocumentEditor editor, IdentifierNameSyntax identifier, CancellationToken cancellationToken)
         {
-            if (editor.SemanticModel.TryGetSymbol(identifier, cancellationToken, out IMethodSymbol method) &&
+            if (editor.SemanticModel.TryGetSymbol(identifier, cancellationToken, out IMethodSymbol? method) &&
                 method.TrySingleMethodDeclaration(cancellationToken, out var declaration))
             {
                 ConvertToLambda(editor, identifier, method, declaration, cancellationToken);
@@ -62,7 +62,7 @@ namespace WpfAnalyzers
 
         private static void ConvertToLambda(DocumentEditor editor, LambdaExpressionSyntax lambda, CancellationToken cancellationToken)
         {
-            if (editor.SemanticModel.TryGetSymbol(lambda.Body, cancellationToken, out IMethodSymbol method) &&
+            if (editor.SemanticModel.TryGetSymbol(lambda.Body, cancellationToken, out IMethodSymbol? method) &&
                 method.TrySingleMethodDeclaration(cancellationToken, out var declaration))
             {
                 ConvertToLambda(editor, lambda, method, declaration, cancellationToken);
@@ -73,7 +73,7 @@ namespace WpfAnalyzers
         {
             if (method.Parameters.TrySingle(out var parameter))
             {
-                if (declaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                if (declaration.ExpressionBody is { } expressionBody)
                 {
                     editor.ReplaceNode(
                         toReplace,

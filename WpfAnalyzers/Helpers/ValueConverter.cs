@@ -88,7 +88,7 @@ namespace WpfAnalyzers
                     case MemberAccessExpressionSyntax _:
                         var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
                         if (type == KnownSymbols.Object &&
-                            semanticModel.GetSymbolSafe(returnValue, cancellationToken) is ISymbol symbol &&
+                            semanticModel.GetSymbolSafe(returnValue, cancellationToken) is { } symbol &&
                             symbol.IsEither<IFieldSymbol, IPropertySymbol>())
                         {
                             switch (symbol)
@@ -96,7 +96,7 @@ namespace WpfAnalyzers
                                 case IFieldSymbol field:
                                     if (field.Type == KnownSymbols.Object &&
                                         field.DeclaredAccessibility == Accessibility.Private &&
-                                        returnValue.FirstAncestor<TypeDeclarationSyntax>() is TypeDeclarationSyntax typeDeclaration)
+                                        returnValue.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
                                     {
                                         using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, SearchScope.Instance, semanticModel, cancellationToken))
                                         {

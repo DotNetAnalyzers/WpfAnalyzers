@@ -29,7 +29,7 @@ namespace WpfAnalyzers
                 context.Node is InvocationExpressionSyntax invocation &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol candidate) &&
+                context.SemanticModel.TryGetSymbol(memberAccess.Expression, context.CancellationToken, out ISymbol? candidate) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
                 method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))

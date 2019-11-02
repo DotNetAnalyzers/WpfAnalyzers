@@ -24,7 +24,7 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax methodDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax? methodDeclaration) &&
                     diagnostic.Properties.TryGetValue(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), out var text) &&
                     text != null)
                 {

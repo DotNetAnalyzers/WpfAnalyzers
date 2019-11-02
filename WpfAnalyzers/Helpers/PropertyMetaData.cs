@@ -122,9 +122,9 @@ namespace WpfAnalyzers
                 {
                     if (field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration))
                     {
-                        if (fieldDeclaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
+                        if (fieldDeclaration.Declaration is { } variableDeclaration &&
                             variableDeclaration.Variables.TryLast(out var variable) &&
-                            variable.Initializer is EqualsValueClauseSyntax initializer &&
+                            variable.Initializer is { } initializer &&
                             !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
                         {
                             return false;
@@ -138,16 +138,16 @@ namespace WpfAnalyzers
 
                 if (symbol is IPropertySymbol property)
                 {
-                    if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
+                    if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration))
                     {
-                        if (propertyDeclaration.Initializer is EqualsValueClauseSyntax initializer &&
+                        if (propertyDeclaration.Initializer is { } initializer &&
                             !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
                         {
                             return false;
                         }
 
                         if (property.SetMethod == null &&
-                            property.GetMethod is IMethodSymbol getMethod)
+                            property.GetMethod is { } getMethod)
                         {
                             return IsReturnValueOfRegisteredType(getMethod);
                         }
@@ -168,7 +168,7 @@ namespace WpfAnalyzers
 
             bool IsAssignedValueOfRegisteredType(ISymbol memberSymbol, MemberDeclarationSyntax declaration)
             {
-                if (declaration.TryFirstAncestor(out TypeDeclarationSyntax typeDeclaration))
+                if (declaration.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
                 {
                     using (var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, semanticModel, cancellationToken))
                     {

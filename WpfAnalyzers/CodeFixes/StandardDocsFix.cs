@@ -25,7 +25,7 @@ namespace WpfAnalyzers
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax member) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member) &&
                     diagnostic.Properties.TryGetValue(nameof(CrefParameterSyntax), out var name) &&
                     TryGetDocumentation(diagnostic, name, out var summary))
                 {
