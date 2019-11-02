@@ -32,7 +32,7 @@ namespace WpfAnalyzers
                 objectCreation.TrySingleArgument(out var callbackArg) &&
                 callbackArg.Expression is IdentifierNameSyntax &&
                 objectCreation.Parent is ArgumentSyntax handlerArgument &&
-                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax invocation)
+                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
             {
                 if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(1, out var eventArgument))

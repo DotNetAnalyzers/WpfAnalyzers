@@ -176,15 +176,11 @@ namespace WpfAnalyzers
                 {
                     walker.memberName = memberName;
                     walker.Visit(typeDeclaration);
-                    if (walker.backingField is VariableDeclaratorSyntax variableDeclarator &&
-                        variableDeclarator.Initializer is EqualsValueClauseSyntax fieldInitializer &&
-                        fieldInitializer.Value is InvocationExpressionSyntax fieldRegistration)
+                    if (walker.backingField is { Initializer: { Value: InvocationExpressionSyntax fieldRegistration } })
                     {
                         registration = fieldRegistration;
                     }
-                    else if (walker.backingProperty is PropertyDeclarationSyntax propertyDeclaration &&
-                             propertyDeclaration.Initializer is EqualsValueClauseSyntax propertyInitializer &&
-                             propertyInitializer.Value is InvocationExpressionSyntax propertyRegistration)
+                    else if (walker.backingProperty is { Initializer: { Value: InvocationExpressionSyntax propertyRegistration } })
                     {
                         registration = propertyRegistration;
                     }
@@ -193,8 +189,7 @@ namespace WpfAnalyzers
                         return false;
                     }
 
-                    return registration?.ArgumentList != null &&
-                           registration.ArgumentList.Arguments.Count == 4 &&
+                    return registration is { ArgumentList: { Arguments: { Count: 4 } } } &&
                            registration.TryGetMethodName(out var name) &&
                            name == "RegisterRoutedEvent";
                 }

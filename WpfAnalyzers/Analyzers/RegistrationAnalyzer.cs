@@ -80,7 +80,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (nameArg.Expression is ExpressionSyntax nameExpression &&
+                if (nameArg.Expression is { } nameExpression &&
                     nameExpression.IsNameof() == false &&
                     context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out var property))
                 {

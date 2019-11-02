@@ -101,7 +101,7 @@ namespace WpfAnalyzers
                 {
                     if (node.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
-                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string @namespace))
+                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string? @namespace))
                         {
                             this.mappedNamespaces.Add(@namespace);
                         }
@@ -138,7 +138,7 @@ namespace WpfAnalyzers
                 this.cancellationToken = CancellationToken.None;
             }
 
-            private class NameSyntaxComparer : IEqualityComparer<NameSyntax>
+            private sealed class NameSyntaxComparer : IEqualityComparer<NameSyntax>
             {
                 internal static readonly NameSyntaxComparer Default = new NameSyntaxComparer();
 

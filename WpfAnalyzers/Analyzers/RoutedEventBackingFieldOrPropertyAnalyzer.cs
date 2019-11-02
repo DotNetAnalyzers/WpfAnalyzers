@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -121,7 +122,7 @@ namespace WpfAnalyzers
             return node.GetFirstToken();
         }
 
-        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, out DocumentationCommentTriviaSyntax comment)
+        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, [NotNullWhen(true)] out DocumentationCommentTriviaSyntax? comment)
         {
             return memberDeclaration.TryGetDocumentationComment(out comment) &&
                    comment.TryGetSummary(out var summary) &&

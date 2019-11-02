@@ -126,9 +126,9 @@ namespace WpfAnalyzers
                 return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
             }
 
-            bool TryGetCommonBase(ITypeSymbol t1, TypeSyntax ts, out ITypeSymbol result)
+            bool TryGetCommonBase(ITypeSymbol? t1, TypeSyntax? ts, out ITypeSymbol result)
             {
-                result = null;
+                result = null!;
                 if (ts == null)
                 {
                     return false;

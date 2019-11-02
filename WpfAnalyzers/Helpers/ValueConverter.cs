@@ -58,12 +58,8 @@ namespace WpfAnalyzers
                         }
 
                         return returnTypes.TrySingle(out targetType) &&
-                               ConversionWalker.TryGetCommonBase(
-                                   convertMethod,
-                                   semanticModel.GetDeclaredSymbolSafe(valueParameter, cancellationToken),
-                                   semanticModel,
-                                   cancellationToken,
-                                   out sourceType);
+                               semanticModel.TryGetSymbol(valueParameter, cancellationToken, out var symbol) &&
+                               ConversionWalker.TryGetCommonBase(convertMethod, symbol, semanticModel, cancellationToken, out sourceType);
                     }
                 }
             }
@@ -102,7 +98,7 @@ namespace WpfAnalyzers
                                         {
                                             foreach (var assignment in walker.Assignments)
                                             {
-                                                if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol assigned) &&
+                                                if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol? assigned) &&
                                                     FieldSymbolComparer.Equals(assigned, field))
                                                 {
                                                     returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);

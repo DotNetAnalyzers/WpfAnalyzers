@@ -115,8 +115,8 @@ namespace WpfAnalyzers
                 }
 
                 if (typeSyntax.Type is QualifiedNameSyntax qualifiedName &&
-                    qualifiedName.Right is SimpleNameSyntax simpleName &&
-                    simpleName.Identifier.ValueText == type.Type)
+                    qualifiedName.Right is { Identifier: { ValueText: { } valueText } } &&
+                    valueText == type.Type)
                 {
                     return true;
                 }

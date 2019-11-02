@@ -224,7 +224,7 @@ namespace WpfAnalyzers
 
             bool ArgsUsesParameter()
             {
-                if (singleInvocation.ArgumentList is ArgumentListSyntax argumentList)
+                if (singleInvocation.ArgumentList is { } argumentList)
                 {
                     foreach (var argument in argumentList.Arguments)
                     {
@@ -288,7 +288,7 @@ namespace WpfAnalyzers
                     }
 
                     if (parent is CastExpressionSyntax castExpression &&
-                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is ITypeSymbol castType &&
+                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is { } castType &&
                         !Equals(castType, expectedType))
                     {
                         var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
@@ -385,12 +385,12 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, out Location location, out string expectedText)
+        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, out string? expectedText)
         {
             expectedText = null;
             location = null;
             var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
-            if (methodDeclaration.ParameterList is ParameterListSyntax parameterList)
+            if (methodDeclaration.ParameterList is { } parameterList)
             {
                 if (HasDocComment(out var comment, out location) &&
                     HasSummary(comment, standardSummaryText, out location))
@@ -582,24 +582,24 @@ namespace WpfAnalyzers
 
                 return false;
             }
+        }
 
-            bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, out Location errorLocation)
+        private static bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, [NotNullWhen(true)] out Location? errorLocation)
+        {
+            if (comment.TryGetParam(current.Identifier.ValueText, out var param))
             {
-                if (comment.TryGetParam(current.Identifier.ValueText, out var param))
+                if (param.ToString() == expected)
                 {
-                    if (param.ToString() == expected)
-                    {
-                        errorLocation = null;
-                        return true;
-                    }
-
-                    errorLocation = param.GetLocation();
-                    return false;
+                    errorLocation = null;
+                    return true;
                 }
 
-                errorLocation = comment.GetLocation();
+                errorLocation = param.GetLocation();
                 return false;
             }
+
+            errorLocation = comment.GetLocation();
+            return false;
         }
 
         private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
@@ -717,8 +717,8 @@ namespace WpfAnalyzers
             {
                 switch (argumentList.Parent)
                 {
-                    case ObjectCreationExpressionSyntax objectCreation:
-                        return TryGetValueType(objectCreation.Parent as ArgumentSyntax, containingType, context, out type);
+                    case ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArgument }:
+                        return TryGetValueType(parentArgument, containingType, context, out type);
                     case InvocationExpressionSyntax invocation when
                         DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                         DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
@@ -731,11 +731,12 @@ namespace WpfAnalyzers
                         }
 
                     case InvocationExpressionSyntax invocation when
-                        invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
                         (DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                          DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _)):
                         {
-                            return BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(memberAccess.Expression, context.CancellationToken), out var fieldOrProperty) &&
+                            return context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
+                                   BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
                                    DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out type);
                         }
                 }

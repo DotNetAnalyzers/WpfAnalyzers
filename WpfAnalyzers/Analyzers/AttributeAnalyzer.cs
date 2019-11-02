@@ -99,7 +99,8 @@ namespace WpfAnalyzers
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.ConstructorArgumentAttribute, context.CancellationToken, out _) &&
                          ConstructorArgument.TryGetArgumentName(attribute, out argument, out var argumentName) &&
-                         ConstructorArgument.TryGetParameterName(context.ContainingProperty(), context.SemanticModel, context.CancellationToken, out var parameterName) &&
+                         context.ContainingProperty() is { } containingProperty &&
+                         ConstructorArgument.TryGetParameterName(containingProperty, context.SemanticModel, context.CancellationToken, out var parameterName) &&
                          argumentName != parameterName)
                 {
                     context.ReportDiagnostic(

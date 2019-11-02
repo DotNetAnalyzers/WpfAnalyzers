@@ -81,7 +81,7 @@ namespace WpfAnalyzers
                                      .WithLeadingTriviaFrom(toReplace));
                     RemoveMethod(editor, method, declaration, cancellationToken);
                 }
-                else if (declaration.Body is BlockSyntax body &&
+                else if (declaration.Body is { } body &&
                          body.Statements.TrySingle(out var statement) &&
                          statement is ReturnStatementSyntax returnStatement)
                 {
@@ -97,7 +97,7 @@ namespace WpfAnalyzers
                 method.Parameters.TryElementAt(0, out var parameter1) &&
                 method.Parameters.TryElementAt(1, out var parameter2))
             {
-                if (declaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                if (declaration.ExpressionBody is { } expressionBody)
                 {
                     editor.ReplaceNode(
                         toReplace,
@@ -105,7 +105,7 @@ namespace WpfAnalyzers
                                      .WithLeadingTriviaFrom(toReplace));
                     RemoveMethod(editor, method, declaration, cancellationToken);
                 }
-                else if (declaration.Body is BlockSyntax body &&
+                else if (declaration.Body is { } body &&
                          body.Statements.TrySingle(out var statement))
                 {
                     switch (statement)

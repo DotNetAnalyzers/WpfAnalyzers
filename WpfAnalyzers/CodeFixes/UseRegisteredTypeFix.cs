@@ -46,13 +46,13 @@ namespace WpfAnalyzers
         {
             switch (getter.ExpressionBody)
             {
-                case ArrowExpressionClauseSyntax arrow when arrow.Expression is CastExpressionSyntax cast:
+                case { Expression: CastExpressionSyntax cast }:
                     return getter.ReplaceNode(cast.Type, SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(cast.Type));
-                case ArrowExpressionClauseSyntax arrow:
+                case { } arrow:
                     return getter.ReplaceNode(arrow.Expression, SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(typeText), arrow.Expression));
             }
 
-            if (getter.Body is BlockSyntax block &&
+            if (getter.Body is { } block &&
                 block.Statements.TrySingleOfType(out ReturnStatementSyntax statement))
             {
                 if (statement.Expression is CastExpressionSyntax cast)
