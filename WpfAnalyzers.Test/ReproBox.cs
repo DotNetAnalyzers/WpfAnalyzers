@@ -51,5 +51,14 @@ namespace N
 
             RoslynAssert.Valid(analyzer, code);
         }
+
+        [Test]
+        public static void METHOD()
+        {
+            foreach (var file in Directory.EnumerateFiles("C:\\Git\\_DotnetAnalyzers\\WpfAnalyzers\\WpfAnalyzers.Benchmarks\\bin\\Release\\net472\\BenchmarkDotNet.Artifacts\\results"))
+            {
+                File.Move(file, file.Replace("WpfAnalyzers.Benchmarks.Benchmarks.", "").Replace("-report-github", ""));
+            }
+        }
     }
 }

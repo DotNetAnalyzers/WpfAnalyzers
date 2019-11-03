@@ -1,13 +1,12 @@
 ``` ini
 
-BenchmarkDotNet=v0.11.0, OS=Windows 10.0.17134.228 (1803/April2018Update/Redstone4)
-Intel Xeon CPU E5-2637 v4 3.50GHz (Max: 3.49GHz), 2 CPU, 16 logical and 8 physical cores
-Frequency=3410080 Hz, Resolution=293.2483 ns, Timer=TSC
-  [Host]     : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.3132.0
-  DefaultJob : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.3132.0
+BenchmarkDotNet=v0.12.0, OS=Windows 10.0.18362
+Intel Xeon CPU E5-2637 v4 3.50GHz, 2 CPU, 16 logical and 8 physical cores
+  [Host]     : .NET Framework 4.8 (4.8.4018.0), X64 RyuJIT
+  DefaultJob : .NET Framework 4.8 (4.8.4018.0), X64 RyuJIT
 
 
 ```
-|                Method |     Mean |    Error |   StdDev | Allocated |
-|---------------------- |---------:|---------:|---------:|----------:|
-| RunOnValidCodeProject | 508.1 us | 10.01 us | 17.27 us |       0 B |
+|                Method |     Mean |    Error |   StdDev | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------- |---------:|---------:|---------:|------:|------:|------:|----------:|
+| RunOnValidCodeProject | 69.32 us | 1.374 us | 1.971 us |     - |     - |     - |         - |

@@ -1,35 +1,34 @@
 ``` ini
 
-BenchmarkDotNet=v0.11.5, OS=Windows 10.0.17134.885 (1803/April2018Update/Redstone4)
-Intel Core i7-7500U CPU 2.70GHz (Kaby Lake), 1 CPU, 4 logical and 2 physical cores
-Frequency=2835936 Hz, Resolution=352.6173 ns, Timer=TSC
-  [Host]     : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.3416.0
-  DefaultJob : .NET Framework 4.7.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.3416.0
+BenchmarkDotNet=v0.12.0, OS=Windows 10.0.18362
+Intel Xeon CPU E5-2637 v4 3.50GHz, 2 CPU, 16 logical and 8 physical cores
+  [Host]     : .NET Framework 4.8 (4.8.4018.0), X64 RyuJIT
+  DefaultJob : .NET Framework 4.8 (4.8.4018.0), X64 RyuJIT
 
 
 ```
-|                                           Method |         Mean |       Error |      StdDev |       Median | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------------------------------------------- |-------------:|------------:|------------:|-------------:|------:|------:|------:|----------:|
-|                                AttributeAnalyzer | 1,118.022 us | 110.6571 us | 326.2750 us | 1,232.045 us |     - |     - |     - |         - |
-|                                 CallbackAnalyzer | 1,156.849 us | 120.9502 us | 356.6244 us |   925.268 us |     - |     - |     - |         - |
-|                     ClrMethodDeclarationAnalyzer | 1,381.678 us | 127.4215 us | 375.7051 us | 1,140.893 us |     - |     - |     - |   60600 B |
-|                   ClrPropertyDeclarationAnalyzer | 1,093.794 us | 118.3503 us | 348.9586 us |   858.270 us |     - |     - |     - |   40960 B |
-|                     ComponentResourceKeyAnalyzer |    25.631 us |   1.2419 us |   2.3628 us |    25.036 us |     - |     - |     - |         - |
-| DependencyPropertyBackingFieldOrPropertyAnalyzer |   815.574 us |  10.0411 us |   7.8394 us |   816.309 us |     - |     - |     - |   49152 B |
-|                         GetTemplateChildAnalyzer |   138.567 us |   2.7474 us |   6.1450 us |   137.168 us |     - |     - |     - |         - |
-|                         OverrideMetadataAnalyzer |   104.957 us |   2.9080 us |   8.3435 us |   101.554 us |     - |     - |     - |         - |
-|                         PropertyMetadataAnalyzer |   848.203 us |  16.6446 us |  19.1679 us |   851.747 us |     - |     - |     - |   40960 B |
-|                             RegistrationAnalyzer |   413.484 us |   8.1543 us |  12.4525 us |   412.562 us |     - |     - |     - |   16384 B |
-|                    RoutedCommandCreationAnalyzer |    71.455 us |   1.9420 us |   2.7851 us |    71.229 us |     - |     - |     - |         - |
-|        RoutedEventBackingFieldOrPropertyAnalyzer |    34.671 us |   0.9813 us |   2.7677 us |    33.499 us |     - |     - |     - |         - |
-|                      RoutedEventCallbackAnalyzer |    67.196 us |   1.9428 us |   5.6055 us |    64.705 us |     - |     - |     - |         - |
-|              RoutedEventEventDeclarationAnalyzer |     5.790 us |   0.2506 us |   0.6903 us |     5.642 us |     - |     - |     - |         - |
-|                                 SetValueAnalyzer |   912.275 us |  18.1877 us |  35.0415 us |   908.342 us |     - |     - |     - |   49152 B |
-|                           ValueConverterAnalyzer |    68.546 us |   1.6435 us |   3.3572 us |    67.350 us |     - |     - |     - |         - |
-|     WPF0011ContainingTypeShouldBeRegisteredOwner |   223.330 us |   4.4516 us |   9.9566 us |   222.854 us |     - |     - |     - |         - |
-| WPF0015RegisteredOwnerTypeMustBeDependencyObject |   187.207 us |   3.7227 us |   7.7706 us |   185.829 us |     - |     - |     - |         - |
-|            WPF0041SetMutableUsingSetCurrentValue |   622.428 us |  12.2437 us |  18.3258 us |   617.433 us |     - |     - |     - |   24576 B |
-|       WPF0050XmlnsPrefixMustMatchXmlnsDefinition |   207.583 us |   4.0931 us |   5.6027 us |   205.576 us |     - |     - |     - |         - |
-|   WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces |   123.034 us |   2.4375 us |   4.0726 us |   121.124 us |     - |     - |     - |         - |
-|       WPF0080MarkupExtensionDoesNotHaveAttribute |    85.341 us |   1.9351 us |   3.6818 us |    84.276 us |     - |     - |     - |         - |
-|           WPF0083UseConstructorArgumentAttribute |    96.353 us |   2.2802 us |   2.2394 us |    95.736 us |     - |     - |     - |         - |
+|                                           Method |        Mean |     Error |    StdDev |      Median | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------------------------------- |------------:|----------:|----------:|------------:|------:|------:|------:|----------:|
+|                                AttributeAnalyzer |   454.68 us | 17.049 us | 45.801 us |   437.80 us |     - |     - |     - |         - |
+|                                 CallbackAnalyzer | 1,035.80 us | 20.549 us | 45.962 us | 1,022.05 us |     - |     - |     - |   16384 B |
+|                     ClrMethodDeclarationAnalyzer | 1,230.99 us | 23.996 us | 40.747 us | 1,223.10 us |     - |     - |     - |  131072 B |
+|                   ClrPropertyDeclarationAnalyzer | 2,271.80 us | 44.331 us | 59.181 us | 2,258.30 us |     - |     - |     - |  147456 B |
+|                     ComponentResourceKeyAnalyzer |   111.93 us |  7.065 us | 20.383 us |   106.00 us |     - |     - |     - |         - |
+| DependencyPropertyBackingFieldOrPropertyAnalyzer | 3,025.88 us | 77.030 us | 82.421 us | 3,008.35 us |     - |     - |     - |  212992 B |
+|                         GetTemplateChildAnalyzer |   177.77 us |  3.773 us | 11.124 us |   173.80 us |     - |     - |     - |         - |
+|                         OverrideMetadataAnalyzer |   132.29 us |  2.635 us |  7.258 us |   129.95 us |     - |     - |     - |         - |
+|                         PropertyMetadataAnalyzer | 1,751.83 us | 34.339 us | 50.334 us | 1,753.10 us |     - |     - |     - |   90112 B |
+|                             RegistrationAnalyzer |   636.08 us | 12.302 us | 18.413 us |   634.20 us |     - |     - |     - |   24576 B |
+|                    RoutedCommandCreationAnalyzer |   196.78 us |  3.922 us |  7.833 us |   192.50 us |     - |     - |     - |         - |
+|        RoutedEventBackingFieldOrPropertyAnalyzer |   123.15 us |  2.418 us |  2.969 us |   122.50 us |     - |     - |     - |         - |
+|                      RoutedEventCallbackAnalyzer |   138.86 us |  7.802 us | 21.878 us |   133.60 us |     - |     - |     - |         - |
+|              RoutedEventEventDeclarationAnalyzer |    71.41 us |  5.353 us |  6.960 us |    68.30 us |     - |     - |     - |         - |
+|                                 SetValueAnalyzer | 2,821.96 us | 54.273 us | 64.609 us | 2,804.90 us |     - |     - |     - |  188416 B |
+|                           ValueConverterAnalyzer |   859.58 us | 16.701 us | 15.622 us |   863.10 us |     - |     - |     - |   24576 B |
+|     WPF0011ContainingTypeShouldBeRegisteredOwner |   291.85 us |  5.813 us | 12.512 us |   285.50 us |     - |     - |     - |         - |
+| WPF0015RegisteredOwnerTypeMustBeDependencyObject |   277.98 us |  5.501 us | 15.959 us |   276.70 us |     - |     - |     - |         - |
+|            WPF0041SetMutableUsingSetCurrentValue |   854.16 us | 13.656 us | 11.403 us |   857.30 us |     - |     - |     - |   40960 B |
+|       WPF0050XmlnsPrefixMustMatchXmlnsDefinition |   112.59 us |  2.822 us |  6.194 us |   110.30 us |     - |     - |     - |         - |
+|   WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces |    86.58 us |  1.960 us |  4.846 us |    84.60 us |     - |     - |     - |         - |
+|       WPF0080MarkupExtensionDoesNotHaveAttribute |   181.59 us |  3.016 us |  2.674 us |   181.65 us |     - |     - |     - |         - |
+|           WPF0083UseConstructorArgumentAttribute |   139.05 us |  1.879 us |  1.569 us |   138.80 us |     - |     - |     - |         - |
