@@ -33,7 +33,7 @@ namespace N
         }
 
         [Test]
-        public static void DirectCastWrongSourceType()
+        public static void ReturnsThis()
         {
             var before = @"
 namespace N
@@ -56,6 +56,48 @@ namespace N
     using System;
     using System.Windows.Markup;
 
+    [MarkupExtensionReturnType(typeof(FooExtension))]
+    public class FooExtension : MarkupExtension
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void WhenDocumented()
+        {
+            var before = @"
+namespace N
+{
+    using System;
+    using System.Windows.Markup;
+
+    /// <summary>
+    /// Text
+    /// </summary>
+    public class ↓FooExtension : MarkupExtension
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.Windows.Markup;
+
+    /// <summary>
+    /// Text
+    /// </summary>
     [MarkupExtensionReturnType(typeof(FooExtension))]
     public class FooExtension : MarkupExtension
     {
