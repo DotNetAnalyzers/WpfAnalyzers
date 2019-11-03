@@ -52,29 +52,42 @@ namespace WpfAnalyzers
             }
         }
 
-        private static void ConvertToLambda(DocumentEditor editor, IdentifierNameSyntax identifier, CancellationToken cancellationToken)
+        private static void ConvertToLambda(DocumentEditor editor, IdentifierNameSyntax methodGroup, CancellationToken cancellationToken)
         {
-            if (editor.SemanticModel.TryGetSymbol(identifier, cancellationToken, out IMethodSymbol? method) &&
+            if (editor.SemanticModel.TryGetSymbol(methodGroup, cancellationToken, out IMethodSymbol? method) &&
                 SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration) &&
                 TryGetExpression(symbolAndDeclaration.Declaration, out var expression))
             {
-                switch (method.Parameters.Length)
+                switch (method)
                 {
-                    case 1
-                        when method.Parameters[0] is { } parameter:
+                    case { ReturnsVoid: false, Parameters: { Length: 1 } parameters }
+                        when parameters[0] is { } parameter:
                         editor.ReplaceNode(
-                            identifier,
-                            x => SyntaxFactory.ParseExpression($"{parameter.Name} => {expression}")
-                                         .WithLeadingTriviaFrom(x));
+                            methodGroup,
+                            (x, g) => g.ValueReturningLambdaExpression(parameter.Name, expression)
+                                        .WithLeadingTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
-                    case 2
-                        when method.Parameters[0] is { } parameter1 &&
-                             method.Parameters[1] is { } parameter2:
+                    case { ReturnsVoid: true, Parameters: { Length: 2 } parameters }
+                        when parameters[0] is { } parameter1 &&
+                             parameters[1] is { } parameter2:
                         editor.ReplaceNode(
-                            identifier,
-                            x => SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expression}")
-                                              .WithLeadingTriviaFrom(x));
+                            methodGroup,
+                            (x, g) => g.VoidReturningLambdaExpression(
+                                           new[] { g.LambdaParameter(parameter1.Name), g.LambdaParameter(parameter2.Name) },
+                                           expression)
+                                       .WithLeadingTriviaFrom(x));
+                        RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
+                        break;
+                    case { ReturnsVoid: false, Parameters: { Length: 2 } parameters }
+                        when parameters[0] is { } parameter1 &&
+                             parameters[1] is { } parameter2:
+                        editor.ReplaceNode(
+                            methodGroup,
+                            (x, g) => g.ValueReturningLambdaExpression(
+                                           new[] { g.LambdaParameter(parameter1.Name), g.LambdaParameter(parameter2.Name) },
+                                           expression)
+                                       .WithLeadingTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
                 }
