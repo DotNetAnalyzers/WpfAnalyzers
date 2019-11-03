@@ -26,17 +26,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.4</Version>
+    <Version>2.4.1</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
-      NEW RULES: WPF0171-176
-      FEATURE: Use nameof() fix.
-      BUGFIX: WPF005 warn only on virtual.
-      BUGFIX: WPF0070 when list.
-      BUGFIX: Infinite recursion when alias.
+      BUGFIX: convert to lambda.
+      BUGFIX: WPF0032 when nonstandard names.
+      BUGFIX: WPF0171 for attached properties.
     </PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
