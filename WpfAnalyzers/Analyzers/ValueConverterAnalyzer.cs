@@ -29,10 +29,9 @@ namespace WpfAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.ContainingSymbol is INamedTypeSymbol type &&
+                context.ContainingSymbol is INamedTypeSymbol { IsAbstract: false, IsStatic: false } type &&
                 type.IsAssignableToEither(KnownSymbols.IValueConverter, KnownSymbols.IMultiValueConverter, context.Compilation) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
-                !type.IsAbstract &&
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
@@ -52,7 +51,8 @@ namespace WpfAnalyzers
                     }
                     else if (!Virtual.HasVirtualOrAbstractOrProtectedMembers(type) &&
                              !type.Constructors.TryFirst(x => x.Parameters.Length > 0, out _) &&
-                             !Mutable.HasMutableInstanceMembers(type))
+                             !Mutable.HasMutableInstanceMembers(type) &&
+                             !classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0070ConverterDoesNotHaveDefaultField, classDeclaration.Identifier.GetLocation()));
                     }
@@ -83,16 +83,14 @@ namespace WpfAnalyzers
                             }
                         }
                     }
-                    else
+                    else if (!classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                     {
-                        if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out _, out _))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0071ConverterDoesNotHaveAttribute, classDeclaration.Identifier.GetLocation()));
-                        }
-                        else
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes, classDeclaration.Identifier.GetLocation()));
-                        }
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out _, out _)
+                                    ? Descriptors.WPF0071ConverterDoesNotHaveAttribute
+                                    : Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes,
+                                classDeclaration.Identifier.GetLocation()));
                     }
                 }
             }
