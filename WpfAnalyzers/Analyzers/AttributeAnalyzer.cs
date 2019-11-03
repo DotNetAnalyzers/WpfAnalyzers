@@ -46,24 +46,17 @@ namespace WpfAnalyzers
                 context.Node is AttributeSyntax attribute)
             {
                 if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.DependsOnAttribute, context.CancellationToken, out _) &&
-                    TryFindStringArgument(context, attribute, 0, "name", out var argument, out var expression, out string? text))
+                    TryFindStringArgument(context, attribute, 0, "name", out var argument, out ExpressionSyntax? expression, out string? text))
                 {
                     if (TryFindPropertyRecursive(context.ContainingSymbol.ContainingType, text!, out var property))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                                    property.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
@@ -114,20 +107,13 @@ namespace WpfAnalyzers
                 {
                     if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, text, m => IsMarkupExtensionHandler(m), out var method))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
-                                    method.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
@@ -143,20 +129,13 @@ namespace WpfAnalyzers
                 {
                     if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, text, m => IsTypeConverterHandler(m), out var method))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
-                                    method.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
@@ -170,7 +149,7 @@ namespace WpfAnalyzers
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.TemplatePartAttribute, context.CancellationToken, out _) &&
                          attribute.TryFindArgument(0, "Name", out argument) &&
                          context.SemanticModel.TryGetConstantValue(argument.Expression, context.CancellationToken, out string? partName) &&
-                         !partName.StartsWith("PART_", StringComparison.Ordinal))
+                         partName?.StartsWith("PART_", StringComparison.Ordinal) != true)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0132UsePartPrefix, argument.Expression.GetLocation(), argument));
                 }
@@ -179,20 +158,13 @@ namespace WpfAnalyzers
                 {
                     if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                                    property.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
@@ -207,35 +179,51 @@ namespace WpfAnalyzers
                 {
                     if (TryFindStringArgument(context, attribute, 0, "Property", out argument, out expression, out text))
                     {
-                        if (TryFindPropertyRecursive(context.ContainingSymbol as INamedTypeSymbol, text, out var property))
+                        if (TryFindStyleTypedProperty(context, text, out var property, out var styleType))
                         {
-                            if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                            if (property is { } &&
+                                !argument.Expression.IsNameof())
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
-                                        Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                        expression.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                                        property.Name));
-                            }
-                            else if (!argument.Expression.IsNameof())
-                            {
-                                context.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                        expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                            ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                            : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                         expression.GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                         property.Name));
                             }
 
-                            if (!property.Type.Is(KnownSymbols.Style))
+                            if (!styleType.Is(KnownSymbols.Style))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0171StyleTypedPropertyPropertyType, expression.GetLocation()));
                             }
 
-                            if (FindDuplicateStyleTypedProperty(property.Name))
+                            if (FindDuplicateStyleTypedProperty())
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0175StyleTypedPropertyPropertyUnique, expression.GetLocation()));
+                            }
+
+                            bool FindDuplicateStyleTypedProperty()
+                            {
+                                if (attribute.TryFirstAncestor(out ClassDeclarationSyntax? attributedType))
+                                {
+                                    foreach (var list in attributedType.AttributeLists)
+                                    {
+                                        foreach (var candidate in list.Attributes)
+                                        {
+                                            if (!ReferenceEquals(candidate, attribute) &&
+                                                context.SemanticModel.TryGetNamedType(candidate, KnownSymbols.StyleTypedPropertyAttribute, context.CancellationToken, out _) &&
+                                                TryFindStringArgument(context, candidate, 0, "Property", out _, out _, out var other) &&
+                                                other == text)
+                                            {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                return false;
                             }
                         }
                         else
@@ -261,31 +249,9 @@ namespace WpfAnalyzers
                     }
                 }
             }
-
-            bool FindDuplicateStyleTypedProperty(string property)
-            {
-                if (attribute.TryFirstAncestor(out TypeDeclarationSyntax? containingType))
-                {
-                    foreach (var list in containingType.AttributeLists)
-                    {
-                        foreach (var candidate in list.Attributes)
-                        {
-                            if (!ReferenceEquals(candidate, attribute) &&
-                                context.SemanticModel.TryGetNamedType(candidate, KnownSymbols.StyleTypedPropertyAttribute, context.CancellationToken, out _) &&
-                                TryFindStringArgument(context, candidate, 0, "Property", out _, out _, out var text) &&
-                                text == property)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
         }
 
-        private static bool TryFindStringArgument(SyntaxNodeAnalysisContext context, AttributeSyntax candidate, int index, string name, [NotNullWhen(true)] out AttributeArgumentSyntax? argument, [NotNullWhen(true)] out ExpressionSyntax? expression, [NotNullWhen(true)] out string? text)
+        private static bool TryFindStringArgument(SyntaxNodeAnalysisContext context, AttributeSyntax candidate, int index, string name, [NotNullWhen(true)] out AttributeArgumentSyntax? argument, out ExpressionSyntax expression, [NotNullWhen(true)] out string? text)
         {
             text = null;
             if (candidate.TryFindArgument(index, name, out argument))
@@ -298,7 +264,7 @@ namespace WpfAnalyzers
             expression = candidate.Name;
             return false;
 
-            static bool TryFindExpression(AttributeArgumentSyntax a, out ExpressionSyntax? result)
+            static bool TryFindExpression(AttributeArgumentSyntax a, out ExpressionSyntax result)
             {
                 switch (a.Expression)
                 {
@@ -377,6 +343,33 @@ namespace WpfAnalyzers
             result = null;
             return type is { } &&
                    type.TryFindPropertyRecursive(name, out result);
+        }
+
+        private static bool TryFindStyleTypedProperty(SyntaxNodeAnalysisContext context, string name, out IPropertySymbol? result, [NotNullWhen(true)] out ITypeSymbol? registeredType)
+        {
+            if (context.ContainingSymbol is INamedTypeSymbol type)
+            {
+                if (type.TryFindPropertyRecursive(name, out result))
+                {
+                    registeredType = result.Type;
+                    return true;
+                }
+
+                foreach (var member in type.GetMembers())
+                {
+                    if (BackingFieldOrProperty.TryCreateCandidate(member, out var backing) &&
+                        DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                        registeredName == name &&
+                        DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out registeredType))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            result = null;
+            registeredType = null;
+            return false;
         }
 
         private static bool TryFindMethodRecursive(ITypeSymbol? type, string name, Func<IMethodSymbol, bool> selector, [NotNullWhen(true)] out IMethodSymbol? result)
