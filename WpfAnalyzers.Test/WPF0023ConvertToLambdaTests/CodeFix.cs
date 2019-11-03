@@ -78,7 +78,7 @@ namespace N
         }
 
         [Test]
-        public static void CoerceCallback()
+        public static void CoerceValueCallback()
         {
             var code = @"
 namespace N
@@ -131,6 +131,93 @@ namespace N
         {
             get => (string)this.GetValue(TextProperty);
             set => this.SetValue(TextProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+        }
+
+        [Test]
+        public static void WhenBinaryExpression()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+
+    public class C : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(C),
+            new PropertyMetadata(
+                default(string),
+                ↓(d, e) => SetHasText(d, e.NewValue != null)));
+
+        private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(HasText),
+            typeof(bool),
+            typeof(C),
+            new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty HasTextProperty = HasTextPropertyKey.DependencyProperty;
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        public bool HasText
+        {
+            get => (bool)this.GetValue(HasTextProperty);
+            private set => this.SetValue(HasTextPropertyKey, value);
+        }
+
+        private static void SetHasText(DependencyObject o, bool value)
+        {
+            o.SetValue(HasTextPropertyKey, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public class C : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(C),
+            new PropertyMetadata(
+                default(string),
+                (d, e) => d.SetValue(HasTextPropertyKey, e.NewValue != null)));
+
+        private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(HasText),
+            typeof(bool),
+            typeof(C),
+            new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty HasTextProperty = HasTextPropertyKey.DependencyProperty;
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        public bool HasText
+        {
+            get => (bool)this.GetValue(HasTextProperty);
+            private set => this.SetValue(HasTextPropertyKey, value);
         }
     }
 }";

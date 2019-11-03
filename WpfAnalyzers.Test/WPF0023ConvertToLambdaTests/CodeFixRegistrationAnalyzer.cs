@@ -12,9 +12,9 @@ namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
 
         [TestCase("ValidateValue", "value => (int)value >= 0")]
-        [TestCase("x => ValidateValue(x)", "value => (int)value >= 0")]
+        [TestCase("x => ValidateValue(x)", "x => (int)x >= 0")]
         [TestCase("new ValidateValueCallback(ValidateValue)", "new ValidateValueCallback(value => (int)value >= 0)")]
-        [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(value => (int)value >= 0)")]
+        [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(x => (int)x >= 0)")]
         public static void RemoveMethod(string callback, string lambda)
         {
             var before = @"

@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Diagnostics.CodeAnalysis;
@@ -76,7 +77,7 @@ namespace WpfAnalyzers
                             (x, g) => g.VoidReturningLambdaExpression(
                                            new[] { g.LambdaParameter(parameter1.Name), g.LambdaParameter(parameter2.Name) },
                                            expression)
-                                       .WithLeadingTriviaFrom(x));
+                                       .WithTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
                     case { ReturnsVoid: false, Parameters: { Length: 2 } parameters }
@@ -87,7 +88,7 @@ namespace WpfAnalyzers
                             (x, g) => g.ValueReturningLambdaExpression(
                                            new[] { g.LambdaParameter(parameter1.Name), g.LambdaParameter(parameter2.Name) },
                                            expression)
-                                       .WithLeadingTriviaFrom(x));
+                                       .WithTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
                 }
@@ -96,28 +97,31 @@ namespace WpfAnalyzers
 
         private static void ConvertToLambda(DocumentEditor editor, LambdaExpressionSyntax lambda, CancellationToken cancellationToken)
         {
-            if (lambda is { Body: ExpressionSyntax body } &&
+            if (lambda is { Body: InvocationExpressionSyntax body } &&
                 editor.SemanticModel.TryGetSymbol(body, cancellationToken, out IMethodSymbol? method) &&
                 SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration) &&
                 TryGetExpression(symbolAndDeclaration.Declaration, out var expression))
             {
-                switch (method.Parameters.Length)
+                switch (method)
                 {
-                    case 1
-                        when method.Parameters[0] is { } parameter:
+                    case { Parameters: { Length: 1 } parameters }
+                        when parameters[0] is { } parameter &&
+                             body.TryFindArgument(parameter, out var argument):
                         editor.ReplaceNode(
-                            lambda,
-                            x => SyntaxFactory.ParseExpression($"{parameter.Name} => {expression}")
-                                              .WithLeadingTriviaFrom(x));
+                            body,
+                            x => ParameterRewriter.Rewrite(expression, new[] { (parameter, argument.Expression) }, editor.SemanticModel, cancellationToken)
+                                                  .WithTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
-                    case 2
-                        when method.Parameters[0] is { } parameter1 &&
-                             method.Parameters[1] is { } parameter2:
+                    case { Parameters: { Length: 2 } parameters }
+                        when parameters[0] is { } parameter1 &&
+                             body.TryFindArgument(parameter1, out var argument1) &&
+                             parameters[1] is { } parameter2 &&
+                             body.TryFindArgument(parameter2, out var argument2):
                         editor.ReplaceNode(
-                            lambda,
-                            x => SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expression}")
-                                              .WithLeadingTriviaFrom(x));
+                            body,
+                            x => ParameterRewriter.Rewrite(expression, new[] { (parameter1, argument1.Expression), (parameter2, argument2.Expression) }, editor.SemanticModel, cancellationToken)
+                                                  .WithTriviaFrom(x));
                         RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
                         break;
                 }
@@ -156,6 +160,39 @@ namespace WpfAnalyzers
                 symbolAndDeclaration.Symbol.IsInvokedOnce(editor.SemanticModel, cancellationToken))
             {
                 editor.RemoveNode(symbolAndDeclaration.Declaration);
+            }
+        }
+
+        private class ParameterRewriter : CSharpSyntaxRewriter
+        {
+            private readonly IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements;
+            private readonly SemanticModel semanticModel;
+            private readonly CancellationToken cancellationToken;
+
+            private ParameterRewriter(IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                this.replacements = replacements;
+                this.semanticModel = semanticModel;
+                this.cancellationToken = cancellationToken;
+            }
+
+            public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
+            {
+                foreach ((IParameterSymbol parameter, ExpressionSyntax expression) replacement in this.replacements)
+                {
+                    if (node.IsSymbol(replacement.parameter, this.semanticModel, this.cancellationToken))
+                    {
+                        return replacement.expression.WithTriviaFrom(node);
+                    }
+                }
+
+                return base.VisitIdentifierName(node);
+            }
+
+            internal static ExpressionSyntax Rewrite(ExpressionSyntax expression, IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                return (ExpressionSyntax)new ParameterRewriter(replacements, semanticModel, cancellationToken)
+                    .Visit(expression);
             }
         }
     }
