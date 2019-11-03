@@ -63,12 +63,7 @@ namespace WpfAnalyzers
                     }
                 }
 
-                if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
-                    getArg.Expression is IdentifierNameSyntax getIdentifier &&
-                    setCall.TryGetArgumentAtIndex(0, out var setArg) &&
-                    setArg.Expression is IdentifierNameSyntax setIdentifier &&
-                    getIdentifier.Identifier.ValueText != setIdentifier.Identifier.ValueText &&
-                    !setIdentifier.Identifier.ValueText.IsParts(getIdentifier.Identifier.ValueText, "Key"))
+                if (IsGettingAndSettingDifferent() == false)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -102,6 +97,32 @@ namespace WpfAnalyzers
                                 property,
                                 registeredType));
                     }
+                }
+
+                bool? IsGettingAndSettingDifferent()
+                {
+                    if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
+                        getArg.Expression is IdentifierNameSyntax getIdentifier &&
+                        setCall.TryGetArgumentAtIndex(0, out var setArg) &&
+                        setArg.Expression is IdentifierNameSyntax setIdentifier)
+                    {
+                        if (getIdentifier.Identifier.ValueText == setIdentifier.Identifier.ValueText)
+                        {
+                            return true;
+                        }
+
+                        if (context.SemanticModel.TryGetSymbol(getIdentifier, context.CancellationToken, out var getSymbol) &&
+                            BackingFieldOrProperty.TryCreateCandidate(getSymbol, out var getBacking) &&
+                            context.SemanticModel.TryGetSymbol(setIdentifier, context.CancellationToken, out var setSymbol) &&
+                            BackingFieldOrProperty.TryCreateCandidate(setSymbol, out var setBacking) &&
+                            DependencyProperty.TryGetRegisterInvocationRecursive(getBacking, context.SemanticModel, context.CancellationToken, out var getRegistration, out _) &&
+                            DependencyProperty.TryGetRegisterInvocationRecursive(setBacking, context.SemanticModel, context.CancellationToken, out var setRegistration, out _))
+                        {
+                            return getRegistration == setRegistration;
+                        }
+                    }
+
+                    return null;
                 }
             }
         }

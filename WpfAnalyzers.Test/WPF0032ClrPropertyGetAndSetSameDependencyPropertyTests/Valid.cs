@@ -94,6 +94,36 @@ namespace N
         }
 
         [Test]
+        public static void ReadOnlyDependencyPropertyWithNonStandardKeyField()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarKey = DependencyProperty.RegisterReadOnly(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarKey.DependencyProperty;
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            protected set { this.SetValue(BarKey, value); }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
         public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"

@@ -111,37 +111,26 @@ namespace WpfAnalyzers
 
         internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? call, out BackingFieldOrProperty getField)
         {
+            if (method is { ParameterList: { Parameters: { Count: 1 } parameters } } &&
+               !method.ReturnType.IsVoid() &&
+               method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+               parameters.TrySingle(out var parameter))
+            {
+                using (var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken))
+                {
+                    call = walker.GetValue;
+                    return call?.Expression is MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess &&
+                           memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                           parameter.Identifier.ValueText == member.Identifier.ValueText &&
+                           walker.Property?.Expression is { } expression &&
+                           semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                           BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
+                }
+            }
+
             call = null;
             getField = default;
-            if (method == null ||
-                method.ParameterList.Parameters.Count != 1 ||
-                method.ReturnType.IsVoid() ||
-                !method.Modifiers.Any(SyntaxKind.StaticKeyword))
-            {
-                return false;
-            }
-
-            using (var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken))
-            {
-                call = walker.GetValue;
-                var memberAccess = walker.GetValue?.Expression as MemberAccessExpressionSyntax;
-                var member = memberAccess?.Expression as IdentifierNameSyntax;
-                if (memberAccess == null ||
-                    member == null ||
-                    !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression))
-                {
-                    return false;
-                }
-
-                if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
-                {
-                    return false;
-                }
-
-                return walker.Property?.Expression is { } expression &&
-                       semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                       BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
-            }
+            return false;
         }
     }
 }
