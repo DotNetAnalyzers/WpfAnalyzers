@@ -38,6 +38,7 @@ namespace ValidCode.DependencyProperties
         /// <summary>Helper for getting <see cref="GenericAttachedProperty"/> from <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DependencyObject"/> to read <see cref="GenericAttachedProperty"/> from.</param>
         /// <returns>GenericAttached property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static T GetGenericAttached(DependencyObject element)
         {
             return (T)element.GetValue(GenericAttachedProperty);
