@@ -54,59 +54,59 @@ namespace WpfAnalyzers
         private static void ConvertToLambda(DocumentEditor editor, IdentifierNameSyntax identifier, CancellationToken cancellationToken)
         {
             if (editor.SemanticModel.TryGetSymbol(identifier, cancellationToken, out IMethodSymbol? method) &&
-                method.TrySingleMethodDeclaration(cancellationToken, out var declaration))
+                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration))
             {
-                ConvertToLambda(editor, identifier, method, declaration, cancellationToken);
+                ConvertToLambda(editor, identifier, symbolAndDeclaration, cancellationToken);
             }
         }
 
         private static void ConvertToLambda(DocumentEditor editor, LambdaExpressionSyntax lambda, CancellationToken cancellationToken)
         {
             if (editor.SemanticModel.TryGetSymbol(lambda.Body, cancellationToken, out IMethodSymbol? method) &&
-                method.TrySingleMethodDeclaration(cancellationToken, out var declaration))
+                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration))
             {
-                ConvertToLambda(editor, lambda, method, declaration, cancellationToken);
+                ConvertToLambda(editor, lambda, symbolAndDeclaration, cancellationToken);
             }
         }
 
-        private static void ConvertToLambda(DocumentEditor editor, SyntaxNode toReplace, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
+        private static void ConvertToLambda(DocumentEditor editor, SyntaxNode toReplace, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
         {
-            if (method.Parameters.TrySingle(out var parameter))
+            if (symbolAndDeclaration.Symbol.Parameters.TrySingle(out var parameter))
             {
-                if (declaration.ExpressionBody is { } expressionBody)
+                if (symbolAndDeclaration.Declaration.ExpressionBody is { } expressionBody)
                 {
                     editor.ReplaceNode(
                         toReplace,
                         SyntaxFactory.ParseExpression($"{parameter.Name} => {expressionBody.Expression}")
                                      .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, method, declaration, cancellationToken);
+                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
                 }
-                else if (declaration.Body is { } body &&
-                         body.Statements.TrySingle(out var statement) &&
+                else if (symbolAndDeclaration.Declaration.Body is { Statements: { } statements } &&
+                         statements.TrySingle(out var statement) &&
                          statement is ReturnStatementSyntax returnStatement)
                 {
                     editor.ReplaceNode(
                         toReplace,
                         SyntaxFactory.ParseExpression($"{parameter.Name} => {returnStatement.Expression}")
                                      .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, method, declaration, cancellationToken);
+                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
                 }
             }
 
-            if (method.Parameters.Length == 2 &&
-                method.Parameters.TryElementAt(0, out var parameter1) &&
-                method.Parameters.TryElementAt(1, out var parameter2))
+            if (symbolAndDeclaration.Symbol.Parameters.Length == 2 &&
+                symbolAndDeclaration.Symbol.Parameters.TryElementAt(0, out var parameter1) &&
+                symbolAndDeclaration.Symbol.Parameters.TryElementAt(1, out var parameter2))
             {
-                if (declaration.ExpressionBody is { } expressionBody)
+                if (symbolAndDeclaration.Declaration.ExpressionBody is { } expressionBody)
                 {
                     editor.ReplaceNode(
                         toReplace,
                         SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionBody.Expression}")
                                      .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, method, declaration, cancellationToken);
+                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
                 }
-                else if (declaration.Body is { } body &&
-                         body.Statements.TrySingle(out var statement))
+                else if (symbolAndDeclaration.Declaration.Body is { Statements: { } statements } &&
+                         statements.TrySingle(out var statement))
                 {
                     switch (statement)
                     {
@@ -115,26 +115,26 @@ namespace WpfAnalyzers
                                 toReplace,
                                 SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {returnStatement.Expression}")
                                              .WithLeadingTriviaFrom(toReplace));
-                            RemoveMethod(editor, method, declaration, cancellationToken);
+                            RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
                             break;
                         case ExpressionStatementSyntax expressionStatement:
                             editor.ReplaceNode(
                                 toReplace,
                                 SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionStatement.Expression}")
                                              .WithLeadingTriviaFrom(toReplace));
-                            RemoveMethod(editor, method, declaration, cancellationToken);
+                            RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
                             break;
                     }
                 }
             }
         }
 
-        private static void RemoveMethod(DocumentEditor editor, IMethodSymbol method, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
+        private static void RemoveMethod(DocumentEditor editor, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
         {
-            if (method.DeclaredAccessibility == Accessibility.Private &&
-                method.IsInvokedOnce(editor.SemanticModel, cancellationToken))
+            if (symbolAndDeclaration.Symbol.DeclaredAccessibility == Accessibility.Private &&
+                symbolAndDeclaration.Symbol.IsInvokedOnce(editor.SemanticModel, cancellationToken))
             {
-                editor.RemoveNode(declaration);
+                editor.RemoveNode(symbolAndDeclaration.Declaration);
             }
         }
     }
