@@ -81,8 +81,7 @@ namespace WpfAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace, expression.GetLocation(), expression));
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.MarkupExtensionReturnTypeAttribute, context.CancellationToken, out _) &&
-                         context.ContainingSymbol is ITypeSymbol containingType &&
-                         !containingType.IsAbstract &&
+                         context.ContainingSymbol is ITypeSymbol { IsAbstract: false } containingType &&
                          containingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
@@ -376,21 +375,20 @@ namespace WpfAnalyzers
         private static bool TryFindPropertyRecursive(ITypeSymbol? type, string name, [NotNullWhen(true)] out IPropertySymbol? result)
         {
             result = null;
-            return type != null &&
+            return type is { } &&
                    type.TryFindPropertyRecursive(name, out result);
         }
 
         private static bool TryFindMethodRecursive(ITypeSymbol? type, string name, Func<IMethodSymbol, bool> selector, [NotNullWhen(true)] out IMethodSymbol? result)
         {
             result = null;
-            return type != null &&
+            return type is { } &&
                    type.TryFindFirstMethodRecursive(name, selector, out result);
         }
 
         private static bool IsMarkupExtensionHandler(IMethodSymbol candidate)
         {
-            return candidate.ReturnsVoid &&
-                   candidate.Parameters.Length == 2 &&
+            return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } } &&
                    candidate.Parameters.TryElementAt(0, out var parameter) &&
                    parameter.Type == KnownSymbols.Object &&
                    candidate.Parameters.TryElementAt(1, out parameter) &&
@@ -399,8 +397,7 @@ namespace WpfAnalyzers
 
         private static bool IsTypeConverterHandler(IMethodSymbol candidate)
         {
-            return candidate.ReturnsVoid &&
-                   candidate.Parameters.Length == 2 &&
+            return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } } &&
                    candidate.Parameters.TryElementAt(0, out var parameter) &&
                    parameter.Type == KnownSymbols.Object &&
                    candidate.Parameters.TryElementAt(1, out parameter) &&
