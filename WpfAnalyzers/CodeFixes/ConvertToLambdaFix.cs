@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -54,82 +55,89 @@ namespace WpfAnalyzers
         private static void ConvertToLambda(DocumentEditor editor, IdentifierNameSyntax identifier, CancellationToken cancellationToken)
         {
             if (editor.SemanticModel.TryGetSymbol(identifier, cancellationToken, out IMethodSymbol? method) &&
-                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration))
+                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration) &&
+                TryGetExpression(symbolAndDeclaration.Declaration, out var expression))
             {
-                ConvertToLambda(editor, identifier, symbolAndDeclaration, cancellationToken);
+                switch (method.Parameters.Length)
+                {
+                    case 1
+                        when method.Parameters[0] is { } parameter:
+                        editor.ReplaceNode(
+                            identifier,
+                            x => SyntaxFactory.ParseExpression($"{parameter.Name} => {expression}")
+                                         .WithLeadingTriviaFrom(x));
+                        RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
+                        break;
+                    case 2
+                        when method.Parameters[0] is { } parameter1 &&
+                             method.Parameters[1] is { } parameter2:
+                        editor.ReplaceNode(
+                            identifier,
+                            x => SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expression}")
+                                              .WithLeadingTriviaFrom(x));
+                        RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
+                        break;
+                }
             }
         }
 
         private static void ConvertToLambda(DocumentEditor editor, LambdaExpressionSyntax lambda, CancellationToken cancellationToken)
         {
-            if (editor.SemanticModel.TryGetSymbol(lambda.Body, cancellationToken, out IMethodSymbol? method) &&
-                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration))
+            if (lambda is { Body: ExpressionSyntax body } &&
+                editor.SemanticModel.TryGetSymbol(body, cancellationToken, out IMethodSymbol? method) &&
+                SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration) &&
+                TryGetExpression(symbolAndDeclaration.Declaration, out var expression))
             {
-                ConvertToLambda(editor, lambda, symbolAndDeclaration, cancellationToken);
+                switch (method.Parameters.Length)
+                {
+                    case 1
+                        when method.Parameters[0] is { } parameter:
+                        editor.ReplaceNode(
+                            lambda,
+                            x => SyntaxFactory.ParseExpression($"{parameter.Name} => {expression}")
+                                              .WithLeadingTriviaFrom(x));
+                        RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
+                        break;
+                    case 2
+                        when method.Parameters[0] is { } parameter1 &&
+                             method.Parameters[1] is { } parameter2:
+                        editor.ReplaceNode(
+                            lambda,
+                            x => SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expression}")
+                                              .WithLeadingTriviaFrom(x));
+                        RemoveIfNotUsed(editor, symbolAndDeclaration, cancellationToken);
+                        break;
+                }
             }
         }
 
-        private static void ConvertToLambda(DocumentEditor editor, SyntaxNode toReplace, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
+        private static bool TryGetExpression(MethodDeclarationSyntax declaration, [NotNullWhen(true)] out ExpressionSyntax? expression)
         {
-            if (symbolAndDeclaration.Symbol.Parameters.TrySingle(out var parameter))
+            if (declaration.ExpressionBody is { } expressionBody)
             {
-                if (symbolAndDeclaration.Declaration.ExpressionBody is { } expressionBody)
+                expression = expressionBody.Expression;
+                return true;
+            }
+
+            if (declaration.Body is { Statements: { Count: 1 } statements } &&
+                statements.TrySingle(out var statement))
+            {
+                switch (statement)
                 {
-                    editor.ReplaceNode(
-                        toReplace,
-                        SyntaxFactory.ParseExpression($"{parameter.Name} => {expressionBody.Expression}")
-                                     .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
-                }
-                else if (symbolAndDeclaration.Declaration.Body is { Statements: { } statements } &&
-                         statements.TrySingle(out var statement) &&
-                         statement is ReturnStatementSyntax returnStatement)
-                {
-                    editor.ReplaceNode(
-                        toReplace,
-                        SyntaxFactory.ParseExpression($"{parameter.Name} => {returnStatement.Expression}")
-                                     .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
+                    case ReturnStatementSyntax { Expression: { } temp }:
+                        expression = temp;
+                        return true;
+                    case ExpressionStatementSyntax { Expression: { } temp }:
+                        expression = temp;
+                        return true;
                 }
             }
 
-            if (symbolAndDeclaration.Symbol.Parameters.Length == 2 &&
-                symbolAndDeclaration.Symbol.Parameters.TryElementAt(0, out var parameter1) &&
-                symbolAndDeclaration.Symbol.Parameters.TryElementAt(1, out var parameter2))
-            {
-                if (symbolAndDeclaration.Declaration.ExpressionBody is { } expressionBody)
-                {
-                    editor.ReplaceNode(
-                        toReplace,
-                        SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionBody.Expression}")
-                                     .WithLeadingTriviaFrom(toReplace));
-                    RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
-                }
-                else if (symbolAndDeclaration.Declaration.Body is { Statements: { } statements } &&
-                         statements.TrySingle(out var statement))
-                {
-                    switch (statement)
-                    {
-                        case ReturnStatementSyntax returnStatement:
-                            editor.ReplaceNode(
-                                toReplace,
-                                SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {returnStatement.Expression}")
-                                             .WithLeadingTriviaFrom(toReplace));
-                            RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
-                            break;
-                        case ExpressionStatementSyntax expressionStatement:
-                            editor.ReplaceNode(
-                                toReplace,
-                                SyntaxFactory.ParseExpression($"({parameter1.Name}, {parameter2.Name}) => {expressionStatement.Expression}")
-                                             .WithLeadingTriviaFrom(toReplace));
-                            RemoveMethod(editor, symbolAndDeclaration, cancellationToken);
-                            break;
-                    }
-                }
-            }
+            expression = null;
+            return false;
         }
 
-        private static void RemoveMethod(DocumentEditor editor, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
+        private static void RemoveIfNotUsed(DocumentEditor editor, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
         {
             if (symbolAndDeclaration.Symbol.DeclaredAccessibility == Accessibility.Private &&
                 symbolAndDeclaration.Symbol.IsInvokedOnce(editor.SemanticModel, cancellationToken))
