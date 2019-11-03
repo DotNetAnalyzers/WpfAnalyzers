@@ -76,5 +76,66 @@ namespace N
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
+
+        [Test]
+        public static void CoerceCallback()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+
+    public class Issue252 : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(Issue252),
+            new PropertyMetadata(
+                default(string),
+                (d, e) => { },
+                ↓CoerceText));
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        private static object CoerceText(DependencyObject d, object baseValue)
+        {
+            return baseValue ?? new object();
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public class Issue252 : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(Issue252),
+            new PropertyMetadata(
+                default(string),
+                (d, e) => { },
+                (d, baseValue) => baseValue ?? new object()));
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+        }
     }
 }

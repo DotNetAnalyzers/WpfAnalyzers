@@ -126,7 +126,7 @@ namespace WpfAnalyzers
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.IsSingleExpression(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueCallback.GetLocation()));
                         }
                     }
                 }
