@@ -50,20 +50,13 @@ namespace WpfAnalyzers
                 {
                     if (TryFindPropertyRecursive(context.ContainingSymbol.ContainingType, text!, out var property))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
-                                    property.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
@@ -114,20 +107,13 @@ namespace WpfAnalyzers
                 {
                     if (TryFindMethodRecursive(context.ContainingSymbol as INamedTypeSymbol, text, m => IsMarkupExtensionHandler(m), out var method))
                     {
-                        if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+                        if (!argument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
-                                    Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
-                                    method.Name));
-                        }
-                        else if (!argument.Expression.IsNameof())
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                    expression.IsKind(SyntaxKind.StringLiteralExpression)
+                                        ? Descriptors.WPF0150UseNameofInsteadOfLiteral
+                                        : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));

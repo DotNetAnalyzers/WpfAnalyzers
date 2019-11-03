@@ -373,7 +373,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, out string? expectedText)
+        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, [NotNullWhen(false)] out string? expectedText)
         {
             expectedText = null;
             location = null;
@@ -442,7 +442,7 @@ namespace WpfAnalyzers
                         return null;
                     }
 
-                    return false;
+                    return null;
                 }
 
                 if (parameterList.Parameters.Count == 0)
