@@ -110,18 +110,16 @@ namespace WpfAnalyzers
         {
             fieldOrProperty = default;
             memberDeclaration = null;
-            switch (objectCreation.Parent)
+            return objectCreation.Parent switch
             {
-                case EqualsValueClauseSyntax _:
-                    return objectCreation.TryFirstAncestor(out memberDeclaration) &&
-                           FieldOrProperty.TryCreate(context.ContainingSymbol, out fieldOrProperty);
-                case ArrowExpressionClauseSyntax _:
-                    return objectCreation.TryFirstAncestor(out memberDeclaration) &&
-                           context.ContainingSymbol is IMethodSymbol getter &&
-                           FieldOrProperty.TryCreate(getter.AssociatedSymbol, out fieldOrProperty);
-            }
+                EqualsValueClauseSyntax _ => objectCreation.TryFirstAncestor(out memberDeclaration) &&
+                                             FieldOrProperty.TryCreate(context.ContainingSymbol, out fieldOrProperty),
+                ArrowExpressionClauseSyntax _ => objectCreation.TryFirstAncestor(out memberDeclaration) &&
+                                                 context.ContainingSymbol is IMethodSymbol { AssociatedSymbol: { } associatedSymbol } &&
+                                                 FieldOrProperty.TryCreate(associatedSymbol, out fieldOrProperty),
 
-            return false;
+                _ => false,
+            };
         }
     }
 }
