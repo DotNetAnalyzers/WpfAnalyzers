@@ -1,6 +1,7 @@
 namespace WpfAnalyzers
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -54,7 +55,7 @@ namespace WpfAnalyzers
 
         internal static ConversionWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ConversionWalker());
 
-        internal static bool TryGetCommonBase(SyntaxNode node, IParameterSymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol sourceType)
+        internal static bool TryGetCommonBase(SyntaxNode node, IParameterSymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? sourceType)
         {
             sourceType = null;
             using (var walker = Borrow(node))
@@ -88,9 +89,9 @@ namespace WpfAnalyzers
 
                 foreach (var isPattern in walker.isPatterns)
                 {
-                    if (isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
-                        IsFor(isPattern.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, declarationPattern.Type, out sourceType))
+                    if (isPattern is { Expression: { } expression, Pattern: DeclarationPatternSyntax { Type: { } type } } &&
+                        IsFor(expression, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(sourceType, type, out sourceType))
                     {
                         return false;
                     }
@@ -98,9 +99,9 @@ namespace WpfAnalyzers
 
                 foreach (var label in walker.caseLabels)
                 {
-                    if (label.Pattern is DeclarationPatternSyntax declarationPattern &&
-                        IsFor(label.FirstAncestor<SwitchStatementSyntax>().Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, declarationPattern.Type, out sourceType))
+                    if (label is { Pattern: DeclarationPatternSyntax { Type: { } type }, Parent: SwitchSectionSyntax { Parent: SwitchStatementSyntax { Expression: { } expression } } } &&
+                        IsFor(expression, symbol, semanticModel, cancellationToken) &&
+                        !TryGetCommonBase(sourceType, type, out sourceType))
                     {
                         return false;
                     }

@@ -2,6 +2,7 @@ namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -84,7 +85,7 @@ namespace WpfAnalyzers
             }
         }
 
-        private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
+        private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ArgumentSyntax? eventArgument)
         {
             eventArgument = null;
             if (invocation.TryGetMethodName(out var name) &&
@@ -104,7 +105,7 @@ namespace WpfAnalyzers
                    context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbols.RoutedEvent;
         }
 
-        private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, out ArgumentSyntax eventArgument)
+        private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ArgumentSyntax? eventArgument)
         {
             eventArgument = null;
             if (invocation.TryGetMethodName(out var name) &&

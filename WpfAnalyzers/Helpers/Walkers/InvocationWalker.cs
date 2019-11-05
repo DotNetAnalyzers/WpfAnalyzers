@@ -9,8 +9,8 @@ namespace WpfAnalyzers
     internal sealed class InvocationWalker : PooledWalker<InvocationWalker>
     {
         private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
-        private IMethodSymbol method;
-        private SemanticModel semanticModel;
+        private IMethodSymbol method = null!;
+        private SemanticModel semanticModel = null!;
         private CancellationToken cancellationToken;
 
         private InvocationWalker()
@@ -48,8 +48,8 @@ namespace WpfAnalyzers
 
         protected override void Clear()
         {
-            this.method = null;
-            this.semanticModel = null;
+            this.method = null!;
+            this.semanticModel = null!;
             this.cancellationToken = CancellationToken.None;
             this.identifierNames.Clear();
         }

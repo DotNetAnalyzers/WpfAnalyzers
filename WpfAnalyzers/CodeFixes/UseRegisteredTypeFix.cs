@@ -53,7 +53,7 @@ namespace WpfAnalyzers
             }
 
             if (getter.Body is { } block &&
-                block.Statements.TrySingleOfType(out ReturnStatementSyntax statement))
+                block.Statements.TrySingleOfType<StatementSyntax, ReturnStatementSyntax>(out ReturnStatementSyntax? statement))
             {
                 if (statement.Expression is CastExpressionSyntax cast)
                 {

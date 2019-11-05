@@ -42,11 +42,9 @@ namespace WpfAnalyzers
             sourceType = null;
             targetType = null;
             if (classDeclaration.TryFindMethod("Convert", out var convertMethod) &&
-                convertMethod.ReturnType is PredefinedTypeSyntax returnType &&
-                returnType.Keyword.ValueText == "object" &&
-                convertMethod.ParameterList != null &&
-                convertMethod.ParameterList.Parameters.Count == 4 &&
-                convertMethod.ParameterList.Parameters.TryFirst(out var valueParameter))
+                convertMethod is { ReturnType: { } returnType, ParameterList: { Parameters: { Count: 4 } parameters } } &&
+                returnType == KnownSymbols.Object &&
+                parameters.TryFirst<ParameterSyntax>(out var valueParameter))
             {
                 using (var returnValues = ReturnValueWalker.Borrow(convertMethod))
                 {

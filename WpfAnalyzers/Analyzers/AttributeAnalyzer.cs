@@ -382,18 +382,18 @@ namespace WpfAnalyzers
         private static bool IsMarkupExtensionHandler(IMethodSymbol candidate)
         {
             return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } } &&
-                   candidate.Parameters.TryElementAt(0, out var parameter) &&
+                   candidate.Parameters.TryElementAt<IParameterSymbol>(0, out var parameter) &&
                    parameter.Type == KnownSymbols.Object &&
-                   candidate.Parameters.TryElementAt(1, out parameter) &&
+                   candidate.Parameters.TryElementAt<IParameterSymbol>(1, out parameter) &&
                    parameter.Type == KnownSymbols.XamlSetMarkupExtensionEventArgs;
         }
 
         private static bool IsTypeConverterHandler(IMethodSymbol candidate)
         {
             return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } } &&
-                   candidate.Parameters.TryElementAt(0, out var parameter) &&
+                   candidate.Parameters.TryElementAt<IParameterSymbol>(0, out var parameter) &&
                    parameter.Type == KnownSymbols.Object &&
-                   candidate.Parameters.TryElementAt(1, out parameter) &&
+                   candidate.Parameters.TryElementAt<IParameterSymbol>(1, out parameter) &&
                    parameter.Type == KnownSymbols.XamlSetTypeConverterEventArgs;
         }
     }
