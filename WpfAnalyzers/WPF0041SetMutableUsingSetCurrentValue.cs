@@ -26,15 +26,15 @@ namespace WpfAnalyzers
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is AssignmentExpressionSyntax assignment &&
+                context.Node is AssignmentExpressionSyntax { Left: ExpressionSyntax left } assignment &&
                 !IsInObjectInitializer(assignment) &&
                 !IsInConstructor(assignment) &&
-                context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out IPropertySymbol? property) &&
+                context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
                 property != KnownSymbols.FrameworkElement.DataContext &&
-                ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
-                !IsCalleePotentiallyCreatedInScope(assignment.Left as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var backing) &&
+                !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
             {
-                var propertyArgument = fieldOrProperty.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
+                var propertyArgument = backing.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
@@ -52,31 +52,24 @@ namespace WpfAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 !IsInConstructor(invocation) &&
-                invocation.ArgumentList is { Arguments: { Count: 2 } } argumentList &&
-                argumentList.Arguments.TryElementAt(0, out var propertyArg) &&
+                invocation is { Expression: ExpressionSyntax invocationExpression, ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                arguments.TryElementAt(0, out var propertyArg) &&
+                propertyArg is { Expression: { } expression } &&
                 DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(context.SemanticModel.GetSymbolSafe(propertyArg.Expression, context.CancellationToken), out var backingFieldOrProperty) &&
-                !IsCalleePotentiallyCreatedInScope(invocation.Expression as MemberAccessExpressionSyntax, context.SemanticModel, context.CancellationToken))
+                context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
+                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
+                backing.Type != KnownSymbols.DependencyPropertyKey &&
+                backing.Symbol != KnownSymbols.FrameworkElement.DataContextProperty &&
+                !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken))
             {
-                if (backingFieldOrProperty.Type == KnownSymbols.DependencyPropertyKey)
+                if (context.ContainingProperty() is { } clrProperty &&
+                    clrProperty.IsDependencyPropertyAccessor(context.SemanticModel, context.CancellationToken))
                 {
                     return;
                 }
 
-                if (backingFieldOrProperty.Symbol is IFieldSymbol field &&
-                    field == KnownSymbols.FrameworkElement.DataContextProperty)
-                {
-                    return;
-                }
-
-                var clrProperty = context.ContainingProperty();
-                if (clrProperty.IsDependencyPropertyAccessor(context.SemanticModel, context.CancellationToken))
-                {
-                    return;
-                }
-
-                var clrMethod = context.ContainingSymbol as IMethodSymbol;
-                if (ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out backingFieldOrProperty))
+                if (context.ContainingSymbol is IMethodSymbol clrMethod &&
+                    ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out backing))
                 {
                     return;
                 }
@@ -85,36 +78,20 @@ namespace WpfAnalyzers
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         invocation.GetLocation(),
-                        backingFieldOrProperty,
+                        backing,
                         invocation.ArgumentList.Arguments[1]));
             }
         }
 
-        private static bool IsCalleePotentiallyCreatedInScope(MemberAccessExpressionSyntax memberAccess, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static bool IsAssignedCreatedInScope(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (memberAccess == null ||
-                !memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) ||
-                memberAccess.Expression.IsKind(SyntaxKind.ThisExpression))
+            return expression switch
             {
-                return false;
-            }
-
-            if (memberAccess.Expression is IdentifierNameSyntax callee &&
-                semanticModel.TryGetSymbol(callee, cancellationToken, out var symbol))
-            {
-                if (symbol.Kind != SymbolKind.Local)
-                {
-                    return false;
-                }
-
-                if (symbol.TrySingleDeclaration(cancellationToken, out VariableDeclaratorSyntax? declaration))
-                {
-                    return declaration.Initializer is { } initializer &&
-                           initializer.Value is ObjectCreationExpressionSyntax;
-                }
-            }
-
-            return false;
+                MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax identifier } => semanticModel.TryGetSymbol(identifier, cancellationToken, out var symbol) &&
+                                                                                                symbol.Kind == SymbolKind.Local,
+                MemberAccessExpressionSyntax { Expression: { Parent: ObjectCreationExpressionSyntax _ } } => true,
+                _ => false,
+            };
         }
 
         private static bool IsInObjectInitializer(SyntaxNode node)
@@ -125,8 +102,8 @@ namespace WpfAnalyzers
         private static bool IsInConstructor(SyntaxNode node)
         {
             return node.Parent is StatementSyntax statement &&
-                   statement.Parent is BlockSyntax blockSyntax &&
-                   blockSyntax.Parent.IsKind(SyntaxKind.ConstructorDeclaration);
+                   statement.TryFirstAncestor<ConstructorDeclarationSyntax>(out _) &&
+                   !statement.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _);
         }
     }
 }

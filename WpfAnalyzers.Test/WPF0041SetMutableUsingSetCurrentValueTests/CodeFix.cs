@@ -378,8 +378,8 @@ namespace N
 
         public void M()
         {
-            var value = GetValue(BarProperty);
-            ↓SetValue(BarProperty, value);
+            var o = GetValue(BarProperty);
+            ↓SetValue(BarProperty, o);
         }
     }
 }";
@@ -406,8 +406,8 @@ namespace N
 
         public void M()
         {
-            var value = GetValue(BarProperty);
-            SetCurrentValue(BarProperty, value);
+            var o = GetValue(BarProperty);
+            SetCurrentValue(BarProperty, o);
         }
     }
 }";
