@@ -132,9 +132,9 @@ namespace WpfAnalyzers
             senderParameter = null;
             argParameter = null;
             return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } parameters } &&
-                   parameters.TryElementAt(0, out senderParameter) &&
+                   parameters.TryElementAt<IParameterSymbol>(0, out senderParameter) &&
                    senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
-                   parameters.TryElementAt(1, out argParameter) &&
+                   parameters.TryElementAt<IParameterSymbol>(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs;
         }
 
@@ -144,9 +144,9 @@ namespace WpfAnalyzers
             argParameter = null;
             return candidate is { ReturnsVoid: false, Parameters: { Length: 2 } parameters } &&
                    candidate.ReturnType == KnownSymbols.Object &&
-                   parameters.TryElementAt(0, out senderParameter) &&
+                   parameters.TryElementAt<IParameterSymbol>(0, out senderParameter) &&
                    senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
-                   parameters.TryElementAt(1, out argParameter) &&
+                   parameters.TryElementAt<IParameterSymbol>(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.Object;
         }
 
@@ -155,7 +155,7 @@ namespace WpfAnalyzers
             argParameter = null;
             return candidate is { ReturnsVoid: false, Parameters: { Length: 1 } parameters } &&
                    candidate.ReturnType == KnownSymbols.Boolean &&
-                   parameters.TryElementAt(0, out argParameter) &&
+                   parameters.TryElementAt<IParameterSymbol>(0, out argParameter) &&
                    argParameter.Type == KnownSymbols.Object;
         }
 

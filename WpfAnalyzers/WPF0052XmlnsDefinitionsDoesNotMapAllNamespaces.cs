@@ -53,7 +53,7 @@ namespace WpfAnalyzers
             private readonly HashSet<NameSyntax> namespaces = new HashSet<NameSyntax>(NameSyntaxComparer.Default);
             private readonly List<string> mappedNamespaces = new List<string>();
 
-            private SemanticModel semanticModel;
+            private SemanticModel semanticModel = null!;
             private CancellationToken cancellationToken;
 
             private Walker()
@@ -101,7 +101,7 @@ namespace WpfAnalyzers
                 {
                     if (node.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
-                        if (this.semanticModel.TryGetConstantValue(arg.Expression, this.cancellationToken, out string? @namespace))
+                        if (this.semanticModel.TryGetConstantValue<string>(arg.Expression, this.cancellationToken, out string? @namespace))
                         {
                             this.mappedNamespaces.Add(@namespace);
                         }
@@ -134,7 +134,7 @@ namespace WpfAnalyzers
             {
                 this.namespaces.Clear();
                 this.mappedNamespaces.Clear();
-                this.semanticModel = null;
+                this.semanticModel = null!;
                 this.cancellationToken = CancellationToken.None;
             }
 
@@ -170,17 +170,17 @@ namespace WpfAnalyzers
                         return false;
                     }
 
-                    if (x is IdentifierNameSyntax xIdentifier &&
-                        y is IdentifierNameSyntax yIdentifier)
+                    if (x is IdentifierNameSyntax { Identifier: { ValueText: { } xText } } &&
+                        y is IdentifierNameSyntax { Identifier: { ValueText: { } yText } })
                     {
-                        return xIdentifier.Identifier.ValueText == yIdentifier.Identifier.ValueText;
+                        return xText == yText;
                     }
 
-                    if (x is QualifiedNameSyntax xName &&
-                        y is QualifiedNameSyntax yName)
+                    if (x is QualifiedNameSyntax { Left: { } xLeft, Right: { Identifier: { ValueText: { } xRight } } } &&
+                        y is QualifiedNameSyntax { Left: { } yLeft, Right: { Identifier: { ValueText: { } yRight } } })
                     {
-                        return xName.Right.Identifier.ValueText == yName.Right.Identifier.ValueText &&
-                               RecursiveEquals(xName.Left, yName.Left);
+                        return xRight == yRight &&
+                               RecursiveEquals(xLeft, yLeft);
                     }
 
                     throw new NotSupportedException("Don't think we can ever get here.");
