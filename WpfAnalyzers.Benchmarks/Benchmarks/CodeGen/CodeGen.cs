@@ -89,5 +89,14 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                 Assert.Fail();
             }
         }
+
+        [Test]
+        public static void CopyResults()
+        {
+            foreach (var file in Directory.EnumerateFiles("C:\\Git\\_DotnetAnalyzers\\WpfAnalyzers\\WpfAnalyzers.Benchmarks\\bin\\Release\\net472\\BenchmarkDotNet.Artifacts\\results"))
+            {
+                File.Move(file, file.Replace("WpfAnalyzers.Benchmarks.Benchmarks.", string.Empty).Replace("-report-github", string.Empty));
+            }
+        }
     }
 }

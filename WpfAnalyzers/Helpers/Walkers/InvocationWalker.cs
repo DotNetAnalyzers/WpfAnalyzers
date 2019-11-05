@@ -22,6 +22,17 @@ namespace WpfAnalyzers
         /// <inheritdoc />
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
+            // PERF: Avoid getting symbol for known cases.
+            switch (node)
+            {
+                case { Parent: TypeSyntax _ }:
+                case { Parent: BaseTypeSyntax _ }:
+                case { Parent: ParameterSyntax _ }:
+                case { Parent: VariableDeclarationSyntax _ }:
+                case { Parent: MemberDeclarationSyntax _ }:
+                return;
+            }
+
             if (node.Identifier.ValueText == this.method.MetadataName &&
                 this.semanticModel.TryGetSymbol(node, this.cancellationToken, out IMethodSymbol? candidate) &&
                 candidate.Equals(this.method))
