@@ -10,7 +10,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
     using NUnit.Framework;
 
     [Explicit("Script")]
-    public class CodeGen
+    public static class CodeGen
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbols).Assembly
                                                                                                     .GetTypes()
@@ -19,12 +19,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
                                                                                                     .ToArray();
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)
+        public static void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)
         {
             var expectedName = analyzer.GetType().Name + "Benchmarks";
             var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
             var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
-                                          .AppendLine($"namespace {this.GetType().Namespace}")
+                                          .AppendLine($"namespace {typeof(AllBenchmarks).Namespace}")
                                           .AppendLine("{")
                                           .AppendLine("    [BenchmarkDotNet.Attributes.MemoryDiagnoser]")
                                           .AppendLine($"    public class {expectedName}")
@@ -48,12 +48,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         }
 
         [Test]
-        public void AllBenchmarks()
+        public static void AllBenchmarks()
         {
             var fileName = Path.Combine(Program.BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
             builder.AppendLine("// ReSharper disable RedundantNameQualifier")
-                   .AppendLine($"namespace {this.GetType().Namespace}")
+                   .AppendLine($"namespace {typeof(AllBenchmarks).Namespace}")
                    .AppendLine("{")
                    .AppendLine("    [BenchmarkDotNet.Attributes.MemoryDiagnoser]")
                    .AppendLine("    public class AllBenchmarks")

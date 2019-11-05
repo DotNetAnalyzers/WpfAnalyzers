@@ -1,5 +1,6 @@
 namespace WpfAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -8,7 +9,7 @@ namespace WpfAnalyzers
 
     internal static class MarkupExtension
     {
-        internal static bool TryGetReturnType(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol returnType)
+        internal static bool TryGetReturnType(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? returnType)
         {
             returnType = null;
             if (classDeclaration.TryFindMethod("ProvideValue", out var convertMethod) &&
@@ -22,7 +23,7 @@ namespace WpfAnalyzers
                     using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
                     {
                         returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        return returnTypes.TrySingle(out returnType);
+                        return returnTypes.TrySingle<ITypeSymbol>(out returnType);
                     }
                 }
             }

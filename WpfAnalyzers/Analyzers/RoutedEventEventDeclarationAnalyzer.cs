@@ -65,7 +65,8 @@ namespace WpfAnalyzers
                                 addIdentifier.Identifier.ValueText,
                                 removeIdentifier.Identifier.ValueText));
                     }
-                    else if (BackingFieldWalker.TryGetRegistration(eventDeclaration.Parent as TypeDeclarationSyntax, addIdentifier.Identifier.ValueText, out var registration) &&
+                    else if (eventDeclaration.Parent is TypeDeclarationSyntax typeDeclaration &&
+                             BackingFieldWalker.TryGetRegistration(typeDeclaration, addIdentifier.Identifier.ValueText, out var registration) &&
                              registration.ArgumentList != null)
                     {
                         if (registration.TryGetArgumentAtIndex(0, out var nameARg) &&
@@ -97,8 +98,8 @@ namespace WpfAnalyzers
 
         private class EventDeclarationWalker : PooledWalker<EventDeclarationWalker>
         {
-            private InvocationExpressionSyntax addCall;
-            private InvocationExpressionSyntax removeCall;
+            private InvocationExpressionSyntax addCall = null!;
+            private InvocationExpressionSyntax removeCall = null!;
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
@@ -131,16 +132,16 @@ namespace WpfAnalyzers
 
             protected override void Clear()
             {
-                this.addCall = null;
-                this.removeCall = null;
+                this.addCall = null!;
+                this.removeCall = null!;
             }
         }
 
         private class BackingFieldWalker : PooledWalker<BackingFieldWalker>
         {
-            private VariableDeclaratorSyntax backingField;
-            private PropertyDeclarationSyntax backingProperty;
-            private string memberName;
+            private VariableDeclaratorSyntax backingField = null!;
+            private PropertyDeclarationSyntax backingProperty = null!;
+            private string memberName = null!;
 
             public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
             {
@@ -197,9 +198,9 @@ namespace WpfAnalyzers
 
             protected override void Clear()
             {
-                this.backingField = null;
-                this.backingProperty = null;
-                this.memberName = null;
+                this.backingField = null!;
+                this.backingProperty = null!;
+                this.memberName = null!;
             }
         }
     }

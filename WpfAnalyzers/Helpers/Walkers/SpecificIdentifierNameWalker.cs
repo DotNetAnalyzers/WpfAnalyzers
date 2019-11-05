@@ -8,7 +8,7 @@ namespace WpfAnalyzers
     internal sealed class SpecificIdentifierNameWalker : PooledWalker<SpecificIdentifierNameWalker>
     {
         private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
-        private string name;
+        private string name = null!;
 
         private SpecificIdentifierNameWalker()
         {
@@ -37,7 +37,7 @@ namespace WpfAnalyzers
 
         protected override void Clear()
         {
-            this.name = null;
+            this.name = null!;
             this.identifierNames.Clear();
         }
     }
