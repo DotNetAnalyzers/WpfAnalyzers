@@ -72,7 +72,7 @@ namespace WpfAnalyzers.Benchmarks
                 return;
             }
 
-            var pattern = $"{summary.Title}-report-github.md";
+            var pattern = $"{summary.Title.Split('-').First()}-report-github.md";
             var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, pattern)
                                           .SingleOrDefault();
             if (sourceFileName == null)
