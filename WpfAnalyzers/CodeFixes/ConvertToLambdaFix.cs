@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -165,11 +165,11 @@ namespace WpfAnalyzers
 
         private class ParameterRewriter : CSharpSyntaxRewriter
         {
-            private readonly IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements;
+            private readonly IReadOnlyList<(IParameterSymbol Parameter, ExpressionSyntax Expression)> replacements;
             private readonly SemanticModel semanticModel;
             private readonly CancellationToken cancellationToken;
 
-            private ParameterRewriter(IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
+            private ParameterRewriter(IReadOnlyList<(IParameterSymbol Parameter, ExpressionSyntax Expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
                 this.replacements = replacements;
                 this.semanticModel = semanticModel;
@@ -178,18 +178,18 @@ namespace WpfAnalyzers
 
             public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
             {
-                foreach ((IParameterSymbol parameter, ExpressionSyntax expression) replacement in this.replacements)
+                foreach ((IParameterSymbol Parameter, ExpressionSyntax Expression) replacement in this.replacements)
                 {
-                    if (node.IsSymbol(replacement.parameter, this.semanticModel, this.cancellationToken))
+                    if (node.IsSymbol(replacement.Parameter, this.semanticModel, this.cancellationToken))
                     {
-                        return replacement.expression.WithTriviaFrom(node);
+                        return replacement.Expression.WithTriviaFrom(node);
                     }
                 }
 
                 return base.VisitIdentifierName(node);
             }
 
-            internal static ExpressionSyntax Rewrite(ExpressionSyntax expression, IReadOnlyList<(IParameterSymbol parameter, ExpressionSyntax expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
+            internal static ExpressionSyntax Rewrite(ExpressionSyntax expression, IReadOnlyList<(IParameterSymbol Parameter, ExpressionSyntax Expression)> replacements, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
                 return (ExpressionSyntax)new ParameterRewriter(replacements, semanticModel, cancellationToken)
                     .Visit(expression);

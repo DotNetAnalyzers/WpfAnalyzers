@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
@@ -496,7 +496,7 @@ namespace WpfAnalyzers
 
             return false;
 
-            bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location errorLocation)
+            bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location? errorLocation)
             {
                 if (methodDeclaration.TryGetDocumentationComment(out comment))
                 {
@@ -508,7 +508,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            static bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location errorLocation)
+            static bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location? errorLocation)
             {
                 if (comment.TryGetSummary(out var summary))
                 {
