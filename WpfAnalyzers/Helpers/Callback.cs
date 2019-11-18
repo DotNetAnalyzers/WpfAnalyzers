@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -67,10 +67,8 @@ namespace WpfAnalyzers
 
         internal static bool IsInvokedOnce(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var walker = InvocationWalker.InContainingClass(method, semanticModel, cancellationToken))
-            {
-                return walker.IdentifierNames.Count == 1;
-            }
+            using var walker = InvocationWalker.InContainingClass(method, semanticModel, cancellationToken);
+            return walker.IdentifierNames.Count == 1;
         }
     }
 }

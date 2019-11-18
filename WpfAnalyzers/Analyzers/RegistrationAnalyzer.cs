@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Immutable;
@@ -41,34 +41,32 @@ namespace WpfAnalyzers
                     if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                         !MatchesValidateValueCallbackName(validateValueCallback, target, context))
                     {
-                        using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
+                        using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
+                        if (walker.IdentifierNames.Count == 1)
                         {
-                            if (walker.IdentifierNames.Count == 1)
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
+                                    callBackIdentifier.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
+                                    callBackIdentifier,
+                                    $"Validate{registeredName}"));
+                        }
+                        else if (target.Name.StartsWith("Validate", StringComparison.Ordinal))
+                        {
+                            foreach (var identifierName in walker.IdentifierNames)
                             {
-                                context.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
-                                        callBackIdentifier.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
-                                        callBackIdentifier,
-                                        $"Validate{registeredName}"));
-                            }
-                            else if (target.Name.StartsWith("Validate", StringComparison.Ordinal))
-                            {
-                                foreach (var identifierName in walker.IdentifierNames)
+                                if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
+                                    argument != validateValueCallback &&
+                                    MatchesValidateValueCallbackName(argument, target, context))
                                 {
-                                    if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
-                                        argument != validateValueCallback &&
-                                        MatchesValidateValueCallbackName(argument, target, context))
-                                    {
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
-                                                callBackIdentifier.GetLocation(),
-                                                callBackIdentifier,
-                                                $"Validate{registeredName}"));
-                                        break;
-                                    }
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
+                                            callBackIdentifier.GetLocation(),
+                                            callBackIdentifier,
+                                            $"Validate{registeredName}"));
+                                    break;
                                 }
                             }
                         }

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
@@ -122,12 +122,10 @@ namespace WpfAnalyzers
 
             internal static bool TryGetCalls(EventDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax addCall, out InvocationExpressionSyntax removeCall)
             {
-                using (var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker()))
-                {
-                    addCall = walker.addCall;
-                    removeCall = walker.removeCall;
-                    return addCall != null || removeCall != null;
-                }
+                using var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker());
+                addCall = walker.addCall;
+                removeCall = walker.removeCall;
+                return addCall != null || removeCall != null;
             }
 
             protected override void Clear()
@@ -173,27 +171,25 @@ namespace WpfAnalyzers
                     return false;
                 }
 
-                using (var walker = Borrow(() => new BackingFieldWalker()))
+                using var walker = Borrow(() => new BackingFieldWalker());
+                walker.memberName = memberName;
+                walker.Visit(typeDeclaration);
+                if (walker.backingField is { Initializer: { Value: InvocationExpressionSyntax fieldRegistration } })
                 {
-                    walker.memberName = memberName;
-                    walker.Visit(typeDeclaration);
-                    if (walker.backingField is { Initializer: { Value: InvocationExpressionSyntax fieldRegistration } })
-                    {
-                        registration = fieldRegistration;
-                    }
-                    else if (walker.backingProperty is { Initializer: { Value: InvocationExpressionSyntax propertyRegistration } })
-                    {
-                        registration = propertyRegistration;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                    return registration is { ArgumentList: { Arguments: { Count: 4 } } } &&
-                           registration.TryGetMethodName(out var name) &&
-                           name == "RegisterRoutedEvent";
+                    registration = fieldRegistration;
                 }
+                else if (walker.backingProperty is { Initializer: { Value: InvocationExpressionSyntax propertyRegistration } })
+                {
+                    registration = propertyRegistration;
+                }
+                else
+                {
+                    return false;
+                }
+
+                return registration is { ArgumentList: { Arguments: { Count: 4 } } } &&
+                       registration.TryGetMethodName(out var name) &&
+                       name == "RegisterRoutedEvent";
             }
 
             protected override void Clear()

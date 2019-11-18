@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -18,14 +18,10 @@ namespace WpfAnalyzers
                 convertMethod.ParameterList != null &&
                 convertMethod.ParameterList.Parameters.Count == 1)
             {
-                using (var walker = ReturnValueWalker.Borrow(convertMethod))
-                {
-                    using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
-                    {
-                        returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
-                        return returnTypes.TrySingle<ITypeSymbol>(out returnType);
-                    }
-                }
+                using var walker = ReturnValueWalker.Borrow(convertMethod);
+                using var returnTypes = PooledSet<ITypeSymbol>.Borrow();
+                returnTypes.UnionWith(walker.ReturnValues.Select(x => semanticModel.GetTypeInfoSafe(x, cancellationToken).Type));
+                return returnTypes.TrySingle<ITypeSymbol>(out returnType);
             }
 
             return false;

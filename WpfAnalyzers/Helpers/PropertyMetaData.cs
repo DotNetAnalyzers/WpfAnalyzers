@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -82,7 +82,7 @@ namespace WpfAnalyzers
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 (DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
                  DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
-                semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out ISymbol? candidate))
+                semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var candidate))
             {
                 return BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out fieldOrProperty);
             }
@@ -170,14 +170,12 @@ namespace WpfAnalyzers
             {
                 if (declaration.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
                 {
-                    using (var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, semanticModel, cancellationToken))
+                    using var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, semanticModel, cancellationToken);
+                    foreach (var assignment in walker.Assignments)
                     {
-                        foreach (var assignment in walker.Assignments)
+                        if (!IsValueValidForRegisteredType(assignment.Right, registeredType, semanticModel, cancellationToken, visited))
                         {
-                            if (!IsValueValidForRegisteredType(assignment.Right, registeredType, semanticModel, cancellationToken, visited))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                 }
@@ -195,14 +193,12 @@ namespace WpfAnalyzers
                     {
                         if (visited.Add(target))
                         {
-                            using (var walker = ReturnValueWalker.Borrow(target))
+                            using var walker = ReturnValueWalker.Borrow(target);
+                            foreach (var returnValue in walker.ReturnValues)
                             {
-                                foreach (var returnValue in walker.ReturnValues)
+                                if (!IsValueValidForRegisteredType(returnValue, registeredType, semanticModel, cancellationToken, visited))
                                 {
-                                    if (!IsValueValidForRegisteredType(returnValue, registeredType, semanticModel, cancellationToken, visited))
-                                    {
-                                        return false;
-                                    }
+                                    return false;
                                 }
                             }
                         }

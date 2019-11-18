@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -40,54 +40,52 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            using (var walker = ClrSetterWalker.Borrow(semanticModel, method, cancellationToken))
+            using var walker = ClrSetterWalker.Borrow(semanticModel, method, cancellationToken);
+            if (!walker.IsSuccess)
             {
-                if (!walker.IsSuccess)
+                return false;
+            }
+
+            setValueCall = walker.SetValue ?? walker.SetCurrentValue;
+            if (setValueCall?.Expression is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                memberAccess.Expression is IdentifierNameSyntax member)
+            {
+                if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
                 {
                     return false;
                 }
 
-                setValueCall = walker.SetValue ?? walker.SetCurrentValue;
-                if (setValueCall?.Expression is MemberAccessExpressionSyntax memberAccess &&
-                    memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-                    memberAccess.Expression is IdentifierNameSyntax member)
+                if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
+                    method.ParameterList.Parameters.TryElementAt(1, out var parameter) &&
+                    walker.Property is { Expression: { } expression })
                 {
-                    if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
+                    if (arg.Expression is IdentifierNameSyntax argIdentifier &&
+                        argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
                     {
-                        return false;
+                        return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                               BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
                     }
 
-                    if (setValueCall.TryGetArgumentAtIndex(1, out var arg) &&
-                        method.ParameterList.Parameters.TryElementAt(1, out var parameter) &&
-                        walker.Property is { Expression: { } expression })
+                    if (arg.Expression is InvocationExpressionSyntax invocation &&
+                        invocation.TrySingleArgument(out var nestedArg) &&
+                        nestedArg.Expression is IdentifierNameSyntax nestedArgId &&
+                        nestedArgId.Identifier.ValueText == parameter.Identifier.ValueText)
                     {
-                        if (arg.Expression is IdentifierNameSyntax argIdentifier &&
-                            argIdentifier.Identifier.ValueText == parameter.Identifier.ValueText)
-                        {
-                            return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                                   BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
-                        }
+                        return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                               BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
+                    }
 
-                        if (arg.Expression is InvocationExpressionSyntax invocation &&
-                            invocation.TrySingleArgument(out var nestedArg) &&
-                            nestedArg.Expression is IdentifierNameSyntax nestedArgId &&
-                            nestedArgId.Identifier.ValueText == parameter.Identifier.ValueText)
-                        {
-                            return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                                   BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
-                        }
-
-                        if (arg.Expression is ConditionalExpressionSyntax { Condition: IdentifierNameSyntax { Identifier: { } identifier } } &&
-                            identifier.ValueText == parameter.Identifier.ValueText)
-                        {
-                            return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                                   BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
-                        }
+                    if (arg.Expression is ConditionalExpressionSyntax { Condition: IdentifierNameSyntax { Identifier: { } identifier } } &&
+                        identifier.ValueText == parameter.Identifier.ValueText)
+                    {
+                        return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                               BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField);
                     }
                 }
-
-                return false;
             }
+
+            return false;
         }
 
         /// <summary>
@@ -116,16 +114,14 @@ namespace WpfAnalyzers
                method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
                parameters.TrySingle(out var parameter))
             {
-                using (var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken))
-                {
-                    call = walker.GetValue;
-                    return call?.Expression is MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess &&
-                           memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-                           parameter.Identifier.ValueText == member.Identifier.ValueText &&
-                           walker.Property?.Expression is { } expression &&
-                           semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                           BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
-                }
+                using var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken);
+                call = walker.GetValue;
+                return call?.Expression is MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess &&
+                       memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
+                       parameter.Identifier.ValueText == member.Identifier.ValueText &&
+                       walker.Property?.Expression is { } expression &&
+                       semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                       BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
             }
 
             call = null;

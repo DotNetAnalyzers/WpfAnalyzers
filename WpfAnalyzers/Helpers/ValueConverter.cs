@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -46,20 +46,16 @@ namespace WpfAnalyzers
                 returnType == KnownSymbols.Object &&
                 parameters.TryFirst<ParameterSyntax>(out var valueParameter))
             {
-                using (var returnValues = ReturnValueWalker.Borrow(convertMethod))
+                using var returnValues = ReturnValueWalker.Borrow(convertMethod);
+                using var returnTypes = PooledSet<ITypeSymbol>.Borrow();
+                foreach (var returnValue in returnValues.ReturnValues)
                 {
-                    using (var returnTypes = PooledSet<ITypeSymbol>.Borrow())
-                    {
-                        foreach (var returnValue in returnValues.ReturnValues)
-                        {
-                            AddReturnType(returnTypes, returnValue);
-                        }
-
-                        return returnTypes.TrySingle(out targetType) &&
-                               semanticModel.TryGetSymbol(valueParameter, cancellationToken, out var symbol) &&
-                               ConversionWalker.TryGetCommonBase(convertMethod, symbol, semanticModel, cancellationToken, out sourceType);
-                    }
+                    AddReturnType(returnTypes, returnValue);
                 }
+
+                return returnTypes.TrySingle(out targetType) &&
+                       semanticModel.TryGetSymbol(valueParameter, cancellationToken, out var symbol) &&
+                       ConversionWalker.TryGetCommonBase(convertMethod, symbol, semanticModel, cancellationToken, out sourceType);
             }
 
             return false;
@@ -92,15 +88,13 @@ namespace WpfAnalyzers
                                         field.DeclaredAccessibility == Accessibility.Private &&
                                         returnValue.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
                                     {
-                                        using (var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, SearchScope.Instance, semanticModel, cancellationToken))
+                                        using var walker = AssignmentExecutionWalker.Borrow(typeDeclaration, SearchScope.Instance, semanticModel, cancellationToken);
+                                        foreach (var assignment in walker.Assignments)
                                         {
-                                            foreach (var assignment in walker.Assignments)
+                                            if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol? assigned) &&
+                                                FieldSymbolComparer.Equals(assigned, field))
                                             {
-                                                if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol? assigned) &&
-                                                    FieldSymbolComparer.Equals(assigned, field))
-                                                {
-                                                    returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
-                                                }
+                                                returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
                                             }
                                         }
                                     }

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Immutable;
@@ -43,35 +43,33 @@ namespace WpfAnalyzers
                             !target.Name.IsParts("On", registeredName, "Changed") &&
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
                         {
-                            using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
+                            using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
+                            if (walker.IdentifierNames.Count == 1)
                             {
-                                if (walker.IdentifierNames.Count == 1)
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
+                                        callbackIdentifier.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                        callbackIdentifier,
+                                        $"On{registeredName}Changed"));
+                            }
+                            else if (target.Name.StartsWith("On", StringComparison.Ordinal) &&
+                                     target.Name.EndsWith("Changed", StringComparison.Ordinal))
+                            {
+                                foreach (var identifierName in walker.IdentifierNames)
                                 {
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-                                            callbackIdentifier.GetLocation(),
-                                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
-                                            callbackIdentifier,
-                                            $"On{registeredName}Changed"));
-                                }
-                                else if (target.Name.StartsWith("On", StringComparison.Ordinal) &&
-                                         target.Name.EndsWith("Changed", StringComparison.Ordinal))
-                                {
-                                    foreach (var identifierName in walker.IdentifierNames)
+                                    if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
+                                        argument != propertyChangedCallback &&
+                                        MatchesPropertyChangedCallbackName(argument, target, context))
                                     {
-                                        if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
-                                            argument != propertyChangedCallback &&
-                                            MatchesPropertyChangedCallbackName(argument, target, context))
-                                        {
-                                            context.ReportDiagnostic(
-                                                Diagnostic.Create(
-                                                    Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-                                                    callbackIdentifier.GetLocation(),
-                                                    callbackIdentifier,
-                                                    $"On{registeredName}Changed"));
-                                            break;
-                                        }
+                                        context.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
+                                                callbackIdentifier.GetLocation(),
+                                                callbackIdentifier,
+                                                $"On{registeredName}Changed"));
+                                        break;
                                     }
                                 }
                             }
@@ -90,34 +88,32 @@ namespace WpfAnalyzers
                         if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
                             !target.Name.IsParts("Coerce", registeredName))
                         {
-                            using (var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken))
+                            using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
+                            if (walker.IdentifierNames.Count == 1)
                             {
-                                if (walker.IdentifierNames.Count == 1)
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
+                                        callbackIdentifier.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
+                                        callbackIdentifier,
+                                        $"Coerce{registeredName}"));
+                            }
+                            else if (target.Name.StartsWith("Coerce", StringComparison.Ordinal))
+                            {
+                                foreach (var identifierName in walker.IdentifierNames)
                                 {
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
-                                            callbackIdentifier.GetLocation(),
-                                            ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
-                                            callbackIdentifier,
-                                            $"Coerce{registeredName}"));
-                                }
-                                else if (target.Name.StartsWith("Coerce", StringComparison.Ordinal))
-                                {
-                                    foreach (var identifierName in walker.IdentifierNames)
+                                    if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
+                                        argument != propertyChangedCallback &&
+                                        MatchesCoerceValueCallbackName(argument, target, context))
                                     {
-                                        if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
-                                            argument != propertyChangedCallback &&
-                                            MatchesCoerceValueCallbackName(argument, target, context))
-                                        {
-                                            context.ReportDiagnostic(
-                                                Diagnostic.Create(
-                                                    Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
-                                                    callbackIdentifier.GetLocation(),
-                                                    callbackIdentifier,
-                                                    $"Coerce{registeredName}"));
-                                            break;
-                                        }
+                                        context.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
+                                                callbackIdentifier.GetLocation(),
+                                                callbackIdentifier,
+                                                $"Coerce{registeredName}"));
+                                        break;
                                     }
                                 }
                             }

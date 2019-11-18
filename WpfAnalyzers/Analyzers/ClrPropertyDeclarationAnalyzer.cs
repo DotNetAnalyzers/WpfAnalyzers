@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -153,12 +153,10 @@ namespace WpfAnalyzers
 
             internal static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax? getCall, out InvocationExpressionSyntax? setCall)
             {
-                using (var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker()))
-                {
-                    getCall = walker.getCall;
-                    setCall = walker.setCall;
-                    return getCall != null || setCall != null;
-                }
+                using var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker());
+                getCall = walker.getCall;
+                setCall = walker.setCall;
+                return getCall != null || setCall != null;
             }
 
             protected override void Clear()

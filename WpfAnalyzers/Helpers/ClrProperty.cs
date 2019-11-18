@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -87,32 +87,28 @@ namespace WpfAnalyzers
             if (propertyDeclaration.TryGetGetter(out var getAccessor) &&
                 propertyDeclaration.TryGetSetter(out var setAccessor))
             {
-                using (var getterWalker = ClrGetterWalker.Borrow(semanticModel, getAccessor, cancellationToken))
+                using var getterWalker = ClrGetterWalker.Borrow(semanticModel, getAccessor, cancellationToken);
+                using var setterWalker = ClrSetterWalker.Borrow(semanticModel, setAccessor, cancellationToken);
+                if (getterWalker.HasError ||
+                    setterWalker.HasError)
                 {
-                    using (var setterWalker = ClrSetterWalker.Borrow(semanticModel, setAccessor, cancellationToken))
-                    {
-                        if (getterWalker.HasError ||
-                            setterWalker.HasError)
-                        {
-                            return false;
-                        }
-
-                        if (getterWalker.IsSuccess &&
-                            getterWalker.Property?.Expression is { } getExpression &&
-                            semanticModel.TryGetSymbol(getExpression, cancellationToken, out var symbol) &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField) &&
-                            setterWalker.IsSuccess &&
-                            setterWalker.Property?.Expression is { } setExpression &&
-                            semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField))
-                        {
-                            return true;
-                        }
-
-                        return semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property) &&
-                               TryGetBackingFieldsByName(property, semanticModel.Compilation, out getField, out setField);
-                    }
+                    return false;
                 }
+
+                if (getterWalker.IsSuccess &&
+                    getterWalker.Property?.Expression is { } getExpression &&
+                    semanticModel.TryGetSymbol(getExpression, cancellationToken, out var symbol) &&
+                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField) &&
+                    setterWalker.IsSuccess &&
+                    setterWalker.Property?.Expression is { } setExpression &&
+                    semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
+                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out setField))
+                {
+                    return true;
+                }
+
+                return semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property) &&
+                       TryGetBackingFieldsByName(property, semanticModel.Compilation, out getField, out setField);
             }
 
             return false;

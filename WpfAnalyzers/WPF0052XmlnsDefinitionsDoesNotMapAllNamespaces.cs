@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -35,13 +35,11 @@ namespace WpfAnalyzers
             if (context.Node is AttributeSyntax attribute &&
                 context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.CancellationToken, out _))
             {
-                using (var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken))
+                using var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken);
+                if (walker.NotMapped.Count != 0)
                 {
-                    if (walker.NotMapped.Count != 0)
-                    {
-                        var missing = ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, attribute.GetLocation(), missing, string.Join(Environment.NewLine, walker.NotMapped)));
-                    }
+                    var missing = ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string>(x, x)));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces, attribute.GetLocation(), missing, string.Join(Environment.NewLine, walker.NotMapped)));
                 }
             }
         }

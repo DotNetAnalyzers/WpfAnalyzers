@@ -40,32 +40,28 @@
                     if (TryMatchPropertyChangedCallback(method, context, out var senderParameter, out var argParameter) ||
                         TryMatchCoerceValueCallback(method, context, out senderParameter, out argParameter))
                     {
-                        using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                        using var usages = GetCallbackArguments(context, method, methodDeclaration);
+                        foreach (var callbackArgument in usages)
                         {
-                            foreach (var callbackArgument in usages)
+                            if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
                             {
-                                if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
-                                {
-                                    HandleCasts(context, methodDeclaration, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
-                                }
+                                HandleCasts(context, methodDeclaration, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
+                            }
 
-                                if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
-                                {
-                                    HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
-                                }
+                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                            {
+                                HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                             }
                         }
                     }
                     else if (TryMatchValidateValueCallback(method, out argParameter))
                     {
-                        using (var usages = GetCallbackArguments(context, method, methodDeclaration))
+                        using var usages = GetCallbackArguments(context, method, methodDeclaration);
+                        foreach (var callbackArgument in usages)
                         {
-                            foreach (var callbackArgument in usages)
+                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
                             {
-                                if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
-                                {
-                                    HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
-                                }
+                                HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                             }
                         }
                     }
@@ -201,12 +197,10 @@
                                    identifier.ValueText == senderParameter.Name;
                         }
 
-                        using (var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name))
-                        {
-                            return walker.IdentifierNames.TrySingle(out var identifierName) &&
-                                   context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IParameterSymbol? symbol) &&
-                                   symbol.Name == senderParameter.Name;
-                        }
+                        using var walker = SpecificIdentifierNameWalker.Borrow(declaration, senderParameter.Name);
+                        return walker.IdentifierNames.TrySingle(out var identifierName) &&
+                               context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IParameterSymbol? symbol) &&
+                               symbol.Name == senderParameter.Name;
                     }
                 }
 
@@ -219,18 +213,16 @@
                 {
                     foreach (var argument in argumentList.Arguments)
                     {
-                        using (var walker = IdentifierNameWalker.Borrow(argument.Expression))
+                        using var walker = IdentifierNameWalker.Borrow(argument.Expression);
+                        if (!walker.TryFind(argParameter.Name, out _))
                         {
-                            if (!walker.TryFind(argParameter.Name, out _))
-                            {
-                                return false;
-                            }
+                            return false;
+                        }
 
-                            if (!walker.TryFind("NewValue", out _) &&
-                                !walker.TryFind("OldValue", out _))
-                            {
-                                return false;
-                            }
+                        if (!walker.TryFind("NewValue", out _) &&
+                            !walker.TryFind("OldValue", out _))
+                        {
+                            return false;
                         }
                     }
 
@@ -242,10 +234,8 @@
 
             bool TryGetStaticCallbackArgument(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, out ArgumentSyntax? result)
             {
-                using (var usages = GetCallbackArguments(context, method, methodDeclaration))
-                {
-                    return usages.TrySingle(out result);
-                }
+                using var usages = GetCallbackArguments(context, method, methodDeclaration);
+                return usages.TrySingle(out result);
             }
 
             bool Try(out BackingFieldOrProperty backing)
@@ -264,108 +254,106 @@
                 return;
             }
 
-            using (var walker = SpecificIdentifierNameWalker.Borrow(methodOrLambda, parameter.Name))
+            using var walker = SpecificIdentifierNameWalker.Borrow(methodOrLambda, parameter.Name);
+            foreach (var identifierName in walker.IdentifierNames)
             {
-                foreach (var identifierName in walker.IdentifierNames)
+                var parent = identifierName.Parent;
+                if (parameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs &&
+                    parent is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax { Identifier: { } identifier } } memberAccess &&
+                    (identifier.ValueText == "NewValue" ||
+                     identifier.ValueText == "OldValue"))
                 {
-                    var parent = identifierName.Parent;
-                    if (parameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs &&
-                        parent is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax { Identifier: { } identifier } } memberAccess &&
-                        (identifier.ValueText == "NewValue" ||
-                         identifier.ValueText == "OldValue"))
-                    {
-                        parent = memberAccess.Parent;
-                    }
+                    parent = memberAccess.Parent;
+                }
 
-                    if (parent is CastExpressionSyntax castExpression &&
-                        context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is { } castType &&
-                        !Equals(castType, expectedType))
+                if (parent is CastExpressionSyntax castExpression &&
+                    context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is { } castType &&
+                    !Equals(castType, expectedType))
+                {
+                    var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    if (!expectedType.IsAssignableTo(castType, context.Compilation))
                     {
-                        var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                        if (!expectedType.IsAssignableTo(castType, context.Compilation))
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    wrongTypeDescriptor,
-                                    castExpression.Type.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
-                                    expectedTypeName));
-                        }
-
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                notExactTypeDescriptor,
+                                wrongTypeDescriptor,
                                 castExpression.Type.GetLocation(),
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
                                 expectedTypeName));
                     }
 
-                    if (parent is BinaryExpressionSyntax binaryExpression &&
-                        binaryExpression.IsKind(SyntaxKind.AsExpression) &&
-                        context.SemanticModel.TryGetType(binaryExpression.Right, context.CancellationToken, out var asType) &&
-                        asType.TypeKind != TypeKind.Interface &&
-                        expectedType.TypeKind != TypeKind.Interface &&
-                        !(asType.IsAssignableTo(expectedType, context.Compilation) ||
-                          expectedType.IsAssignableTo(asType, context.Compilation)))
-                    {
-                        var expectedTypeName = expectedType.ToMinimalDisplayString(
-                            context.SemanticModel,
-                            binaryExpression.SpanStart,
-                            SymbolDisplayFormat.MinimallyQualifiedFormat);
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                wrongTypeDescriptor,
-                                binaryExpression.Right.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
-                                expectedTypeName));
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            notExactTypeDescriptor,
+                            castExpression.Type.GetLocation(),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            expectedTypeName));
+                }
 
-                    if (parent is IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax isDeclaration } &&
-                        expectedType != KnownSymbols.Object &&
-                        context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
-                        isType.TypeKind != TypeKind.Interface &&
-                        expectedType.TypeKind != TypeKind.Interface &&
-                        !(isType.IsAssignableTo(expectedType, context.Compilation) || expectedType.IsAssignableTo(isType, context.Compilation)))
-                    {
-                        var expectedTypeName = expectedType.ToMinimalDisplayString(
-                            context.SemanticModel,
-                            isDeclaration.SpanStart,
-                            SymbolDisplayFormat.MinimallyQualifiedFormat);
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                wrongTypeDescriptor,
-                                isDeclaration.Type.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
-                                expectedTypeName));
-                    }
+                if (parent is BinaryExpressionSyntax binaryExpression &&
+                    binaryExpression.IsKind(SyntaxKind.AsExpression) &&
+                    context.SemanticModel.TryGetType(binaryExpression.Right, context.CancellationToken, out var asType) &&
+                    asType.TypeKind != TypeKind.Interface &&
+                    expectedType.TypeKind != TypeKind.Interface &&
+                    !(asType.IsAssignableTo(expectedType, context.Compilation) ||
+                      expectedType.IsAssignableTo(asType, context.Compilation)))
+                {
+                    var expectedTypeName = expectedType.ToMinimalDisplayString(
+                        context.SemanticModel,
+                        binaryExpression.SpanStart,
+                        SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            wrongTypeDescriptor,
+                            binaryExpression.Right.GetLocation(),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            expectedTypeName));
+                }
 
-                    if (parent is SwitchStatementSyntax switchStatement &&
-                        expectedType.TypeKind != TypeKind.Interface &&
-                        expectedType != KnownSymbols.Object)
+                if (parent is IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax isDeclaration } &&
+                    expectedType != KnownSymbols.Object &&
+                    context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
+                    isType.TypeKind != TypeKind.Interface &&
+                    expectedType.TypeKind != TypeKind.Interface &&
+                    !(isType.IsAssignableTo(expectedType, context.Compilation) || expectedType.IsAssignableTo(isType, context.Compilation)))
+                {
+                    var expectedTypeName = expectedType.ToMinimalDisplayString(
+                        context.SemanticModel,
+                        isDeclaration.SpanStart,
+                        SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            wrongTypeDescriptor,
+                            isDeclaration.Type.GetLocation(),
+                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            expectedTypeName));
+                }
+
+                if (parent is SwitchStatementSyntax switchStatement &&
+                    expectedType.TypeKind != TypeKind.Interface &&
+                    expectedType != KnownSymbols.Object)
+                {
+                    foreach (var section in switchStatement.Sections)
                     {
-                        foreach (var section in switchStatement.Sections)
+                        foreach (var label in section.Labels)
                         {
-                            foreach (var label in section.Labels)
+                            if (label is CasePatternSwitchLabelSyntax { Pattern: DeclarationPatternSyntax { Type: { } type } } &&
+                                context.SemanticModel.TryGetType(type, context.CancellationToken, out var caseType) &&
+                                caseType.TypeKind != TypeKind.Interface &&
+                                !(caseType.IsAssignableTo(expectedType, context.Compilation) ||
+                                  expectedType.IsAssignableTo(caseType, context.Compilation)))
                             {
-                                if (label is CasePatternSwitchLabelSyntax { Pattern: DeclarationPatternSyntax { Type: { } type } } &&
-                                    context.SemanticModel.TryGetType(type, context.CancellationToken, out var caseType) &&
-                                    caseType.TypeKind != TypeKind.Interface &&
-                                    !(caseType.IsAssignableTo(expectedType, context.Compilation) ||
-                                      expectedType.IsAssignableTo(caseType, context.Compilation)))
-                                {
-                                    var expectedTypeName = expectedType.ToMinimalDisplayString(
-                                        context.SemanticModel,
-                                        label.SpanStart,
-                                        SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            wrongTypeDescriptor,
-                                            type.GetLocation(),
-                                            ImmutableDictionary<string, string>.Empty.Add(
-                                                "ExpectedType",
-                                                expectedTypeName),
-                                            expectedTypeName));
-                                }
+                                var expectedTypeName = expectedType.ToMinimalDisplayString(
+                                    context.SemanticModel,
+                                    label.SpanStart,
+                                    SymbolDisplayFormat.MinimallyQualifiedFormat);
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        wrongTypeDescriptor,
+                                        type.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(
+                                            "ExpectedType",
+                                            expectedTypeName),
+                                        expectedTypeName));
                             }
                         }
                     }
@@ -557,13 +545,11 @@
                 {
                     foreach (var argument in argumentList.Arguments)
                     {
-                        using (var walker = SpecificIdentifierNameWalker.Borrow(argument.Expression, propertyName))
+                        using var walker = SpecificIdentifierNameWalker.Borrow(argument.Expression, propertyName);
+                        if (walker.IdentifierNames.TrySingle(out _) &&
+                            methodDeclaration.TryFindParameter(argument, out parameter))
                         {
-                            if (walker.IdentifierNames.TrySingle(out _) &&
-                                methodDeclaration.TryFindParameter(argument, out parameter))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
@@ -595,22 +581,20 @@
             invocation = null;
             if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
             {
-                using (var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, methodDeclaration.Identifier.ValueText))
+                using var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, methodDeclaration.Identifier.ValueText);
+                foreach (var identifierName in walker.IdentifierNames)
                 {
-                    foreach (var identifierName in walker.IdentifierNames)
+                    if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
+                        context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
+                        Equals(symbol, method))
                     {
-                        if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
-                            context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
-                            Equals(symbol, method))
+                        if (invocation != null)
                         {
-                            if (invocation != null)
-                            {
-                                invocation = null;
-                                return false;
-                            }
-
-                            invocation = candidate;
+                            invocation = null;
+                            return false;
                         }
+
+                        invocation = candidate;
                     }
                 }
             }
@@ -624,24 +608,22 @@
             var callbacks = PooledSet<ArgumentSyntax>.Borrow();
             if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
             {
-                using (var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, method.MetadataName))
+                using var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, method.MetadataName);
+                foreach (var identifierName in walker.IdentifierNames)
                 {
-                    foreach (var identifierName in walker.IdentifierNames)
+                    if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
+                        Equals(symbol, method))
                     {
-                        if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
-                            Equals(symbol, method))
+                        switch (identifierName.Parent)
                         {
-                            switch (identifierName.Parent)
-                            {
-                                case ArgumentSyntax argument
-                                    when TryGetCallbackArgument(argument, out var callbackArg):
-                                    callbacks.Add(callbackArg);
-                                    break;
-                                case InvocationExpressionSyntax { Parent: ParenthesizedLambdaExpressionSyntax { Parent: ArgumentSyntax argument } }
-                                    when TryGetCallbackArgument(argument, out var callbackArg):
-                                    callbacks.Add(callbackArg);
-                                    break;
-                            }
+                            case ArgumentSyntax argument
+                                when TryGetCallbackArgument(argument, out var callbackArg):
+                                callbacks.Add(callbackArg);
+                                break;
+                            case InvocationExpressionSyntax { Parent: ParenthesizedLambdaExpressionSyntax { Parent: ArgumentSyntax argument } }
+                                when TryGetCallbackArgument(argument, out var callbackArg):
+                                callbacks.Add(callbackArg);
+                                break;
                         }
                     }
                 }

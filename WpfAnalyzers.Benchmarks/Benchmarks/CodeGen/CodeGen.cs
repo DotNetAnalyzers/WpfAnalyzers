@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Benchmarks.Benchmarks
+﻿namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -90,6 +90,7 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
             }
         }
 
+        [Explicit("Script.")]
         [Test]
         public static void CopyResults()
         {

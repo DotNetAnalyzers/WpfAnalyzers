@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -58,63 +58,61 @@ namespace WpfAnalyzers
         internal static bool TryGetCommonBase(SyntaxNode node, IParameterSymbol symbol, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? sourceType)
         {
             sourceType = null;
-            using (var walker = Borrow(node))
+            using var walker = Borrow(node);
+            foreach (var cast in walker.casts)
             {
-                foreach (var cast in walker.casts)
+                if (IsFor(cast.Expression, symbol, semanticModel, cancellationToken) &&
+                    !TryGetCommonBase(sourceType, cast.Type, out sourceType))
                 {
-                    if (IsFor(cast.Expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, cast.Type, out sourceType))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-
-                foreach (var cast in walker.asCasts)
-                {
-                    if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, cast.Right as TypeSyntax, out sourceType))
-                    {
-                        return false;
-                    }
-                }
-
-                foreach (var isCheck in walker.isChecks)
-                {
-                    if (IsFor(isCheck.Left, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, isCheck.Right as TypeSyntax, out sourceType))
-                    {
-                        return false;
-                    }
-                }
-
-                foreach (var isPattern in walker.isPatterns)
-                {
-                    if (isPattern is { Expression: { } expression, Pattern: DeclarationPatternSyntax { Type: { } type } } &&
-                        IsFor(expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, type, out sourceType))
-                    {
-                        return false;
-                    }
-                }
-
-                foreach (var label in walker.caseLabels)
-                {
-                    if (label is { Pattern: DeclarationPatternSyntax { Type: { } type }, Parent: SwitchSectionSyntax { Parent: SwitchStatementSyntax { Expression: { } expression } } } &&
-                        IsFor(expression, symbol, semanticModel, cancellationToken) &&
-                        !TryGetCommonBase(sourceType, type, out sourceType))
-                    {
-                        return false;
-                    }
-                }
-
-                // If we couldn't "guess" a source type we take parameters type
-                if (sourceType == null)
-                {
-                    sourceType = symbol.Type;
-                }
-
-                return true;
             }
+
+            foreach (var cast in walker.asCasts)
+            {
+                if (IsFor(cast.Left, symbol, semanticModel, cancellationToken) &&
+                    !TryGetCommonBase(sourceType, cast.Right as TypeSyntax, out sourceType))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var isCheck in walker.isChecks)
+            {
+                if (IsFor(isCheck.Left, symbol, semanticModel, cancellationToken) &&
+                    !TryGetCommonBase(sourceType, isCheck.Right as TypeSyntax, out sourceType))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var isPattern in walker.isPatterns)
+            {
+                if (isPattern is { Expression: { } expression, Pattern: DeclarationPatternSyntax { Type: { } type } } &&
+                    IsFor(expression, symbol, semanticModel, cancellationToken) &&
+                    !TryGetCommonBase(sourceType, type, out sourceType))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var label in walker.caseLabels)
+            {
+                if (label is { Pattern: DeclarationPatternSyntax { Type: { } type }, Parent: SwitchSectionSyntax { Parent: SwitchStatementSyntax { Expression: { } expression } } } &&
+                    IsFor(expression, symbol, semanticModel, cancellationToken) &&
+                    !TryGetCommonBase(sourceType, type, out sourceType))
+                {
+                    return false;
+                }
+            }
+
+            // If we couldn't "guess" a source type we take parameters type
+            if (sourceType == null)
+            {
+                sourceType = symbol.Type;
+            }
+
+            return true;
 
             bool IsFor(ExpressionSyntax e, ISymbol s, SemanticModel sm, CancellationToken ct)
             {
@@ -160,13 +158,11 @@ namespace WpfAnalyzers
                     return true;
                 }
 
-                using (var set = PooledSet<ITypeSymbol>.Borrow())
-                {
-                    set.UnionWith(t1.RecursiveBaseTypes());
-                    set.IntersectWith(t2.RecursiveBaseTypes());
-                    return set.TryFirst(x => x is INamedTypeSymbol namedType && namedType.IsGenericType, out result) ||
-                           set.TryFirst(out result);
-                }
+                using var set = PooledSet<ITypeSymbol>.Borrow();
+                set.UnionWith(t1.RecursiveBaseTypes());
+                set.IntersectWith(t2.RecursiveBaseTypes());
+                return set.TryFirst(x => x is INamedTypeSymbol namedType && namedType.IsGenericType, out result) ||
+                       set.TryFirst(out result);
             }
         }
 
