@@ -66,8 +66,7 @@
                         }
                     }
                 }
-                else if (method.ReturnsVoid &&
-                         method.IsVirtual &&
+                else if (method is { ReturnsVoid: true, IsVirtual: true } &&
                          TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
                          TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
                 {
@@ -86,10 +85,11 @@
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
                         HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(
-                                                     Descriptors.WPF0062DocumentPropertyChangedCallback,
-                                                     location,
-                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0062DocumentPropertyChangedCallback,
+                                location,
+                                ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
                     }
                 }
             }
