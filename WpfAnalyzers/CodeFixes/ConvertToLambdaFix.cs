@@ -178,11 +178,11 @@
 
             public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
             {
-                foreach ((IParameterSymbol Parameter, ExpressionSyntax Expression) replacement in this.replacements)
+                foreach ((var parameter, var expression) in this.replacements)
                 {
-                    if (node.IsSymbol(replacement.Parameter, this.semanticModel, this.cancellationToken))
+                    if (node.IsSymbol(parameter, this.semanticModel, this.cancellationToken))
                     {
-                        return replacement.Expression.WithTriviaFrom(node);
+                        return expression.WithTriviaFrom(node);
                     }
                 }
 
