@@ -98,7 +98,7 @@
         private static void ConvertToLambda(DocumentEditor editor, LambdaExpressionSyntax lambda, CancellationToken cancellationToken)
         {
             if (lambda is { Body: InvocationExpressionSyntax body } &&
-                editor.SemanticModel.TryGetSymbol(body, cancellationToken, out IMethodSymbol? method) &&
+                editor.SemanticModel.TryGetSymbol(body, cancellationToken, out var method) &&
                 SymbolAndDeclaration.TryCreate(method, cancellationToken, out SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration) &&
                 TryGetExpression(symbolAndDeclaration.Declaration, out var expression))
             {

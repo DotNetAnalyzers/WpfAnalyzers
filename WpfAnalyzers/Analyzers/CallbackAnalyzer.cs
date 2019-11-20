@@ -11,7 +11,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class CallbackAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
             Descriptors.WPF0019CastSenderToCorrectType,
@@ -20,7 +19,6 @@
             Descriptors.WPF0022DirectCastValueToExactType,
             Descriptors.WPF0062DocumentPropertyChangedCallback);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
