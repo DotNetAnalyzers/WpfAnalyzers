@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
+﻿namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new DocumentOnPropertyChangedFix();
+        private static readonly CodeFixProvider Fix = new DocumentationFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0062DocumentPropertyChangedCallback);
 
         [TestCase("new PropertyMetadata(OnBarChanged)")]

@@ -1,11 +1,14 @@
-﻿namespace WpfAnalyzers.Helpers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DocComment
     {
-        internal static bool TryMatch(this XmlElementSyntax e, [NotNullWhen(true)] out XmlTextSyntax? prefix, [NotNullWhen(true)] out XmlElementSyntax? cref, [NotNullWhen(true)] out XmlTextSyntax? suffix)
+        internal static bool IsMatch(this XmlTextSyntax xmlText, string text) => xmlText.TextTokens.TrySingle(out var token) && token.ValueText == text;
+
+        internal static bool TryMatch(this XmlElementSyntax e, [NotNullWhen(true)] out XmlTextSyntax? prefix, [NotNullWhen(true)] out XmlEmptyElementSyntax? cref, [NotNullWhen(true)] out XmlTextSyntax? suffix)
         {
             prefix = default;
             cref = default;

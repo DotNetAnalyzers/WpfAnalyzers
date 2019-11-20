@@ -1,5 +1,7 @@
 ﻿namespace WpfAnalyzers
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -80,14 +82,16 @@
                                 $"On{registeredName}Changed"));
                     }
 
-                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        ShouldUseStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText))
+                    if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0062DocumentPropertyChangedCallback,
-                                location,
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), standardExpectedText)));
+                        foreach (var (location, text) in new OnPropertyChangedComment(methodDeclaration, singleInvocation, fieldOrProperty))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0062DocumentPropertyChangedCallback,
+                                    location,
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), text)));
+                        }
                     }
                 }
             }
@@ -359,223 +363,6 @@
             }
         }
 
-        private static bool ShouldUseStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, [NotNullWhen(true)] out string? text)
-        {
-            text = null;
-            location = null;
-            if (methodDeclaration.ParameterList is null)
-            {
-                return false;
-            }
-
-            var parameters = methodDeclaration.ParameterList.Parameters;
-            var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
-            if (HasDocComment(out var comment, out location) &&
-                HasSummary(comment, standardSummaryText, out location))
-            {
-                switch (parameters.Count)
-                {
-                    case 0:
-                        return false;
-                    case 1:
-                        {
-                            if (TryGetNewValue(out var parameter, out var standardParamText) ||
-                                TryGetOldValue(out parameter, out standardParamText))
-                            {
-                                if (HasParam(comment, parameter, standardParamText, out location))
-                                {
-                                    return false;
-                                }
-
-                                text = StringBuilderPool.Borrow()
-                                                        .Append("/// ").AppendLine(standardSummaryText)
-                                                        .Append("/// ").AppendLine(standardParamText)
-                                                        .Return();
-                                return true;
-                            }
-
-                            return false;
-                        }
-
-                    case 2:
-                        {
-                            if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
-                                TryGetNewValue(out var newParameter, out var standardNewParamText))
-                            {
-                                if (HasParam(comment, oldParameter, standardOldParamText, out location) &&
-                                    HasParam(comment, newParameter, standardNewParamText, out location))
-                                {
-                                    return false;
-                                }
-
-                                if (parameters.IndexOf(oldParameter) < parameters.IndexOf(newParameter))
-                                {
-                                    text = StringBuilderPool.Borrow()
-                                                            .Append("/// ").AppendLine(standardSummaryText)
-                                                            .Append("/// ").AppendLine(standardOldParamText)
-                                                            .Append("/// ").AppendLine(standardNewParamText)
-                                                            .Return();
-                                }
-                                else
-                                {
-                                    text = StringBuilderPool.Borrow()
-                                                            .Append("/// ").AppendLine(standardSummaryText)
-                                                            .Append("/// ").AppendLine(standardNewParamText)
-                                                            .Append("/// ").AppendLine(standardOldParamText)
-                                                            .Return();
-                                }
-
-                                return true;
-                            }
-
-                            return false;
-                        }
-                }
-
-                return false;
-            }
-
-            text = FullText();
-            return text != null;
-
-            bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location? errorLocation)
-            {
-                if (methodDeclaration.TryGetDocumentationComment(out comment))
-                {
-                    errorLocation = null;
-                    return true;
-                }
-
-                errorLocation = methodDeclaration.Identifier.GetLocation();
-                return false;
-            }
-
-            static bool HasSummary(DocumentationCommentTriviaSyntax comment, string expected, out Location? errorLocation)
-            {
-                if (comment.TryGetSummary(out var summary))
-                {
-                    if (summary.ToString() == expected)
-                    {
-                        errorLocation = null;
-                        return true;
-                    }
-
-                    errorLocation = summary.GetLocation();
-                    return false;
-                }
-
-                errorLocation = comment.GetLocation();
-                return false;
-            }
-
-            bool TryGetNewValue(out ParameterSyntax parameter, out string standardText)
-            {
-                standardText = null;
-                if (TryFindParameter("NewValue", out parameter))
-                {
-                    standardText = $"<param name=\"{parameter.Identifier.ValueText}\">The new value of <see cref=\"{backingField.Name}\"/>.</param>";
-                    return true;
-                }
-
-                return false;
-            }
-
-            bool TryGetOldValue(out ParameterSyntax parameter, out string standardText)
-            {
-                standardText = null;
-                if (TryFindParameter("OldValue", out parameter))
-                {
-                    standardText = $"<param name=\"{parameter.Identifier.ValueText}\">The old value of <see cref=\"{backingField.Name}\"/>.</param>";
-                    return true;
-                }
-
-                return false;
-            }
-
-            bool TryFindParameter(string propertyName, out ParameterSyntax parameter)
-            {
-                parameter = null;
-                if (invocation.ArgumentList is { } argumentList)
-                {
-                    foreach (var argument in argumentList.Arguments)
-                    {
-                        using var walker = SpecificIdentifierNameWalker.Borrow(argument.Expression, propertyName);
-                        if (walker.IdentifierNames.TrySingle(out _) &&
-                            methodDeclaration.TryFindParameter(argument, out parameter))
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            string? FullText()
-            {
-                switch (parameters.Count)
-                {
-                    case 0:
-                        return $"/// {standardSummaryText}";
-                    case 1:
-                        if (TryGetNewValue(out _, out var standardParamText) ||
-                            TryGetOldValue(out _, out standardParamText))
-                        {
-                            return StringBuilderPool.Borrow()
-                                                            .Append("/// ").AppendLine(standardSummaryText)
-                                                            .Append("/// ").AppendLine(standardParamText)
-                                                            .Return();
-                        }
-
-                        return null;
-
-                    case 2:
-                        if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
-                            TryGetNewValue(out var newParameter, out var standardNewParamText))
-                        {
-                            if (parameters.IndexOf(oldParameter) < parameters.IndexOf(newParameter))
-                            {
-                                return StringBuilderPool.Borrow()
-                                                            .Append("/// ").AppendLine(standardSummaryText)
-                                                            .Append("/// ").AppendLine(standardOldParamText)
-                                                            .Append("/// ").AppendLine(standardNewParamText)
-                                                            .Return();
-                            }
-                            else
-                            {
-                                return StringBuilderPool.Borrow()
-                                                                .Append("/// ").AppendLine(standardSummaryText)
-                                                                .Append("/// ").AppendLine(standardNewParamText)
-                                                                .Append("/// ").AppendLine(standardOldParamText)
-                                                                .Return();
-                            }
-                        }
-
-                        return null;
-                }
-
-                return null;
-            }
-        }
-
-        private static bool HasParam(DocumentationCommentTriviaSyntax comment, ParameterSyntax current, string expected, [NotNullWhen(true)] out Location? errorLocation)
-        {
-            if (comment.TryGetParam(current.Identifier.ValueText, out var param))
-            {
-                if (param.ToString() == expected)
-                {
-                    errorLocation = null;
-                    return true;
-                }
-
-                errorLocation = param.GetLocation();
-                return false;
-            }
-
-            errorLocation = comment.GetLocation();
-            return false;
-        }
-
         private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
         {
             invocation = null;
@@ -700,6 +487,180 @@
             }
 
             return false;
+        }
+
+        private struct OnPropertyChangedComment : IEnumerable<(Location Location, string Text)>
+        {
+            private readonly MethodDeclarationSyntax method;
+            private readonly InvocationExpressionSyntax invocation;
+            private readonly BackingFieldOrProperty backing;
+
+            internal OnPropertyChangedComment(MethodDeclarationSyntax method, InvocationExpressionSyntax invocation, BackingFieldOrProperty backing)
+            {
+                this.method = method;
+                this.invocation = invocation;
+                this.backing = backing;
+            }
+
+            public IEnumerator<(Location Location, string Text)> GetEnumerator()
+            {
+                if (this.method.ParameterList is null)
+                {
+                    yield break;
+                }
+
+                if (this.method.TryGetDocumentationComment(out var comment))
+                {
+                    if (comment.TryGetSummary(out var summary))
+                    {
+                        if (summary.TryMatch(out var prefix, out var cref, out var suffix) &&
+                            prefix.IsMatch("This method is invoked when the ") &&
+                            suffix.IsMatch(" changes."))
+                        {
+
+                        }
+                        else
+                        {
+                            yield return (summary.GetLocation(), this.SummaryText());
+                        }
+
+                        foreach (var parameter in this.method.ParameterList.Parameters)
+                        {
+                            if (this.IsParameter("OldValue", parameter))
+                            {
+                                if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
+                                {
+                                    if (param.TryMatch(out prefix, out cref, out suffix) &&
+                                        prefix.IsMatch("The old value of ") &&
+                                        suffix.IsMatch("."))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        yield return (param.GetLocation(), this.OldValueText(parameter));
+                                    }
+                                }
+                                else
+                                {
+                                    yield return (parameter.GetLocation(), this.OldValueText(parameter));
+                                }
+                            }
+                            else if (this.IsParameter("NewValue", parameter))
+                            {
+                                if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
+                                {
+                                    if (param.TryMatch(out prefix, out cref, out suffix) &&
+                                        prefix.IsMatch("The new value of ") &&
+                                        suffix.IsMatch("."))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        yield return (param.GetLocation(), this.NewValueText(parameter));
+                                    }
+                                }
+                                else
+                                {
+                                    yield return (parameter.GetLocation(), this.NewValueText(parameter));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        yield return (comment.GetLocation(), this.SummaryText());
+                    }
+                }
+                else if (this.FullText() is { } fullText)
+                {
+                    yield return (this.method.Identifier.GetLocation(), fullText);
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+            private bool IsParameter(string name, ParameterSyntax p) => this.TryFindParameter(name, out var match) && p == match;
+
+            private bool TryFindParameter(string propertyName, [NotNullWhen(true)] out ParameterSyntax? parameter)
+            {
+                if (this.invocation.ArgumentList is { } argumentList)
+                {
+                    foreach (var argument in argumentList.Arguments)
+                    {
+                        using var walker = SpecificIdentifierNameWalker.Borrow(argument.Expression, propertyName);
+                        if (walker.IdentifierNames.TrySingle(out _) &&
+                            this.method.TryFindParameter(argument, out parameter))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                parameter = null;
+                return false;
+            }
+
+            private string SummaryText() => $"<summary>This method is invoked when the <see cref=\"{this.backing.Name}\"/> changes.</summary>";
+
+            private string NewValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">The new value of <see cref=\"{this.backing.Name}\"/>.</param>";
+
+            private string OldValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">The old value of <see cref=\"{this.backing.Name}\"/>.</param>";
+
+            private string? FullText()
+            {
+                var parameters = this.method.ParameterList.Parameters;
+                switch (parameters.Count)
+                {
+                    case 0:
+                        return $"/// {this.SummaryText()}";
+                    case 1:
+                        if (this.TryFindParameter("NewValue", out var parameter))
+                        {
+                            return StringBuilderPool.Borrow()
+                                                    .Append("/// ").AppendLine(this.SummaryText())
+                                                    .Append("/// ").AppendLine(this.NewValueText(parameter))
+                                                    .Return();
+                        }
+
+                        if (this.TryFindParameter("OldValue", out parameter))
+                        {
+                            return StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(this.SummaryText())
+                                                            .Append("/// ").AppendLine(this.OldValueText(parameter))
+                                                            .Return();
+                        }
+
+                        return null;
+
+                    case 2:
+                        if (this.TryFindParameter("OldValue", out var oldParameter) &&
+                            this.TryFindParameter("NewValue", out var newParameter))
+                        {
+                            if (parameters.IndexOf(oldParameter) < parameters.IndexOf(newParameter))
+                            {
+                                return StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(this.SummaryText())
+                                                            .Append("/// ").AppendLine(this.OldValueText(oldParameter))
+                                                            .Append("/// ").AppendLine(this.NewValueText(newParameter))
+                                                            .Return();
+                            }
+                            else
+                            {
+                                return StringBuilderPool.Borrow()
+                                                                .Append("/// ").AppendLine(this.SummaryText())
+                                                                .Append("/// ").AppendLine(this.NewValueText(newParameter))
+                                                                .Append("/// ").AppendLine(this.OldValueText(oldParameter))
+                                                                .Return();
+                            }
+                        }
+
+                        return null;
+                }
+
+                return null;
+            }
         }
     }
 }
