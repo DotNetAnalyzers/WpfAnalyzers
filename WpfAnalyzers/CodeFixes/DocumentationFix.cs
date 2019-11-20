@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -35,10 +36,24 @@
                                 this.GetType(),
                                 diagnostic);
                             break;
+                        case XmlEmptyElementSyntax element:
+                            context.RegisterCodeFix(
+                                "Add standard documentation.",
+                                (editor, _) => editor.ReplaceNode(element, x => Parse.XmlEmptyElementSyntax(text)),
+                                this.GetType(),
+                                diagnostic);
+                            break;
                         case DocumentationCommentTriviaSyntax element:
                             context.RegisterCodeFix(
                                 "Add standard documentation.",
                                 (editor, _) => editor.ReplaceNode(element, x => Parse.DocumentationCommentTriviaSyntax(text)),
+                                this.GetType(),
+                                diagnostic);
+                            break;
+                        case IdentifierNameSyntax identifierName:
+                            context.RegisterCodeFix(
+                                "Add standard documentation.",
+                                (editor, _) => editor.ReplaceNode(identifierName, x => x.WithIdentifier(SyntaxFactory.Identifier(text))),
                                 this.GetType(),
                                 diagnostic);
                             break;
@@ -57,7 +72,8 @@
                                 this.GetType(),
                                 diagnostic);
                             break;
-
+                        case { } node:
+                            throw new NotSupportedException($"Not handling node type: {node.Kind()}");
                     }
                 }
             }

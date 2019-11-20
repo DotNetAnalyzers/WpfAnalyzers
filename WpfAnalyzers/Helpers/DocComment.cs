@@ -12,9 +12,9 @@
         {
             if (e.Name?.LocalName.ValueText == "see")
             {
-                foreach (var candiate in e.Attributes)
+                foreach (var candidate in e.Attributes)
                 {
-                    if (candiate is XmlCrefAttributeSyntax cref)
+                    if (candidate is XmlCrefAttributeSyntax cref)
                     {
                         attribute = cref;
                         return true;
@@ -23,7 +23,7 @@
             }
 
             attribute = null;
-            return true;
+            return false;
         }
 
         internal static bool IsMatch(this XmlTextSyntax xmlText, string text)

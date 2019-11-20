@@ -517,16 +517,9 @@
                             prefix.IsMatch("This method is invoked when the ") &&
                             suffix.IsMatch(" changes."))
                         {
-                            if (cref.IsCref(out var attribute))
+                            if (this.CheckCref(cref) is { } error)
                             {
-                                if (attribute.Cref.ToString() != this.backing.Name)
-                                {
-                                    yield return (attribute.Cref.GetLocation(), this.backing.Name);
-                                }
-                            }
-                            else
-                            {
-                                yield return (cref.GetLocation(), this.CrefElementText());
+                                yield return error;
                             }
                         }
                         else
@@ -544,16 +537,9 @@
                                         prefix.IsMatch("The old value of ") &&
                                         suffix.IsMatch("."))
                                     {
-                                        if (cref.IsCref(out var attribute))
+                                        if (this.CheckCref(cref) is { } error)
                                         {
-                                            if (attribute.Cref.ToString() != this.backing.Name)
-                                            {
-                                                yield return (attribute.Cref.GetLocation(), this.backing.Name);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            yield return (cref.GetLocation(), this.CrefElementText());
+                                            yield return error;
                                         }
                                     }
                                     else
@@ -574,16 +560,9 @@
                                         prefix.IsMatch("The new value of ") &&
                                         suffix.IsMatch("."))
                                     {
-                                        if (cref.IsCref(out var attribute))
+                                        if (this.CheckCref(cref) is { } error)
                                         {
-                                            if (attribute.Cref.ToString() != this.backing.Name)
-                                            {
-                                                yield return (attribute.Cref.GetLocation(), this.backing.Name);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            yield return (cref.GetLocation(), this.CrefElementText());
+                                            yield return error;
                                         }
                                     }
                                     else
@@ -611,6 +590,26 @@
 
             IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+            private (Location, string)? CheckCref(XmlEmptyElementSyntax e)
+            {
+                if (e.IsCref(out var attribute))
+                {
+                    if (attribute.Cref is NameMemberCrefSyntax { Name: IdentifierNameSyntax name })
+                    {
+                        if (name.Identifier.ValueText == this.backing.Name)
+                        {
+                            return null;
+                        }
+
+                        return (name.GetLocation(), this.backing.Name);
+                    }
+
+                    return (e.GetLocation(), $"<see cref=\"{this.backing.Name}\"/>");
+                }
+
+                return (e.GetLocation(), $"<see cref=\"{this.backing.Name}\"/>");
+            }
+
             private bool IsParameter(string name, ParameterSyntax p) => this.TryFindParameter(name, out var match) && p == match;
 
             private bool TryFindParameter(string propertyName, [NotNullWhen(true)] out ParameterSyntax? parameter)
@@ -631,8 +630,6 @@
                 parameter = null;
                 return false;
             }
-
-            private string CrefElementText() => $"<see cref=\"{this.backing.Name}\"/>.</summary>";
 
             private string SummaryText() => $"<summary>This method is invoked when the <see cref=\"{this.backing.Name}\"/> changes.</summary>";
 
