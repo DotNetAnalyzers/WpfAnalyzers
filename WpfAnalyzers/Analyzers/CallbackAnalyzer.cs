@@ -363,125 +363,80 @@
         {
             text = null;
             location = null;
-            var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
-            if (methodDeclaration.ParameterList is { } parameterList)
+            if (methodDeclaration.ParameterList is null)
             {
-                if (HasDocComment(out var comment, out location) &&
-                    HasSummary(comment, standardSummaryText, out location))
-                {
-                    if (parameterList.Parameters.Count == 0)
-                    {
-                        return false;
-                    }
+                return false;
+            }
 
-                    if (parameterList.Parameters.Count == 1)
-                    {
-                        if (TryGetNewValue(out var parameter, out var standardParamText) ||
-                            TryGetOldValue(out parameter, out standardParamText))
+            var parameters = methodDeclaration.ParameterList.Parameters;
+            var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
+            if (HasDocComment(out var comment, out location) &&
+                HasSummary(comment, standardSummaryText, out location))
+            {
+                switch (parameters.Count)
+                {
+                    case 0:
+                        return false;
+                    case 1:
                         {
-                            if (HasParam(comment, parameter, standardParamText, out location))
+                            if (TryGetNewValue(out var parameter, out var standardParamText) ||
+                                TryGetOldValue(out parameter, out standardParamText))
                             {
-                                return false;
-                            }
+                                if (HasParam(comment, parameter, standardParamText, out location))
+                                {
+                                    return false;
+                                }
 
-                            text = StringBuilderPool.Borrow()
-                                                    .Append("/// ").AppendLine(standardSummaryText)
-                                                    .Append("/// ").AppendLine(standardParamText)
-                                                    .Return();
-                            return true;
-                        }
-
-                        return false;
-                    }
-
-                    if (parameterList.Parameters.Count == 2)
-                    {
-                        if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
-                            TryGetNewValue(out var newParameter, out var standardNewParamText))
-                        {
-                            if (HasParam(comment, oldParameter, standardOldParamText, out location) &&
-                                HasParam(comment, newParameter, standardNewParamText, out location))
-                            {
-                                return false;
-                            }
-
-                            if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
-                            {
                                 text = StringBuilderPool.Borrow()
-                                                        .Append("/// ").AppendLine(standardSummaryText)
-                                                        .Append("/// ").AppendLine(standardOldParamText)
-                                                        .Append("/// ").AppendLine(standardNewParamText)
-                                                        .Return();
-                            }
-                            else
-                            {
-                                text = StringBuilderPool.Borrow()
-                                                        .Append("/// ").AppendLine(standardSummaryText)
-                                                        .Append("/// ").AppendLine(standardNewParamText)
-                                                        .Append("/// ").AppendLine(standardOldParamText)
-                                                        .Return();
-                            }
-
-                            return true;
-                        }
-
-                        return false;
-                    }
-
-                    return false;
-                }
-
-                if (parameterList.Parameters.Count == 0)
-                {
-                    text = $"/// {standardSummaryText}";
-                    return true;
-                }
-
-                if (parameterList.Parameters.Count == 1)
-                {
-                    if (TryGetNewValue(out _, out var standardParamText) ||
-                        TryGetOldValue(out _, out standardParamText))
-                    {
-                        text = StringBuilderPool.Borrow()
                                                         .Append("/// ").AppendLine(standardSummaryText)
                                                         .Append("/// ").AppendLine(standardParamText)
                                                         .Return();
-                        return true;
-                    }
+                                return true;
+                            }
 
-                    return false;
-                }
-
-                if (parameterList.Parameters.Count == 2)
-                {
-                    if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
-                        TryGetNewValue(out var newParameter, out var standardNewParamText))
-                    {
-                        if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
-                        {
-                            text = StringBuilderPool.Borrow()
-                                                        .Append("/// ").AppendLine(standardSummaryText)
-                                                        .Append("/// ").AppendLine(standardOldParamText)
-                                                        .Append("/// ").AppendLine(standardNewParamText)
-                                                        .Return();
+                            return false;
                         }
-                        else
+
+                    case 2:
                         {
-                            text = StringBuilderPool.Borrow()
+                            if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
+                                TryGetNewValue(out var newParameter, out var standardNewParamText))
+                            {
+                                if (HasParam(comment, oldParameter, standardOldParamText, out location) &&
+                                    HasParam(comment, newParameter, standardNewParamText, out location))
+                                {
+                                    return false;
+                                }
+
+                                if (parameters.IndexOf(oldParameter) < parameters.IndexOf(newParameter))
+                                {
+                                    text = StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(standardSummaryText)
+                                                            .Append("/// ").AppendLine(standardOldParamText)
+                                                            .Append("/// ").AppendLine(standardNewParamText)
+                                                            .Return();
+                                }
+                                else
+                                {
+                                    text = StringBuilderPool.Borrow()
                                                             .Append("/// ").AppendLine(standardSummaryText)
                                                             .Append("/// ").AppendLine(standardNewParamText)
                                                             .Append("/// ").AppendLine(standardOldParamText)
                                                             .Return();
+                                }
+
+                                return true;
+                            }
+
+                            return false;
                         }
-
-                        return true;
-                    }
-
-                    return false;
                 }
+
+                return false;
             }
 
-            return false;
+            text = FullText();
+            return text != null;
 
             bool HasDocComment(out DocumentationCommentTriviaSyntax comment, out Location? errorLocation)
             {
@@ -554,6 +509,52 @@
                 }
 
                 return false;
+            }
+
+            string? FullText()
+            {
+                switch (parameters.Count)
+                {
+                    case 0:
+                        return $"/// {standardSummaryText}";
+                    case 1:
+                        if (TryGetNewValue(out _, out var standardParamText) ||
+                            TryGetOldValue(out _, out standardParamText))
+                        {
+                            return StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(standardSummaryText)
+                                                            .Append("/// ").AppendLine(standardParamText)
+                                                            .Return();
+                        }
+
+                        return null;
+
+                    case 2:
+                        if (TryGetOldValue(out var oldParameter, out var standardOldParamText) &&
+                            TryGetNewValue(out var newParameter, out var standardNewParamText))
+                        {
+                            if (parameters.IndexOf(oldParameter) < parameters.IndexOf(newParameter))
+                            {
+                                return StringBuilderPool.Borrow()
+                                                            .Append("/// ").AppendLine(standardSummaryText)
+                                                            .Append("/// ").AppendLine(standardOldParamText)
+                                                            .Append("/// ").AppendLine(standardNewParamText)
+                                                            .Return();
+                            }
+                            else
+                            {
+                                return StringBuilderPool.Borrow()
+                                                                .Append("/// ").AppendLine(standardSummaryText)
+                                                                .Append("/// ").AppendLine(standardNewParamText)
+                                                                .Append("/// ").AppendLine(standardOldParamText)
+                                                                .Return();
+                            }
+                        }
+
+                        return null;
+                }
+
+                return null;
             }
         }
 
