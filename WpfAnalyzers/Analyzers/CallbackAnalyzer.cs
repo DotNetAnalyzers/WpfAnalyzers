@@ -543,7 +543,7 @@
                                 }
                                 else
                                 {
-                                    yield return (parameter.GetLocation(), this.OldValueText(parameter));
+                                    yield return (parameter.Identifier.GetLocation(), this.OldValueInnerText());
                                 }
                             }
                             else if (this.IsParameter("NewValue", parameter))
@@ -563,7 +563,7 @@
                                 }
                                 else
                                 {
-                                    yield return (parameter.GetLocation(), this.NewValueText(parameter));
+                                    yield return (parameter.Identifier.GetLocation(), this.NewValueInnerText());
                                 }
                             }
                         }
@@ -604,9 +604,13 @@
 
             private string SummaryText() => $"<summary>This method is invoked when the <see cref=\"{this.backing.Name}\"/> changes.</summary>";
 
-            private string NewValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">The new value of <see cref=\"{this.backing.Name}\"/>.</param>";
+            private string NewValueInnerText() => $"The new value of <see cref=\"{this.backing.Name}\"/>.";
 
-            private string OldValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">The old value of <see cref=\"{this.backing.Name}\"/>.</param>";
+            private string NewValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">{this.NewValueInnerText()}</param>";
+
+            private string OldValueInnerText() => $"The old value of <see cref=\"{this.backing.Name}\"/>.";
+
+            private string OldValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">{this.OldValueInnerText()}</param>";
 
             private string? FullText()
             {
