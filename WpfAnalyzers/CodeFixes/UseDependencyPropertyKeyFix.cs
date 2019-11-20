@@ -1,28 +1,26 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseDependencyPropertyKeyFix))]
     [Shared]
-    internal class UseDependencyPropertyKeyFix : CodeFixProvider
+    internal class UseDependencyPropertyKeyFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.WPF0040SetUsingDependencyPropertyKey.Id);
 
-        public override FixAllProvider? GetFixAllProvider() => null;
+        protected override DocumentEditorFixAllProvider? FixAllProvider() => null;
 
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
@@ -42,46 +40,23 @@ namespace WpfAnalyzers
                     if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _))
                     {
                         context.RegisterCodeFix(
-                            CodeAction.Create(
-                                invocation.ToString(),
-                                cancellationToken => ApplyFixAsync(
-                                    context.Document,
-                                    invocation,
-                                    null,
-                                    keyField.CreateArgument(semanticModel, invocation.SpanStart),
-                                    cancellationToken),
-                                this.GetType().FullName),
+                            invocation.ToString(),
+                            (e, _) => e.ReplaceNode(arguments[0], x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
+                            this.GetType().FullName,
                             diagnostic);
                     }
 
                     if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _))
                     {
                         context.RegisterCodeFix(
-                            CodeAction.Create(
-                                invocation.ToString(),
-                                cancellationToken => ApplyFixAsync(
-                                    context.Document,
-                                    invocation,
-                                    SetValueExpression(invocation.Expression),
-                                    keyField.CreateArgument(semanticModel, invocation.SpanStart),
-                                    cancellationToken),
-                                this.GetType().FullName),
+                            invocation.ToString(),
+                            (e, _) => e.ReplaceNode(invocation.Expression, x => SetValueExpression(invocation.Expression))
+                                       .ReplaceNode(arguments[0], x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
+                            this.GetType().FullName,
                             diagnostic);
                     }
                 }
             }
-        }
-
-        private static async Task<Document> ApplyFixAsync(Document document, InvocationExpressionSyntax oldNode, ExpressionSyntax expression, ArgumentSyntax argument, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            if (expression != null)
-            {
-                editor.ReplaceNode(oldNode.Expression, expression);
-            }
-
-            editor.ReplaceNode(oldNode.ArgumentList.Arguments[0], argument);
-            return editor.GetChangedDocument();
         }
 
         private static ExpressionSyntax SetValueExpression(ExpressionSyntax old)
