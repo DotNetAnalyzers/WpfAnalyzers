@@ -36,47 +36,47 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         $"Use nameof({name})",
-                        (editor, cancellationToken) => FixAsync(editor, expression, name, cancellationToken),
+                        (editor, cancellationToken) => FixAsync(editor, cancellationToken),
                         this.GetType().FullName,
                         diagnostic);
+
+                    async Task FixAsync(DocumentEditor editor, CancellationToken cancellationToken)
+                    {
+                        if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None)
+                        {
+                            name = "@" + name;
+                        }
+
+                        if (!expression.IsInStaticContext() &&
+                            editor.SemanticModel.LookupSymbols(expression.SpanStart, name: name).TrySingle(out var member) &&
+                            (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
+                            !member.IsStatic &&
+                            await Qualify(member).ConfigureAwait(false) != CodeStyleResult.No)
+                        {
+                            editor.ReplaceNode(
+                                expression,
+                                (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})").WithTriviaFrom(x));
+                        }
+                        else
+                        {
+                            editor.ReplaceNode(
+                                expression,
+                                (x, _) => SyntaxFactory.ParseExpression($"nameof({name})").WithTriviaFrom(x));
+                        }
+
+                        Task<CodeStyleResult> Qualify(ISymbol symbol)
+                        {
+                            return symbol.Kind switch
+                            {
+                                SymbolKind.Field => editor.QualifyFieldAccessAsync(cancellationToken),
+                                SymbolKind.Event => editor.QualifyEventAccessAsync(cancellationToken),
+                                SymbolKind.Property => editor.QualifyPropertyAccessAsync(cancellationToken),
+                                SymbolKind.Method => editor.QualifyMethodAccessAsync(cancellationToken),
+                                _ => throw new ArgumentOutOfRangeException(nameof(symbol)),
+                            };
+                        }
+                    }
                 }
-            }
-        }
-
-        private static async Task FixAsync(DocumentEditor editor, ExpressionSyntax argument, string name, CancellationToken cancellationToken)
-        {
-            if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None)
-            {
-                name = "@" + name;
-            }
-
-            if (!argument.IsInStaticContext() &&
-                editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
-                (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
-                !member.IsStatic &&
-                await Qualify(member).ConfigureAwait(false) != CodeStyleResult.No)
-            {
-                editor.ReplaceNode(
-                    argument,
-                    (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})").WithTriviaFrom(x));
-            }
-            else
-            {
-                editor.ReplaceNode(
-                    argument,
-                    (x, _) => SyntaxFactory.ParseExpression($"nameof({name})").WithTriviaFrom(x));
-            }
-
-            Task<CodeStyleResult> Qualify(ISymbol symbol)
-            {
-                return symbol.Kind switch
-                {
-                    SymbolKind.Field => editor.QualifyFieldAccessAsync(cancellationToken),
-                    SymbolKind.Event => editor.QualifyEventAccessAsync(cancellationToken),
-                    SymbolKind.Property => editor.QualifyPropertyAccessAsync(cancellationToken),
-                    SymbolKind.Method => editor.QualifyMethodAccessAsync(cancellationToken),
-                    _ => throw new ArgumentOutOfRangeException(nameof(symbol)),
-                };
             }
         }
     }
