@@ -50,6 +50,7 @@
                         Diagnostic.Create(
                             Descriptors.WPF0040SetUsingDependencyPropertyKey,
                             propertyArg.GetLocation(),
+                            properties: ImmutableDictionary<string, string>.Empty.Add(nameof(DependencyPropertyKeyType), keyField.Name),
                             propertyArg,
                             keyField.CreateArgument(context.SemanticModel, propertyArg.SpanStart)));
                 }

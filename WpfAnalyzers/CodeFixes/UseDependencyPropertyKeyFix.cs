@@ -31,40 +31,36 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
-                    invocation is { ArgumentList: { Arguments: { } arguments } } &&
-                    arguments.FirstOrDefault() is { Expression: { } dp } &&
-                    semanticModel.TryGetSymbol(dp, context.CancellationToken, out var symbol) &&
-                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
-                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, context.CancellationToken, out var keyField))
+                    diagnostic.Properties.TryGetValue(nameof(DependencyPropertyKeyType), out var keyName))
                 {
-                    if (DependencyObject.TryGetSetValueCall(invocation, semanticModel, context.CancellationToken, out _))
+                    context.RegisterCodeFix(
+                        invocation.ToString(),
+                        (e, _) => e.ReplaceNode(invocation.Expression, x => SetValue(x))
+                                   .ReplaceNode(invocation.ArgumentList.Arguments[0].Expression, x => PropertyKey(x)),
+                        this.GetType().FullName,
+                        diagnostic);
+
+                    ExpressionSyntax PropertyKey(ExpressionSyntax old)
                     {
-                        context.RegisterCodeFix(
-                            invocation.ToString(),
-                            (e, _) => e.ReplaceNode(arguments[0], x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
-                            this.GetType().FullName,
-                            diagnostic);
+                        return old switch
+                        {
+                            IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier(keyName)),
+                            MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier(keyName))),
+                            _ => old,
+                        };
                     }
 
-                    if (DependencyObject.TryGetSetCurrentValueCall(invocation, semanticModel, context.CancellationToken, out _))
+                    ExpressionSyntax SetValue(ExpressionSyntax old)
                     {
-                        context.RegisterCodeFix(
-                            invocation.ToString(),
-                            (e, _) => e.ReplaceNode(
-                                invocation.Expression,
-                                x => x switch
-                                    {
-                                        IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier("SetValue")),
-                                        MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier("SetValue"))),
-                                        _ => x,
-                                    })
-                                       .ReplaceNode(
-                                arguments[0],
-                                x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
-                            this.GetType().FullName,
-                            diagnostic);
+                        return old switch
+                        {
+                            IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier("SetValue")),
+                            MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier("SetValue"))),
+                            _ => old,
+                        };
                     }
                 }
+
             }
         }
     }
