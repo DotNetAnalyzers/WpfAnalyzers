@@ -94,13 +94,13 @@
         {
             switch (value)
             {
-                case ConditionalExpressionSyntax conditional:
-                    return IsValueValidForRegisteredType(conditional.WhenTrue, registeredType, semanticModel, cancellationToken, visited) &&
-                           IsValueValidForRegisteredType(conditional.WhenFalse, registeredType, semanticModel, cancellationToken, visited);
+                case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse } conditional:
+                    return IsValueValidForRegisteredType(whenTrue, registeredType, semanticModel, cancellationToken, visited) &&
+                           IsValueValidForRegisteredType(whenFalse, registeredType, semanticModel, cancellationToken, visited);
 
-                case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression):
-                    return IsValueValidForRegisteredType(binary.Left, registeredType, semanticModel, cancellationToken, visited) &&
-                           IsValueValidForRegisteredType(binary.Right, registeredType, semanticModel, cancellationToken, visited);
+                case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary when binary.IsKind(SyntaxKind.CoalesceExpression):
+                    return IsValueValidForRegisteredType(left, registeredType, semanticModel, cancellationToken, visited) &&
+                           IsValueValidForRegisteredType(right, registeredType, semanticModel, cancellationToken, visited);
             }
 
             if (registeredType.TypeKind == TypeKind.Enum)
@@ -118,49 +118,39 @@
 
             if (semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
             {
-                if (symbol is IFieldSymbol field)
+                switch (symbol)
                 {
-                    if (field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration))
-                    {
+                    case IFieldSymbol field
+                        when field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration):
                         if (fieldDeclaration.Declaration is { } variableDeclaration &&
                             variableDeclaration.Variables.TryLast(out var variable) &&
-                            variable.Initializer is { } initializer &&
-                            !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
+                            variable.Initializer is { Value: { } fv } &&
+                            !IsValueValidForRegisteredType(fv, registeredType, semanticModel, cancellationToken, visited))
                         {
                             return false;
                         }
 
                         return IsAssignedValueOfRegisteredType(symbol, fieldDeclaration);
-                    }
-
-                    return field.Type == KnownSymbols.Object;
-                }
-
-                if (symbol is IPropertySymbol property)
-                {
-                    if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration))
-                    {
-                        if (propertyDeclaration.Initializer is { } initializer &&
-                            !IsValueValidForRegisteredType(initializer.Value, registeredType, semanticModel, cancellationToken, visited))
+                    case IFieldSymbol field:
+                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
+                    case IPropertySymbol property
+                        when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration):
+                        if (propertyDeclaration.Initializer is { Value: { } pv } &&
+                            !IsValueValidForRegisteredType(pv, registeredType, semanticModel, cancellationToken, visited))
                         {
                             return false;
                         }
 
-                        if (property.SetMethod == null &&
-                            property.GetMethod is { } getMethod)
+                        if (property is { SetMethod: null, GetMethod: { } getMethod })
                         {
                             return IsReturnValueOfRegisteredType(getMethod);
                         }
 
                         return IsAssignedValueOfRegisteredType(symbol, propertyDeclaration);
-                    }
-
-                    return property.Type == KnownSymbols.Object;
-                }
-
-                if (symbol is IMethodSymbol method)
-                {
-                    return IsReturnValueOfRegisteredType(method);
+                    case IPropertySymbol property:
+                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
+                    case IMethodSymbol method:
+                        return IsReturnValueOfRegisteredType(method);
                 }
             }
 

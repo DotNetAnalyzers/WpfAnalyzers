@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -53,11 +53,6 @@ namespace WpfAnalyzers
         {
             nameArg = null;
             registeredName = null;
-            if (invocation == null)
-            {
-                return false;
-            }
-
             if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out var method) ||
                 TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out method) ||
                 TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out method) ||
@@ -141,13 +136,13 @@ namespace WpfAnalyzers
         {
             result = default;
             if (backing.TryGetAssignedValue(cancellationToken, out var value) &&
-                semanticModel.TryGetSymbol(value, cancellationToken, out ISymbol? symbol))
+                semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
             {
                 if (symbol is IMethodSymbol method)
                 {
                     return method == KnownSymbols.DependencyProperty.AddOwner &&
                            value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } &&
-                           semanticModel.TryGetSymbol(expression, cancellationToken, out ISymbol? candidate) &&
+                           semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate) &&
                            BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result) &&
                            TryGetDependencyPropertyKeyFieldOrProperty(result, semanticModel, cancellationToken, out result);
                 }
@@ -156,7 +151,7 @@ namespace WpfAnalyzers
                     return symbol is IPropertySymbol property &&
                            property == KnownSymbols.DependencyPropertyKey.DependencyProperty &&
                            value is MemberAccessExpressionSyntax { Expression: { } expression } &&
-                           semanticModel.TryGetSymbol(expression, cancellationToken, out ISymbol? candidate) &&
+                           semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate) &&
                            BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result);
                 }
             }

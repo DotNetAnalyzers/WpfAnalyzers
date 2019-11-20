@@ -1,6 +1,7 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -72,12 +73,12 @@ namespace WpfAnalyzers
             return member.GetFirstToken();
         }
 
-        internal bool TryGetAssignedValue(CancellationToken cancellationToken, out ExpressionSyntax value)
+        internal bool TryGetAssignedValue(CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
         {
             return this.FieldOrProperty.TryGetAssignedValue(cancellationToken, out value);
         }
 
-        internal bool TryGetSyntaxReference(out SyntaxReference syntaxReference)
+        internal bool TryGetSyntaxReference([NotNullWhen(true)] out SyntaxReference? syntaxReference)
         {
             return this.Symbol.DeclaringSyntaxReferences.TrySingle(out syntaxReference);
         }
