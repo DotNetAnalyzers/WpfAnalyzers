@@ -50,31 +50,22 @@
                     {
                         context.RegisterCodeFix(
                             invocation.ToString(),
-                            (e, _) => e.ReplaceNode(invocation.Expression, x => SetValueExpression(invocation.Expression))
-                                       .ReplaceNode(arguments[0], x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
+                            (e, _) => e.ReplaceNode(
+                                invocation.Expression,
+                                x => x switch
+                                    {
+                                        IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier("SetValue")),
+                                        MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier("SetValue"))),
+                                        _ => x,
+                                    })
+                                       .ReplaceNode(
+                                arguments[0],
+                                x => keyField.CreateArgument(semanticModel, invocation.SpanStart)),
                             this.GetType().FullName,
                             diagnostic);
                     }
                 }
             }
-        }
-
-        private static ExpressionSyntax SetValueExpression(ExpressionSyntax old)
-        {
-            if (old is IdentifierNameSyntax identifierNameSyntax)
-            {
-                return identifierNameSyntax.Identifier.ValueText == "SetCurrentValue"
-                           ? identifierNameSyntax.WithIdentifier(SyntaxFactory.Identifier("SetValue"))
-                           : identifierNameSyntax;
-            }
-
-            if (old is MemberAccessExpressionSyntax memberAccessExpressionSyntax)
-            {
-                var newName = SetValueExpression(memberAccessExpressionSyntax.Name) as SimpleNameSyntax;
-                return memberAccessExpressionSyntax.WithName(newName);
-            }
-
-            return old;
         }
     }
 }
