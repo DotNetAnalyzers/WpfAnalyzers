@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -54,18 +54,8 @@ namespace WpfAnalyzers
             }
         }
 
-        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol sourceType, ITypeSymbol targetType)
+        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol? sourceType, ITypeSymbol? targetType)
         {
-            TypeOfExpressionSyntax TypeOf(ITypeSymbol t)
-            {
-                if (t != null)
-                {
-                    return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(t));
-                }
-
-                return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(SyntaxFactory.ParseTypeName("TYPE"));
-            }
-
             var attributeArguments = new[]
             {
                 editor.Generator.AttributeArgument(TypeOf(sourceType)),
@@ -76,6 +66,16 @@ namespace WpfAnalyzers
                 editor.Generator.AddAttributeArguments(
                     Attribute,
                     attributeArguments));
+
+            TypeOfExpressionSyntax TypeOf(ITypeSymbol? t)
+            {
+                if (t != null)
+                {
+                    return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(t));
+                }
+
+                return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(SyntaxFactory.ParseTypeName("TYPE"));
+            }
         }
     }
 }

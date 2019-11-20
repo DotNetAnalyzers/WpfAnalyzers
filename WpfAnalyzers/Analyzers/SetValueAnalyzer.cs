@@ -68,7 +68,7 @@
             }
         }
 
-        private static bool IsWrongType(BackingFieldOrProperty fieldOrProperty, ArgumentSyntax argument, SyntaxNodeAnalysisContext context, out ITypeSymbol registeredType)
+        private static bool IsWrongType(BackingFieldOrProperty fieldOrProperty, ArgumentSyntax argument, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? registeredType)
         {
             if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out registeredType) &&
                 !PropertyMetadata.IsValueValidForRegisteredType(argument.Expression, registeredType, context.SemanticModel, context.CancellationToken))
