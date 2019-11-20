@@ -98,7 +98,8 @@
                     return IsValueValidForRegisteredType(whenTrue, registeredType, semanticModel, cancellationToken, visited) &&
                            IsValueValidForRegisteredType(whenFalse, registeredType, semanticModel, cancellationToken, visited);
 
-                case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary when binary.IsKind(SyntaxKind.CoalesceExpression):
+                case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary
+                    when binary.IsKind(SyntaxKind.CoalesceExpression):
                     return IsValueValidForRegisteredType(left, registeredType, semanticModel, cancellationToken, visited) &&
                            IsValueValidForRegisteredType(right, registeredType, semanticModel, cancellationToken, visited);
             }
@@ -131,8 +132,6 @@
                         }
 
                         return IsAssignedValueOfRegisteredType(symbol, fieldDeclaration);
-                    case IFieldSymbol field:
-                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
                     case IPropertySymbol property
                         when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration):
                         if (propertyDeclaration.Initializer is { Value: { } pv } &&
@@ -147,10 +146,10 @@
                         }
 
                         return IsAssignedValueOfRegisteredType(symbol, propertyDeclaration);
-                    case IPropertySymbol property:
-                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
                     case IMethodSymbol method:
                         return IsReturnValueOfRegisteredType(method);
+                    default:
+                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
                 }
             }
 

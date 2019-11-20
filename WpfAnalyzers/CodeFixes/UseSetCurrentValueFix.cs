@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -30,18 +30,18 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
-                    TryGetName(setValue, out var identifierName))
+                    Name(setValue) is { } name)
                 {
                     context.RegisterCodeFix(
                         setValue.ToString().Replace("SetValue", "SetCurrentValue"),
                         (editor, _) => editor.ReplaceNode(
-                            identifierName,
+                            name,
                             x => x.WithIdentifier(SyntaxFactory.Identifier("SetCurrentValue")).WithTriviaFrom(x)),
                         nameof(UseSetCurrentValueFix),
                         diagnostic);
                 }
                 else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
-                         TryCreatePath(assignment, out var path) &&
+                         TryCreatePath(assignment) is { } path &&
                          diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))
                 {
                     var expressionString = $"{path}SetCurrentValue({backingFieldOrProperty}, {Cast(assignment)}{assignment.Right})";
@@ -54,39 +54,25 @@ namespace WpfAnalyzers
                         diagnostic);
                 }
 
-                static bool TryGetName(InvocationExpressionSyntax invocation, out SimpleNameSyntax result)
+                static SimpleNameSyntax? Name(InvocationExpressionSyntax invocation)
                 {
-                    switch (invocation.Expression)
+                    return invocation.Expression switch
                     {
-                        case MemberAccessExpressionSyntax memberAccess:
-                            result = memberAccess.Name;
-                            return true;
-                        case IdentifierNameSyntax name:
-                            result = name;
-                            return true;
-                        case MemberBindingExpressionSyntax memberBinding:
-                            result = memberBinding.Name;
-                            return true;
-                        default:
-                            result = null;
-                            return true;
-                    }
+                        MemberAccessExpressionSyntax memberAccess => memberAccess.Name,
+                        IdentifierNameSyntax name => name,
+                        MemberBindingExpressionSyntax memberBinding => memberBinding.Name,
+                        _ => null,
+                    };
                 }
 
-                static bool TryCreatePath(AssignmentExpressionSyntax assignment, out string result)
+                static string? TryCreatePath(AssignmentExpressionSyntax assignment)
                 {
-                    switch (assignment.Left)
+                    return assignment.Left switch
                     {
-                        case MemberAccessExpressionSyntax memberAccess:
-                            result = $"{memberAccess.Expression}.";
-                            return true;
-                        case IdentifierNameSyntax _:
-                            result = string.Empty;
-                            return true;
-                        default:
-                            result = null;
-                            return false;
-                    }
+                        MemberAccessExpressionSyntax memberAccess => $"{memberAccess.Expression}.",
+                        IdentifierNameSyntax _ => string.Empty,
+                        _ => null,
+                    };
                 }
 
                 string Cast(AssignmentExpressionSyntax assignment)
