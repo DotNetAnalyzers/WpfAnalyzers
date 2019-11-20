@@ -9,7 +9,7 @@
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
 
         [Test]
-        public static void NoParameter()
+        public static void NoParameterCompact()
         {
             var code = @"
 namespace N
@@ -35,6 +35,44 @@ namespace N
         }
 
         /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
+        protected virtual void OnValueChanged()
+        {
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void NoParameterExpanded()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(double),
+                new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged())));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        /// <summary>
+        /// This method is invoked when the <see cref=""ValueProperty""/> changes.
+        /// </summary>
         protected virtual void OnValueChanged()
         {
         }
