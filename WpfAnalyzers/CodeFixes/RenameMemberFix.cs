@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -39,24 +39,16 @@ namespace WpfAnalyzers
             {
                 if (syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is var token &&
                     token.IsKind(SyntaxKind.IdentifierToken) &&
-                    diagnostic.Properties.TryGetValue("ExpectedName", out var registeredName))
+                    diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            $"Rename to: '{registeredName}'.",
-                            cancellationToken => ApplyFixAsync(context.Document, token, registeredName, cancellationToken),
+                            $"Rename to: '{newName}'.",
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);
                 }
             }
-        }
-
-        private static async Task<Solution> ApplyFixAsync(Document document, SyntaxToken token, string newName, CancellationToken cancellationToken)
-        {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
-                                           .ConfigureAwait(false);
-            return await RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, cancellationToken)
-                                     .ConfigureAwait(false);
         }
     }
 }

@@ -50,7 +50,7 @@
                         };
                     }
 
-                    ExpressionSyntax SetValue(ExpressionSyntax old)
+                    static ExpressionSyntax SetValue(ExpressionSyntax old)
                     {
                         return old switch
                         {

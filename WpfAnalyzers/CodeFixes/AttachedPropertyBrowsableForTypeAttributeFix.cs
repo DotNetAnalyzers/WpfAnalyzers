@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -18,15 +18,15 @@ namespace WpfAnalyzers
         private static readonly AttributeSyntax Attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("System.Windows.AttachedPropertyBrowsableForTypeAttribute")).WithSimplifiedNames();
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(Descriptors.WPF0071ConverterDoesNotHaveAttribute.Id, Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.WPF0071ConverterDoesNotHaveAttribute.Id,
+            Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                                   .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {

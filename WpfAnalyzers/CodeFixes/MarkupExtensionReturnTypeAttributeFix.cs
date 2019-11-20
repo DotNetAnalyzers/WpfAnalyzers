@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -36,20 +36,20 @@ namespace WpfAnalyzers
                 {
                     context.RegisterCodeFix(
                         "Add MarkupExtensionReturnTypeAttribute.",
-                        (e, _) => AddAttribute(e, classDeclaration, returnType),
+                        (e, _) => AddAttribute(e),
                         "Add MarkupExtensionReturnTypeAttribute.",
                         diagnostic);
+
+                    void AddAttribute(DocumentEditor editor)
+                    {
+                        editor.AddAttribute(
+                            classDeclaration,
+                            editor.Generator.AddAttributeArguments(
+                                Attribute,
+                                new[] { editor.Generator.AttributeArgument(editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))) }));
+                    }
                 }
             }
-        }
-
-        private static void AddAttribute(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, ITypeSymbol returnType)
-        {
-            editor.AddAttribute(
-                classDeclaration,
-                editor.Generator.AddAttributeArguments(
-                    Attribute,
-                    new[] { editor.Generator.AttributeArgument(editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(returnType))) }));
         }
     }
 }
