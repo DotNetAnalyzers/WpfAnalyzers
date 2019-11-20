@@ -90,7 +90,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0062DocumentPropertyChangedCallback,
                                     location,
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), text)));
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
                         }
                     }
                 }

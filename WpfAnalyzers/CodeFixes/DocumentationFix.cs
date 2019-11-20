@@ -25,7 +25,7 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(nameof(Descriptors.WPF0062DocumentPropertyChangedCallback), out var text))
+                if (diagnostic.Properties.TryGetValue(nameof(DocComment), out var text))
                 {
                     switch (syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true))
                     {
