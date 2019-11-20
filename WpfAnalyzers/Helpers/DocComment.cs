@@ -8,6 +8,24 @@
 
     internal static class DocComment
     {
+        internal static bool IsCref(this XmlEmptyElementSyntax e, [NotNullWhen(true)] out XmlCrefAttributeSyntax? attribute)
+        {
+            if (e.Name?.LocalName.ValueText == "see")
+            {
+                foreach (var candiate in e.Attributes)
+                {
+                    if (candiate is XmlCrefAttributeSyntax cref)
+                    {
+                        attribute = cref;
+                        return true;
+                    }
+                }
+            }
+
+            attribute = null;
+            return true;
+        }
+
         internal static bool IsMatch(this XmlTextSyntax xmlText, string text)
         {
             return xmlText.TextTokens.TrySingle(x => x.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(x.ValueText), out var token) &&

@@ -517,7 +517,17 @@
                             prefix.IsMatch("This method is invoked when the ") &&
                             suffix.IsMatch(" changes."))
                         {
-
+                            if (cref.IsCref(out var attribute))
+                            {
+                                if (attribute.Cref.ToString() != this.backing.Name)
+                                {
+                                    yield return (attribute.Cref.GetLocation(), this.backing.Name);
+                                }
+                            }
+                            else
+                            {
+                                yield return (cref.GetLocation(), this.CrefElementText());
+                            }
                         }
                         else
                         {
@@ -534,7 +544,17 @@
                                         prefix.IsMatch("The old value of ") &&
                                         suffix.IsMatch("."))
                                     {
-
+                                        if (cref.IsCref(out var attribute))
+                                        {
+                                            if (attribute.Cref.ToString() != this.backing.Name)
+                                            {
+                                                yield return (attribute.Cref.GetLocation(), this.backing.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yield return (cref.GetLocation(), this.CrefElementText());
+                                        }
                                     }
                                     else
                                     {
@@ -554,7 +574,17 @@
                                         prefix.IsMatch("The new value of ") &&
                                         suffix.IsMatch("."))
                                     {
-
+                                        if (cref.IsCref(out var attribute))
+                                        {
+                                            if (attribute.Cref.ToString() != this.backing.Name)
+                                            {
+                                                yield return (attribute.Cref.GetLocation(), this.backing.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yield return (cref.GetLocation(), this.CrefElementText());
+                                        }
                                     }
                                     else
                                     {
@@ -601,6 +631,8 @@
                 parameter = null;
                 return false;
             }
+
+            private string CrefElementText() => $"<see cref=\"{this.backing.Name}\"/>.</summary>";
 
             private string SummaryText() => $"<summary>This method is invoked when the <see cref=\"{this.backing.Name}\"/> changes.</summary>";
 
