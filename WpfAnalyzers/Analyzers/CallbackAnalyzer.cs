@@ -81,7 +81,7 @@
                     }
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        HasStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText) == false)
+                        ShouldUseStandardText(methodDeclaration, singleInvocation, fieldOrProperty, out var location, out var standardExpectedText))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -359,9 +359,9 @@
             }
         }
 
-        private static bool? HasStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, [NotNullWhen(false)] out string? expectedText)
+        private static bool ShouldUseStandardText(MethodDeclarationSyntax methodDeclaration, InvocationExpressionSyntax invocation, BackingFieldOrProperty backingField, [NotNullWhen(true)] out Location? location, [NotNullWhen(true)] out string? text)
         {
-            expectedText = null;
+            text = null;
             location = null;
             var standardSummaryText = $"<summary>This method is invoked when the <see cref=\"{backingField.Name}\"/> changes.</summary>";
             if (methodDeclaration.ParameterList is { } parameterList)
@@ -371,7 +371,7 @@
                 {
                     if (parameterList.Parameters.Count == 0)
                     {
-                        return true;
+                        return false;
                     }
 
                     if (parameterList.Parameters.Count == 1)
@@ -381,17 +381,17 @@
                         {
                             if (HasParam(comment, parameter, standardParamText, out location))
                             {
-                                return true;
+                                return false;
                             }
 
-                            expectedText = StringBuilderPool.Borrow()
-                                                            .Append("/// ").AppendLine(standardSummaryText)
-                                                            .Append("/// ").AppendLine(standardParamText)
-                                                            .Return();
-                            return false;
+                            text = StringBuilderPool.Borrow()
+                                                    .Append("/// ").AppendLine(standardSummaryText)
+                                                    .Append("/// ").AppendLine(standardParamText)
+                                                    .Return();
+                            return true;
                         }
 
-                        return null;
+                        return false;
                     }
 
                     if (parameterList.Parameters.Count == 2)
@@ -402,38 +402,39 @@
                             if (HasParam(comment, oldParameter, standardOldParamText, out location) &&
                                 HasParam(comment, newParameter, standardNewParamText, out location))
                             {
-                                return true;
+                                return false;
                             }
 
                             if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
                             {
-                                expectedText = StringBuilderPool.Borrow()
-                                                                .Append("/// ").AppendLine(standardSummaryText)
-                                                                .Append("/// ").AppendLine(standardOldParamText)
-                                                                .Append("/// ").AppendLine(standardNewParamText)
-                                                                .Return();
+                                text = StringBuilderPool.Borrow()
+                                                        .Append("/// ").AppendLine(standardSummaryText)
+                                                        .Append("/// ").AppendLine(standardOldParamText)
+                                                        .Append("/// ").AppendLine(standardNewParamText)
+                                                        .Return();
                             }
                             else
                             {
-                                expectedText = StringBuilderPool.Borrow()
-                                                                .Append("/// ").AppendLine(standardSummaryText)
-                                                                .Append("/// ").AppendLine(standardNewParamText)
-                                                                .Append("/// ").AppendLine(standardOldParamText)
-                                                                .Return();
+                                text = StringBuilderPool.Borrow()
+                                                        .Append("/// ").AppendLine(standardSummaryText)
+                                                        .Append("/// ").AppendLine(standardNewParamText)
+                                                        .Append("/// ").AppendLine(standardOldParamText)
+                                                        .Return();
                             }
 
-                            return false;
+                            return true;
                         }
 
-                        return null;
+                        return false;
                     }
 
-                    return null;
+                    return false;
                 }
 
                 if (parameterList.Parameters.Count == 0)
                 {
-                    expectedText = $"/// {standardSummaryText}";
+                    text = $"/// {standardSummaryText}";
+                    return true;
                 }
 
                 if (parameterList.Parameters.Count == 1)
@@ -441,14 +442,14 @@
                     if (TryGetNewValue(out _, out var standardParamText) ||
                         TryGetOldValue(out _, out standardParamText))
                     {
-                        expectedText = StringBuilderPool.Borrow()
+                        text = StringBuilderPool.Borrow()
                                                         .Append("/// ").AppendLine(standardSummaryText)
                                                         .Append("/// ").AppendLine(standardParamText)
                                                         .Return();
-                        return false;
+                        return true;
                     }
 
-                    return null;
+                    return false;
                 }
 
                 if (parameterList.Parameters.Count == 2)
@@ -458,7 +459,7 @@
                     {
                         if (parameterList.Parameters.IndexOf(oldParameter) < parameterList.Parameters.IndexOf(newParameter))
                         {
-                            expectedText = StringBuilderPool.Borrow()
+                            text = StringBuilderPool.Borrow()
                                                         .Append("/// ").AppendLine(standardSummaryText)
                                                         .Append("/// ").AppendLine(standardOldParamText)
                                                         .Append("/// ").AppendLine(standardNewParamText)
@@ -466,17 +467,17 @@
                         }
                         else
                         {
-                            expectedText = StringBuilderPool.Borrow()
+                            text = StringBuilderPool.Borrow()
                                                             .Append("/// ").AppendLine(standardSummaryText)
                                                             .Append("/// ").AppendLine(standardNewParamText)
                                                             .Append("/// ").AppendLine(standardOldParamText)
                                                             .Return();
                         }
 
-                        return false;
+                        return true;
                     }
 
-                    return null;
+                    return false;
                 }
             }
 
