@@ -8,6 +8,24 @@
 
     internal static class DocComment
     {
+        internal static (Location, string)? VerifyCref(XmlEmptyElementSyntax e, string nameMember)
+        {
+            if (e.IsCref(out var attribute))
+            {
+                if (attribute.Cref is NameMemberCrefSyntax { Name: IdentifierNameSyntax name })
+                {
+                    if (name.Identifier.ValueText == nameMember)
+                    {
+                        return null;
+                    }
+
+                    return (name.GetLocation(), nameMember);
+                }
+            }
+
+            return (e.GetLocation(), $"<see cref=\"{nameMember}\"/>");
+        }
+
         internal static bool IsCref(this XmlEmptyElementSyntax e, [NotNullWhen(true)] out XmlCrefAttributeSyntax? attribute)
         {
             if (e.Name?.LocalName.ValueText == "see")

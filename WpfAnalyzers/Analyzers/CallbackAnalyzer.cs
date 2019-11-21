@@ -517,7 +517,7 @@
                             prefix.IsMatch("This method is invoked when the ") &&
                             suffix.IsMatch(" changes."))
                         {
-                            if (this.CheckCref(cref) is { } error)
+                            if (DocComment.VerifyCref(cref, this.backing.Name) is { } error)
                             {
                                 yield return error;
                             }
@@ -542,7 +542,7 @@
                                     prefix.IsMatch("The old value of ") &&
                                     suffix.IsMatch("."))
                                 {
-                                    if (this.CheckCref(cref) is { } error)
+                                    if (DocComment.VerifyCref(cref, this.backing.Name) is { } error)
                                     {
                                         yield return error;
                                     }
@@ -565,7 +565,7 @@
                                     prefix.IsMatch("The new value of ") &&
                                     suffix.IsMatch("."))
                                 {
-                                    if (this.CheckCref(cref) is { } error)
+                                    if (DocComment.VerifyCref(cref, this.backing.Name) is { } error)
                                     {
                                         yield return error;
                                     }
@@ -589,24 +589,6 @@
             }
 
             IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-            private (Location, string)? CheckCref(XmlEmptyElementSyntax e)
-            {
-                if (e.IsCref(out var attribute))
-                {
-                    if (attribute.Cref is NameMemberCrefSyntax { Name: IdentifierNameSyntax name })
-                    {
-                        if (name.Identifier.ValueText == this.backing.Name)
-                        {
-                            return null;
-                        }
-
-                        return (name.GetLocation(), this.backing.Name);
-                    }
-                }
-
-                return (e.GetLocation(), $"<see cref=\"{this.backing.Name}\"/>");
-            }
 
             private bool IsParameter(string name, ParameterSyntax p) => this.TryFindParameter(name, out var match) && p == match;
 
