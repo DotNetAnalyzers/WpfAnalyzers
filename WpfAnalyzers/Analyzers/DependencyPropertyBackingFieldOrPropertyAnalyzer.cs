@@ -209,8 +209,6 @@
 
                         return (identifierName.GetLocation(), this.name);
                     }
-
-                    return (e.GetLocation(), $"<see cref=\"{this.name}\"/>");
                 }
 
                 return (e.GetLocation(), $"<see cref=\"{this.name}\"/>");

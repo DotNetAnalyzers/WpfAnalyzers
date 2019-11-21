@@ -603,8 +603,6 @@
 
                         return (name.GetLocation(), this.backing.Name);
                     }
-
-                    return (e.GetLocation(), $"<see cref=\"{this.backing.Name}\"/>");
                 }
 
                 return (e.GetLocation(), $"<see cref=\"{this.backing.Name}\"/>");
