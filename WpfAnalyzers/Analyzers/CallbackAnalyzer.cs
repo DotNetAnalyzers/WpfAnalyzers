@@ -526,60 +526,60 @@
                         {
                             yield return (summary.GetLocation(), this.SummaryText());
                         }
-
-                        foreach (var parameter in this.method.ParameterList.Parameters)
-                        {
-                            if (this.IsParameter("OldValue", parameter))
-                            {
-                                if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
-                                {
-                                    if (param.TryMatch(out prefix, out cref, out suffix) &&
-                                        prefix.IsMatch("The old value of ") &&
-                                        suffix.IsMatch("."))
-                                    {
-                                        if (this.CheckCref(cref) is { } error)
-                                        {
-                                            yield return error;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        yield return (param.GetLocation(), this.OldValueText(parameter));
-                                    }
-                                }
-                                else
-                                {
-                                    yield return (parameter.Identifier.GetLocation(), this.OldValueInnerText());
-                                }
-                            }
-                            else if (this.IsParameter("NewValue", parameter))
-                            {
-                                if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
-                                {
-                                    if (param.TryMatch(out prefix, out cref, out suffix) &&
-                                        prefix.IsMatch("The new value of ") &&
-                                        suffix.IsMatch("."))
-                                    {
-                                        if (this.CheckCref(cref) is { } error)
-                                        {
-                                            yield return error;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        yield return (param.GetLocation(), this.NewValueText(parameter));
-                                    }
-                                }
-                                else
-                                {
-                                    yield return (parameter.Identifier.GetLocation(), this.NewValueInnerText());
-                                }
-                            }
-                        }
                     }
                     else
                     {
                         yield return (comment.GetLocation(), this.SummaryText());
+                    }
+
+                    foreach (var parameter in this.method.ParameterList.Parameters)
+                    {
+                        if (this.IsParameter("OldValue", parameter))
+                        {
+                            if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
+                            {
+                                if (param.TryMatch(out var prefix, out var cref, out var suffix) &&
+                                    prefix.IsMatch("The old value of ") &&
+                                    suffix.IsMatch("."))
+                                {
+                                    if (this.CheckCref(cref) is { } error)
+                                    {
+                                        yield return error;
+                                    }
+                                }
+                                else
+                                {
+                                    yield return (param.GetLocation(), this.OldValueText(parameter));
+                                }
+                            }
+                            else
+                            {
+                                yield return (parameter.Identifier.GetLocation(), this.OldValueInnerText());
+                            }
+                        }
+                        else if (this.IsParameter("NewValue", parameter))
+                        {
+                            if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
+                            {
+                                if (param.TryMatch(out var prefix, out var cref, out var suffix) &&
+                                    prefix.IsMatch("The new value of ") &&
+                                    suffix.IsMatch("."))
+                                {
+                                    if (this.CheckCref(cref) is { } error)
+                                    {
+                                        yield return error;
+                                    }
+                                }
+                                else
+                                {
+                                    yield return (param.GetLocation(), this.NewValueText(parameter));
+                                }
+                            }
+                            else
+                            {
+                                yield return (parameter.Identifier.GetLocation(), this.NewValueInnerText());
+                            }
+                        }
                     }
                 }
                 else if (this.FullText() is { } fullText)
