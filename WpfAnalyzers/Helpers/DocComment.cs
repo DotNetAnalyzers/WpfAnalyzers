@@ -116,6 +116,20 @@
             }
         }
 
+        internal static bool TryMatch<T1>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1)
+            where T1 : XmlNodeSyntax
+        {
+            n1 = default;
+            return e is { Content: { Count: 1 } content } &&
+                   Element(0, out n1);
+
+            bool Element<T>(int index, out T? result)
+                 where T : class
+            {
+                return (result = content[index] as T) is { };
+            }
+        }
+
         internal static bool TryMatch<T1, T2, T3>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3)
             where T1 : XmlNodeSyntax
             where T2 : XmlNodeSyntax
