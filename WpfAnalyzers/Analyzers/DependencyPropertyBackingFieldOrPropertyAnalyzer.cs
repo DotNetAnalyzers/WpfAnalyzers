@@ -64,7 +64,7 @@
                         if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
                             context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            foreach (var (location, text) in new CommentErrors(memberDeclaration, registeredName))
+                            foreach (var (location, text) in new DocumentationErrors(memberDeclaration, registeredName))
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
@@ -142,18 +142,18 @@
             return false;
         }
 
-        private struct CommentErrors : IEnumerable<(Location, string)>
+        private struct DocumentationErrors : IEnumerable<(Location Location, string DocText)>
         {
             private readonly MemberDeclarationSyntax memberDeclaration;
             private readonly string name;
 
-            internal CommentErrors(MemberDeclarationSyntax memberDeclaration, string name)
+            internal DocumentationErrors(MemberDeclarationSyntax memberDeclaration, string name)
             {
                 this.memberDeclaration = memberDeclaration;
                 this.name = name;
             }
 
-            public IEnumerator<(Location, string)> GetEnumerator()
+            public IEnumerator<(Location Location, string DocText)> GetEnumerator()
             {
                 if (this.memberDeclaration.TryGetDocumentationComment(out var comment))
                 {

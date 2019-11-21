@@ -12,7 +12,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
             Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
@@ -21,7 +20,6 @@
             Descriptors.WPF0042AvoidSideEffectsInClrAccessors,
             Descriptors.WPF0061DocumentClrMethod);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -181,7 +179,7 @@
             return false;
         }
 
-        private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backingField, string registeredName, [NotNullWhen(true)] out Location? location)
+        private static bool HasStandardText(MethodDeclarationSyntax methodDeclaration, BackingFieldOrProperty backing, string registeredName, [NotNullWhen(true)] out Location? location)
         {
             location = null;
             if (methodDeclaration.ParameterList is { Parameters: { } parameters } &&
@@ -190,8 +188,8 @@
                 if (parameters.Count == 1)
                 {
                     if (HasDocComment(out var comment, out location) &&
-                        HasSummary(comment, $"<summary>Helper for getting <see cref=\"{backingField.Name}\"/> from <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
-                        HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to read <see cref=\"{backingField.Name}\"/> from.</param>", out location) &&
+                        HasSummary(comment, $"<summary>Helper for getting <see cref=\"{backing.Name}\"/> from <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
+                        HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to read <see cref=\"{backing.Name}\"/> from.</param>", out location) &&
                         HasReturns(comment, $"<returns>{registeredName} property value.</returns>", out location))
                     {
                         location = null;
@@ -204,8 +202,8 @@
                 if (parameters.Count == 2)
                 {
                     return HasDocComment(out var comment, out location) &&
-                           HasSummary(comment, $"<summary>Helper for setting <see cref=\"{backingField.Name}\"/> on <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
-                           HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to set <see cref=\"{backingField.Name}\"/> on.</param>", out location) &&
+                           HasSummary(comment, $"<summary>Helper for setting <see cref=\"{backing.Name}\"/> on <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>", out location) &&
+                           HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\"><see cref=\"{parameter.Type}\"/> to set <see cref=\"{backing.Name}\"/> on.</param>", out location) &&
                            parameters.TryElementAt<ParameterSyntax>(1, out parameter) &&
                            HasParam(comment, parameter, $"<param name=\"{parameter.Identifier.ValueText}\">{registeredName} property value.</param>", out location);
                 }

@@ -84,7 +84,7 @@
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                     {
-                        foreach (var (location, text) in new OnPropertyChangedComment(methodDeclaration, singleInvocation, fieldOrProperty))
+                        foreach (var (location, text) in new OnPropertyChangedDocumentationErrors(methodDeclaration, singleInvocation, fieldOrProperty))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -489,13 +489,13 @@
             return false;
         }
 
-        private struct OnPropertyChangedComment : IEnumerable<(Location Location, string Text)>
+        private struct OnPropertyChangedDocumentationErrors : IEnumerable<(Location Location, string Text)>
         {
             private readonly MethodDeclarationSyntax method;
             private readonly InvocationExpressionSyntax invocation;
             private readonly BackingFieldOrProperty backing;
 
-            internal OnPropertyChangedComment(MethodDeclarationSyntax method, InvocationExpressionSyntax invocation, BackingFieldOrProperty backing)
+            internal OnPropertyChangedDocumentationErrors(MethodDeclarationSyntax method, InvocationExpressionSyntax invocation, BackingFieldOrProperty backing)
             {
                 this.method = method;
                 this.invocation = invocation;
