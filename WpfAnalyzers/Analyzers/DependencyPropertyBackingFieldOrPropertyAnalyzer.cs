@@ -145,12 +145,12 @@
         private struct DocumentationErrors : IEnumerable<(Location Location, string DocText)>
         {
             private readonly MemberDeclarationSyntax memberDeclaration;
-            private readonly string name;
+            private readonly string registeredName;
 
             internal DocumentationErrors(MemberDeclarationSyntax memberDeclaration, string name)
             {
                 this.memberDeclaration = memberDeclaration;
-                this.name = name;
+                this.registeredName = name;
             }
 
             public IEnumerator<(Location Location, string DocText)> GetEnumerator()
@@ -163,7 +163,7 @@
                             prefix.IsMatch("Identifies the ") &&
                             suffix.IsMatch(" dependency property."))
                         {
-                            if (this.CheckCref(cref) is { } error)
+                            if (DocComment.VerifyCref(cref, this.registeredName) is { } error)
                             {
                                 yield return error;
                             }
@@ -194,25 +194,7 @@
 
             IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-            private string SummaryText() => $"/// <summary>Identifies the <see cref=\"{this.name}\"/> dependency property.</summary>";
-
-            private (Location, string)? CheckCref(XmlEmptyElementSyntax e)
-            {
-                if (e.IsCref(out var attribute))
-                {
-                    if (attribute.Cref is NameMemberCrefSyntax { Name: IdentifierNameSyntax identifierName })
-                    {
-                        if (identifierName.Identifier.ValueText == this.name)
-                        {
-                            return null;
-                        }
-
-                        return (identifierName.GetLocation(), this.name);
-                    }
-                }
-
-                return (e.GetLocation(), $"<see cref=\"{this.name}\"/>");
-            }
+            private string SummaryText() => $"/// <summary>Identifies the <see cref=\"{this.registeredName}\"/> dependency property.</summary>";
         }
     }
 }
