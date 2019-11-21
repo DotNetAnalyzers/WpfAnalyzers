@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -48,9 +49,9 @@
         {
             if (e.IsParamRef(out var attribute))
             {
-                if (attribute.Name is XmlNameSyntax { } name)
+                if (attribute.Identifier is IdentifierNameSyntax name)
                 {
-                    if (name.LocalName.ValueText == parameter.Identifier.ValueText)
+                    if (name.Identifier.ValueText == parameter.Identifier.ValueText)
                     {
                         return null;
                     }
@@ -145,7 +146,7 @@
             n2 = default;
             n3 = default;
             n4 = default;
-            return e is { Content: { Count: 3 } content } &&
+            return e is { Content: { Count: 4 } content } &&
                    Element(0, out n1) &&
                    Element(1, out n2) &&
                    Element(2, out n3) &&
@@ -155,6 +156,51 @@
                  where T : class
             {
                 return (result = content[index] as T) is { };
+            }
+        }
+
+        internal static bool TryMatch<T1, T2, T3, T4, T5>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3, [NotNullWhen(true)] out T4? n4, [NotNullWhen(true)] out T5? n5)
+            where T1 : XmlNodeSyntax
+            where T2 : XmlNodeSyntax
+            where T3 : XmlNodeSyntax
+            where T4 : XmlNodeSyntax
+            where T5 : XmlNodeSyntax
+        {
+            n1 = default;
+            n2 = default;
+            n3 = default;
+            n4 = default;
+            n5 = default;
+            return e is { Content: { Count: 5 } content } &&
+                   Element(0, out n1) &&
+                   Element(1, out n2) &&
+                   Element(2, out n3) &&
+                   Element(3, out n4) &&
+                   Element(4, out n5);
+
+            bool Element<T>(int index, out T? result)
+                 where T : class
+            {
+                return (result = content[index] as T) is { };
+            }
+        }
+
+        internal static (Location Location, string Text)? VerifyTextCrefText(XmlElementSyntax e, string prefix, string name, string suffix)
+        {
+            if (e.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefixElement, out var crefElement, out var suffixElement) &&
+                prefixElement.IsMatch(prefix) &&
+                suffixElement.IsMatch(suffix))
+            {
+                if (VerifyCref(crefElement, name) is { } error)
+                {
+                    return error;
+                }
+
+                return null;
+            }
+            else
+            {
+                return (e.GetLocation(), $"{prefix}<see cref=\"{name}\"/>{suffix}");
             }
         }
     }

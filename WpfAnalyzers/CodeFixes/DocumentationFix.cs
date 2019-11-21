@@ -11,7 +11,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentClrMethodFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DocumentationFix))]
     [Shared]
     internal class DocumentationFix : DocumentEditorCodeFixProvider
     {
@@ -53,7 +53,17 @@
                         case DocumentationCommentTriviaSyntax element:
                             context.RegisterCodeFix(
                                 "Add standard documentation.",
-                                (editor, _) => editor.ReplaceNode(element, x => Parse.DocumentationCommentTriviaSyntax(text)),
+                                (editor, __) =>
+                                {
+                                    if (text.StartsWith("<summary>"))
+                                    {
+                                        _ = editor.ReplaceNode(element, x => x.WithSummary(Parse.XmlElementSyntax(text)));
+                                    }
+                                    else
+                                    {
+                                        _ = editor.ReplaceNode(element, x => Parse.DocumentationCommentTriviaSyntax(text));
+                                    }
+                                },
                                 this.GetType(),
                                 diagnostic);
                             break;

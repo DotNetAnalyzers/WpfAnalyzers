@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Diagnostics.CodeAnalysis;
@@ -11,13 +12,12 @@
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StandardDocsFix))]
     [Shared]
+    [Obsolete("Use documentation fix")]
     internal class StandardDocsFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0108DocumentRoutedEventBackingMember.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
