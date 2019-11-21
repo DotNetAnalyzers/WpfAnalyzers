@@ -16,13 +16,13 @@
     internal class DocumentationFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.WPF0060DocumentDependencyPropertyBackingMember.Id,
             Descriptors.WPF0062DocumentPropertyChangedCallback.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
-            var document = context.Document;
-            var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                                   .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(nameof(DocComment), out var text))
@@ -61,6 +61,20 @@
                             context.RegisterCodeFix(
                                 "Add standard documentation.",
                                 (editor, _) => editor.ReplaceNode(method, x => x.WithDocumentationText(text)),
+                                this.GetType(),
+                                diagnostic);
+                            break;
+                        case PropertyDeclarationSyntax property:
+                            context.RegisterCodeFix(
+                                "Add standard documentation.",
+                                (editor, _) => editor.ReplaceNode(property, x => x.WithDocumentationText(text)),
+                                this.GetType(),
+                                diagnostic);
+                            break;
+                        case VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax { Parent: FieldDeclarationSyntax field } }:
+                            context.RegisterCodeFix(
+                                "Add standard documentation.",
+                                (editor, _) => editor.ReplaceNode(field, x => x.WithDocumentationText(text)),
                                 this.GetType(),
                                 diagnostic);
                             break;

@@ -1,7 +1,8 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -12,7 +13,6 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class DependencyPropertyBackingFieldOrPropertyAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0001BackingFieldShouldMatchRegisteredName,
             Descriptors.WPF0002BackingFieldShouldMatchRegisteredName,
@@ -21,7 +21,6 @@ namespace WpfAnalyzers
             Descriptors.WPF0031FieldOrder,
             Descriptors.WPF0176StyleTypedPropertyMissing);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -63,16 +62,16 @@ namespace WpfAnalyzers
                         }
 
                         if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
-                            context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                            !HasStandardText(memberDeclaration, registeredName, out var comment))
+                            context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
-                                    comment == null
-                                        ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
-                                        : comment.GetLocation(),
-                                    properties: ImmutableDictionary<string, string>.Empty.Add(nameof(CrefParameterSyntax), registeredName)));
+                            foreach (var (location, text) in new CommentErrors(memberDeclaration, registeredName))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
+                                        location,
+                                        properties: ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
+                            }
                         }
 
                         if (DependencyProperty.TryGetRegisteredType(backingMember, context.SemanticModel, context.CancellationToken, out var type) &&
@@ -143,11 +142,79 @@ namespace WpfAnalyzers
             return false;
         }
 
-        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, [NotNullWhen(true)] out DocumentationCommentTriviaSyntax? comment)
+        private struct CommentErrors : IEnumerable<(Location, string)>
         {
-            return memberDeclaration.TryGetDocumentationComment(out comment) &&
-                   comment.TryGetSummary(out var summary) &&
-                   summary.ToString().IsParts("<summary>Identifies the <see cref=\"", name, "\"/> dependency property.</summary>");
+            private readonly MemberDeclarationSyntax memberDeclaration;
+            private readonly string name;
+
+            internal CommentErrors(MemberDeclarationSyntax memberDeclaration, string name)
+            {
+                this.memberDeclaration = memberDeclaration;
+                this.name = name;
+            }
+
+            public IEnumerator<(Location, string)> GetEnumerator()
+            {
+                if (this.memberDeclaration.TryGetDocumentationComment(out var comment))
+                {
+                    if (comment.TryGetSummary(out var summary))
+                    {
+                        if (summary.TryMatch(out var prefix, out var cref, out var suffix) &&
+                            prefix.IsMatch("Identifies the ") &&
+                            suffix.IsMatch(" dependency property."))
+                        {
+                            if (this.CheckCref(cref) is { } error)
+                            {
+                                yield return error;
+                            }
+                        }
+                        else
+                        {
+                            yield return (summary.GetLocation(), this.SummaryText());
+                        }
+                    }
+                    else
+                    {
+                        yield return (comment.GetLocation(), this.SummaryText());
+                    }
+                }
+                else
+                {
+                    switch (this.memberDeclaration)
+                    {
+                        case PropertyDeclarationSyntax property:
+                            yield return (property.Identifier.GetLocation(), this.SummaryText());
+                            break;
+                        case FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 } variables } }:
+                            yield return (variables[0].Identifier.GetLocation(), this.SummaryText());
+                            break;
+                    }
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+            private string SummaryText() => $"/// <summary>Identifies the <see cref=\"{this.name}\"/> dependency property.</summary>";
+
+            private (Location, string)? CheckCref(XmlEmptyElementSyntax e)
+            {
+                if (e.IsCref(out var attribute))
+                {
+                    if (attribute.Cref is NameMemberCrefSyntax { Name: IdentifierNameSyntax identifierName })
+                    {
+                        if (identifierName.Identifier.ValueText == this.name)
+                        {
+                            return null;
+                        }
+
+                        return (identifierName.GetLocation(), this.name);
+                    }
+
+                    return (e.GetLocation(), $"<see cref=\"{this.name}\"/>");
+                }
+
+                return (e.GetLocation(), $"<see cref=\"{this.name}\"/>");
+            }
         }
     }
 }

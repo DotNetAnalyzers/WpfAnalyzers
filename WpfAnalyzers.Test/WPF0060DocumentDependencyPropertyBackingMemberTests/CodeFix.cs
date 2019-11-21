@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
+﻿namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -9,7 +9,7 @@ namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly CodeFixProvider Fix = new StandardDocsFix();
+        private static readonly CodeFixProvider Fix = new DocumentationFix();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0060DocumentDependencyPropertyBackingMember;
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 
@@ -223,7 +223,50 @@ namespace N
 
     public class FooControl : Control
     {
-        ///↓ <summary>Identifies the <see cref=""BarProperty""/> dependency property.</summary>
+        /// ↓<summary>WRONG TEXT.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Bar""/> dependency property.</summary>
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void WrongCref()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""↓BarProperty""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar

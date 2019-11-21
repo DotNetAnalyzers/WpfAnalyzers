@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -15,7 +15,6 @@ namespace WpfAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0060DocumentDependencyPropertyBackingMember.Id,
             Descriptors.WPF0108DocumentRoutedEventBackingMember.Id);
 
         /// <inheritdoc/>
