@@ -7,6 +7,6 @@ Intel Xeon CPU E5-2637 v4 3.50GHz, 2 CPU, 16 logical and 8 physical cores
 
 
 ```
-|                Method |     Mean |    Error |   StdDev | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|---------------------- |---------:|---------:|---------:|------:|------:|------:|----------:|
-| RunOnValidCodeProject | 556.9 us | 11.11 us | 28.88 us |     - |     - |     - |     24 KB |
+|                Method |     Mean |    Error |   StdDev |   Median | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------- |---------:|---------:|---------:|---------:|------:|------:|------:|----------:|
+| RunOnValidCodeProject | 587.0 us | 22.35 us | 64.50 us | 560.4 us |     - |     - |     - |     24 KB |
