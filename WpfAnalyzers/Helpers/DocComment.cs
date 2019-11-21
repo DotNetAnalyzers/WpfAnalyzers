@@ -44,6 +44,42 @@
             return false;
         }
 
+        internal static (Location, string)? VerifyParamRef(XmlEmptyElementSyntax e, ParameterSyntax parameter)
+        {
+            if (e.IsParamRef(out var attribute))
+            {
+                if (attribute.Name is XmlNameSyntax { } name)
+                {
+                    if (name.LocalName.ValueText == parameter.Identifier.ValueText)
+                    {
+                        return null;
+                    }
+
+                    return (name.GetLocation(), parameter.Identifier.ValueText);
+                }
+            }
+
+            return (e.GetLocation(), $"<paramref name=\"{parameter.Identifier.ValueText}\"/>");
+        }
+
+        internal static bool IsParamRef(this XmlEmptyElementSyntax e, [NotNullWhen(true)] out XmlNameAttributeSyntax? attribute)
+        {
+            if (e.Name?.LocalName.ValueText == "paramref")
+            {
+                foreach (var candidate in e.Attributes)
+                {
+                    if (candidate is XmlNameAttributeSyntax name)
+                    {
+                        attribute = name;
+                        return true;
+                    }
+                }
+            }
+
+            attribute = null;
+            return false;
+        }
+
         internal static bool IsMatch(this XmlTextSyntax xmlText, string text)
         {
             return xmlText.TextTokens.TrySingle(x => x.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(x.ValueText), out var token) &&
@@ -79,15 +115,18 @@
             }
         }
 
-        internal static bool TryMatch(this XmlElementSyntax e, [NotNullWhen(true)] out XmlTextSyntax? prefix, [NotNullWhen(true)] out XmlEmptyElementSyntax? cref, [NotNullWhen(true)] out XmlTextSyntax? suffix)
+        internal static bool TryMatch<T1, T2, T3>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3)
+            where T1 : XmlNodeSyntax
+            where T2 : XmlNodeSyntax
+            where T3 : XmlNodeSyntax
         {
-            prefix = default;
-            cref = default;
-            suffix = default;
+            n1 = default;
+            n2 = default;
+            n3 = default;
             return e is { Content: { Count: 3 } content } &&
-                   Element(0, out prefix) &&
-                   Element(1, out cref) &&
-                   Element(2, out suffix);
+                   Element(0, out n1) &&
+                   Element(1, out n2) &&
+                   Element(2, out n3);
 
             bool Element<T>(int index, out T? result)
                  where T : class
@@ -96,17 +135,21 @@
             }
         }
 
-        internal static bool TryMatch(this XmlElementSyntax e, [NotNullWhen(true)] out XmlTextSyntax? prefix, [NotNullWhen(true)] out XmlEmptyElementSyntax? cref, [NotNullWhen(true)] out XmlEmptyElementSyntax? paramref, [NotNullWhen(true)] out XmlTextSyntax? suffix)
+        internal static bool TryMatch<T1, T2, T3, T4>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3, [NotNullWhen(true)] out T4? n4)
+            where T1 : XmlNodeSyntax
+            where T2 : XmlNodeSyntax
+            where T3 : XmlNodeSyntax
+            where T4 : XmlNodeSyntax
         {
-            prefix = default;
-            cref = default;
-            paramref = default;
-            suffix = default;
+            n1 = default;
+            n2 = default;
+            n3 = default;
+            n4 = default;
             return e is { Content: { Count: 3 } content } &&
-                   Element(0, out prefix) &&
-                   Element(1, out cref) &&
-                   Element(2, out paramref) &&
-                   Element(3, out suffix);
+                   Element(0, out n1) &&
+                   Element(1, out n2) &&
+                   Element(2, out n3) &&
+                   Element(3, out n4);
 
             bool Element<T>(int index, out T? result)
                  where T : class

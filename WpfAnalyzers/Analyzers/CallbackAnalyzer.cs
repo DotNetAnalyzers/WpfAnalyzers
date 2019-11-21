@@ -513,7 +513,7 @@
                 {
                     if (comment.TryGetSummary(out var summary))
                     {
-                        if (summary.TryMatch(out var prefix, out var cref, out var suffix) &&
+                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
                             prefix.IsMatch("This method is invoked when the ") &&
                             suffix.IsMatch(" changes."))
                         {
@@ -538,7 +538,7 @@
                         {
                             if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
                             {
-                                if (param.TryMatch(out var prefix, out var cref, out var suffix) &&
+                                if (param.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
                                     prefix.IsMatch("The old value of ") &&
                                     suffix.IsMatch("."))
                                 {
@@ -561,7 +561,7 @@
                         {
                             if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
                             {
-                                if (param.TryMatch(out var prefix, out var cref, out var suffix) &&
+                                if (param.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
                                     prefix.IsMatch("The new value of ") &&
                                     suffix.IsMatch("."))
                                 {

@@ -159,7 +159,7 @@
                 {
                     if (comment.TryGetSummary(out var summary))
                     {
-                        if (summary.TryMatch(out var prefix, out var cref, out var suffix) &&
+                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
                             prefix.IsMatch("Identifies the ") &&
                             suffix.IsMatch(" dependency property."))
                         {

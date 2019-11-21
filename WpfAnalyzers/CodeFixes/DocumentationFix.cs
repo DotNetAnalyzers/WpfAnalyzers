@@ -43,6 +43,13 @@
                                 this.GetType(),
                                 diagnostic);
                             break;
+                        case XmlNameSyntax name:
+                            context.RegisterCodeFix(
+                                "Add standard documentation.",
+                                (editor, _) => editor.ReplaceNode(name, x => SyntaxFactory.XmlName(text)),
+                                this.GetType(),
+                                diagnostic);
+                            break;
                         case DocumentationCommentTriviaSyntax element:
                             context.RegisterCodeFix(
                                 "Add standard documentation.",
