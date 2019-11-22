@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new CastFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0021DirectCastSenderToExactType);
 
         [Test]

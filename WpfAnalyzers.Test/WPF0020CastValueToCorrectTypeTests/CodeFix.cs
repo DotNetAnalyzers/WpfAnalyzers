@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new CastFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0020CastValueToCorrectType);
 
         [Test]

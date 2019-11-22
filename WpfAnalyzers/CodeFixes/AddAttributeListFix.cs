@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -33,7 +33,7 @@ namespace WpfAnalyzers
                         (e, _) => e.ReplaceNode(
                             classDeclaration,
                             x => x.WithLeadingElasticLineFeed().AddAttributeLists(Parse.AttributeList(attribute).WithLeadingTrivia(SyntaxFactory.ElasticSpace).WithSimplifiedNames())),
-                        "[TemplatePart]",
+                        attribute,
                         diagnostic);
                 }
             }

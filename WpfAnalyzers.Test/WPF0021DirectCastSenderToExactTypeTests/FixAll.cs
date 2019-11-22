@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
     public static class FixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new FixCastCodeFixProvider();
+        private static readonly CodeFixProvider Fix = new CastFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0021DirectCastSenderToExactType);
 
         [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
