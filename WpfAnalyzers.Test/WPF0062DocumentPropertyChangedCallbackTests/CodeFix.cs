@@ -954,6 +954,77 @@ namespace N
         }
 
         [Test]
+        public static void WrongSummaryMultiline()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(double),
+                new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        /// <summary>
+        /// ↓WRONG
+        /// </summary>
+        /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
+        /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
+        protected virtual void OnValueChanged(double newValue, double oldValue)
+        {
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(double),
+                new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))));
+
+        public double Value
+        {
+            get => (double)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
+        /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
+        /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
+        protected virtual void OnValueChanged(double newValue, double oldValue)
+        {
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
         public static void MissingOldValue()
         {
             var before = @"
