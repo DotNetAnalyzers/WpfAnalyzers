@@ -1,11 +1,10 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,56 +12,40 @@ namespace WpfAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseSetValueFix))]
     [Shared]
-    internal class UseSetValueFix : CodeFixProvider
+    internal class UseSetValueFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext.Id,
             Descriptors.WPF0035ClrPropertyUseSetValueInSetter.Id);
 
-        public override FixAllProvider? GetFixAllProvider() => null;
-
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
+                    IdentifierName() is { } identifier)
                 {
                     context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Use SetValue",
-                            _ => ApplyFixAsync(context.Document, syntaxRoot, invocation),
-                            this.GetType().FullName),
+                        "Use SetValue",
+                        e => e.ReplaceNode(
+                            identifier,
+                            x => x.WithIdentifier(SyntaxFactory.Identifier("SetValue"))),
+                        "Use SetValue",
                         diagnostic);
                 }
-            }
-        }
 
-        private static Task<Document> ApplyFixAsync(Document document, SyntaxNode syntaxRoot, InvocationExpressionSyntax invocation)
-        {
-            return Task.FromResult(document.WithSyntaxRoot(syntaxRoot.ReplaceNode(invocation, SetValueRewriter.Default.Visit(invocation))));
-        }
-
-        private sealed class SetValueRewriter : CSharpSyntaxRewriter
-        {
-            internal static readonly SetValueRewriter Default = new SetValueRewriter();
-            private static readonly NameSyntax SetValueIdentifier = SyntaxFactory.ParseName("SetValue").WithAdditionalAnnotations(Formatter.Annotation);
-
-            private SetValueRewriter()
-            {
-            }
-
-            public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
-            {
-                if (node.Identifier.ValueText == "SetCurrentValue")
+                IdentifierNameSyntax? IdentifierName()
                 {
-                    return SetValueIdentifier;
+                    return invocation.Expression switch
+                    {
+                        IdentifierNameSyntax identifierName => identifierName,
+                        MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName } => identifierName,
+                        _ => null,
+                    };
                 }
-
-                return base.VisitIdentifierName(node);
             }
         }
     }
