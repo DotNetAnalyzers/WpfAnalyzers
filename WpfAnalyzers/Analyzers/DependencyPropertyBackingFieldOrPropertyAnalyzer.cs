@@ -62,7 +62,7 @@
                         if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
                             context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            var summaryFormat = "<summary>Identifies the <see cref=\"{PROPERTY}\"/> dependency property.</summary>";
+                            var summaryFormat = "<summary>Identifies the <see cref=\"{backing}\"/> dependency property.</summary>";
                             if (memberDeclaration.TryGetDocumentationComment(out var comment))
                             {
                                 if (comment.VerifySummary(summaryFormat, registeredName) is { } summaryError)
