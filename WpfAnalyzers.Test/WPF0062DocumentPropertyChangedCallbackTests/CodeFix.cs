@@ -298,7 +298,7 @@ namespace N
             set => this.SetValue(ValueProperty, value);
         }
 
-        /// ↓<summary>Not standard.</summary>
+        /// <summary>↓Not standard.</summary>
         /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
         /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
         protected virtual void OnValueChanged(double oldValue, double newValue)
@@ -910,7 +910,7 @@ namespace N
             set => this.SetValue(ValueProperty, value);
         }
 
-        /// ↓<summary>WRONG</summary>
+        /// <summary>↓WRONG</summary>
         /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
         /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
         protected virtual void OnValueChanged(double newValue, double oldValue)

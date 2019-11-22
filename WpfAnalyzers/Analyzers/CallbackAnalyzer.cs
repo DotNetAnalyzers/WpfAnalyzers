@@ -511,25 +511,10 @@
 
                 if (this.method.TryGetDocumentationComment(out var comment))
                 {
-                    if (comment.TryGetSummary(out var summary))
+                    const string summaryFormat = "<summary>This method is invoked when the <see cref=\"{backing}\"/> changes.</summary>";
+                    if (comment.VerifySummary(summaryFormat, this.backing.Name) is { } summaryError)
                     {
-                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
-                            prefix.IsMatch("This method is invoked when the ") &&
-                            suffix.IsMatch(" changes."))
-                        {
-                            if (DocComment.VerifyCref(cref, this.backing.Name) is { } error)
-                            {
-                                yield return error;
-                            }
-                        }
-                        else
-                        {
-                            yield return (summary.GetLocation(), this.SummaryText());
-                        }
-                    }
-                    else
-                    {
-                        yield return (comment.GetLocation(), this.SummaryText());
+                        yield return summaryError;
                     }
 
                     foreach (var parameter in this.method.ParameterList.Parameters)
