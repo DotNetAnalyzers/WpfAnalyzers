@@ -1,7 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -33,51 +31,65 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MemberDeclarationSyntax memberDeclaration)
             {
-                if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backingMember))
+                if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backing))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backingMember, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
-                        if (backingMember.Type == KnownSymbols.DependencyProperty &&
-                            !backingMember.Name.IsParts(registeredName, "Property"))
+                        if (backing.Type == KnownSymbols.DependencyProperty &&
+                            !backing.Name.IsParts(registeredName, "Property"))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0001BackingFieldShouldMatchRegisteredName,
                                     BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Property"),
-                                    backingMember.Name,
+                                    backing.Name,
                                     registeredName));
                         }
 
-                        if (backingMember.Type == KnownSymbols.DependencyPropertyKey &&
-                            !backingMember.Name.IsParts(registeredName, "PropertyKey"))
+                        if (backing.Type == KnownSymbols.DependencyPropertyKey &&
+                            !backing.Name.IsParts(registeredName, "PropertyKey"))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0002BackingFieldShouldMatchRegisteredName,
                                     BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
                                     ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "PropertyKey"),
-                                    backingMember.Name,
+                                    backing.Name,
                                     registeredName));
                         }
 
                         if (context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) &&
                             context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            foreach (var (location, text) in new DocumentationErrors(memberDeclaration, registeredName))
+                            var summaryFormat = "<summary>Identifies the <see cref=\"{PROPERTY}\"/> dependency property.</summary>";
+                            if (memberDeclaration.TryGetDocumentationComment(out var comment))
+                            {
+                                if (comment.VerifySummary(summaryFormat, registeredName) is { } summaryError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
+                                            summaryError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                }
+                            }
+                            else
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
-                                        location,
-                                        properties: ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
+                                        backing.Symbol.Locations[0],
+                                        ImmutableDictionary<string, string>.Empty.Add(
+                                            nameof(DocComment),
+                                            $"/// {DocComment.Format(summaryFormat, registeredName)}")));
                             }
                         }
 
-                        if (DependencyProperty.TryGetRegisteredType(backingMember, context.SemanticModel, context.CancellationToken, out var type) &&
+                        if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var type) &&
                             type.Is(KnownSymbols.Style) &&
                             !TryFindStyleTypedPropertyAttribute(memberDeclaration, registeredName, context.SemanticModel, context.CancellationToken) &&
-                            backingMember.FieldOrProperty.Symbol.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
+                            backing.FieldOrProperty.Symbol.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -86,12 +98,12 @@
                                     ImmutableDictionary<string, string>.Empty.Add(
                                         nameof(AttributeListSyntax),
                                         $"[StyleTypedProperty(Property = {(context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) ? $"nameof({registeredName})" : $"\"{registeredName}\"")}, StyleTargetType = typeof(TYPE))]"),
-                                    backingMember.Name));
+                                    backing.Name));
                         }
                     }
 
-                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backingMember, context.SemanticModel, context.CancellationToken, out var keyMember) &&
-                        Equals(backingMember.ContainingType, keyMember.ContainingType) &&
+                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, context.SemanticModel, context.CancellationToken, out var keyMember) &&
+                        Equals(backing.ContainingType, keyMember.ContainingType) &&
                         keyMember.TryGetSyntaxReference(out var reference) &&
                         ReferenceEquals(reference.SyntaxTree, context.Node.SyntaxTree) &&
                         reference.Span.Start > context.Node.SpanStart)
@@ -102,7 +114,7 @@
                                 reference.GetSyntax(context.CancellationToken).GetLocation(),
                                 additionalLocations: new[] { context.Node.GetLocation() },
                                 keyMember.Name,
-                                backingMember.Name));
+                                backing.Name));
                     }
                 }
 
@@ -140,61 +152,6 @@
             }
 
             return false;
-        }
-
-        private struct DocumentationErrors : IEnumerable<(Location Location, string DocText)>
-        {
-            private readonly MemberDeclarationSyntax memberDeclaration;
-            private readonly string registeredName;
-
-            internal DocumentationErrors(MemberDeclarationSyntax memberDeclaration, string name)
-            {
-                this.memberDeclaration = memberDeclaration;
-                this.registeredName = name;
-            }
-
-            public IEnumerator<(Location Location, string DocText)> GetEnumerator()
-            {
-                if (this.memberDeclaration.TryGetDocumentationComment(out var comment))
-                {
-                    if (comment.TryGetSummary(out var summary))
-                    {
-                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var suffix) &&
-                            prefix.IsMatch("Identifies the ") &&
-                            suffix.IsMatch(" dependency property."))
-                        {
-                            if (DocComment.VerifyCref(cref, this.registeredName) is { } error)
-                            {
-                                yield return error;
-                            }
-                        }
-                        else
-                        {
-                            yield return (summary.GetLocation(), this.SummaryText());
-                        }
-                    }
-                    else
-                    {
-                        yield return (comment.GetLocation(), this.SummaryText());
-                    }
-                }
-                else
-                {
-                    switch (this.memberDeclaration)
-                    {
-                        case PropertyDeclarationSyntax property:
-                            yield return (property.Identifier.GetLocation(), this.SummaryText());
-                            break;
-                        case FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 } variables } }:
-                            yield return (variables[0].Identifier.GetLocation(), this.SummaryText());
-                            break;
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-            private string SummaryText() => $"/// <summary>Identifies the <see cref=\"{this.registeredName}\"/> dependency property.</summary>";
         }
     }
 }

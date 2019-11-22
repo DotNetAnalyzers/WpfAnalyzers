@@ -223,7 +223,7 @@ namespace N
 
     public class FooControl : Control
     {
-        /// ↓<summary>WRONG TEXT.</summary>
+        /// <summary>↓WRONG</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar
@@ -266,7 +266,7 @@ namespace N
 
     public class FooControl : Control
     {
-        /// <summary>Identifies the <see cref=""↓BarProperty""/> dependency property.</summary>
+        /// <summary>Identifies the <see cref=""↓WRONG""/> dependency property.</summary>
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(nameof(Bar), typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
 
         public int Bar

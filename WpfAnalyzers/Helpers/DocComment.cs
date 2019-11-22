@@ -106,17 +106,17 @@
             }
         }
 
-        internal static (Location Location, string Text)? VerifySummary(this DocumentationCommentTriviaSyntax doc, string format, string p1, string p2)
+        internal static (Location Location, string Text)? VerifySummary(this DocumentationCommentTriviaSyntax doc, string format, string? p1 = null, string? p2 = null, string? p3= null)
         {
             if (doc.TryGetSummary(out var summary))
             {
-                return Verify(summary, format, p1, p2, null);
+                return Verify(summary, format, p1, p2, p3);
             }
 
-            return (doc.GetLocation(), Format(format, p1, p2));
+            return (doc.GetLocation(), Format(format, p1, p2, p3));
         }
 
-        internal static (Location Location, string Text)? VerifyParameter(this DocumentationCommentTriviaSyntax doc, string format, IParameterSymbol parameter, string p1, string p2)
+        internal static (Location Location, string Text)? VerifyParameter(this DocumentationCommentTriviaSyntax doc, string format, IParameterSymbol parameter, string? p1 = null, string? p2 = null)
         {
             if (doc.TryGetParam(parameter.Name, out var param))
             {
@@ -126,19 +126,19 @@
             return (parameter.Locations[0], Format(format, parameter.Name, p1, p2));
         }
 
-        internal static (Location Location, string Text)? VerifyReturns(this DocumentationCommentTriviaSyntax doc, string format, string p1)
+        internal static (Location Location, string Text)? VerifyReturns(this DocumentationCommentTriviaSyntax doc, string format, string? p1 = null, string? p2 = null, string? p3 = null)
         {
             if (doc.TryGetReturns(out var returns))
             {
-                return Verify(returns, format, p1, null, null);
+                return Verify(returns, format, p1, p2, p3);
             }
 
             if (doc.TryFirstAncestor(out MethodDeclarationSyntax? method))
             {
-                return (method.ReturnType.GetLocation(), Format(format, p1));
+                return (method.ReturnType.GetLocation(), Format(format, p1, p2, p3));
             }
 
-            return (doc.GetLocation(), Format(format, p1));
+            return (doc.GetLocation(), Format(format, p1, p2, p3));
         }
 
         internal static string Format(string format, params string?[] args)
