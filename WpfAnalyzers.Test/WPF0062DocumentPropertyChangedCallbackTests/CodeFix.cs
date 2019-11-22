@@ -368,7 +368,7 @@ namespace N
         }
 
         /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
-        /// ↓<param name=""oldValue"">Not standard.</param>
+        /// <param name=""oldValue"">↓Not standard.</param>
         /// <param name=""newValue"">The new value of <see cref=""ValueProperty""/>.</param>
         protected virtual void OnValueChanged(double oldValue, double newValue)
         {
@@ -438,7 +438,7 @@ namespace N
 
         /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
         /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
-        /// ↓<param name=""newValue"">Not standard.</param>
+        /// <param name=""newValue"">↓Not standard.</param>
         protected virtual void OnValueChanged(double oldValue, double newValue)
         {
         }
@@ -1186,7 +1186,7 @@ namespace N
 
         /// <summary>This method is invoked when the <see cref=""ValueProperty""/> changes.</summary>
         /// <param name=""oldValue"">The old value of <see cref=""ValueProperty""/>.</param>
-        /// <param name=""newValue"">The new value of ↓<paramref name=""oldValue""/>.</param>
+        /// <param name=""newValue"">↓The new value of <paramref name=""oldValue""/>.</param>
         protected virtual void OnValueChanged(double oldValue, double newValue)
         {
         }
