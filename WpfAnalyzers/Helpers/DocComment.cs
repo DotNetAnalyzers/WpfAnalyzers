@@ -21,6 +21,18 @@
             while (docPos < e.Span.End &&
                    formatPos < format.Length)
             {
+                if (sourceText[docPos] == format[formatPos])
+                {
+                    formatPos++;
+                    docPos++;
+                    continue;
+                }
+
+                if (MoveToContent())
+                {
+                    continue;
+                }
+
                 if (format[formatPos] == '{')
                 {
                     parameter = NextParameter();
@@ -79,14 +91,32 @@
                         return paramPos == parameter.Length;
                     }
                 }
-                else if (sourceText[docPos] == format[formatPos])
-                {
-                    formatPos++;
-                    docPos++;
-                }
                 else
                 {
                     return ContentError();
+                }
+
+                bool MoveToContent()
+                {
+                    var token = e.FindToken(docPos, findInsideTrivia: true);
+                    switch (token.Kind())
+                    {
+                        case SyntaxKind.XmlTextLiteralNewLineToken:
+                            docPos += token.ValueText.Length;
+                            return true;
+                        case SyntaxKind.XmlTextLiteralToken
+                            when token.HasLeadingTrivia &&
+                                 token.LeadingTrivia.Span.Contains(docPos):
+                            docPos += token.LeadingTrivia.Span.Length;
+                            return true;
+                        case SyntaxKind.XmlTextLiteralToken
+                            when sourceText[docPos] == ' ' &&
+                                 token.SpanStart == docPos:
+                            docPos++;
+                            return true;
+                        default:
+                            return false;
+                    }
                 }
             }
 

@@ -106,7 +106,7 @@
                                 Title,
                                 diagnostic);
                             break;
-                        case ParameterSyntax { Parent: ParameterListSyntax { Parent: MethodDeclarationSyntax method } } parameter
+                        case ParameterSyntax { Parent: ParameterListSyntax { Parent: MethodDeclarationSyntax method } }
                             when text.StartsWith("<param") &&
                                  method.TryGetDocumentationComment(out var comment):
                             context.RegisterCodeFix(

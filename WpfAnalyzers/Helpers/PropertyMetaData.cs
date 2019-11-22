@@ -94,7 +94,7 @@
         {
             switch (value)
             {
-                case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse } conditional:
+                case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse }:
                     return IsValueValidForRegisteredType(whenTrue, registeredType, semanticModel, cancellationToken, visited) &&
                            IsValueValidForRegisteredType(whenFalse, registeredType, semanticModel, cancellationToken, visited);
 

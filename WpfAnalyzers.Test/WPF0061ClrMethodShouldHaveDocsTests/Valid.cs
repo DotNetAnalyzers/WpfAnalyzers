@@ -45,7 +45,6 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [Ignore("tbd")]
         [Test]
         public static void Multiline()
         {
