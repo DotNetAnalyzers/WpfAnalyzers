@@ -20,7 +20,8 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0060DocumentDependencyPropertyBackingMember.Id,
             Descriptors.WPF0061DocumentClrMethod.Id,
-            Descriptors.WPF0062DocumentPropertyChangedCallback.Id);
+            Descriptors.WPF0062DocumentPropertyChangedCallback.Id,
+            Descriptors.WPF0108DocumentRoutedEventBackingMember.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

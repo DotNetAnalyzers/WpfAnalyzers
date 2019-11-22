@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests
+﻿namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -8,7 +8,7 @@ namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
-        private static readonly CodeFixProvider Fix = new StandardDocsFix();
+        private static readonly CodeFixProvider Fix = new DocumentationFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0108DocumentRoutedEventBackingMember);
 
         [Test]

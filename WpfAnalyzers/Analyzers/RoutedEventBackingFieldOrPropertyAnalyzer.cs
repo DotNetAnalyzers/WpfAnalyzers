@@ -1,7 +1,6 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -31,23 +30,23 @@ namespace WpfAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MemberDeclarationSyntax memberDeclaration &&
-                FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty) &&
-                fieldOrProperty.Type == KnownSymbols.RoutedEvent)
+                FieldOrProperty.TryCreate(context.ContainingSymbol, out var backing) &&
+                backing.Type == KnownSymbols.RoutedEvent)
             {
-                if (RoutedEvent.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
+                if (RoutedEvent.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
                 {
-                    if (!fieldOrProperty.Name.IsParts(registeredName, "Event"))
+                    if (!backing.Name.IsParts(registeredName, "Event"))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
-                                FindIdentifier(context.Node).GetLocation(),
+                                backing.Symbol.Locations[0],
                                 ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
-                                fieldOrProperty.Name,
+                                backing.Name,
                                 registeredName));
                     }
 
-                    if (fieldOrProperty.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
+                    if (backing.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
                     {
                         if (nameArg.Expression is LiteralExpressionSyntax)
                         {
@@ -70,31 +69,45 @@ namespace WpfAnalyzers
                     }
 
                     if (context.ContainingSymbol.ContainingType.TryFindEvent(registeredName, out _) &&
-                        context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public) &&
-                        !HasStandardText(memberDeclaration, registeredName, out var comment))
+                        context.ContainingSymbol.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0108DocumentRoutedEventBackingMember,
-                                comment == null
-                                    ? BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()
-                                    : comment.GetLocation(),
-                                properties: ImmutableDictionary<string, string>.Empty.Add(nameof(CrefParameterSyntax), registeredName)));
+                        var summaryFormat = "<summary>Identifies the <see cref=\"{registered_name}\"/> routed event.</summary>";
+                        if (memberDeclaration.TryGetDocumentationComment(out var comment))
+                        {
+                            if (comment.VerifySummary(summaryFormat, registeredName) is { } summaryError)
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.WPF0108DocumentRoutedEventBackingMember,
+                                        summaryError.Location,
+                                        ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                            }
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0108DocumentRoutedEventBackingMember,
+                                    backing.Symbol.Locations[0],
+                                    ImmutableDictionary<string, string>.Empty.Add(
+                                        nameof(DocComment),
+                                        $"/// {DocComment.Format(summaryFormat, registeredName)}")));
+                        }
                     }
                 }
 
-                if (RoutedEvent.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
+                if (RoutedEvent.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
                     !Equals(registeredOwnerType, context.ContainingSymbol.ContainingType))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0101RegisterContainingTypeAsOwner,
                             typeArg.GetLocation(),
-                            fieldOrProperty.ContainingType.Name,
+                            backing.ContainingType.Name,
                             registeredName));
                 }
 
-                if (!fieldOrProperty.IsStaticReadOnly())
+                if (!backing.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -102,31 +115,6 @@ namespace WpfAnalyzers
                             BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation()));
                 }
             }
-        }
-
-        private static SyntaxToken FindIdentifier(SyntaxNode node)
-        {
-            if (node is PropertyDeclarationSyntax propertyDeclaration)
-            {
-                return propertyDeclaration.Identifier;
-            }
-
-            if (node is FieldDeclarationSyntax fieldDeclaration)
-            {
-                if (fieldDeclaration.Declaration.Variables.TrySingle(out var variable))
-                {
-                    return variable.Identifier;
-                }
-            }
-
-            return node.GetFirstToken();
-        }
-
-        private static bool HasStandardText(MemberDeclarationSyntax memberDeclaration, string name, [NotNullWhen(true)] out DocumentationCommentTriviaSyntax? comment)
-        {
-            return memberDeclaration.TryGetDocumentationComment(out comment) &&
-                   comment.TryGetSummary(out var summary) &&
-                   summary.ToString().IsParts("<summary>Identifies the <see cref=\"", name, "\"/> routed event.</summary>");
         }
     }
 }

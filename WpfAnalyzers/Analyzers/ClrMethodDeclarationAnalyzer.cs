@@ -54,9 +54,9 @@
 
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            var summaryFormat = "<summary>Helper for getting <see cref=\"{BACKING}\"/> from <paramref name=\"{PARAMETER}\"/>.</summary>";
-                            var paramFormat = "<param name=\"{PARAMETER}\"><see cref=\"{PARAMETER_TYPE}\"/> to read <see cref=\"{BACKING}\"/> from.</param>";
-                            var returnsFormat = "<returns>{REGISTERED_NAME} property value.</returns>";
+                            var summaryFormat = "<summary>Helper for getting <see cref=\"{backing}\"/> from <paramref name=\"{element}\"/>.</summary>";
+                            var paramFormat = "<param name=\"{element}\"><see cref=\"{element.type}\"/> to read <see cref=\"{backing}\"/> from.</param>";
+                            var returnsFormat = "<returns>{registered_name} property value.</returns>";
                             if (methodDeclaration.TryGetDocumentationComment(out var comment))
                             {
                                 if (comment.VerifySummary(summaryFormat, backing.Symbol.Name, element.Name) is { } summaryError)
