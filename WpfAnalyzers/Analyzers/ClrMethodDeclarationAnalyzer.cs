@@ -143,7 +143,8 @@
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
                 }
-                else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out backing))
+                else if (method.Parameters.TryElementAt(1, out var value) &&
+                         ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out backing))
                 {
                     if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
@@ -160,13 +161,49 @@
 
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            foreach (var (location, text) in new SetDocumentationErrors(methodDeclaration, backing, registeredName))
+                            var summaryFormat = "<summary>Helper for setting <see cref=\"{backing}\"/> on <paramref name=\"{element}\"/>.</summary>";
+                            var elementFormat = "<param name=\"{element}\"><see cref=\"{element_type}\"/> to set <see cref=\"{backing}\"/> on.</param>";
+                            var valueFormat = "<param name=\"{value}\">{registered_name} property value.</param>";
+                            if (methodDeclaration.TryGetDocumentationComment(out var comment))
+                            {
+                                if (comment.VerifySummary(summaryFormat, backing.Symbol.Name, element.Name) is { } summaryError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            summaryError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                }
+
+                                if (comment.VerifyParameter(elementFormat, element, element.Type.ToCrefType(), backing.Symbol.Name) is { } elementError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            elementError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), elementError.Text)));
+                                }
+
+                                if (comment.VerifyParameter(valueFormat, value, registeredName) is { } valueError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            valueError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), valueError.Text)));
+                                }
+                            }
+                            else
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         Descriptors.WPF0061DocumentClrMethod,
-                                        location,
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
+                                        methodDeclaration.Identifier.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(
+                                            nameof(DocComment),
+                                            $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
+                                            $"/// {DocComment.Format(elementFormat, element.Name, element.Type.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(valueFormat, value.Name, registeredName)}\n")));
                             }
                         }
                     }
@@ -227,86 +264,6 @@
 
             sideEffect = null;
             return false;
-        }
-
-        private struct SetDocumentationErrors : IEnumerable<(Location Location, string Text)>
-        {
-            private readonly MethodDeclarationSyntax method;
-            private readonly BackingFieldOrProperty backing;
-            private readonly string registeredName;
-
-            internal SetDocumentationErrors(MethodDeclarationSyntax method, BackingFieldOrProperty backing, string registeredName)
-            {
-                this.method = method;
-                this.backing = backing;
-                this.registeredName = registeredName;
-            }
-
-            public IEnumerator<(Location Location, string Text)> GetEnumerator()
-            {
-                if (this.method.ParameterList is null ||
-                    this.method.ParameterList.Parameters.Count != 2)
-                {
-                    yield break;
-                }
-
-                if (this.method.TryGetDocumentationComment(out var comment))
-                {
-                    var element = this.method.ParameterList.Parameters[0];
-                    var value = this.method.ParameterList.Parameters[1];
-                    if (comment.TryGetSummary(out var summary))
-                    {
-                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var middle, out var paramRef, out var suffix) &&
-                            prefix.IsMatch("Helper for setting ") &&
-                            middle.IsMatch(" on ") &&
-                            suffix.IsMatch("."))
-                        {
-                            if (DocComment.VerifyCref(cref, this.backing.Name) is { } crefError)
-                            {
-                                yield return crefError;
-                            }
-
-                            if (DocComment.VerifyParamRef(paramRef, element) is { } paramRefError)
-                            {
-                                yield return paramRefError;
-                            }
-                        }
-                        else
-                        {
-                            yield return (summary.GetLocation(), this.SummaryText());
-                        }
-                    }
-                    else
-                    {
-                        yield return (comment.GetLocation(), this.SummaryText());
-                    }
-                }
-                else if (this.FullText() is { } fullText)
-                {
-                    yield return (this.method.Identifier.GetLocation(), fullText);
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-            private string SummaryText() => $"<summary>Helper for setting <see cref=\"{this.backing.Name}\"/> on <paramref name=\"{this.method.ParameterList.Parameters[0].Identifier.ValueText}\"/>.</summary>";
-
-            private string ElementInnerText(ParameterSyntax parameter) => $"<see cref=\"{parameter.Type}\"/> to set <see cref=\"{this.backing.Name}\"/> on.";
-
-            private string ElementText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">{this.ElementInnerText(parameter)}</param>";
-
-            private string ValueInnerText() => $"{this.registeredName} property value.";
-
-            private string ValueText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">{this.ValueInnerText()}</param>";
-
-            private string? FullText()
-            {
-                return StringBuilderPool.Borrow()
-                                        .Append("/// ").AppendLine(this.SummaryText())
-                                        .Append("/// ").AppendLine(this.ElementText(this.method.ParameterList.Parameters[0]))
-                                        .Append("/// ").AppendLine(this.ValueText(this.method.ParameterList.Parameters[1]))
-                                        .Return();
-            }
         }
     }
 }

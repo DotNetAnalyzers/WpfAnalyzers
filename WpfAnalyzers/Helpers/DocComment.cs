@@ -106,7 +106,7 @@
             }
         }
 
-        internal static (Location Location, string Text)? VerifySummary(this DocumentationCommentTriviaSyntax doc, string format, string? p1 = null, string? p2 = null, string? p3= null)
+        internal static (Location Location, string Text)? VerifySummary(this DocumentationCommentTriviaSyntax doc, string format, string? p1 = null, string? p2 = null, string? p3 = null)
         {
             if (doc.TryGetSummary(out var summary))
             {
@@ -239,42 +239,6 @@
             return false;
         }
 
-        internal static (Location, string)? VerifyParamRef(XmlEmptyElementSyntax e, ParameterSyntax parameter)
-        {
-            if (e.IsParamRef(out var attribute))
-            {
-                if (attribute.Identifier is IdentifierNameSyntax name)
-                {
-                    if (name.Identifier.ValueText == parameter.Identifier.ValueText)
-                    {
-                        return null;
-                    }
-
-                    return (name.GetLocation(), parameter.Identifier.ValueText);
-                }
-            }
-
-            return (e.GetLocation(), $"<paramref name=\"{parameter.Identifier.ValueText}\"/>");
-        }
-
-        internal static bool IsParamRef(this XmlEmptyElementSyntax e, [NotNullWhen(true)] out XmlNameAttributeSyntax? attribute)
-        {
-            if (e.Name?.LocalName.ValueText == "paramref")
-            {
-                foreach (var candidate in e.Attributes)
-                {
-                    if (candidate is XmlNameAttributeSyntax name)
-                    {
-                        attribute = name;
-                        return true;
-                    }
-                }
-            }
-
-            attribute = null;
-            return false;
-        }
-
         internal static bool IsMatch(this XmlTextSyntax xmlText, string text)
         {
             return xmlText.TextTokens.TrySingle(x => x.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(x.ValueText), out var token) &&
@@ -322,32 +286,6 @@
                    Element(0, out n1) &&
                    Element(1, out n2) &&
                    Element(2, out n3);
-
-            bool Element<T>(int index, out T? result)
-                 where T : class
-            {
-                return (result = content[index] as T) is { };
-            }
-        }
-
-        internal static bool TryMatch<T1, T2, T3, T4, T5>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3, [NotNullWhen(true)] out T4? n4, [NotNullWhen(true)] out T5? n5)
-            where T1 : XmlNodeSyntax
-            where T2 : XmlNodeSyntax
-            where T3 : XmlNodeSyntax
-            where T4 : XmlNodeSyntax
-            where T5 : XmlNodeSyntax
-        {
-            n1 = default;
-            n2 = default;
-            n3 = default;
-            n4 = default;
-            n5 = default;
-            return e is { Content: { Count: 5 } content } &&
-                   Element(0, out n1) &&
-                   Element(1, out n2) &&
-                   Element(2, out n3) &&
-                   Element(3, out n4) &&
-                   Element(4, out n5);
 
             bool Element<T>(int index, out T? result)
                  where T : class
