@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Text;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
