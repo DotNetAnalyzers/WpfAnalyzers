@@ -59,7 +59,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Backing member for RoutedEvent must have standard documentation text."), before, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Backing member for RoutedEvent should have standard documentation text."), before, after);
         }
     }
 }

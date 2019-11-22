@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -331,30 +331,30 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0060DocumentDependencyPropertyBackingMember = Create(
             id: "WPF0060",
-            title: "Backing member for DependencyProperty must have standard documentation text.",
-            messageFormat: "Backing member for DependencyProperty must have standard documentation text.",
+            title: "Backing member for DependencyProperty should have standard documentation text.",
+            messageFormat: "Backing member for DependencyProperty should have standard documentation text.",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Backing member for DependencyProperty must have standard documentation text.");
+            description: "Backing member for DependencyProperty should have standard documentation text.");
 
         internal static readonly DiagnosticDescriptor WPF0061DocumentClrMethod = Create(
             id: "WPF0061",
-            title: "Accessor method for attached property must have standard documentation text.",
-            messageFormat: "Accessor method for attached property must have standard documentation text.",
+            title: "Accessor method for attached property should have standard documentation text.",
+            messageFormat: "Accessor method for attached property should have standard documentation text.",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Accessor method for attached property must have standard documentation text.");
+            description: "Accessor method for attached property should have standard documentation text.");
 
         internal static readonly DiagnosticDescriptor WPF0062DocumentPropertyChangedCallback = Create(
             id: "WPF0062",
-            title: "Property changed callback must have standard documentation text.",
-            messageFormat: "Property changed callback must have standard documentation text.",
+            title: "Property changed callback should have standard documentation text.",
+            messageFormat: "Property changed callback should have standard documentation text.",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Property changed callback must have standard documentation text.");
+            description: "Property changed callback should have standard documentation text.");
 
         internal static readonly DiagnosticDescriptor WPF0070ConverterDoesNotHaveDefaultField = Create(
             id: "WPF0070",
@@ -547,12 +547,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0108DocumentRoutedEventBackingMember = Create(
             id: "WPF0108",
-            title: "Backing member for RoutedEvent must have standard documentation text.",
-            messageFormat: "Backing member for RoutedEvent must have standard documentation text.",
+            title: "Backing member for RoutedEvent should have standard documentation text.",
+            messageFormat: "Backing member for RoutedEvent should have standard documentation text.",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Backing member for RoutedEvent must have standard documentation text.");
+            description: "Backing member for RoutedEvent should have standard documentation text.");
 
         internal static readonly DiagnosticDescriptor WPF0120RegisterContainingMemberAsNameForRoutedCommand = Create(
             id: "WPF0120",

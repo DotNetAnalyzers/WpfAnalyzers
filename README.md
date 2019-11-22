@@ -47,9 +47,9 @@ Roslyn analyzers for WPF.
 | [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition.
 | [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace.
 | [WPF0052](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md)| XmlnsDefinitions does not map all namespaces with public types.
-| [WPF0060](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md)| Backing member for DependencyProperty must have standard documentation text.
-| [WPF0061](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md)| Accessor method for attached property must have standard documentation text.
-| [WPF0062](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md)| Property changed callback must have standard documentation text.
+| [WPF0060](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md)| Backing member for DependencyProperty should have standard documentation text.
+| [WPF0061](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md)| Accessor method for attached property should have standard documentation text.
+| [WPF0062](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md)| Property changed callback should have standard documentation text.
 | [WPF0070](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md)| Add default field to converter.
 | [WPF0071](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md)| Add ValueConversion attribute.
 | [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types.
@@ -71,7 +71,7 @@ Roslyn analyzers for WPF.
 | [WPF0105](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md)| Call RemoveHandler in remove.
 | [WPF0106](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md)| Use the registered handler type.
 | [WPF0107](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md)| Backing member for a RoutedEvent should be static and readonly.
-| [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent must have standard documentation text.
+| [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent should have standard documentation text.
 | [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command.
 | [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command.
 | [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command.
