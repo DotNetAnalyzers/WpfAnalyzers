@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Text;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -54,20 +55,34 @@
                                 Title,
                                 diagnostic);
                             break;
-                        case DocumentationCommentTriviaSyntax element
+                        case DocumentationCommentTriviaSyntax doc
                             when text.StartsWith("<summary>"):
                             context.RegisterCodeFix(
                                 Title,
-                                editor => editor.ReplaceNode(element, x => x.WithSummary(Parse.XmlElementSyntax(text))),
+                                editor => editor.ReplaceNode(doc, x => x.WithSummary(Parse.XmlElementSyntax(text))),
                                 Title,
                                 diagnostic);
                             break;
-                        case DocumentationCommentTriviaSyntax element:
+                        case DocumentationCommentTriviaSyntax doc:
                             context.RegisterCodeFix(
                                 Title,
-                                editor => editor.ReplaceNode(element, x => Parse.DocumentationCommentTriviaSyntax(text)),
+                                editor => editor.ReplaceNode(doc, x => Parse.DocumentationCommentTriviaSyntax(text)),
                                 Title,
                                 diagnostic);
+                            break;
+                        case XmlTextSyntax xmlText
+                            when xmlText.TryFirstAncestor(out XmlElementSyntax? containing):
+                            context.RegisterCodeFix(
+                                Title,
+                                editor => editor.ReplaceNode(containing, x => Replacement(x)),
+                                Title,
+                                diagnostic);
+
+                            XmlElementSyntax Replacement(XmlElementSyntax old)
+                            {
+                                return old.WithContent(Parse.XmlElementSyntax(text).Content);
+                            }
+
                             break;
                         case IdentifierNameSyntax identifierName:
                             context.RegisterCodeFix(
@@ -120,16 +135,6 @@
                             context.RegisterCodeFix(
                                 Title,
                                 editor => editor.ReplaceNode(comment, x => x.WithParamText(parameter.Identifier.ValueText, text)),
-                                Title,
-                                diagnostic);
-                            break;
-                        case XmlTextSyntax xmlText
-                            when xmlText.TryFirstAncestor(out XmlElementSyntax? containing) &&
-                                 diagnostic.Location.SourceSpan.Start == containing.Content.First().SpanStart &&
-                                 diagnostic.Location.SourceSpan.End == containing.Content.Last().Span.End:
-                            context.RegisterCodeFix(
-                                Title,
-                                editor => editor.ReplaceNode(containing, x => x.WithContent(Parse.XmlElementSyntax(text).Content)),
                                 Title,
                                 diagnostic);
                             break;

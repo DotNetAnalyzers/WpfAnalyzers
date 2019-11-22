@@ -130,8 +130,49 @@
             (Location, string) ContentError()
             {
                 return (
-                    e.SyntaxTree.GetLocation(TextSpan.FromBounds(e.Content.First().SpanStart, e.Content.Last().Span.End)),
+                    e.SyntaxTree.GetLocation(TextSpan.FromBounds(Start(), End())),
                     Format(format, p1, p2, p3));
+
+                int Start()
+                {
+                    foreach (var node in e.Content)
+                    {
+                        foreach (var token in node.DescendantTokens(descendIntoTrivia: true))
+                        {
+                            switch (token.Kind())
+                            {
+                                case SyntaxKind.XmlTextLiteralNewLineToken:
+                                    continue;
+                                case SyntaxKind.XmlTextLiteralToken
+                                    when token.ValueText.StartsWith(" "):
+                                    return token.SpanStart + 1;
+                                default:
+                                    return token.SpanStart;
+                            }
+                        }
+                    }
+
+                    return e.GetFirstToken().SpanStart;
+                }
+
+                int End()
+                {
+                    for (var i = e.Content.Count - 1; i >= 0; i--)
+                    {
+                        foreach (var token in e.Content[i].DescendantTokens(descendIntoTrivia: true).Reverse())
+                        {
+                            switch (token.Kind())
+                            {
+                                case SyntaxKind.XmlTextLiteralNewLineToken:
+                                    continue;
+                                default:
+                                    return token.Span.End;
+                            }
+                        }
+                    }
+
+                    return e.GetLastToken().Span.End;
+                }
             }
         }
 
@@ -211,7 +252,7 @@
                     {
                         if (start == -1)
                         {
-                            throw new FormatException($"Expected {{ before [i].");
+                            throw new FormatException($"Expected {{ before [{i}].");
                         }
 
                         return builder.ToString(start, i - start + 1);
