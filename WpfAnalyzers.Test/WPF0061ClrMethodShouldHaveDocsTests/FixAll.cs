@@ -319,7 +319,7 @@ namespace N
             element.SetValue(BarProperty, value);
         }
 
-        /// ↓<summary>Helper for getting Wrong property from <paramref name=""element""/>.</summary>
+        /// <summary>↓Helper for getting Wrong property from <paramref name=""element""/>.</summary>
         /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         public static int GetBar(UIElement element)

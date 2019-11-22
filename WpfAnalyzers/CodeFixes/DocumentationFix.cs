@@ -106,10 +106,29 @@
                                 diagnostic);
                             break;
                         case ParameterSyntax { Parent: ParameterListSyntax { Parent: MethodDeclarationSyntax method } } parameter
+                            when text.StartsWith("<param") &&
+                                 method.TryGetDocumentationComment(out var comment):
+                            context.RegisterCodeFix(
+                                Title,
+                                editor => editor.ReplaceNode(comment, x => x.WithParam(Parse.XmlElementSyntax(text))),
+                                Title,
+                                diagnostic);
+                            break;
+                        case ParameterSyntax { Parent: ParameterListSyntax { Parent: MethodDeclarationSyntax method } } parameter
                             when method.TryGetDocumentationComment(out var comment):
                             context.RegisterCodeFix(
                                 Title,
                                 editor => editor.ReplaceNode(comment, x => x.WithParamText(parameter.Identifier.ValueText, text)),
+                                Title,
+                                diagnostic);
+                            break;
+                        case XmlTextSyntax xmlText
+                            when xmlText.TryFirstAncestor(out XmlElementSyntax? containing) &&
+                                 diagnostic.Location.SourceSpan.Start == containing.Content.First().SpanStart &&
+                                 diagnostic.Location.SourceSpan.End == containing.Content.Last().Span.End:
+                            context.RegisterCodeFix(
+                                Title,
+                                editor => editor.ReplaceNode(containing, x => x.WithContent(Parse.XmlElementSyntax(text).Content)),
                                 Title,
                                 diagnostic);
                             break;

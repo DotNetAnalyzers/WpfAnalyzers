@@ -34,12 +34,12 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol { IsStatic: true } method &&
-                method.Parameters.TryElementAt(0, out var parameter) &&
-                parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
+                method.Parameters.TryElementAt(0, out var element) &&
+                element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
             {
-                if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var fieldOrProperty))
+                if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var backing))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         if (!method.Name.IsParts("Get", registeredName))
                         {
@@ -54,18 +54,54 @@
 
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            foreach (var (location, text) in new GetDocumentationErrors(methodDeclaration, fieldOrProperty, registeredName))
+                            var summaryFormat = "<summary>Helper for getting <see cref=\"{BACKING}\"/> from <paramref name=\"{PARAMETER}\"/>.</summary>";
+                            var paramFormat = "<param name=\"{PARAMETER}\"><see cref=\"{PARAMETER_TYPE}\"/> to read <see cref=\"{BACKING}\"/> from.</param>";
+                            var returnsFormat = "<returns>{REGISTERED_NAME} property value.</returns>";
+                            if (methodDeclaration.TryGetDocumentationComment(out var comment))
+                            {
+                                if (comment.VerifySummary(summaryFormat, backing.Symbol.Name, element.Name) is { } summaryError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            summaryError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                }
+
+                                if (comment.VerifyParameter(paramFormat, element, element.Type.ToCrefType(), backing.Symbol.Name) is { } paramError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            paramError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), paramError.Text)));
+                                }
+
+                                if (comment.VerifyReturns(returnsFormat, registeredName) is { } returnsError)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0061DocumentClrMethod,
+                                            returnsError.Location,
+                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), returnsError.Text)));
+                                }
+                            }
+                            else
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         Descriptors.WPF0061DocumentClrMethod,
-                                        location,
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
+                                        methodDeclaration.Identifier.GetLocation(),
+                                        ImmutableDictionary<string, string>.Empty.Add(
+                                            nameof(DocComment),
+                                            $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
+                                            $"/// {DocComment.Format(paramFormat, element.Name, element.Type.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(returnsFormat, registeredName)}\n")));
                             }
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         !Equals(method.ReturnType, registeredType))
                     {
                         context.ReportDiagnostic(
@@ -76,18 +112,18 @@
                                 registeredType));
                     }
 
-                    if (Attribute.TryFind(methodDeclaration, KnownSymbols.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Gu.Roslyn.AnalyzerExtensions.Attribute.TryFind(methodDeclaration, KnownSymbols.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
                             TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
-                            !argumentType.IsAssignableTo(parameter.Type, context.Compilation))
+                            !argumentType.IsAssignableTo(element.Type, context.Compilation))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument,
                                     argument.GetLocation(),
-                                    parameter.Type.ToMinimalDisplayString(
+                                    element.Type.ToMinimalDisplayString(
                                         context.SemanticModel,
                                         argument.SpanStart)));
                         }
@@ -98,7 +134,7 @@
                             Diagnostic.Create(
                                     Descriptors.WPF0033UseAttachedPropertyBrowsableForTypeAttribute,
                                     methodDeclaration.Identifier.GetLocation(),
-                                    parameter.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
+                                    element.Type.ToMinimalDisplayString(context.SemanticModel, methodDeclaration.SpanStart)));
                     }
 
                     if (methodDeclaration.Body is { } body &&
@@ -107,9 +143,9 @@
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
                 }
-                else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out fieldOrProperty))
+                else if (ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out backing))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         if (!method.Name.IsParts("Set", registeredName))
                         {
@@ -124,7 +160,7 @@
 
                         if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                         {
-                            foreach (var (location, text) in new SetDocumentationErrors(methodDeclaration, fieldOrProperty, registeredName))
+                            foreach (var (location, text) in new SetDocumentationErrors(methodDeclaration, backing, registeredName))
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
@@ -135,7 +171,7 @@
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         method.Parameters.TryElementAt(1, out var valueParameter) &&
                         !Equals(valueParameter.Type, registeredType))
                     {
@@ -191,123 +227,6 @@
 
             sideEffect = null;
             return false;
-        }
-
-        private struct GetDocumentationErrors : IEnumerable<(Location Location, string Text)>
-        {
-            private readonly MethodDeclarationSyntax method;
-            private readonly BackingFieldOrProperty backing;
-            private readonly string registeredName;
-
-            internal GetDocumentationErrors(MethodDeclarationSyntax method, BackingFieldOrProperty backing, string registeredName)
-            {
-                this.method = method;
-                this.backing = backing;
-                this.registeredName = registeredName;
-            }
-
-            public IEnumerator<(Location Location, string Text)> GetEnumerator()
-            {
-                if (this.method.ParameterList is null ||
-                    this.method.ParameterList.Parameters.Count != 1)
-                {
-                    yield break;
-                }
-
-                var parameter = this.method.ParameterList.Parameters[0];
-                if (this.method.TryGetDocumentationComment(out var comment))
-                {
-                    if (comment.TryGetSummary(out var summary))
-                    {
-                        if (summary.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefix, out var cref, out var middle, out var paramRef, out var suffix) &&
-                            prefix.IsMatch("Helper for getting ") &&
-                            middle.IsMatch(" from ") &&
-                            suffix.IsMatch("."))
-                        {
-                            if (DocComment.VerifyCref(cref, this.backing.Name) is { } crefError)
-                            {
-                                yield return crefError;
-                            }
-
-                            if (DocComment.VerifyParamRef(paramRef, parameter) is { } paramRefError)
-                            {
-                                yield return paramRefError;
-                            }
-                        }
-                        else
-                        {
-                            yield return (summary.GetLocation(), this.SummaryText(parameter));
-                        }
-                    }
-                    else
-                    {
-                        yield return (comment.GetLocation(), this.SummaryText(parameter));
-                    }
-
-                    if (comment.TryGetParam(parameter.Identifier.ValueText, out var param))
-                    {
-                        if (param.TryMatch<XmlEmptyElementSyntax, XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var elementCref, out var text, out var propertyCref, out var suffix) &&
-                            text.IsMatch(" to read ") &&
-                            suffix.IsMatch(" from."))
-                        {
-                            if (parameter.Type is SimpleNameSyntax simpleName &&
-                                DocComment.VerifyCref(elementCref, simpleName.Identifier.ValueText) is { } crefError)
-                            {
-                                yield return crefError;
-                            }
-
-                            if (DocComment.VerifyCref(propertyCref, this.backing.Name) is { } propertyRefError)
-                            {
-                                yield return propertyRefError;
-                            }
-                        }
-                        else
-                        {
-                            yield return (param.GetLocation(), this.ElementText(parameter));
-                        }
-                    }
-                    else
-                    {
-                        yield return (parameter.Identifier.GetLocation(), this.ElementInnerText(parameter));
-                    }
-
-                    if (comment.TryGetReturns(out var returns))
-                    {
-                        if (!returns.TryMatch<XmlTextSyntax>(out _))
-                        {
-                            yield return (returns.GetLocation(), this.ReturnsText());
-                        }
-                    }
-                    else
-                    {
-                        yield return (this.method.ReturnType.GetLocation(), this.ReturnsText());
-                    }
-                }
-                else if (this.FullText() is { } fullText)
-                {
-                    yield return (this.method.Identifier.GetLocation(), fullText);
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-            private string SummaryText(ParameterSyntax parameter) => $"<summary>Helper for getting <see cref=\"{this.backing.Name}\"/> from <paramref name=\"{parameter.Identifier.ValueText}\"/>.</summary>";
-
-            private string ElementInnerText(ParameterSyntax parameter) => $"<see cref=\"{parameter.Type}\"/> to read <see cref=\"{this.backing.Name}\"/> from.";
-
-            private string ElementText(ParameterSyntax parameter) => $"<param name=\"{parameter.Identifier.ValueText}\">{this.ElementInnerText(parameter)}</param>";
-
-            private string ReturnsText() => $"<returns>{this.registeredName} property value.</returns>";
-
-            private string? FullText()
-            {
-                var parameters = this.method.ParameterList.Parameters;
-                return StringBuilderPool.Borrow()
-                            .Append("/// ").AppendLine(this.SummaryText(parameters[0]))
-                            .Append("/// ").AppendLine(this.ElementText(parameters[0]))
-                            .Append("/// ").AppendLine(this.ReturnsText())
-                            .Return();
-            }
         }
 
         private struct SetDocumentationErrors : IEnumerable<(Location Location, string Text)>

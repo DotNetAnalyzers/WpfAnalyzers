@@ -2,13 +2,207 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Text;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
 
     internal static class DocComment
     {
+        internal static (Location Location, string Text)? Verify(XmlElementSyntax e, string format, string? p1, string? p2, string? p3)
+        {
+            var sourceText = e.SyntaxTree.GetText();
+            var formatPos = 0;
+            var docPos = e.Span.Start;
+            string? parameter = null;
+            while (docPos < e.Span.End &&
+                   formatPos < format.Length)
+            {
+                if (format[formatPos] == '{')
+                {
+                    parameter = NextParameter();
+                    if (IsMatch())
+                    {
+                        formatPos = format.IndexOf('}', formatPos) + 1;
+                    }
+                    else
+                    {
+                        var token = e.FindToken(docPos, findInsideTrivia: true);
+                        if (token.IsKind(SyntaxKind.XmlTextLiteralToken))
+                        {
+                            return ContentError();
+                        }
+
+                        return (token.GetLocation(), parameter);
+                    }
+
+                    string NextParameter()
+                    {
+                        if (parameter == null)
+                        {
+                            return p1 ?? throw new FormatException("Too few parameters provided p1 is null.");
+                        }
+
+                        if (parameter == p1)
+                        {
+                            return p2 ?? throw new FormatException("Too few parameters provided p2 is null.");
+                        }
+
+                        if (parameter == p2)
+                        {
+                            return p3 ?? throw new FormatException("Too few parameters provided p3 is null.");
+                        }
+
+                        throw new FormatException("Too few parameters provided.");
+                    }
+
+                    bool IsMatch()
+                    {
+                        var paramPos = 0;
+                        while (paramPos < parameter.Length &&
+                               docPos < e.Span.End)
+                        {
+                            if (sourceText[docPos] == parameter[paramPos])
+                            {
+                                paramPos++;
+                                docPos++;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+
+                        return paramPos == parameter.Length;
+                    }
+                }
+                else if (sourceText[docPos] == format[formatPos])
+                {
+                    formatPos++;
+                    docPos++;
+                }
+                else
+                {
+                    return ContentError();
+                }
+            }
+
+            if (docPos == e.Span.End &&
+                formatPos == format.Length)
+            {
+                return null;
+            }
+
+            return ContentError();
+
+            (Location, string) ContentError()
+            {
+                return (
+                    e.SyntaxTree.GetLocation(TextSpan.FromBounds(e.Content.First().SpanStart, e.Content.Last().Span.End)),
+                    Format(format, p1, p2, p3));
+            }
+        }
+
+        internal static (Location Location, string Text)? VerifySummary(this DocumentationCommentTriviaSyntax doc, string format, string p1, string p2)
+        {
+            if (doc.TryGetSummary(out var summary))
+            {
+                return Verify(summary, format, p1, p2, null);
+            }
+
+            return (doc.GetLocation(), Format(format, p1, p2));
+        }
+
+        internal static (Location Location, string Text)? VerifyParameter(this DocumentationCommentTriviaSyntax doc, string format, IParameterSymbol parameter, string p1, string p2)
+        {
+            if (doc.TryGetParam(parameter.Name, out var param))
+            {
+                return Verify(param, format, parameter.Name, p1, p2);
+            }
+
+            return (parameter.Locations[0], Format(format, parameter.Name, p1, p2));
+        }
+
+        internal static (Location Location, string Text)? VerifyReturns(this DocumentationCommentTriviaSyntax doc, string format, string p1)
+        {
+            if (doc.TryGetReturns(out var returns))
+            {
+                return Verify(returns, format, p1, null, null);
+            }
+
+            if (doc.TryFirstAncestor(out MethodDeclarationSyntax? method))
+            {
+                return (method.ReturnType.GetLocation(), Format(format, p1));
+            }
+
+            return (doc.GetLocation(), Format(format, p1));
+        }
+
+        internal static string Format(string format, params string?[] args)
+        {
+            var builder = new StringBuilder(format);
+            foreach (var arg in args)
+            {
+                if (arg == null)
+                {
+                    break;
+                }
+
+                if (FindParameter() is { } parameter)
+                {
+                    _ = builder.Replace(parameter, arg);
+                }
+                else
+                {
+                    throw new FormatException("Too many format parameters in the format string.");
+                }
+            }
+
+            if (FindParameter() is { })
+            {
+                throw new FormatException("Too many format parameters in the format string.");
+            }
+
+            return builder.ToString();
+
+            string? FindParameter()
+            {
+                var start = -1;
+                for (var i = 0; i < builder.Length; i++)
+                {
+                    if (builder[i] == '{')
+                    {
+                        start = i;
+                    }
+
+                    if (builder[i] == '}')
+                    {
+                        if (start == -1)
+                        {
+                            throw new FormatException($"Expected {{ before [i].");
+                        }
+
+                        return builder.ToString(start, i - start + 1);
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        internal static string ToCrefType(this ITypeSymbol type)
+        {
+            return type switch
+            {
+                INamedTypeSymbol { IsGenericType: false } simple => simple.Name,
+                INamedTypeSymbol { IsGenericType: true } generic => $"{generic.Name}{{{string.Join(",", generic.TypeArguments.Select(x => x.Name))}}}",
+                _ => type.Name,
+            };
+        }
+
         internal static (Location, string)? VerifyCref(XmlEmptyElementSyntax e, string nameMember)
         {
             if (e.IsCref(out var attribute))
@@ -116,20 +310,6 @@
             }
         }
 
-        internal static bool TryMatch<T1>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1)
-            where T1 : XmlNodeSyntax
-        {
-            n1 = default;
-            return e is { Content: { Count: 1 } content } &&
-                   Element(0, out n1);
-
-            bool Element<T>(int index, out T? result)
-                 where T : class
-            {
-                return (result = content[index] as T) is { };
-            }
-        }
-
         internal static bool TryMatch<T1, T2, T3>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3)
             where T1 : XmlNodeSyntax
             where T2 : XmlNodeSyntax
@@ -142,29 +322,6 @@
                    Element(0, out n1) &&
                    Element(1, out n2) &&
                    Element(2, out n3);
-
-            bool Element<T>(int index, out T? result)
-                 where T : class
-            {
-                return (result = content[index] as T) is { };
-            }
-        }
-
-        internal static bool TryMatch<T1, T2, T3, T4>(this XmlElementSyntax e, [NotNullWhen(true)] out T1? n1, [NotNullWhen(true)] out T2? n2, [NotNullWhen(true)] out T3? n3, [NotNullWhen(true)] out T4? n4)
-            where T1 : XmlNodeSyntax
-            where T2 : XmlNodeSyntax
-            where T3 : XmlNodeSyntax
-            where T4 : XmlNodeSyntax
-        {
-            n1 = default;
-            n2 = default;
-            n3 = default;
-            n4 = default;
-            return e is { Content: { Count: 4 } content } &&
-                   Element(0, out n1) &&
-                   Element(1, out n2) &&
-                   Element(2, out n3) &&
-                   Element(3, out n4);
 
             bool Element<T>(int index, out T? result)
                  where T : class
@@ -196,25 +353,6 @@
                  where T : class
             {
                 return (result = content[index] as T) is { };
-            }
-        }
-
-        internal static (Location Location, string Text)? VerifyTextCrefText(XmlElementSyntax e, string prefix, string name, string suffix)
-        {
-            if (e.TryMatch<XmlTextSyntax, XmlEmptyElementSyntax, XmlTextSyntax>(out var prefixElement, out var crefElement, out var suffixElement) &&
-                prefixElement.IsMatch(prefix) &&
-                suffixElement.IsMatch(suffix))
-            {
-                if (VerifyCref(crefElement, name) is { } error)
-                {
-                    return error;
-                }
-
-                return null;
-            }
-            else
-            {
-                return (e.GetLocation(), $"{prefix}<see cref=\"{name}\"/>{suffix}");
             }
         }
     }

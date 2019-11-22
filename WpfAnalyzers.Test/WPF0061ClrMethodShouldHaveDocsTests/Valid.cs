@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
+﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -34,6 +34,57 @@ namespace N
         /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
         /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(UIElement))]
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Ignore("tbd")]
+        [Test]
+        public static void Multiline()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>
+        /// Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.
+        /// </summary>
+        /// <param name=""element"">
+        /// <see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.
+        /// </param>
+        /// <param name=""value"">
+        /// Bar property value.
+        /// </param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>
+        /// Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.
+        /// </summary>
+        /// <param name=""element"">
+        /// <see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.
+        /// </param>
+        /// <returns>
+        /// Bar property value.
+        /// </returns>
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
         public static int GetBar(UIElement element)
         {

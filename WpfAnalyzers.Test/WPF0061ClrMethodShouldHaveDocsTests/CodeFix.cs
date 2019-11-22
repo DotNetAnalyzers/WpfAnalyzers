@@ -76,7 +76,7 @@ namespace N
         }
 
         [Test]
-        public static void GetMissingSummaryForGet()
+        public static void GetSummaryMissing()
         {
             var before = @"
 namespace N
@@ -142,7 +142,7 @@ namespace N
         }
 
         [Test]
-        public static void GetWrongSummaryForGet()
+        public static void GetSummaryWrong()
         {
             var before = @"
 namespace N
@@ -165,7 +165,77 @@ namespace N
             element.SetValue(BarProperty, value);
         }
 
-        /// ↓<summary>WRONG</summary>
+        /// <summary>↓WRONG</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Ignore("tbd")]
+        [Test]
+        public static void GetSummaryWrongMultiline()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>
+        /// ↓WRONG
+        /// </summary>
         /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
         /// <returns>Bar property value.</returns>
         public static int GetBar(UIElement element)
@@ -209,7 +279,141 @@ namespace N
         }
 
         [Test]
-        public static void GetMissingParameterDoc()
+        public static void GetSummaryWrongCref()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""↓WRONG""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void GetSummaryWrongParamref()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""↓WRONG""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void GetParamMissing()
         {
             var before = @"
 namespace N
@@ -275,7 +479,7 @@ namespace N
         }
 
         [Test]
-        public static void GetWrongParameterDoc()
+        public static void GetParamWrong()
         {
             var before = @"
 namespace N
@@ -299,7 +503,7 @@ namespace N
         }
 
         /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
-        /// ↓<param name=""element"">WRONG.</param>
+        /// <param name=""element"">↓WRONG.</param>
         /// <returns>Bar property value.</returns>
         public static int GetBar(UIElement element)
         {
@@ -342,7 +546,7 @@ namespace N
         }
 
         [Test]
-        public static void MissingReturns()
+        public static void GetReturnsMissing()
         {
             var before = @"
 namespace N
@@ -368,6 +572,73 @@ namespace N
         /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
         /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
         public static ↓int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>Bar property value.</returns>
+        public static int GetBar(UIElement element)
+        {
+            return (int)element.GetValue(BarProperty);
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void GetReturnsWrong()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(int),
+            typeof(Foo),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for setting <see cref=""BarProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to set <see cref=""BarProperty""/> on.</param>
+        /// <param name=""value"">Bar property value.</param>
+        public static void SetBar(UIElement element, int value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""BarProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""UIElement""/> to read <see cref=""BarProperty""/> from.</param>
+        /// <returns>↓WRONG</returns>
+        public static int GetBar(UIElement element)
         {
             return (int)element.GetValue(BarProperty);
         }
