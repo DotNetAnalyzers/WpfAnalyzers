@@ -14,7 +14,6 @@
     [Shared]
     internal class UseSetCurrentValueFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0041SetMutableUsingSetCurrentValue.Id);
 
