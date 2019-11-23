@@ -92,7 +92,7 @@
 
         internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using var recursion = Recursion.Borrow(semanticModel, cancellationToken);
+            using var recursion = Recursion.Borrow(value, semanticModel, cancellationToken);
             return IsValueValidForRegisteredType(value, registeredType, recursion);
 
             static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, Recursion recursion)
