@@ -90,113 +90,109 @@
             return false;
         }
 
-        internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<SyntaxNode>? visited = null)
+        internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            switch (value)
-            {
-                case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse }:
-                    return IsValueValidForRegisteredType(whenTrue, registeredType, semanticModel, cancellationToken, visited) &&
-                           IsValueValidForRegisteredType(whenFalse, registeredType, semanticModel, cancellationToken, visited);
+            using var recursion = Recursion.Borrow(semanticModel, cancellationToken);
+            return IsValueValidForRegisteredType(value, registeredType, recursion);
 
-                case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary
-                    when binary.IsKind(SyntaxKind.CoalesceExpression):
-                    return IsValueValidForRegisteredType(left, registeredType, semanticModel, cancellationToken, visited) &&
-                           IsValueValidForRegisteredType(right, registeredType, semanticModel, cancellationToken, visited);
-            }
-
-            if (registeredType.TypeKind == TypeKind.Enum)
+            static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, Recursion recursion)
             {
-                return semanticModel.TryGetType(value, cancellationToken, out var valueType) &&
-                       valueType.MetadataName == registeredType.MetadataName &&
-                       Equals(valueType.ContainingType, registeredType.ContainingType) &&
-                       NamespaceSymbolComparer.Equals(valueType.ContainingNamespace, registeredType.ContainingNamespace);
-            }
-
-            if (semanticModel.IsRepresentationPreservingConversion(value, registeredType))
-            {
-                return true;
-            }
-
-            if (semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
-            {
-                switch (symbol)
+                switch (value)
                 {
-                    case IFieldSymbol field
-                        when field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration):
-                        if (fieldDeclaration.Declaration is { } variableDeclaration &&
-                            variableDeclaration.Variables.TryLast(out var variable) &&
-                            variable.Initializer is { Value: { } fv } &&
-                            !IsValueValidForRegisteredType(fv, registeredType, semanticModel, cancellationToken, visited))
-                        {
-                            return false;
-                        }
+                    case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse }:
+                        return IsValueValidForRegisteredType(whenTrue, registeredType, recursion) &&
+                               IsValueValidForRegisteredType(whenFalse, registeredType, recursion);
 
-                        return IsAssignedValueOfRegisteredType(symbol, fieldDeclaration);
-                    case IPropertySymbol property
-                        when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration):
-                        if (propertyDeclaration.Initializer is { Value: { } pv } &&
-                            !IsValueValidForRegisteredType(pv, registeredType, semanticModel, cancellationToken, visited))
-                        {
-                            return false;
-                        }
-
-                        if (property is { SetMethod: null, GetMethod: { } getMethod })
-                        {
-                            return IsReturnValueOfRegisteredType(getMethod);
-                        }
-
-                        return IsAssignedValueOfRegisteredType(symbol, propertyDeclaration);
-                    case IMethodSymbol method:
-                        return IsReturnValueOfRegisteredType(method);
-                    default:
-                        return semanticModel.IsRepresentationPreservingConversion(value, registeredType);
+                    case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary
+                        when binary.IsKind(SyntaxKind.CoalesceExpression):
+                        return IsValueValidForRegisteredType(left, registeredType, recursion) &&
+                               IsValueValidForRegisteredType(right, registeredType, recursion);
                 }
-            }
 
-            return false;
-
-            bool IsAssignedValueOfRegisteredType(ISymbol memberSymbol, MemberDeclarationSyntax declaration)
-            {
-                if (declaration.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
+                if (registeredType.TypeKind == TypeKind.Enum)
                 {
-                    using var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, semanticModel, cancellationToken);
-                    foreach (var assignment in walker.Assignments)
+                    return recursion.SemanticModel.TryGetType(value, recursion.CancellationToken, out var valueType) &&
+                           valueType.MetadataName == registeredType.MetadataName &&
+                           Equals(valueType.ContainingType, registeredType.ContainingType) &&
+                           NamespaceSymbolComparer.Equals(valueType.ContainingNamespace, registeredType.ContainingNamespace);
+                }
+
+                if (recursion.SemanticModel.IsRepresentationPreservingConversion(value, registeredType))
+                {
+                    return true;
+                }
+
+                if (recursion.Target<ExpressionSyntax, ISymbol, CSharpSyntaxNode>(value) is { } target)
+                {
+                    switch (target)
                     {
-                        if (!IsValueValidForRegisteredType(assignment.Right, registeredType, semanticModel, cancellationToken, visited))
-                        {
-                            return false;
-                        }
+                        case { Symbol: IFieldSymbol field, TargetNode: VariableDeclaratorSyntax declarator }:
+                            if (declarator.Initializer is { Value: { } fv } &&
+                                !IsValueValidForRegisteredType(fv, registeredType, recursion))
+                            {
+                                return false;
+                            }
+
+                            return IsAssignedValueOfRegisteredType(field, declarator);
+
+                        case { Symbol: IPropertySymbol property, TargetNode: PropertyDeclarationSyntax declaration }:
+                            if (declaration.Initializer is { Value: { } pv } &&
+                                !IsValueValidForRegisteredType(pv, registeredType, recursion))
+                            {
+                                return false;
+                            }
+
+                            if (declaration.Getter() is { } getter)
+                            {
+                                return IsReturnValueOfRegisteredType(getter);
+                            }
+
+                            return IsAssignedValueOfRegisteredType(property, declaration);
+                        case { Symbol: IMethodSymbol _, TargetNode: MethodDeclarationSyntax declaration }:
+                            return IsReturnValueOfRegisteredType(declaration);
+                        case { Symbol: IFieldSymbol { Type: { SpecialType: SpecialType.System_Object } } }:
+                            return true;
+                        case { Symbol: IPropertySymbol { Type: { SpecialType: SpecialType.System_Object } } }:
+                            return true;
+                        case { Symbol: IMethodSymbol { ReturnType: { SpecialType: SpecialType.System_Object } } }:
+                            return true;
+                        default:
+                            return recursion.SemanticModel.IsRepresentationPreservingConversion(value, registeredType);
                     }
                 }
 
-                return true;
-            }
+                return false;
 
-            bool IsReturnValueOfRegisteredType(IMethodSymbol method)
-            {
-                if (method.TrySingleMethodDeclaration(cancellationToken, out var target))
+                bool IsAssignedValueOfRegisteredType(ISymbol memberSymbol, SyntaxNode declaration)
                 {
-#pragma warning disable IDISP003 // Dispose previous before re-assigning.
-                    using (visited = visited.IncrementUsage())
-#pragma warning restore IDISP003 // Dispose previous before re-assigning.
+                    if (declaration.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration))
                     {
-                        if (visited.Add(target))
+                        using var walker = AssignmentExecutionWalker.For(memberSymbol, typeDeclaration, SearchScope.Type, recursion.SemanticModel, recursion.CancellationToken);
+                        foreach (var assignment in walker.Assignments)
                         {
-                            using var walker = ReturnValueWalker.Borrow(target);
-                            foreach (var returnValue in walker.ReturnValues)
+                            if (!IsValueValidForRegisteredType(assignment.Right, registeredType, recursion))
                             {
-                                if (!IsValueValidForRegisteredType(returnValue, registeredType, semanticModel, cancellationToken, visited))
-                                {
-                                    return false;
-                                }
+                                return false;
                             }
                         }
-
-                        return true;
                     }
+
+                    return true;
                 }
 
-                return method.ReturnType == KnownSymbols.Object;
+                bool IsReturnValueOfRegisteredType(SyntaxNode declaration)
+                {
+                    using var walker = ReturnValueWalker.Borrow(declaration);
+                    foreach (var returnValue in walker.ReturnValues)
+                    {
+                        if (!IsValueValidForRegisteredType(returnValue, registeredType, recursion))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
             }
         }
 
