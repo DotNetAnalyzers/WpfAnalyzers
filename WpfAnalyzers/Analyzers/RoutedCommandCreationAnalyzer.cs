@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -12,7 +12,6 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class RoutedCommandCreationAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
             Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand,
@@ -21,7 +20,6 @@ namespace WpfAnalyzers
             Descriptors.WPF0150UseNameofInsteadOfLiteral,
             Descriptors.WPF0151UseNameofInsteadOfConstant);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

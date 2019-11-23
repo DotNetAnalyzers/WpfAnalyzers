@@ -14,10 +14,8 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -27,12 +25,8 @@
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is AttributeSyntax attribute &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is AttributeSyntax attribute &&
                 context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.CancellationToken, out _))
             {
                 using var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken);

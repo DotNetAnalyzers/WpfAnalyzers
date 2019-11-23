@@ -17,11 +17,9 @@
         private static readonly AttributeSyntax Attribute = SyntaxFactory
                                                             .Attribute(SyntaxFactory.ParseName("System.Windows.Markup.MarkupExtensionReturnTypeAttribute")).WithSimplifiedNames();
 
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;

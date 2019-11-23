@@ -18,7 +18,6 @@
     [Shared]
     internal class ConvertToLambdaFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(Descriptors.WPF0023ConvertToLambda.Id);
 

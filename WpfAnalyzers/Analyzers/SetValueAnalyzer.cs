@@ -11,13 +11,11 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SetValueAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0014SetValueMustUseRegisteredType,
             Descriptors.WPF0040SetUsingDependencyPropertyKey,
             Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

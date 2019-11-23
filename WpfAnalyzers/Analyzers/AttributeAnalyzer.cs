@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,6 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class AttributeAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0008DependsOnTarget,
             Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace,
@@ -32,7 +31,6 @@ namespace WpfAnalyzers
             Descriptors.WPF0174StyleTypedPropertyStyleSpecified,
             Descriptors.WPF0175StyleTypedPropertyPropertyUnique);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

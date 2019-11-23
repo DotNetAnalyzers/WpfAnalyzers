@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -14,13 +14,11 @@ namespace WpfAnalyzers
     [Shared]
     internal class MakePropertyStaticReadonlyFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0030BackingFieldShouldBeStaticReadonly.Id,
             Descriptors.WPF0107BackingMemberShouldBeStaticReadonly.Id,
             Descriptors.WPF0123BackingMemberShouldBeStaticReadonly.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)

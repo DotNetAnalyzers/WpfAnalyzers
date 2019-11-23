@@ -18,7 +18,6 @@
             Descriptors.WPF0105EventDeclarationRemoveHandlerInRemove,
             Descriptors.WPF0106EventDeclarationUseRegisteredHandlerType);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

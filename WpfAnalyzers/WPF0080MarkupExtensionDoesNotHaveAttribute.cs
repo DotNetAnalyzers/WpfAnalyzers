@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -10,10 +10,9 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class WPF0080MarkupExtensionDoesNotHaveAttribute : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -23,13 +22,8 @@ namespace WpfAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is INamedTypeSymbol type &&
-                !type.IsGenericType &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is INamedTypeSymbol { IsGenericType: false } type &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 type.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
                 type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbols.IServiceProvider, out _) &&

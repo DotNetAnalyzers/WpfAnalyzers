@@ -17,12 +17,10 @@
         private static readonly AttributeSyntax Attribute = SyntaxFactory
                                                             .Attribute(SyntaxFactory.ParseName("System.Windows.Data.ValueConversionAttribute")).WithSimplifiedNames();
 
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0071ConverterDoesNotHaveAttribute.Id,
             Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;

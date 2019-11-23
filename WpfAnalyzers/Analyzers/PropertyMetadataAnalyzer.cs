@@ -11,7 +11,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
             Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
@@ -19,7 +18,6 @@
             Descriptors.WPF0016DefaultValueIsSharedReferenceType,
             Descriptors.WPF0023ConvertToLambda);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

@@ -18,7 +18,6 @@
             Descriptors.WPF0150UseNameofInsteadOfLiteral,
             Descriptors.WPF0151UseNameofInsteadOfConstant);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

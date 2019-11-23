@@ -10,7 +10,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
             Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
@@ -18,7 +17,6 @@
             Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
             Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

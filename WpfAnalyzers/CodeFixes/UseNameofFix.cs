@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System;
     using System.Collections.Immutable;
@@ -17,13 +17,11 @@ namespace WpfAnalyzers
     [Shared]
     internal class UseNameofFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand.Id,
             Descriptors.WPF0150UseNameofInsteadOfLiteral.Id,
             Descriptors.WPF0151UseNameofInsteadOfConstant.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)

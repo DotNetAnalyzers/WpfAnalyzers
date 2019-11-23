@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -10,7 +10,6 @@ namespace WpfAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ValueConverterAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0070ConverterDoesNotHaveDefaultField,
             Descriptors.WPF0071ConverterDoesNotHaveAttribute,
@@ -18,7 +17,6 @@ namespace WpfAnalyzers
             Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes,
             Descriptors.WPF0074DefaultMemberOfWrongType);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

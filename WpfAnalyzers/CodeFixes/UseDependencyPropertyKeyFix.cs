@@ -13,7 +13,6 @@
     [Shared]
     internal class UseDependencyPropertyKeyFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0040SetUsingDependencyPropertyKey.Id);
 

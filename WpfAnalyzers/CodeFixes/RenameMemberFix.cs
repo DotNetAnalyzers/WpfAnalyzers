@@ -12,7 +12,6 @@
     [Shared]
     internal class RenameMemberFix : CodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0001BackingFieldShouldMatchRegisteredName.Id,
             Descriptors.WPF0002BackingFieldShouldMatchRegisteredName.Id,
@@ -28,7 +27,6 @@
 
         public override FixAllProvider? GetFixAllProvider() => null;
 
-        /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;

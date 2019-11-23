@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -21,11 +21,9 @@ namespace WpfAnalyzers
         private const string DefaultDocs = "/// <summary> Gets the default instance </summary>";
         private const string DefaultPropertyFormat = "{0} static {1} Default {{ get; }} = new {1}();";
 
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.WPF0070ConverterDoesNotHaveDefaultField.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var document = context.Document;
