@@ -11,12 +11,14 @@ namespace ValidCode.DependencyProperties
             nameof(Value),
             typeof(T?),
             typeof(GenericNullable<T>),
-            new PropertyMetadata(default(T?), OnValueChanged));
+            new PropertyMetadata(
+                default(T?),
+                OnValueChanged));
 
         public T? Value
         {
-            get { return (T?)this.GetValue(ValueProperty); }
-            set { this.SetValue(ValueProperty, value); }
+            get => (T?)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
