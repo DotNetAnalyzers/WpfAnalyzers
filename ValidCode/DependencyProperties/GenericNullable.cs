@@ -21,8 +21,15 @@ namespace ValidCode.DependencyProperties
             set => this.SetValue(ValueProperty, value);
         }
 
+        public static void UpdateStatic(GenericNullable<T> control, T value)
+        {
+            control.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
+            control.SetCurrentValue(ValueProperty, value);
+        }
+
         public void Update(T value)
         {
+            this.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
             this.SetCurrentValue(ValueProperty, value);
         }
 
