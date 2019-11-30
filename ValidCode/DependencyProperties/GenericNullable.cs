@@ -21,6 +21,11 @@ namespace ValidCode.DependencyProperties
             set => this.SetValue(ValueProperty, value);
         }
 
+        public void Update(T value)
+        {
+            this.SetCurrentValue(ValueProperty, value);
+        }
+
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue is T oldValue)
