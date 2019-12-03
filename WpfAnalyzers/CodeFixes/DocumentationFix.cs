@@ -55,7 +55,7 @@
                                 diagnostic);
                             break;
                         case DocumentationCommentTriviaSyntax doc
-                            when text.StartsWith("<summary>"):
+                            when text.StartsWith("<summary>", StringComparison.Ordinal):
                             context.RegisterCodeFix(
                                 Title,
                                 editor => editor.ReplaceNode(doc, x => x.WithSummary(Parse.XmlElementSyntax(text))),
@@ -121,7 +121,7 @@
                                 diagnostic);
                             break;
                         case ParameterSyntax { Parent: ParameterListSyntax { Parent: MethodDeclarationSyntax method } }
-                            when text.StartsWith("<param") &&
+                            when text.StartsWith("<param", StringComparison.Ordinal) &&
                                  method.TryGetDocumentationComment(out var comment):
                             context.RegisterCodeFix(
                                 Title,

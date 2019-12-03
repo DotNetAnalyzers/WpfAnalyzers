@@ -144,7 +144,7 @@
                                 case SyntaxKind.XmlTextLiteralNewLineToken:
                                     continue;
                                 case SyntaxKind.XmlTextLiteralToken
-                                    when token.ValueText.StartsWith(" "):
+                                    when token.ValueText.StartsWith(" ", StringComparison.Ordinal):
                                     return token.SpanStart + 1;
                                 default:
                                     return token.SpanStart;
