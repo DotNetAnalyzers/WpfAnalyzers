@@ -3,6 +3,7 @@
 [![Join the chat at https://gitter.im/DotNetAnalyzers/WpfAnalyzers](https://badges.gitter.im/DotNetAnalyzers/WpfAnalyzers.svg)](https://gitter.im/DotNetAnalyzers/WpfAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build status](https://ci.appveyor.com/api/projects/status/25nvar8j6evtmtg4/branch/master?svg=true)](https://ci.appveyor.com/project/JohanLarsson/wpfanalyzers-twfog/branch/master)
+[![Build Status](https://dev.azure.com/DotNetAnalyzers/WpfAnalyzers/_apis/build/status/DotNetAnalyzers.WpfAnalyzers?branchName=master)](https://dev.azure.com/DotNetAnalyzers/WpfAnalyzers/_build/latest?definitionId=2&branchName=master)
 [![NuGet](https://img.shields.io/nuget/v/WpfAnalyzers.svg)](https://www.nuget.org/packages/WpfAnalyzers/)
 
 Roslyn analyzers for WPF.
