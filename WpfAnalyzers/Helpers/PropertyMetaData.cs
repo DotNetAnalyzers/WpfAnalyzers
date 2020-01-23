@@ -132,7 +132,7 @@
                 {
                     switch (target)
                     {
-                        case { Symbol: IFieldSymbol field, TargetNode: VariableDeclaratorSyntax declarator }:
+                        case { Symbol: IFieldSymbol field, Declaration: VariableDeclaratorSyntax declarator }:
                             if (declarator.Initializer is { Value: { } fv } &&
                                 !IsValueValidForRegisteredType(fv, registeredType, recursion))
                             {
@@ -141,7 +141,7 @@
 
                             return IsAssignedValueOfRegisteredType(field, declarator);
 
-                        case { Symbol: IPropertySymbol property, TargetNode: PropertyDeclarationSyntax declaration }:
+                        case { Symbol: IPropertySymbol property, Declaration: PropertyDeclarationSyntax declaration }:
                             if (declaration.Initializer is { Value: { } pv } &&
                                 !IsValueValidForRegisteredType(pv, registeredType, recursion))
                             {
@@ -154,7 +154,7 @@
                             }
 
                             return IsAssignedValueOfRegisteredType(property, declaration);
-                        case { Symbol: IMethodSymbol _, TargetNode: MethodDeclarationSyntax declaration }:
+                        case { Symbol: IMethodSymbol _, Declaration: MethodDeclarationSyntax declaration }:
                             return IsReturnValueOfRegisteredType(declaration);
                         case { Symbol: IFieldSymbol { Type: { SpecialType: SpecialType.System_Object } } }:
                             return true;

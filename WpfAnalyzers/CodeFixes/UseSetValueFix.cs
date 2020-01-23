@@ -38,7 +38,7 @@
 
                 IdentifierNameSyntax? IdentifierName()
                 {
-                    return invocation.Expression switch
+                    return invocation!.Expression switch
                     {
                         IdentifierNameSyntax identifierName => identifierName,
                         MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName } => identifierName,

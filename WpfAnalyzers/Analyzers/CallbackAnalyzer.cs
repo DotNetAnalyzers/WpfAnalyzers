@@ -173,7 +173,7 @@
                staticMethod.IsStatic &&
                TryGetStaticCallbackArgument(staticMethod, staticCallback, out callbackArgument) &&
                TryMatchPropertyChangedCallback(staticMethod, context, out senderParameter, out argParameter) &&
-                Try(out fieldOrProperty))
+               Try(out fieldOrProperty))
             {
                 return true;
             }
@@ -185,7 +185,7 @@
                 if (singleInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                     MemberPath.TrySingle(memberAccess.Expression, out var pathItem))
                 {
-                    if (pathItem.ValueText == senderParameter.Name)
+                    if (pathItem.ValueText == senderParameter!.Name)
                     {
                         return true;
                     }
@@ -216,7 +216,7 @@
                     foreach (var argument in argumentList.Arguments)
                     {
                         using var walker = IdentifierNameWalker.Borrow(argument.Expression);
-                        if (!walker.TryFind(argParameter.Name, out _))
+                        if (!walker.TryFind(argParameter!.Name, out _))
                         {
                             return false;
                         }
@@ -244,7 +244,7 @@
             {
                 return IsCalledOnSender() &&
                        ArgsUsesParameter() &&
-                       callbackArgument.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax metaDataCreation } &&
+                       callbackArgument!.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax metaDataCreation } &&
                        PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out backing);
             }
         }

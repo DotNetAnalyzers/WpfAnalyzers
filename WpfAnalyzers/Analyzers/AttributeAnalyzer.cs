@@ -290,7 +290,7 @@
 
             bool TryFindExpression(out ExpressionSyntax? result)
             {
-                switch (argument.Expression)
+                switch (argument!.Expression)
                 {
                     case TypeOfExpressionSyntax typeOf:
                         result = typeOf.Type;

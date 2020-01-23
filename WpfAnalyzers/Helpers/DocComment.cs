@@ -73,7 +73,7 @@
                     bool IsMatch()
                     {
                         var paramPos = 0;
-                        while (paramPos < parameter.Length &&
+                        while (paramPos < parameter!.Length &&
                                docPos < e.Span.End)
                         {
                             if (sourceText[docPos] == parameter[paramPos])
