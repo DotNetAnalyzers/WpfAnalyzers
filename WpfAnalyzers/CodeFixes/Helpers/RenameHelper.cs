@@ -19,7 +19,7 @@ namespace WpfAnalyzers
             var annotatedSolution = document.Project.Solution.WithDocumentSyntaxRoot(document.Id, annotatedRoot);
             var annotatedDocument = annotatedSolution.GetDocument(document.Id);
 
-            annotatedRoot = await annotatedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            annotatedRoot = await annotatedDocument!.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var annotatedToken = annotatedRoot.FindToken(declarationToken.SpanStart);
 
             var semanticModel = await annotatedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
