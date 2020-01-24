@@ -5,7 +5,6 @@
     <OutputType>Exe</OutputType>
     <StartupObject>WpfAnalyzers.Benchmarks.Program</StartupObject>
     <CodeAnalysisRuleSet>WpfAnalyzers.Benchmarks.ruleset</CodeAnalysisRuleSet>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   
   <PropertyGroup>
