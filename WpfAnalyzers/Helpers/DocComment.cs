@@ -263,14 +263,30 @@
             }
         }
 
-        internal static string ToCrefType(this ITypeSymbol type)
+        internal static string ToCrefType(this IParameterSymbol parameter)
+        {
+            return ToCrefType(parameter.Type, parameter.ContainingType);
+        }
+
+        private static string ToCrefType(this ITypeSymbol type, INamedTypeSymbol containingType)
         {
             return type switch
             {
-                INamedTypeSymbol { IsGenericType: false } simple => simple.Name,
-                INamedTypeSymbol { IsGenericType: true } generic => $"{generic.Name}{{{string.Join(",", generic.TypeArguments.Select(x => x.Name))}}}",
+                INamedTypeSymbol { IsGenericType: false } simple
+                => TypeName(simple),
+                INamedTypeSymbol { IsGenericType: true } generic
+                => $"{TypeName(generic)}{{{string.Join(",", generic.TypeArguments.Select(x => TypeName(x)))}}}",
                 _ => type.Name,
             };
+
+            string TypeName(ITypeSymbol t)
+            {
+                return t switch
+                {
+                    INamedTypeSymbol nt => nt.Name == containingType.Name ? nt.FullName() : t.Name,
+                    _ => t.Name,
+                };
+            }
         }
     }
 }

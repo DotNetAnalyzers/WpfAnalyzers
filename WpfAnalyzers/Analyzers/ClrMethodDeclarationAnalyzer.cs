@@ -66,7 +66,7 @@
                                             ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
-                                if (comment.VerifyParameter(paramFormat, element, element.Type.ToCrefType(), backing.Symbol.Name) is { } paramError)
+                                if (comment.VerifyParameter(paramFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } paramError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -93,7 +93,7 @@
                                         ImmutableDictionary<string, string>.Empty.Add(
                                             nameof(DocComment),
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
-                                            $"/// {DocComment.Format(paramFormat, element.Name, element.Type.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(paramFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
                                             $"/// {DocComment.Format(returnsFormat, registeredName)}\n")));
                             }
                         }
@@ -173,7 +173,7 @@
                                             ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
-                                if (comment.VerifyParameter(elementFormat, element, element.Type.ToCrefType(), backing.Symbol.Name) is { } elementError)
+                                if (comment.VerifyParameter(elementFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } elementError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -200,7 +200,7 @@
                                         ImmutableDictionary<string, string>.Empty.Add(
                                             nameof(DocComment),
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
-                                            $"/// {DocComment.Format(elementFormat, element.Name, element.Type.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(elementFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
                                             $"/// {DocComment.Format(valueFormat, value.Name, registeredName)}\n")));
                             }
                         }
