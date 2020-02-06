@@ -721,7 +721,7 @@ namespace N
         }
 
         [Test]
-        public static void ObservableCollectionOfIntWhenNUllableIEnumerable()
+        public static void ObservableCollectionOfIntWhenNullableIEnumerable()
         {
             var code = @"
 #nullable enable
@@ -749,6 +749,46 @@ namespace N
         public static void M()
         {
             var control = new FooControl();
+            control.SetValue(SourceProperty, new ObservableCollection<int> { 1, 2 });
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void ObservableCollectionOfIntWhenIEnumerableAttached()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public static class C
+    {
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.RegisterAttached(
+            ""Source"",
+            typeof(IEnumerable),
+            typeof(C),
+            new PropertyMetadata(default(IEnumerable)));
+
+        public static void SetSource(DependencyObject element, IEnumerable value)
+        {
+            element.SetValue(SourceProperty, value);
+        }
+
+        public static IEnumerable GetSource(DependencyObject element)
+        {
+            return (IEnumerable)element.GetValue(SourceProperty);
+        }
+
+        public static void M()
+        {
+            var control = new DataGrid();
             control.SetValue(SourceProperty, new ObservableCollection<int> { 1, 2 });
         }
     }
