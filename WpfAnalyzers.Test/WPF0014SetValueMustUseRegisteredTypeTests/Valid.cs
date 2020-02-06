@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -680,6 +680,79 @@ namespace N
         }
     }
 }".AssertReplace("SetCurrentValue", call);
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void ObservableCollectionOfIntWhenIEnumerable()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            nameof(Source),
+            typeof(IEnumerable),
+            typeof(FooControl),
+            new PropertyMetadata(default(IEnumerable)));
+
+        public IEnumerable Source
+        {
+            get => (IEnumerable)this.GetValue(SourceProperty);
+            set => this.SetValue(SourceProperty, value);
+        }
+
+        public static void M()
+        {
+            var control = new FooControl();
+            control.SetValue(SourceProperty, new ObservableCollection<int> { 1, 2 });
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void ObservableCollectionOfIntWhenNUllableIEnumerable()
+        {
+            var code = @"
+#nullable enable
+namespace N
+{
+    using System.Collections;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            nameof(Source),
+            typeof(IEnumerable),
+            typeof(FooControl),
+            new PropertyMetadata(default(IEnumerable)));
+
+        public IEnumerable? Source
+        {
+            get => (IEnumerable)this.GetValue(SourceProperty);
+            set => this.SetValue(SourceProperty, value);
+        }
+
+        public static void M()
+        {
+            var control = new FooControl();
+            control.SetValue(SourceProperty, new ObservableCollection<int> { 1, 2 });
+        }
+    }
+}";
 
             RoslynAssert.Valid(Analyzer, code);
         }
