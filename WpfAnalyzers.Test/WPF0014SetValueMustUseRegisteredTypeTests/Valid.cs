@@ -798,6 +798,54 @@ namespace N
         }
 
         [Test]
+        public static void ObservableCollectionOfIntWhenIEnumerableAttachedOtherProject()
+        {
+            var c1 = @"
+namespace N1
+{
+    using System.Collections;
+    using System.Windows;
+
+    public static class C1
+    {
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.RegisterAttached(
+            ""Source"",
+            typeof(IEnumerable),
+            typeof(C1),
+            new PropertyMetadata(default(IEnumerable)));
+
+        public static void SetSource(DependencyObject element, IEnumerable value)
+        {
+            element.SetValue(SourceProperty, value);
+        }
+
+        public static IEnumerable GetSource(DependencyObject element)
+        {
+            return (IEnumerable)element.GetValue(SourceProperty);
+        }
+    }
+}";
+
+            var code = @"
+namespace N2
+{
+    using System.Collections.ObjectModel;
+    using System.Windows.Controls;
+    using N1;
+
+    class C2
+    {
+        public static void M()
+        {
+            var control = new DataGrid();
+            control.SetValue(C1.SourceProperty, new ObservableCollection<int> { 1, 2 });
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, c1, code);
+        }
+
+        [Test]
         public static void PropertyKeyInOtherClass()
         {
             var linkCode = @"
