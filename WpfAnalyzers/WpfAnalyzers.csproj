@@ -21,12 +21,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      3.1.0
+      BUGFIX: Handle using C = C
+      BUGFIX WPF014 when null coalesce
+      3.0.0
       BUGFIX: convert to lambda.
       BUGFIX: WPF0032 when nonstandard names.
       BUGFIX: WPF0171 for attached properties.

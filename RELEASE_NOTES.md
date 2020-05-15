@@ -1,3 +1,7 @@
+#### 3.1.0
+* BUGFIX: Handle using C = C
+* BUGFIX WPF014 when null coalesce
+
 #### 2.3
 * NEW RULES: WPF0171-176
 * FEATURE: Use nameof() fix.
