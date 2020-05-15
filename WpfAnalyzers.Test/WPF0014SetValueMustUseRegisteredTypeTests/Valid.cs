@@ -1037,5 +1037,39 @@ namespace N
 }";
             RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
         }
+
+        [Test]
+        public static void NullCoalesceIssue278()
+        {
+
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Media;
+
+    public class Issue278 : FrameworkElement
+    {
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
+            nameof(Color),
+            typeof(Color),
+            typeof(Issue278),
+            new PropertyMetadata(default(Color)));
+
+        public Color Color
+        {
+            get => (Color)this.GetValue(ColorProperty);
+            set => this.SetValue(ColorProperty, value);
+        }
+
+        public void M(Issue278 control, Color? color = null)
+        {
+            control.SetCurrentValue(ColorProperty, color ?? Colors.HotPink);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

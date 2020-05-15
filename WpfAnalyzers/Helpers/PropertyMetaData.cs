@@ -109,10 +109,9 @@
                         return IsValueValidForRegisteredType(whenTrue, registeredType, recursion) &&
                                IsValueValidForRegisteredType(whenFalse, registeredType, recursion);
 
-                    case BinaryExpressionSyntax { Left: { } left, Right: { } right } binary
+                    case BinaryExpressionSyntax { Left: { } , Right: { } right } binary
                         when binary.IsKind(SyntaxKind.CoalesceExpression):
-                        return IsValueValidForRegisteredType(left, registeredType, recursion) &&
-                               IsValueValidForRegisteredType(right, registeredType, recursion);
+                        return IsValueValidForRegisteredType(right, registeredType, recursion);
                 }
 
                 if (registeredType.TypeKind == TypeKind.Enum)

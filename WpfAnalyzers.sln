@@ -107,7 +107,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Benchmarks", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers", "WpfAnalyzers\WpfAnalyzers.csproj", "{27A6CC19-422F-4986-BA0C-8F967EF37DF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidCode", "ValidCode\ValidCode.csproj", "{1CF75F47-2C7D-49B2-B9F5-89C700271896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidCode", "ValidCode\ValidCode.csproj", "{1CF75F47-2C7D-49B2-B9F5-89C700271896}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
