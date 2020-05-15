@@ -20,8 +20,7 @@
 
         public void M(Issue278 control, Color? color = null)
         {
-            // Uncomment after updating analyzer
-            //control.SetCurrentValue(ColorProperty, color ?? Colors.HotPink);
+            control.SetCurrentValue(ColorProperty, color ?? Colors.HotPink);
         }
     }
 }

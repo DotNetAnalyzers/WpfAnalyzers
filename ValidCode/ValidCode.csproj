@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WpfAnalyzers" Version="2.4.5" PrivateAssets="all" />
+    <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
