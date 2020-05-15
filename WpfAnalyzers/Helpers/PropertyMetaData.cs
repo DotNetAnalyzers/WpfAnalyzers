@@ -109,7 +109,7 @@
                         return IsValueValidForRegisteredType(whenTrue, registeredType, recursion) &&
                                IsValueValidForRegisteredType(whenFalse, registeredType, recursion);
 
-                    case BinaryExpressionSyntax { Left: { } , Right: { } right } binary
+                    case BinaryExpressionSyntax { Left: { }, Right: { } right } binary
                         when binary.IsKind(SyntaxKind.CoalesceExpression):
                         return IsValueValidForRegisteredType(right, registeredType, recursion);
                 }

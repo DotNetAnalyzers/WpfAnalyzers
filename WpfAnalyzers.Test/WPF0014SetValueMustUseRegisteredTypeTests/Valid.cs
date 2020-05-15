@@ -1041,7 +1041,6 @@ namespace N
         [Test]
         public static void Issue278NullCoalesce()
         {
-
             var code = @"
 namespace N
 {
@@ -1075,7 +1074,6 @@ namespace N
         [Test]
         public static void Issue278NewList()
         {
-
             var code = @"
 namespace N
 {
