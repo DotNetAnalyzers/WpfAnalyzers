@@ -1039,7 +1039,7 @@ namespace N
         }
 
         [Test]
-        public static void NullCoalesceIssue278()
+        public static void Issue278NullCoalesce()
         {
 
             var code = @"
@@ -1065,6 +1065,42 @@ namespace N
         public void M(Issue278 control, Color? color = null)
         {
             control.SetCurrentValue(ColorProperty, color ?? Colors.HotPink);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void Issue278NewList()
+        {
+
+            var code = @"
+namespace N
+{
+     using System.Collections.Generic;
+    using System.Windows;
+    using System.Windows.Media;
+
+    public class Issue278 : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Colors""/> dependency property.</summary>
+        public static readonly DependencyProperty ColorsProperty = DependencyProperty.Register(
+            nameof(Colors),
+            typeof(List<Color>),
+            typeof(Issue278),
+            new PropertyMetadata(default(List<Color>)));
+
+        public List<Color> Colors
+        {
+            get => (List<Color>)this.GetValue(ColorsProperty);
+            set => this.SetValue(ColorsProperty, value);
+        }
+
+        public void M(Issue278 control, Color? color = null)
+        {
+            control.SetCurrentValue(ColorsProperty, new List<Color> { System.Windows.Media.Colors.HotPink });
         }
     }
 }";
