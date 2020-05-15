@@ -16,9 +16,9 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.12.1" />
     <PackageReference Include="Gu.Analyzers" Version="1.6.7-dev" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Asserts" Version="3.3.0" />
-    <PackageReference Include="IDisposableAnalyzers" Version="3.3.7" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" Version="3.3.8" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0-beta3.final" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" PrivateAssets="all" />
