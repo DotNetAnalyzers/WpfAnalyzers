@@ -1,3 +1,6 @@
+#### 3.1.1
+* Handle regressions in Roslyn 3.7
+
 #### 3.1.0
 * BUGFIX: Handle using C = C
 * BUGFIX WPF014 when null coalesce

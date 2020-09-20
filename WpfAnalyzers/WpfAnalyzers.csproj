@@ -21,12 +21,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      3.1.1
+      Handle regressions in Roslyn 3.7
       3.1.0
       BUGFIX: Handle using C = C
       BUGFIX WPF014 when null coalesce
