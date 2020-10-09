@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -133,25 +135,26 @@
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
                 if (node.TryGetMethodName(out var name) &&
-                    (name == "SetValue" || name == "SetCurrentValue" || name == "GetValue") &&
                     node.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor)
                 {
-                    if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
-                    {
-                        this.getCall = node;
-                    }
-                    else if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
+                    if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration) &&
+                        (name == "SetValue" || name == "SetCurrentValue"))
                     {
                         this.setCall = node;
+                    }
+                    else if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration) &&
+                             name == "GetValue")
+                    {
+                        this.getCall = node;
                     }
                 }
 
                 base.VisitInvocationExpression(node);
             }
 
-            internal static bool TryGetCalls(PropertyDeclarationSyntax eventDeclaration, out InvocationExpressionSyntax? getCall, out InvocationExpressionSyntax? setCall)
+            internal static bool TryGetCalls(PropertyDeclarationSyntax declaration, out InvocationExpressionSyntax? getCall, out InvocationExpressionSyntax? setCall)
             {
-                using var walker = BorrowAndVisit(eventDeclaration, () => new PropertyDeclarationWalker());
+                using var walker = BorrowAndVisit(declaration, () => new PropertyDeclarationWalker());
                 getCall = walker.getCall;
                 setCall = walker.setCall;
                 return getCall != null || setCall != null;
