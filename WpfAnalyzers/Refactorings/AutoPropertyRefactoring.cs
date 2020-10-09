@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Refactorings
 {
+    using System.Composition;
     using System.Threading.Tasks;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -13,6 +14,8 @@
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
+    [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(AutoPropertyRefactoring))]
+    [Shared]
     internal class AutoPropertyRefactoring : CodeRefactoringProvider
     {
         private static readonly UsingDirectiveSyntax SystemWindows = SyntaxFactory.UsingDirective(
@@ -184,11 +187,11 @@
                         if (property.Setter() is { } setter &&
                             setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                         {
-                            context.RegisterRefactoring(
-                                CodeAction.Create(
-                                    "Change to readonly dependency property",
-                                    _ => Replace(classDeclaration, classDeclaration, semanticModel),
-                                    "Change to readonly dependency property"));
+                            //context.RegisterRefactoring(
+                            //    CodeAction.Create(
+                            //        "Change to readonly dependency property",
+                            //        _ => Replace(classDeclaration, classDeclaration, semanticModel),
+                            //        "Change to readonly dependency property"));
                         }
                     }
                 }
