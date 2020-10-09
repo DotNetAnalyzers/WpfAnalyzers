@@ -90,7 +90,7 @@
             }
         }
 
-        [Explicit("Script.")]
+        [Ignore("Script.")]
         [Test]
         public static void CopyResults()
         {
