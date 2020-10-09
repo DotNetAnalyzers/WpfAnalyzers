@@ -138,7 +138,7 @@
                 {
                 }
 
-                public bool Equals(NameSyntax x, NameSyntax y)
+                public bool Equals(NameSyntax? x, NameSyntax? y)
                 {
                     if (ReferenceEquals(x, y))
                     {

@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Repro
+﻿// ReSharper disable All
+namespace ValidCode.Repro
 {
     using System.Windows;
     using System.Windows.Media;

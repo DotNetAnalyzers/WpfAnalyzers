@@ -1,5 +1,6 @@
 [*.cs]
 dotnet_diagnostic.IDE0001.severity = none
+dotnet_diagnostic.IDE0009.severity = none
 dotnet_diagnostic.IDE0051.severity = none
 dotnet_diagnostic.IDE0052.severity = none
 dotnet_diagnostic.IDE0059.severity = none
@@ -7,3 +8,5 @@ dotnet_diagnostic.IDE0060.severity = none
 dotnet_diagnostic.IDE0067.severity = none
 dotnet_diagnostic.IDE0068.severity = none
 dotnet_diagnostic.IDE0069.severity = none
+dotnet_diagnostic.IDE1006.severity = none
+
