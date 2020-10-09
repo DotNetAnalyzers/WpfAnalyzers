@@ -46,5 +46,43 @@ namespace N
 }";
             RoslynAssert.Refactoring(Refactoring, before, after);
         }
+
+        [Test]
+        public static void AutoProperty2()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public double? ↓Value { get; set; }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double?),
+            typeof(FooControl),
+            new PropertyMetadata(default(double?)));
+
+        public double? Value
+        {
+            get => (double?)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            RoslynAssert.Refactoring(Refactoring, before, after);
+        }
     }
 }
