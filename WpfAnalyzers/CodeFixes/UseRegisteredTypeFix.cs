@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -24,20 +24,32 @@ namespace WpfAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(nameof(TypeSyntax), out var typeText) &&
-                    syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax) &&
-                    typeSyntax.Parent is PropertyDeclarationSyntax property &&
-                    property.TryGetGetter(out var getter))
+                    syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax))
                 {
-                    context.RegisterCodeFix(
-                        $"Change to: {typeText}.",
-                        (editor, _) => editor.ReplaceNode(
-                                                 typeSyntax,
-                                                 x => SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(x))
-                                             .ReplaceNode(
-                                                 getter,
-                                                 x => WithCast(x, typeText)),
-                        nameof(UseRegisteredTypeFix),
-                        diagnostic);
+                    if (typeSyntax.Parent is PropertyDeclarationSyntax property &&
+                        property.TryGetGetter(out var getter))
+                    {
+                        context.RegisterCodeFix(
+                            $"Change to: {typeText}.",
+                            (editor, _) => editor.ReplaceNode(
+                                                     typeSyntax,
+                                                     x => SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(x))
+                                                 .ReplaceNode(
+                                                     getter,
+                                                     x => WithCast(x, typeText)),
+                            nameof(UseRegisteredTypeFix),
+                            diagnostic);
+                    }
+                    else
+                    {
+                        context.RegisterCodeFix(
+                            $"Change to: {typeText}.",
+                            (editor, _) => editor.ReplaceNode(
+                                                     typeSyntax,
+                                                     x => SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(x)),
+                            nameof(UseRegisteredTypeFix),
+                            diagnostic);
+                    }
                 }
             }
         }

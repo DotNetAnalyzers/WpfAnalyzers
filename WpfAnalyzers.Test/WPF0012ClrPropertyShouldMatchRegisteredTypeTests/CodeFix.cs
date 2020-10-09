@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -396,6 +396,110 @@ namespace N
         {
             get { return (int)this.GetValue(BarProperty); }
             protected set { this.SetValue(BarPropertyKey, value); }
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void DependencyPropertyNullable()
+        {
+            var before = @"
+namespace BoxEr.Ui.Views.Status
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int?),
+            typeof(C),
+            new PropertyMetadata(default(int?)));
+
+        public ↓int Number
+        {
+            get => (int)GetValue(NumberProperty);
+            set => SetValue(NumberProperty, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace BoxEr.Ui.Views.Status
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int?),
+            typeof(C),
+            new PropertyMetadata(default(int?)));
+
+        public int? Number
+        {
+            get => (int?)GetValue(NumberProperty);
+            set => SetValue(NumberProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void DependencyPropertyNullableNotCastingReturnValueCorrectly()
+        {
+            var before = @"
+namespace BoxEr.Ui.Views.Status
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int?),
+            typeof(C),
+            new PropertyMetadata(default(int?)));
+
+        public int? Number
+        {
+            get => (↓int)GetValue(NumberProperty);
+            set => SetValue(NumberProperty, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace BoxEr.Ui.Views.Status
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int?),
+            typeof(C),
+            new PropertyMetadata(default(int?)));
+
+        public int? Number
+        {
+            get => (int?)GetValue(NumberProperty);
+            set => SetValue(NumberProperty, value);
         }
     }
 }";

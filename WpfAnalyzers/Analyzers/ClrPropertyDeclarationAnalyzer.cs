@@ -86,16 +86,30 @@
                                 registeredName));
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !registeredType.Equals(property.Type))
+                    if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
-                                propertyDeclaration.Type.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
-                                property,
-                                registeredType));
+                        if (!registeredType.Equals(property.Type))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+                                    propertyDeclaration.Type.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                    property,
+                                    registeredType));
+                        }
+                        else if (getCall is { Parent: CastExpressionSyntax { Type: { } type } } &&
+                                 context.SemanticModel.TryGetType(type, context.CancellationToken, out var castType) &&
+                                 !registeredType.Equals(castType))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+                                    type.GetLocation(),
+                                    ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                    property,
+                                    registeredType));
+                        }
                     }
                 }
 

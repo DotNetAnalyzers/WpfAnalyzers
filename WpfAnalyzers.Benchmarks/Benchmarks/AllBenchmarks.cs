@@ -50,6 +50,8 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark WPF0083UseConstructorArgumentAttributeBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.WPF0083UseConstructorArgumentAttribute());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark Sa1202SuppressorBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.Suppressors.Sa1202Suppressor());
+
         [BenchmarkDotNet.Attributes.Benchmark]
         public void AttributeAnalyzer()
         {
@@ -186,6 +188,12 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
         public void WPF0083UseConstructorArgumentAttribute()
         {
             WPF0083UseConstructorArgumentAttributeBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void Sa1202Suppressor()
+        {
+            Sa1202SuppressorBenchmark.Run();
         }
     }
 }
