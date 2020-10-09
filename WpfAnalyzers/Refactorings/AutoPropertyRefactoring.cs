@@ -58,30 +58,14 @@
                                 SyntaxFactory.FieldDeclaration(
                                     attributeLists: default,
                                     modifiers: SyntaxFactory.TokenList(
-                                        SyntaxFactory.Token(
-                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
-                                            kind: SyntaxKind.PublicKeyword,
-                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
-                                        SyntaxFactory.Token(
-                                            leading: default,
-                                            kind: SyntaxKind.StaticKeyword,
-                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
-                                        SyntaxFactory.Token(
-                                            leading: default,
-                                            kind: SyntaxKind.ReadOnlyKeyword,
-                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space))),
+                                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                                     declaration: SyntaxFactory.VariableDeclaration(
-                                        type: SyntaxFactory.IdentifierName(
-                                            identifier: SyntaxFactory.Identifier(
-                                                leading: default,
-                                                text: "DependencyProperty",
-                                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space))),
+                                        type: SyntaxFactory.IdentifierName("DependencyProperty"),
                                         variables: SyntaxFactory.SingletonSeparatedList(
                                             SyntaxFactory.VariableDeclarator(
-                                                identifier: SyntaxFactory.Identifier(
-                                                    leading: default,
-                                                    text: "NumberProperty",
-                                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
+                                                identifier: SyntaxFactory.Identifier(property.Identifier.ValueText + "Property"),
                                                 argumentList: default,
                                                 initializer: SyntaxFactory.EqualsValueClause(
                                                     equalsToken: SyntaxFactory.Token(
