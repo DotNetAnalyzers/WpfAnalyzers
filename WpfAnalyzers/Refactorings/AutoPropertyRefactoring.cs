@@ -68,104 +68,92 @@
                                                 identifier: SyntaxFactory.Identifier(property.Identifier.ValueText + "Property"),
                                                 argumentList: default,
                                                 initializer: SyntaxFactory.EqualsValueClause(
-                                                    equalsToken: SyntaxFactory.Token(
-                                                        leading: default,
-                                                        kind: SyntaxKind.EqualsToken,
-                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
-                                                    value: SyntaxFactory.InvocationExpression(
-                                                        expression: SyntaxFactory.MemberAccessExpression(
-                                                            kind: SyntaxKind.SimpleMemberAccessExpression,
-                                                            expression: SyntaxFactory.IdentifierName(
-                                                                identifier: SyntaxFactory.Identifier(
-                                                                    leading: default,
-                                                                    text: "DependencyProperty",
-                                                                    trailing: default)),
-                                                            operatorToken: SyntaxFactory.Token(SyntaxKind.DotToken),
-                                                            name: SyntaxFactory.IdentifierName(
-                                                                identifier: SyntaxFactory.Identifier(
-                                                                    leading: default,
-                                                                    text: "Register",
-                                                                    trailing: default))),
-                                                        argumentList: SyntaxFactory.ArgumentList(
-                                                            openParenToken: SyntaxFactory.Token(
-                                                                leading: default,
-                                                                kind: SyntaxKind.OpenParenToken,
-                                                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                                            arguments: SyntaxFactory.SeparatedList(
-                                                                new[]
-                                                                {
-                                                                    SyntaxFactory.Argument(
-                                                                        nameColon: default,
-                                                                        refKindKeyword: default,
-                                                                        expression:SyntaxFactory.InvocationExpression(
-                                                                            expression: SyntaxFactory.IdentifierName(
-                                                                                identifier: SyntaxFactory.Identifier(
-                                                                                    leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                                                    text: "nameof",
-                                                                                    trailing: default)),
-                                                                            argumentList: SyntaxFactory.ArgumentList(
-                                                                                openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
-                                                                                arguments: SyntaxFactory.SingletonSeparatedList(
-                                                                                    SyntaxFactory.Argument(
-                                                                                        nameColon: default,
-                                                                                        refKindKeyword: default,
-                                                                                        expression: SyntaxFactory.IdentifierName(identifier: property.Identifier))),
-                                                                                closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)))),
-                                                                    SyntaxFactory.Argument(
-                                                                        nameColon: default,
-                                                                        refKindKeyword: default,
-                                                                        expression: SyntaxFactory.TypeOfExpression(
-                                                                            keyword: SyntaxFactory.Token(
-                                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                                                kind: SyntaxKind.TypeOfKeyword,
-                                                                                trailing: default),
-                                                                            openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
-                                                                            type: property.Type,
-                                                                            closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken))),
-                                                                    SyntaxFactory.Argument(
-                                                                        nameColon: default,
-                                                                        refKindKeyword: default,
-                                                                        expression: SyntaxFactory.TypeOfExpression(
-                                                                            keyword: SyntaxFactory.Token(
-                                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                                                kind: SyntaxKind.TypeOfKeyword,
-                                                                                trailing: default),
-                                                                            openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
-                                                                            type: SyntaxFactory.IdentifierName(classDeclaration.Identifier),
-                                                                            closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken))),
-                                                                    SyntaxFactory.Argument(
-                                                                        nameColon: default,
-                                                                        refKindKeyword: default,
-                                                                        expression: SyntaxFactory.ObjectCreationExpression(
-                                                                            newKeyword: SyntaxFactory.Token(
-                                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                                                kind: SyntaxKind.NewKeyword,
-                                                                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
-                                                                            type: SyntaxFactory.IdentifierName("PropertyMetadata"),
-                                                                            argumentList: SyntaxFactory.ArgumentList(
-                                                                                openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
-                                                                                arguments: SyntaxFactory.SingletonSeparatedList(
-                                                                                    SyntaxFactory.Argument(expression: SyntaxFactory.DefaultExpression(property.Type))),
-                                                                                closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)),
-                                                                            initializer: default)),
-                                                                },
-                                                                new[]
-                                                                {
-                                                                    SyntaxFactory.Token(
-                                                                        leading: default,
-                                                                        kind: SyntaxKind.CommaToken,
-                                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                                                    SyntaxFactory.Token(
-                                                                        leading: default,
-                                                                        kind: SyntaxKind.CommaToken,
-                                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                                                    SyntaxFactory.Token(
-                                                                        leading: default,
-                                                                        kind: SyntaxKind.CommaToken,
-                                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                                                }),
-                                                            closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken))))))),
+                                                    value: Register())))),
                                     semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+
+                            InvocationExpressionSyntax Register()
+                            {
+                                return SyntaxFactory.InvocationExpression(
+                                    expression: SyntaxFactory.MemberAccessExpression(
+                                        kind: SyntaxKind.SimpleMemberAccessExpression,
+                                        expression: SyntaxFactory.IdentifierName("DependencyProperty"),
+                                        name: SyntaxFactory.IdentifierName("Register")),
+                                    argumentList: SyntaxFactory.ArgumentList(
+                                        openParenToken: SyntaxFactory.Token(
+                                            leading: default,
+                                            kind: SyntaxKind.OpenParenToken,
+                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                        arguments: SyntaxFactory.SeparatedList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    nameColon: default,
+                                                    refKindKeyword: default,
+                                                    expression: SyntaxFactory.InvocationExpression(
+                                                        expression: SyntaxFactory.IdentifierName(
+                                                            identifier: SyntaxFactory.Identifier(
+                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                                text: "nameof",
+                                                                trailing: default)),
+                                                        argumentList: SyntaxFactory.ArgumentList(
+                                                            arguments: SyntaxFactory.SingletonSeparatedList(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.IdentifierName(identifier: property.Identifier)))))),
+                                                SyntaxFactory.Argument(
+                                                    nameColon: default,
+                                                    refKindKeyword: default,
+                                                    expression: SyntaxFactory.TypeOfExpression(
+                                                        keyword: SyntaxFactory.Token(
+                                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                            kind: SyntaxKind.TypeOfKeyword,
+                                                            trailing: default),
+                                                        openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
+                                                        type: property.Type,
+                                                        closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken))),
+                                                SyntaxFactory.Argument(
+                                                    nameColon: default,
+                                                    refKindKeyword: default,
+                                                    expression: SyntaxFactory.TypeOfExpression(
+                                                        keyword: SyntaxFactory.Token(
+                                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                            kind: SyntaxKind.TypeOfKeyword,
+                                                            trailing: default),
+                                                        openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
+                                                        type: SyntaxFactory.IdentifierName(classDeclaration.Identifier),
+                                                        closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken))),
+                                                SyntaxFactory.Argument(
+                                                    nameColon: default,
+                                                    refKindKeyword: default,
+                                                    expression: SyntaxFactory.ObjectCreationExpression(
+                                                        newKeyword: SyntaxFactory.Token(
+                                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                            kind: SyntaxKind.NewKeyword,
+                                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
+                                                        type: SyntaxFactory.IdentifierName("PropertyMetadata"),
+                                                        argumentList: SyntaxFactory.ArgumentList(
+                                                            openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
+                                                            arguments: SyntaxFactory.SingletonSeparatedList(
+                                                                SyntaxFactory.Argument(expression: SyntaxFactory.DefaultExpression(property.Type))),
+                                                            closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)),
+                                                        initializer: default)),
+                                            },
+                                            new[]
+                                            {
+                                                SyntaxFactory.Token(
+                                                    leading: default,
+                                                    kind: SyntaxKind.CommaToken,
+                                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                                SyntaxFactory.Token(
+                                                    leading: default,
+                                                    kind: SyntaxKind.CommaToken,
+                                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                                SyntaxFactory.Token(
+                                                    leading: default,
+                                                    kind: SyntaxKind.CommaToken,
+                                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                            }),
+                                        closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
+                            }
                         }
 
                         if (property.Setter() is { } setter &&
