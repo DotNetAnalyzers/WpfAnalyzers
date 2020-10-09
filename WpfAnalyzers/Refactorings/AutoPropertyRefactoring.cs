@@ -54,11 +54,83 @@
                             return generator.AddSorted(
                                 classDeclaration.ReplaceNode(
                                     property,
-                                    new PropertyRewriter(property.Identifier.ValueText + "Property", null).Visit(property)),
+                                    Property(property.Identifier.ValueText + "Property")),
                                 Field(
                                     "DependencyProperty",
                                     property.Identifier.ValueText + "Property",
                                     Register("Register", Nameof())));
+
+                            PropertyDeclarationSyntax Property(string field)
+                            {
+                                return property.WithIdentifier(property.Identifier.WithTrailingTrivia(SyntaxFactory.LineFeed))
+                                               .WithAccessorList(
+                                    SyntaxFactory.AccessorList(
+                                        openBraceToken: SyntaxFactory.Token(
+                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                            kind: SyntaxKind.OpenBraceToken,
+                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                        accessors: SyntaxFactory.List(
+                                            new[]
+                                            {
+                                                SyntaxFactory.AccessorDeclaration(
+                                                    kind: SyntaxKind.GetAccessorDeclaration,
+                                                    attributeLists: default,
+                                                    modifiers: default,
+                                                    keyword: SyntaxFactory.Token(
+                                                        leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                        kind: SyntaxKind.GetKeyword,
+                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
+                                                    body: default,
+                                                    expressionBody: SyntaxFactory.ArrowExpressionClause(
+                                                        expression: SyntaxFactory.CastExpression(
+                                                            type: property.Type,
+                                                            expression: SyntaxFactory.InvocationExpression(
+                                                                expression: SyntaxFactory.MemberAccessExpression(
+                                                                    kind: SyntaxKind.SimpleMemberAccessExpression,
+                                                                    expression: SyntaxFactory.ThisExpression(),
+                                                                    name: SyntaxFactory.IdentifierName( "GetValue")),
+                                                                argumentList: SyntaxFactory.ArgumentList(
+                                                                    arguments: SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            expression: SyntaxFactory.IdentifierName(field))))))),
+                                                    semicolonToken: SyntaxFactory.Token(
+                                                        leading: default,
+                                                        kind: SyntaxKind.SemicolonToken,
+                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))),
+                                                SyntaxFactory.AccessorDeclaration(
+                                                    kind: SyntaxKind.SetAccessorDeclaration,
+                                                    attributeLists: default,
+                                                    modifiers: default,
+                                                    keyword: SyntaxFactory.Token(
+                                                        leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                                        kind: SyntaxKind.SetKeyword,
+                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
+                                                    body: default,
+                                                    expressionBody: SyntaxFactory.ArrowExpressionClause(
+                                                        expression: SyntaxFactory.InvocationExpression(
+                                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                                kind: SyntaxKind.SimpleMemberAccessExpression,
+                                                                expression: SyntaxFactory.ThisExpression(),
+                                                                name: SyntaxFactory.IdentifierName("SetValue")),
+                                                            argumentList: SyntaxFactory.ArgumentList(
+                                                                arguments: SyntaxFactory.SeparatedList(
+                                                                    new ArgumentSyntax[]
+                                                                    {
+                                                                        SyntaxFactory.Argument(
+                                                                            expression: SyntaxFactory.IdentifierName(field)),
+                                                                        SyntaxFactory.Argument(
+                                                                            expression: SyntaxFactory.IdentifierName("value")),
+                                                                    })))),
+                                                    semicolonToken: SyntaxFactory.Token(
+                                                        leading: default,
+                                                        kind: SyntaxKind.SemicolonToken,
+                                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))),
+                                            }),
+                                        closeBraceToken: SyntaxFactory.Token(
+                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                            kind: SyntaxKind.CloseBraceToken,
+                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))));
+                            }
                         }
 
                         if (property.Setter() is { } setter &&
@@ -188,68 +260,6 @@
 
                     return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(node, replacement)));
                 }
-            }
-        }
-
-        private class PropertyRewriter : CSharpSyntaxRewriter
-        {
-            private readonly string dependencyPropertyName;
-            private readonly string? dependencyPropertyKeyName;
-
-            internal PropertyRewriter(string dependencyPropertyName, string? dependencyPropertyKeyName)
-            {
-                this.dependencyPropertyName = dependencyPropertyName;
-                this.dependencyPropertyKeyName = dependencyPropertyKeyName;
-            }
-
-            public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
-            {
-                return base.VisitPropertyDeclaration(node).WithAdditionalAnnotations(Formatter.Annotation);
-            }
-
-            public override SyntaxNode VisitAccessorList(AccessorListSyntax node)
-            {
-                return base.VisitAccessorList(node)
-                           .WithLeadingTrivia(SyntaxFactory.LineFeed, SyntaxFactory.Whitespace("        "));
-            }
-
-            public override SyntaxNode VisitAccessorDeclaration(AccessorDeclarationSyntax node)
-            {
-                return node.Kind() switch
-                {
-                    SyntaxKind.GetAccessorDeclaration => node.WithExpressionBody(
-                        SyntaxFactory.ArrowExpressionClause(
-                            SyntaxFactory.CastExpression(
-                                Type(),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("GetValue")),
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList(
-                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.dependencyPropertyName))))))))
-                                                             .WithLeadingTrivia(SyntaxFactory.LineFeed, SyntaxFactory.Whitespace("            ")),
-                    SyntaxKind.SetAccessorDeclaration => node.WithExpressionBody(
-                        SyntaxFactory.ArrowExpressionClause(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("SetValue")),
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.dependencyPropertyKeyName ?? this.dependencyPropertyName)),
-                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")),
-                                        })))))
-                                                             .WithLeadingTrivia(SyntaxFactory.LineFeed, SyntaxFactory.Whitespace("            "))
-                                                             .WithTrailingTrivia(SyntaxFactory.LineFeed, SyntaxFactory.Whitespace("        ")),
-                    _ => node,
-                };
-
-                TypeSyntax Type() => ((PropertyDeclarationSyntax)node.Parent.Parent).Type;
             }
         }
     }
