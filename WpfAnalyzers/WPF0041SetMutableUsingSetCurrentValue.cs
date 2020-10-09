@@ -25,7 +25,7 @@
         private static void HandleAssignment(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is AssignmentExpressionSyntax { Left: ExpressionSyntax left } assignment &&
+                context.Node is AssignmentExpressionSyntax { Left: { } left } assignment &&
                 !IsInObjectInitializer(assignment) &&
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
@@ -51,7 +51,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 !IsInConstructor(invocation) &&
-                invocation is { Expression: ExpressionSyntax invocationExpression, ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                invocation is { Expression: { } invocationExpression, ArgumentList: { Arguments: { Count: 2 } arguments } } &&
                 arguments.TryElementAt(0, out var propertyArg) &&
                 propertyArg is { Expression: { } expression } &&
                 DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&

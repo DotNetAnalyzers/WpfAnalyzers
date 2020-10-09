@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -28,20 +30,9 @@
                                        .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
-                    Name(setValue) is { } name)
-                {
-                    context.RegisterCodeFix(
-                        setValue.ToString().Replace("SetValue", "SetCurrentValue"),
-                        (editor, _) => editor.ReplaceNode(
-                            name,
-                            x => x.WithIdentifier(SyntaxFactory.Identifier("SetCurrentValue")).WithTriviaFrom(x)),
-                        nameof(UseSetCurrentValueFix),
-                        diagnostic);
-                }
-                else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
-                         TryCreatePath(assignment) is { } path &&
-                         diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
+                    TryCreatePath(assignment) is { } path &&
+                    diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))
                 {
                     var expressionString = $"{path}SetCurrentValue({backingFieldOrProperty}, {Cast(assignment)}{assignment.Right})";
                     context.RegisterCodeFix(
@@ -49,6 +40,17 @@
                         (editor, _) => editor.ReplaceNode(
                             assignment,
                             x => SyntaxFactory.ParseExpression(expressionString).WithTriviaFrom(x)),
+                        nameof(UseSetCurrentValueFix),
+                        diagnostic);
+                }
+                else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
+                         Name(setValue) is { Identifier: { ValueText: "SetValue" } } name)
+                {
+                    context.RegisterCodeFix(
+                        setValue.ToString().Replace("SetValue", "SetCurrentValue"),
+                        (editor, _) => editor.ReplaceNode(
+                            name,
+                            x => x.WithIdentifier(SyntaxFactory.Identifier("SetCurrentValue")).WithTriviaFrom(x)),
                         nameof(UseSetCurrentValueFix),
                         diagnostic);
                 }

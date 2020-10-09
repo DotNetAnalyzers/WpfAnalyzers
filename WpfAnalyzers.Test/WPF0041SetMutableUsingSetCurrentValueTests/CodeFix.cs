@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
+﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -1221,6 +1221,108 @@ namespace N
         {
             get { return (int)this.GetValue(BarProperty); }
             set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void AssignInLambda()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public FooControl()
+        {
+            this.Loaded += (sender, args) =>
+            {
+                ↓this.Bar = 1;
+            };
+        }
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public FooControl()
+        {
+            this.Loaded += (sender, args) =>
+            {
+                this.SetCurrentValue(BarProperty, 1);
+            };
+        }
+
+        public int Bar
+        {
+            get { return (int)this.GetValue(BarProperty); }
+            set { this.SetValue(BarProperty, value); }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void AssignInLambdaIssue279()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows.Controls;
+    using System.Windows.Media;
+    using System.Windows.Threading;
+
+    public class Issue279
+    {
+        public Issue279(Control control)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(()=> ↓control.BorderBrush = Brushes.HotPink);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows.Controls;
+    using System.Windows.Media;
+    using System.Windows.Threading;
+
+    public class Issue279
+    {
+        public Issue279(Control control)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(()=> control.SetCurrentValue(Control.BorderBrushProperty, Brushes.HotPink));
         }
     }
 }";
