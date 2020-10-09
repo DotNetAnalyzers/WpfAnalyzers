@@ -60,4 +60,8 @@
     <None Update="tools\*" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\Gu.Roslyn.Extensions.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Suppressors\" />
+  </ItemGroup>
 </Project>
