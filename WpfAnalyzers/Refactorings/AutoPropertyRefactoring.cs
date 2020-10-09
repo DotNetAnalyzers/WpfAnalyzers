@@ -39,8 +39,8 @@
                 {
                     var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                          .ConfigureAwait(false);
-                    if (semanticModel.TryGetType(classDeclaration, context.CancellationToken, out var type) &&
-                        type.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
+                    if (semanticModel.TryGetType(classDeclaration, context.CancellationToken, out var containingType) &&
+                        containingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
                     {
                         context.RegisterRefactoring(
                             CodeAction.Create(
@@ -55,50 +55,57 @@
                                 classDeclaration.ReplaceNode(
                                     property,
                                     new PropertyRewriter(property.Identifier.ValueText + "Property", null).Visit(property)),
-                                SyntaxFactory.FieldDeclaration(
-                                    attributeLists: default,
-                                    modifiers: SyntaxFactory.TokenList(
-                                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
-                                    declaration: SyntaxFactory.VariableDeclaration(
-                                        type: SyntaxFactory.IdentifierName("DependencyProperty"),
-                                        variables: SyntaxFactory.SingletonSeparatedList(
-                                            SyntaxFactory.VariableDeclarator(
-                                                identifier: SyntaxFactory.Identifier(property.Identifier.ValueText + "Property"),
-                                                argumentList: default,
-                                                initializer: SyntaxFactory.EqualsValueClause(
-                                                    value: Register())))),
-                                    semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                                Field(
+                                    "DependencyProperty",
+                                    property.Identifier.ValueText + "Property",
+                                    Register("Register", Nameof())));
+                        }
 
-                            InvocationExpressionSyntax Register()
-                            {
-                                return SyntaxFactory.InvocationExpression(
-                                    expression: SyntaxFactory.MemberAccessExpression(
-                                        kind: SyntaxKind.SimpleMemberAccessExpression,
-                                        expression: SyntaxFactory.IdentifierName("DependencyProperty"),
-                                        name: SyntaxFactory.IdentifierName("Register")),
-                                    argumentList: SyntaxFactory.ArgumentList(
-                                        openParenToken: SyntaxFactory.Token(
-                                            leading: default,
-                                            kind: SyntaxKind.OpenParenToken,
-                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                        arguments: SyntaxFactory.SeparatedList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    nameColon: default,
-                                                    refKindKeyword: default,
-                                                    expression: SyntaxFactory.InvocationExpression(
-                                                        expression: SyntaxFactory.IdentifierName(
-                                                            identifier: SyntaxFactory.Identifier(
-                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                                text: "nameof",
-                                                                trailing: default)),
-                                                        argumentList: SyntaxFactory.ArgumentList(
-                                                            arguments: SyntaxFactory.SingletonSeparatedList(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName(identifier: property.Identifier)))))),
+                        if (property.Setter() is { } setter &&
+                            setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                        {
+                            //context.RegisterRefactoring(
+                            //    CodeAction.Create(
+                            //        "Change to readonly dependency property",
+                            //        _ => Replace(classDeclaration, classDeclaration, semanticModel),
+                            //        "Change to readonly dependency property"));
+                        }
+
+                        FieldDeclarationSyntax Field(string type, string name, ExpressionSyntax value)
+                        {
+                            return SyntaxFactory.FieldDeclaration(
+                                attributeLists: default,
+                                modifiers: SyntaxFactory.TokenList(
+                                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                                    SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                                    SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                                declaration: SyntaxFactory.VariableDeclaration(
+                                    type: SyntaxFactory.IdentifierName(type),
+                                    variables: SyntaxFactory.SingletonSeparatedList(
+                                        SyntaxFactory.VariableDeclarator(
+                                            identifier: SyntaxFactory.Identifier(name),
+                                            argumentList: default,
+                                            initializer: SyntaxFactory.EqualsValueClause(
+                                                value: value)))),
+                                semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        }
+
+                        InvocationExpressionSyntax Register(string methodName, ExpressionSyntax name)
+                        {
+                            return SyntaxFactory.InvocationExpression(
+                                expression: SyntaxFactory.MemberAccessExpression(
+                                    kind: SyntaxKind.SimpleMemberAccessExpression,
+                                    expression: SyntaxFactory.IdentifierName("DependencyProperty"),
+                                    name: SyntaxFactory.IdentifierName(methodName)),
+                                argumentList: SyntaxFactory.ArgumentList(
+                                    openParenToken: SyntaxFactory.Token(
+                                        leading: default,
+                                        kind: SyntaxKind.OpenParenToken,
+                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                    arguments: SyntaxFactory.SeparatedList(
+                                        new[]
+                                        {
+                                                SyntaxFactory.Argument(expression: name),
                                                 SyntaxFactory.Argument(
                                                     nameColon: default,
                                                     refKindKeyword: default,
@@ -131,14 +138,12 @@
                                                             trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
                                                         type: SyntaxFactory.IdentifierName("PropertyMetadata"),
                                                         argumentList: SyntaxFactory.ArgumentList(
-                                                            openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
                                                             arguments: SyntaxFactory.SingletonSeparatedList(
-                                                                SyntaxFactory.Argument(expression: SyntaxFactory.DefaultExpression(property.Type))),
-                                                            closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)),
+                                                                SyntaxFactory.Argument(expression: SyntaxFactory.DefaultExpression(property.Type)))),
                                                         initializer: default)),
-                                            },
-                                            new[]
-                                            {
+                                        },
+                                        new[]
+                                        {
                                                 SyntaxFactory.Token(
                                                     leading: default,
                                                     kind: SyntaxKind.CommaToken,
@@ -151,19 +156,22 @@
                                                     leading: default,
                                                     kind: SyntaxKind.CommaToken,
                                                     trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                                            }),
-                                        closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
-                            }
+                                        }),
+                                    closeParenToken: SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
                         }
 
-                        if (property.Setter() is { } setter &&
-                            setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                        InvocationExpressionSyntax Nameof()
                         {
-                            //context.RegisterRefactoring(
-                            //    CodeAction.Create(
-                            //        "Change to readonly dependency property",
-                            //        _ => Replace(classDeclaration, classDeclaration, semanticModel),
-                            //        "Change to readonly dependency property"));
+                            return SyntaxFactory.InvocationExpression(
+                                expression: SyntaxFactory.IdentifierName(
+                                    identifier: SyntaxFactory.Identifier(
+                                        leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                        text: "nameof",
+                                        trailing: default)),
+                                argumentList: SyntaxFactory.ArgumentList(
+                                    arguments: SyntaxFactory.SingletonSeparatedList(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(identifier: property.Identifier)))));
                         }
                     }
                 }
