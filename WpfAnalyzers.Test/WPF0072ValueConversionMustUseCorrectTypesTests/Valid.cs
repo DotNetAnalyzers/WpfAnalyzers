@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
+﻿namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -250,7 +250,7 @@ namespace N
         }
 
         [Test]
-        public static void Issue249()
+        public static void IfIsPatternIssue249()
         {
             var code = @"
 namespace WpfCopyDeploy
@@ -288,6 +288,52 @@ namespace WpfCopyDeploy
             }
 
             return null;
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void SwitchOnNullableBoolIssue276()
+        {
+            var code = @"
+namespace Gu.Wpf.ToolTips.Demo.Wpf
+{
+    using System;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(bool?), typeof(Visibility))]
+    public sealed class BoolToVisibilityConverter : IValueConverter
+    {
+        public static readonly BoolToVisibilityConverter VisibleWhenTrueElseCollapsed = new BoolToVisibilityConverter(Visibility.Visible, Visibility.Collapsed);
+        public static readonly BoolToVisibilityConverter VisibleWhenTrueElseHidden = new BoolToVisibilityConverter(Visibility.Visible, Visibility.Hidden);
+
+        private readonly object whenTrue;
+        private readonly object whenFalse;
+
+        private BoolToVisibilityConverter(Visibility whenTrue, Visibility whenFalse)
+        {
+            this.whenTrue = whenTrue;
+            this.whenFalse = whenFalse;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value switch
+            {
+                true => this.whenTrue,
+                false => this.whenFalse,
+                null => this.whenFalse,
+                _=> throw new ArgumentException(""expected bool"", nameof(value)),
+            };
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException($""{nameof(BoolToVisibilityConverter)} can only be used in OneWay bindings"");
         }
     }
 }";
