@@ -4,8 +4,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -30,7 +32,7 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(nameof(DocComment), out var text) &&
-                    text is {})
+                    text is { })
                 {
                     switch (syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true))
                     {
@@ -80,7 +82,7 @@
 
                             XmlElementSyntax Replacement(XmlElementSyntax old)
                             {
-                                return old.WithContent(Parse.XmlElementSyntax(text).Content);
+                                return old.WithContent(Parse.XmlElementSyntax(text!).Content);
                             }
 
                             break;
