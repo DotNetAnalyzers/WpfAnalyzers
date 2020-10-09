@@ -115,6 +115,15 @@
                         }
 
                         break;
+                    case ThrowExpressionSyntax _:
+                        break;
+                    case SwitchExpressionSyntax switchExpression:
+                        foreach (var arm in switchExpression.Arms)
+                        {
+                            AddReturnType(returnTypes, arm.Expression);
+                        }
+
+                        break;
                     default:
                         returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
                         break;

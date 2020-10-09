@@ -327,7 +327,7 @@ namespace Gu.Wpf.ToolTips.Demo.Wpf
                 true => this.whenTrue,
                 false => this.whenFalse,
                 null => this.whenFalse,
-                _=> throw new ArgumentException(""expected bool"", nameof(value)),
+                _ => throw new ArgumentException(""expected bool"", nameof(value)),
             };
         }
 
