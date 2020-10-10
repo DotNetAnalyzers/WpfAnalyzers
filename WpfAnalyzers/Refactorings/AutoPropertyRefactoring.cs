@@ -51,13 +51,15 @@
                         SyntaxNode WithDependencyProperty()
                         {
                             var generator = SyntaxGenerator.GetGenerator(context.Document);
+                            var fieldName = property.Identifier.ValueText + "Property";
+                            containingClass = containingClass.ReplaceNode(
+                                property,
+                                Property(fieldName));
                             return generator.AddSorted(
-                                containingClass.ReplaceNode(
-                                    property,
-                                    Property(property.Identifier.ValueText + "Property")),
+                                containingClass,
                                 Field(
                                     "DependencyProperty",
-                                    property.Identifier.ValueText + "Property",
+                                    fieldName,
                                     Register("Register", Nameof())));
 
                             PropertyDeclarationSyntax Property(string field)
