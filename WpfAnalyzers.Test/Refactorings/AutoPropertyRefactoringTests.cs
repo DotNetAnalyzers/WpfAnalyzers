@@ -84,5 +84,47 @@ namespace N
 }";
             RoslynAssert.Refactoring(Refactoring, before, after);
         }
+
+        [Test]
+        public static void AutoPropertyNotQualifiedMethodAccess()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        public int ↓Number { get; set; }
+
+        public int M() => M();
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        public int Number
+        {
+            get => (int)GetValue(NumberProperty);
+            set => SetValue(NumberProperty, value);
+        }
+
+        public int M() => M();
+    }
+}";
+            RoslynAssert.Refactoring(Refactoring, before, after);
+        }
     }
 }

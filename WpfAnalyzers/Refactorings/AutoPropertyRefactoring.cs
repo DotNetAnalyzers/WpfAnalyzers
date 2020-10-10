@@ -1,6 +1,7 @@
 ﻿namespace WpfAnalyzers.Refactorings
 {
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -45,24 +46,35 @@
                         context.RegisterRefactoring(
                             CodeAction.Create(
                                 "Change to dependency property",
-                                _ => Replace(containingClass, WithDependencyProperty(), semanticModel),
+                                c => WithDependencyProperty(c),
                                 "Change to dependency property"));
 
-                        SyntaxNode WithDependencyProperty()
+                        async Task<Document> WithDependencyProperty(CancellationToken cancellationToken)
                         {
+                            var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
+                                                                        .ConfigureAwait(false);
                             var generator = SyntaxGenerator.GetGenerator(context.Document);
                             var fieldName = property.Identifier.ValueText + "Property";
-                            containingClass = containingClass.ReplaceNode(
+                            TypeDeclarationSyntax updatedClass = containingClass.ReplaceNode(
                                 property,
-                                Property(fieldName));
-                            return generator.AddSorted(
-                                containingClass,
+                                Property(fieldName, qualifyMethodAccess != CodeStyleResult.No));
+                            updatedClass = generator.AddSorted(
+                                updatedClass,
                                 Field(
                                     "DependencyProperty",
                                     fieldName,
                                     Register("Register", Nameof())));
 
-                            PropertyDeclarationSyntax Property(string field)
+                            if (syntaxRoot is CompilationUnitSyntax compilationUnit)
+                            {
+                                return context.Document.WithSyntaxRoot(
+                                        compilationUnit.ReplaceNode(containingClass, updatedClass)
+                                                       .AddUsing(SystemWindows, semanticModel));
+                            }
+
+                            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
+
+                            PropertyDeclarationSyntax Property(string field, bool qualifyMethodAccess)
                             {
                                 return property.WithIdentifier(property.Identifier.WithTrailingTrivia(SyntaxFactory.LineFeed))
                                                .WithAccessorList(
@@ -87,10 +99,7 @@
                                                         expression: SyntaxFactory.CastExpression(
                                                             type: property.Type,
                                                             expression: SyntaxFactory.InvocationExpression(
-                                                                expression: SyntaxFactory.MemberAccessExpression(
-                                                                    kind: SyntaxKind.SimpleMemberAccessExpression,
-                                                                    expression: SyntaxFactory.ThisExpression(),
-                                                                    name: SyntaxFactory.IdentifierName( "GetValue")),
+                                                                expression: MethodAccess("GetValue"),
                                                                 argumentList: SyntaxFactory.ArgumentList(
                                                                     arguments: SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                                         SyntaxFactory.Argument(
@@ -110,13 +119,10 @@
                                                     body: default,
                                                     expressionBody: SyntaxFactory.ArrowExpressionClause(
                                                         expression: SyntaxFactory.InvocationExpression(
-                                                            expression: SyntaxFactory.MemberAccessExpression(
-                                                                kind: SyntaxKind.SimpleMemberAccessExpression,
-                                                                expression: SyntaxFactory.ThisExpression(),
-                                                                name: SyntaxFactory.IdentifierName("SetValue")),
+                                                            expression: MethodAccess("SetValue"),
                                                             argumentList: SyntaxFactory.ArgumentList(
                                                                 arguments: SyntaxFactory.SeparatedList(
-                                                                    new ArgumentSyntax[]
+                                                                    new []
                                                                     {
                                                                         SyntaxFactory.Argument(
                                                                             expression: SyntaxFactory.IdentifierName(field)),
@@ -132,6 +138,16 @@
                                             leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
                                             kind: SyntaxKind.CloseBraceToken,
                                             trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))));
+
+                                ExpressionSyntax MethodAccess(string name)
+                                {
+                                    return qualifyMethodAccess
+                                        ? (ExpressionSyntax) SyntaxFactory.MemberAccessExpression(
+                                            kind: SyntaxKind.SimpleMemberAccessExpression,
+                                            expression: SyntaxFactory.ThisExpression(),
+                                            name: SyntaxFactory.IdentifierName(name))
+                                        : SyntaxFactory.IdentifierName(name);
+                                }
                             }
                         }
 
