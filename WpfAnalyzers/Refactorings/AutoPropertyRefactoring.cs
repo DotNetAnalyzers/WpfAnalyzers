@@ -89,8 +89,8 @@
                                             {
                                                 SyntaxFactory.AccessorDeclaration(
                                                     kind: SyntaxKind.GetAccessorDeclaration,
-                                                    attributeLists: default,
-                                                    modifiers: default,
+                                                    attributeLists: property.Getter()!.AttributeLists,
+                                                    modifiers: property.Getter()!.Modifiers,
                                                     keyword: SyntaxFactory.Token(
                                                         leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
                                                         kind: SyntaxKind.GetKeyword,
@@ -111,8 +111,8 @@
                                                         trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))),
                                                 SyntaxFactory.AccessorDeclaration(
                                                     kind: SyntaxKind.SetAccessorDeclaration,
-                                                    attributeLists: default,
-                                                    modifiers: default,
+                                                    attributeLists: property.Setter()!.AttributeLists,
+                                                    modifiers: property.Setter()!.Modifiers,
                                                     keyword: SyntaxFactory.Token(
                                                         leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
                                                         kind: SyntaxKind.SetKeyword,
@@ -153,7 +153,7 @@
                         }
 
                         if (property.Setter() is { } setter &&
-                            setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                            setter.Modifiers.Any())
                         {
                             //context.RegisterRefactoring(
                             //    CodeAction.Create(
@@ -186,11 +186,15 @@
                     {
                         if (Descriptors.WPF0060DocumentDependencyPropertyBackingMember.IsSuppressed(semanticModel))
                         {
-                            return SyntaxFactory.Token(SyntaxKind.PublicKeyword);
+                            return SyntaxFactory.Token(
+                                SyntaxFactory.TriviaList(SyntaxFactory.ElasticLineFeed),
+                                SyntaxKind.PublicKeyword,
+                                SyntaxFactory.TriviaList(SyntaxFactory.Space));
                         }
 
                         return SyntaxFactory.Token(
                             leading: SyntaxFactory.TriviaList(
+                                SyntaxFactory.ElasticLineFeed,
                                 SyntaxFactory.Whitespace("        "),
                                 SyntaxFactory.Trivia(
                                     SyntaxFactory.DocumentationCommentTrivia(
@@ -344,19 +348,6 @@
                             arguments: SyntaxFactory.SingletonSeparatedList(
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(identifier: property.Identifier)))));
-                }
-
-                Task<Document> Replace(ClassDeclarationSyntax node, SyntaxNode replacement, SemanticModel semanticModel)
-                {
-                    if (syntaxRoot is CompilationUnitSyntax compilationUnit)
-                    {
-                        return Task.FromResult(
-                            context.Document.WithSyntaxRoot(
-                                compilationUnit.ReplaceNode(node, replacement)
-                                               .AddUsing(SystemWindows, semanticModel)));
-                    }
-
-                    return Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(node, replacement)));
                 }
             }
         }

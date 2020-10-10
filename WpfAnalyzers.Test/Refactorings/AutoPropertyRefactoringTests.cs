@@ -129,5 +129,97 @@ namespace N
 }";
             RoslynAssert.Refactoring(Refactoring, before, after);
         }
+
+        [Test]
+        public static void InsertsBackingFieldAtCorrectPosition()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Value1""/> dependency property.</summary>
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Identifies the <see cref=""Value3""/> dependency property.</summary>
+        public static readonly DependencyProperty Value3Property = DependencyProperty.Register(
+            nameof(Value3),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        public int Value1
+        {
+            get => (int)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public int ↓Value2 { get; set; }
+
+        public int Value3
+        {
+            get => (int)this.GetValue(Value3Property);
+            set => this.SetValue(Value3Property, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class C : Control
+    {
+        /// <summary>Identifies the <see cref=""Value1""/> dependency property.</summary>
+        public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
+            nameof(Value1),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Identifies the <see cref=""Value2""/> dependency property.</summary>
+        public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
+            nameof(Value2),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Identifies the <see cref=""Value3""/> dependency property.</summary>
+        public static readonly DependencyProperty Value3Property = DependencyProperty.Register(
+            nameof(Value3),
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        public int Value1
+        {
+            get => (int)this.GetValue(Value1Property);
+            set => this.SetValue(Value1Property, value);
+        }
+
+        public int Value2
+        {
+            get => (int)this.GetValue(Value2Property);
+            set => this.SetValue(Value2Property, value);
+        }
+
+        public int Value3
+        {
+            get => (int)this.GetValue(Value3Property);
+            set => this.SetValue(Value3Property, value);
+        }
+    }
+}";
+            RoslynAssert.Refactoring(Refactoring, before, after);
+        }
     }
 }
