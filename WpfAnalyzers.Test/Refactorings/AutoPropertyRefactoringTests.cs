@@ -31,6 +31,7 @@ namespace N
 
     public class C : Control
     {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
         public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
             nameof(Number),
             typeof(int),
@@ -69,6 +70,7 @@ namespace N
 
     public class FooControl : Control
     {
+        /// <summary>Identifies the <see cref=""Value""/> dependency property.</summary>
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             nameof(Value),
             typeof(double?),
@@ -109,6 +111,7 @@ namespace N
 
     public class C : Control
     {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
         public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
             nameof(Number),
             typeof(int),
