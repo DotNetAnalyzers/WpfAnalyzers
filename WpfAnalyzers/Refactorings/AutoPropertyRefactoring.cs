@@ -33,7 +33,6 @@
             {
                 if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-
                 }
                 else
                 {
