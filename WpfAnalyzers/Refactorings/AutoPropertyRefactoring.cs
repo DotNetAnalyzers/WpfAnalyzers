@@ -53,18 +53,17 @@
                         {
                             var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
                                                                         .ConfigureAwait(false);
-                            var generator = SyntaxGenerator.GetGenerator(context.Document);
-                            var fieldName = property.Identifier.ValueText + "Property";
-                            TypeDeclarationSyntax updatedClass = containingClass.ReplaceNode(
-                                property,
-                                Property(fieldName, qualifyMethodAccess != CodeStyleResult.No));
-                            updatedClass = generator.AddSorted(
-                                updatedClass,
-                                Field(
-                                    KnownSymbols.DependencyProperty,
-                                    property,
-                                    Register("Register", Nameof()),
-                                    semanticModel));
+                            var updatedClass = containingClass.ReplaceNode(
+                                                                  property,
+                                                                  Property(
+                                                                      property.Identifier.ValueText + "Property",
+                                                                      qualifyMethodAccess != CodeStyleResult.No))
+                                                              .AddField(
+                                                                  Field(
+                                                                      KnownSymbols.DependencyProperty,
+                                                                      property,
+                                                                      Register("Register", Nameof()),
+                                                                      semanticModel));
 
                             if (syntaxRoot is CompilationUnitSyntax compilationUnit)
                             {
