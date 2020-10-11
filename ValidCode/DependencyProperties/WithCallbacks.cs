@@ -1,4 +1,4 @@
-namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties
 {
     using System;
     using System.Windows;
