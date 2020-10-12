@@ -222,7 +222,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
+            RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to dependency property");
         }
 
         [Test]
@@ -242,7 +242,7 @@ namespace N
             typeof(C),
             new PropertyMetadata(default(int)));
 
-        /// <summary>Identifies the <see cref=""""Value1""""/> dependency property.</summary>
+        /// <summary>Identifies the <see cref=""Value1""/> dependency property.</summary>
         public static readonly DependencyProperty Value1Property = Value1PropertyKey.DependencyProperty;
 
         private static readonly DependencyPropertyKey Value3PropertyKey = DependencyProperty.RegisterReadOnly(
@@ -251,7 +251,7 @@ namespace N
             typeof(C),
             new PropertyMetadata(default(int)));
 
-        /// <summary>Identifies the <see cref=""""Value3""""/> dependency property.</summary>
+        /// <summary>Identifies the <see cref=""Value3""/> dependency property.</summary>
         public static readonly DependencyProperty Value3Property = Value3PropertyKey.DependencyProperty;
 
         public int Value1
@@ -324,7 +324,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
+            RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to readonly dependency property");
         }
     }
 }
