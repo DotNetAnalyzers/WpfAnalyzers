@@ -62,9 +62,8 @@
                                              .ConfigureAwait(false);
 
             if (syntaxRoot.FindNode(context.Span) is { } node &&
-                node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is { } property &&
+                node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is { Parent: ClassDeclarationSyntax containingClass } property &&
                 property.IsAutoProperty() &&
-                property.Parent is ClassDeclarationSyntax containingClass &&
                 semanticModel is { })
             {
                 if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
