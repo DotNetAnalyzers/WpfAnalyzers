@@ -130,7 +130,7 @@
                                                                         SyntaxFactory.XmlText("."),
                                                                     })),
                                                             NewCommentLine,
-                                                            Param(
+                                                            ParamElement(
                                                                 "element",
                                                                 SeeCref("DependencyObject"),
                                                                 SyntaxFactory.XmlText(" to read "),
@@ -224,14 +224,14 @@
                                                                     SyntaxFactory.XmlText("."),
                                                                 })),
                                                         NewCommentLine,
-                                                        Param(
+                                                        ParamElement(
                                                             "element",
                                                             SeeCref("DependencyObject"),
                                                             SyntaxFactory.XmlText(" to set "),
                                                             SeeCref(property.Identifier.ValueText + "Property"),
                                                             SyntaxFactory.XmlText(" on.")),
                                                         NewCommentLine,
-                                                        Param(
+                                                        ParamElement(
                                                             "value",
                                                             SyntaxFactory.XmlText(property.Identifier.ValueText + " property value.")),
                                                         EndComment,
@@ -624,7 +624,7 @@
                             SyntaxFactory.XmlNameAttribute(name)));
                 }
 
-                static XmlElementSyntax Param(string name, params XmlNodeSyntax[] content)
+                static XmlElementSyntax ParamElement(string name, params XmlNodeSyntax[] content)
                 {
                     return SyntaxFactory.XmlElement(
                         startTag: SyntaxFactory.XmlElementStartTag(
