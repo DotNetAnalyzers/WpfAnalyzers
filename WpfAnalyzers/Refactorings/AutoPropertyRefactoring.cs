@@ -23,6 +23,20 @@
                 left: SyntaxFactory.IdentifierName("System"),
                 right: SyntaxFactory.IdentifierName("Windows")));
 
+        private static readonly XmlTextSyntax NewCommentLine = SyntaxFactory.XmlText(
+            textTokens: SyntaxFactory.TokenList(
+                SyntaxFactory.XmlTextNewLine(
+                    leading: default,
+                    text: "\r\n",
+                    value: "\r\n",
+                    trailing: default),
+                SyntaxFactory.XmlTextLiteral(
+                    leading: SyntaxFactory.TriviaList(
+                        SyntaxFactory.DocumentationCommentExterior("///")),
+                    text: " ",
+                    value: " ",
+                    trailing: default)));
+
         public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
@@ -116,19 +130,7 @@
                                                                     }),
                                                                 endTag: SyntaxFactory.XmlElementEndTag(
                                                                     name: SyntaxFactory.XmlName("summary"))),
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextNewLine(
-                                                                        leading: default,
-                                                                        text: "\r\n",
-                                                                        value: "\r\n",
-                                                                        trailing: default),
-                                                                    SyntaxFactory.XmlTextLiteral(
-                                                                        leading: SyntaxFactory.TriviaList(
-                                                                            SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                        text: " ",
-                                                                        value: " ",
-                                                                        trailing: default))),
+                                                            NewCommentLine,
                                                             SyntaxFactory.XmlElement(
                                                                 startTag: SyntaxFactory.XmlElementStartTag(
                                                                     name: SyntaxFactory.XmlName("param"),
@@ -154,19 +156,7 @@
                                                                     }),
                                                                 endTag: SyntaxFactory.XmlElementEndTag(
                                                                     name: SyntaxFactory.XmlName("param"))),
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextNewLine(
-                                                                        leading: default,
-                                                                        text: "\r\n",
-                                                                        value: "\r\n",
-                                                                        trailing: default),
-                                                                    SyntaxFactory.XmlTextLiteral(
-                                                                        leading: SyntaxFactory.TriviaList(
-                                                                            SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                        text: " ",
-                                                                        value: " ",
-                                                                        trailing: default))),
+                                                            NewCommentLine,
                                                             SyntaxFactory.XmlElement(
                                                                 startTag: SyntaxFactory.XmlElementStartTag(
                                                                     name: SyntaxFactory.XmlName("returns")),
@@ -293,19 +283,7 @@
                                                                 }),
                                                             endTag: SyntaxFactory.XmlElementEndTag(
                                                                 SyntaxFactory.XmlName("summary"))),
-                                                        SyntaxFactory.XmlText(
-                                                            textTokens: SyntaxFactory.TokenList(
-                                                                SyntaxFactory.XmlTextNewLine(
-                                                                    leading: default,
-                                                                    text: "\r\n",
-                                                                    value: "\r\n",
-                                                                    trailing: default),
-                                                                SyntaxFactory.XmlTextLiteral(
-                                                                    leading: SyntaxFactory.TriviaList(
-                                                                        SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                    text: " ",
-                                                                    value: " ",
-                                                                    trailing: default))),
+                                                        NewCommentLine,
                                                         SyntaxFactory.XmlElement(
                                                             startTag: SyntaxFactory.XmlElementStartTag(
                                                                 name: SyntaxFactory.XmlName("param"),
@@ -315,44 +293,23 @@
                                                                 new XmlNodeSyntax[]
                                                                 {
                                                                     SyntaxFactory.XmlEmptyElement(
-                                                                        lessThanToken: SyntaxFactory.Token(SyntaxKind.LessThanToken),
                                                                         name: SyntaxFactory.XmlName("see"),
                                                                         attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
                                                                             SyntaxFactory.XmlCrefAttribute(
                                                                                 cref: SyntaxFactory.NameMemberCref(
-                                                                                    name: SyntaxFactory.IdentifierName("DependencyObject")))),
-                                                                        slashGreaterThanToken: SyntaxFactory.Token(SyntaxKind.SlashGreaterThanToken)),
+                                                                                    name: SyntaxFactory.IdentifierName("DependencyObject"))))),
                                                                     SyntaxFactory.XmlText(" to set "),
                                                                     SyntaxFactory.XmlEmptyElement(
-                                                                        lessThanToken: SyntaxFactory.Token(SyntaxKind.LessThanToken),
                                                                         name: SyntaxFactory.XmlName("see"),
                                                                         attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
                                                                             SyntaxFactory.XmlCrefAttribute(
                                                                                 cref: SyntaxFactory.NameMemberCref(
-                                                                                    name: SyntaxFactory.IdentifierName(
-                                                                                        identifier: SyntaxFactory.Identifier(
-                                                                                            leading: default,
-                                                                                            text: property.Identifier.ValueText + "Property",
-                                                                                            trailing: default)),
-                                                                                    parameters: default))),
-                                                                        slashGreaterThanToken: SyntaxFactory.Token(SyntaxKind.SlashGreaterThanToken)),
+                                                                                    name: SyntaxFactory.IdentifierName( property.Identifier.ValueText + "Property"))))),
                                                                     SyntaxFactory.XmlText(" on."),
                                                                 }),
                                                             endTag: SyntaxFactory.XmlElementEndTag(
                                                                 SyntaxFactory.XmlName("param"))),
-                                                        SyntaxFactory.XmlText(
-                                                            textTokens: SyntaxFactory.TokenList(
-                                                                SyntaxFactory.XmlTextNewLine(
-                                                                    leading: default,
-                                                                    text: "\r\n",
-                                                                    value: "\r\n",
-                                                                    trailing: default),
-                                                                SyntaxFactory.XmlTextLiteral(
-                                                                    leading: SyntaxFactory.TriviaList(
-                                                                        SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                    text: " ",
-                                                                    value: " ",
-                                                                    trailing: default))),
+                                                        NewCommentLine,
                                                         SyntaxFactory.XmlElement(
                                                             startTag: SyntaxFactory.XmlElementStartTag(
                                                                 name: SyntaxFactory.XmlName("param"),
@@ -379,10 +336,7 @@
                                     kind: SyntaxKind.StaticKeyword,
                                     trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space))),
                             returnType: SyntaxFactory.PredefinedType(
-                                keyword: SyntaxFactory.Token(
-                                    leading: default,
-                                    kind: SyntaxKind.VoidKeyword,
-                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space))),
+                                keyword: SyntaxFactory.Token(kind: SyntaxKind.VoidKeyword)),
                             explicitInterfaceSpecifier: default,
                             identifier: SyntaxFactory.Identifier("Set" + property.Identifier.ValueText),
                             typeParameterList: default,
@@ -417,11 +371,7 @@
                                         expression: SyntaxFactory.InvocationExpression(
                                             expression: SyntaxFactory.MemberAccessExpression(
                                                 kind: SyntaxKind.SimpleMemberAccessExpression,
-                                                expression: SyntaxFactory.IdentifierName(
-                                                    identifier: SyntaxFactory.Identifier(
-                                                        leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
-                                                        text: "element",
-                                                        trailing: default)),
+                                                expression: SyntaxFactory.IdentifierName("element"),
                                                 name: SyntaxFactory.IdentifierName("SetValue")),
                                             argumentList: SyntaxFactory.ArgumentList(
                                                 arguments: SyntaxFactory.SeparatedList(
@@ -432,12 +382,9 @@
                                                         SyntaxFactory.Argument(
                                                             expression: SyntaxFactory.IdentifierName("value")),
                                                     },
-                                                    new SyntaxToken[]
+                                                    new[]
                                                     {
-                                                        SyntaxFactory.Token(
-                                                            leading: default,
-                                                            kind: SyntaxKind.CommaToken,
-                                                            trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                     }))),
                                         semicolonToken: SyntaxFactory.Token(
                                             leading: default,
