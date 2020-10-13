@@ -161,7 +161,7 @@
                                                                 startTag: SyntaxFactory.XmlElementStartTag(
                                                                     name: SyntaxFactory.XmlName("returns")),
                                                                 content: SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                                                    SyntaxFactory.XmlText("Style property value.")),
+                                                                    SyntaxFactory.XmlText("Value property value.")),
                                                                 endTag: SyntaxFactory.XmlElementEndTag(
                                                                     name: SyntaxFactory.XmlName("returns"))),
                                                             SyntaxFactory.XmlText(
