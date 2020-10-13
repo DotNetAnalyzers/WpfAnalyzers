@@ -96,18 +96,18 @@
                                                                           qualifyMethodAccess != CodeStyleResult.No))
                                                                   .AddField(
                                                                       Field(
+                                                                          KnownSymbols.DependencyPropertyKey,
+                                                                          property,
+                                                                          Register("RegisterReadOnly", Nameof(property), property.Type, containingClass),
+                                                                          semanticModel!))
+                                                                  .AddField(
+                                                                      Field(
                                                                           KnownSymbols.DependencyProperty,
                                                                           property,
                                                                           SyntaxFactory.MemberAccessExpression(
                                                                               SyntaxKind.SimpleMemberAccessExpression,
                                                                               SyntaxFactory.IdentifierName(property.Identifier.ValueText + "PropertyKey"),
                                                                               SyntaxFactory.IdentifierName("DependencyProperty")),
-                                                                          semanticModel!))
-                                                                  .AddField(
-                                                                      Field(
-                                                                          KnownSymbols.DependencyPropertyKey,
-                                                                          property,
-                                                                          Register("RegisterReadOnly", Nameof(property), property.Type, containingClass),
                                                                           semanticModel!));
 
                                 if (syntaxRoot is CompilationUnitSyntax compilationUnit)
@@ -218,7 +218,7 @@
                                     argumentList: default,
                                     initializer: SyntaxFactory.EqualsValueClause(
                                         value: value)))),
-                        semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        semicolonToken: SyntaxFactory.Token(default, SyntaxKind.SemicolonToken, default));
 
                     SyntaxToken PublicOrPrivate()
                     {
@@ -232,7 +232,7 @@
                         if (Descriptors.WPF0060DocumentDependencyPropertyBackingMember.IsSuppressed(semanticModel) ||
                             keyword != SyntaxKind.PublicKeyword)
                         {
-                            return SyntaxFactory.Token(keyword);
+                            return SyntaxFactory.Token(default, keyword, SyntaxFactory.TriviaList(SyntaxFactory.Space));
                         }
 
                         return SyntaxFactory.Token(
