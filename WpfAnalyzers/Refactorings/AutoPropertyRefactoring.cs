@@ -23,6 +23,15 @@
                 left: SyntaxFactory.IdentifierName("System"),
                 right: SyntaxFactory.IdentifierName("Windows")));
 
+        private static readonly XmlTextSyntax StartComment = SyntaxFactory.XmlText(
+            textTokens: SyntaxFactory.TokenList(
+                SyntaxFactory.XmlTextLiteral(
+                    leading: SyntaxFactory.TriviaList(
+                        SyntaxFactory.DocumentationCommentExterior("///")),
+                    text: " ",
+                    value: " ",
+                    trailing: default)));
+
         private static readonly XmlTextSyntax NewCommentLine = SyntaxFactory.XmlText(
             textTokens: SyntaxFactory.TokenList(
                 SyntaxFactory.XmlTextNewLine(
@@ -35,6 +44,14 @@
                         SyntaxFactory.DocumentationCommentExterior("///")),
                     text: " ",
                     value: " ",
+                    trailing: default)));
+
+        private static readonly XmlTextSyntax EndComment = SyntaxFactory.XmlText(
+            textTokens: SyntaxFactory.TokenList(
+                SyntaxFactory.XmlTextNewLine(
+                    leading: default,
+                    text: "\r\n",
+                    value: "\r\n",
                     trailing: default)));
 
         public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
@@ -100,77 +117,31 @@
                                                     content: SyntaxFactory.List(
                                                         new XmlNodeSyntax[]
                                                         {
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextLiteral(
-                                                                        leading: SyntaxFactory.TriviaList(
-                                                                            SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                        text: " ",
-                                                                        value: " ",
-                                                                        trailing: default))),
+                                                            StartComment,
                                                             SyntaxFactory.XmlElement(
-                                                                startTag: SyntaxFactory.XmlElementStartTag(
-                                                                    SyntaxFactory.XmlName("summary")),
-                                                                content: SyntaxFactory.List(
+                                                                "summary",
+                                                                SyntaxFactory.List(
                                                                     new XmlNodeSyntax[]
                                                                     {
                                                                         SyntaxFactory.XmlText("Helper for getting "),
-                                                                        SyntaxFactory.XmlEmptyElement(
-                                                                            name: SyntaxFactory.XmlName("see"),
-                                                                            attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                                SyntaxFactory.XmlCrefAttribute(
-                                                                                    cref: SyntaxFactory.NameMemberCref(
-                                                                                        name: SyntaxFactory.IdentifierName(property.Identifier.ValueText + "Property"))))),
+                                                                        SeeCref(property.Identifier.ValueText + "Property"),
                                                                         SyntaxFactory.XmlText(" from "),
-                                                                        SyntaxFactory.XmlEmptyElement(
-                                                                            name: SyntaxFactory.XmlName("paramref"),
-                                                                            attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                                SyntaxFactory.XmlNameAttribute("element"))),
+                                                                        ParamRef("element"),
                                                                         SyntaxFactory.XmlText("."),
-                                                                    }),
-                                                                endTag: SyntaxFactory.XmlElementEndTag(
-                                                                    name: SyntaxFactory.XmlName("summary"))),
+                                                                    })),
+                                                            NewCommentLine,
+                                                            Param(
+                                                                "element",
+                                                                SeeCref("DependencyObject"),
+                                                                SyntaxFactory.XmlText(" to read "),
+                                                                SeeCref(property.Identifier.ValueText + "Property"),
+                                                                SyntaxFactory.XmlText(" from.")),
                                                             NewCommentLine,
                                                             SyntaxFactory.XmlElement(
-                                                                startTag: SyntaxFactory.XmlElementStartTag(
-                                                                    name: SyntaxFactory.XmlName("param"),
-                                                                    attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                        SyntaxFactory.XmlNameAttribute("element"))),
-                                                                content: SyntaxFactory.List(
-                                                                    new XmlNodeSyntax[]
-                                                                    {
-                                                                        SyntaxFactory.XmlEmptyElement(
-                                                                            name: SyntaxFactory.XmlName("see"),
-                                                                            attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                                SyntaxFactory.XmlCrefAttribute(
-                                                                                    cref: SyntaxFactory.NameMemberCref(
-                                                                                        name: SyntaxFactory.IdentifierName("DependencyObject"))))),
-                                                                        SyntaxFactory.XmlText(" to read "),
-                                                                        SyntaxFactory.XmlEmptyElement(
-                                                                            name: SyntaxFactory.XmlName("see"),
-                                                                            attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                                SyntaxFactory.XmlCrefAttribute(
-                                                                                    cref: SyntaxFactory.NameMemberCref(
-                                                                                        name: SyntaxFactory.IdentifierName(property.Identifier.ValueText + "Property"))))),
-                                                                        SyntaxFactory.XmlText(" from."),
-                                                                    }),
-                                                                endTag: SyntaxFactory.XmlElementEndTag(
-                                                                    name: SyntaxFactory.XmlName("param"))),
-                                                            NewCommentLine,
-                                                            SyntaxFactory.XmlElement(
-                                                                startTag: SyntaxFactory.XmlElementStartTag(
-                                                                    name: SyntaxFactory.XmlName("returns")),
-                                                                content: SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                                                    SyntaxFactory.XmlText("Value property value.")),
-                                                                endTag: SyntaxFactory.XmlElementEndTag(
-                                                                    name: SyntaxFactory.XmlName("returns"))),
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextNewLine(
-                                                                        leading: default,
-                                                                        text: "\r\n",
-                                                                        value: "\r\n",
-                                                                        trailing: default))),
+                                                                "returns",
+                                                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                                                     SyntaxFactory.XmlText("Value property value."))),
+                                                            EndComment,
                                                         }),
                                                     endOfComment: SyntaxFactory.Token(SyntaxKind.EndOfDocumentationCommentToken)))),
                                         kind: SyntaxKind.OpenBracketToken,
@@ -240,92 +211,30 @@
                                                 content: SyntaxFactory.List(
                                                     new XmlNodeSyntax[]
                                                     {
-                                                        SyntaxFactory.XmlText(
-                                                            textTokens: SyntaxFactory.TokenList(
-                                                                SyntaxFactory.XmlTextLiteral(
-                                                                    leading: SyntaxFactory.TriviaList(
-                                                                        SyntaxFactory.DocumentationCommentExterior("///")),
-                                                                    text: " ",
-                                                                    value: " ",
-                                                                    trailing: default))),
+                                                        StartComment,
                                                         SyntaxFactory.XmlElement(
-                                                            startTag: SyntaxFactory.XmlElementStartTag(
-                                                                SyntaxFactory.XmlName("summary")),
-                                                            content: SyntaxFactory.List(
+                                                            "summary",
+                                                            SyntaxFactory.List(
                                                                 new XmlNodeSyntax[]
                                                                 {
-                                                                    SyntaxFactory.XmlText(
-                                                                        textTokens: SyntaxFactory.TokenList(
-                                                                            SyntaxFactory.XmlTextLiteral("Helper for setting "))),
-                                                                    SyntaxFactory.XmlEmptyElement(
-                                                                        lessThanToken: SyntaxFactory.Token(SyntaxKind.LessThanToken),
-                                                                        name: SyntaxFactory.XmlName(
-                                                                            prefix: default,
-                                                                            localName: SyntaxFactory.Identifier(
-                                                                                leading: default,
-                                                                                text: "see",
-                                                                                trailing: default)),
-                                                                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                            SyntaxFactory.XmlCrefAttribute(
-                                                                                cref: SyntaxFactory.NameMemberCref(
-                                                                                    name: SyntaxFactory.IdentifierName(property.Identifier.ValueText + "Property")))),
-                                                                        slashGreaterThanToken: SyntaxFactory.Token(SyntaxKind.SlashGreaterThanToken)),
+                                                                    SyntaxFactory.XmlText("Helper for setting "),
+                                                                    SeeCref(property.Identifier.ValueText + "Property"),
                                                                     SyntaxFactory.XmlText(" on "),
-                                                                    SyntaxFactory.XmlEmptyElement(
-                                                                        lessThanToken: SyntaxFactory.Token(SyntaxKind.LessThanToken),
-                                                                        name: SyntaxFactory.XmlName("paramref"),
-                                                                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                            SyntaxFactory.XmlNameAttribute("element")),
-                                                                        slashGreaterThanToken: SyntaxFactory.Token(SyntaxKind.SlashGreaterThanToken)),
-                                                                    SyntaxFactory.XmlText(
-                                                                        textTokens: SyntaxFactory.TokenList(
-                                                                            SyntaxFactory.XmlTextLiteral("."))),
-                                                                }),
-                                                            endTag: SyntaxFactory.XmlElementEndTag(
-                                                                SyntaxFactory.XmlName("summary"))),
+                                                                    ParamRef("element"),
+                                                                    SyntaxFactory.XmlText("."),
+                                                                })),
                                                         NewCommentLine,
-                                                        SyntaxFactory.XmlElement(
-                                                            startTag: SyntaxFactory.XmlElementStartTag(
-                                                                name: SyntaxFactory.XmlName("param"),
-                                                                attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                    SyntaxFactory.XmlNameAttribute("element"))),
-                                                            content: SyntaxFactory.List(
-                                                                new XmlNodeSyntax[]
-                                                                {
-                                                                    SyntaxFactory.XmlEmptyElement(
-                                                                        name: SyntaxFactory.XmlName("see"),
-                                                                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                            SyntaxFactory.XmlCrefAttribute(
-                                                                                cref: SyntaxFactory.NameMemberCref(
-                                                                                    name: SyntaxFactory.IdentifierName("DependencyObject"))))),
-                                                                    SyntaxFactory.XmlText(" to set "),
-                                                                    SyntaxFactory.XmlEmptyElement(
-                                                                        name: SyntaxFactory.XmlName("see"),
-                                                                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                            SyntaxFactory.XmlCrefAttribute(
-                                                                                cref: SyntaxFactory.NameMemberCref(
-                                                                                    name: SyntaxFactory.IdentifierName( property.Identifier.ValueText + "Property"))))),
-                                                                    SyntaxFactory.XmlText(" on."),
-                                                                }),
-                                                            endTag: SyntaxFactory.XmlElementEndTag(
-                                                                SyntaxFactory.XmlName("param"))),
+                                                        Param(
+                                                            "element",
+                                                            SeeCref("DependencyObject"),
+                                                            SyntaxFactory.XmlText(" to set "),
+                                                            SeeCref(property.Identifier.ValueText + "Property"),
+                                                            SyntaxFactory.XmlText(" on.")),
                                                         NewCommentLine,
-                                                        SyntaxFactory.XmlElement(
-                                                            startTag: SyntaxFactory.XmlElementStartTag(
-                                                                name: SyntaxFactory.XmlName("param"),
-                                                                attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                    SyntaxFactory.XmlNameAttribute("value"))),
-                                                            content: SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                                                SyntaxFactory.XmlText(property.Identifier.ValueText + " property value.")),
-                                                            endTag: SyntaxFactory.XmlElementEndTag(
-                                                                SyntaxFactory.XmlName("param"))),
-                                                        SyntaxFactory.XmlText(
-                                                            textTokens: SyntaxFactory.TokenList(
-                                                                SyntaxFactory.XmlTextNewLine(
-                                                                    leading: default,
-                                                                    text: "\r\n",
-                                                                    value: "\r\n",
-                                                                    trailing: default))),
+                                                        Param(
+                                                            "value",
+                                                            SyntaxFactory.XmlText(property.Identifier.ValueText + " property value.")),
+                                                        EndComment,
                                                     }),
                                                 endOfComment: SyntaxFactory.Token(SyntaxKind.EndOfDocumentationCommentToken))),
                                         SyntaxFactory.Whitespace("        ")),
@@ -596,14 +505,7 @@
                                         content: SyntaxFactory.List(
                                             new XmlNodeSyntax[]
                                             {
-                                                SyntaxFactory.XmlText(
-                                                    textTokens: SyntaxFactory.TokenList(
-                                                        SyntaxFactory.XmlTextLiteral(
-                                                            leading: SyntaxFactory.TriviaList(
-                                                                SyntaxFactory.DocumentationCommentExterior("///")),
-                                                            text: " ",
-                                                            value: " ",
-                                                            trailing: default))),
+                                                StartComment,
                                                 SyntaxFactory.XmlElement(
                                                     startTag: SyntaxFactory.XmlElementStartTag(
                                                         name: SyntaxFactory.XmlName("summary")),
@@ -611,24 +513,12 @@
                                                         new XmlNodeSyntax[]
                                                         {
                                                             SyntaxFactory.XmlText("Identifies the "),
-                                                            SyntaxFactory.XmlEmptyElement(
-                                                                name: SyntaxFactory.XmlName("see"),
-                                                                attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
-                                                                    SyntaxFactory.XmlCrefAttribute(
-                                                                        cref: SyntaxFactory.NameMemberCref(
-                                                                            name: SyntaxFactory.IdentifierName(
-                                                                                identifier: property.Identifier.WithoutTrivia()))))),
+                                                            SeeCref(property.Identifier.ValueText),
                                                             SyntaxFactory.XmlText(" dependency property."),
                                                         }),
                                                     endTag: SyntaxFactory.XmlElementEndTag(
                                                         name: SyntaxFactory.XmlName("summary"))),
-                                                SyntaxFactory.XmlText(
-                                                    textTokens: SyntaxFactory.TokenList(
-                                                        SyntaxFactory.XmlTextNewLine(
-                                                            leading: default,
-                                                            text: "\r\n",
-                                                            value: "\r\n",
-                                                            trailing: default))),
+                                                EndComment,
                                             }),
                                         endOfComment: SyntaxFactory.Token(SyntaxKind.EndOfDocumentationCommentToken)))),
                             kind: keyword,
@@ -714,6 +604,36 @@
                             arguments: SyntaxFactory.SingletonSeparatedList(
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(identifier: property.Identifier)))));
+                }
+
+                static XmlEmptyElementSyntax SeeCref(string name)
+                {
+                    return SyntaxFactory.XmlEmptyElement(
+                        name: SyntaxFactory.XmlName("see"),
+                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
+                            SyntaxFactory.XmlCrefAttribute(
+                                cref: SyntaxFactory.NameMemberCref(
+                                    name: SyntaxFactory.IdentifierName(name)))));
+                }
+
+                static XmlEmptyElementSyntax ParamRef(string name)
+                {
+                    return SyntaxFactory.XmlEmptyElement(
+                        name: SyntaxFactory.XmlName("paramref"),
+                        attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
+                            SyntaxFactory.XmlNameAttribute(name)));
+                }
+
+                static XmlElementSyntax Param(string name, params XmlNodeSyntax[] content)
+                {
+                    return SyntaxFactory.XmlElement(
+                        startTag: SyntaxFactory.XmlElementStartTag(
+                            name: SyntaxFactory.XmlName("param"),
+                            attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
+                                SyntaxFactory.XmlNameAttribute(name))),
+                        content: SyntaxFactory.List(content),
+                        endTag: SyntaxFactory.XmlElementEndTag(
+                            SyntaxFactory.XmlName("param")));
                 }
             }
         }
