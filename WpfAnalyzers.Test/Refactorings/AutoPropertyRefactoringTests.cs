@@ -326,5 +326,51 @@ namespace N
 }";
             RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to readonly dependency property");
         }
+
+        [Test]
+        public static void StaticAutoProperty()
+        {
+            var before = @"
+namespace N
+{
+    public static class C
+    {
+        public static int ↓Number { get; set; }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class C
+    {
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.RegisterAttached(
+            ""Number"",
+            typeof(int),
+            typeof(C),
+            new PropertyMetadata(default(int)));
+
+        /// <summary>Helper for getting <see cref=""NumberProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""NumberProperty""/> from.</param>
+        /// <returns>Style property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+        public static int GetNumber(DependencyObject element)
+        {
+            return (int)element.GetValue(NumberProperty);
+        }
+
+        /// <summary>Helper for setting <see cref=""NumberProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to set <see cref=""NumberProperty""/> on.</param>
+        /// <param name=""value"">Number property value.</param>
+        public static void SetNumber(DependencyObject element, int value)
+        {
+            element.SetValue(NumberProperty, value);
+        }
+    }
+}";
+            RoslynAssert.Refactoring(Refactoring, before, after);
+        }
     }
 }
