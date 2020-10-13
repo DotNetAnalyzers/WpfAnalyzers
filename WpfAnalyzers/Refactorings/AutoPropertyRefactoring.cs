@@ -27,114 +27,113 @@
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
+
             if (syntaxRoot.FindNode(context.Span) is { } node &&
                 node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is { } property &&
                 property.IsAutoProperty() &&
-                property.Parent is ClassDeclarationSyntax containingClass)
+                property.Parent is ClassDeclarationSyntax containingClass &&
+                semanticModel is { } &&
+                    semanticModel.TryGetType(containingClass, context.CancellationToken, out var containingType) &&
+                    containingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
             {
                 if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                 }
                 else
                 {
-                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                                         .ConfigureAwait(false);
-                    if (semanticModel.TryGetType(containingClass, context.CancellationToken, out var containingType) &&
-                        containingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
+                    context.RegisterRefactoring(
+                        CodeAction.Create(
+                            "Change to dependency property",
+                            c => WithDependencyProperty(c),
+                            "Change to dependency property"));
+
+                    async Task<Document> WithDependencyProperty(CancellationToken cancellationToken)
+                    {
+                        var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
+                                                               .ConfigureAwait(false);
+                        var updatedClass = containingClass.ReplaceNode(
+                                                              property,
+                                                              Property(
+                                                                  property!.Identifier.ValueText + "Property",
+                                                                  property.Identifier.ValueText + "Property",
+                                                                  qualifyMethodAccess != CodeStyleResult.No))
+                                                          .AddField(
+                                                              Field(
+                                                                  KnownSymbols.DependencyProperty,
+                                                                  property,
+                                                                  Register("Register", Nameof(property), property.Type, containingClass),
+                                                                  semanticModel!));
+
+                        if (syntaxRoot is CompilationUnitSyntax compilationUnit)
+                        {
+                            return context.Document.WithSyntaxRoot(
+                                compilationUnit.ReplaceNode(containingClass, updatedClass)
+                                               .AddUsing(SystemWindows, semanticModel!));
+                        }
+
+                        return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
+                    }
+
+                    if (property.Setter() is { } setter &&
+                        setter.Modifiers.Any())
                     {
                         context.RegisterRefactoring(
                             CodeAction.Create(
-                                "Change to dependency property",
-                                c => WithDependencyProperty(c),
-                                "Change to dependency property"));
+                                "Change to readonly dependency property",
+                                c => WithReadOnlyDependencyProperty(c),
+                                "Change to readonly dependency property"));
 
-                        async Task<Document> WithDependencyProperty(CancellationToken cancellationToken)
+                        async Task<Document> WithReadOnlyDependencyProperty(CancellationToken cancellationToken)
                         {
                             var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
-                                                                        .ConfigureAwait(false);
+                                                                   .ConfigureAwait(false);
                             var updatedClass = containingClass.ReplaceNode(
                                                                   property,
                                                                   Property(
                                                                       property!.Identifier.ValueText + "Property",
-                                                                      property.Identifier.ValueText + "Property",
+                                                                      property.Identifier.ValueText + "PropertyKey",
                                                                       qualifyMethodAccess != CodeStyleResult.No))
+                                                              .AddField(
+                                                                  Field(
+                                                                      KnownSymbols.DependencyPropertyKey,
+                                                                      property,
+                                                                      Register("RegisterReadOnly", Nameof(property), property.Type, containingClass),
+                                                                      semanticModel!))
                                                               .AddField(
                                                                   Field(
                                                                       KnownSymbols.DependencyProperty,
                                                                       property,
-                                                                      Register("Register", Nameof(property), property.Type, containingClass),
+                                                                      SyntaxFactory.MemberAccessExpression(
+                                                                          SyntaxKind.SimpleMemberAccessExpression,
+                                                                          SyntaxFactory.IdentifierName(property.Identifier.ValueText + "PropertyKey"),
+                                                                          SyntaxFactory.IdentifierName("DependencyProperty")),
                                                                       semanticModel!));
 
                             if (syntaxRoot is CompilationUnitSyntax compilationUnit)
                             {
                                 return context.Document.WithSyntaxRoot(
-                                        compilationUnit.ReplaceNode(containingClass, updatedClass)
-                                                       .AddUsing(SystemWindows, semanticModel!));
+                                    compilationUnit.ReplaceNode(containingClass, updatedClass)
+                                                   .AddUsing(SystemWindows, semanticModel!));
                             }
 
                             return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
                         }
-
-                        if (property.Setter() is { } setter &&
-                            setter.Modifiers.Any())
-                        {
-                            context.RegisterRefactoring(
-                                CodeAction.Create(
-                                    "Change to readonly dependency property",
-                                    c => WithReadOnlyDependencyProperty(c),
-                                    "Change to readonly dependency property"));
-
-                            async Task<Document> WithReadOnlyDependencyProperty(CancellationToken cancellationToken)
-                            {
-                                var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
-                                                                            .ConfigureAwait(false);
-                                var updatedClass = containingClass.ReplaceNode(
-                                                                      property,
-                                                                      Property(
-                                                                          property!.Identifier.ValueText + "Property",
-                                                                          property.Identifier.ValueText + "PropertyKey",
-                                                                          qualifyMethodAccess != CodeStyleResult.No))
-                                                                  .AddField(
-                                                                      Field(
-                                                                          KnownSymbols.DependencyPropertyKey,
-                                                                          property,
-                                                                          Register("RegisterReadOnly", Nameof(property), property.Type, containingClass),
-                                                                          semanticModel!))
-                                                                  .AddField(
-                                                                      Field(
-                                                                          KnownSymbols.DependencyProperty,
-                                                                          property,
-                                                                          SyntaxFactory.MemberAccessExpression(
-                                                                              SyntaxKind.SimpleMemberAccessExpression,
-                                                                              SyntaxFactory.IdentifierName(property.Identifier.ValueText + "PropertyKey"),
-                                                                              SyntaxFactory.IdentifierName("DependencyProperty")),
-                                                                          semanticModel!));
-
-                                if (syntaxRoot is CompilationUnitSyntax compilationUnit)
-                                {
-                                    return context.Document.WithSyntaxRoot(
-                                            compilationUnit.ReplaceNode(containingClass, updatedClass)
-                                                           .AddUsing(SystemWindows, semanticModel!));
-                                }
-
-                                return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
-                            }
-                        }
                     }
-                }
 
-                PropertyDeclarationSyntax Property(string field, string keyField, bool qualifyMethodAccess)
-                {
-                    return property.WithIdentifier(property.Identifier.WithTrailingTrivia(SyntaxFactory.LineFeed))
-                                   .WithAccessorList(
-                        SyntaxFactory.AccessorList(
-                            openBraceToken: SyntaxFactory.Token(
-                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
-                                kind: SyntaxKind.OpenBraceToken,
-                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
-                            accessors: SyntaxFactory.List(
-                                new[]
-                                {
+                    PropertyDeclarationSyntax Property(string field, string keyField, bool qualifyMethodAccess)
+                    {
+                        return property.WithIdentifier(property.Identifier.WithTrailingTrivia(SyntaxFactory.LineFeed))
+                                       .WithAccessorList(
+                            SyntaxFactory.AccessorList(
+                                openBraceToken: SyntaxFactory.Token(
+                                    leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                    kind: SyntaxKind.OpenBraceToken,
+                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
+                                accessors: SyntaxFactory.List(
+                                    new[]
+                                    {
                                     SyntaxFactory.AccessorDeclaration(
                                         kind: SyntaxKind.GetAccessorDeclaration,
                                         attributeLists: property.Getter()!.AttributeLists,
@@ -166,7 +165,7 @@
                                                 expression: MethodAccess("SetValue"),
                                                 argumentList: SyntaxFactory.ArgumentList(
                                                     arguments: SyntaxFactory.SeparatedList(
-                                                        new []
+                                                        new[]
                                                         {
                                                             SyntaxFactory.Argument(
                                                                 expression: SyntaxFactory.IdentifierName(keyField)),
@@ -178,20 +177,21 @@
                                             kind: SyntaxKind.SemicolonToken,
                                             trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)))
                                                  .WithLeadingTrivia(SyntaxFactory.Whitespace("            ")),
-                                }),
-                            closeBraceToken: SyntaxFactory.Token(
-                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
-                                kind: SyntaxKind.CloseBraceToken,
-                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))));
+                                    }),
+                                closeBraceToken: SyntaxFactory.Token(
+                                    leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                    kind: SyntaxKind.CloseBraceToken,
+                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))));
 
-                    ExpressionSyntax MethodAccess(string name)
-                    {
-                        return qualifyMethodAccess
-                            ? (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
-                                kind: SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName(name))
-                            : SyntaxFactory.IdentifierName(name);
+                        ExpressionSyntax MethodAccess(string name)
+                        {
+                            return qualifyMethodAccess
+                                ? (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
+                                    kind: SyntaxKind.SimpleMemberAccessExpression,
+                                    expression: SyntaxFactory.ThisExpression(),
+                                    name: SyntaxFactory.IdentifierName(name))
+                                : SyntaxFactory.IdentifierName(name);
+                        }
                     }
                 }
 
@@ -253,45 +253,22 @@
                                                             trailing: default))),
                                                 SyntaxFactory.XmlElement(
                                                     startTag: SyntaxFactory.XmlElementStartTag(
-                                                        name: SyntaxFactory.XmlName(localName: SyntaxFactory.Identifier(text: "summary"))),
+                                                        name: SyntaxFactory.XmlName("summary")),
                                                     content: SyntaxFactory.List(
                                                         new XmlNodeSyntax[]
                                                         {
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextLiteral("Identifies the "))),
+                                                            SyntaxFactory.XmlText("Identifies the "),
                                                             SyntaxFactory.XmlEmptyElement(
-                                                                lessThanToken: SyntaxFactory.Token(SyntaxKind.LessThanToken),
-                                                                name: SyntaxFactory.XmlName(
-                                                                    prefix: default,
-                                                                    localName: SyntaxFactory.Identifier(
-                                                                        leading: default,
-                                                                        text: "see",
-                                                                        trailing: default)),
+                                                                name: SyntaxFactory.XmlName("see"),
                                                                 attributes: SyntaxFactory.SingletonList<XmlAttributeSyntax>(
                                                                     SyntaxFactory.XmlCrefAttribute(
-                                                                        name: SyntaxFactory.XmlName(
-                                                                            prefix: default,
-                                                                            localName: SyntaxFactory.Identifier(
-                                                                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Space),
-                                                                                text: "cref",
-                                                                                trailing: default)),
-                                                                        equalsToken: SyntaxFactory.Token(SyntaxKind.EqualsToken),
-                                                                        startQuoteToken: SyntaxFactory.Token(SyntaxKind.DoubleQuoteToken),
                                                                         cref: SyntaxFactory.NameMemberCref(
                                                                             name: SyntaxFactory.IdentifierName(
-                                                                                identifier: property.Identifier.WithoutTrivia()),
-                                                                            parameters: default),
-                                                                        endQuoteToken: SyntaxFactory.Token(SyntaxKind.DoubleQuoteToken))),
-                                                                slashGreaterThanToken: SyntaxFactory.Token(SyntaxKind.SlashGreaterThanToken)),
-                                                            SyntaxFactory.XmlText(
-                                                                textTokens: SyntaxFactory.TokenList(
-                                                                    SyntaxFactory.XmlTextLiteral(" dependency property."))),
+                                                                                identifier: property.Identifier.WithoutTrivia()))))),
+                                                            SyntaxFactory.XmlText(" dependency property."),
                                                         }),
                                                     endTag: SyntaxFactory.XmlElementEndTag(
-                                                        lessThanSlashToken: SyntaxFactory.Token(SyntaxKind.LessThanSlashToken),
-                                                        name: SyntaxFactory.XmlName(localName: SyntaxFactory.Identifier(text: "summary")),
-                                                        greaterThanToken: SyntaxFactory.Token(SyntaxKind.GreaterThanToken))),
+                                                        name: SyntaxFactory.XmlName("summary"))),
                                                 SyntaxFactory.XmlText(
                                                     textTokens: SyntaxFactory.TokenList(
                                                         SyntaxFactory.XmlTextNewLine(
