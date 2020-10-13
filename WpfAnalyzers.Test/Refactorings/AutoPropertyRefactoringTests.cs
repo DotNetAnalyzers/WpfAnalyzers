@@ -372,5 +372,51 @@ namespace N
 }";
             RoslynAssert.Refactoring(Refactoring, before, after);
         }
+
+        [Test]
+        public static void StaticAutoProperty2()
+        {
+            var before = @"
+namespace N
+{
+    public static class Foo
+    {
+        public static double ↓Value { get; set; }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
+            ""Value"",
+            typeof(double),
+            typeof(Foo),
+            new PropertyMetadata(default(double)));
+
+        /// <summary>Helper for getting <see cref=""ValueProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""ValueProperty""/> from.</param>
+        /// <returns>Style property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+        public static double GetValue(DependencyObject element)
+        {
+            return (double)element.GetValue(ValueProperty);
+        }
+
+        /// <summary>Helper for setting <see cref=""ValueProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DependencyObject""/> to set <see cref=""ValueProperty""/> on.</param>
+        /// <param name=""value"">Value property value.</param>
+        public static void SetValue(DependencyObject element, double value)
+        {
+            element.SetValue(ValueProperty, value);
+        }
+    }
+}";
+            RoslynAssert.Refactoring(Refactoring, before, after);
+        }
     }
 }
