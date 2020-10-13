@@ -21,12 +21,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.1.1</Version>
+    <Version>3.2.0</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      3.2.0
+      FEATURE: Change to dependency property refactorings.
+      BUGFIX: switch expression WPF0072
+      BUGFIX: Only change SetValue to SetCurrentValue when in lambda
       3.1.1
       Handle regressions in Roslyn 3.7
       3.1.0

@@ -13,7 +13,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(AutoPropertyRefactoring))]
+    [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(ReadOnlyRefactoring))]
     [Shared]
     internal class ReadOnlyRefactoring : CodeRefactoringProvider
     {
@@ -58,9 +58,6 @@
                             context.Document.WithSyntaxRoot(
                                 syntaxRoot.ReplaceNode(containingClass, updatedClass)));
                     }
-                }
-                else if (type == KnownSymbols.DependencyPropertyKey)
-                {
                 }
 
                 static FieldDeclarationSyntax Field(QualifiedType type, string name, ExpressionSyntax value)

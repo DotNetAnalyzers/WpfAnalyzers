@@ -1,3 +1,8 @@
+#### 3.2.0
+* FEATURE: Change to dependency property refactorings.
+* BUGFIX: switch expression WPF0072
+* BUGFIX: Only change SetValue to SetCurrentValue when in lambda
+
 #### 3.1.1
 * Handle regressions in Roslyn 3.7
 
