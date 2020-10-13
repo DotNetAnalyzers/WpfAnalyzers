@@ -23,12 +23,20 @@
                 var root = diagnostic.Location.SourceTree.GetRoot(context.CancellationToken);
                 if (root.FindNode(diagnostic.Location.SourceSpan) is { } node &&
                     node.TryFirstAncestorOrSelf(out IdentifierNameSyntax? identifierName) &&
-                    context.GetSemanticModel(identifierName.SyntaxTree) is { } semanticModel &&
-                    semanticModel.TryGetSymbol(identifierName, context.CancellationToken, out var symbol) &&
-                    FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
-                    fieldOrProperty.Type == KnownSymbols.DependencyPropertyKey)
+                    context.GetSemanticModel(identifierName.SyntaxTree) is { } semanticModel)
                 {
-                    context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
+                    if (semanticModel.TryGetSymbol(identifierName, context.CancellationToken, out var symbol) &&
+                        FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
+                        fieldOrProperty.Type == KnownSymbols.DependencyPropertyKey)
+                    {
+                        context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
+                    }
+
+                    if (identifierName.Parent is MethodDeclarationSyntax method &&
+                        ClrMethod.IsAttachedSet(method, semanticModel, context.CancellationToken, out _, out _))
+                    {
+                        context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
+                    }
                 }
             }
         }
