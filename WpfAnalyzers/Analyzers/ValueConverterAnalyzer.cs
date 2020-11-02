@@ -66,7 +66,7 @@
                                 sourceType != QualifiedType.System.Object &&
                                 attribute.TryFindArgument(0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
-                                TypeOf.TryGetType(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
+                                TypeSymbol.TryGet(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
                                 !Equals(argType, sourceType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes, arg.GetLocation(), sourceType));
@@ -74,7 +74,7 @@
 
                             if (attribute.TryFindArgument(1, "targetType", out arg) &&
                                 arg.Expression is TypeOfExpressionSyntax targetTypeOf &&
-                                TypeOf.TryGetType(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
+                                TypeSymbol.TryGet(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
                                 !Equals(argType, targetType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes, arg.GetLocation(), targetType));

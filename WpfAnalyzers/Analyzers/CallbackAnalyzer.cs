@@ -472,7 +472,7 @@
                         {
                             return invocation.TryGetArgumentAtIndex(1, out var arg) &&
                                    arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                                   TypeOf.TryGetType(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+                                   TypeSymbol.TryGet(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
                         }
 
                     case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when
@@ -489,7 +489,7 @@
             return false;
         }
 
-        private struct OnPropertyChangedDocumentationErrors : IEnumerable<(Location Location, string Text)>
+        private readonly struct OnPropertyChangedDocumentationErrors : IEnumerable<(Location Location, string Text)>
         {
 #pragma warning disable RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             private readonly SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> method;

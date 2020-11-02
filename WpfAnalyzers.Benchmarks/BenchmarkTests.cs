@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Benchmarks
+﻿namespace WpfAnalyzers.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +8,7 @@ namespace WpfAnalyzers.Benchmarks
     using NUnit.Framework;
     using WpfAnalyzers.Benchmarks.Benchmarks;
 
+    [Ignore("Broken By Roslyn 3.5.0")]
     public static class BenchmarkTests
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbols).Assembly

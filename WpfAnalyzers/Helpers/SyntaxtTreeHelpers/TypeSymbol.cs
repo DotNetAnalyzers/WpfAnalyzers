@@ -8,13 +8,23 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class TypeOf
+    internal static class TypeSymbol
     {
-        internal static bool TryGetType(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? type)
+        internal static bool Equals(ITypeSymbol x, ITypeSymbol y)
+        {
+            if (x.IsReferenceType)
+            {
+                return SymbolEqualityComparer.IncludeNullability.Equals(x, y);
+            }
+
+            return SymbolEqualityComparer.Default.Equals(x, y);
+        }
+
+        internal static bool TryGet(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? type)
         {
             if (expression is { Type: { } typeSyntax })
             {
-                type = TryGetType(typeSyntax, containingType, semanticModel, cancellationToken);
+                type = TryGet(typeSyntax, containingType, semanticModel, cancellationToken);
                 return type is { };
             }
 
@@ -22,7 +32,7 @@
             return false;
         }
 
-        internal static ITypeSymbol? TryGetType(TypeSyntax typeSyntax, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static ITypeSymbol? TryGet(TypeSyntax typeSyntax, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetType(typeSyntax, cancellationToken, out var type) &&
                 type.Kind == SymbolKind.TypeParameter)

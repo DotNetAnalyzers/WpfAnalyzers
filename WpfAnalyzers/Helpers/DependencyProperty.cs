@@ -111,14 +111,41 @@
         internal static bool TryGetRegisteredType(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out _))
+            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out var method))
             {
                 if (invocation.TryGetArgumentAtIndex(1, out var typeArg) &&
                     typeArg.Expression is TypeOfExpressionSyntax { Type: { } typeSyntax } &&
-                    TypeOf.TryGetType(typeSyntax, backing.ContainingType, semanticModel, cancellationToken) is { } type)
+                    TypeSymbol.TryGet(typeSyntax, backing.ContainingType, semanticModel, cancellationToken) is { } type)
                 {
+                    if (type.IsReferenceType &&
+                        (semanticModel.GetNullableContext(invocation.SpanStart) & NullableContext.Enabled) == NullableContext.Enabled &&
+                        IsDefaultValueNull())
+                    {
+                        result = type.WithNullableAnnotation(NullableAnnotation.Annotated);
+                        return true;
+                    }
+
                     result = type;
                     return true;
+
+                    bool IsDefaultValueNull()
+                    {
+                        if (method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
+                            invocation.TryFindArgument(parameter, out var metadataArg) &&
+                            metadataArg is { Expression: ObjectCreationExpressionSyntax propertyMetaData } &&
+                            PropertyMetadata.TryGetDefaultValue(propertyMetaData, semanticModel, cancellationToken, out var defaultValue))
+                        {
+                            return defaultValue switch
+                            {
+                                { Expression: DefaultExpressionSyntax _ } => true,
+                                { Expression: LiteralExpressionSyntax { Token: { ValueText: "null" } } } => true,
+                                { Expression: CastExpressionSyntax { Expression: LiteralExpressionSyntax { Token: { ValueText: "null" } } } } => true,
+                                _ => false,
+                            };
+                        }
+
+                        return true;
+                    }
                 }
 
                 return false;

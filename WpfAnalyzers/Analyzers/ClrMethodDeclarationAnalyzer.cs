@@ -102,7 +102,7 @@
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !Equals(method.ReturnType, registeredType))
+                        !TypeSymbol.Equals(method.ReturnType, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -112,11 +112,11 @@
                                 registeredType));
                     }
 
-                    if (Gu.Roslyn.AnalyzerExtensions.Attribute.TryFind(methodDeclaration, KnownSymbols.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
+                    if (Attribute.TryFind(methodDeclaration, KnownSymbols.AttachedPropertyBrowsableForTypeAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {
                         if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
-                            TypeOf.TryGetType(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
+                            TypeSymbol.TryGet(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
                             !argumentType.IsAssignableTo(element.Type, context.Compilation))
                         {
                             context.ReportDiagnostic(
@@ -212,7 +212,7 @@
 
                     if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         method.Parameters.TryElementAt(1, out var valueParameter) &&
-                        !Equals(valueParameter.Type, registeredType))
+                        !TypeSymbol.Equals(valueParameter.Type, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
