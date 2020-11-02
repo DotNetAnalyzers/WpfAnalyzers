@@ -91,8 +91,8 @@
                                 objectCreation.ArgumentList.GetLocation(),
                                 ImmutableDictionary.CreateRange(new[]
                                 {
-                                    new KeyValuePair<string, string>(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
-                                    new KeyValuePair<string, string>(nameof(TypeOfExpressionSyntax), context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)),
+                                    new KeyValuePair<string, string?>(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                    new KeyValuePair<string, string?>(nameof(TypeOfExpressionSyntax), context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)),
                                 })));
                     }
 

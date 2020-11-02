@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -55,8 +57,11 @@
             {
                 if (EventManager.TryGetExpectedCallbackName(identifierName.Identifier.ValueText, out var expectedName))
                 {
-                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("ExpectedName", expectedName) });
-                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            descriptor,
+                            callbackArg.GetLocation(),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName), expectedName));
                 }
                 else
                 {
@@ -70,10 +75,12 @@
             {
                 if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))
                 {
-                    var properties = ImmutableDictionary.CreateRange(
-                        new[] { new KeyValuePair<string, string>("ExpectedName", expectedName), });
                     context.ReportDiagnostic(
-                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), properties, expectedName));
+                        Diagnostic.Create(
+                            descriptor,
+                            callbackArg.GetLocation(),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
+                            expectedName));
                 }
                 else
                 {

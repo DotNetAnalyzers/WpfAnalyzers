@@ -34,7 +34,7 @@
                     Diagnostic.Create(
                         Descriptors.WPF0083UseConstructorArgumentAttribute,
                         propertyDeclaration.Identifier.GetLocation(),
-                        ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
+                        ImmutableDictionary<string, string?>.Empty.Add(nameof(ConstructorArgument), parameterName),
                         parameterName));
             }
         }

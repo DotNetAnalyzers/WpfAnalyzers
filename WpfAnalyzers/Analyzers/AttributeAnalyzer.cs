@@ -97,7 +97,7 @@
                         Diagnostic.Create(
                             Descriptors.WPF0082ConstructorArgument,
                             argument.GetLocation(),
-                            ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(nameof(ConstructorArgument), parameterName) }),
+                            ImmutableDictionary<string, string?>.Empty.Add(nameof(ConstructorArgument), parameterName),
                             parameterName));
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XamlSetMarkupExtensionAttribute, context.CancellationToken, out _) &&
