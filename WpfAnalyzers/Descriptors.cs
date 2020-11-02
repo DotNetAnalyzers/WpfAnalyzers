@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers
+﻿#pragma warning disable SA1118 // Parameter should not span multiple lines
+namespace WpfAnalyzers
 {
     using Microsoft.CodeAnalysis;
 

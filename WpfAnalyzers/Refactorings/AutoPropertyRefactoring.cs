@@ -77,16 +77,16 @@
                     Task<Document> WithAttachedProperty()
                     {
                         var updatedClass = containingClass.RemoveNode(property, SyntaxRemoveOptions.KeepUnbalancedDirectives)
-                                                          .AddMethod(GetMethod(property))
-                                                          .AddMethod(SetMethod(property))
+                                                          .AddMethod(GetMethod(property!))
+                                                          .AddMethod(SetMethod(property!))
                                                           .AddField(
                                                               Field(
                                                                   withStandardDocs: false,
                                                                   KnownSymbols.DependencyProperty,
-                                                                  property,
+                                                                  property!,
                                                                   Register(
                                                                       "RegisterAttached",
-                                                                      SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(property.Identifier.ValueText)),
+                                                                      SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(property!.Identifier.ValueText)),
                                                                       property.Type,
                                                                       containingClass)));
 

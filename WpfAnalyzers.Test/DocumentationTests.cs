@@ -1,4 +1,4 @@
-#pragma warning disable CA1055 // Uri return values should not be strings
+﻿#pragma warning disable CA1055 // Uri return values should not be strings
 #pragma warning disable CA1056 // Uri properties should not be strings
 #pragma warning disable CA1721 // Property names should not match get methods
 namespace WpfAnalyzers.Test
@@ -228,7 +228,7 @@ namespace WpfAnalyzers.Test
 | Topic    | Value
 | :--      | :--
 | Id       | {descriptor.Id}
-| Severity | {descriptor.DefaultSeverity.ToString()}
+| Severity | {descriptor.DefaultSeverity}
 | Enabled  | {(descriptor.IsEnabledByDefault ? "True" : "False")}
 | Category | {descriptor.Category}
 | Code     | [<TYPENAME>](<URL>)

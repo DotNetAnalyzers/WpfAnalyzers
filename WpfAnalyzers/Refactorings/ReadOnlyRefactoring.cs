@@ -45,7 +45,7 @@
                                     register,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(variable.Identifier.Text + "Key"),
+                                        SyntaxFactory.IdentifierName(variable!.Identifier.Text + "Key"),
                                         SyntaxFactory.IdentifierName("DependencyProperty")))
                                 .AddField(
                                     Field(

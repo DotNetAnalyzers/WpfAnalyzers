@@ -92,9 +92,11 @@
                                         methodDeclaration.Identifier.GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add(
                                             nameof(DocComment),
+#pragma warning disable SA1118 // Parameter should not span multiple lines
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
                                             $"/// {DocComment.Format(paramFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
                                             $"/// {DocComment.Format(returnsFormat, registeredName)}\n")));
+#pragma warning restore SA1118 // Parameter should not span multiple lines
                             }
                         }
                     }
@@ -199,9 +201,11 @@
                                         methodDeclaration.Identifier.GetLocation(),
                                         ImmutableDictionary<string, string>.Empty.Add(
                                             nameof(DocComment),
+#pragma warning disable SA1118 // Parameter should not span multiple lines
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
                                             $"/// {DocComment.Format(elementFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
                                             $"/// {DocComment.Format(valueFormat, value.Name, registeredName)}\n")));
+#pragma warning restore SA1118 // Parameter should not span multiple lines
                             }
                         }
                     }
