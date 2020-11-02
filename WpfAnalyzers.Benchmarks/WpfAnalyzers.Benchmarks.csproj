@@ -4,7 +4,6 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>Exe</OutputType>
     <StartupObject>WpfAnalyzers.Benchmarks.Program</StartupObject>
-    <CodeAnalysisRuleSet>WpfAnalyzers.Benchmarks.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
   <PropertyGroup>

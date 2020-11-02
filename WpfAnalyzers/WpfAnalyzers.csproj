@@ -5,7 +5,6 @@
     <LangVersion>latest</LangVersion>
     <Nullable>Enable</Nullable>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <CodeAnalysisRuleSet>WpfAnalyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>
