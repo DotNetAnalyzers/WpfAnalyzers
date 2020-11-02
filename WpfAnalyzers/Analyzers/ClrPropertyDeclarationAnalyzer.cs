@@ -171,7 +171,7 @@
                 using var walker = BorrowAndVisit(declaration, () => new PropertyDeclarationWalker());
                 getCall = walker.getCall;
                 setCall = walker.setCall;
-                return getCall != null || setCall != null;
+                return getCall is { } || setCall is { };
             }
 
             protected override void Clear()

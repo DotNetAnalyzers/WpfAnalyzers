@@ -205,7 +205,7 @@
                 setter = getter;
             }
 
-            return setter.Symbol != null;
+            return setter.Symbol is { };
         }
     }
 }

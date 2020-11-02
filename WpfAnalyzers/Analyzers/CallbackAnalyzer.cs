@@ -375,7 +375,7 @@
                         context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
                         Equals(symbol, method))
                     {
-                        if (invocation != null)
+                        if (invocation is { })
                         {
                             invocation = null;
                             return false;
@@ -386,7 +386,7 @@
                 }
             }
 
-            return invocation != null;
+            return invocation is { };
         }
 
         private static PooledSet<ArgumentSyntax> GetCallbackArguments(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration)

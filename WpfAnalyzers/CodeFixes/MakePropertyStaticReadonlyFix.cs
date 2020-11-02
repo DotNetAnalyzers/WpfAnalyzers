@@ -49,7 +49,7 @@
                 return property.RemoveNode(setter, SyntaxRemoveOptions.KeepNoTrivia);
             }
 
-            if (property.ExpressionBody != null)
+            if (property.ExpressionBody is { })
             {
                 return property
                        .WithInitializer(SyntaxFactory.EqualsValueClause(property.ExpressionBody.Expression))

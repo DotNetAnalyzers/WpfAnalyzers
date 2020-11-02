@@ -67,7 +67,7 @@
 
             TypeOfExpressionSyntax TypeOf(ITypeSymbol? t)
             {
-                if (t != null)
+                if (t is { })
                 {
                     return (TypeOfExpressionSyntax)editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(t));
                 }

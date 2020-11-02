@@ -30,7 +30,7 @@ namespace WpfAnalyzers
                 }
             }
 
-            return type != null;
+            return type is { };
         }
     }
 }

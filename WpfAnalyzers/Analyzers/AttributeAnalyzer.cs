@@ -275,7 +275,7 @@
                         return true;
                     default:
                         result = a.Expression;
-                        return result != null;
+                        return result is { };
                 }
             }
         }

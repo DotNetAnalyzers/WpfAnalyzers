@@ -14,7 +14,7 @@ namespace WpfAnalyzers
         {
         }
 
-        internal bool IsSuccess => !this.HasError && this.GetValue != null;
+        internal bool IsSuccess => !this.HasError && this.GetValue is { };
 
         internal bool HasError { get; private set; }
 
@@ -26,7 +26,7 @@ namespace WpfAnalyzers
         {
             if (DependencyObject.TryGetGetValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
             {
-                if (this.Property != null)
+                if (this.Property is { })
                 {
                     this.HasError = true;
                     this.GetValue = null;

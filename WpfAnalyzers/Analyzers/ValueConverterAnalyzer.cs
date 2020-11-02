@@ -62,7 +62,7 @@
                     {
                         if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                         {
-                            if (sourceType != null &&
+                            if (sourceType is { } &&
                                 sourceType != QualifiedType.System.Object &&
                                 attribute.TryFindArgument(0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&

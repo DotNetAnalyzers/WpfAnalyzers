@@ -66,7 +66,7 @@
                     }
                     else if (eventDeclaration.Parent is TypeDeclarationSyntax typeDeclaration &&
                              BackingFieldWalker.TryGetRegistration(typeDeclaration, addIdentifier.Identifier.ValueText, out var registration) &&
-                             registration.ArgumentList != null)
+                             registration.ArgumentList is { })
                     {
                         if (registration.TryGetArgumentAtIndex(0, out var nameARg) &&
                             nameARg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&
@@ -124,7 +124,7 @@
                 using var walker = BorrowAndVisit(eventDeclaration, () => new EventDeclarationWalker());
                 addCall = walker.addCall;
                 removeCall = walker.removeCall;
-                return addCall != null || removeCall != null;
+                return addCall is { } || removeCall is { };
             }
 
             protected override void Clear()

@@ -40,7 +40,7 @@
                     {
                         if (TryFindTemplatePartType(attribute, out var partType))
                         {
-                            if (partType != null &&
+                            if (partType is { } &&
                                 context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
                                 !IsValidCast(partType, castType, cast, context.Compilation))
                             {
@@ -118,7 +118,7 @@
                 type = arg.Value.Value as INamedTypeSymbol;
             }
 
-            return type != null;
+            return type is { };
         }
 
         private static bool TryGetCastType(InvocationExpressionSyntax invocation, [NotNullWhen(true)] out ExpressionSyntax? cast, [NotNullWhen(true)] out SyntaxNode? type)

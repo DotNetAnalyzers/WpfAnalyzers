@@ -34,7 +34,7 @@
             }
 
             defaults = temp;
-            return defaults != null;
+            return defaults is { };
         }
 
         internal static bool TryGetConversionTypes(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? sourceType, [NotNullWhen(true)] out ITypeSymbol? targetType)

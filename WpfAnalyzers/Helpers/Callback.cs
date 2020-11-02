@@ -54,7 +54,7 @@
 
         internal static bool IsSingleExpression(MethodDeclarationSyntax method)
         {
-            if (method.ExpressionBody != null)
+            if (method.ExpressionBody is { })
             {
                 return true;
             }

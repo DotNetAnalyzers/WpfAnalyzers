@@ -40,7 +40,7 @@
                 }
 
                 var toAdd = diagnostic.Properties.Values.Select(x => CreateAttribute(x, attribute))
-                                      .Where(a => a != null)
+                                      .Where(a => a is { })
                                       .ToArray();
                 if (toAdd.Any())
                 {

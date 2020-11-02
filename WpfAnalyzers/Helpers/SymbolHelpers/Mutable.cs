@@ -12,7 +12,7 @@ namespace WpfAnalyzers
                 return false;
             }
 
-            while (type != null &&
+            while (type is { } &&
                    type != KnownSymbols.Object)
             {
                 foreach (var member in type.GetMembers())

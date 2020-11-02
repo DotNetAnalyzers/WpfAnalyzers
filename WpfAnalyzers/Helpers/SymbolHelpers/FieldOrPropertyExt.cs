@@ -20,16 +20,16 @@ namespace WpfAnalyzers
             {
                 if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? declaration))
                 {
-                    if (declaration.Initializer != null)
+                    if (declaration.Initializer is { })
                     {
                         value = declaration.Initializer.Value;
                     }
-                    else if (declaration.ExpressionBody != null)
+                    else if (declaration.ExpressionBody is { })
                     {
                         value = declaration.ExpressionBody.Expression;
                     }
 
-                    return value != null;
+                    return value is { };
                 }
             }
 

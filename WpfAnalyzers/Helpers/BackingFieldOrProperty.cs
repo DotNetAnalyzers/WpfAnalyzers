@@ -28,7 +28,7 @@
 
         internal static bool TryCreateForDependencyProperty(ISymbol symbol, out BackingFieldOrProperty result)
         {
-            if (symbol != null &&
+            if (symbol is { } &&
                 symbol.IsStatic &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
@@ -43,7 +43,7 @@
 
         internal static bool TryCreateCandidate(ISymbol symbol, out BackingFieldOrProperty result)
         {
-            if (symbol != null &&
+            if (symbol is { } &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
             {

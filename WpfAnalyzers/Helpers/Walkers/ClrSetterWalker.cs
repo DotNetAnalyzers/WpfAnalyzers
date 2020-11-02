@@ -14,7 +14,7 @@ namespace WpfAnalyzers
         {
         }
 
-        internal bool IsSuccess => !this.HasError && this.Arguments != null;
+        internal bool IsSuccess => !this.HasError && this.Arguments is { };
 
         internal bool HasError { get; private set; }
 
@@ -30,7 +30,7 @@ namespace WpfAnalyzers
         {
             if (DependencyObject.TryGetSetValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
             {
-                if (this.SetValue != null || this.SetCurrentValue != null)
+                if (this.SetValue is { } || this.SetCurrentValue is { })
                 {
                     this.HasError = true;
                     this.SetValue = null;
@@ -44,7 +44,7 @@ namespace WpfAnalyzers
 
             if (DependencyObject.TryGetSetCurrentValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
             {
-                if (this.SetValue != null || this.SetCurrentValue != null)
+                if (this.SetValue is { } || this.SetCurrentValue is { })
                 {
                     this.HasError = true;
                     this.SetValue = null;

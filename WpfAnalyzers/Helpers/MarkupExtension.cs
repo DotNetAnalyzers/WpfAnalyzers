@@ -15,7 +15,7 @@
             if (classDeclaration.TryFindMethod("ProvideValue", out var convertMethod) &&
                 convertMethod.ReturnType is PredefinedTypeSyntax predefinedType &&
                 predefinedType.Keyword.ValueText == "object" &&
-                convertMethod.ParameterList != null &&
+                convertMethod.ParameterList is { } &&
                 convertMethod.ParameterList.Parameters.Count == 1)
             {
                 using var walker = ReturnValueWalker.Borrow(convertMethod);

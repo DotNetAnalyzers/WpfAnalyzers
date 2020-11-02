@@ -17,7 +17,7 @@ namespace WpfAnalyzers
                 argumentName = literal.Token.ValueText;
             }
 
-            return argumentName != null;
+            return argumentName is { };
         }
 
         internal static bool TryGetParameterName(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? parameterName)
