@@ -12,3 +12,5 @@ dotnet_diagnostic.SA1401.severity = none
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
 
+# RS2008: Enable analyzer release tracking for the analyzer project containing rule 'WPF0001'
+dotnet_diagnostic.RS2008.severity = none
