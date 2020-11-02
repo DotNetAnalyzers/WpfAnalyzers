@@ -3,7 +3,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <RootNamespace>WpfAnalyzers</RootNamespace>
     <TargetName>WpfAnalyzers</TargetName>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
