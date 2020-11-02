@@ -3,7 +3,9 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -111,9 +113,15 @@
             result = null;
             if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var invocation, out _))
             {
-                return invocation.TryGetArgumentAtIndex(1, out var typeArg) &&
-                       typeArg.Expression is TypeOfExpressionSyntax typeOf &&
-                       TypeOf.TryGetType(typeOf, backing.ContainingType, semanticModel, cancellationToken, out result);
+                if (invocation.TryGetArgumentAtIndex(1, out var typeArg) &&
+                    typeArg.Expression is TypeOfExpressionSyntax { Type: { } typeSyntax } &&
+                    TypeOf.TryGetType(typeSyntax, backing.ContainingType, semanticModel, cancellationToken) is { } type)
+                {
+                    result = type;
+                    return true;
+                }
+
+                return false;
             }
 
             if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&

@@ -1,8 +1,10 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -10,7 +12,19 @@ namespace WpfAnalyzers
     {
         internal static bool TryGetType(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? type)
         {
-            if (semanticModel.TryGetType(expression.Type, cancellationToken, out type) &&
+            if (expression is { Type: { } typeSyntax })
+            {
+                type = TryGetType(typeSyntax, containingType, semanticModel, cancellationToken);
+                return type is { };
+            }
+
+            type = null;
+            return false;
+        }
+
+        internal static ITypeSymbol? TryGetType(TypeSyntax typeSyntax, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (semanticModel.TryGetType(typeSyntax, cancellationToken, out var type) &&
                 type.Kind == SymbolKind.TypeParameter)
             {
                 while (containingType is { })
@@ -21,8 +35,7 @@ namespace WpfAnalyzers
                         var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
                         if (index >= 0)
                         {
-                            type = containingType.TypeArguments[index];
-                            return true;
+                            return containingType.TypeArguments[index];
                         }
                     }
 
@@ -30,7 +43,7 @@ namespace WpfAnalyzers
                 }
             }
 
-            return type is { };
+            return type;
         }
     }
 }
