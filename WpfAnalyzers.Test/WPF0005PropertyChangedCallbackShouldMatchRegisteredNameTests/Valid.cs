@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -79,8 +79,10 @@ namespace N
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (FooControl)d;
-            control.OnBarChanged(e.OldValue, e.NewValue);
+            if (d is FooControl control)
+            {
+                control.OnBarChanged(e.OldValue, e.NewValue);
+            }
         }
 
         private static object CoerceBar(DependencyObject d, object baseValue)
