@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
+﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -73,6 +73,75 @@ namespace N
         }
     }
 }".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+        }
+
+        [Test]
+        public static void DependencyPropertyRegisterPropertyChangedCallbackFrameworkPropertyMetadata()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(string),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(
+                default(string),
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                ↓OnValueChanged));
+
+        public string Value
+        {
+            get => (string)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(string oldValue, string newValue)
+        {
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(string),
+            typeof(FooControl),
+            new FrameworkPropertyMetadata(
+                default(string),
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+
+        public string Value
+        {
+            get => (string)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(string oldValue, string newValue)
+        {
+        }
+    }
+}";
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
