@@ -109,6 +109,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers", "WpfAnalyzer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidCode", "ValidCode\ValidCode.csproj", "{1CF75F47-2C7D-49B2-B9F5-89C700271896}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidCode.Netcore", "ValidCode.Netcore\ValidCode.Netcore.csproj", "{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test.Netcore", "WpfAnalyzers.Test.Netcore\WpfAnalyzers.Test.Netcore.csproj", "{91395167-BCA8-48BD-84D3-F2CEC4C811D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +139,14 @@ Global
 		{1CF75F47-2C7D-49B2-B9F5-89C700271896}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CF75F47-2C7D-49B2-B9F5-89C700271896}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CF75F47-2C7D-49B2-B9F5-89C700271896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91395167-BCA8-48BD-84D3-F2CEC4C811D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91395167-BCA8-48BD-84D3-F2CEC4C811D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91395167-BCA8-48BD-84D3-F2CEC4C811D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91395167-BCA8-48BD-84D3-F2CEC4C811D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
