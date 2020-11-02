@@ -56,7 +56,7 @@
                                         ? Descriptors.WPF0150UseNameofInsteadOfLiteral
                                         : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
                         }
                     }
@@ -84,7 +84,7 @@
                         Diagnostic.Create(
                             Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType,
                             expression.GetLocation(),
-                            properties: ImmutableDictionary<string, string>.Empty.Add(nameof(ITypeSymbol), returnType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                            properties: ImmutableDictionary<string, string?>.Empty.Add(nameof(ITypeSymbol), returnType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                             returnType));
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.ConstructorArgumentAttribute, context.CancellationToken, out _) &&
@@ -113,7 +113,7 @@
                                         ? Descriptors.WPF0150UseNameofInsteadOfLiteral
                                         : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
                         }
                     }
@@ -135,7 +135,7 @@
                                         ? Descriptors.WPF0150UseNameofInsteadOfLiteral
                                         : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), method.Name),
                                     method.Name));
                         }
                     }
@@ -164,7 +164,7 @@
                                         ? Descriptors.WPF0150UseNameofInsteadOfLiteral
                                         : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     expression.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                     property.Name));
                         }
                     }
@@ -188,7 +188,7 @@
                                             ? Descriptors.WPF0150UseNameofInsteadOfLiteral
                                             : Descriptors.WPF0151UseNameofInsteadOfConstant,
                                         expression.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                         property.Name));
                             }
 

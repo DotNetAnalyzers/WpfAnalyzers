@@ -37,7 +37,7 @@
                         Diagnostic.Create(
                             Descriptors.WPF0140UseContainingTypeComponentResourceKey,
                             argumentList.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add(nameof(ArgumentListSyntax), argumentListText),
+                            ImmutableDictionary<string, string?>.Empty.Add(nameof(ArgumentListSyntax), argumentListText),
                             argumentListText));
                 }
                 else
@@ -64,7 +64,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0141UseContainingMemberComponentResourceKey,
                                 arg.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(ArgumentSyntax), keyText),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(ArgumentSyntax), keyText),
                                 keyText));
                     }
                 }

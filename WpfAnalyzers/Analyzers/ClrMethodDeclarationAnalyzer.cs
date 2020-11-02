@@ -45,7 +45,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
                                     methodDeclaration.Identifier.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Get" + registeredName),
+                                    ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", "Get" + registeredName),
                                     method.Name,
                                     "Get" + registeredName));
                         }
@@ -63,7 +63,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             summaryError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
                                 if (comment.VerifyParameter(paramFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } paramError)
@@ -72,7 +72,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             paramError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), paramError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), paramError.Text)));
                                 }
 
                                 if (comment.VerifyReturns(returnsFormat, registeredName) is { } returnsError)
@@ -81,7 +81,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             returnsError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), returnsError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), returnsError.Text)));
                                 }
                             }
                             else
@@ -90,7 +90,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0061DocumentClrMethod,
                                         methodDeclaration.Identifier.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(
+                                        ImmutableDictionary<string, string?>.Empty.Add(
                                             nameof(DocComment),
 #pragma warning disable SA1118 // Parameter should not span multiple lines
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
@@ -154,7 +154,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0004ClrMethodShouldMatchRegisteredName,
                                     methodDeclaration.Identifier.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", "Set" + registeredName),
+                                    ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", "Set" + registeredName),
                                     method.Name,
                                     "Set" + registeredName));
                         }
@@ -172,7 +172,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             summaryError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
                                 if (comment.VerifyParameter(elementFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } elementError)
@@ -181,7 +181,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             elementError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), elementError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), elementError.Text)));
                                 }
 
                                 if (comment.VerifyParameter(valueFormat, value, registeredName) is { } valueError)
@@ -190,7 +190,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0061DocumentClrMethod,
                                             valueError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), valueError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), valueError.Text)));
                                 }
                             }
                             else
@@ -199,7 +199,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0061DocumentClrMethod,
                                         methodDeclaration.Identifier.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(
+                                        ImmutableDictionary<string, string?>.Empty.Add(
                                             nameof(DocComment),
 #pragma warning disable SA1118 // Parameter should not span multiple lines
                                             $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +

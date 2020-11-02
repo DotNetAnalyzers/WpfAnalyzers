@@ -48,7 +48,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
                                         callbackIdentifier.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                        ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
                                         callbackIdentifier,
                                         $"On{registeredName}Changed"));
                             }
@@ -93,7 +93,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
                                         callbackIdentifier.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
+                                        ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
                                         callbackIdentifier,
                                         $"Coerce{registeredName}"));
                             }

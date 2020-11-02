@@ -42,7 +42,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0001BackingFieldShouldMatchRegisteredName,
                                     BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Property"),
+                                    ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName + "Property"),
                                     backing.Name,
                                     registeredName));
                         }
@@ -54,7 +54,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0002BackingFieldShouldMatchRegisteredName,
                                     BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "PropertyKey"),
+                                    ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName + "PropertyKey"),
                                     backing.Name,
                                     registeredName));
                         }
@@ -71,7 +71,7 @@
                                         Diagnostic.Create(
                                             Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
                                             summaryError.Location,
-                                            ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
                             }
                             else
@@ -80,7 +80,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0060DocumentDependencyPropertyBackingMember,
                                         backing.Symbol.Locations[0],
-                                        ImmutableDictionary<string, string>.Empty.Add(
+                                        ImmutableDictionary<string, string?>.Empty.Add(
                                             nameof(DocComment),
                                             $"/// {DocComment.Format(summaryFormat, registeredName)}")));
                             }
@@ -95,7 +95,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0176StyleTypedPropertyMissing,
                                     BackingFieldOrProperty.FindIdentifier(memberDeclaration).GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(
+                                    ImmutableDictionary<string, string?>.Empty.Add(
                                         nameof(AttributeListSyntax),
                                         $"[StyleTypedProperty(Property = {(context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out _) ? $"nameof({registeredName})" : $"\"{registeredName}\"")}, StyleTargetType = typeof(TYPE))]"),
                                     backing.Name));

@@ -81,7 +81,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
                                 propertyDeclaration.Identifier.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName),
+                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName),
                                 property.Name,
                                 registeredName));
                     }
@@ -94,7 +94,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
                                     propertyDeclaration.Type.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                     property,
                                     registeredType));
                         }
@@ -106,7 +106,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
                                     type.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                     property,
                                     registeredType));
                         }

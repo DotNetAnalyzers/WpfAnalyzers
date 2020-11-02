@@ -47,7 +47,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
                                     callBackIdentifier.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
+                                    ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
                                     callBackIdentifier,
                                     $"Validate{registeredName}"));
                         }
@@ -88,7 +88,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0150UseNameofInsteadOfLiteral,
                                 nameArg.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                 property.Name));
                     }
                     else
@@ -97,7 +97,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0151UseNameofInsteadOfConstant,
                                 nameExpression.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                 property.Name));
                     }
                 }

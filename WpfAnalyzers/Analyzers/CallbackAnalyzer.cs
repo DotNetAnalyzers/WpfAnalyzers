@@ -77,7 +77,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
                                 methodDeclaration.Identifier.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
+                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
                                 methodDeclaration.Identifier,
                                 $"On{registeredName}Changed"));
                     }
@@ -90,7 +90,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0062DocumentPropertyChangedCallback,
                                     location,
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), text)));
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), text)));
                         }
                     }
                 }
@@ -279,7 +279,7 @@
                             Diagnostic.Create(
                                 wrongTypeDescriptor,
                                 castExpression.Type.GetLocation(),
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedType", expectedTypeName),
                                 expectedTypeName));
                     }
 
@@ -287,7 +287,7 @@
                         Diagnostic.Create(
                             notExactTypeDescriptor,
                             castExpression.Type.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedType", expectedTypeName),
                             expectedTypeName));
                 }
 
@@ -307,7 +307,7 @@
                         Diagnostic.Create(
                             wrongTypeDescriptor,
                             binaryExpression.Right.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedType", expectedTypeName),
                             expectedTypeName));
                 }
 
@@ -326,7 +326,7 @@
                         Diagnostic.Create(
                             wrongTypeDescriptor,
                             isDeclaration.Type.GetLocation(),
-                            ImmutableDictionary<string, string>.Empty.Add("ExpectedType", expectedTypeName),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedType", expectedTypeName),
                             expectedTypeName));
                 }
 
@@ -352,7 +352,7 @@
                                     Diagnostic.Create(
                                         wrongTypeDescriptor,
                                         type.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(
+                                        ImmutableDictionary<string, string?>.Empty.Add(
                                             "ExpectedType",
                                             expectedTypeName),
                                         expectedTypeName));

@@ -40,7 +40,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0100BackingFieldShouldMatchRegisteredName,
                                 backing.Symbol.Locations[0],
-                                ImmutableDictionary<string, string>.Empty.Add("ExpectedName", registeredName + "Event"),
+                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName + "Event"),
                                 backing.Name,
                                 registeredName));
                     }
@@ -53,7 +53,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameofInsteadOfLiteral,
                                     nameArg.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
                                     eventSymbol.Name));
                         }
                         else if (!nameArg.Expression.IsNameof())
@@ -62,7 +62,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0151UseNameofInsteadOfConstant,
                                     nameArg.GetLocation(),
-                                    ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
+                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
                                     eventSymbol.Name));
                         }
                     }
@@ -79,7 +79,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0108DocumentRoutedEventBackingMember,
                                         summaryError.Location,
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(DocComment), summaryError.Text)));
+                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                             }
                         }
                         else
@@ -88,7 +88,7 @@
                                 Diagnostic.Create(
                                     Descriptors.WPF0108DocumentRoutedEventBackingMember,
                                     backing.Symbol.Locations[0],
-                                    ImmutableDictionary<string, string>.Empty.Add(
+                                    ImmutableDictionary<string, string?>.Empty.Add(
                                         nameof(DocComment),
                                         $"/// {DocComment.Format(summaryFormat, registeredName)}")));
                         }

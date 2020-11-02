@@ -38,7 +38,7 @@
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         assignment.GetLocation(),
-                        properties: ImmutableDictionary<string, string>.Empty.Add(
+                        properties: ImmutableDictionary<string, string?>.Empty.Add(
                             nameof(BackingFieldOrProperty),
                             propertyArgument),
                         propertyArgument,

@@ -60,7 +60,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand,
                                         nameArg.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                         fieldOrProperty.Name));
                             }
                             else if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
@@ -69,7 +69,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0150UseNameofInsteadOfLiteral,
                                         nameArg.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                         fieldOrProperty.Name));
                             }
                             else if (!nameArg.Expression.IsNameof())
@@ -78,7 +78,7 @@
                                     Diagnostic.Create(
                                         Descriptors.WPF0151UseNameofInsteadOfConstant,
                                         nameArg.GetLocation(),
-                                        ImmutableDictionary<string, string>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                         fieldOrProperty.Name));
                             }
                         }

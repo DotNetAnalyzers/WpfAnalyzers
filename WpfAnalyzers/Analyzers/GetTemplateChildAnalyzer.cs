@@ -65,7 +65,7 @@
                         context.ReportDiagnostic(Diagnostic.Create(
                                                      Descriptors.WPF0130UseTemplatePartAttribute,
                                                      invocation.GetLocation(),
-                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(AttributeListSyntax), attributeText),
+                                                     ImmutableDictionary<string, string?>.Empty.Add(nameof(AttributeListSyntax), attributeText),
                                                      attributeText));
                     }
                     else
@@ -74,7 +74,7 @@
                         context.ReportDiagnostic(Diagnostic.Create(
                                                      Descriptors.WPF0130UseTemplatePartAttribute,
                                                      invocation.GetLocation(),
-                                                     ImmutableDictionary<string, string>.Empty.Add(nameof(AttributeListSyntax), attributeText),
+                                                     ImmutableDictionary<string, string?>.Empty.Add(nameof(AttributeListSyntax), attributeText),
                                                      attributeText));
                     }
                 }
