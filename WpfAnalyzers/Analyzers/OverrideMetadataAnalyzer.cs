@@ -26,7 +26,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
-                context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out ISymbol? candidate) &&
+                context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var candidate) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
                 method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))

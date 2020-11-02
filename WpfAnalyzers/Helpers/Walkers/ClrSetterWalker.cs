@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -59,7 +59,7 @@ namespace WpfAnalyzers
             base.VisitInvocationExpression(invocation);
         }
 
-        public override void Visit(SyntaxNode node)
+        public override void Visit(SyntaxNode? node)
         {
             if (this.HasError)
             {

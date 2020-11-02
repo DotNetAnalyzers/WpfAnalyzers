@@ -97,7 +97,7 @@
                 {
                     if (node.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var arg))
                     {
-                        if (this.semanticModel.TryGetConstantValue<string>(arg.Expression, this.cancellationToken, out string? @namespace))
+                        if (this.semanticModel.TryGetConstantValue<string>(arg.Expression, this.cancellationToken, out var @namespace))
                         {
                             this.mappedNamespaces.Add(@namespace);
                         }
