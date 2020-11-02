@@ -93,9 +93,8 @@
                                 Title,
                                 diagnostic);
                             break;
-                        case TypeSyntax typeSyntax
-                            when typeSyntax.Parent is MethodDeclarationSyntax method &&
-                                 method.TryGetDocumentationComment(out var comment):
+                        case TypeSyntax { Parent: MethodDeclarationSyntax method }
+                            when method.TryGetDocumentationComment(out var comment):
                             context.RegisterCodeFix(
                                 Title,
                                 editor => editor.ReplaceNode(comment, x => x.WithReturns(Parse.XmlElementSyntax(text))),

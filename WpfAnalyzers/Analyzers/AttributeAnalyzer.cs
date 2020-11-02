@@ -44,7 +44,7 @@
                 context.Node is AttributeSyntax attribute)
             {
                 if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.DependsOnAttribute, context.CancellationToken, out _) &&
-                    TryFindStringArgument(context, attribute, 0, "name", out var argument, out ExpressionSyntax? expression, out string? text))
+                    TryFindStringArgument(context, attribute, 0, "name", out var argument, out var expression, out var text))
                 {
                     if (TryFindPropertyRecursive(context.ContainingSymbol.ContainingType, text!, out var property))
                     {
@@ -323,7 +323,7 @@
                     return true;
                 }
 
-                foreach (INamespaceSymbol nested in symbol.GetNamespaceMembers())
+                foreach (var nested in symbol.GetNamespaceMembers())
                 {
                     if (TryFindRecursive(nested, out match))
                     {
