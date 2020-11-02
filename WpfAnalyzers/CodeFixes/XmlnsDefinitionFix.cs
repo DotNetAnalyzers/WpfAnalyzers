@@ -34,7 +34,7 @@
 
                 var attribute = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                      .FirstAncestorOrSelf<AttributeSyntax>();
-                if (attribute == null || attribute.IsMissing)
+                if (attribute is null || attribute.IsMissing)
                 {
                     continue;
                 }

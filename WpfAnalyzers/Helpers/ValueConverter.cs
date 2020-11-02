@@ -23,7 +23,7 @@
                         (fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IValueConverter, compilation) ||
                          fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IMultiValueConverter, compilation)))
                     {
-                        if (temp == null)
+                        if (temp is null)
                         {
                             temp = new List<FieldOrProperty>();
                         }

@@ -52,7 +52,7 @@
 
                     string NextParameter()
                     {
-                        if (parameter == null)
+                        if (parameter is null)
                         {
                             return p1 ?? throw new FormatException("Too few parameters provided p1 is null.");
                         }
@@ -216,7 +216,7 @@
             var builder = new StringBuilder(format);
             foreach (var arg in args)
             {
-                if (arg == null)
+                if (arg is null)
                 {
                     break;
                 }

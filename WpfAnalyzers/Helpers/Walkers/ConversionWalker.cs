@@ -107,7 +107,7 @@
             }
 
             // If we couldn't "guess" a source type we take parameters type
-            if (sourceType == null)
+            if (sourceType is null)
             {
                 sourceType = symbol.Type;
             }
@@ -128,13 +128,13 @@
             bool TryGetCommonBase(ITypeSymbol? t1, TypeSyntax? ts, out ITypeSymbol? result)
             {
                 result = null!;
-                if (ts == null)
+                if (ts is null)
                 {
                     return false;
                 }
 
                 var t2 = semanticModel.GetTypeInfoSafe(ts, cancellationToken).Type;
-                if (t2 == null)
+                if (t2 is null)
                 {
                     return false;
                 }
@@ -145,7 +145,7 @@
                     return true;
                 }
 
-                if (t1 == null ||
+                if (t1 is null ||
                     t1.IsAssignableTo(t2, semanticModel.Compilation))
                 {
                     result = t2;

@@ -56,7 +56,7 @@
                 }
 
                 var compilation = xmlnsAttribute.FirstAncestorOrSelf<CompilationUnitSyntax>();
-                if (compilation == null)
+                if (compilation is null)
                 {
                     return;
                 }

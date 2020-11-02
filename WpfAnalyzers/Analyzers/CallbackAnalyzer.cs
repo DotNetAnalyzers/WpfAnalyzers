@@ -251,7 +251,7 @@
 
         private static void HandleCasts(SyntaxNodeAnalysisContext context, SyntaxNode methodOrLambda, IParameterSymbol parameter, ITypeSymbol expectedType, DiagnosticDescriptor wrongTypeDescriptor, DiagnosticDescriptor notExactTypeDescriptor)
         {
-            if (expectedType == null)
+            if (expectedType is null)
             {
                 return;
             }

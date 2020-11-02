@@ -92,7 +92,7 @@
                 return false;
             }
 
-            if (invocation.ArgumentList == null ||
+            if (invocation.ArgumentList is null ||
                 invocation.ArgumentList.Arguments.Count < 2 ||
                 invocation.ArgumentList.Arguments.Count > 3)
             {
@@ -112,7 +112,7 @@
                 return false;
             }
 
-            if (invocation.ArgumentList == null ||
+            if (invocation.ArgumentList is null ||
                 invocation.ArgumentList.Arguments.Count != 2)
             {
                 return false;

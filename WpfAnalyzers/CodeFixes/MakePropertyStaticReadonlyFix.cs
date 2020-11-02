@@ -44,7 +44,7 @@
             }
 
             if (property.TryGetSetter(out var setter) &&
-                setter.Body == null)
+                setter.Body is null)
             {
                 return property.RemoveNode(setter, SyntaxRemoveOptions.KeepNoTrivia);
             }

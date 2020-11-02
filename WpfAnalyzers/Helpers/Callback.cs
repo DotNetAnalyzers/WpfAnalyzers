@@ -14,7 +14,7 @@
             identifier = null;
             method = null;
 
-            if (callback == null)
+            if (callback is null)
             {
                 return false;
             }

@@ -19,7 +19,7 @@
         internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? defaultValueArg)
         {
             defaultValueArg = null;
-            if (objectCreation?.ArgumentList == null ||
+            if (objectCreation?.ArgumentList is null ||
                 objectCreation.ArgumentList.Arguments.Count == 0)
             {
                 return false;
@@ -54,7 +54,7 @@
         {
             fieldOrProperty = default;
             var invocation = objectCreation.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (invocation == null)
+            if (invocation is null)
             {
                 return false;
             }

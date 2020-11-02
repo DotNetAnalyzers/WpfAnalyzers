@@ -32,7 +32,7 @@
         {
             setValueCall = null;
             setField = default;
-            if (method == null ||
+            if (method is null ||
                 method.ParameterList.Parameters.Count != 2 ||
                 !method.ReturnType.IsVoid() ||
                 !method.Modifiers.Any(SyntaxKind.StaticKeyword))

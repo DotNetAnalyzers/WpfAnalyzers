@@ -7,7 +7,7 @@ namespace WpfAnalyzers
     {
         internal static bool HasMutableInstanceMembers(ITypeSymbol type)
         {
-            if (type == null)
+            if (type is null)
             {
                 return false;
             }

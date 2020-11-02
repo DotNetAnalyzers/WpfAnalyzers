@@ -164,7 +164,7 @@
             internal static bool TryGetRegistration(TypeDeclarationSyntax typeDeclaration, string memberName, [NotNullWhen(true)] out InvocationExpressionSyntax? registration)
             {
                 registration = null;
-                if (typeDeclaration == null ||
+                if (typeDeclaration is null ||
                     string.IsNullOrEmpty(memberName))
                 {
                     return false;

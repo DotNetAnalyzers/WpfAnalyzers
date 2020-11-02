@@ -168,7 +168,7 @@
         {
             getter = default;
             setter = default;
-            if (property == null ||
+            if (property is null ||
                 !property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, compilation))
             {
                 return false;
@@ -200,7 +200,7 @@
                 }
             }
 
-            if (setter.Symbol == null)
+            if (setter.Symbol is null)
             {
                 setter = getter;
             }

@@ -84,7 +84,7 @@
         private static bool TryFindAttribute(INamedTypeSymbol type, string part, [NotNullWhen(true)] out AttributeData? attribute)
         {
             attribute = null;
-            if (type == null ||
+            if (type is null ||
                 type == KnownSymbols.Object)
             {
                 return false;

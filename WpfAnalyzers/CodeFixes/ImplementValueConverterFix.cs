@@ -90,7 +90,7 @@ namespace WpfAnalyzers
 
         private static bool HasInterface(ClassDeclarationSyntax classDeclaration, QualifiedType type)
         {
-            if (classDeclaration.BaseList == null)
+            if (classDeclaration.BaseList is null)
             {
                 return false;
             }

@@ -78,7 +78,7 @@
                 if (node.Modifiers.Any(SyntaxKind.PublicKeyword))
                 {
                     var @namespace = node.FirstAncestorOrSelf<NamespaceDeclarationSyntax>();
-                    if (@namespace == null)
+                    if (@namespace is null)
                     {
                         return;
                     }
@@ -145,7 +145,7 @@
                         return true;
                     }
 
-                    if (x == null || y == null)
+                    if (x is null || y is null)
                     {
                         return false;
                     }

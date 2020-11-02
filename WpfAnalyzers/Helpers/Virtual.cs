@@ -6,7 +6,7 @@ namespace WpfAnalyzers
     {
         internal static bool HasVirtualOrAbstractOrProtectedMembers(ITypeSymbol type)
         {
-            if (type == null ||
+            if (type is null ||
                 type.IsStatic ||
                 type.IsSealed)
             {
