@@ -1,8 +1,10 @@
 ﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
 {
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+
     using NUnit.Framework;
 
     public static class CodeFix
@@ -80,7 +82,7 @@ namespace N
         [Test]
         public static void DependencyPropertyRegisterPropertyChangedCallbackFrameworkPropertyMetadata()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -143,7 +145,127 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void Issue285()
+        {
+            var part1 = @"
+namespace N
+{
+    using System;
+    using System.Windows.Controls;
+
+    public partial class MediaElementWrapper : Decorator
+    {
+        protected virtual void OnSourceChanged(Uri? source)
+        {
+        }
+    }
+}";
+            var before = @"
+namespace N
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class MediaElementWrapper
+    {
+        /// <summary>
+        /// Identifies the <see cref=""MediaElementWrapper.Source"" /> dependency property.
+        /// </summary>
+        /// <returns>
+        /// The identifier for the <see cref=""MediaElementWrapper.Source"" /> dependency property.
+        /// </returns>
+        public static readonly DependencyProperty SourceProperty = MediaElement.SourceProperty.AddOwner(
+            typeof(MediaElementWrapper),
+            new FrameworkPropertyMetadata(
+                null,
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                ↓OnSourceChanged,
+                OnSourceCoerce));
+
+        /// <summary>
+        /// Gets or sets a media source on the <see cref=""MediaElementWrapper"" />.
+        /// </summary>
+        /// <returns>
+        /// The URI that specifies the source of the element. The default is null.
+        /// </returns>
+        public Uri Source
+        {
+            get => (Uri)this.GetValue(SourceProperty);
+            set => this.SetValue(SourceProperty, value);
+        }
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MediaElementWrapper)d).OnSourceChanged(e.NewValue as Uri);
+        }
+
+        private static object OnSourceCoerce(DependencyObject d, object baseValue)
+        {
+            var uri = baseValue as Uri;
+            if (string.IsNullOrWhiteSpace(uri?.OriginalString))
+            {
+                return null;
+            }
+
+            return baseValue;
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public partial class MediaElementWrapper
+    {
+        /// <summary>
+        /// Identifies the <see cref=""MediaElementWrapper.Source"" /> dependency property.
+        /// </summary>
+        /// <returns>
+        /// The identifier for the <see cref=""MediaElementWrapper.Source"" /> dependency property.
+        /// </returns>
+        public static readonly DependencyProperty SourceProperty = MediaElement.SourceProperty.AddOwner(
+            typeof(MediaElementWrapper),
+            new FrameworkPropertyMetadata(
+                null,
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                (d, e) => ((MediaElementWrapper)d).OnSourceChanged(e.NewValue as Uri),
+                OnSourceCoerce));
+
+        /// <summary>
+        /// Gets or sets a media source on the <see cref=""MediaElementWrapper"" />.
+        /// </summary>
+        /// <returns>
+        /// The URI that specifies the source of the element. The default is null.
+        /// </returns>
+        public Uri Source
+        {
+            get => (Uri)this.GetValue(SourceProperty);
+            set => this.SetValue(SourceProperty, value);
+        }
+
+        private static object OnSourceCoerce(DependencyObject d, object baseValue)
+        {
+            var uri = baseValue as Uri;
+            if (string.IsNullOrWhiteSpace(uri?.OriginalString))
+            {
+                return null;
+            }
+
+            return baseValue;
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, before }, new[] { part1, after });
         }
 
         [Test]
