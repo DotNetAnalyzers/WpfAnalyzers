@@ -13,11 +13,11 @@
         private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
 
-        [TestCase("new PropertyMetadata(default(string), OnValueChanged)", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
-        [TestCase("new PropertyMetadata(default(string), (d, e) => OnValueChanged(d, e))", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
-        [TestCase("new PropertyMetadata(default(string), new PropertyChangedCallback(OnValueChanged))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
-        [TestCase("new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => OnValueChanged(d, e)))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
-        public static void DependencyPropertyRegisterPropertyChangedCallback(string metadata, string callback)
+        [TestCase("OnValueChanged", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
+        [TestCase("(d, e) => OnValueChanged(d, e)", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
+        [TestCase("new PropertyChangedCallback(OnValueChanged)", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
+        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
+        public static void DependencyPropertyRegisterPropertyChangedCallback(string call, string lambda)
         {
             var code = @"
 namespace N
@@ -31,7 +31,9 @@ namespace N
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(default(string), OnValueChanged));
+            new PropertyMetadata(
+                default(string),
+                ↓OnValueChanged));
 
         public string Value
         {
@@ -48,7 +50,7 @@ namespace N
             ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue);
         }
     }
-}".AssertReplace("new PropertyMetadata(default(string), OnValueChanged)", metadata);
+}".AssertReplace("↓OnValueChanged", $"↓{call}");
 
             var after = @"
 namespace N
@@ -62,7 +64,9 @@ namespace N
             nameof(Value),
             typeof(string),
             typeof(FooControl),
-            new PropertyMetadata(default(string), (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+            new PropertyMetadata(
+                default(string),
+                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
 
         public string Value
         {
@@ -74,7 +78,7 @@ namespace N
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", callback);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", lambda);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
@@ -268,6 +272,77 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { part1, before }, new[] { part1, after });
         }
 
+        [TestCase("↓OnValueChanged", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
+        [TestCase("(d, e) => OnValueChanged(d, e)", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]
+        [TestCase("new PropertyChangedCallback(OnValueChanged)", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
+        [TestCase("new PropertyChangedCallback((d, e) => OnValueChanged(d, e))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue))")]
+        public static void InlineCastStatement(string call, string lambda)
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(string),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(string),
+                ↓OnValueChanged));
+
+        public string Value
+        {
+            get => (string)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(string oldValue, string newValue)
+        {
+        }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (FooControl)d;
+            control.OnValueChanged((string)e.OldValue, (string)e.NewValue);
+        }
+    }
+}".AssertReplace("↓OnValueChanged", $"↓{call}");
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(string),
+            typeof(FooControl),
+            new PropertyMetadata(
+                default(string),
+                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+
+        public string Value
+        {
+            get => (string)this.GetValue(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
+        }
+
+        protected virtual void OnValueChanged(string oldValue, string newValue)
+        {
+        }
+    }
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", lambda);
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+        }
+
         [Test]
         public static void CoerceValueCallback()
         {
@@ -346,7 +421,7 @@ namespace N
             typeof(C),
             new PropertyMetadata(
                 default(string),
-                ↓(d, e) => SetHasText(d, e.NewValue != null)));
+                ↓(d, e) => SetHasText(d, e.NewValue is { })));
 
         private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(HasText),
@@ -389,7 +464,7 @@ namespace N
             typeof(C),
             new PropertyMetadata(
                 default(string),
-                (d, e) => d.SetValue(HasTextPropertyKey, e.NewValue != null)));
+                (d, e) => d.SetValue(HasTextPropertyKey, e.NewValue is { })));
 
         private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(HasText),

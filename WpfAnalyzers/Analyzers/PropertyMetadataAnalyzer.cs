@@ -74,7 +74,7 @@
                         }
 
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
-                            Callback.IsSingleExpression(declaration))
+                            Callback.CanInlineBody(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
                         }
@@ -118,7 +118,7 @@
                         }
 
                         if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
-                            Callback.IsSingleExpression(declaration))
+                            Callback.CanInlineBody(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueCallback.GetLocation()));
                         }

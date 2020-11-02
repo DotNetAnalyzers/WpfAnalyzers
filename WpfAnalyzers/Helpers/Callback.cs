@@ -2,7 +2,9 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -52,17 +54,18 @@
                    TryGetTarget(arg, handlerType, semanticModel, cancellationToken, out identifier, out method);
         }
 
-        internal static bool IsSingleExpression(MethodDeclarationSyntax method)
+        internal static bool CanInlineBody(MethodDeclarationSyntax method)
         {
-            if (method.ExpressionBody is { })
+            return method switch
             {
-                return true;
-            }
-
-            return method.Body is { Statements: { Count: 1 } } body &&
-                   body.Statements.TrySingle(out var statement) &&
-                   (statement is ExpressionStatementSyntax ||
-                    statement is ReturnStatementSyntax);
+                { ExpressionBody: { } } => true,
+                { Body: { Statements: { Count: 1 } statements } } => statements[0].IsEither(SyntaxKind.ExpressionStatement, SyntaxKind.ReturnStatement),
+                { Body: { Statements: { Count: 2 } statements } }
+                    when statements[0] is LocalDeclarationStatementSyntax { Declaration: { Variables: { Count: 1 } variables } } &&
+                         variables[0].Initializer is { Value: CastExpressionSyntax _ }
+                    => statements[1].IsEither(SyntaxKind.ExpressionStatement, SyntaxKind.ReturnStatement),
+                _ => false,
+            };
         }
 
         internal static bool IsInvokedOnce(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
