@@ -79,8 +79,8 @@
                         return false;
                     }
 
-                    if (registeredType.IsAssignableTo(KnownSymbols.Freezable, context.Compilation) &&
-                        type.IsAssignableTo(KnownSymbols.Freezable, context.Compilation))
+                    if (registeredType.IsAssignableTo(KnownSymbols.Freezable, context.SemanticModel.Compilation) &&
+                        type.IsAssignableTo(KnownSymbols.Freezable, context.SemanticModel.Compilation))
                     {
                         return false;
                     }

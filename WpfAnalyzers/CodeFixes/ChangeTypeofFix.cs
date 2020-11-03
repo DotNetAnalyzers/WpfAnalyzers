@@ -23,7 +23,8 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
                     diagnostic.Properties.TryGetValue(nameof(ITypeSymbol), out var returnType))
                 {
                     context.RegisterCodeFix(

@@ -30,7 +30,8 @@
                                        .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
                     TryCreatePath(assignment) is { } path &&
                     diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))
                 {

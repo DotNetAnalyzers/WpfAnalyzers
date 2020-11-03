@@ -10,101 +10,86 @@
     internal readonly struct RegisterInvocation
     {
         internal readonly InvocationExpressionSyntax Invocation;
-        internal readonly IMethodSymbol Method;
+        internal readonly IMethodSymbol Target;
 
-        internal RegisterInvocation(InvocationExpressionSyntax invocation, IMethodSymbol method)
+        internal RegisterInvocation(InvocationExpressionSyntax invocation, IMethodSymbol target)
         {
             this.Invocation = invocation;
-            this.Method = method;
+            this.Target = target;
         }
 
-        internal static bool TryFindRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? FindRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
             {
-                return TryFindRecursive(keyField, semanticModel, cancellationToken, out result);
+                return FindRecursive(keyField, semanticModel, cancellationToken);
             }
 
             if (DependencyProperty.TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
             {
-                return TryFindRecursive(addOwnerSource, semanticModel, cancellationToken, out result);
+                return FindRecursive(addOwnerSource, semanticModel, cancellationToken);
             }
 
-            return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result);
+            return FindRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken);
         }
 
-        internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? FindRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
                 value is InvocationExpressionSyntax invocation)
             {
-                if (TryMatchRegister(invocation, semanticModel, cancellationToken, out result) ||
-                    TryMatchRegisterReadOnly(invocation, semanticModel, cancellationToken, out result) ||
-                    TryMatchRegisterAttached(invocation, semanticModel, cancellationToken, out result) ||
-                    TryMatchRegisterAttachedReadOnly(invocation, semanticModel, cancellationToken, out result))
-                {
-                    return true;
-                }
+                return MatchRegisterAny(invocation, semanticModel, cancellationToken);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
-        internal static bool TryMatchRegisterAny(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? MatchRegisterAny(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return TryMatchRegister(invocation, semanticModel, cancellationToken, out result) ||
-                   TryMatchRegisterReadOnly(invocation, semanticModel, cancellationToken, out result) ||
-                   TryMatchRegisterAttached(invocation, semanticModel, cancellationToken, out result) ||
-                   TryMatchRegisterAttachedReadOnly(invocation, semanticModel, cancellationToken, out result);
+            return MatchRegister(invocation, semanticModel, cancellationToken) ??
+                   MatchRegisterReadOnly(invocation, semanticModel, cancellationToken) ??
+                   MatchRegisterAttached(invocation, semanticModel, cancellationToken) ??
+                   MatchRegisterAttachedReadOnly(invocation, semanticModel, cancellationToken);
         }
 
-        internal static bool TryMatchRegister(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? MatchRegister(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.Register, cancellationToken, out var method))
             {
-                result = new RegisterInvocation(invocation, method);
-                return true;
+                return new RegisterInvocation(invocation, method);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
-        internal static bool TryMatchRegisterReadOnly(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? MatchRegisterReadOnly(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.RegisterReadOnly, cancellationToken, out var method))
             {
-                result = new RegisterInvocation(invocation, method);
-                return true;
+                return new RegisterInvocation(invocation, method);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
-        internal static bool TryMatchRegisterAttached(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? MatchRegisterAttached(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.RegisterAttached, cancellationToken, out var method))
             {
-                result = new RegisterInvocation(invocation, method);
-                return true;
+                return new RegisterInvocation(invocation, method);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
-        internal static bool TryMatchRegisterAttachedReadOnly(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
+        internal static RegisterInvocation? MatchRegisterAttachedReadOnly(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.RegisterAttachedReadOnly, cancellationToken, out var method))
             {
-                result = new RegisterInvocation(invocation, method);
-                return true;
+                return new RegisterInvocation(invocation, method);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
         internal ArgumentSyntax? NameArgument() => this.FindArgument("name");
@@ -113,7 +98,7 @@
 
         internal ArgumentSyntax? FindArgument(string name)
         {
-            if (this.Method.TryFindParameter(name, out var parameter))
+            if (this.Target.TryFindParameter(name, out var parameter))
             {
                 return this.Invocation.FindArgument(parameter);
             }
@@ -123,7 +108,7 @@
 
         internal ArgumentSyntax? FindArgument(QualifiedType type)
         {
-            if (this.Method.TryFindParameter(type, out var parameter))
+            if (this.Target.TryFindParameter(type, out var parameter))
             {
                 return this.Invocation.FindArgument(parameter);
             }

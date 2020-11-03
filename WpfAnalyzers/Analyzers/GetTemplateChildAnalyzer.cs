@@ -42,7 +42,7 @@
                         {
                             if (partType is { } &&
                                 context.SemanticModel.TryGetType(castTypeSyntax, context.CancellationToken, out var castType) &&
-                                !IsValidCast(partType, castType, cast, context.Compilation))
+                                !IsValidCast(partType, castType, cast, context.SemanticModel.Compilation))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0131TemplatePartType, invocation.GetLocation()));
                             }
@@ -137,8 +137,8 @@
                     cast = castExpression;
                     type = castExpression.Type;
                     return true;
-                case IsPatternExpressionSyntax isPattern when
-                    isPattern.Pattern is DeclarationPatternSyntax declarationPattern &&
+                case IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax declarationPattern } isPattern
+                    when
                     !declarationPattern.Type.IsVar:
                     {
                         cast = isPattern;

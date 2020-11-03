@@ -2,7 +2,9 @@
 {
     using System.Collections.Immutable;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -119,7 +121,7 @@
                 }
 
                 if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
-                    DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _) &&
+                    RegisterInvocation.FindRecursive(candidate, context.SemanticModel, context.CancellationToken) is { } &&
                     !candidate.FieldOrProperty.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(

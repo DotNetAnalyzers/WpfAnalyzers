@@ -38,11 +38,11 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("Register");
-            Assert.AreEqual(true, RegisterInvocation.TryMatchRegister(invocation, semanticModel, CancellationToken.None, out var call));
-            Assert.AreEqual("Register", call.Method.Name);
+            Assert.AreEqual("Register",         RegisterInvocation.MatchRegister(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+            Assert.AreEqual("Register", RegisterInvocation.MatchRegisterAny(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, RegisterInvocation.TryMatchRegister(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, RegisterInvocation.MatchRegister(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -75,11 +75,11 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("RegisterReadOnly");
-            Assert.AreEqual(true, RegisterInvocation.TryMatchRegisterReadOnly(invocation, semanticModel, CancellationToken.None, out var call));
-            Assert.AreEqual("RegisterReadOnly", call.Method.Name);
+            Assert.AreEqual("RegisterReadOnly", RegisterInvocation.MatchRegisterReadOnly(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+            Assert.AreEqual("RegisterReadOnly", RegisterInvocation.MatchRegisterAny(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, RegisterInvocation.TryMatchRegisterReadOnly(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, RegisterInvocation.MatchRegisterReadOnly(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -113,11 +113,11 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("RegisterAttached");
-            Assert.AreEqual(true, RegisterInvocation.TryMatchRegisterAttached(invocation, semanticModel, CancellationToken.None, out var call));
-            Assert.AreEqual("RegisterAttached", call.Method.Name);
+            Assert.AreEqual("RegisterAttached", RegisterInvocation.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+            Assert.AreEqual("RegisterAttached",         RegisterInvocation.MatchRegisterAny(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, RegisterInvocation.TryMatchRegisterAttached(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, RegisterInvocation.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -148,11 +148,11 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("RegisterAttached");
-            Assert.AreEqual(true, RegisterInvocation.TryMatchRegisterAttached(invocation, semanticModel, CancellationToken.None, out var call));
-            Assert.AreEqual("RegisterAttached", call.Method.Name);
+            Assert.AreEqual("RegisterAttached", RegisterInvocation.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+            Assert.AreEqual("RegisterAttached", RegisterInvocation.MatchRegisterAny(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, RegisterInvocation.TryMatchRegisterAttached(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, RegisterInvocation.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -182,11 +182,11 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("RegisterAttachedReadOnly");
-            Assert.AreEqual(true, RegisterInvocation.TryMatchRegisterAttachedReadOnly(invocation, semanticModel, CancellationToken.None, out var call));
-            Assert.AreEqual("RegisterAttachedReadOnly", call.Method.Name);
+            Assert.AreEqual("RegisterAttachedReadOnly", RegisterInvocation.MatchRegisterAttachedReadOnly(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+            Assert.AreEqual("RegisterAttachedReadOnly", RegisterInvocation.MatchRegisterAny(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, RegisterInvocation.TryMatchRegisterAttachedReadOnly(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, RegisterInvocation.MatchRegisterAttachedReadOnly(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]

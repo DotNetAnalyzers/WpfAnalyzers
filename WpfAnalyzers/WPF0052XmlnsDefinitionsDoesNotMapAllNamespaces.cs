@@ -5,7 +5,9 @@
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,13 +31,13 @@
                 context.Node is AttributeSyntax attribute &&
                 context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.XmlnsDefinitionAttribute, context.CancellationToken, out _))
             {
-                using var walker = Walker.Create(context.Compilation, context.SemanticModel, context.CancellationToken);
+                using var walker = Walker.Create(context.SemanticModel.Compilation, context.SemanticModel, context.CancellationToken);
                 if (walker.NotMapped.Count != 0)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces,
-                            attribute.GetLocation(), 
+                            attribute.GetLocation(),
                             ImmutableDictionary.CreateRange(walker.NotMapped.Select(x => new KeyValuePair<string, string?>(x, x))),
                             string.Join(Environment.NewLine, walker.NotMapped)));
                 }

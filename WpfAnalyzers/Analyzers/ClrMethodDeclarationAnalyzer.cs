@@ -33,7 +33,7 @@
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
                 context.ContainingSymbol is IMethodSymbol { IsStatic: true } method &&
                 method.Parameters.TryElementAt(0, out var element) &&
-                element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
+                element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
             {
                 if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var backing))
                 {
@@ -118,7 +118,7 @@
                         if (attribute.TrySingleArgument(out var argument) &&
                             argument.Expression is TypeOfExpressionSyntax typeOf &&
                             TypeSymbol.TryGet(typeOf, method.ContainingType, context.SemanticModel, context.CancellationToken, out var argumentType) &&
-                            !argumentType.IsAssignableTo(element.Type, context.Compilation))
+                            !argumentType.IsAssignableTo(element.Type, context.SemanticModel.Compilation))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

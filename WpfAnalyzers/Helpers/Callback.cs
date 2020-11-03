@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;

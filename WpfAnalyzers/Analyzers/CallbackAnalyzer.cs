@@ -445,8 +445,8 @@
             if (argument is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax register } } } metaDataCreation } } &&
                 PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (RegisterInvocation.TryMatchRegister(register, context.SemanticModel, context.CancellationToken, out _) ||
-                    RegisterInvocation.TryMatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken, out _) ||
+                if (RegisterInvocation.MatchRegister(register, context.SemanticModel, context.CancellationToken) is { } ||
+                    RegisterInvocation.MatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken) is { } ||
                     DependencyProperty.TryGetAddOwnerCall(register, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetOverrideMetadataCall(register, context.SemanticModel, context.CancellationToken, out _))
                 {
@@ -468,10 +468,7 @@
                     case ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArgument }:
                         return TryGetValueType(parentArgument, containingType, context, out type);
                     case InvocationExpressionSyntax invocation when
-                        RegisterInvocation.TryMatchRegister(invocation, context.SemanticModel, context.CancellationToken, out var call) ||
-                        RegisterInvocation.TryMatchRegisterReadOnly(invocation, context.SemanticModel, context.CancellationToken, out call) ||
-                        RegisterInvocation.TryMatchRegisterAttached(invocation, context.SemanticModel, context.CancellationToken, out call) ||
-                        RegisterInvocation.TryMatchRegisterAttachedReadOnly(invocation, context.SemanticModel, context.CancellationToken, out call):
+                        RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { } call:
                         {
                             return (type = call.PropertyType(containingType, context.SemanticModel, context.CancellationToken)) is { };
                         }

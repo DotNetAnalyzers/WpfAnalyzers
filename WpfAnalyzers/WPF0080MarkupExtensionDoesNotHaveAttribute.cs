@@ -25,7 +25,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is INamedTypeSymbol { IsGenericType: false } type &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
-                type.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
+                type.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation) &&
                 type.TryFindFirstMethod("ProvideValue", x => x.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbols.IServiceProvider, out _) &&
                 !Attribute.TryFind(classDeclaration, KnownSymbols.MarkupExtensionReturnTypeAttribute, context.SemanticModel, context.CancellationToken, out _))
             {

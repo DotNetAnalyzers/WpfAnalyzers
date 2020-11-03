@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,7 +29,7 @@
                 context.ContainingSymbol.IsStatic)
             {
                 if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
-                    (RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out _)))
+                    (RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { }))
                 {
                     HandleArgument(context, argument);
                 }
@@ -41,7 +43,7 @@
                              invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
                              context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
                              BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
-                             context.ContainingSymbol.ContainingType.IsAssignableTo(fieldOrProperty.ContainingType, context.Compilation))
+                             context.ContainingSymbol.ContainingType.IsAssignableTo(fieldOrProperty.ContainingType, context.SemanticModel.Compilation))
                     {
                         HandleArgument(context, argument);
                     }

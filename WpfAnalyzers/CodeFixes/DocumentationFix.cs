@@ -31,7 +31,8 @@
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(nameof(DocComment), out var text) &&
+                if (syntaxRoot is { } &&
+                    diagnostic.Properties.TryGetValue(nameof(DocComment), out var text) &&
                     text is { })
                 {
                     switch (syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true))

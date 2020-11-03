@@ -36,8 +36,8 @@
                     HandleArgument(context, argument);
                 }
 
-                if ((RegisterInvocation.TryMatchRegister(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                     RegisterInvocation.TryMatchRegisterReadOnly(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                if ((RegisterInvocation.MatchRegister(invocation, context.SemanticModel, context.CancellationToken) is { } ||
+                     RegisterInvocation.MatchRegisterReadOnly(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                     invocation.TryGetArgumentAtIndex(2, out argument))
                 {
                     HandleArgument(context, argument);
@@ -48,7 +48,7 @@
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
-                !ownerType.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation))
+                !ownerType.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject, argument.GetLocation(), KnownSymbols.DependencyProperty.RegisterAttached.Name));
             }

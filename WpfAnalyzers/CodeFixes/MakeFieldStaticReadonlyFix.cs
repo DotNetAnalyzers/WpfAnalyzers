@@ -23,7 +23,8 @@
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out FieldDeclarationSyntax? fieldDeclaration))
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out FieldDeclarationSyntax? fieldDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Make static readonly",

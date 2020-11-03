@@ -22,7 +22,8 @@
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentListSyntax? argumentList) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentListSyntax? argumentList) &&
                     argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
                     diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
                     diagnostic.Properties.TryGetValue(nameof(TypeOfExpressionSyntax), out var type))

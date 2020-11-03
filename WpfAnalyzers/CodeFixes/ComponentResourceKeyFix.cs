@@ -24,7 +24,8 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Id == Descriptors.WPF0140UseContainingTypeComponentResourceKey.Id &&
+                if (syntaxRoot is { } &&
+                    diagnostic.Id == Descriptors.WPF0140UseContainingTypeComponentResourceKey.Id &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ObjectCreationExpressionSyntax? objectCreation) &&
                     objectCreation.ArgumentList is { Arguments: { Count: 0 } } argumentList &&
                     diagnostic.Properties.TryGetValue(nameof(ArgumentListSyntax), out var argumentListString))

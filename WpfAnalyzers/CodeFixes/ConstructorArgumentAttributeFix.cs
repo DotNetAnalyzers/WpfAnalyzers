@@ -26,7 +26,8 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
                     diagnostic.Properties.TryGetValue(nameof(ConstructorArgument), out var parameterName))
                 {
                     context.RegisterCodeFix(

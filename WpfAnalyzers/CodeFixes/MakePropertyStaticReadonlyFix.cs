@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -25,7 +27,8 @@
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration))
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Make static readonly",
@@ -46,7 +49,7 @@
             if (property.TryGetSetter(out var setter) &&
                 setter.Body is null)
             {
-                return property.RemoveNode(setter, SyntaxRemoveOptions.KeepNoTrivia);
+                return property.RemoveNode(setter, SyntaxRemoveOptions.KeepNoTrivia)!;
             }
 
             if (property.ExpressionBody is { })

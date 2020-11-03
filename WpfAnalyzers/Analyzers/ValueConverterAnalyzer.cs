@@ -28,14 +28,14 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is INamedTypeSymbol { IsAbstract: false, IsStatic: false } type &&
-                type.IsAssignableToEither(KnownSymbols.IValueConverter, KnownSymbols.IMultiValueConverter, context.Compilation) &&
+                type.IsAssignableToEither(KnownSymbols.IValueConverter, KnownSymbols.IMultiValueConverter, context.SemanticModel.Compilation) &&
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 type.DeclaredAccessibility != Accessibility.Private &&
                 type.DeclaredAccessibility != Accessibility.Protected)
             {
-                if (!type.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation))
+                if (!type.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation))
                 {
-                    if (ValueConverter.TryGetDefaultFieldsOrProperties(type, context.Compilation, out var defaults))
+                    if (ValueConverter.TryGetDefaultFieldsOrProperties(type, context.SemanticModel.Compilation, out var defaults))
                     {
                         foreach (var fieldOrProperty in defaults)
                         {
@@ -56,7 +56,7 @@
                     }
                 }
 
-                if (type.IsAssignableTo(KnownSymbols.IValueConverter, context.Compilation))
+                if (type.IsAssignableTo(KnownSymbols.IValueConverter, context.SemanticModel.Compilation))
                 {
                     if (Attribute.TryFind(classDeclaration, KnownSymbols.ValueConversionAttribute, context.SemanticModel, context.CancellationToken, out var attribute))
                     {

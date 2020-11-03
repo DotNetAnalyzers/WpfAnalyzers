@@ -34,7 +34,8 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is var token &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is var token &&
                     token.IsKind(SyntaxKind.IdentifierToken) &&
                     diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
                 {

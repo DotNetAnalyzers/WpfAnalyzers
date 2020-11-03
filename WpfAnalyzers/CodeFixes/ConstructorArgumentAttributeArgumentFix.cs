@@ -22,7 +22,8 @@
                                            .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor<AttributeArgumentSyntax>(diagnostic, out var argument) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor<AttributeArgumentSyntax>(diagnostic, out var argument) &&
                     argument is { Expression: { } expression } &&
                     diagnostic.Properties.TryGetValue(nameof(ConstructorArgument), out var parameterName))
                 {

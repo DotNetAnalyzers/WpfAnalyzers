@@ -2,7 +2,9 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -59,7 +61,7 @@
                 return false;
             }
 
-            if (RegisterInvocation.TryMatchRegisterAny(invocation, semanticModel, cancellationToken, out _))
+            if (RegisterInvocation.MatchRegisterAny(invocation, semanticModel, cancellationToken) is { })
             {
                 if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
                     semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))

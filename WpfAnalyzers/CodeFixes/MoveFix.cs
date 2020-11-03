@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,7 +24,8 @@
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? toMove) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? toMove) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
                     syntaxRoot.TryFindNodeOrAncestor(additionalLocation, out MemberDeclarationSyntax? member))
                 {

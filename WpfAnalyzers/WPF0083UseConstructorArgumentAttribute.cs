@@ -26,7 +26,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property &&
-                property.ContainingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
+                property.ContainingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation) &&
                 !Attribute.TryFind(propertyDeclaration, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
                 ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
             {

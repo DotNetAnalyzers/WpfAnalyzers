@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
@@ -35,9 +36,9 @@
         {
             nameArg = null;
             registeredName = null;
-            if (RegisterInvocation.TryMatchRegisterAny(invocation, semanticModel, cancellationToken, out var call))
+            if (RegisterInvocation.MatchRegisterAny(invocation, semanticModel, cancellationToken) is { } register)
             {
-                return (nameArg = call.NameArgument()) is { } &&
+                return (nameArg = register.NameArgument()) is { } &&
                        nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
             }
 
@@ -61,7 +62,7 @@
         {
             nameArg = null;
             result = null;
-            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var call))
+            if (RegisterInvocation.FindRecursive(backing, semanticModel, cancellationToken) is { } call)
             {
                 return (nameArg = call.NameArgument()) is { } &&
                        nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
@@ -86,7 +87,7 @@
         internal static bool TryGetRegisteredType(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? result)
         {
             result = null;
-            if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var call))
+            if (RegisterInvocation.FindRecursive(backing, semanticModel, cancellationToken) is { } call)
             {
                 result = call.PropertyType(backing.ContainingType, semanticModel, cancellationToken);
                 return result is { };
@@ -145,37 +146,7 @@
                    semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol) &&
                    BackingFieldOrProperty.TryCreateForDependencyProperty(addOwnerSymbol, out result);
         }
-
-        internal static bool TryGetRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
-        {
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                value is InvocationExpressionSyntax invocation)
-            {
-                return RegisterInvocation.TryMatchRegister(invocation, semanticModel, cancellationToken, out result) ||
-                       RegisterInvocation.TryMatchRegisterReadOnly(invocation, semanticModel, cancellationToken, out result) ||
-                       RegisterInvocation.TryMatchRegisterAttached(invocation, semanticModel, cancellationToken, out result) ||
-                       RegisterInvocation.TryMatchRegisterAttachedReadOnly(invocation, semanticModel, cancellationToken, out result);
-            }
-
-            result = default;
-            return false;
-        }
-
-        internal static bool TryGetRegisterInvocationRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out RegisterInvocation result)
-        {
-            if (TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
-            {
-                return TryGetRegisterInvocationRecursive(keyField, semanticModel, cancellationToken, out result);
-            }
-
-            if (TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
-            {
-                return TryGetRegisterInvocationRecursive(addOwnerSource, semanticModel, cancellationToken, out result);
-            }
-
-            return TryGetRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken, out result);
-        }
-
+        
         internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, [NotNullWhen(true)] out IPropertySymbol? property)
         {
             if (Suffix() is { } suffix)
