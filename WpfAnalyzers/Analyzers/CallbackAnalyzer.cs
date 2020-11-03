@@ -473,7 +473,7 @@
                         RegisterInvocation.TryMatchRegisterAttached(invocation, context.SemanticModel, context.CancellationToken, out call) ||
                         RegisterInvocation.TryMatchRegisterAttachedReadOnly(invocation, context.SemanticModel, context.CancellationToken, out call):
                         {
-                            return (type = call.PropertyType(context.SemanticModel, context.CancellationToken)) is { };
+                            return (type = call.PropertyType(containingType, context.SemanticModel, context.CancellationToken)) is { };
                         }
 
                     case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when

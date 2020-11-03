@@ -31,7 +31,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol is { IsStatic: true } &&
-                RegisterInvocation.TryMatchRegister(invocation, context.SemanticModel, context.CancellationToken, out var call) &&
+                RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out var call) &&
                 DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
             {
                 if (call.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&

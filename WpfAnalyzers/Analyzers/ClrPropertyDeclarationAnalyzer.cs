@@ -132,7 +132,7 @@
                             DependencyProperty.TryGetRegisterInvocationRecursive(getBacking, context.SemanticModel, context.CancellationToken, out var getRegistration) &&
                             DependencyProperty.TryGetRegisterInvocationRecursive(setBacking, context.SemanticModel, context.CancellationToken, out var setRegistration))
                         {
-                            return MethodSymbolComparer.Equal(getRegistration.Method, setRegistration.Method);
+                            return getRegistration.Invocation == setRegistration.Invocation;
                         }
                     }
 

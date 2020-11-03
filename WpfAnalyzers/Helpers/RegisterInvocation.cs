@@ -127,10 +127,10 @@
             return null;
         }
 
-        internal ITypeSymbol? PropertyType(SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal ITypeSymbol? PropertyType(INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (this.FindArgument("propertyType") is { Expression: TypeOfExpressionSyntax { Type: { } typeSyntax } } &&
-                TypeSymbol.TryGet(typeSyntax, this.Method.ContainingType, semanticModel, cancellationToken) is { } type)
+                TypeSymbol.TryGet(typeSyntax, containingType, semanticModel, cancellationToken) is { } type)
             {
                 if (type.IsReferenceType &&
                     (semanticModel.GetNullableContext(this.Invocation.SpanStart) & NullableContext.Enabled) == NullableContext.Enabled &&

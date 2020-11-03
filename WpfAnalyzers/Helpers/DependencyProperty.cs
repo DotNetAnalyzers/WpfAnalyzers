@@ -88,7 +88,7 @@
             result = null;
             if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var call))
             {
-                result = call.PropertyType(semanticModel, cancellationToken);
+                result = call.PropertyType(backing.ContainingType, semanticModel, cancellationToken);
                 return result is { };
             }
 
