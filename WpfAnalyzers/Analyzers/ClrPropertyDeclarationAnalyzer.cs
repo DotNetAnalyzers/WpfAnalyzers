@@ -88,7 +88,7 @@
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
-                        if (!SymbolEqualityComparer.Equal(registeredType, property.Type))
+                        if (!SymbolEqualityComparer.Equal(property.Type, registeredType))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

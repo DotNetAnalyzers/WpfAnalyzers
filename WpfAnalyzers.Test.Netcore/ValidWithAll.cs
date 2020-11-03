@@ -18,7 +18,7 @@
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
             ProjectFile.Find("ValidCode.Netcore.csproj"),
-            AllAnalyzers,
+            CodeFactory.DefaultCompilationOptions(AllAnalyzers, null).WithNullableContextOptions(NullableContextOptions.Enable),
             MetadataReferences.FromAttributes());
 
         [Test]

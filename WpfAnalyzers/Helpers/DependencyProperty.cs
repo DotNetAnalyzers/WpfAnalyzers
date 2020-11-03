@@ -93,7 +93,7 @@
             }
 
             if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
-                !source.Symbol.Equals(backing.Symbol))
+                !Microsoft.CodeAnalysis.SymbolEqualityComparer.Default.Equals(source.Symbol, backing.Symbol))
             {
                 return TryGetRegisteredName(source, semanticModel, cancellationToken, out nameArg, out result);
             }
@@ -152,7 +152,7 @@
             }
 
             if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
-               !source.Symbol.Equals(backing.Symbol))
+               !Microsoft.CodeAnalysis.SymbolEqualityComparer.Default.Equals(source.Symbol, backing.Symbol))
             {
                 return TryGetRegisteredType(source, semanticModel, cancellationToken, out result);
             }

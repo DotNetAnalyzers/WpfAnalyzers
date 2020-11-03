@@ -24,7 +24,7 @@ namespace N
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             nameof(Bar), 
-            typeof(string?), 
+            typeof(string), 
             typeof(FooControl),
             new PropertyMetadata(default(string)));
 
@@ -53,7 +53,7 @@ namespace N
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             nameof(Bar), 
-            typeof(string?), 
+            typeof(string), 
             typeof(FooControl),
             new PropertyMetadata(default(string)));
 
