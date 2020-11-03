@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -33,7 +35,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
-                context.ContainingSymbol is IMethodSymbol method)
+                context.ContainingSymbol is IMethodSymbol { ContainingType: { } containingType } method)
             {
                 if (method.IsStatic)
                 {
@@ -43,7 +45,7 @@
                         using var usages = GetCallbackArguments(context, method, methodDeclaration);
                         foreach (var callbackArgument in usages)
                         {
-                            if (TryGetSenderType(callbackArgument, method.ContainingType, context, out var senderType))
+                            if (TryGetSenderType(callbackArgument, containingType, context, out var senderType))
                             {
                                 HandleCasts(context, methodDeclaration, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
                             }
@@ -269,7 +271,7 @@
                 }
 
                 if (parent is CastExpressionSyntax castExpression &&
-                    context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is { } castType &&
+                    context.SemanticModel.GetType(castExpression.Type, context.CancellationToken) is { } castType &&
                     !TypeSymbolComparer.Equal(castType, expectedType))
                 {
                     var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
@@ -293,7 +295,7 @@
 
                 if (parent is BinaryExpressionSyntax binaryExpression &&
                     binaryExpression.IsKind(SyntaxKind.AsExpression) &&
-                    context.SemanticModel.TryGetType(binaryExpression.Right, context.CancellationToken, out var asType) &&
+                    context.SemanticModel.GetType(binaryExpression.Right, context.CancellationToken) is { } asType &&
                     asType.TypeKind != TypeKind.Interface &&
                     expectedType.TypeKind != TypeKind.Interface &&
                     !(asType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
@@ -313,7 +315,7 @@
 
                 if (parent is IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax isDeclaration } &&
                     expectedType != KnownSymbols.Object &&
-                    context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
+                    context.SemanticModel.GetType(isDeclaration.Type, context.CancellationToken) is { } isType &&
                     isType.TypeKind != TypeKind.Interface &&
                     expectedType.TypeKind != TypeKind.Interface &&
                     !(isType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
@@ -340,7 +342,7 @@
                         foreach (var label in section.Labels)
                         {
                             if (label is CasePatternSwitchLabelSyntax { Pattern: DeclarationPatternSyntax { Type: { } type } } &&
-                                context.SemanticModel.TryGetType(type, context.CancellationToken, out var caseType) &&
+                                context.SemanticModel.GetType(type, context.CancellationToken) is { } caseType &&
                                 caseType.TypeKind != TypeKind.Interface &&
                                 !(caseType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
                                   expectedType.IsAssignableTo(caseType, context.SemanticModel.Compilation)))
@@ -443,8 +445,8 @@
             if (argument is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax register } } } metaDataCreation } } &&
                 PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (DependencyProperty.TryGetRegisterCall(register, context.SemanticModel, context.CancellationToken, out _) ||
-                    DependencyProperty.TryGetRegisterReadOnlyCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                if (RegisterInvocation.TryGetRegisterCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                    RegisterInvocation.TryGetRegisterReadOnlyCall(register, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetAddOwnerCall(register, context.SemanticModel, context.CancellationToken, out _) ||
                     DependencyProperty.TryGetOverrideMetadataCall(register, context.SemanticModel, context.CancellationToken, out _))
                 {
@@ -471,9 +473,7 @@
                         DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
                         DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _):
                         {
-                            return invocation.TryGetArgumentAtIndex(1, out var arg) &&
-                                   arg.Expression is TypeOfExpressionSyntax senderTypeOf &&
-                                   TypeSymbol.TryGet(senderTypeOf, containingType, context.SemanticModel, context.CancellationToken, out type);
+                            return DependencyProperty.TryGetRegisteredType();
                         }
 
                     case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when
