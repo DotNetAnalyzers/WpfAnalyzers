@@ -27,10 +27,7 @@
                 context.ContainingSymbol.IsStatic)
             {
                 if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
-                    (DependencyProperty.TryGetRegisterCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                     DependencyProperty.TryGetRegisterReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                     DependencyProperty.TryGetRegisterAttachedCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                     DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, context.SemanticModel, context.CancellationToken, out _)))
+                    (RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out _)))
                 {
                     HandleArgument(context, argument);
                 }

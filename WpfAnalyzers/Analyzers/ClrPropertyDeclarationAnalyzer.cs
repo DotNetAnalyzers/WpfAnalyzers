@@ -129,10 +129,10 @@
                             BackingFieldOrProperty.TryCreateCandidate(getSymbol, out var getBacking) &&
                             context.SemanticModel.TryGetSymbol(setIdentifier, context.CancellationToken, out var setSymbol) &&
                             BackingFieldOrProperty.TryCreateCandidate(setSymbol, out var setBacking) &&
-                            DependencyProperty.TryGetRegisterInvocationRecursive(getBacking, context.SemanticModel, context.CancellationToken, out var getRegistration, out _) &&
-                            DependencyProperty.TryGetRegisterInvocationRecursive(setBacking, context.SemanticModel, context.CancellationToken, out var setRegistration, out _))
+                            DependencyProperty.TryGetRegisterInvocationRecursive(getBacking, context.SemanticModel, context.CancellationToken, out var getRegistration) &&
+                            DependencyProperty.TryGetRegisterInvocationRecursive(setBacking, context.SemanticModel, context.CancellationToken, out var setRegistration))
                         {
-                            return getRegistration == setRegistration;
+                            return MethodSymbolComparer.Equal(getRegistration.Method, setRegistration.Method);
                         }
                     }
 

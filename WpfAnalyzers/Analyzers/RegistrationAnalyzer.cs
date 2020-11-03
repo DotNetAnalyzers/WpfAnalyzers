@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
 
     using Gu.Roslyn.AnalyzerExtensions;
 
@@ -30,13 +29,12 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is InvocationExpressionSyntax registerCall &&
+                context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol is { IsStatic: true } &&
-                TryGetAnyRegisterCall(registerCall, context, out var registerMethod) &&
-                DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
+                RegisterInvocation.TryMatchRegister(invocation, context.SemanticModel, context.CancellationToken, out var call) &&
+                DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
             {
-                if (registerMethod.TryFindParameter(KnownSymbols.ValidateValueCallback, out var parameter) &&
-                    registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
+                if (call.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
                     Callback.TryGetTarget(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
                 {
                     if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
@@ -109,18 +107,10 @@
         private static bool MatchesValidateValueCallbackName(ArgumentSyntax validateValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return validateValueCallback.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
-                   TryGetAnyRegisterCall(invocation, context, out _) &&
+                   RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.Name.IsParts("Validate", registeredName);
-        }
-
-        private static bool TryGetAnyRegisterCall(InvocationExpressionSyntax registerCall, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IMethodSymbol? method)
-        {
-            return DependencyProperty.TryGetRegisterCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
-                   DependencyProperty.TryGetRegisterReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
-                   DependencyProperty.TryGetRegisterAttachedCall(registerCall, context.SemanticModel, context.CancellationToken, out method) ||
-                   DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerCall, context.SemanticModel, context.CancellationToken, out method);
         }
     }
 }

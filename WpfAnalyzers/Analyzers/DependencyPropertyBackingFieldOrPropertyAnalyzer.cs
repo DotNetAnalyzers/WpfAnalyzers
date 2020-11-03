@@ -119,7 +119,7 @@
                 }
 
                 if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
-                    DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _, out _) &&
+                    DependencyProperty.TryGetRegisterInvocationRecursive(candidate, context.SemanticModel, context.CancellationToken, out _) &&
                     !candidate.FieldOrProperty.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(

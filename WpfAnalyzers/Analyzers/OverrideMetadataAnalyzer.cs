@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -25,6 +27,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation &&
+                context.ContainingSymbol is { } &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var candidate) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
@@ -34,16 +37,15 @@
                 if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
                     value is InvocationExpressionSyntax registerInvocation)
                 {
-                    if (DependencyProperty.TryGetRegisterCall(registerInvocation, context.SemanticModel, context.CancellationToken, out var registerMethod) ||
-                        DependencyProperty.TryGetRegisterReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
-                        DependencyProperty.TryGetRegisterAttachedCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod) ||
-                        DependencyProperty.TryGetRegisterAttachedReadOnlyCall(registerInvocation, context.SemanticModel, context.CancellationToken, out registerMethod))
+                    if (RegisterInvocation.TryMatchRegister(registerInvocation, context.SemanticModel, context.CancellationToken, out var call) ||
+                        RegisterInvocation.TryMatchRegisterReadOnly(registerInvocation, context.SemanticModel, context.CancellationToken, out call) ||
+                        RegisterInvocation.TryMatchRegisterAttached(registerInvocation, context.SemanticModel, context.CancellationToken, out call) ||
+                        RegisterInvocation.TryMatchRegisterAttachedReadOnly(registerInvocation, context.SemanticModel, context.CancellationToken, out call))
                     {
-                        if (registerMethod.TryFindParameter(KnownSymbols.PropertyMetadata, out var registerParameter) &&
-                            registerInvocation.TryFindArgument(registerParameter, out var registeredMetadataArg) &&
+                        if (call.FindArgument(KnownSymbols.PropertyMetadata) is { } registeredMetadataArg &&
                             context.SemanticModel.TryGetType(metadataArg.Expression, context.CancellationToken, out var type) &&
                             context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
-                            !type.IsAssignableTo(registeredType, context.Compilation))
+                            !type.IsAssignableTo(registeredType, context.SemanticModel.Compilation))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable, metadataArg.GetLocation()));
                         }

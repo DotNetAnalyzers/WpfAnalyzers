@@ -59,10 +59,7 @@
                 return false;
             }
 
-            if (DependencyProperty.TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterReadOnlyCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterAttachedCall(invocation, semanticModel, cancellationToken, out _) ||
-                DependencyProperty.TryGetRegisterAttachedReadOnlyCall(invocation, semanticModel, cancellationToken, out _))
+            if (RegisterInvocation.TryMatchRegisterAny(invocation, semanticModel, cancellationToken, out _))
             {
                 if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
                     semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))
