@@ -67,5 +67,34 @@ namespace N
 
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [Test]
+        public static void NotNull()
+        {
+            var code = @"
+#nullable enable
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            nameof(Bar), 
+            typeof(string), 
+            typeof(FooControl),
+            new PropertyMetadata(string.Empty));
+
+        public string Bar
+        {
+            get => (string)GetValue(BarProperty);
+            set => SetValue(BarProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

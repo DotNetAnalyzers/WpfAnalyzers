@@ -99,7 +99,7 @@
                                     registeredType));
                         }
                         else if (getCall is { Parent: CastExpressionSyntax { Type: { } type } } &&
-                                 context.SemanticModel.TryGetType(type, context.CancellationToken, out var castType) &&
+                                 context.SemanticModel.GetType(type, context.CancellationToken) is { } castType &&
                                  !TypeSymbolComparer.Equal(registeredType, castType))
                         {
                             context.ReportDiagnostic(

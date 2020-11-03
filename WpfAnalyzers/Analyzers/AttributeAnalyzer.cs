@@ -1,10 +1,11 @@
 ﻿namespace WpfAnalyzers
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -41,6 +42,7 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is { } &&
                 context.Node is AttributeSyntax attribute)
             {
                 if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.DependsOnAttribute, context.CancellationToken, out _) &&
@@ -73,12 +75,12 @@
                 }
                 else if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.MarkupExtensionReturnTypeAttribute, context.CancellationToken, out _) &&
                          context.ContainingSymbol is ITypeSymbol { IsAbstract: false } containingType &&
-                         containingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.Compilation) &&
+                         containingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation) &&
                          attribute.TryFirstAncestor<ClassDeclarationSyntax>(out var classDeclaration) &&
                          MarkupExtension.TryGetReturnType(classDeclaration, context.SemanticModel, context.CancellationToken, out var returnType) &&
                          returnType != KnownSymbols.Object &&
                          TryFindTypeArgument(context, attribute, 0, "returnType", out expression, out var argumentType) &&
-                         !returnType.IsAssignableTo(argumentType, context.Compilation))
+                         !returnType.IsAssignableTo(argumentType, context.SemanticModel.Compilation))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -304,7 +306,7 @@
 
         private static bool TryFindNamespaceRecursive(SyntaxNodeAnalysisContext context, string name, [NotNullWhen(true)] out INamespaceSymbol? result)
         {
-            foreach (var ns in context.Compilation.GlobalNamespace.GetNamespaceMembers())
+            foreach (var ns in context.SemanticModel.Compilation.GlobalNamespace.GetNamespaceMembers())
             {
                 if (TryFindRecursive(ns, out result))
                 {

@@ -92,7 +92,7 @@
                                         foreach (var assignment in walker.Assignments)
                                         {
                                             if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol? assigned) &&
-                                                FieldSymbolComparer.Equals(assigned, field))
+                                                FieldSymbolComparer.Equal(assigned, field))
                                             {
                                                 returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
                                             }

@@ -131,7 +131,7 @@
             argParameter = null;
             return candidate is { ReturnsVoid: true, Parameters: { Length: 2 } parameters } &&
                    parameters.TryElementAt<IParameterSymbol>(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation) &&
                    parameters.TryElementAt<IParameterSymbol>(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs;
         }
@@ -143,7 +143,7 @@
             return candidate is { ReturnsVoid: false, Parameters: { Length: 2 } parameters } &&
                    candidate.ReturnType == KnownSymbols.Object &&
                    parameters.TryElementAt<IParameterSymbol>(0, out senderParameter) &&
-                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
+                   senderParameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation) &&
                    parameters.TryElementAt<IParameterSymbol>(1, out argParameter) &&
                    argParameter.Type == KnownSymbols.Object;
         }
@@ -273,7 +273,7 @@
                     !TypeSymbolComparer.Equal(castType, expectedType))
                 {
                     var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    if (!expectedType.IsAssignableTo(castType, context.Compilation))
+                    if (!expectedType.IsAssignableTo(castType, context.SemanticModel.Compilation))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -296,8 +296,8 @@
                     context.SemanticModel.TryGetType(binaryExpression.Right, context.CancellationToken, out var asType) &&
                     asType.TypeKind != TypeKind.Interface &&
                     expectedType.TypeKind != TypeKind.Interface &&
-                    !(asType.IsAssignableTo(expectedType, context.Compilation) ||
-                      expectedType.IsAssignableTo(asType, context.Compilation)))
+                    !(asType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
+                      expectedType.IsAssignableTo(asType, context.SemanticModel.Compilation)))
                 {
                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                         context.SemanticModel,
@@ -316,7 +316,8 @@
                     context.SemanticModel.TryGetType(isDeclaration.Type, context.CancellationToken, out var isType) &&
                     isType.TypeKind != TypeKind.Interface &&
                     expectedType.TypeKind != TypeKind.Interface &&
-                    !(isType.IsAssignableTo(expectedType, context.Compilation) || expectedType.IsAssignableTo(isType, context.Compilation)))
+                    !(isType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
+                      expectedType.IsAssignableTo(isType, context.SemanticModel.Compilation)))
                 {
                     var expectedTypeName = expectedType.ToMinimalDisplayString(
                         context.SemanticModel,
@@ -341,8 +342,8 @@
                             if (label is CasePatternSwitchLabelSyntax { Pattern: DeclarationPatternSyntax { Type: { } type } } &&
                                 context.SemanticModel.TryGetType(type, context.CancellationToken, out var caseType) &&
                                 caseType.TypeKind != TypeKind.Interface &&
-                                !(caseType.IsAssignableTo(expectedType, context.Compilation) ||
-                                  expectedType.IsAssignableTo(caseType, context.Compilation)))
+                                !(caseType.IsAssignableTo(expectedType, context.SemanticModel.Compilation) ||
+                                  expectedType.IsAssignableTo(caseType, context.SemanticModel.Compilation)))
                             {
                                 var expectedTypeName = expectedType.ToMinimalDisplayString(
                                     context.SemanticModel,
@@ -373,7 +374,7 @@
                 {
                     if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
                         context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
-                        Equals(symbol, method))
+                        MethodSymbolComparer.Equal(symbol, method))
                     {
                         if (invocation is { })
                         {
@@ -399,7 +400,7 @@
                 foreach (var identifierName in walker.IdentifierNames)
                 {
                     if (context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
-                        Equals(symbol, method))
+                        MethodSymbolComparer.Equal(symbol, method))
                     {
                         switch (identifierName.Parent)
                         {

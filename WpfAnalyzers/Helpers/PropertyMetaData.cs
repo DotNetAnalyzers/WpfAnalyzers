@@ -118,8 +118,8 @@
                 {
                     return recursion.SemanticModel.TryGetType(value, recursion.CancellationToken, out var valueType) &&
                            valueType.MetadataName == registeredType.MetadataName &&
-                           Equals(valueType.ContainingType, registeredType.ContainingType) &&
-                           NamespaceSymbolComparer.Equals(valueType.ContainingNamespace, registeredType.ContainingNamespace);
+                           TypeSymbolComparer.Equal(valueType.ContainingType, registeredType.ContainingType) &&
+                           NamespaceSymbolComparer.Equal(valueType.ContainingNamespace, registeredType.ContainingNamespace);
                 }
 
                 if (recursion.SemanticModel.IsRepresentationPreservingConversion(value, registeredType))

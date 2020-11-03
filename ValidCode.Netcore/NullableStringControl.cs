@@ -4,22 +4,22 @@
     using System.Windows;
     using System.Windows.Controls;
 
-    public class CustomControl : Control
+    public class NullableStringControl : Control
     {
         /// <summary>Identifies the <see cref="Text"/> dependency property.</summary>
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
             nameof(Text),
             typeof(string),
-            typeof(CustomControl),
+            typeof(NullableStringControl),
             new PropertyMetadata(
                 null,
                 OnTextChanged,
                 CoerceText),
             ValidateText);
 
-        static CustomControl()
+        static NullableStringControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomControl), new FrameworkPropertyMetadata(typeof(CustomControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(NullableStringControl), new FrameworkPropertyMetadata(typeof(NullableStringControl)));
         }
 
         public string? Text
@@ -39,7 +39,7 @@
                 return;
             }
 
-            ((CustomControl)d).OnTextChanged((string?)e.NewValue, (string?)e.OldValue);
+            ((NullableStringControl)d).OnTextChanged((string?)e.NewValue, (string?)e.OldValue);
         }
 
         private static object? CoerceText(DependencyObject d, object? baseValue)
@@ -51,8 +51,8 @@
 
             return baseValue switch
             {
-                string s => s.Length > 1,
-                _ => false,
+                string s => s,
+                _ => null,
             };
         }
 
