@@ -24,26 +24,30 @@
 
         internal static ITypeSymbol? TryGet(TypeSyntax typeSyntax, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (semanticModel.TryGetType(typeSyntax, cancellationToken, out var type) &&
-                type.Kind == SymbolKind.TypeParameter)
+            if (semanticModel.GetType(typeSyntax, cancellationToken) is { } type)
             {
-                while (containingType is { })
+                if (type.Kind == SymbolKind.TypeParameter)
                 {
-                    if (containingType.IsGenericType &&
-                        containingType != KnownSymbols.Object)
+                    while (containingType is { })
                     {
-                        var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
-                        if (index >= 0)
+                        if (containingType.IsGenericType &&
+                            containingType != KnownSymbols.Object)
                         {
-                            return containingType.TypeArguments[index];
+                            var index = containingType.TypeParameters.IndexOf((ITypeParameterSymbol)type);
+                            if (index >= 0)
+                            {
+                                return containingType.TypeArguments[index];
+                            }
                         }
-                    }
 
-                    containingType = containingType.ContainingType;
+                        containingType = containingType.ContainingType;
+                    }
                 }
+
+                return type;
             }
 
-            return type;
+            return null;
         }
     }
 }
