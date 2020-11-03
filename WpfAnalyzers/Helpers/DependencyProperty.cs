@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
@@ -12,11 +11,6 @@
 
     internal static class DependencyProperty
     {
-        internal static bool TryGetAddOwnerCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
-        {
-            return semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out method);
-        }
-
         internal static bool TryGetOverrideMetadataCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             return semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.OverrideMetadata, cancellationToken, out method);
@@ -43,7 +37,7 @@
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                (TryGetAddOwnerCall(invocation, semanticModel, cancellationToken, out _) ||
+                (AddOwner.Match(invocation, semanticModel, cancellationToken) is { } ||
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
                 if (semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var symbol) &&
@@ -146,7 +140,7 @@
                    semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol) &&
                    BackingFieldOrProperty.TryCreateForDependencyProperty(addOwnerSymbol, out result);
         }
-        
+
         internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, [NotNullWhen(true)] out IPropertySymbol? property)
         {
             if (Suffix() is { } suffix)
@@ -176,6 +170,29 @@
                     ? "PropertyKey"
                     : null;
             }
+        }
+
+        internal readonly struct AddOwner
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+            internal readonly IMethodSymbol Target;
+
+            internal AddOwner(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            {
+                this.Invocation = invocation;
+                this.Target = target;
+            }
+
+            internal static AddOwner? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out var target))
+                {
+                    return new AddOwner(invocation, target);
+                }
+
+                return null;
+            }
+
         }
     }
 }

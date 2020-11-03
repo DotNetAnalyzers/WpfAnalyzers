@@ -234,11 +234,10 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("AddOwner");
-            Assert.AreEqual(true, DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, CancellationToken.None, out var method));
-            Assert.AreEqual("AddOwner", method.Name);
+            Assert.AreEqual("AddOwner", DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyProperty.TryGetAddOwnerCall(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None));
         }
 
         [Test]

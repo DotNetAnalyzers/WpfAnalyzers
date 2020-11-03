@@ -447,7 +447,7 @@
             {
                 if (RegisterInvocation.MatchRegister(register, context.SemanticModel, context.CancellationToken) is { } ||
                     RegisterInvocation.MatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken) is { } ||
-                    DependencyProperty.TryGetAddOwnerCall(register, context.SemanticModel, context.CancellationToken, out _) ||
+                    DependencyProperty.AddOwner.Match(register, context.SemanticModel, context.CancellationToken) is { } ||
                     DependencyProperty.TryGetOverrideMetadataCall(register, context.SemanticModel, context.CancellationToken, out _))
                 {
                     senderType = containingType;
@@ -474,7 +474,7 @@
                         }
 
                     case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when
-                        DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
+                        DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                         DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _):
                         {
                             return context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&

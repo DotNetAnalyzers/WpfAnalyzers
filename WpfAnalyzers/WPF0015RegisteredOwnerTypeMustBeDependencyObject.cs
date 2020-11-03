@@ -30,7 +30,7 @@
             if (context.Node is InvocationExpressionSyntax invocation)
             {
                 if ((DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) ||
-                     DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _)) &&
+                     DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                     invocation.TryGetArgumentAtIndex(0, out var argument))
                 {
                     HandleArgument(context, argument);

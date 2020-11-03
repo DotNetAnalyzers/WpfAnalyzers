@@ -35,7 +35,7 @@
                 }
                 else if (invocation.TryGetArgumentAtIndex(0, out argument))
                 {
-                    if (DependencyProperty.TryGetAddOwnerCall(invocation, context.SemanticModel, context.CancellationToken, out _))
+                    if (DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { })
                     {
                         HandleArgument(context, argument);
                     }
