@@ -10,16 +10,6 @@
 
     internal static class TypeSymbol
     {
-        internal static bool Equals(ITypeSymbol x, ITypeSymbol y)
-        {
-            if (x.IsReferenceType)
-            {
-                return SymbolEqualityComparer.IncludeNullability.Equals(x, y);
-            }
-
-            return SymbolEqualityComparer.Default.Equals(x, y);
-        }
-
         internal static bool TryGet(TypeOfExpressionSyntax expression, INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? type)
         {
             if (expression is { Type: { } typeSyntax })

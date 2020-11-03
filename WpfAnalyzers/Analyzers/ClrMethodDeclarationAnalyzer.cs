@@ -102,7 +102,7 @@
                     }
 
                     if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
-                        !TypeSymbol.Equals(method.ReturnType, registeredType))
+                        !SymbolEqualityComparer.Equal(method.ReturnType, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -213,7 +213,7 @@
 
                     if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         method.Parameters.TryElementAt(1, out var valueParameter) &&
-                        !TypeSymbol.Equals(valueParameter.Type, registeredType))
+                        !SymbolEqualityComparer.Equal(valueParameter.Type, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(

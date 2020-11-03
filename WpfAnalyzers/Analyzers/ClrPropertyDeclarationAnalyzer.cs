@@ -30,7 +30,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
-                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, context.Compilation) &&
+                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
             {
@@ -88,7 +88,7 @@
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
-                        if (!registeredType.Equals(property.Type))
+                        if (!SymbolEqualityComparer.Equal(registeredType, property.Type))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -100,7 +100,7 @@
                         }
                         else if (getCall is { Parent: CastExpressionSyntax { Type: { } type } } &&
                                  context.SemanticModel.TryGetType(type, context.CancellationToken, out var castType) &&
-                                 !registeredType.Equals(castType))
+                                 !SymbolEqualityComparer.Equal(registeredType, castType))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

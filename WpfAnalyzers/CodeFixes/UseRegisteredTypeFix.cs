@@ -28,6 +28,8 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(nameof(TypeSyntax), out var typeText) &&
+                    typeText is { } &&
+                    syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax))
                 {
                     if (typeSyntax.Parent is PropertyDeclarationSyntax property &&
