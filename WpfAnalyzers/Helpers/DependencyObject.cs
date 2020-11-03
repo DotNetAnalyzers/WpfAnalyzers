@@ -1,4 +1,4 @@
-#pragma warning disable 1573
+﻿#pragma warning disable 1573
 namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;

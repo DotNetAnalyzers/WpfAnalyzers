@@ -41,9 +41,8 @@
         /// Get the single DependencyProperty backing field for <paramref name="property"/>
         /// Returns false for accessors for readonly dependency properties.
         /// </summary>
-        internal static bool TrySingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
+        internal static BackingFieldOrProperty? SingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            result = default;
             BackingFieldOrProperty getter;
             BackingFieldOrProperty setter;
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
@@ -56,25 +55,24 @@
                     out getter,
                     out setter))
                 {
-                    if (ReferenceEquals(setter.Symbol, getter.Symbol) &&
+                    if (SymbolEqualityComparer.Default.Equals(setter.Symbol, getter.Symbol) &&
                         setter.Type == KnownSymbols.DependencyProperty)
                     {
-                        result = setter;
-                        return true;
+                       return setter;
                     }
                 }
             }
 
             if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out getter, out setter))
             {
-                if (ReferenceEquals(getter.Symbol, setter.Symbol))
+                if (SymbolEqualityComparer.Default.Equals(getter.Symbol, setter.Symbol) &&
+                    getter.Type == KnownSymbols.DependencyProperty)
                 {
-                    result = getter;
-                    return result.Type == KnownSymbols.DependencyProperty;
+                    return getter;
                 }
             }
 
-            return false;
+            return null;
         }
 
         /// <summary>

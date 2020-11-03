@@ -2,7 +2,9 @@
 {
     using System.Collections.Immutable;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,7 +32,7 @@
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
                 property != KnownSymbols.FrameworkElement.DataContext &&
-                ClrProperty.TrySingleBackingField(property, context.SemanticModel, context.CancellationToken, out var backing) &&
+                ClrProperty.SingleBackingField(property, context.SemanticModel, context.CancellationToken) is { } backing &&
                 !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
             {
                 var propertyArgument = backing.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
