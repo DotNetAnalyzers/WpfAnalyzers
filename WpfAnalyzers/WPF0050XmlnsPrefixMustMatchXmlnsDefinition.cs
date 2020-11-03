@@ -77,7 +77,7 @@
                     }
                 }
 
-                var attributeName = ReferenceEquals(correspondingType, KnownSymbols.XmlnsPrefixAttribute)
+                var attributeName = correspondingType == KnownSymbols.XmlnsPrefixAttribute
                                         ? XmlnsPrefix
                                         : XmlnsDefinition;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition, arg.GetLocation(), attributeName, xmlNamespace));

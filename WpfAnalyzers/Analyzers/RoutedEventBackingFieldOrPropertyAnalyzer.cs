@@ -96,7 +96,7 @@
                 }
 
                 if (RoutedEvent.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
-                    !Equals(registeredOwnerType, context.ContainingSymbol.ContainingType))
+                    !TypeSymbolComparer.Equal(registeredOwnerType, context.ContainingSymbol.ContainingType))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

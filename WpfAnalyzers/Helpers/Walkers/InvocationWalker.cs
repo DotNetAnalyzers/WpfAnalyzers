@@ -1,8 +1,10 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -30,12 +32,12 @@ namespace WpfAnalyzers
                 case { Parent: ParameterSyntax _ }:
                 case { Parent: VariableDeclarationSyntax _ }:
                 case { Parent: MemberDeclarationSyntax _ }:
-                return;
+                    return;
             }
 
             if (node.Identifier.ValueText == this.method.MetadataName &&
                 this.semanticModel.TryGetSymbol(node, this.cancellationToken, out IMethodSymbol? candidate) &&
-                candidate.Equals(this.method))
+                MethodSymbolComparer.Equal(candidate, this.method))
             {
                 this.identifierNames.Add(node);
             }

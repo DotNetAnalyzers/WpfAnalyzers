@@ -31,7 +31,7 @@
                 name == "GetTemplateChild" &&
                 arguments.TrySingle(out var argument) &&
                 argument.Expression is { } expression &&
-                context.SemanticModel.TryGetConstantValue<string>(expression, context.CancellationToken, out string? partName) &&
+                context.SemanticModel.TryGetConstantValue<string>(expression, context.CancellationToken, out var partName) &&
                 context.ContainingSymbol is IMethodSymbol { Name: "OnApplyTemplate", IsOverride: true, Parameters: { Length: 0 } } containingMethod)
             {
                 if (TryFindAttribute(containingMethod.ContainingType, partName, out var attribute))

@@ -54,7 +54,7 @@
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
-                !ownerType.Equals(context.ContainingSymbol.ContainingType))
+                !TypeSymbolComparer.Equal(ownerType, context.ContainingSymbol.ContainingType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner, argument.GetLocation(), context.ContainingSymbol.ContainingType));
             }

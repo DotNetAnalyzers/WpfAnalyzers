@@ -47,9 +47,8 @@
             }
 
             setValueCall = walker.SetValue ?? walker.SetCurrentValue;
-            if (setValueCall?.Expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-                memberAccess.Expression is IdentifierNameSyntax member)
+            if (setValueCall?.Expression is MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess &&
+                memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression))
             {
                 if (method.ParameterList.Parameters[0].Identifier.ValueText != member.Identifier.ValueText)
                 {
@@ -86,25 +85,6 @@
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Check if <paramref name="method"/> is a potential accessor for an attached property.
-        /// </summary>
-        internal static bool IsPotentialClrGetMethod(IMethodSymbol method, Compilation compilation)
-        {
-            return method is { IsStatic: true, ReturnsVoid: false, Parameters: { Length: 1 } } &&
-                   method.Name.StartsWith("Get", StringComparison.Ordinal) &&
-                   method.Parameters.TrySingle(out var parameter) &&
-                   parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
-        }
-
-        internal static bool IsAttachedGet(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField)
-        {
-            getField = default;
-            return IsPotentialClrGetMethod(method, semanticModel.Compilation) &&
-                   method.TrySingleMethodDeclaration(cancellationToken, out var declaration) &&
-                   IsAttachedGet(declaration, semanticModel, cancellationToken, out _, out getField);
         }
 
         internal static bool IsAttachedGet(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? call, out BackingFieldOrProperty getField)

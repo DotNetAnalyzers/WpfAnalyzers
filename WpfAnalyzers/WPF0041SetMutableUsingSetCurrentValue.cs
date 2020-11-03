@@ -88,8 +88,9 @@
         {
             return expression switch
             {
-                MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax identifier } => semanticModel.TryGetSymbol(identifier, cancellationToken, out var symbol) &&
-                                                                                                symbol.Kind == SymbolKind.Local,
+                MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax identifier }
+                    => semanticModel.TryGetSymbol(identifier, cancellationToken, out var symbol) &&
+                       symbol.Kind == SymbolKind.Local,
                 MemberAccessExpressionSyntax { Expression: { Parent: ObjectCreationExpressionSyntax _ } } => true,
                 _ => false,
             };

@@ -122,7 +122,7 @@
                     getter = keyField;
                 }
 
-                if (ReferenceEquals(setter.Symbol, getter.Symbol))
+                if (SymbolComparer.Equal(setter.Symbol, getter.Symbol))
                 {
                     result = setter;
                     return true;

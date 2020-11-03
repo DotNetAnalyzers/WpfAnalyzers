@@ -82,7 +82,7 @@
 
                         if (registration.TryGetArgumentAtIndex(2, out var handlerTypeArg) &&
                             handlerTypeArg.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var registeredHandlerType) &&
-                            !registeredHandlerType.Equals(eventSymbol.Type))
+                            !TypeSymbolComparer.Equal(registeredHandlerType, eventSymbol.Type))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

@@ -41,7 +41,7 @@
                         {
                             if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var assignedValue) &&
                                 context.SemanticModel.TryGetType(assignedValue, context.CancellationToken, out var assignedType) &&
-                                !Equals(assignedType, type))
+                                !TypeSymbolComparer.Equal(assignedType, type))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0074DefaultMemberOfWrongType, assignedValue.GetLocation()));
                             }
@@ -67,7 +67,7 @@
                                 attribute.TryFindArgument(0, "sourceType", out var arg) &&
                                 arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
                                 TypeSymbol.TryGet(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
-                                !Equals(argType, sourceType))
+                                !TypeSymbolComparer.Equal(argType, sourceType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes, arg.GetLocation(), sourceType));
                             }
@@ -75,7 +75,7 @@
                             if (attribute.TryFindArgument(1, "targetType", out arg) &&
                                 arg.Expression is TypeOfExpressionSyntax targetTypeOf &&
                                 TypeSymbol.TryGet(targetTypeOf, type, context.SemanticModel, context.CancellationToken, out argType) &&
-                                !Equals(argType, targetType))
+                                !TypeSymbolComparer.Equal(argType, targetType))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes, arg.GetLocation(), targetType));
                             }

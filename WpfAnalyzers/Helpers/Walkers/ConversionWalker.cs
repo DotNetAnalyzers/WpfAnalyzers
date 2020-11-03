@@ -122,7 +122,7 @@
                     return false;
                 }
 
-                return ReferenceEquals(sm.GetSymbolSafe(e, ct), s);
+                return SymbolComparer.Equal(sm.GetSymbolSafe(e, ct), s);
             }
 
             bool TryGetCommonBase(ITypeSymbol? t1, TypeSyntax? ts, out ITypeSymbol? result)
@@ -139,7 +139,7 @@
                     return false;
                 }
 
-                if (ReferenceEquals(t1, t2))
+                if (TypeSymbolComparer.Equal(t1, t2))
                 {
                     result = t1;
                     return true;
