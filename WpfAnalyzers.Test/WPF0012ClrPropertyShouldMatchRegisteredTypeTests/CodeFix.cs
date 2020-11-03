@@ -23,15 +23,15 @@ namespace N
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            ""Bar"", 
+            nameof(Bar), 
             typeof(int), 
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
         public ↓double Bar
         {
-            get { return (double)this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            get => (double)this.GetValue(BarProperty);
+            set => this.SetValue(BarProperty, value);
         }
     }
 }";

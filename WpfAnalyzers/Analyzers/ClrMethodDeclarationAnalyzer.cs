@@ -108,6 +108,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
                                 methodDeclaration.ReturnType.GetLocation(),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 "Return type",
                                 registeredType));
                     }
@@ -218,6 +219,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
                                 methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 "Value type",
                                 registeredType));
                     }

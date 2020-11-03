@@ -1,10 +1,13 @@
 ﻿namespace WpfAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -15,7 +18,8 @@
     internal class UseRegisteredTypeFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType.Id);
+            Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType.Id,
+            Descriptors.WPF0013ClrMethodMustMatchRegisteredType.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -27,7 +31,7 @@
                     syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax))
                 {
                     if (typeSyntax.Parent is PropertyDeclarationSyntax property &&
-                        property.TryGetGetter(out var getter))
+                        property.Getter() is { } getter)
                     {
                         context.RegisterCodeFix(
                             $"Change to: {typeText}.",
@@ -36,7 +40,21 @@
                                                      x => SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(x))
                                                  .ReplaceNode(
                                                      getter,
-                                                     x => WithCast(x, typeText)),
+                                                     x => CastReturnValue.Rewrite(x, typeText)),
+                            nameof(UseRegisteredTypeFix),
+                            diagnostic);
+                    }
+                    else if (typeSyntax.Parent is MethodDeclarationSyntax { ParameterList: { Parameters: { Count: 1 } } } method &&
+                             method.Identifier.ValueText.StartsWith("Get", StringComparison.Ordinal))
+                    {
+                        context.RegisterCodeFix(
+                            $"Change to: {typeText}.",
+                            (editor, _) => editor.ReplaceNode(
+                                                     typeSyntax,
+                                                     x => SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(x))
+                                                 .ReplaceNode(
+                                                     method,
+                                                     x => CastReturnValue.Rewrite(x, typeText)),
                             nameof(UseRegisteredTypeFix),
                             diagnostic);
                     }
@@ -54,28 +72,41 @@
             }
         }
 
-        private static AccessorDeclarationSyntax WithCast(AccessorDeclarationSyntax getter, string typeText)
+        private class CastReturnValue : CSharpSyntaxRewriter
         {
-            switch (getter.ExpressionBody)
+            private readonly string typeText;
+
+            private CastReturnValue(string typeText)
             {
-                case { Expression: CastExpressionSyntax cast }:
-                    return getter.ReplaceNode(cast.Type, SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(cast.Type));
-                case { } arrow:
-                    return getter.ReplaceNode(arrow.Expression, SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(typeText), arrow.Expression));
+                this.typeText = typeText;
             }
 
-            if (getter.Body is { } block &&
-                block.Statements.TrySingleOfType<StatementSyntax, ReturnStatementSyntax>(out ReturnStatementSyntax? statement))
+            public override SyntaxNode? VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
             {
-                if (statement.Expression is CastExpressionSyntax cast)
+                return node switch
                 {
-                    return getter.ReplaceNode(cast.Type, SyntaxFactory.ParseTypeName(typeText).WithTriviaFrom(cast.Type));
-                }
-
-                return getter.ReplaceNode(statement.Expression, SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(typeText), statement.Expression));
+                    { Expression: CastExpressionSyntax { Type: { } type } } => node.ReplaceNode(type, SyntaxFactory.ParseTypeName(this.typeText).WithTriviaFrom(type)),
+                    { Expression: { } expression } => SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(this.typeText), expression),
+                    _ => base.VisitArrowExpressionClause(node),
+                };
             }
 
-            return getter;
+            public override SyntaxNode? VisitReturnStatement(ReturnStatementSyntax node)
+            {
+                return node switch
+                {
+                    { Expression: CastExpressionSyntax { Type: { } type } } => node.ReplaceNode(type, SyntaxFactory.ParseTypeName(this.typeText).WithTriviaFrom(type)),
+                    { Expression: { } expression } => SyntaxFactory.CastExpression(SyntaxFactory.ParseTypeName(this.typeText), expression),
+                    _ => base.VisitReturnStatement(node),
+                };
+            }
+
+            internal static T Rewrite<T>(T node, string typeText)
+                where T : CSharpSyntaxNode
+
+            {
+                return (T)new CastReturnValue(typeText).Visit(node);
+            }
         }
     }
 }

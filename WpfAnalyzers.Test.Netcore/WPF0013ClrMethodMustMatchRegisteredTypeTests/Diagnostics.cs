@@ -1,12 +1,14 @@
 ﻿namespace WpfAnalyzers.Test.Netcore.WPF0013ClrMethodMustMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public static class Diagnostics
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseRegisteredTypeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0013ClrMethodMustMatchRegisteredType);
 
         [Test]
@@ -43,7 +45,7 @@ namespace N
         [TestCase("null")]
         public static void GetMethod(string expression)
         {
-            var code = @"
+            var before = @"
 #nullable enable
 namespace N
 {
@@ -71,7 +73,35 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+            var after = @"
+#nullable enable
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(string),
+            typeof(Foo),
+            new PropertyMetadata(
+                default(string),
+                (o, e) => { }));
+
+        public static void SetBar(this FrameworkElement element, string? value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static string? GetBar(this FrameworkElement element)
+        {
+            return (string?)element.GetValue(BarProperty);
+        }
+    }
+}".AssertReplace("default(string)", expression);
+
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("default(string)")]
@@ -79,7 +109,7 @@ namespace N
         [TestCase("(object)null")]
         public static void SetMethod(string expression)
         {
-            var code = @"
+            var before = @"
 #nullable enable
 namespace N
 {
@@ -107,7 +137,35 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+            var after = @"
+#nullable enable
+namespace N
+{
+    using System.Windows;
+
+    public static class Foo
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
+            ""Bar"",
+            typeof(string),
+            typeof(Foo),
+            new PropertyMetadata(
+                default(string),
+                (o, e) => { }));
+
+        public static void SetBar(this FrameworkElement element, string? value)
+        {
+            element.SetValue(BarProperty, value);
+        }
+
+        public static string? GetBar(this FrameworkElement element)
+        {
+            return (string?)element.GetValue(BarProperty);
+        }
+    }
+}".AssertReplace("default(string)", expression);
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
