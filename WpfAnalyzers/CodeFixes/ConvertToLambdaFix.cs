@@ -157,7 +157,7 @@
         private static void RemoveIfNotUsed(DocumentEditor editor, SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> symbolAndDeclaration, CancellationToken cancellationToken)
         {
             if (symbolAndDeclaration.Symbol.DeclaredAccessibility == Accessibility.Private &&
-                symbolAndDeclaration.Symbol.IsInvokedOnce(editor.SemanticModel, cancellationToken))
+                Callback.IsInvokedOnce(symbolAndDeclaration.Symbol, editor.SemanticModel, cancellationToken))
             {
                 editor.RemoveNode(symbolAndDeclaration.Declaration);
             }

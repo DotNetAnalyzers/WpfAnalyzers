@@ -35,7 +35,7 @@
                 DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
             {
                 if (call.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
-                    Callback.TryGetTarget(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
+                    Callback.Match(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } identifier, Target: { } target })
                 {
                     if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
                         !MatchesValidateValueCallbackName(validateValueCallback, target, context))
@@ -46,9 +46,9 @@
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
-                                    callBackIdentifier.GetLocation(),
+                                    identifier.GetLocation(),
                                     ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"Validate{registeredName}"),
-                                    callBackIdentifier,
+                                    identifier,
                                     $"Validate{registeredName}"));
                         }
                         else if (target.Name.StartsWith("Validate", StringComparison.Ordinal))
@@ -62,8 +62,8 @@
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
                                             Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
-                                            callBackIdentifier.GetLocation(),
-                                            callBackIdentifier,
+                                            identifier.GetLocation(),
+                                            identifier,
                                             $"Validate{registeredName}"));
                                     break;
                                 }

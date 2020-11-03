@@ -37,37 +37,37 @@
                 if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                 {
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
-                        Callback.TryGetTarget(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
+                        Callback.Match(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
                     {
-                        if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
-                            !target.Name.IsParts("On", registeredName, "Changed") &&
-                            target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
+                        if (TypeSymbolComparer.Equal(onPropertyChanged.ContainingType, context.ContainingSymbol.ContainingType) &&
+                            !onPropertyChanged.Name.IsParts("On", registeredName, "Changed") &&
+                            onPropertyChanged.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
                         {
-                            using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
+                            using var walker = InvocationWalker.InContainingClass(onPropertyChanged, context.SemanticModel, context.CancellationToken);
                             if (walker.IdentifierNames.Count == 1)
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-                                        callbackIdentifier.GetLocation(),
+                                        onPropertyChangedNode.GetLocation(),
                                         ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"On{registeredName}Changed"),
-                                        callbackIdentifier,
+                                        onPropertyChangedNode,
                                         $"On{registeredName}Changed"));
                             }
-                            else if (target.Name.StartsWith("On", StringComparison.Ordinal) &&
-                                     target.Name.EndsWith("Changed", StringComparison.Ordinal))
+                            else if (onPropertyChanged.Name.StartsWith("On", StringComparison.Ordinal) &&
+                                     onPropertyChanged.Name.EndsWith("Changed", StringComparison.Ordinal))
                             {
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {
                                     if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
                                         argument != propertyChangedCallback &&
-                                        MatchesPropertyChangedCallbackName(argument, target, context))
+                                        MatchesPropertyChangedCallbackName(argument, onPropertyChanged, context))
                                     {
                                         context.ReportDiagnostic(
                                             Diagnostic.Create(
                                                 Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName,
-                                                callbackIdentifier.GetLocation(),
-                                                callbackIdentifier,
+                                                onPropertyChangedNode.GetLocation(),
+                                                onPropertyChangedNode,
                                                 $"On{registeredName}Changed"));
                                         break;
                                     }
@@ -75,7 +75,7 @@
                             }
                         }
 
-                        if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                        if (onPropertyChanged.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.CanInlineBody(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
@@ -83,35 +83,35 @@
                     }
 
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
-                        Callback.TryGetTarget(coerceValueCallback, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
+                        Callback.Match(coerceValueCallback, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
                     {
-                        if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
-                            !target.Name.IsParts("Coerce", registeredName))
+                        if (TypeSymbolComparer.Equal(coerce.ContainingType, context.ContainingSymbol.ContainingType) &&
+                            !coerce.Name.IsParts("Coerce", registeredName))
                         {
-                            using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
+                            using var walker = InvocationWalker.InContainingClass(coerce, context.SemanticModel, context.CancellationToken);
                             if (walker.IdentifierNames.Count == 1)
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
                                         Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
-                                        callbackIdentifier.GetLocation(),
+                                        coerceNode.GetLocation(),
                                         ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", $"Coerce{registeredName}"),
-                                        callbackIdentifier,
+                                        coerceNode,
                                         $"Coerce{registeredName}"));
                             }
-                            else if (target.Name.StartsWith("Coerce", StringComparison.Ordinal))
+                            else if (coerce.Name.StartsWith("Coerce", StringComparison.Ordinal))
                             {
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {
                                     if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
                                         argument != propertyChangedCallback &&
-                                        MatchesCoerceValueCallbackName(argument, target, context))
+                                        MatchesCoerceValueCallbackName(argument, coerce, context))
                                     {
                                         context.ReportDiagnostic(
                                             Diagnostic.Create(
                                                 Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
-                                                callbackIdentifier.GetLocation(),
-                                                callbackIdentifier,
+                                                coerceNode.GetLocation(),
+                                                coerceNode,
                                                 $"Coerce{registeredName}"));
                                         break;
                                     }
@@ -119,7 +119,7 @@
                             }
                         }
 
-                        if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
+                        if (coerce.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.CanInlineBody(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueCallback.GetLocation()));

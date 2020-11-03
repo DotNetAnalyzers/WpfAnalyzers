@@ -9,49 +9,57 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class Callback
+    internal readonly struct Callback
     {
-        internal static bool TryGetTarget(ArgumentSyntax callback, QualifiedType handlerType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? identifier, [NotNullWhen(true)] out IMethodSymbol? method)
+        internal readonly IdentifierNameSyntax Identifier;
+        internal readonly IMethodSymbol Target;
+
+        internal Callback(IdentifierNameSyntax identifier, IMethodSymbol target)
         {
-            identifier = null;
-            method = null;
+            this.Identifier = identifier;
+            this.Target = target;
+        }
 
-            if (callback is null)
+        internal static Callback? Match(ArgumentSyntax callback, QualifiedType handlerType, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return callback.Expression switch
             {
-                return false;
-            }
-
-            switch (callback.Expression)
-            {
-                case IdentifierNameSyntax identifierName
-                    when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                    identifier = identifierName;
-                    return true;
-                case MemberAccessExpressionSyntax { Name: IdentifierNameSyntax candidate } memberAccess
+                IdentifierNameSyntax identifierName
+                   when FindMethod(identifierName) is { } method
+                   => new Callback(identifierName, method),
+                MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName }
+                memberAccess
                     when memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-                         semanticModel.TryGetSymbol(candidate, cancellationToken, out method):
-                    identifier = candidate;
-                    return true;
-                case LambdaExpressionSyntax { Body: InvocationExpressionSyntax invocation }:
-                    switch (invocation.Expression)
+                    FindMethod(identifierName) is { } method
+                     => new Callback(identifierName, method),
+                LambdaExpressionSyntax { Body: InvocationExpressionSyntax invocation } =>
+                    invocation switch
                     {
-                        case IdentifierNameSyntax identifierName
-                            when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                            identifier = identifierName;
-                            return true;
-                        case MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName }
-                            when semanticModel.TryGetSymbol(identifierName, cancellationToken, out method):
-                            identifier = identifierName;
-                            return true;
-                    }
+                        { Expression: IdentifierNameSyntax identifierName }
+                                when FindMethod(identifierName) is { } method
+                        => new Callback(identifierName, method),
+                        { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax identifierName } }
+                                when FindMethod(identifierName) is { } method
+                        => new Callback(identifierName, method),
+                        _ => null,
+                    },
 
-                    break;
+                ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } creation
+                    when creation.IsType(handlerType, semanticModel, cancellationToken)
+                    => Match(arguments[0], handlerType, semanticModel, cancellationToken),
+                _ => null,
+            };
+
+            IMethodSymbol? FindMethod(IdentifierNameSyntax candidate)
+            {
+                if (semanticModel.TryGetSymbol(candidate, cancellationToken, out var symbol) &&
+                    symbol is IMethodSymbol method)
+                {
+                    return method;
+                }
+
+                return null;
             }
-
-            return callback.Expression is ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } creation &&
-                   semanticModel.GetTypeInfoSafe(creation, cancellationToken).Type == handlerType &&
-                   arguments.TrySingle(out var arg) &&
-                   TryGetTarget(arg, handlerType, semanticModel, cancellationToken, out identifier, out method);
         }
 
         internal static bool CanInlineBody(MethodDeclarationSyntax method)
@@ -68,7 +76,7 @@
             };
         }
 
-        internal static bool IsInvokedOnce(this IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsInvokedOnce(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using var walker = InvocationWalker.InContainingClass(method, semanticModel, cancellationToken);
             return walker.IdentifierNames.Count == 1;
