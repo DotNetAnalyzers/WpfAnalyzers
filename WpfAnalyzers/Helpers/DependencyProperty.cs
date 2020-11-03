@@ -37,7 +37,7 @@
             registeredName = null;
             if (RegisterInvocation.TryMatchRegisterAny(invocation, semanticModel, cancellationToken, out var call))
             {
-                return (nameArg = call.FindArgument("name")) is { } &&
+                return (nameArg = call.NameArgument()) is { } &&
                        nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
             }
 
@@ -63,7 +63,7 @@
             result = null;
             if (TryGetRegisterInvocationRecursive(backing, semanticModel, cancellationToken, out var call))
             {
-                return (nameArg = call.FindArgument("name")) is { } &&
+                return (nameArg = call.NameArgument()) is { } &&
                        nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
             }
 

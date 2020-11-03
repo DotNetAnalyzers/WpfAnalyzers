@@ -107,6 +107,10 @@
             return false;
         }
 
+        internal ArgumentSyntax? NameArgument() => this.FindArgument("name");
+
+        internal ArgumentSyntax? PropertyTypeArgument() => this.FindArgument("propertyType");
+
         internal ArgumentSyntax? FindArgument(string name)
         {
             if (this.Method.TryFindParameter(name, out var parameter))
@@ -129,7 +133,7 @@
 
         internal ITypeSymbol? PropertyType(INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (this.FindArgument("propertyType") is { Expression: TypeOfExpressionSyntax { Type: { } typeSyntax } } &&
+            if (this.PropertyTypeArgument() is { Expression: TypeOfExpressionSyntax { Type: { } typeSyntax } } &&
                 TypeSymbol.TryGet(typeSyntax, containingType, semanticModel, cancellationToken) is { } type)
             {
                 if (type.IsReferenceType &&
@@ -160,6 +164,14 @@
             }
 
             return null;
+        }
+
+        internal string? PropertyName(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return this.NameArgument() is { } argument &&
+                   argument.TryGetStringValue(semanticModel, cancellationToken, out var name)
+                ? name
+                : null;
         }
     }
 }

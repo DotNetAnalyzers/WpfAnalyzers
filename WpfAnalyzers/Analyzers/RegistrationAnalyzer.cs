@@ -107,9 +107,9 @@
         private static bool MatchesValidateValueCallbackName(ArgumentSyntax validateValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return validateValueCallback.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
-                   RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                   RegisterInvocation.TryMatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken, out var call) &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
-                   DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                   call.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName &&
                    target.Name.IsParts("Validate", registeredName);
         }
     }
