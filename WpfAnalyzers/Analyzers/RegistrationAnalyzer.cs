@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,7 +31,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax registerCall &&
-                context.ContainingSymbol.IsStatic &&
+                context.ContainingSymbol is { IsStatic: true } &&
                 TryGetAnyRegisterCall(registerCall, context, out var registerMethod) &&
                 DependencyProperty.TryGetRegisteredName(registerCall, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
             {
@@ -37,7 +39,7 @@
                     registerCall.TryFindArgument(parameter, out var validateValueCallback) &&
                     Callback.TryGetTarget(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken, out var callBackIdentifier, out var target))
                 {
-                    if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                    if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
                         !MatchesValidateValueCallbackName(validateValueCallback, target, context))
                     {
                         using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
@@ -108,7 +110,7 @@
         {
             return validateValueCallback.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
                    TryGetAnyRegisterCall(invocation, context, out _) &&
-                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    DependencyProperty.TryGetRegisteredName(invocation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                    target.Name.IsParts("Validate", registeredName);
         }

@@ -103,7 +103,7 @@
                     }
 
                     if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, context.SemanticModel, context.CancellationToken, out var keyMember) &&
-                        Equals(backing.ContainingType, keyMember.ContainingType) &&
+                        TypeSymbolComparer.Equal(backing.ContainingType, keyMember.ContainingType) &&
                         keyMember.TryGetSyntaxReference(out var reference) &&
                         ReferenceEquals(reference.SyntaxTree, context.Node.SyntaxTree) &&
                         reference.Span.Start > context.Node.SpanStart)

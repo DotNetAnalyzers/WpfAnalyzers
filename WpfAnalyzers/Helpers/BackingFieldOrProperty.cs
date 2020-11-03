@@ -9,7 +9,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [DebuggerDisplay("{this.Symbol}")]
-    internal struct BackingFieldOrProperty
+    internal readonly struct BackingFieldOrProperty
     {
         private BackingFieldOrProperty(FieldOrProperty fieldOrProperty)
         {
@@ -26,10 +26,9 @@
 
         internal string Name => this.FieldOrProperty.Name;
 
-        internal static bool TryCreateForDependencyProperty(ISymbol symbol, out BackingFieldOrProperty result)
+        internal static bool TryCreateForDependencyProperty(ISymbol? symbol, out BackingFieldOrProperty result)
         {
-            if (symbol is { } &&
-                symbol.IsStatic &&
+            if (symbol is { IsStatic: true } &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
             {
@@ -41,7 +40,7 @@
             return false;
         }
 
-        internal static bool TryCreateCandidate(ISymbol symbol, out BackingFieldOrProperty result)
+        internal static bool TryCreateCandidate(ISymbol? symbol, out BackingFieldOrProperty result)
         {
             if (symbol is { } &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&

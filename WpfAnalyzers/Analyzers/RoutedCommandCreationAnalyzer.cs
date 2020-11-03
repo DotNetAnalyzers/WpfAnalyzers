@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,7 +31,8 @@
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is ObjectCreationExpressionSyntax objectCreation &&
+            if (context.Node is ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation &&
+                context.ContainingSymbol is { } containingSymbol &&
                 (objectCreation.Type == KnownSymbols.RoutedCommand || objectCreation.Type == KnownSymbols.RoutedUICommand) &&
                 context.SemanticModel.TryGetSymbol(objectCreation, context.CancellationToken, out var ctor))
             {
@@ -37,7 +40,7 @@
                 {
                     if (objectCreation.TryFindArgument(parameter, out var ownerTypeArg) &&
                         ownerTypeArg.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var type) &&
-                        !type.Equals(context.ContainingSymbol.ContainingType))
+                        !TypeSymbolComparer.Equal(type, containingSymbol.ContainingType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -88,7 +91,7 @@
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.WPF0122RegisterRoutedCommand,
-                                objectCreation.ArgumentList.GetLocation(),
+                                argumentList.GetLocation(),
                                 ImmutableDictionary.CreateRange(new[]
                                 {
                                     new KeyValuePair<string, string?>(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
@@ -111,7 +114,7 @@
             return objectCreation.Parent switch
             {
                 EqualsValueClauseSyntax _ => objectCreation.TryFirstAncestor(out memberDeclaration) &&
-                                             FieldOrProperty.TryCreate(context.ContainingSymbol, out fieldOrProperty),
+                                             FieldOrProperty.TryCreate(context.ContainingSymbol!, out fieldOrProperty),
                 ArrowExpressionClauseSyntax _ => objectCreation.TryFirstAncestor(out memberDeclaration) &&
                                                  context.ContainingSymbol is IMethodSymbol { AssociatedSymbol: { } associatedSymbol } &&
                                                  FieldOrProperty.TryCreate(associatedSymbol, out fieldOrProperty),

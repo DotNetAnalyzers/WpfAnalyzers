@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,7 +31,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ObjectCreationExpressionSyntax objectCreation &&
-                context.ContainingSymbol.IsStatic &&
+                context.ContainingSymbol is { IsStatic: true } &&
                 PropertyMetadata.TryGetConstructor(objectCreation, context.SemanticModel, context.CancellationToken, out _))
             {
                 if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
@@ -37,7 +39,7 @@
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
                         Callback.TryGetTarget(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken, out var callbackIdentifier, out var target))
                     {
-                        if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                        if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
                             !target.Name.IsParts("On", registeredName, "Changed") &&
                             target.DeclaredAccessibility.IsEither(Accessibility.Private, Accessibility.Protected))
                         {
@@ -83,7 +85,7 @@
                     if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
                         Callback.TryGetTarget(coerceValueCallback, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken, out callbackIdentifier, out target))
                     {
-                        if (target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                        if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
                             !target.Name.IsParts("Coerce", registeredName))
                         {
                             using var walker = InvocationWalker.InContainingClass(target, context.SemanticModel, context.CancellationToken);
@@ -158,7 +160,7 @@
         {
             return propertyChangedCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
-                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
         }
 
@@ -166,7 +168,7 @@
         {
             return coerceValueCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
                    PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
-                   target.ContainingType.Equals(context.ContainingSymbol.ContainingType) &&
+                   TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);
         }
 

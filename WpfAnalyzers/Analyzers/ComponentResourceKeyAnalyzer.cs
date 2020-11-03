@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -25,13 +27,14 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation &&
+                context.ContainingSymbol is { ContainingType: { } containingType } &&
                 objectCreation.Type == KnownSymbols.ComponentResourceKey &&
                 context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbols.ComponentResourceKey, context.CancellationToken, out var constructor) &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))
             {
                 if (constructor.Parameters.Length == 0)
                 {
-                    var containingTypeString = context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart);
+                    var containingTypeString = containingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart);
                     var argumentListText = $"typeof({containingTypeString}), nameof({fieldOrProperty.Name})";
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -45,13 +48,13 @@
                     if (constructor.TryFindParameter("typeInTargetAssembly", out var parameter) &&
                         objectCreation.TryFindArgument(parameter, out var arg) &&
                         arg.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var type) &&
-                        !type.Equals(context.ContainingSymbol.ContainingType))
+                        !TypeSymbolComparer.Equal(type, containingType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.WPF0140UseContainingTypeComponentResourceKey,
                                 arg.GetLocation(),
-                                context.ContainingSymbol.ContainingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
+                                containingType.ToMinimalDisplayString(context.SemanticModel, objectCreation.SpanStart)));
                     }
 
                     if (constructor.TryFindParameter("resourceId", out parameter) &&

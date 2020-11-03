@@ -88,7 +88,7 @@
 
                     if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
-                        if (!SymbolEqualityComparer.Equal(property.Type, registeredType))
+                        if (!TypeSymbolComparer.Equal(property.Type, registeredType))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -100,7 +100,7 @@
                         }
                         else if (getCall is { Parent: CastExpressionSyntax { Type: { } type } } &&
                                  context.SemanticModel.TryGetType(type, context.CancellationToken, out var castType) &&
-                                 !SymbolEqualityComparer.Equal(registeredType, castType))
+                                 !TypeSymbolComparer.Equal(registeredType, castType))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

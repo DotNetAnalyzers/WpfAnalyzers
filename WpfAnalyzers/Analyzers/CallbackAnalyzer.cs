@@ -270,7 +270,7 @@
 
                 if (parent is CastExpressionSyntax castExpression &&
                     context.SemanticModel.GetTypeInfoSafe(castExpression.Type, context.CancellationToken).Type is { } castType &&
-                    !Equals(castType, expectedType))
+                    !TypeSymbolComparer.Equal(castType, expectedType))
                 {
                     var expectedTypeName = expectedType.ToMinimalDisplayString(context.SemanticModel, castExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
                     if (!expectedType.IsAssignableTo(castType, context.Compilation))
