@@ -39,15 +39,14 @@
                     if (propertyDeclaration.Getter() is { } getter &&
                         propertyDeclaration.Setter() is { } setter)
                     {
-                        using var setterWalker = ClrSetterWalker.Borrow(semanticModel, setter, cancellationToken);
                         if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
                             semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
                             BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backingGet) &&
-                            setterWalker is { HasError: false, IsSuccess: true, Property: { Expression: { } setExpression } } &&
-                            semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
+                            DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument: { Expression: { } setProperty } } &&
+                            semanticModel.TryGetSymbol(setProperty, cancellationToken, out symbol) &&
                             BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var setField))
                         {
-                            return Create(property.ContainingType, backingGet, setField, getValue, setterWalker.SetValue ?? setterWalker.SetCurrentValue);
+                            return Create(property.ContainingType, backingGet, setField, getValue, setValue);
                         }
                     }
 

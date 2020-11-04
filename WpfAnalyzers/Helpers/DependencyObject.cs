@@ -44,10 +44,10 @@ namespace WpfAnalyzers
 
                 GetValue? Walk(SyntaxNode body)
                 {
-                    using var getterWalker = Walker.Borrow(semanticModel, body, cancellationToken);
-                    if (getterWalker is { HasError: false, Result: { } getValue })
+                    using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
+                    if (walker is { HasError: false, Result: { } match })
                     {
-                        return getValue;
+                        return match;
                     }
 
                     return null;
@@ -106,12 +106,12 @@ namespace WpfAnalyzers
                     base.Visit(node);
                 }
 
-                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode getter, CancellationToken cancellationToken)
+                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
                 {
                     var walker = Borrow(() => new Walker());
                     walker.semanticModel = semanticModel;
                     walker.cancellationToken = cancellationToken;
-                    walker.Visit(getter);
+                    walker.Visit(node);
                     return walker;
                 }
 
@@ -136,6 +136,36 @@ namespace WpfAnalyzers
                 this.Target = target;
             }
 
+            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
+            internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
+
+            internal static SetValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                return node switch
+                {
+                    { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                        => Match(invocation, semanticModel, cancellationToken),
+                    { ExpressionBody: { } expressionBody } => Walk(expressionBody),
+                    { Body: { Statements: { } statements } }
+                        when statements.Last() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                        => Match(invocation, semanticModel, cancellationToken),
+                    { Body: { } body } => Walk(body),
+                    _ => null,
+                };
+
+                SetValue? Walk(SyntaxNode body)
+                {
+                    using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
+                    if (walker is { HasError: false, Result: { } match })
+                    {
+                        return match;
+                    }
+
+                    return null;
+                }
+            }
+
             internal static SetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
                 if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
@@ -147,6 +177,64 @@ namespace WpfAnalyzers
                 }
 
                 return null;
+            }
+
+            private class Walker : PooledWalker<Walker>
+            {
+                internal bool HasError;
+                internal SetValue? Result;
+
+                private SemanticModel semanticModel = null!;
+                private CancellationToken cancellationToken;
+
+                private Walker()
+                {
+                }
+
+                public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
+                {
+                    if (Match(invocation, this.semanticModel, this.cancellationToken) is { } setValue)
+                    {
+                        if (this.Result is { })
+                        {
+                            this.HasError = true;
+                            this.Result = null;
+                        }
+                        else
+                        {
+                            this.Result = setValue;
+                        }
+                    }
+
+                    base.VisitInvocationExpression(invocation);
+                }
+
+                public override void Visit(SyntaxNode? node)
+                {
+                    if (this.HasError)
+                    {
+                        return;
+                    }
+
+                    base.Visit(node);
+                }
+
+                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+                {
+                    var walker = Borrow(() => new Walker());
+                    walker.semanticModel = semanticModel;
+                    walker.cancellationToken = cancellationToken;
+                    walker.Visit(node);
+                    return walker;
+                }
+
+                protected override void Clear()
+                {
+                    this.semanticModel = null!;
+                    this.cancellationToken = CancellationToken.None;
+                    this.HasError = false;
+                    this.Result = null;
+                }
             }
         }
 
@@ -160,6 +248,10 @@ namespace WpfAnalyzers
                 this.Invocation = invocation;
                 this.Target = target;
             }
+
+            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
+            internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
 
             internal static SetCurrentValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
