@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -40,6 +39,46 @@
             }
         }
 
+        internal ArgumentSyntax? PropertyChangedArgument
+        {
+            get
+            {
+                if (this.ObjectCreation.ArgumentList is null ||
+                    this.ObjectCreation.ArgumentList.Arguments.Count == 0)
+                {
+                    return null;
+                }
+
+                if (this.Constructor.TryFindParameter(KnownSymbols.PropertyChangedCallback, out var parameter) &&
+                    this.ObjectCreation.TryFindArgument(parameter, out var argument))
+                {
+                    return argument;
+                }
+
+                return null;
+            }
+        }
+
+        internal ArgumentSyntax? CoerceValueArgument
+        {
+            get
+            {
+                if (this.ObjectCreation.ArgumentList is null ||
+                    this.ObjectCreation.ArgumentList.Arguments.Count == 0)
+                {
+                    return null;
+                }
+
+                if (this.Constructor.TryFindParameter(KnownSymbols.CoerceValueCallback, out var parameter) &&
+                    this.ObjectCreation.TryFindArgument(parameter, out var argument))
+                {
+                    return argument;
+                }
+
+                return null;
+            }
+        }
+
         internal static PropertyMetadata? Match(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (objectCreation is { ArgumentList: { } })
@@ -53,16 +92,6 @@
             }
 
             return null;
-        }
-
-        internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? callback)
-        {
-            return TryGetCallback(objectCreation, KnownSymbols.PropertyChangedCallback, semanticModel, cancellationToken, out callback);
-        }
-
-        internal static bool TryGetCoerceValueCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? callback)
-        {
-            return TryGetCallback(objectCreation, KnownSymbols.CoerceValueCallback, semanticModel, cancellationToken, out callback);
         }
 
         internal static ArgumentAndValue<string?>? FindRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -222,14 +251,6 @@
                     return true;
                 }
             }
-        }
-
-        private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? callback)
-        {
-            callback = null;
-            return Match(objectCreation, semanticModel, cancellationToken) is { Constructor: { } constructor } &&
-                   constructor.TryFindParameter(callbackType, out var parameter) &&
-                   objectCreation.TryFindArgument(parameter, out callback);
         }
     }
 }

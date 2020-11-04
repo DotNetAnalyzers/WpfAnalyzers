@@ -36,8 +36,8 @@
             {
                 if (PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
-                    if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
-                        Callback.Match(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
+                    if (propertyMetadata.PropertyChangedArgument is { } propertyChangeArgument &&
+                        Callback.Match(propertyChangeArgument, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
                     {
                         if (TypeSymbolComparer.Equal(onPropertyChanged.ContainingType, context.ContainingSymbol.ContainingType) &&
                             !onPropertyChanged.Name.IsParts("On", registeredName, "Changed") &&
@@ -60,7 +60,7 @@
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {
                                     if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
-                                        argument != propertyChangedCallback &&
+                                        argument != propertyChangeArgument &&
                                         MatchesPropertyChangedCallbackName(argument, onPropertyChanged, context))
                                     {
                                         context.ReportDiagnostic(
@@ -78,12 +78,12 @@
                         if (onPropertyChanged.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.CanInlineBody(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangedCallback.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, propertyChangeArgument.GetLocation()));
                         }
                     }
 
-                    if (PropertyMetadata.TryGetCoerceValueCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var coerceValueCallback) &&
-                        Callback.Match(coerceValueCallback, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
+                    if (propertyMetadata.CoerceValueArgument is { } coerceValueArgument &&
+                        Callback.Match(coerceValueArgument, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
                     {
                         if (TypeSymbolComparer.Equal(coerce.ContainingType, context.ContainingSymbol.ContainingType) &&
                             !coerce.Name.IsParts("Coerce", registeredName))
@@ -104,7 +104,7 @@
                                 foreach (var identifierName in walker.IdentifierNames)
                                 {
                                     if (identifierName.TryFirstAncestor(out ArgumentSyntax? argument) &&
-                                        argument != propertyChangedCallback &&
+                                        argument != coerceValueArgument &&
                                         MatchesCoerceValueCallbackName(argument, coerce, context))
                                     {
                                         context.ReportDiagnostic(
@@ -122,7 +122,7 @@
                         if (coerce.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
                             Callback.CanInlineBody(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueCallback.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueArgument.GetLocation()));
                         }
                     }
                 }
