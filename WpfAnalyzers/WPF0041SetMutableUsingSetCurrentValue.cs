@@ -32,10 +32,11 @@
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
                 property != KnownSymbols.FrameworkElement.DataContext &&
-                ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { } backing &&
+                ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { BackingSet: { } backingSet } &&
+                backingSet.FieldOrProperty.Type == KnownSymbols.DependencyProperty &&
                 !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
             {
-                var propertyArgument = backing.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
+                var propertyArgument = backingSet.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,

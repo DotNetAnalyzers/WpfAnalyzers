@@ -10,45 +10,74 @@
     /// <summary>
     /// Exposes helper methods for working with CLR-properties for DependencyProperty.
     /// </summary>
-    internal static class ClrProperty
+    internal readonly struct ClrProperty
     {
-        /// <summary>
-        /// Check if the <paramref name="property"/> can be an accessor for a DependencyProperty.
-        /// </summary>
-        internal static bool IsPotentialClrProperty(this IPropertySymbol property, Compilation compilation)
+        internal readonly BackingFieldOrProperty BackingGet;
+        internal readonly BackingFieldOrProperty BackingSet;
+        internal readonly AccessorDeclarationSyntax? Getter;
+        internal readonly AccessorDeclarationSyntax? Setter;
+
+        private ClrProperty(BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, AccessorDeclarationSyntax? getter, AccessorDeclarationSyntax? setter)
         {
-            return property is { IsIndexer: false, IsReadOnly: false, IsWriteOnly: false, IsStatic: false } &&
-                   property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
+            this.BackingGet = backingGet;
+            this.BackingSet = backingSet;
+            this.Getter = getter;
+            this.Setter = setter;
         }
 
         /// <summary>
         /// Get the single DependencyProperty backing field for <paramref name="property"/>
         /// Returns false for accessors for readonly dependency properties.
         /// </summary>
-        internal static BackingFieldOrProperty? Match(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static ClrProperty? Match(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
-                property.TrySingleDeclaration(cancellationToken, out _))
+            if (property is { IsIndexer: false, IsReadOnly: false, IsWriteOnly: false, IsStatic: false } &&
+                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation) &&
+                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration))
             {
-                if (TryGetBackingFields(property, semanticModel, cancellationToken, out var getter, out var setter))
+                if (propertyDeclaration.Getter() is { } getter &&
+                    propertyDeclaration.Setter() is { } setter)
                 {
-                    if (SymbolEqualityComparer.Default.Equals(setter.Symbol, getter.Symbol) &&
-                        setter.Type == KnownSymbols.DependencyProperty)
+                    using var getterWalker = ClrGetterWalker.Borrow(semanticModel, getter, cancellationToken);
+                    using var setterWalker = ClrSetterWalker.Borrow(semanticModel, setter, cancellationToken);
+                    if (getterWalker is { HasError: false, IsSuccess: true, Property: { Expression: { } getExpression } } &&
+                        semanticModel.TryGetSymbol(getExpression, cancellationToken, out var symbol) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var getField) &&
+                        setterWalker is { HasError: false, IsSuccess: true, Property: { Expression: { } setExpression } } &&
+                        semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var setField))
                     {
-                        return setter;
+                        return Create(property.ContainingType, getField, setField, getter, setter);
                     }
                 }
+
+                return null;
             }
-            else if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out var getter, out var setter))
+            else if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out var getField, out var setField))
             {
-                if (SymbolEqualityComparer.Default.Equals(getter.Symbol, setter.Symbol) &&
-                    getter.Type == KnownSymbols.DependencyProperty)
-                {
-                    return getter;
-                }
+                return Create(property.ContainingType, getField, setField, null, null);
             }
 
             return null;
+
+            static ClrProperty? Create(INamedTypeSymbol containingType, BackingFieldOrProperty getField, BackingFieldOrProperty setField, AccessorDeclarationSyntax? getter, AccessorDeclarationSyntax? setter)
+            {
+                if (!TypeSymbolComparer.Equal(containingType, getField.ContainingType) &&
+                    getField.ContainingType.IsGenericType)
+                {
+                    if (containingType.TryFindFirstMember(getField.Name, out var getMember) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out getField) &&
+                        containingType.TryFindFirstMember(setField.Name, out var setMember) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out setField))
+                    {
+                        return new ClrProperty(getField, setField, getter, setter);
+                    }
+
+                    return null;
+                }
+
+                return new ClrProperty(getField, setField, getter, setter);
+            }
         }
 
         /// <summary>
@@ -103,32 +132,6 @@
                     result = setter;
                     return true;
                 }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Get the backing fields for the <paramref name="property"/> these are different for readonly dependency properties where the setter returns the DependencyPropertyKey field.
-        /// </summary>
-        private static bool TryGetBackingFields(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty getField, out BackingFieldOrProperty setField)
-        {
-            getField = default;
-            setField = default;
-
-            if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
-                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
-                TryGetBackingFields(propertyDeclaration, semanticModel, cancellationToken, out getField, out setField))
-            {
-                if (getField.ContainingType.IsGenericType)
-                {
-                    return property.ContainingType.TryFindFirstMember(getField.Name, out var getMember) &&
-                           BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out getField) &&
-                           property.ContainingType.TryFindFirstMember(setField.Name, out var setMember) &&
-                           BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out setField);
-                }
-
-                return true;
             }
 
             return false;
