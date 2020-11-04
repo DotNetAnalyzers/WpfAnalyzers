@@ -50,7 +50,7 @@
                                 HandleCasts(context, methodDeclaration, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
                             }
 
-                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                            if (ValueType(callbackArgument, method.ContainingType, context) is { } valueType)
                             {
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                             }
@@ -61,7 +61,7 @@
                         using var usages = GetCallbackArguments(context, method, methodDeclaration);
                         foreach (var callbackArgument in usages)
                         {
-                            if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                            if (ValueType(callbackArgument, method.ContainingType, context) is { } valueType)
                             {
                                 HandleCasts(context, methodDeclaration, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                             }
@@ -70,9 +70,9 @@
                 }
                 else if (method is { ReturnsVoid: true, IsVirtual: true } &&
                          TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
-                         TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var fieldOrProperty))
+                         TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var backing))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(fieldOrProperty, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                    if (backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                         !method.Name.IsParts("On", registeredName, "Changed"))
                     {
                         context.ReportDiagnostic(
@@ -86,7 +86,7 @@
 
                     if (method.DeclaredAccessibility.IsEither(Accessibility.Protected, Accessibility.Internal, Accessibility.Public))
                     {
-                        foreach (var (location, text) in new OnPropertyChangedDocumentationErrors(new SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax>(method, methodDeclaration), singleInvocation, fieldOrProperty))
+                        foreach (var (location, text) in new OnPropertyChangedDocumentationErrors(new SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax>(method, methodDeclaration), singleInvocation, backing))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -114,13 +114,13 @@
                         HandleCasts(context, lambda, senderParameter, senderType, Descriptors.WPF0019CastSenderToCorrectType, Descriptors.WPF0021DirectCastSenderToExactType);
                     }
 
-                    if (TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                    if (ValueType(callbackArgument, method.ContainingType, context) is { } valueType)
                     {
                         HandleCasts(context, lambda, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                     }
                 }
                 else if (TryMatchValidateValueCallback(method, out argParameter) &&
-                         TryGetValueType(callbackArgument, method.ContainingType, context, out var valueType))
+                         ValueType(callbackArgument, method.ContainingType, context) is { } valueType)
                 {
                     HandleCasts(context, lambda, argParameter, valueType, Descriptors.WPF0020CastValueToCorrectType, Descriptors.WPF0022DirectCastValueToExactType);
                 }
@@ -458,33 +458,36 @@
             return false;
         }
 
-        private static bool TryGetValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? type)
+        private static ITypeSymbol? ValueType(ArgumentSyntax argument, INamedTypeSymbol containingType, SyntaxNodeAnalysisContext context)
         {
-            type = null;
             if (argument is { Parent: ArgumentListSyntax { Parent: { } parent } })
             {
                 switch (parent)
                 {
                     case ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArgument }:
-                        return TryGetValueType(parentArgument, containingType, context, out type);
+                        return ValueType(parentArgument, containingType, context);
                     case InvocationExpressionSyntax invocation when
                         DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { } register:
                         {
-                            return (type = register.PropertyType(containingType, context.SemanticModel, context.CancellationToken)) is { };
+                            return register.PropertyType(containingType, context.SemanticModel, context.CancellationToken);
                         }
 
-                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when
-                        DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
-                        DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _):
+                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation
+                        when DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
+                             DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _):
                         {
-                            return context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
-                                   BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
-                                   DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out type);
+                            if (context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
+                                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
+                            {
+                                return fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken)?.Value;
+                            }
                         }
+
+                        break;
                 }
             }
 
-            return false;
+            return null;
         }
 
         private readonly struct OnPropertyChangedDocumentationErrors : IEnumerable<(Location Location, string Text)>

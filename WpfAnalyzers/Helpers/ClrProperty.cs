@@ -68,7 +68,7 @@
                     {
                         if (candidate.Name.IsParts(property.Name, "Property"))
                         {
-                            if (!DependencyProperty.IsPotentialDependencyPropertyBackingField(candidate))
+                            if (candidate.Type != KnownSymbols.DependencyProperty)
                             {
                                 return null;
                             }
@@ -78,7 +78,7 @@
 
                         if (candidate.Name.IsParts(property.Name, "PropertyKey"))
                         {
-                            if (!DependencyProperty.IsPotentialDependencyPropertyKeyBackingField(candidate))
+                            if (candidate.Type != KnownSymbols.DependencyPropertyKey)
                             {
                                 return null;
                             }

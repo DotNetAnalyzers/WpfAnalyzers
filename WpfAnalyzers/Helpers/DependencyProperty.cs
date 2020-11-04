@@ -16,24 +16,21 @@
             return semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.OverrideMetadata, cancellationToken, out method);
         }
 
-        internal static bool IsPotentialDependencyPropertyBackingField(BackingFieldOrProperty fieldOrProperty)
+        internal static ArgumentAndValue<string?>? TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return fieldOrProperty.Type == KnownSymbols.DependencyProperty;
-        }
-
-        internal static bool IsPotentialDependencyPropertyKeyBackingField(BackingFieldOrProperty fieldOrProperty)
-        {
-            return fieldOrProperty.Type == KnownSymbols.DependencyPropertyKey;
-        }
-
-        internal static bool TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg, [NotNullWhen(true)] out string? registeredName)
-        {
-            nameArg = null;
-            registeredName = null;
             if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { } register)
             {
-                return (nameArg = register.NameArgument()) is { } &&
-                       nameArg.TryGetStringValue(semanticModel, cancellationToken, out registeredName);
+                if (register.NameArgument() is { } argument)
+                {
+                    if (argument.TryGetStringValue(semanticModel, cancellationToken, out var registeredName))
+                    {
+                        return new ArgumentAndValue<string?>(argument,registeredName);
+                    }
+
+                    return new ArgumentAndValue<string?>(argument, null);
+                }
+
+                return null;
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -43,64 +40,13 @@
                 if (semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var symbol) &&
                     BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
                 {
-                    return TryGetRegisteredName(fieldOrProperty, semanticModel, cancellationToken, out nameArg, out registeredName);
+                    return fieldOrProperty.RegisteredName(semanticModel, cancellationToken);
                 }
 
-                return false;
+                return null;
             }
 
-            return false;
-        }
-
-        internal static bool TryGetRegisteredName(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg, [NotNullWhen(true)] out string? result)
-        {
-            nameArg = null;
-            result = null;
-            if (Register.FindRecursive(backing, semanticModel, cancellationToken) is { } call)
-            {
-                return (nameArg = call.NameArgument()) is { } &&
-                       nameArg.TryGetStringValue(semanticModel, cancellationToken, out result);
-            }
-
-            if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
-                !SymbolEqualityComparer.Default.Equals(source.Symbol, backing.Symbol))
-            {
-                return TryGetRegisteredName(source, semanticModel, cancellationToken, out nameArg, out result);
-            }
-
-            if (backing.Symbol.Locations.All(x => !x.IsInSource) &&
-                TryGetPropertyByName(backing, out var property))
-            {
-                result = property.Name;
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetRegisteredType(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ITypeSymbol? result)
-        {
-            result = null;
-            if (Register.FindRecursive(backing, semanticModel, cancellationToken) is { } call)
-            {
-                result = call.PropertyType(backing.ContainingType, semanticModel, cancellationToken);
-                return result is { };
-            }
-
-            if (TryGetDependencyAddOwnerSourceField(backing, semanticModel, cancellationToken, out var source) &&
-               !SymbolEqualityComparer.Default.Equals(source.Symbol, backing.Symbol))
-            {
-                return TryGetRegisteredType(source, semanticModel, cancellationToken, out result);
-            }
-
-            if (backing.Symbol.Locations.All(x => !x.IsInSource) &&
-                TryGetPropertyByName(backing, out var property))
-            {
-                result = property.Type;
-                return true;
-            }
-
-            return false;
+            return null;
         }
 
         internal static bool TryGetDependencyPropertyKeyFieldOrProperty(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
@@ -141,37 +87,6 @@
                    BackingFieldOrProperty.TryCreateForDependencyProperty(addOwnerSymbol, out result);
         }
 
-        internal static bool TryGetPropertyByName(BackingFieldOrProperty fieldOrProperty, [NotNullWhen(true)] out IPropertySymbol? property)
-        {
-            if (Suffix() is { } suffix)
-            {
-                foreach (var symbol in fieldOrProperty.ContainingType.GetMembers())
-                {
-                    if (symbol is IPropertySymbol candidate &&
-                        fieldOrProperty.Name.IsParts(candidate.Name, suffix))
-                    {
-                        property = candidate;
-                        return true;
-                    }
-                }
-            }
-
-            property = null;
-            return false;
-
-            string? Suffix()
-            {
-                if (IsPotentialDependencyPropertyBackingField(fieldOrProperty))
-                {
-                    return "Property";
-                }
-
-                return IsPotentialDependencyPropertyBackingField(fieldOrProperty)
-                    ? "PropertyKey"
-                    : null;
-            }
-        }
-
         internal readonly struct Register
         {
             internal readonly InvocationExpressionSyntax Invocation;
@@ -185,17 +100,22 @@
 
             internal static Register? FindRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
+                if (FindRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken) is { } register)
+                {
+                    return register;
+                }
+
+                if (TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
                 {
                     return FindRecursive(keyField, semanticModel, cancellationToken);
                 }
 
-                if (DependencyProperty.TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
+                if (TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
                 {
                     return FindRecursive(addOwnerSource, semanticModel, cancellationToken);
                 }
 
-                return FindRegisterInvocation(fieldOrProperty, semanticModel, cancellationToken);
+                return null;
             }
 
             internal static Register? FindRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -39,7 +39,7 @@
             {
                 if (GetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { GetValue: { Invocation: { } getValue }, Backing: { } backingGet })
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backingGet, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (backingGet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                     {
                         if (!method.Name.IsParts("Get", registeredName))
                         {
@@ -103,7 +103,7 @@
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backingGet, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (backingGet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
                         !TypeSymbolComparer.Equal(method.ReturnType, registeredType))
                     {
                         context.ReportDiagnostic(
@@ -149,7 +149,7 @@
                 else if (method.Parameters.TryElementAt(1, out var value) &&
                          SetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { SetValue: { Invocation: { } setValue }, Backing: { } backingSet })
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backingSet, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (backingSet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                     {
                         if (!method.Name.IsParts("Set", registeredName))
                         {
@@ -213,7 +213,7 @@
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backingSet, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (backingSet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
                         method.Parameters.TryElementAt(1, out var valueParameter) &&
                         !TypeSymbolComparer.Equal(valueParameter.Type, registeredType))
                     {

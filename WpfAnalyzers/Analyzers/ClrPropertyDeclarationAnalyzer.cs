@@ -59,7 +59,7 @@
                                 context.ContainingSymbol.Name));
                     }
 
-                    if (DependencyProperty.TryGetRegisteredName(backingGet, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                    if (backingGet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                         registeredName != property.Name)
                     {
                         context.ReportDiagnostic(
@@ -71,7 +71,7 @@
                                 registeredName));
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backingGet, context.SemanticModel, context.CancellationToken, out var registeredType))
+                    if (backingGet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType })
                     {
                         if (!TypeSymbolComparer.Equal(property.Type, registeredType))
                         {

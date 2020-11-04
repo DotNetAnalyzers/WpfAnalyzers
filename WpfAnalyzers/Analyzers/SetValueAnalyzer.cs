@@ -2,7 +2,9 @@
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,9 +31,9 @@
                 context.Node is InvocationExpressionSyntax invocation &&
                 TryGetArgs(context, out var target, out var propertyArg, out var valueArg) &&
                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
+                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing))
             {
-                if (IsWrongType(fieldOrProperty, valueArg, context, out var registeredType))
+                if (IsWrongType(backing, valueArg, context) is { } registeredType)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -41,8 +43,8 @@
                             registeredType));
                 }
 
-                if (fieldOrProperty.Type == KnownSymbols.DependencyProperty &&
-                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var keyField))
+                if (backing.Type == KnownSymbols.DependencyProperty &&
+                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, context.SemanticModel, context.CancellationToken, out var keyField))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -54,7 +56,7 @@
                 }
 
                 if (target == KnownSymbols.DependencyObject.SetCurrentValue &&
-                    fieldOrProperty.Symbol is IFieldSymbol setField &&
+                    backing.Symbol is IFieldSymbol setField &&
                     setField == KnownSymbols.FrameworkElement.DataContextProperty)
                 {
                     context.ReportDiagnostic(
@@ -67,29 +69,29 @@
             }
         }
 
-        private static bool IsWrongType(BackingFieldOrProperty fieldOrProperty, ArgumentSyntax argument, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ITypeSymbol? registeredType)
+        private static ITypeSymbol? IsWrongType(BackingFieldOrProperty fieldOrProperty, ArgumentSyntax argument, SyntaxNodeAnalysisContext context)
         {
-            if (DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out registeredType) &&
+            if (fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
                 !PropertyMetadata.IsValueValidForRegisteredType(argument.Expression, registeredType, context.SemanticModel, context.CancellationToken))
             {
                 if (context.SemanticModel.TryGetType(argument.Expression, context.CancellationToken, out var type))
                 {
                     if (type == KnownSymbols.Object)
                     {
-                        return false;
+                        return null;
                     }
 
                     if (registeredType.IsAssignableTo(KnownSymbols.Freezable, context.SemanticModel.Compilation) &&
                         type.IsAssignableTo(KnownSymbols.Freezable, context.SemanticModel.Compilation))
                     {
-                        return false;
+                        return null;
                     }
                 }
 
-                return true;
+                return registeredType;
             }
 
-            return false;
+            return null;
         }
 
         private static bool TryGetArgs(SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out IMethodSymbol? target, [NotNullWhen(true)] out ArgumentSyntax? propertyArg, [NotNullWhen(true)] out ArgumentSyntax? valueArg)

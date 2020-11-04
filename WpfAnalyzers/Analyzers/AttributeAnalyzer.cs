@@ -358,10 +358,11 @@
                 foreach (var member in type.GetMembers())
                 {
                     if (BackingFieldOrProperty.TryCreateCandidate(member, out var backing) &&
-                        DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                        backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                         registeredName == name &&
-                        DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out registeredType))
+                        backing.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } match })
                     {
+                        registeredType = match;
                         return true;
                     }
                 }

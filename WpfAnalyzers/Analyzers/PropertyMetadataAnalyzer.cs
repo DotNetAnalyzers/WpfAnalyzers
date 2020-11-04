@@ -34,7 +34,7 @@
                 context.ContainingSymbol is { IsStatic: true } &&
                 PropertyMetadata.TryGetConstructor(objectCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                if (PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
                     if (PropertyMetadata.TryGetPropertyChangedCallback(objectCreation, context.SemanticModel, context.CancellationToken, out var propertyChangedCallback) &&
                         Callback.Match(propertyChangedCallback, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
@@ -128,7 +128,7 @@
                 }
 
                 if (PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
-                    DependencyProperty.TryGetRegisteredType(fieldOrProperty, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
                     PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
                 {
                     if (!PropertyMetadata.IsValueValidForRegisteredType(defaultValueArg.Expression, registeredType, context.SemanticModel, context.CancellationToken))
@@ -159,7 +159,7 @@
         private static bool MatchesPropertyChangedCallbackName(ArgumentSyntax propertyChangedCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return propertyChangedCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
-                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                   PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
         }
@@ -167,7 +167,7 @@
         private static bool MatchesCoerceValueCallbackName(ArgumentSyntax coerceValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return coerceValueCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
-                   PropertyMetadata.TryGetRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                   PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);
         }

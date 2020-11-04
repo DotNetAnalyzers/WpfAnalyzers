@@ -35,7 +35,7 @@
             {
                 if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backing))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                     {
                         if (backing.Type == KnownSymbols.DependencyProperty &&
                             !backing.Name.IsParts(registeredName, "Property"))
@@ -88,8 +88,8 @@
                             }
                         }
 
-                        if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var type) &&
-                            type.Is(KnownSymbols.Style) &&
+                        if (backing.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
+                            registeredType.Is(KnownSymbols.Style) &&
                             !TryFindStyleTypedPropertyAttribute(memberDeclaration, registeredName, context.SemanticModel, context.CancellationToken) &&
                             backing.FieldOrProperty.Symbol.DeclaredAccessibility.IsEither(Accessibility.Public, Accessibility.Internal))
                         {

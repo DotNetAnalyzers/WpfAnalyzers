@@ -2,8 +2,11 @@
 {
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -72,6 +75,70 @@
             return member.GetFirstToken();
         }
 
+        internal ArgumentAndValue<string?>? RegisteredName(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { } register)
+            {
+                if (register.NameArgument() is { } argument)
+                {
+                    if (argument.TryGetStringValue(semanticModel, cancellationToken, out var name))
+                    {
+                        return new ArgumentAndValue<string?>(argument, name);
+                    }
+
+                    return new ArgumentAndValue<string?>(argument, name);
+                }
+
+                return null;
+            }
+
+            if (DependencyProperty.TryGetDependencyAddOwnerSourceField(this, semanticModel, cancellationToken, out var source) &&
+                !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
+            {
+                return source.RegisteredName(semanticModel, cancellationToken);
+            }
+
+            if (this.Symbol.Locations.All(x => !x.IsInSource) &&
+                this.PropertyByName() is { Name: { } } match)
+            {
+                return new ArgumentAndValue<string?>(null, match.Name);
+            }
+
+            return null;
+        }
+
+        internal ArgumentAndValue<ITypeSymbol?>? RegisteredType(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { } register)
+            {
+                if (register.PropertyTypeArgument() is { } argument)
+                {
+                    if (register.PropertyType(this.ContainingType, semanticModel, cancellationToken) is {} type)
+                    {
+                        return new ArgumentAndValue<ITypeSymbol?>(argument, type);
+                    }
+
+                    return new ArgumentAndValue<ITypeSymbol?>(argument, null);
+                }
+
+                return null;
+            }
+
+            if (DependencyProperty.TryGetDependencyAddOwnerSourceField(this, semanticModel, cancellationToken, out var source) &&
+                !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
+            {
+                return source.RegisteredType(semanticModel, cancellationToken);
+            }
+
+            if (this.Symbol.Locations.All(x => !x.IsInSource) &&
+                this.PropertyByName() is { Name: { } } match)
+            {
+                return new ArgumentAndValue<ITypeSymbol?>(null, match.Type);
+            }
+
+            return null;
+        }
+
         internal bool TryGetAssignedValue(CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
         {
             return this.FieldOrProperty.TryGetAssignedValue(cancellationToken, out value);
@@ -92,6 +159,38 @@
 
             var typeName = this.ContainingType.ToMinimalDisplayString(semanticModel, position, SymbolDisplayFormat.MinimallyQualifiedFormat);
             return SyntaxFactory.Argument(SyntaxFactory.ParseExpression($"{typeName}.{name}"));
+        }
+
+        private IPropertySymbol? PropertyByName()
+        {
+            if (Suffix(this.Type) is { } suffix)
+            {
+                foreach (var symbol in this.ContainingType.GetMembers())
+                {
+                    if (symbol is IPropertySymbol candidate &&
+                        this.Name.IsParts(candidate.Name, suffix))
+                    {
+                        return candidate;
+                    }
+                }
+            }
+
+            return null;
+
+            static string? Suffix(ITypeSymbol type)
+            {
+                if (type == KnownSymbols.DependencyProperty)
+                {
+                    return "Property";
+                }
+
+                if (type == KnownSymbols.DependencyPropertyKey)
+                {
+                    return "PropertyKey";
+                }
+
+                return null;
+            }
         }
     }
 }

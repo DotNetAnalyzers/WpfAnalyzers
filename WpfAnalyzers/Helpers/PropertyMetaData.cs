@@ -43,13 +43,15 @@
             return TryGetCallback(objectCreation, KnownSymbols.CoerceValueCallback, semanticModel, cancellationToken, out callback);
         }
 
-        internal static bool TryGetRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg, [NotNullWhen(true)] out string? registeredName)
+        internal static ArgumentAndValue<string?>? FindRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            nameArg = null;
-            registeredName = null;
-            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
-                   objectCreation.TryFirstAncestor(out InvocationExpressionSyntax? invocation) &&
-                   DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken, out nameArg, out registeredName);
+            if (TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
+                objectCreation.TryFirstAncestor(out InvocationExpressionSyntax? invocation))
+            {
+                return DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken);
+            }
+
+            return null;
         }
 
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)
