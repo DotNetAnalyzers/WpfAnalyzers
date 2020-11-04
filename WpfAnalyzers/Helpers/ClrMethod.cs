@@ -94,15 +94,14 @@
             if (method is { ParameterList: { Parameters: { Count: 1 } parameters } } &&
                !method.ReturnType.IsVoid() &&
                method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
-               parameters.TrySingle(out var parameter))
+               parameters.TrySingle(out var parameter) &&
+               DependencyObject.GetValue.Find(MethodOrAccessor.Create(method), semanticModel, cancellationToken) is { Invocation: { } } getValue)
             {
-                using var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken);
-                call = walker.GetValue?.Invocation;
-                return walker.GetValue is { Invocation: { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess } } &&
+                call = getValue.Invocation;
+                return getValue is { PropertyArgument: { Expression: { } backing }, Invocation: { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess } } &&
                        memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
                        parameter.Identifier.ValueText == member.Identifier.ValueText &&
-                       walker.Property?.Expression is { } expression &&
-                       semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                       semanticModel.TryGetSymbol(backing, cancellationToken, out var symbol) &&
                        BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out getField);
             }
 

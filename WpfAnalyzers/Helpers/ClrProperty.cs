@@ -14,15 +14,15 @@
     {
         internal readonly BackingFieldOrProperty BackingGet;
         internal readonly BackingFieldOrProperty BackingSet;
-        internal readonly AccessorDeclarationSyntax? Getter;
-        internal readonly AccessorDeclarationSyntax? Setter;
+        internal readonly InvocationExpressionSyntax? GetValue;
+        internal readonly InvocationExpressionSyntax? SetValue;
 
-        private ClrProperty(BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, AccessorDeclarationSyntax? getter, AccessorDeclarationSyntax? setter)
+        private ClrProperty(BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
         {
             this.BackingGet = backingGet;
             this.BackingSet = backingSet;
-            this.Getter = getter;
-            this.Setter = setter;
+            this.GetValue = getValue;
+            this.SetValue = setValue;
         }
 
         /// <summary>
@@ -40,14 +40,14 @@
                         propertyDeclaration.Setter() is { } setter)
                     {
                         using var setterWalker = ClrSetterWalker.Borrow(semanticModel, setter, cancellationToken);
-                        if (ClrGetterWalker.FindGetValue(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { PropertyArgument: { Expression: { } getProperty } } &&
+                        if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
                             semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var getField) &&
+                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backingGet) &&
                             setterWalker is { HasError: false, IsSuccess: true, Property: { Expression: { } setExpression } } &&
                             semanticModel.TryGetSymbol(setExpression, cancellationToken, out symbol) &&
                             BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var setField))
                         {
-                            return Create(property.ContainingType, getField, setField, getter, setter);
+                            return Create(property.ContainingType, backingGet, setField, getValue, setterWalker.SetValue ?? setterWalker.SetCurrentValue);
                         }
                     }
 
@@ -98,23 +98,23 @@
                 return Create(property.ContainingType, getField.Value, setField.Value, null, null);
             }
 
-            static ClrProperty? Create(INamedTypeSymbol containingType, BackingFieldOrProperty getField, BackingFieldOrProperty setField, AccessorDeclarationSyntax? getter, AccessorDeclarationSyntax? setter)
+            static ClrProperty? Create(INamedTypeSymbol containingType, BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
             {
-                if (!TypeSymbolComparer.Equal(containingType, getField.ContainingType) &&
-                    getField.ContainingType.IsGenericType)
+                if (!TypeSymbolComparer.Equal(containingType, backingGet.ContainingType) &&
+                    backingGet.ContainingType.IsGenericType)
                 {
-                    if (containingType.TryFindFirstMember(getField.Name, out var getMember) &&
-                        BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out getField) &&
-                        containingType.TryFindFirstMember(setField.Name, out var setMember) &&
-                        BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out setField))
+                    if (containingType.TryFindFirstMember(backingGet.Name, out var getMember) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out backingGet) &&
+                        containingType.TryFindFirstMember(backingSet.Name, out var setMember) &&
+                        BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out backingSet))
                     {
-                        return new ClrProperty(getField, setField, getter, setter);
+                        return new ClrProperty(backingGet, backingSet, getValue, setValue);
                     }
 
                     return null;
                 }
 
-                return new ClrProperty(getField, setField, getter, setter);
+                return new ClrProperty(backingGet, backingSet, getValue, setValue);
             }
         }
     }
