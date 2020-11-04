@@ -21,13 +21,15 @@
 
         internal static GetAttached? Match(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (method is { ParameterList: { Parameters: { Count: 1 } parameters } } &&
+            if (method is { Parent: TypeDeclarationSyntax containingType, ParameterList: { Parameters: { Count: 1 } parameters } } &&
                 !method.ReturnType.IsVoid() &&
                 method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
                 DependencyObject.GetValue.Find(MethodOrAccessor.Create(method), semanticModel, cancellationToken) is { Invocation: { } invocation } getValue &&
                 InvokedOnParameter(parameters[0], invocation) &&
                 semanticModel.TryGetSymbol(getValue.PropertyArgument.Expression, cancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing))
+                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
+                backing.ContainingType.Name == containingType.Identifier.ValueText &&
+                !HasBetterMatch(backing, method))
             {
                 return new GetAttached(getValue, backing);
             }
@@ -41,6 +43,24 @@
                     { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax { Identifier: { ValueText: { } name } } } } => name == parameter.Identifier.ValueText,
                     _ => false,
                 };
+            }
+
+            static bool HasBetterMatch(BackingFieldOrProperty backing, MethodDeclarationSyntax method)
+            {
+                if (method.Identifier.ValueText.IsParts("Get", backing.Name))
+                {
+                    return false;
+                }
+
+                foreach (var name in backing.Symbol.ContainingType.MemberNames)
+                {
+                    if (name.IsParts("Get", backing.Name))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
     }

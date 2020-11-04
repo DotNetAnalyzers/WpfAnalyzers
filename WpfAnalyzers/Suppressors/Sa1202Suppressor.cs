@@ -33,7 +33,7 @@
                     }
 
                     if (identifierName.Parent is MethodDeclarationSyntax method &&
-                        ClrMethod.IsAttachedSet(method, semanticModel, context.CancellationToken, out _, out _))
+                        SetAttached.Match(method, semanticModel, context.CancellationToken) is { })
                     {
                         context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
                     }

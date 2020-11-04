@@ -96,7 +96,7 @@
                                             nameof(DocComment),
 #pragma warning disable SA1118 // Parameter should not span multiple lines
                                             $"/// {DocComment.Format(summaryFormat, backingGet.Symbol.Name, element.Name)}\n" +
-                                            $"/// {DocComment.Format(paramFormat,   element.Name,           element.ToCrefType(), backingGet.Name)}\n" +
+                                            $"/// {DocComment.Format(paramFormat, element.Name, element.ToCrefType(), backingGet.Name)}\n" +
                                             $"/// {DocComment.Format(returnsFormat, registeredName)}\n")));
 #pragma warning restore SA1118 // Parameter should not span multiple lines
                             }
@@ -147,7 +147,7 @@
                     }
                 }
                 else if (method.Parameters.TryElementAt(1, out var value) &&
-                         ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out var backingSet))
+                         SetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { SetValue: { Invocation: { } setValue }, Backing: { } backingSet })
                 {
                     if (DependencyProperty.TryGetRegisteredName(backingSet, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
@@ -227,7 +227,7 @@
                     }
 
                     if (methodDeclaration.Body is { } body &&
-                        TryGetSideEffect(body, setValueCall, out var sideEffect))
+                        TryGetSideEffect(body, setValue, out var sideEffect))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
