@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -24,17 +26,7 @@
         /// </summary>
         internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return property.IsPotentialClrProperty(semanticModel.Compilation) &&
-                   property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration) &&
-                   IsDependencyPropertyAccessor(propertyDeclaration, semanticModel, cancellationToken);
-        }
-
-        /// <summary>
-        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty.
-        /// </summary>
-        internal static bool IsDependencyPropertyAccessor(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            return TryGetBackingFields(property, semanticModel, cancellationToken, out var _, out var _);
+            return SingleBackingField(property, semanticModel, cancellationToken) is { };
         }
 
         /// <summary>
@@ -48,17 +40,12 @@
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
                 property.TrySingleDeclaration(cancellationToken, out _))
             {
-                if (TryGetBackingFields(
-                    property,
-                    semanticModel,
-                    cancellationToken,
-                    out getter,
-                    out setter))
+                if (TryGetBackingFields(property, semanticModel, cancellationToken, out getter, out setter))
                 {
                     if (SymbolEqualityComparer.Default.Equals(setter.Symbol, getter.Symbol) &&
                         setter.Type == KnownSymbols.DependencyProperty)
                     {
-                       return setter;
+                        return setter;
                     }
                 }
             }
