@@ -26,7 +26,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
-                context.ContainingSymbol.IsStatic)
+                context.ContainingSymbol is { IsStatic: true })
             {
                 if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
                     (DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { }))
@@ -54,6 +54,7 @@
         private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
+                context.ContainingSymbol is { } &&
                 !TypeSymbolComparer.Equal(ownerType, context.ContainingSymbol.ContainingType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner, argument.GetLocation(), context.ContainingSymbol.ContainingType));

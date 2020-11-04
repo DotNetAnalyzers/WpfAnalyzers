@@ -220,7 +220,7 @@
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.WPF0013ClrMethodMustMatchRegisteredType,
-                                methodDeclaration.ParameterList.Parameters[1].Type.GetLocation(),
+                                methodDeclaration.ParameterList.Parameters[1].Type!.GetLocation(),
                                 ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 "Value type",
                                 registeredType));

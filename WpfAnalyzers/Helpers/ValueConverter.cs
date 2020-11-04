@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -76,7 +78,7 @@
                         break;
                     case IdentifierNameSyntax _:
                     case MemberAccessExpressionSyntax _:
-                        var type = semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type;
+                        var type = semanticModel.GetType(returnValue, cancellationToken);
                         if (type == KnownSymbols.Object &&
                             semanticModel.GetSymbolSafe(returnValue, cancellationToken) is { } symbol &&
                             symbol.IsEither<IFieldSymbol, IPropertySymbol>())
@@ -92,9 +94,10 @@
                                         foreach (var assignment in walker.Assignments)
                                         {
                                             if (semanticModel.TryGetSymbol(assignment.Left, cancellationToken, out IFieldSymbol? assigned) &&
-                                                FieldSymbolComparer.Equal(assigned, field))
+                                                FieldSymbolComparer.Equal(assigned, field) &&
+                                                semanticModel.GetType(assignment.Right, cancellationToken) is { } rightType)
                                             {
-                                                returnTypes.Add(semanticModel.GetTypeInfoSafe(assignment.Right, cancellationToken).Type);
+                                                returnTypes.Add(rightType);
                                             }
                                         }
                                     }
@@ -109,7 +112,7 @@
                                     return;
                             }
                         }
-                        else
+                        else if (type is { })
                         {
                             returnTypes.Add(type);
                         }
@@ -125,7 +128,10 @@
 
                         break;
                     default:
-                        returnTypes.Add(semanticModel.GetTypeInfoSafe(returnValue, cancellationToken).Type);
+                        if (semanticModel.GetType(returnValue, cancellationToken) is { } returnValueType)
+                        {
+                            returnTypes.Add(returnValueType);
+                        }
                         break;
                 }
             }
