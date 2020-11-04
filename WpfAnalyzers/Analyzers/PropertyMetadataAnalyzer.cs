@@ -34,7 +34,7 @@
                 context.ContainingSymbol is { IsStatic: true } &&
                 PropertyMetadata.Match(objectCreation, context.SemanticModel, context.CancellationToken) is { } propertyMetadata)
             {
-                if (PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
+                if (propertyMetadata.FindRegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
                     if (propertyMetadata.PropertyChangedArgument is { } propertyChangeArgument &&
                         Callback.Match(propertyChangeArgument, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
@@ -159,7 +159,8 @@
         private static bool MatchesPropertyChangedCallbackName(ArgumentSyntax propertyChangedCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return propertyChangedCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
-                   PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
+                   PropertyMetadata.Match(objectCreation, context.SemanticModel, context.CancellationToken) is { } propertyMetadata &&
+                   propertyMetadata.FindRegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("On", registeredName, "Changed");
         }
@@ -167,7 +168,8 @@
         private static bool MatchesCoerceValueCallbackName(ArgumentSyntax coerceValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return coerceValueCallback is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax objectCreation } } &&
-                   PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
+                   PropertyMetadata.Match(objectCreation, context.SemanticModel, context.CancellationToken) is { } propertyMetadata &&
+                   propertyMetadata.FindRegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
                    target.Name.IsParts("Coerce", registeredName);
         }

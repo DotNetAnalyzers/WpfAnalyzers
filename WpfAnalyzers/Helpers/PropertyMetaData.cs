@@ -94,10 +94,9 @@
             return null;
         }
 
-        internal static ArgumentAndValue<string?>? FindRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal ArgumentAndValue<string?>? FindRegisteredName(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Match(objectCreation, semanticModel, cancellationToken) is { } &&
-                objectCreation.TryFirstAncestor(out InvocationExpressionSyntax? invocation))
+            if (this.ObjectCreation is { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } })
             {
                 return DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken);
             }
