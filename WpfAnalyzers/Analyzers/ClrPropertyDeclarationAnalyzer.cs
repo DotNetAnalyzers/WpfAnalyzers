@@ -30,51 +30,36 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
-                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation) &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                PropertyDeclarationWalker.TryGetCalls(propertyDeclaration, out var getCall, out var setCall))
+                propertyDeclaration.Getter() is { } getter &&
+                propertyDeclaration.Setter() is { } setter)
             {
-                if (getCall is { } &&
-                    propertyDeclaration.TryGetGetter(out var getter) &&
-                    getter.Body is { Statements: { } getStatements } &&
-                    getStatements.TryFirst(x => !x.Contains(getCall), out var statement))
+                if (ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { SetValue: { } setValue, BackingSet: { } backingSet, GetValue: { } getValue, BackingGet: { } backingGet })
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
-                }
+                    if (getter.Body is { Statements: { } getStatements } &&
+                        getStatements.Count > 1 &&
+                        getStatements.TryFirst(x => !x.Contains(getValue), out var statement))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
+                    }
 
-                if (setCall is { })
-                {
-                    if (propertyDeclaration.TryGetSetter(out var setter) &&
-                        setter.Body is { Statements: { } setStatements } &&
-                        setStatements.TryFirst(x => !x.Contains(setCall), out var sideEffect))
+                    if (setter.Body is { Statements: { } setStatements } &&
+                        setStatements.Count > 1 &&
+                        setStatements.TryFirst(x => !x.Contains(setValue), out var sideEffect))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
 
-                    if (setCall.TryGetMethodName(out var setCallName) &&
-                        setCallName != "SetValue")
+                    if (IsGettingAndSettingDifferent())
                     {
-                        //// ReSharper disable once PossibleNullReferenceException
                         context.ReportDiagnostic(
                             Diagnostic.Create(
-                                Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
-                                setCall.GetLocation(),
+                                Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
+                                propertyDeclaration.GetLocation(),
                                 context.ContainingSymbol.Name));
                     }
-                }
 
-                if (IsGettingAndSettingDifferent() == false)
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
-                            propertyDeclaration.GetLocation(),
-                            context.ContainingSymbol.Name));
-                }
-
-                if (ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { BackingGet: { } backing })
-                {
-                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
+                    if (DependencyProperty.TryGetRegisteredName(backingGet, context.SemanticModel, context.CancellationToken, out _, out var registeredName) &&
                         registeredName != property.Name)
                     {
                         context.ReportDiagnostic(
@@ -86,7 +71,7 @@
                                 registeredName));
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType))
+                    if (DependencyProperty.TryGetRegisteredType(backingGet, context.SemanticModel, context.CancellationToken, out var registeredType))
                     {
                         if (!TypeSymbolComparer.Equal(property.Type, registeredType))
                         {
@@ -98,7 +83,7 @@
                                     property,
                                     registeredType));
                         }
-                        else if (getCall is { Parent: CastExpressionSyntax { Type: { } type } } &&
+                        else if (getValue is { Parent: CastExpressionSyntax { Type: { } type } } &&
                                  context.SemanticModel.GetType(type, context.CancellationToken) is { } castType &&
                                  !TypeSymbolComparer.Equal(registeredType, castType))
                         {
@@ -111,73 +96,27 @@
                                     registeredType));
                         }
                     }
-                }
 
-                bool? IsGettingAndSettingDifferent()
-                {
-                    if (getCall.TryGetArgumentAtIndex(0, out var getArg) &&
-                        getArg.Expression is IdentifierNameSyntax getIdentifier &&
-                        setCall.TryGetArgumentAtIndex(0, out var setArg) &&
-                        setArg.Expression is IdentifierNameSyntax setIdentifier)
+                    bool IsGettingAndSettingDifferent()
                     {
-                        if (getIdentifier.Identifier.ValueText == setIdentifier.Identifier.ValueText)
+                        if (RegisterInvocation.FindRecursive(backingGet, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
+                            RegisterInvocation.FindRecursive(backingSet, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
                         {
-                            return true;
+                            return getRegistration != setRegistration;
                         }
 
-                        if (context.SemanticModel.TryGetSymbol(getIdentifier, context.CancellationToken, out var getSymbol) &&
-                            BackingFieldOrProperty.TryCreateCandidate(getSymbol, out var getBacking) &&
-                            context.SemanticModel.TryGetSymbol(setIdentifier, context.CancellationToken, out var setSymbol) &&
-                            BackingFieldOrProperty.TryCreateCandidate(setSymbol, out var setBacking) &&
-                            RegisterInvocation.FindRecursive(getBacking, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
-                            RegisterInvocation.FindRecursive(setBacking, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
-                        {
-                            return getRegistration == setRegistration;
-                        }
+                        return false;
                     }
-
-                    return null;
                 }
-            }
-        }
 
-        private class PropertyDeclarationWalker : PooledWalker<PropertyDeclarationWalker>
-        {
-            private InvocationExpressionSyntax? getCall;
-            private InvocationExpressionSyntax? setCall;
-
-            public override void VisitInvocationExpression(InvocationExpressionSyntax node)
-            {
-                if (node.TryGetMethodName(out var name) &&
-                    node.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor)
+                if (DependencyObject.SetCurrentValue.Find(MethodOrAccessor.Create(setter), context.SemanticModel, context.CancellationToken) is { Invocation: { } setCurrentValue })
                 {
-                    if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration) &&
-                        (name == "SetValue" || name == "SetCurrentValue"))
-                    {
-                        this.setCall = node;
-                    }
-                    else if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration) &&
-                             name == "GetValue")
-                    {
-                        this.getCall = node;
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
+                            setCurrentValue.GetLocation(),
+                            context.ContainingSymbol.Name));
                 }
-
-                base.VisitInvocationExpression(node);
-            }
-
-            internal static bool TryGetCalls(PropertyDeclarationSyntax declaration, out InvocationExpressionSyntax? getCall, out InvocationExpressionSyntax? setCall)
-            {
-                using var walker = BorrowAndVisit(declaration, () => new PropertyDeclarationWalker());
-                getCall = walker.getCall;
-                setCall = walker.setCall;
-                return getCall is { } || setCall is { };
-            }
-
-            protected override void Clear()
-            {
-                this.getCall = null;
-                this.setCall = null;
             }
         }
     }

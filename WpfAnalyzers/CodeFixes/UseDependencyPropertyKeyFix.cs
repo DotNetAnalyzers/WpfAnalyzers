@@ -26,7 +26,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot is { } && 
+                if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
                     diagnostic.Properties.TryGetValue(nameof(DependencyPropertyKeyType), out var keyName))
                 {

@@ -29,7 +29,7 @@
                                               .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot is { } && 
+                if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration) &&
                     MarkupExtension.TryGetReturnType(classDeclaration, semanticModel, context.CancellationToken, out var returnType))
                 {

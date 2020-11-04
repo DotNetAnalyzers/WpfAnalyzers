@@ -44,7 +44,8 @@
                         nameof(UseSetCurrentValueFix),
                         diagnostic);
                 }
-                else if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
+                else if (syntaxRoot is { } &&
+                         syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
                          Name(setValue) is { Identifier: { ValueText: "SetValue" } } name)
                 {
                     context.RegisterCodeFix(

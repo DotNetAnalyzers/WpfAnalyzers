@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
+﻿namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -112,7 +112,61 @@ namespace N
         }
 
         [Test]
-        public static void DependencyPropertyAndReadOnlyDependencyProperty()
+        public static void ReadOnlyDependencyPropertyExpressionBodies()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => ↓this.SetCurrentValue(BarProperty, value);
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        private static readonly DependencyPropertyKey BarPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public static readonly DependencyProperty BarProperty = BarPropertyKey.DependencyProperty;
+
+        public int Bar
+        {
+            get => (int)this.GetValue(BarProperty);
+            set => this.SetValue(BarPropertyKey, value);
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void ReadOnlyDependencyPropertyStatementBodies()
         {
             var before = @"
 namespace N
@@ -133,7 +187,7 @@ namespace N
         public int Bar
         {
             get { return (int)this.GetValue(BarProperty); }
-            set { ↓this.SetCurrentValue(BarPropertyKey, value); }
+            set { ↓this.SetCurrentValue(BarProperty, value); }
         }
     }
 }";
