@@ -28,13 +28,15 @@
                 {
                     if (semanticModel.TryGetSymbol(identifierName, context.CancellationToken, out var symbol) &&
                         FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
-                        fieldOrProperty.Type == KnownSymbols.DependencyPropertyKey)
+                       (fieldOrProperty.Type == KnownSymbols.DependencyProperty ||
+                        fieldOrProperty.Type == KnownSymbols.DependencyPropertyKey))
                     {
                         context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
                     }
 
                     if (identifierName.Parent is MethodDeclarationSyntax method &&
-                        SetAttached.Match(method, semanticModel, context.CancellationToken) is { })
+                        (SetAttached.Match(method, semanticModel, context.CancellationToken) is { } ||
+                         GetAttached.Match(method, semanticModel, context.CancellationToken) is { }))
                     {
                         context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
                     }
