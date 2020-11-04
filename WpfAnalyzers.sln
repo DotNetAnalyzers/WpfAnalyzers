@@ -15,7 +15,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6739-4830-BC74-2F8CF785A572}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
-		.paket\Readme.paket.md = .paket\Readme.paket.md
 		RELEASE_NOTES.md = RELEASE_NOTES.md
 		documentation\WPF0001.md = documentation\WPF0001.md
 		documentation\WPF0002.md = documentation\WPF0002.md
@@ -109,9 +108,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers", "WpfAnalyzer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidCode", "ValidCode\ValidCode.csproj", "{1CF75F47-2C7D-49B2-B9F5-89C700271896}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidCode.Netcore", "ValidCode.Netcore\ValidCode.Netcore.csproj", "{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidCode.Netcore", "ValidCode.Netcore\ValidCode.Netcore.csproj", "{F0918FBB-7F85-41FC-ADDE-2B86F0906BE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnalyzers.Test.Netcore", "WpfAnalyzers.Test.Netcore\WpfAnalyzers.Test.Netcore.csproj", "{91395167-BCA8-48BD-84D3-F2CEC4C811D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnalyzers.Test.Netcore", "WpfAnalyzers.Test.Netcore\WpfAnalyzers.Test.Netcore.csproj", "{91395167-BCA8-48BD-84D3-F2CEC4C811D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

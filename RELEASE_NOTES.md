@@ -1,3 +1,7 @@
+#### 3.3.0
+* BREAKING: Roslyn 3.5.0, requires a recent VisualStudio, not sure about exact version.
+* FEATURE: Initial support for nullable types.
+
 #### 3.2.0
 * FEATURE: Change to dependency property refactorings.
 * BUGFIX: switch expression WPF0072
