@@ -64,7 +64,7 @@
                 context.ContainingProperty() is null)
             {
                 if (context.ContainingSymbol is IMethodSymbol clrMethod &&
-                    ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out backing))
+                    ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out _))
                 {
                     return;
                 }

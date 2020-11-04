@@ -3,7 +3,9 @@
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,9 +37,9 @@
                 method.Parameters.TryElementAt(0, out var element) &&
                 element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
             {
-                if (ClrMethod.IsAttachedGet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var getValueCall, out var backing))
+                if (GetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { GetValue: { Invocation: { } getValue }, Backing: { } backingGet })
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backingGet, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         if (!method.Name.IsParts("Get", registeredName))
                         {
@@ -57,7 +59,7 @@
                             var returnsFormat = "<returns>{registered_name} property value.</returns>";
                             if (methodDeclaration.TryGetDocumentationComment(out var comment))
                             {
-                                if (comment.VerifySummary(summaryFormat, backing.Symbol.Name, element.Name) is { } summaryError)
+                                if (comment.VerifySummary(summaryFormat, backingGet.Symbol.Name, element.Name) is { } summaryError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -66,7 +68,7 @@
                                             ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
-                                if (comment.VerifyParameter(paramFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } paramError)
+                                if (comment.VerifyParameter(paramFormat, element, element.ToCrefType(), backingGet.Symbol.Name) is { } paramError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -93,15 +95,15 @@
                                         ImmutableDictionary<string, string?>.Empty.Add(
                                             nameof(DocComment),
 #pragma warning disable SA1118 // Parameter should not span multiple lines
-                                            $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
-                                            $"/// {DocComment.Format(paramFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(summaryFormat, backingGet.Symbol.Name, element.Name)}\n" +
+                                            $"/// {DocComment.Format(paramFormat,   element.Name,           element.ToCrefType(), backingGet.Name)}\n" +
                                             $"/// {DocComment.Format(returnsFormat, registeredName)}\n")));
 #pragma warning restore SA1118 // Parameter should not span multiple lines
                             }
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (DependencyProperty.TryGetRegisteredType(backingGet, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         !TypeSymbolComparer.Equal(method.ReturnType, registeredType))
                     {
                         context.ReportDiagnostic(
@@ -139,15 +141,15 @@
                     }
 
                     if (methodDeclaration.Body is { } body &&
-                        TryGetSideEffect(body, getValueCall, out var sideEffect))
+                        TryGetSideEffect(body, getValue, out var sideEffect))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
                     }
                 }
                 else if (method.Parameters.TryElementAt(1, out var value) &&
-                         ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out backing))
+                         ClrMethod.IsAttachedSet(methodDeclaration, context.SemanticModel, context.CancellationToken, out var setValueCall, out var backingSet))
                 {
-                    if (DependencyProperty.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
+                    if (DependencyProperty.TryGetRegisteredName(backingSet, context.SemanticModel, context.CancellationToken, out _, out var registeredName))
                     {
                         if (!method.Name.IsParts("Set", registeredName))
                         {
@@ -167,7 +169,7 @@
                             var valueFormat = "<param name=\"{value}\">{registered_name} property value.</param>";
                             if (methodDeclaration.TryGetDocumentationComment(out var comment))
                             {
-                                if (comment.VerifySummary(summaryFormat, backing.Symbol.Name, element.Name) is { } summaryError)
+                                if (comment.VerifySummary(summaryFormat, backingSet.Symbol.Name, element.Name) is { } summaryError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -176,7 +178,7 @@
                                             ImmutableDictionary<string, string?>.Empty.Add(nameof(DocComment), summaryError.Text)));
                                 }
 
-                                if (comment.VerifyParameter(elementFormat, element, element.ToCrefType(), backing.Symbol.Name) is { } elementError)
+                                if (comment.VerifyParameter(elementFormat, element, element.ToCrefType(), backingSet.Symbol.Name) is { } elementError)
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
@@ -203,15 +205,15 @@
                                         ImmutableDictionary<string, string?>.Empty.Add(
                                             nameof(DocComment),
 #pragma warning disable SA1118 // Parameter should not span multiple lines
-                                            $"/// {DocComment.Format(summaryFormat, backing.Symbol.Name, element.Name)}\n" +
-                                            $"/// {DocComment.Format(elementFormat, element.Name, element.ToCrefType(), backing.Name)}\n" +
+                                            $"/// {DocComment.Format(summaryFormat, backingSet.Symbol.Name, element.Name)}\n" +
+                                            $"/// {DocComment.Format(elementFormat, element.Name, element.ToCrefType(), backingSet.Name)}\n" +
                                             $"/// {DocComment.Format(valueFormat, value.Name, registeredName)}\n")));
 #pragma warning restore SA1118 // Parameter should not span multiple lines
                             }
                         }
                     }
 
-                    if (DependencyProperty.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var registeredType) &&
+                    if (DependencyProperty.TryGetRegisteredType(backingSet, context.SemanticModel, context.CancellationToken, out var registeredType) &&
                         method.Parameters.TryElementAt(1, out var valueParameter) &&
                         !TypeSymbolComparer.Equal(valueParameter.Type, registeredType))
                     {
