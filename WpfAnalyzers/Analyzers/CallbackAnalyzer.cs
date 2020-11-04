@@ -443,7 +443,7 @@
         {
             senderType = null;
             if (argument is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax register } } } metaDataCreation } } &&
-                PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _))
+                PropertyMetadata.Match(metaDataCreation, context.SemanticModel, context.CancellationToken) is { })
             {
                 if (DependencyProperty.Register.MatchRegister(register, context.SemanticModel, context.CancellationToken) is { } ||
                     DependencyProperty.Register.MatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken) is { } ||

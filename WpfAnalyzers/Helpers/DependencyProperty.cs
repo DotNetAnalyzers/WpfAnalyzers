@@ -24,7 +24,7 @@
                 {
                     if (argument.TryGetStringValue(semanticModel, cancellationToken, out var registeredName))
                     {
-                        return new ArgumentAndValue<string?>(argument,registeredName);
+                        return new ArgumentAndValue<string?>(argument, registeredName);
                     }
 
                     return new ArgumentAndValue<string?>(argument, null);
@@ -217,8 +217,8 @@
 
                     bool IsDefaultValueNull(ArgumentSyntax? metadataArg)
                     {
-                        if (metadataArg is { Expression: ObjectCreationExpressionSyntax propertyMetaData } &&
-                            PropertyMetadata.TryGetDefaultValue(propertyMetaData, semanticModel, cancellationToken, out var defaultValue))
+                        if (metadataArg is { Expression: ObjectCreationExpressionSyntax objectCreation } &&
+                            PropertyMetadata.Match(objectCreation, semanticModel, cancellationToken) is { DefaultValueArgument: { } defaultValue })
                         {
                             return defaultValue switch
                             {

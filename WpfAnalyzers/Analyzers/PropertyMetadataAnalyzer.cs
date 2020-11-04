@@ -32,7 +32,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ObjectCreationExpressionSyntax objectCreation &&
                 context.ContainingSymbol is { IsStatic: true } &&
-                PropertyMetadata.TryGetConstructor(objectCreation, context.SemanticModel, context.CancellationToken, out _))
+                PropertyMetadata.Match(objectCreation, context.SemanticModel, context.CancellationToken) is { } propertyMetadata)
             {
                 if (PropertyMetadata.FindRegisteredName(objectCreation, context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
@@ -129,7 +129,7 @@
 
                 if (PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
                     fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
-                    PropertyMetadata.TryGetDefaultValue(objectCreation, context.SemanticModel, context.CancellationToken, out var defaultValueArg))
+                    propertyMetadata.DefaultValueArgument is { } defaultValueArg)
                 {
                     if (!PropertyMetadata.IsValueValidForRegisteredType(defaultValueArg.Expression, registeredType, context.SemanticModel, context.CancellationToken))
                     {

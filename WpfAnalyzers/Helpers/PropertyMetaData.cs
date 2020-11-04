@@ -9,28 +9,50 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class PropertyMetadata
+    internal readonly struct PropertyMetadata
     {
-        internal static bool TryGetConstructor(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? constructor)
+        internal readonly ObjectCreationExpressionSyntax ObjectCreation;
+        internal readonly IMethodSymbol Constructor;
+
+        internal PropertyMetadata(ObjectCreationExpressionSyntax objectCreation, IMethodSymbol constructor)
         {
-            return semanticModel.TryGetSymbol(objectCreation, KnownSymbols.PropertyMetadata, cancellationToken, out constructor) ||
-                   semanticModel.TryGetSymbol(objectCreation, KnownSymbols.UIPropertyMetadata, cancellationToken, out constructor) ||
-                   semanticModel.TryGetSymbol(objectCreation, KnownSymbols.FrameworkPropertyMetadata, cancellationToken, out constructor);
+            this.ObjectCreation = objectCreation;
+            this.Constructor = constructor;
         }
 
-        internal static bool TryGetDefaultValue(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? defaultValueArg)
+        internal ArgumentSyntax? DefaultValueArgument
         {
-            defaultValueArg = null;
-            if (objectCreation?.ArgumentList is null ||
-                objectCreation.ArgumentList.Arguments.Count == 0)
+            get
             {
-                return false;
+                if (this.ObjectCreation.ArgumentList is null ||
+                    this.ObjectCreation.ArgumentList.Arguments.Count == 0)
+                {
+                    return null;
+                }
+
+                if (this.Constructor.TryFindParameter(KnownSymbols.Object, out var parameter) &&
+                    this.ObjectCreation.TryFindArgument(parameter, out var argument))
+                {
+                    return argument;
+                }
+
+                return null;
+            }
+        }
+
+        internal static PropertyMetadata? Match(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (objectCreation is { ArgumentList: { } })
+            {
+                if (semanticModel.TryGetSymbol(objectCreation, KnownSymbols.PropertyMetadata, cancellationToken, out var constructor) ||
+                    semanticModel.TryGetSymbol(objectCreation, KnownSymbols.UIPropertyMetadata, cancellationToken, out constructor) ||
+                    semanticModel.TryGetSymbol(objectCreation, KnownSymbols.FrameworkPropertyMetadata, cancellationToken, out constructor))
+                {
+                    return new PropertyMetadata(objectCreation, constructor);
+                }
             }
 
-            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
-                   constructor.Parameters.TryFirst(out var parameter) &&
-                   parameter.Type == KnownSymbols.Object &&
-                   objectCreation.ArgumentList.Arguments.TryFirst(out defaultValueArg);
+            return null;
         }
 
         internal static bool TryGetPropertyChangedCallback(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? callback)
@@ -45,7 +67,7 @@
 
         internal static ArgumentAndValue<string?>? FindRegisteredName(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (TryGetConstructor(objectCreation, semanticModel, cancellationToken, out _) &&
+            if (Match(objectCreation, semanticModel, cancellationToken) is { } &&
                 objectCreation.TryFirstAncestor(out InvocationExpressionSyntax? invocation))
             {
                 return DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken);
@@ -205,7 +227,7 @@
         private static bool TryGetCallback(ObjectCreationExpressionSyntax objectCreation, QualifiedType callbackType, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? callback)
         {
             callback = null;
-            return TryGetConstructor(objectCreation, semanticModel, cancellationToken, out var constructor) &&
+            return Match(objectCreation, semanticModel, cancellationToken) is { Constructor: { } constructor } &&
                    constructor.TryFindParameter(callbackType, out var parameter) &&
                    objectCreation.TryFindArgument(parameter, out callback);
         }
