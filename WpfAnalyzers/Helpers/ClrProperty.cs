@@ -22,25 +22,15 @@
         }
 
         /// <summary>
-        /// Check if the <paramref name="property"/> is a CLR accessor for a DependencyProperty.
-        /// </summary>
-        internal static bool IsDependencyPropertyAccessor(this IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            return SingleBackingField(property, semanticModel, cancellationToken) is { };
-        }
-
-        /// <summary>
         /// Get the single DependencyProperty backing field for <paramref name="property"/>
         /// Returns false for accessors for readonly dependency properties.
         /// </summary>
-        internal static BackingFieldOrProperty? SingleBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static BackingFieldOrProperty? Match(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            BackingFieldOrProperty getter;
-            BackingFieldOrProperty setter;
             if (property.IsPotentialClrProperty(semanticModel.Compilation) &&
                 property.TrySingleDeclaration(cancellationToken, out _))
             {
-                if (TryGetBackingFields(property, semanticModel, cancellationToken, out getter, out setter))
+                if (TryGetBackingFields(property, semanticModel, cancellationToken, out var getter, out var setter))
                 {
                     if (SymbolEqualityComparer.Default.Equals(setter.Symbol, getter.Symbol) &&
                         setter.Type == KnownSymbols.DependencyProperty)
@@ -49,8 +39,7 @@
                     }
                 }
             }
-
-            if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out getter, out setter))
+            else if (TryGetBackingFieldsByName(property, semanticModel.Compilation, out var getter, out var setter))
             {
                 if (SymbolEqualityComparer.Default.Equals(getter.Symbol, setter.Symbol) &&
                     getter.Type == KnownSymbols.DependencyProperty)

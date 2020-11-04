@@ -32,7 +32,7 @@
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
                 property != KnownSymbols.FrameworkElement.DataContext &&
-                ClrProperty.SingleBackingField(property, context.SemanticModel, context.CancellationToken) is { } backing &&
+                ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { } backing &&
                 !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
             {
                 var propertyArgument = backing.CreateArgument(context.SemanticModel, context.Node.SpanStart).ToString();
@@ -64,7 +64,7 @@
                 !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken))
             {
                 if (context.ContainingProperty() is { } clrProperty &&
-                    clrProperty.IsDependencyPropertyAccessor(context.SemanticModel, context.CancellationToken))
+                   ClrProperty.Match(clrProperty, context.SemanticModel, context.CancellationToken) is { })
                 {
                     return;
                 }
