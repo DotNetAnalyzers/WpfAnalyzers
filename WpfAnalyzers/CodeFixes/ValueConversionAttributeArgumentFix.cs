@@ -45,15 +45,18 @@
 
         private static void FixArgument(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol inType, ITypeSymbol outType)
         {
-            editor.ReplaceNode(
-                attributeSyntax.ArgumentList.Arguments[0],
-                editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))));
+            if (attributeSyntax is { ArgumentList: { Arguments: { Count: 2 } arguments } })
+            {
+                editor.ReplaceNode(
+                    arguments[0],
+                    editor.Generator.AttributeArgument(
+                        editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(inType))));
 
-            editor.ReplaceNode(
-                attributeSyntax.ArgumentList.Arguments[1],
-                editor.Generator.AttributeArgument(
-                    editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))));
+                editor.ReplaceNode(
+                    arguments[1],
+                    editor.Generator.AttributeArgument(
+                        editor.Generator.TypeOfExpression(editor.Generator.TypeExpression(outType))));
+            }
         }
     }
 }

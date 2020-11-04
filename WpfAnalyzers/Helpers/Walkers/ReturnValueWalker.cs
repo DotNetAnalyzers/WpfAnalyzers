@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -17,7 +17,11 @@ namespace WpfAnalyzers
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
-            this.returnValues.Add(node.Expression);
+            if (node.Expression is { } expression)
+            {
+                this.returnValues.Add(expression);
+            }
+
             base.VisitReturnStatement(node);
         }
 

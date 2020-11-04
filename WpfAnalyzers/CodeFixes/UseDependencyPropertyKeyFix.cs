@@ -28,7 +28,8 @@
             {
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
-                    diagnostic.Properties.TryGetValue(nameof(DependencyPropertyKeyType), out var keyName))
+                    diagnostic.Properties.TryGetValue(nameof(DependencyPropertyKeyType), out var keyName) &&
+                    keyName is { })
                 {
                     context.RegisterCodeFix(
                         invocation.ToString(),
@@ -41,8 +42,8 @@
                     {
                         return old switch
                         {
-                            IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier(keyName)),
-                            MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier(keyName))),
+                            IdentifierNameSyntax id => id.WithIdentifier(SyntaxFactory.Identifier(keyName!)),
+                            MemberAccessExpressionSyntax { Name: IdentifierNameSyntax id } ma => ma.WithName(id.WithIdentifier(SyntaxFactory.Identifier(keyName!))),
                             _ => old,
                         };
                     }

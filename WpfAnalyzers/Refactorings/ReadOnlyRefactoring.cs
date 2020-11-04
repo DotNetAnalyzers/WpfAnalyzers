@@ -57,7 +57,7 @@
                             variable.Identifier.Text + "Key");
                         return Task.FromResult(
                             context.Document.WithSyntaxRoot(
-                                syntaxRoot.ReplaceNode(containingClass, updatedClass)));
+                                syntaxRoot!.ReplaceNode(containingClass, updatedClass)!));
                     }
                 }
 
@@ -109,8 +109,8 @@
                 {
                     { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { Identifier: { ValueText: "SetValue" } } } } } } }
                         when node.Identifier.Text == this.before
-                        => node.WithIdentifier(SyntaxFactory.Identifier(this.after)),
-                    _ => base.VisitIdentifierName(node),
+                        => node.WithIdentifier(SyntaxFactory.Identifier(this.after))!,
+                    _ => base.VisitIdentifierName(node)!,
                 };
             }
 

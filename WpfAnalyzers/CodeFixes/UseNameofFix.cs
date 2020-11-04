@@ -31,7 +31,8 @@
             {
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
-                    diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name))
+                    diagnostic.Properties.TryGetValue(nameof(IdentifierNameSyntax), out var name) &&
+                    name is { })
                 {
                     context.RegisterCodeFix(
                         $"Use nameof({name})",
@@ -41,7 +42,7 @@
 
                     async Task FixAsync(DocumentEditor editor, CancellationToken cancellationToken)
                     {
-                        if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None)
+                        if (SyntaxFacts.GetKeywordKind(name!) != SyntaxKind.None)
                         {
                             name = "@" + name;
                         }

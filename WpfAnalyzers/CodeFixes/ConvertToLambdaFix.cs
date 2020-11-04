@@ -187,7 +187,7 @@
                     }
                 }
 
-                return base.VisitIdentifierName(node);
+                return base.VisitIdentifierName(node)!;
             }
 
             internal static ExpressionSyntax Rewrite(ExpressionSyntax expression, IReadOnlyList<(string Symbol, ExpressionSyntax Expression)> replacements, SemanticModel semanticModel)

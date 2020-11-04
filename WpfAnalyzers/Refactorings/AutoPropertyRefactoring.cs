@@ -101,7 +101,7 @@
 
                         return Task.FromResult(
                             context.Document.WithSyntaxRoot(
-                                syntaxRoot.ReplaceNode(containingClass, updatedClass)!));
+                                syntaxRoot!.ReplaceNode(containingClass, updatedClass)!));
                     }
 
                     static MethodDeclarationSyntax GetMethod(PropertyDeclarationSyntax property)
@@ -317,7 +317,7 @@
                         var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
                                                                .ConfigureAwait(false);
                         var updatedClass = containingClass.ReplaceNode(
-                                                              property,
+                                                              property!,
                                                               Property(
                                                                   property!.Identifier.ValueText + "Property",
                                                                   property.Identifier.ValueText + "Property",

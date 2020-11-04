@@ -14,3 +14,6 @@ dotnet_diagnostic.CA1822.severity = none
 
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
+
+# CA1724: The type name Code conflicts in whole
+dotnet_diagnostic.CA1724.severity = none

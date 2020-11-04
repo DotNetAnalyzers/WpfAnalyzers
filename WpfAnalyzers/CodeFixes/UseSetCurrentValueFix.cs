@@ -31,6 +31,7 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot is { } &&
+                    semanticModel is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AssignmentExpressionSyntax? assignment) &&
                     TryCreatePath(assignment) is { } path &&
                     diagnostic.Properties.TryGetValue(nameof(BackingFieldOrProperty), out var backingFieldOrProperty))

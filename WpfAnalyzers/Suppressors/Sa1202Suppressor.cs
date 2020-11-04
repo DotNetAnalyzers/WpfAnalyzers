@@ -20,8 +20,9 @@
         {
             foreach (var diagnostic in context.ReportedDiagnostics)
             {
-                var root = diagnostic.Location.SourceTree.GetRoot(context.CancellationToken);
-                if (root.FindNode(diagnostic.Location.SourceSpan) is { } node &&
+                if (diagnostic.Location is { SourceTree: { } tree } &&
+                    tree.GetRoot(context.CancellationToken) is { } root &&
+                    root.FindNode(diagnostic.Location.SourceSpan) is { } node &&
                     node.TryFirstAncestorOrSelf(out IdentifierNameSyntax? identifierName) &&
                     context.GetSemanticModel(identifierName.SyntaxTree) is { } semanticModel)
                 {

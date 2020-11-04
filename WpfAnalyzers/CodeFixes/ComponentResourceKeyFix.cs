@@ -39,9 +39,11 @@
                         diagnostic);
                 }
 
-                if (diagnostic.Id == Descriptors.WPF0141UseContainingMemberComponentResourceKey.Id &&
+                if (syntaxRoot is { } &&
+                    diagnostic.Id == Descriptors.WPF0141UseContainingMemberComponentResourceKey.Id &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
-                    diagnostic.Properties.TryGetValue(nameof(ArgumentSyntax), out var argumentString))
+                    diagnostic.Properties.TryGetValue(nameof(ArgumentSyntax), out var argumentString) &&
+                    argumentString is { })
                 {
                     context.RegisterCodeFix(
                         "Use default key.",
