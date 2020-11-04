@@ -28,7 +28,8 @@
             {
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out TypeSyntax? typeSyntax) &&
-                    diagnostic.Properties.TryGetValue("ExpectedType", out var registeredType))
+                    diagnostic.Properties.TryGetValue("ExpectedType", out var registeredType) &&
+                    registeredType is { })
                 {
                     context.RegisterCodeFix(
                         $"Change type to: {registeredType}.",

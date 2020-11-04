@@ -3,10 +3,14 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
+    using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Rename;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameMemberFix))]
     [Shared]
@@ -32,17 +36,22 @@
             var document = context.Document;
             var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                  .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot is { } &&
-                    syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is var token &&
+                    syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is { Parent: { } parent } token &&
                     token.IsKind(SyntaxKind.IdentifierToken) &&
-                    diagnostic.Properties.TryGetValue("ExpectedName", out var newName))
+                    semanticModel is { } &&
+                    semanticModel.TryGetSymbol(token, context.CancellationToken, out ISymbol? symbol) &&
+                    diagnostic.Properties.TryGetValue("ExpectedName", out var newName) &&
+                    newName is { })
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             $"Rename to: '{newName}'.",
-                            cancellationToken => RenameHelper.RenameSymbolAsync(document, syntaxRoot, token, newName, cancellationToken),
+                            cancellationToken => Renamer.RenameSymbolAsync(document.Project.Solution, symbol, newName, document.Project.Solution.Workspace.Options, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);
                 }

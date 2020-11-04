@@ -25,7 +25,8 @@
             {
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
-                    diagnostic.Properties.TryGetValue(nameof(ITypeSymbol), out var returnType))
+                    diagnostic.Properties.TryGetValue(nameof(ITypeSymbol), out var returnType) &&
+                    returnType is { })
                 {
                     context.RegisterCodeFix(
                         $"Change type to {returnType}.",

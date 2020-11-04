@@ -34,7 +34,7 @@
                 context.SemanticModel.TryGetConstantValue<string>(expression, context.CancellationToken, out var partName) &&
                 context.ContainingSymbol is IMethodSymbol { Name: "OnApplyTemplate", IsOverride: true, Parameters: { Length: 0 } } containingMethod)
             {
-                if (TryFindAttribute(containingMethod.ContainingType, partName, out var attribute))
+                if (FindAttribute(containingMethod.ContainingType, partName) is { } attribute)
                 {
                     if (TryGetCastType(invocation, out var cast, out var castTypeSyntax))
                     {
@@ -81,13 +81,12 @@
             }
         }
 
-        private static bool TryFindAttribute(INamedTypeSymbol type, string part, [NotNullWhen(true)] out AttributeData? attribute)
+        private static AttributeData? FindAttribute(INamedTypeSymbol? type, string part)
         {
-            attribute = null;
             if (type is null ||
                 type == KnownSymbols.Object)
             {
-                return false;
+                return null;
             }
 
             foreach (var candidate in type.GetAttributes())
@@ -95,12 +94,11 @@
                 if (candidate.AttributeClass == KnownSymbols.TemplatePartAttribute &&
                     candidate.NamedArguments.TryFirst(x => IsMatch(x), out _))
                 {
-                    attribute = candidate;
-                    return true;
+                    return candidate;
                 }
             }
 
-            return TryFindAttribute(type.BaseType, part, out attribute);
+            return FindAttribute(type.BaseType, part);
 
             bool IsMatch(KeyValuePair<string, TypedConstant> a)
             {

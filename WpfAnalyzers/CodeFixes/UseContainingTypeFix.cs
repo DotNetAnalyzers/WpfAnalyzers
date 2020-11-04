@@ -33,6 +33,7 @@
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out TypeOfExpressionSyntax? typeofExpression) &&
                     typeofExpression.TryFirstAncestor(out TypeDeclarationSyntax? typeDeclaration) &&
+                    semanticModel is { } &&
                     semanticModel.TryGetSymbol(typeDeclaration, context.CancellationToken, out var containingType))
                 {
                     var containingTypeName = containingType.ToMinimalDisplayString(semanticModel, typeofExpression.SpanStart, SymbolDisplayFormat.MinimallyQualifiedFormat);
