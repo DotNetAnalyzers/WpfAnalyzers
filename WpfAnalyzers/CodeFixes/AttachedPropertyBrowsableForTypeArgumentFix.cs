@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,13 +28,13 @@
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax? argument) &&
                     argument is { Expression: TypeOfExpressionSyntax { Type: { } type }, Parent: AttributeArgumentListSyntax { Parent: AttributeSyntax { Parent: AttributeListSyntax { Parent: MethodDeclarationSyntax { ParameterList: { Parameters: { Count: 1 } parameters } } } } } } &&
-                    parameters.TrySingle(out var parameter))
+                    parameters[0] is { Type: { } toType } parameter)
                 {
                     context.RegisterCodeFix(
-                        $"Change type to {parameter.Type}.",
+                        $"Change type to {toType}.",
                         (editor, _) => editor.ReplaceNode(
                             type,
-                            x => parameter.Type.WithTriviaFrom(x)),
+                            x => toType.WithTriviaFrom(x)),
                         this.GetType(),
                         diagnostic);
                 }

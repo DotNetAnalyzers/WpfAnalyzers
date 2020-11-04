@@ -132,6 +132,7 @@
                         {
                             returnTypes.Add(returnValueType);
                         }
+
                         break;
                 }
             }

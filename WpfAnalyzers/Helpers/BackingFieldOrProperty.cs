@@ -113,7 +113,7 @@
             {
                 if (register.PropertyTypeArgument() is { } argument)
                 {
-                    if (register.PropertyType(this.ContainingType, semanticModel, cancellationToken) is {} type)
+                    if (register.PropertyType(this.ContainingType, semanticModel, cancellationToken) is { } type)
                     {
                         return new ArgumentAndValue<ITypeSymbol?>(argument, type);
                     }

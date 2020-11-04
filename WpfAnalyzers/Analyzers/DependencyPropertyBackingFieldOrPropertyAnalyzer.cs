@@ -31,6 +31,7 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is { } &&
                 context.Node is MemberDeclarationSyntax memberDeclaration)
             {
                 if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backing))

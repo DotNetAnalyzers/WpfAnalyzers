@@ -61,7 +61,8 @@
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
 
-            if (syntaxRoot.FindNode(context.Span) is { } node &&
+            if (syntaxRoot is { } &&
+                syntaxRoot.FindNode(context.Span) is { } node &&
                 node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is { Parent: ClassDeclarationSyntax containingClass } property &&
                 property.IsAutoProperty() &&
                 semanticModel is { })
@@ -76,7 +77,7 @@
 
                     Task<Document> WithAttachedProperty()
                     {
-                        var updatedClass = containingClass.RemoveNode(property, SyntaxRemoveOptions.KeepUnbalancedDirectives)
+                        var updatedClass = containingClass.RemoveNode(property!, SyntaxRemoveOptions.KeepUnbalancedDirectives)!
                                                           .AddMethod(GetMethod(property!))
                                                           .AddMethod(SetMethod(property!))
                                                           .AddField(
@@ -100,7 +101,7 @@
 
                         return Task.FromResult(
                             context.Document.WithSyntaxRoot(
-                                syntaxRoot.ReplaceNode(containingClass, updatedClass)));
+                                syntaxRoot.ReplaceNode(containingClass, updatedClass)!));
                     }
 
                     static MethodDeclarationSyntax GetMethod(PropertyDeclarationSyntax property)
@@ -335,7 +336,7 @@
                                                .AddUsing(SystemWindows, semanticModel!));
                         }
 
-                        return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
+                        return context.Document.WithSyntaxRoot(syntaxRoot!.ReplaceNode(containingClass, updatedClass));
                     }
 
                     if (property.Setter() is { } setter &&
@@ -352,7 +353,7 @@
                             var qualifyMethodAccess = await context.Document.QualifyMethodAccessAsync(cancellationToken)
                                                                    .ConfigureAwait(false);
                             var updatedClass = containingClass.ReplaceNode(
-                                                                  property,
+                                                                  property!,
                                                                   Property(
                                                                       property!.Identifier.ValueText + "Property",
                                                                       property.Identifier.ValueText + "PropertyKey",
@@ -380,7 +381,7 @@
                                                    .AddUsing(SystemWindows, semanticModel!));
                             }
 
-                            return context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(containingClass, updatedClass));
+                            return context.Document.WithSyntaxRoot(syntaxRoot!.ReplaceNode(containingClass, updatedClass));
                         }
                     }
 

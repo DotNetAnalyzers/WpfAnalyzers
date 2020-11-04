@@ -105,7 +105,6 @@
 
             internal static T Rewrite<T>(T node, string typeText)
                 where T : CSharpSyntaxNode
-
             {
                 return (T)new CastReturnValue(typeText).Visit(node);
             }

@@ -29,6 +29,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is MemberDeclarationSyntax memberDeclaration &&
+                context.ContainingSymbol is { } &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var backing) &&
                 backing.Type == KnownSymbols.RoutedEvent)
             {

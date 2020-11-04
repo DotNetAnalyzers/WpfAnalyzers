@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -35,7 +35,9 @@ namespace WpfAnalyzers
                     }
                 }
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 type = type.BaseType;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
 
             return false;

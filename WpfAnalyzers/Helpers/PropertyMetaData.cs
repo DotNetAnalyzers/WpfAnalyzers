@@ -94,16 +94,6 @@
             return null;
         }
 
-        internal ArgumentAndValue<string?>? FindRegisteredName(SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (this.ObjectCreation is { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } })
-            {
-                return DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken);
-            }
-
-            return null;
-        }
-
         internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)
         {
             fieldOrProperty = default;
@@ -250,6 +240,16 @@
                     return true;
                 }
             }
+        }
+
+        internal ArgumentAndValue<string?>? FindRegisteredName(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (this.ObjectCreation is { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } })
+            {
+                return DependencyProperty.TryGetRegisteredName(invocation, semanticModel, cancellationToken);
+            }
+
+            return null;
         }
     }
 }

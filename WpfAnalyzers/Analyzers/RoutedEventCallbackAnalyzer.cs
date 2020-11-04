@@ -29,10 +29,9 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ArgumentSyntax argument &&
-                argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
+                argument.Expression is ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation &&
                 objectCreation.TrySingleArgument(out var callbackArg) &&
                 callbackArg.Expression is IdentifierNameSyntax &&
-                objectCreation.Parent is ArgumentSyntax handlerArgument &&
                 handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
             {
                 if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
@@ -61,7 +60,8 @@
                         Diagnostic.Create(
                             descriptor,
                             callbackArg.GetLocation(),
-                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName), expectedName));
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
+                            expectedName));
                 }
                 else
                 {
@@ -69,8 +69,7 @@
                 }
             }
 
-            if (eventArgument.Expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Name is IdentifierNameSyntax nameSyntax &&
+            if (eventArgument.Expression is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax nameSyntax } memberAccess &&
                 EventManager.IsMatch(invokedHandler.Identifier.ValueText, nameSyntax.Identifier.ValueText) == false)
             {
                 if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))

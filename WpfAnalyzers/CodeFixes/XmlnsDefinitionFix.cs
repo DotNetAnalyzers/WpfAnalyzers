@@ -4,7 +4,9 @@
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -16,57 +18,56 @@
     [Shared]
     internal class XmlnsDefinitionFix : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces.Id);
 
         public override FixAllProvider? GetFixAllProvider() => null;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                              .ConfigureAwait(false);
+                                          .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot is { } &&
+                    syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is { } token &&
+                    !string.IsNullOrEmpty(token.ValueText) &&
+                    syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<AttributeSyntax>() is { IsMissing: false, Parent: AttributeListSyntax attributeList } attribute)
                 {
-                    continue;
-                }
-
-                var attribute = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                     .FirstAncestorOrSelf<AttributeSyntax>();
-                if (attribute is null || attribute.IsMissing)
-                {
-                    continue;
-                }
-
-                var toAdd = diagnostic.Properties.Values.Select(x => CreateAttribute(x, attribute))
-                                      .Where(a => a is { })
-                                      .ToArray();
-                if (toAdd.Any())
-                {
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Map missing namespaces.",
-                            _ => Task.FromResult(
-                                context.Document.WithSyntaxRoot(
-                                    syntaxRoot.InsertNodesAfter(
-                                        attribute.FirstAncestorOrSelf<AttributeListSyntax>(),
-                                        toAdd))),
-                            this.GetType().FullName),
-                        diagnostic);
+                    var toAdd = diagnostic.Properties.Values.Select(x => CreateAttribute(x, attribute))
+                                          .Where(a => a is { })
+                                          .ToArray();
+                    if (toAdd.Any())
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Map missing namespaces.",
+                                _ => Task.FromResult(
+                                    context.Document.WithSyntaxRoot(
+                                        syntaxRoot.InsertNodesAfter(
+                                            attributeList,
+                                            toAdd!))),
+                                this.GetType().FullName),
+                            diagnostic);
+                    }
                 }
             }
         }
 
-        private static AttributeListSyntax? CreateAttribute(string @namespace, AttributeSyntax attribute)
+        private static AttributeListSyntax? CreateAttribute(string? @namespace, AttributeSyntax attribute)
         {
+            if (@namespace is null)
+            {
+                return null;
+            }
+
             var list = attribute.FirstAncestorOrSelf<AttributeListSyntax>();
             if (list?.Attributes.Count != 1)
             {
                 return null;
             }
 
-            if (!attribute.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out AttributeArgumentSyntax? oldArgument))
+            if (!attribute.TryFindArgument(1, KnownSymbols.XmlnsDefinitionAttribute.ClrNamespaceArgumentName, out var oldArgument))
             {
                 return null;
             }
