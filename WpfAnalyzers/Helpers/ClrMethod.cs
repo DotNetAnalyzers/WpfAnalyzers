@@ -3,7 +3,9 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -95,8 +97,8 @@
                parameters.TrySingle(out var parameter))
             {
                 using var walker = ClrGetterWalker.Borrow(semanticModel, method, cancellationToken);
-                call = walker.GetValue;
-                return call?.Expression is MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess &&
+                call = walker.GetValue?.Invocation;
+                return walker.GetValue is { Invocation: { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax member } memberAccess } } &&
                        memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
                        parameter.Identifier.ValueText == member.Identifier.ValueText &&
                        walker.Property?.Expression is { } expression &&

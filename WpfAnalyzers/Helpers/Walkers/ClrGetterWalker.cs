@@ -20,13 +20,13 @@
 
         internal bool HasError { get; private set; }
 
-        internal InvocationExpressionSyntax? GetValue { get; private set; }
+        internal DependencyObject.GetValue? GetValue { get; private set; }
 
-        internal ArgumentSyntax? Property => this.GetValue?.ArgumentList?.Arguments.FirstOrDefault();
+        internal ArgumentSyntax? Property => this.GetValue?.Invocation.ArgumentList?.Arguments.FirstOrDefault();
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
-            if (DependencyObject.GetValue.Match(invocation, this.semanticModel, this.cancellationToken) is { })
+            if (DependencyObject.GetValue.Match(invocation, this.semanticModel, this.cancellationToken) is { } getValue)
             {
                 if (this.Property is { })
                 {
@@ -35,7 +35,7 @@
                 }
                 else
                 {
-                    this.GetValue = invocation;
+                    this.GetValue = getValue;
                 }
             }
 
@@ -50,6 +50,37 @@
             }
 
             base.Visit(node);
+        }
+
+        internal static DependencyObject.GetValue? FindGetValue(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return node switch
+            {
+                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                    => DependencyObject.GetValue.Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } } }
+                    => DependencyObject.GetValue.Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { } expressionBody } => Walk(expressionBody),
+                { Body: { Statements: { } statements } }
+                    when statements.Last() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                    => DependencyObject.GetValue.Match(invocation, semanticModel, cancellationToken),
+                { Body: { Statements: { } statements } }
+                    when statements.Last() is ReturnStatementSyntax { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } }
+                    => DependencyObject.GetValue.Match(invocation, semanticModel, cancellationToken),
+                { Body: { } body } => Walk(body),
+                _ => null,
+            };
+
+            DependencyObject.GetValue? Walk(SyntaxNode body)
+            {
+                using var getterWalker = Borrow(semanticModel, body, cancellationToken);
+                if (getterWalker is { HasError: false, IsSuccess: true, GetValue: { } getValue })
+                {
+                    return getValue;
+                }
+
+                return null;
+            }
         }
 
         internal static ClrGetterWalker Borrow(SemanticModel semanticModel, SyntaxNode getter, CancellationToken cancellationToken)

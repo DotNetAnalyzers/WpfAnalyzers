@@ -21,9 +21,12 @@ namespace WpfAnalyzers
                 this.Target = target;
             }
 
+            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
             internal static GetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 1 } } } &&
+                if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                    arguments[0] is { Expression: { } } &&
                     semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.GetValue, cancellationToken, out var method))
                 {
                     return new GetValue(invocation, method);
@@ -46,7 +49,9 @@ namespace WpfAnalyzers
 
             internal static SetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 2 } } } &&
+                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                    arguments[0] is { Expression: { } } &&
+                    arguments[1] is { Expression: { } } &&
                     semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetValue, cancellationToken, out var method))
                 {
                     return new SetValue(invocation, method);
@@ -69,7 +74,9 @@ namespace WpfAnalyzers
 
             internal static SetCurrentValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 2 } } } &&
+                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                    arguments[0] is { Expression: { } } &&
+                    arguments[1] is { Expression: { } } &&
                     semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetCurrentValue, cancellationToken, out var method))
                 {
                     return new SetCurrentValue(invocation, method);

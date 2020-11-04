@@ -41,9 +41,7 @@
                     Diagnostic.Create(
                         Descriptors.WPF0041SetMutableUsingSetCurrentValue,
                         assignment.GetLocation(),
-                        properties: ImmutableDictionary<string, string?>.Empty.Add(
-                            nameof(BackingFieldOrProperty),
-                            propertyArgument),
+                        ImmutableDictionary<string, string?>.Empty.Add(nameof(BackingFieldOrProperty), propertyArgument),
                         propertyArgument,
                         assignment.Right));
             }
@@ -62,14 +60,9 @@
                 BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
                 backing.Type != KnownSymbols.DependencyPropertyKey &&
                 backing.Symbol != KnownSymbols.FrameworkElement.DataContextProperty &&
-                !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken))
+                !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken) &&
+                context.ContainingProperty() is null)
             {
-                if (context.ContainingProperty() is { } clrProperty &&
-                   ClrProperty.Match(clrProperty, context.SemanticModel, context.CancellationToken) is { })
-                {
-                    return;
-                }
-
                 if (context.ContainingSymbol is IMethodSymbol clrMethod &&
                     ClrMethod.IsAttachedSet(clrMethod, context.SemanticModel, context.CancellationToken, out backing))
                 {

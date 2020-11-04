@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
+﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -732,6 +732,52 @@ namespace N
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void BooleanBoxes()
+        {
+            var boxes = @"
+namespace N
+{
+    internal static class BooleanBoxes
+    {
+        internal static readonly object True = true;
+        internal static readonly object False = false;
+
+        internal static object Box(bool value)
+        {
+            return value
+                ? True
+                : False;
+        }
+    }
+}
+";
+            var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class UsingBoolBoxes : Control
+    {
+        /// <summary>Identifies the <see cref=""IsTrue""/> dependency property.</summary>
+        public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(
+            nameof(IsTrue),
+            typeof(bool),
+            typeof(UsingBoolBoxes),
+            new PropertyMetadata(BooleanBoxes.False));
+
+        public bool IsTrue
+        {
+            get => Equals(BooleanBoxes.True, this.GetValue(IsTrueProperty));
+            set => this.SetValue(IsTrueProperty, BooleanBoxes.Box(value));
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, boxes, code);
         }
     }
 }
