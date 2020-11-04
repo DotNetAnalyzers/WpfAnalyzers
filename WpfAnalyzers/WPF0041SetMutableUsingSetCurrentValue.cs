@@ -57,7 +57,7 @@
                 invocation is { Expression: { } invocationExpression, ArgumentList: { Arguments: { Count: 2 } arguments } } &&
                 arguments.TryElementAt(0, out var propertyArg) &&
                 propertyArg is { Expression: { } expression } &&
-                DependencyObject.TryGetSetValueCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                DependencyObject.SetValue.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
                 BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
                 backing.Type != KnownSymbols.DependencyPropertyKey &&

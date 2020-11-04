@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test
+﻿namespace WpfAnalyzers.Test
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -38,11 +38,10 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
-            Assert.AreEqual("SetValue", method.Name);
+            Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
         }
 
         [TestCase(".SetValue")]
@@ -77,11 +76,10 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(true, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out var method));
-            Assert.AreEqual("SetValue", method.Name);
+            Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyObject.TryGetSetValueCall(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
         }
 
         [TestCase("SetCurrentValue(BarProperty, value)")]
