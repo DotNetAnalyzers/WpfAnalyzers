@@ -445,8 +445,8 @@
             if (argument is { Parent: ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax register } } } metaDataCreation } } &&
                 PropertyMetadata.TryGetConstructor(metaDataCreation, context.SemanticModel, context.CancellationToken, out _))
             {
-                if (RegisterInvocation.MatchRegister(register, context.SemanticModel, context.CancellationToken) is { } ||
-                    RegisterInvocation.MatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken) is { } ||
+                if (DependencyProperty.Register.MatchRegister(register, context.SemanticModel, context.CancellationToken) is { } ||
+                    DependencyProperty.Register.MatchRegisterReadOnly(register, context.SemanticModel, context.CancellationToken) is { } ||
                     DependencyProperty.AddOwner.Match(register, context.SemanticModel, context.CancellationToken) is { } ||
                     DependencyProperty.TryGetOverrideMetadataCall(register, context.SemanticModel, context.CancellationToken, out _))
                 {
@@ -468,9 +468,9 @@
                     case ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArgument }:
                         return TryGetValueType(parentArgument, containingType, context, out type);
                     case InvocationExpressionSyntax invocation when
-                        RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { } call:
+                        DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { } register:
                         {
-                            return (type = call.PropertyType(containingType, context.SemanticModel, context.CancellationToken)) is { };
+                            return (type = register.PropertyType(containingType, context.SemanticModel, context.CancellationToken)) is { };
                         }
 
                     case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation when

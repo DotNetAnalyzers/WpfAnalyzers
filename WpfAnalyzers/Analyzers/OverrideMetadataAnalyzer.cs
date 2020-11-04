@@ -37,9 +37,9 @@
                 if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
                     value is InvocationExpressionSyntax registerInvocation)
                 {
-                    if (RegisterInvocation.MatchRegisterAny(registerInvocation, context.SemanticModel, context.CancellationToken) is { } call)
+                    if (DependencyProperty.Register.MatchAny(registerInvocation, context.SemanticModel, context.CancellationToken) is { } register)
                     {
-                        if (call.FindArgument(KnownSymbols.PropertyMetadata) is { } registeredMetadataArg &&
+                        if (register.FindArgument(KnownSymbols.PropertyMetadata) is { } registeredMetadataArg &&
                             context.SemanticModel.TryGetType(metadataArg.Expression, context.CancellationToken, out var type) &&
                             context.SemanticModel.TryGetType(registeredMetadataArg.Expression, context.CancellationToken, out var registeredType) &&
                             !type.IsAssignableTo(registeredType, context.SemanticModel.Compilation))

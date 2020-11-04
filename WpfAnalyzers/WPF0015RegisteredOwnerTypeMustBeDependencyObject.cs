@@ -36,8 +36,8 @@
                     HandleArgument(context, argument);
                 }
 
-                if ((RegisterInvocation.MatchRegister(invocation, context.SemanticModel, context.CancellationToken) is { } ||
-                     RegisterInvocation.MatchRegisterReadOnly(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
+                if ((DependencyProperty.Register.MatchRegister(invocation, context.SemanticModel, context.CancellationToken) is { } ||
+                     DependencyProperty.Register.MatchRegisterReadOnly(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                     invocation.TryGetArgumentAtIndex(2, out argument))
                 {
                     HandleArgument(context, argument);

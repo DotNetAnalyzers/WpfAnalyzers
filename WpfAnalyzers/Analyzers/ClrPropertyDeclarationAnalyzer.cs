@@ -99,8 +99,8 @@
 
                     bool IsGettingAndSettingDifferent()
                     {
-                        if (RegisterInvocation.FindRecursive(backingGet, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
-                            RegisterInvocation.FindRecursive(backingSet, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
+                        if (DependencyProperty.Register.FindRecursive(backingGet, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
+                            DependencyProperty.Register.FindRecursive(backingSet, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
                         {
                             return getRegistration != setRegistration;
                         }

@@ -31,11 +31,11 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol is { IsStatic: true } &&
-                RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { } call &&
-                call.NameArgument() is { } nameArg &&
-                call.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName)
+                DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { } register &&
+                register.NameArgument() is { } nameArg &&
+                register.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName)
             {
-                if (call.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
+                if (register.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
                     Callback.Match(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } identifier, Target: { } target })
                 {
                     if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
@@ -108,9 +108,9 @@
         private static bool MatchesValidateValueCallbackName(ArgumentSyntax validateValueCallback, IMethodSymbol target, SyntaxNodeAnalysisContext context)
         {
             return validateValueCallback.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
-                   RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { } call &&
+                   DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { } register &&
                    TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol?.ContainingType) &&
-                   call.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName &&
+                   register.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName &&
                    target.Name.IsParts("Validate", registeredName);
         }
     }

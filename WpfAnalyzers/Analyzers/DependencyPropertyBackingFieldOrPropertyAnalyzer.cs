@@ -121,7 +121,7 @@
                 }
 
                 if (BackingFieldOrProperty.TryCreateCandidate(context.ContainingSymbol, out var candidate) &&
-                    RegisterInvocation.FindRecursive(candidate, context.SemanticModel, context.CancellationToken) is { } &&
+                    DependencyProperty.Register.FindRecursive(candidate, context.SemanticModel, context.CancellationToken) is { } &&
                     !candidate.FieldOrProperty.IsStaticReadOnly())
                 {
                     context.ReportDiagnostic(

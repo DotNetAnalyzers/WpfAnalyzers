@@ -29,7 +29,7 @@
                 context.ContainingSymbol.IsStatic)
             {
                 if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
-                    (RegisterInvocation.MatchRegisterAny(invocation, context.SemanticModel, context.CancellationToken) is { }))
+                    (DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { }))
                 {
                     HandleArgument(context, argument);
                 }

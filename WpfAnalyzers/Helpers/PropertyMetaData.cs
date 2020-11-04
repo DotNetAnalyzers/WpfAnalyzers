@@ -61,7 +61,7 @@
                 return false;
             }
 
-            if (RegisterInvocation.MatchRegisterAny(invocation, semanticModel, cancellationToken) is { })
+            if (DependencyProperty.Register.MatchAny(invocation, semanticModel, cancellationToken) is { })
             {
                 if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
                     semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))
