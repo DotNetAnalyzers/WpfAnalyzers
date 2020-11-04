@@ -43,8 +43,7 @@
                     this.SetValue = invocation;
                 }
             }
-
-            if (DependencyObject.TryGetSetCurrentValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
+            else if (DependencyObject.SetCurrentValue.Match(invocation, this.semanticModel, this.cancellationToken) is { })
             {
                 if (this.SetValue is { } || this.SetCurrentValue is { })
                 {

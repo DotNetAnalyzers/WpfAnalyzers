@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -24,7 +26,7 @@
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
         {
-            if (DependencyObject.TryGetGetValueCall(invocation, this.semanticModel, this.cancellationToken, out _))
+            if (DependencyObject.GetValue.Match(invocation, this.semanticModel, this.cancellationToken) is { })
             {
                 if (this.Property is { })
                 {
