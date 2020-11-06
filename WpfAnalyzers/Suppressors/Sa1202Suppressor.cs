@@ -22,7 +22,7 @@
             {
                 if (diagnostic.Location is { SourceTree: { } tree } &&
                     tree.GetRoot(context.CancellationToken) is { } root &&
-                    root.FindNode(diagnostic.Location.SourceSpan) is { } node &&
+                    root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is { } node &&
                     node.TryFirstAncestorOrSelf(out IdentifierNameSyntax? identifierName) &&
                     context.GetSemanticModel(identifierName.SyntaxTree) is { } semanticModel)
                 {
