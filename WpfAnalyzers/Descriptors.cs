@@ -204,6 +204,15 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "The callback is trivial, convert to lambda for better locality.");
 
+        internal static readonly DiagnosticDescriptor WPF0024ParameterShouldBeNullable = Create(
+            id: "WPF0024",
+            title: "Parameter type should be nullable.",
+            messageFormat: "Parameter type should be nullable.",
+            category: AnalyzerCategory.DependencyProperty,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Parameter type should be nullable.");
+
         internal static readonly DiagnosticDescriptor WPF0030BackingFieldShouldBeStaticReadonly = Create(
             id: "WPF0030",
             title: "Backing field for a DependencyProperty should be static and readonly.",

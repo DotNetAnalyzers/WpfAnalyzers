@@ -35,6 +35,7 @@ Roslyn analyzers for WPF.
 | [WPF0021](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md)| Cast sender to containing type.
 | [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type.
 | [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda.
+| [WPF0024](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0024.md)| Parameter type should be nullable.
 | [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly.
 | [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey member must be declared before DependencyProperty member.
 | [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set.

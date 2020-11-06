@@ -18,7 +18,8 @@
             Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName,
             Descriptors.WPF0010DefaultValueMustMatchRegisteredType,
             Descriptors.WPF0016DefaultValueIsSharedReferenceType,
-            Descriptors.WPF0023ConvertToLambda);
+            Descriptors.WPF0023ConvertToLambda,
+            Descriptors.WPF0024ParameterShouldBeNullable);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -119,10 +120,20 @@
                             }
                         }
 
-                        if (coerce.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
-                            Callback.CanInlineBody(declaration))
+                        if (coerce.TrySingleMethodDeclaration(context.CancellationToken, out var declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueArgument.GetLocation()));
+                            if (Callback.CanInlineBody(declaration))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueArgument.GetLocation()));
+                            }
+
+                            if (context.SemanticModel.GetNullableContext(declaration.SpanStart).HasFlag(NullableContext.Enabled) &&
+                                declaration.ParameterList is { Parameters: { Count: 2 } parameters } &&
+                                parameters[1] is { Type: { } type } &&
+                                !(type is NullableTypeSyntax))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable, type.GetLocation()));
+                            }
                         }
                     }
                 }
