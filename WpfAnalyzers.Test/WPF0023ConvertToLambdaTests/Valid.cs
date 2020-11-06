@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
+﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -173,6 +173,44 @@ namespace N
             if (d is FooControl control)
             {
             }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void IgnoreProtectedVirtualInstanceMethod()
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows;
+
+    public class WithProtectedInstanceCallback : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
+            typeof(int),
+            typeof(WithProtectedInstanceCallback),
+            new PropertyMetadata(
+                default(int),
+                (d, e) => ((WithProtectedInstanceCallback)d).OnNumberChanged()));
+
+        private int n;
+
+        public int Number
+        {
+            get => (int)this.GetValue(NumberProperty);
+            set => this.SetValue(NumberProperty, value);
+        }
+
+        /// <summary>This method is invoked when the <see cref=""NumberProperty""/> changes.</summary>
+        protected virtual void OnNumberChanged()
+        {
+            n = 0;
         }
     }
 }";

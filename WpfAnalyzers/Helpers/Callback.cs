@@ -63,6 +63,11 @@
 
         internal static bool CanInlineBody(MethodDeclarationSyntax method)
         {
+            if (method.Modifiers.Any(SyntaxKind.AbstractKeyword, SyntaxKind.VirtualKeyword, SyntaxKind.OverrideKeyword))
+            {
+                return false;
+            }
+
             return method switch
             {
                 { ExpressionBody: { } } => true,
