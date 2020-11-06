@@ -1,3 +1,6 @@
+#### 
+* BUGFIX: Supress SA1202
+
 #### 3.3.0
 * BREAKING: Roslyn 3.5.0, requires a recent VisualStudio, not sure about exact version.
 * FEATURE: Initial support for nullable types.
