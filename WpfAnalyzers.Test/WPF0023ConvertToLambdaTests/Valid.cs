@@ -180,8 +180,11 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [Test]
-        public static void IgnoreProtectedVirtualInstanceMethod()
+        [TestCase("protected")]
+        [TestCase("protected virtual")]
+        [TestCase("internal")]
+        [TestCase("public")]
+        public static void IgnoreProtectedVirtualInstanceMethod(string modifiers)
         {
             var code = @"
 namespace N
@@ -213,7 +216,7 @@ namespace N
             n = 0;
         }
     }
-}";
+}".AssertReplace("protected virtual", modifiers);
 
             RoslynAssert.Valid(Analyzer, code);
         }

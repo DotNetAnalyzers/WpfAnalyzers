@@ -63,7 +63,7 @@
 
         internal static bool CanInlineBody(MethodDeclarationSyntax method)
         {
-            if (method.Modifiers.Any(SyntaxKind.AbstractKeyword, SyntaxKind.VirtualKeyword, SyntaxKind.OverrideKeyword))
+            if (method.Modifiers.Any(SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword, SyntaxKind.PublicKeyword))
             {
                 return false;
             }
