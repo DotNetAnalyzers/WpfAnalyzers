@@ -56,7 +56,7 @@
             };
         }
 
-        private static bool ValidateNumber(object value)
+        private static bool ValidateNumber(object? value)
         {
             if (value is int)
             {

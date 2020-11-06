@@ -16,6 +16,7 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName,
             Descriptors.WPF0023ConvertToLambda,
+            Descriptors.WPF0024ParameterShouldBeNullable,
             Descriptors.WPF0150UseNameofInsteadOfLiteral,
             Descriptors.WPF0151UseNameofInsteadOfConstant);
 
@@ -72,10 +73,20 @@
                         }
                     }
 
-                    if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration) &&
-                        Callback.CanInlineBody(declaration))
+                    if (target.TrySingleMethodDeclaration(context.CancellationToken, out var declaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, validateValueCallback.GetLocation()));
+                        if (Callback.CanInlineBody(declaration))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, validateValueCallback.GetLocation()));
+                        }
+
+                        if (context.SemanticModel.GetNullableContext(declaration.SpanStart).HasFlag(NullableContext.Enabled) &&
+                            declaration.ParameterList is { Parameters: { Count: 1 } parameters } &&
+                            parameters[0] is { Type: { } type } &&
+                            !(type is NullableTypeSyntax))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable, type.GetLocation()));
+                        }
                     }
                 }
 

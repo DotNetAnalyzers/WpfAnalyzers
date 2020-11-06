@@ -7,12 +7,13 @@
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
+        private static readonly DiagnosticAnalyzer PropertyMetadataAnalyzer = new PropertyMetadataAnalyzer();
+        private static readonly DiagnosticAnalyzer RegistrationAnalyzer = new RegistrationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakeNullableFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable);
 
         [Test]
-        public static void Nullable()
+        public static void NullableCoerce()
         {
             var before = @"
 #nullable enable
@@ -85,7 +86,80 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.CodeFix(PropertyMetadataAnalyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void NullableValidate()
+        {
+            var before = @"
+#nullable enable
+namespace N
+{
+    using System.Windows;
+
+    public class C : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(C),
+            new PropertyMetadata(string.Empty),
+            (o) => ValidateText(o));
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        private static bool ValidateText(↓object o)
+        {
+            return o switch
+            {
+                null => false,
+                string s => true,
+                _ => o.ToString() is null ? false : true,
+            };
+        }
+    }
+}";
+
+            var after = @"
+#nullable enable
+namespace N
+{
+    using System.Windows;
+
+    public class C : FrameworkElement
+    {
+        /// <summary>Identifies the <see cref=""Text""/> dependency property.</summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(C),
+            new PropertyMetadata(string.Empty),
+            (o) => ValidateText(o));
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        private static bool ValidateText(object? o)
+        {
+            return o switch
+            {
+                null => false,
+                string s => true,
+                _ => o.ToString() is null ? false : true,
+            };
+        }
+    }
+}";
+            RoslynAssert.CodeFix(RegistrationAnalyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

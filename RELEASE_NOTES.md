@@ -1,6 +1,7 @@
 #### 
 * BUGFIX: Suppress SA1202
 * BUGFIX: WPF0023  don't warn about virtual methods
+* FEATURE: WPF0024 require nullable coerce callback parameter
 
 #### 3.3.0
 * BREAKING: Roslyn 3.5.0, requires a recent VisualStudio, not sure about exact version.

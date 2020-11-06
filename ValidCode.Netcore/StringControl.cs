@@ -56,7 +56,7 @@
             };
         }
 
-        private static bool ValidateText(object value)
+        private static bool ValidateText(object? value)
         {
             if (value is int)
             {
