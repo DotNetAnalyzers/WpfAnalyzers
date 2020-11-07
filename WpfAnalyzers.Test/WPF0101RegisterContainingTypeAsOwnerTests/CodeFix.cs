@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
+﻿namespace WpfAnalyzers.Test.WPF0101RegisterContainingTypeAsOwnerTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -27,7 +27,7 @@ namespace N
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
-            ↓typeof(Window));
+            typeof(↓Window));
 
         public event RoutedEventHandler ValueChanged
         {
@@ -56,7 +56,7 @@ namespace N
             nameof(ValueChanged),
             RoutingStrategy.Direct,
             typeof(RoutedEventHandler),
-            ↓typeof(Window));
+            typeof(↓Window));
 
         public event RoutedEventHandler ValueChanged
         {

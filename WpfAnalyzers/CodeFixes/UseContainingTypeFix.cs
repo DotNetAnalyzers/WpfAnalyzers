@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -41,8 +43,8 @@
                     context.RegisterCodeFix(
                         $"Use containing type: {containingTypeName}.",
                         (editor, _) => editor.ReplaceNode(
-                            typeofExpression,
-                            x => x.WithType(SyntaxFactory.ParseTypeName(containingTypeName))),
+                            typeofExpression.Type,
+                            x => SyntaxFactory.ParseTypeName(containingTypeName).WithTriviaFrom(x)),
                         "Use containing type.",
                         diagnostic);
                 }

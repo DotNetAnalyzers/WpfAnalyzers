@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -31,9 +33,12 @@
                 context.Node is MemberDeclarationSyntax memberDeclaration &&
                 context.ContainingSymbol is { } &&
                 FieldOrProperty.TryCreate(context.ContainingSymbol, out var backing) &&
-                backing.Type == KnownSymbols.RoutedEvent)
+                backing.Type == KnownSymbols.RoutedEvent &&
+                backing.Value(context.CancellationToken) is InvocationExpressionSyntax invocation &&
+                EventManager.RegisterRoutedEvent.Match(invocation, context.SemanticModel, context.CancellationToken) is { NameArgument: { } nameArgument, OwnerTypeArgument: { } ownerTypeArgument })
             {
-                if (RoutedEvent.TryGetRegisteredName(backing, context.SemanticModel, context.CancellationToken, out var nameArg, out var registeredName))
+                if (nameArgument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&
+                    registeredName is { })
                 {
                     if (!backing.Name.IsParts(registeredName, "Event"))
                     {
@@ -48,21 +53,21 @@
 
                     if (backing.ContainingType.TryFindEvent(registeredName, out var eventSymbol))
                     {
-                        if (nameArg.Expression is LiteralExpressionSyntax)
+                        if (nameArgument.Expression is LiteralExpressionSyntax)
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                    nameArg.GetLocation(),
+                                    nameArgument.GetLocation(),
                                     ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
                                     eventSymbol.Name));
                         }
-                        else if (!nameArg.Expression.IsNameof())
+                        else if (!nameArgument.Expression.IsNameof())
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.WPF0151UseNameofInsteadOfConstant,
-                                    nameArg.GetLocation(),
+                                    nameArgument.GetLocation(),
                                     ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), eventSymbol.Name),
                                     eventSymbol.Name));
                         }
@@ -96,15 +101,15 @@
                     }
                 }
 
-                if (RoutedEvent.TryGetRegisteredType(backing, context.SemanticModel, context.CancellationToken, out var typeArg, out var registeredOwnerType) &&
+                if (ownerTypeArgument is { Expression: TypeOfExpressionSyntax { Type: { } type } } &&
+                    context.SemanticModel.GetType(type, context.CancellationToken) is { } registeredOwnerType &&
                     !TypeSymbolComparer.Equal(registeredOwnerType, context.ContainingSymbol.ContainingType))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0101RegisterContainingTypeAsOwner,
-                            typeArg.GetLocation(),
-                            backing.ContainingType.Name,
-                            registeredName));
+                            type.GetLocation(),
+                            backing.ContainingType.Name));
                 }
 
                 if (!backing.IsStaticReadOnly())

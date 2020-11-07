@@ -80,6 +80,33 @@
             }
         }
 
+        internal readonly struct RegisterRoutedEvent
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+            internal readonly IMethodSymbol Target;
+
+            internal RegisterRoutedEvent(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            {
+                this.Invocation = invocation;
+                this.Target = target;
+            }
+
+            internal ArgumentSyntax? NameArgument => this.Invocation.ArgumentList.Arguments[0];
+
+            internal ArgumentSyntax? OwnerTypeArgument => this.Invocation.ArgumentList.Arguments[3];
+
+            internal static RegisterRoutedEvent? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (invocation is { ArgumentList: { Arguments: { Count: 4 } } } &&
+                    semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterRoutedEvent, cancellationToken, out var method))
+                {
+                    return new RegisterRoutedEvent(invocation, method);
+                }
+
+                return null;
+            }
+        }
+
         internal readonly struct AddHandler
         {
             internal readonly InvocationExpressionSyntax Invocation;
