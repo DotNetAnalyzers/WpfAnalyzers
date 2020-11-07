@@ -1,6 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
 
@@ -28,14 +27,11 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ArgumentSyntax argument &&
-                argument.Expression is ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation &&
+                context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation } &&
                 objectCreation.TrySingleArgument(out var callbackArg) &&
-                callbackArg.Expression is IdentifierNameSyntax &&
-                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
+                callbackArg.Expression is IdentifierNameSyntax && handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
             {
-                if (EventManager.TryGetRegisterClassHandlerCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
-                    invocation.TryGetArgumentAtIndex(1, out var eventArgument))
+                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { EventArgument: { } eventArgument })
                 {
                     HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent);
                 }
@@ -69,7 +65,7 @@
                 }
             }
 
-            if (eventArgument.Expression is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax nameSyntax } memberAccess &&
+            if (eventArgument.Expression is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax nameSyntax } &&
                 EventManager.IsMatch(invokedHandler.Identifier.ValueText, nameSyntax.Identifier.ValueText) == false)
             {
                 if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))
