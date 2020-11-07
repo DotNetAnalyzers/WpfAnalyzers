@@ -79,5 +79,60 @@
                 return null;
             }
         }
+
+        internal readonly struct AddHandler
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+            internal readonly IMethodSymbol Target;
+
+            internal AddHandler(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            {
+                this.Invocation = invocation;
+                this.Target = target;
+            }
+
+            internal static AddHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (invocation is { ArgumentList: { Arguments: { } arguments } } &&
+                    (arguments.Count == 2 || arguments.Count == 3) &&
+                    invocation.TryGetMethodName(out var name) &&
+                    name == "AddHandler" &&
+                    semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
+                    method.Parameters.TryFirst(out var parameter) &&
+                    parameter.Type == KnownSymbols.RoutedEvent)
+                {
+                    return new AddHandler(invocation, method);
+                }
+
+                return null;
+            }
+        }
+
+        internal readonly struct RemoveHandler
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+            internal readonly IMethodSymbol Target;
+
+            internal RemoveHandler(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            {
+                this.Invocation = invocation;
+                this.Target = target;
+            }
+
+            internal static RemoveHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (invocation is { ArgumentList: { Arguments: { Count: 2 } } } &&
+                    invocation.TryGetMethodName(out var name) &&
+                    name == "RemoveHandler" &&
+                    semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
+                    method.Parameters.TryFirst(out var parameter) &&
+                    parameter.Type == KnownSymbols.RoutedEvent)
+                {
+                    return new RemoveHandler(invocation, method);
+                }
+
+                return null;
+            }
+        }
     }
 }

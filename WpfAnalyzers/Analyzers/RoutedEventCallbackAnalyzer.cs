@@ -1,7 +1,6 @@
 ﻿namespace WpfAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
 
     using Gu.Roslyn.AnalyzerExtensions;
 
@@ -35,8 +34,8 @@
                 {
                     HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent);
                 }
-                else if ((TryGetAddHandlerCall(invocation, context, out _) ||
-                          TryGetRemoveHandlerCall(invocation, context, out _)) &&
+                else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
+                          EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                           invocation.TryGetArgumentAtIndex(0, out eventArgument))
                 {
                     HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
@@ -83,45 +82,6 @@
                         Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
                 }
             }
-        }
-
-        private static bool TryGetAddHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ArgumentSyntax? eventArgument)
-        {
-            eventArgument = null;
-            if (invocation.TryGetMethodName(out var name) &&
-                name != "AddHandler")
-            {
-                return false;
-            }
-
-            if (invocation.ArgumentList is null ||
-                invocation.ArgumentList.Arguments.Count < 2 ||
-                invocation.ArgumentList.Arguments.Count > 3)
-            {
-                return false;
-            }
-
-            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbols.RoutedEvent;
-        }
-
-        private static bool TryGetRemoveHandlerCall(InvocationExpressionSyntax invocation, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ArgumentSyntax? eventArgument)
-        {
-            eventArgument = null;
-            if (invocation.TryGetMethodName(out var name) &&
-                name != "RemoveHandler")
-            {
-                return false;
-            }
-
-            if (invocation.ArgumentList is null ||
-                invocation.ArgumentList.Arguments.Count != 2)
-            {
-                return false;
-            }
-
-            return invocation.TryGetArgumentAtIndex(0, out eventArgument) &&
-                   context.SemanticModel.GetTypeInfoSafe(eventArgument.Expression, context.CancellationToken).Type == KnownSymbols.RoutedEvent;
         }
     }
 }

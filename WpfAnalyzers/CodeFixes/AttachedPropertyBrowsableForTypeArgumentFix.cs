@@ -4,7 +4,6 @@
     using System.Composition;
     using System.Threading.Tasks;
 
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
 
     using Microsoft.CodeAnalysis;
@@ -28,7 +27,7 @@
                 if (syntaxRoot is { } &&
                     syntaxRoot.TryFindNode(diagnostic, out AttributeArgumentSyntax? argument) &&
                     argument is { Expression: TypeOfExpressionSyntax { Type: { } type }, Parent: AttributeArgumentListSyntax { Parent: AttributeSyntax { Parent: AttributeListSyntax { Parent: MethodDeclarationSyntax { ParameterList: { Parameters: { Count: 1 } parameters } } } } } } &&
-                    parameters[0] is { Type: { } toType } parameter)
+                    parameters[0] is { Type: { } toType })
                 {
                     context.RegisterCodeFix(
                         $"Change type to {toType}.",
