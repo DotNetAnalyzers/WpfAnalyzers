@@ -39,7 +39,7 @@
                     {
                         foreach (var fieldOrProperty in defaults)
                         {
-                            if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var assignedValue) &&
+                            if (fieldOrProperty.Value(context.CancellationToken) is { } assignedValue &&
                                 context.SemanticModel.TryGetType(assignedValue, context.CancellationToken, out var assignedType) &&
                                 !TypeSymbolComparer.Equal(assignedType, type))
                             {

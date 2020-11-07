@@ -82,8 +82,7 @@
 
             internal static Register? FindRegisterInvocation(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                    value is InvocationExpressionSyntax invocation)
+                if (fieldOrProperty.Value(cancellationToken) is InvocationExpressionSyntax invocation)
                 {
                     return MatchAny(invocation, semanticModel, cancellationToken);
                 }

@@ -1,6 +1,5 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -8,19 +7,17 @@ namespace WpfAnalyzers
 
     internal static class FieldSymbolExt
     {
-        internal static bool TryGetAssignedValue(this IFieldSymbol field, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
+        internal static ExpressionSyntax? Value(this IFieldSymbol field, CancellationToken cancellationToken)
         {
             if (field.TrySingleDeclaration(cancellationToken, out var declaration) &&
                 declaration is { Declaration: { Variables: { } variables } } &&
                 variables.TryLast(out var variable) &&
-                variable is { Initializer: { Value: { } temp } })
+                variable is { Initializer: { Value: { } value } })
             {
-                value = temp;
-                return true;
+                return value;
             }
 
-            value = null;
-            return false;
+            return null;
         }
     }
 }

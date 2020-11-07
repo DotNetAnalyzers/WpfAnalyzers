@@ -34,8 +34,7 @@
                 method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))
             {
-                if (backing.TryGetAssignedValue(context.CancellationToken, out var value) &&
-                    value is InvocationExpressionSyntax registerInvocation)
+                if (backing.Value(context.CancellationToken) is InvocationExpressionSyntax registerInvocation)
                 {
                     if (DependencyProperty.Register.MatchAny(registerInvocation, context.SemanticModel, context.CancellationToken) is { } register)
                     {

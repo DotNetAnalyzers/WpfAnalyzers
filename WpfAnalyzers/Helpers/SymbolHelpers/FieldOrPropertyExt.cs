@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -8,32 +8,27 @@ namespace WpfAnalyzers
 
     internal static class FieldOrPropertyExt
     {
-        internal static bool TryGetAssignedValue(this FieldOrProperty fieldOrProperty, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
+        internal static ExpressionSyntax? Value(this FieldOrProperty fieldOrProperty, CancellationToken cancellationToken)
         {
-            value = null;
             if (fieldOrProperty.Symbol is IFieldSymbol field)
             {
-                return field.TryGetAssignedValue(cancellationToken, out value);
+                return field.Value(cancellationToken);
             }
 
             if (fieldOrProperty.Symbol is IPropertySymbol property)
             {
                 if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? declaration))
                 {
-                    if (declaration.Initializer is { })
+                    return declaration switch
                     {
-                        value = declaration.Initializer.Value;
-                    }
-                    else if (declaration.ExpressionBody is { })
-                    {
-                        value = declaration.ExpressionBody.Expression;
-                    }
-
-                    return value is { };
+                        { Initializer: { } initializer } => initializer.Value,
+                        { ExpressionBody: { } expressionBody } => expressionBody.Expression,
+                        _ => null,
+                    };
                 }
             }
 
-            return false;
+            return null;
         }
 
         internal static bool IsStaticReadOnly(this FieldOrProperty fieldOrProperty)

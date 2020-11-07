@@ -1,4 +1,4 @@
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -17,8 +17,7 @@ namespace WpfAnalyzers
         {
             nameArg = null;
             result = null;
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                value is InvocationExpressionSyntax invocation)
+            if (fieldOrProperty.Value(cancellationToken) is InvocationExpressionSyntax invocation)
             {
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(0, out nameArg))
@@ -34,8 +33,7 @@ namespace WpfAnalyzers
         {
             typeArg = null;
             result = null;
-            if (fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                value is InvocationExpressionSyntax invocation)
+            if (fieldOrProperty.Value(cancellationToken) is InvocationExpressionSyntax invocation)
             {
                 if (TryGetRegisterCall(invocation, semanticModel, cancellationToken, out _) &&
                     invocation.TryGetArgumentAtIndex(3, out typeArg))

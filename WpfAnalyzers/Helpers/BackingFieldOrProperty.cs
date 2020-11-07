@@ -137,9 +137,9 @@
             return null;
         }
 
-        internal bool TryGetAssignedValue(CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? value)
+        internal ExpressionSyntax? Value(CancellationToken cancellationToken)
         {
-            return this.FieldOrProperty.TryGetAssignedValue(cancellationToken, out value);
+            return this.FieldOrProperty.Value(cancellationToken);
         }
 
         internal bool TryGetSyntaxReference([NotNullWhen(true)] out SyntaxReference? syntaxReference)
@@ -149,7 +149,7 @@
 
         internal BackingFieldOrProperty? FindKey(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (this.TryGetAssignedValue(cancellationToken, out var value) &&
+            if (this.Value(cancellationToken) is { } value &&
                 semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
             {
                 return symbol switch
@@ -174,7 +174,7 @@
 
         internal BackingFieldOrProperty? FindAddOwnerSource(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (this.TryGetAssignedValue(cancellationToken, out var value) &&
+            if (this.Value(cancellationToken) is { } value &&
                    value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
                    semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol))
