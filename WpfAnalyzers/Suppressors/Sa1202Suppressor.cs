@@ -23,7 +23,7 @@
                 {
                     switch (root.FindNode(diagnostic.Location.SourceSpan))
                     {
-                        case VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax { Type: { } type } declaratorSyntax }
+                        case VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax { Type: { } type } }
                             when type == KnownSymbols.DependencyProperty:
                             context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
                             break;
