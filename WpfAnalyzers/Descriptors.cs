@@ -83,7 +83,7 @@ namespace WpfAnalyzers
             title: "Default value type must match registered type.",
             messageFormat: "Default value for '{0}' must be of type {1}",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "A DependencyProperty is registered with a type and a default value. The type of the default value must be the same as the registered type.");
 
@@ -110,7 +110,7 @@ namespace WpfAnalyzers
             title: "CLR accessor for attached property must match registered type.",
             messageFormat: "{0} must match registered type {1}",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "CLR accessor for attached property must match registered type.");
 
@@ -119,7 +119,7 @@ namespace WpfAnalyzers
             title: "SetValue must use registered type.",
             messageFormat: "{0} must use registered type {1}",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use a type that matches registered type when setting the value of a DependencyProperty");
 
@@ -128,7 +128,7 @@ namespace WpfAnalyzers
             title: "Registered owner type must inherit DependencyObject.",
             messageFormat: "Maybe you intended to use '{0}'?",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "When registering a DependencyProperty owner type must be a subclass of DependencyObject.");
 
@@ -146,7 +146,7 @@ namespace WpfAnalyzers
             title: "Metadata must be of same type or super type.",
             messageFormat: "Metadata must be of same type or super type.",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "When overriding metadata must be of the same type or subtype of the overridden property's metadata.");
 
@@ -155,7 +155,7 @@ namespace WpfAnalyzers
             title: "Use containing type.",
             messageFormat: "Expected new FrameworkPropertyMetadata(typeof({0}))",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Call DefaultStyleKeyProperty.OverrideMetadata with containing type as argument.");
 
@@ -164,7 +164,7 @@ namespace WpfAnalyzers
             title: "Cast sender to correct type.",
             messageFormat: "Sender is of type {0}.",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Cast sender to correct type.");
 
@@ -173,7 +173,7 @@ namespace WpfAnalyzers
             title: "Cast value to correct type.",
             messageFormat: "Value is of type {0}.",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Cast value to correct type.");
 
@@ -227,7 +227,7 @@ namespace WpfAnalyzers
             title: "DependencyPropertyKey member must be declared before DependencyProperty member.",
             messageFormat: "'{0}' must be declared before '{1}'",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "DependencyPropertyKey member must be declared before DependencyProperty member.");
 
@@ -236,7 +236,7 @@ namespace WpfAnalyzers
             title: "Use same dependency property in get and set.",
             messageFormat: "Property '{0}' must access same dependency property in getter and setter",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use same dependency property in get and set.");
 
@@ -281,7 +281,7 @@ namespace WpfAnalyzers
             title: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
             messageFormat: "Set '{0}' using '{1}'",
             category: AnalyzerCategory.DependencyProperty,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "A readonly DependencyProperty must be set with DependencyPropertyKey.");
 
@@ -326,7 +326,7 @@ namespace WpfAnalyzers
             title: "XmlnsDefinition must map to existing namespace.",
             messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist.",
             category: AnalyzerCategory.XmlnsDefinition,
-            defaultSeverity: DiagnosticSeverity.Error,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "XmlnsDefinition must map to existing namespace.");
 

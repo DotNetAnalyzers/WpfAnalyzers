@@ -1,3 +1,6 @@
+#### 3.5.0
+* BREAKING: Change all DiagnosticSeverity.Error to DiagnosticSeverity.Warning
+
 #### 3.4.0
 * BUGFIX: Suppress SA1202
 * BUGFIX: WPF0023  don't warn about virtual methods

@@ -26,6 +26,8 @@
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      3.5.0
+      BREAKING: Change all DiagnosticSeverity.Error to DiagnosticSeverity.Warning
       3.4.0
       BUGFIX: Suppress SA1202
       BUGFIX: WPF0023  don't warn about virtual methods
