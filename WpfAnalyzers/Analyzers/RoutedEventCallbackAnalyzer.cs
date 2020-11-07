@@ -45,42 +45,35 @@
 
         private static void HandleCallback(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg, DiagnosticDescriptor descriptor)
         {
-            var invokedHandler = (IdentifierNameSyntax)callbackArg.Expression;
-            if (eventArgument.Expression is IdentifierNameSyntax identifierName &&
-                EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifierName.Identifier.ValueText) == false)
+            if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
+                Identifier() is { } identifier)
             {
-                if (EventManager.TryGetExpectedCallbackName(identifierName.Identifier.ValueText, out var expectedName))
+                if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            descriptor,
-                            callbackArg.GetLocation(),
-                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
-                            expectedName));
-                }
-                else
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + identifierName.Identifier.ValueText));
+                    if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                descriptor,
+                                callbackArg.GetLocation(),
+                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
+                                expectedName));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + identifier.Identifier.ValueText));
+                    }
                 }
             }
 
-            if (eventArgument.Expression is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax nameSyntax } &&
-                EventManager.IsMatch(invokedHandler.Identifier.ValueText, nameSyntax.Identifier.ValueText) == false)
+            IdentifierNameSyntax? Identifier()
             {
-                if (EventManager.TryGetExpectedCallbackName(nameSyntax.Identifier.ValueText, out var expectedName))
+                return eventArgument switch
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            descriptor,
-                            callbackArg.GetLocation(),
-                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
-                            expectedName));
-                }
-                else
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + nameSyntax.Identifier.ValueText));
-                }
+                    { Expression: IdentifierNameSyntax name } => name,
+                    { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
+                    _ => null,
+                };
             }
         }
     }
