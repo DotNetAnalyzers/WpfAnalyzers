@@ -28,11 +28,9 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation &&
                 context.ContainingSymbol is { } &&
-                DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
+                DependencyProperty.OverrideMetadata.Match(invocation, context.SemanticModel, context.CancellationToken) is { MetadataArgument: { } metadataArg } &&
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var candidate) &&
-                BackingFieldOrProperty.Match(candidate) is { } backing &&
-                method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
-                invocation.TryFindArgument(parameter, out var metadataArg))
+                BackingFieldOrProperty.Match(candidate) is { } backing)
             {
                 if (backing.Value(context.CancellationToken) is InvocationExpressionSyntax registerInvocation)
                 {

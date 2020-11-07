@@ -121,7 +121,7 @@
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 (DependencyProperty.AddOwner.Match(invocation, semanticModel, cancellationToken) is { } ||
-                 DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
+                 DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, cancellationToken) is { }) &&
                 semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var candidate))
             {
                 return BackingFieldOrProperty.Match(candidate);

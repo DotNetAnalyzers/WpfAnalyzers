@@ -11,11 +11,6 @@
 
     internal static class DependencyProperty
     {
-        internal static bool TryGetOverrideMetadataCall(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
-        {
-            return semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.OverrideMetadata, cancellationToken, out method);
-        }
-
         internal static ArgumentAndValue<string?>? TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { } register)
@@ -35,7 +30,7 @@
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 (AddOwner.Match(invocation, semanticModel, cancellationToken) is { } ||
-                 TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
+                 OverrideMetadata.Match(invocation, semanticModel, cancellationToken) is { }))
             {
                 if (semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var symbol) &&
                     BackingFieldOrProperty.Match(symbol) is { } backing)
@@ -222,6 +217,42 @@
                 if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out var target))
                 {
                     return new AddOwner(invocation, target);
+                }
+
+                return null;
+            }
+        }
+
+        internal readonly struct OverrideMetadata
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+            internal readonly IMethodSymbol Target;
+
+            internal OverrideMetadata(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            {
+                this.Invocation = invocation;
+                this.Target = target;
+            }
+
+            internal ArgumentSyntax? MetadataArgument
+            {
+                get
+                {
+                    if (this.Target.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
+                        this.Invocation.TryFindArgument(parameter, out var argument))
+                    {
+                        return argument;
+                    }
+
+                    return null;
+                }
+            }
+
+            internal static OverrideMetadata? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.OverrideMetadata, cancellationToken, out var target))
+                {
+                    return new OverrideMetadata(invocation, target);
                 }
 
                 return null;

@@ -39,7 +39,7 @@
                     {
                         HandleArgument(context, argument);
                     }
-                    else if (DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
+                    else if (DependencyProperty.OverrideMetadata.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
                              invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
                              context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
                              BackingFieldOrProperty.Match(symbol) is { } backing &&

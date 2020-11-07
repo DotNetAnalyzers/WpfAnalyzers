@@ -97,11 +97,10 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("OverrideMetadata");
-            Assert.AreEqual(true, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out var method));
-            Assert.AreEqual("OverrideMetadata", method.Name);
+            Assert.AreEqual("OverrideMetadata", DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
             invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(false, DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, CancellationToken.None, out _));
+            Assert.AreEqual(null, DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None));
         }
     }
 }
