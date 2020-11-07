@@ -31,7 +31,7 @@
                 context.Node is InvocationExpressionSyntax invocation &&
                 TryGetArgs(context, out var target, out var propertyArg, out var valueArg) &&
                 context.SemanticModel.TryGetSymbol(propertyArg.Expression, context.CancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing))
+                BackingFieldOrProperty.Match(symbol) is { } backing)
             {
                 if (IsWrongType(backing, valueArg, context) is { } registeredType)
                 {
@@ -44,7 +44,7 @@
                 }
 
                 if (backing.Type == KnownSymbols.DependencyProperty &&
-                    DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, context.SemanticModel, context.CancellationToken, out var keyField))
+                    backing.FindKey(context.SemanticModel, context.CancellationToken) is { } keyField)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

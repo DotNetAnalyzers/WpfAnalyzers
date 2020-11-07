@@ -50,7 +50,7 @@
                 InvokedOnParameter(parameters[0], invocation) &&
                 PassesParameter(invocation, parameters[1]) &&
                 semanticModel.TryGetSymbol(getValue.PropertyArgument.Expression, cancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
+                BackingFieldOrProperty.Match(symbol) is { } backing &&
                 backing.ContainingType.Name == containingType.Identifier.ValueText &&
                 !HasBetterMatch(backing, method))
             {

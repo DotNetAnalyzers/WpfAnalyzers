@@ -94,13 +94,12 @@
             return null;
         }
 
-        internal static bool TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty fieldOrProperty)
+        internal static BackingFieldOrProperty? TryGetDependencyProperty(ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            fieldOrProperty = default;
             var invocation = objectCreation.FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (invocation is null)
             {
-                return false;
+                return null;
             }
 
             if (DependencyProperty.Register.MatchAny(invocation, semanticModel, cancellationToken) is { })
@@ -108,16 +107,16 @@
                 if (objectCreation.TryFirstAncestor<FieldDeclarationSyntax>(out var fieldDeclaration) &&
                     semanticModel.TryGetSymbol(fieldDeclaration, cancellationToken, out var field))
                 {
-                    return BackingFieldOrProperty.TryCreateForDependencyProperty(field, out fieldOrProperty);
+                    return BackingFieldOrProperty.Match(field);
                 }
 
                 if (objectCreation.TryFirstAncestor<PropertyDeclarationSyntax>(out var propertyDeclaration) &&
                     semanticModel.TryGetSymbol(propertyDeclaration, cancellationToken, out var property))
                 {
-                    return BackingFieldOrProperty.TryCreateForDependencyProperty(property, out fieldOrProperty);
+                    return BackingFieldOrProperty.Match(property);
                 }
 
-                return false;
+                return null;
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -125,10 +124,10 @@
                  DependencyProperty.TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)) &&
                 semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var candidate))
             {
-                return BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out fieldOrProperty);
+                return BackingFieldOrProperty.Match(candidate);
             }
 
-            return false;
+            return null;
         }
 
         internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken)

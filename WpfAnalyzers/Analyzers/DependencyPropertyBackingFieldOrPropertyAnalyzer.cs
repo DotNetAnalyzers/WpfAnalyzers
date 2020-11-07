@@ -34,7 +34,7 @@
                 context.ContainingSymbol is { } &&
                 context.Node is MemberDeclarationSyntax memberDeclaration)
             {
-                if (BackingFieldOrProperty.TryCreateForDependencyProperty(context.ContainingSymbol, out var backing))
+                if (BackingFieldOrProperty.Match(context.ContainingSymbol) is { } backing)
                 {
                     if (backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                     {
@@ -105,7 +105,7 @@
                         }
                     }
 
-                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, context.SemanticModel, context.CancellationToken, out var keyMember) &&
+                    if (backing.FindKey(context.SemanticModel, context.CancellationToken) is { } keyMember &&
                         TypeSymbolComparer.Equal(backing.ContainingType, keyMember.ContainingType) &&
                         keyMember.TryGetSyntaxReference(out var reference) &&
                         ReferenceEquals(reference.SyntaxTree, context.Node.SyntaxTree) &&

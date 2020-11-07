@@ -57,7 +57,7 @@
                 propertyArg is { Expression: { } expression } &&
                 DependencyObject.SetValue.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
+                BackingFieldOrProperty.Match(symbol) is { } backing &&
                 backing.Type != KnownSymbols.DependencyPropertyKey &&
                 backing.Symbol != KnownSymbols.FrameworkElement.DataContextProperty &&
                 !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken) &&

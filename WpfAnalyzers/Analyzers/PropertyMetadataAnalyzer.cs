@@ -138,8 +138,8 @@
                     }
                 }
 
-                if (PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken, out var fieldOrProperty) &&
-                    fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
+                if (PropertyMetadata.TryGetDependencyProperty(objectCreation, context.SemanticModel, context.CancellationToken) is { } backing &&
+                    backing.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType } &&
                     propertyMetadata.DefaultValueArgument is { } defaultValueArg)
                 {
                     if (!PropertyMetadata.IsValueValidForRegisteredType(defaultValueArg.Expression, registeredType, context.SemanticModel, context.CancellationToken))
@@ -148,7 +148,7 @@
                             Diagnostic.Create(
                                 Descriptors.WPF0010DefaultValueMustMatchRegisteredType,
                                 defaultValueArg.GetLocation(),
-                                fieldOrProperty.Symbol,
+                                backing.Symbol,
                                 registeredType));
                     }
 
@@ -160,7 +160,7 @@
                             (defaultValueArg is { Expression: ObjectCreationExpressionSyntax defaultInstance } &&
                              IsReferenceTypeCreation(defaultInstance, context)))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType, defaultValueArg.GetLocation(), fieldOrProperty.Symbol));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType, defaultValueArg.GetLocation(), backing.Symbol));
                         }
                     }
                 }

@@ -34,9 +34,9 @@
                     semanticModel is { } &&
                     invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
                     semanticModel.TryGetSymbol(arguments[0].Expression, context.CancellationToken, out var symbol) &&
-                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing))
+                    BackingFieldOrProperty.Match(symbol) is { } backing)
                 {
-                    if (DependencyProperty.TryGetDependencyPropertyKeyFieldOrProperty(backing, semanticModel, context.CancellationToken, out var key))
+                    if (backing.FindKey(semanticModel, context.CancellationToken) is { } key)
                     {
                         if (IdentifierName(arguments[0].Expression) is { } propertyIdentifier)
                         {

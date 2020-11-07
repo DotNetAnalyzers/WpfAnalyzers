@@ -27,7 +27,7 @@
                 DependencyObject.GetValue.Find(MethodOrAccessor.Create(method), semanticModel, cancellationToken) is { Invocation: { } invocation } getValue &&
                 InvokedOnParameter(parameters[0], invocation) &&
                 semanticModel.TryGetSymbol(getValue.PropertyArgument.Expression, cancellationToken, out var symbol) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backing) &&
+                BackingFieldOrProperty.Match(symbol) is { } backing &&
                 backing.ContainingType.Name == containingType.Identifier.ValueText &&
                 !HasBetterMatch(backing, method))
             {

@@ -29,18 +29,16 @@
 
         internal string Name => this.FieldOrProperty.Name;
 
-        internal static bool TryCreateForDependencyProperty(ISymbol? symbol, out BackingFieldOrProperty result)
+        internal static BackingFieldOrProperty? Match(ISymbol? symbol)
         {
             if (symbol is { IsStatic: true } &&
                 FieldOrProperty.TryCreate(symbol, out var fieldOrProperty) &&
                 fieldOrProperty.Type.IsEither(KnownSymbols.DependencyProperty, KnownSymbols.DependencyPropertyKey))
             {
-                result = new BackingFieldOrProperty(fieldOrProperty);
-                return true;
+                return new BackingFieldOrProperty(fieldOrProperty);
             }
 
-            result = default;
-            return false;
+            return null;
         }
 
         internal static bool TryCreateCandidate(ISymbol? symbol, out BackingFieldOrProperty result)
@@ -92,7 +90,7 @@
                 return null;
             }
 
-            if (DependencyProperty.TryGetDependencyAddOwnerSourceField(this, semanticModel, cancellationToken, out var source) &&
+            if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&
                 !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
             {
                 return source.RegisteredName(semanticModel, cancellationToken);
@@ -124,7 +122,7 @@
                 return null;
             }
 
-            if (DependencyProperty.TryGetDependencyAddOwnerSourceField(this, semanticModel, cancellationToken, out var source) &&
+            if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&
                 !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
             {
                 return source.RegisteredType(semanticModel, cancellationToken);
@@ -147,6 +145,44 @@
         internal bool TryGetSyntaxReference([NotNullWhen(true)] out SyntaxReference? syntaxReference)
         {
             return this.Symbol.DeclaringSyntaxReferences.TrySingle(out syntaxReference);
+        }
+
+        internal BackingFieldOrProperty? FindKey(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (this.TryGetAssignedValue(cancellationToken, out var value) &&
+                semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
+            {
+                return symbol switch
+                {
+                    IMethodSymbol method
+                        when method == KnownSymbols.DependencyProperty.AddOwner &&
+                             value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } &&
+                             semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate) &&
+                             Match(candidate) is { } match
+                        => match.FindKey(semanticModel, cancellationToken),
+                    IPropertySymbol property
+                        when property == KnownSymbols.DependencyPropertyKey.DependencyProperty &&
+                             value is MemberAccessExpressionSyntax { Expression: { } expression } &&
+                             semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate)
+                         => Match(candidate),
+                    _ => null,
+                };
+            }
+
+            return null;
+        }
+
+        internal BackingFieldOrProperty? FindAddOwnerSource(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (this.TryGetAssignedValue(cancellationToken, out var value) &&
+                   value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol))
+            {
+                return Match(addOwnerSymbol);
+            }
+
+            return null;
         }
 
         internal ArgumentSyntax CreateArgument(SemanticModel semanticModel, int position)

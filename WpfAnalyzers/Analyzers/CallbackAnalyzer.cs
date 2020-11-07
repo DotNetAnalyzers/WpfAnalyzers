@@ -244,10 +244,16 @@
 
             bool Try(out BackingFieldOrProperty backing)
             {
-                return IsCalledOnSender() &&
-                       ArgsUsesParameter() &&
-                       callbackArgument!.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax metaDataCreation } &&
-                       PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken, out backing);
+                if (IsCalledOnSender() &&
+                    ArgsUsesParameter() &&
+                    callbackArgument!.Parent is ArgumentListSyntax { Parent: ObjectCreationExpressionSyntax metaDataCreation } &&
+                    PropertyMetadata.TryGetDependencyProperty(metaDataCreation, context.SemanticModel, context.CancellationToken) is { } result)
+                {
+                    backing = result;
+                    return true;
+                }
+
+                return false;
             }
         }
 
@@ -477,9 +483,9 @@
                              DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _):
                         {
                             if (context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
-                                BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
+                                BackingFieldOrProperty.Match(symbol) is { } backing)
                             {
-                                return fieldOrProperty.RegisteredType(context.SemanticModel, context.CancellationToken)?.Value;
+                                return backing.RegisteredType(context.SemanticModel, context.CancellationToken)?.Value;
                             }
                         }
 

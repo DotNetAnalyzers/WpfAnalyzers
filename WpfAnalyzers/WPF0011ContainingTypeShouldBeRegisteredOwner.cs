@@ -42,8 +42,8 @@
                     else if (DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out _) &&
                              invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression } &&
                              context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
-                             BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty) &&
-                             context.ContainingSymbol.ContainingType.IsAssignableTo(fieldOrProperty.ContainingType, context.SemanticModel.Compilation))
+                             BackingFieldOrProperty.Match(symbol) is { } backing &&
+                             context.ContainingSymbol.ContainingType.IsAssignableTo(backing.ContainingType, context.SemanticModel.Compilation))
                     {
                         HandleArgument(context, argument);
                     }

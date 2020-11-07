@@ -41,12 +41,12 @@
                     {
                         if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
                             semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var backingGet) &&
+                            BackingFieldOrProperty.Match(symbol) is { } backingGet &&
                             DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument: { Expression: { } setProperty } } &&
                             semanticModel.TryGetSymbol(setProperty, cancellationToken, out symbol) &&
-                            BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var setField))
+                            BackingFieldOrProperty.Match(symbol) is { } backingSet)
                         {
-                            return Create(property.ContainingType, backingGet, setField, getValue, setValue);
+                            return Create(property.ContainingType, backingGet, backingSet, getValue, setValue);
                         }
                     }
 
@@ -64,7 +64,7 @@
                 BackingFieldOrProperty? setField = null;
                 foreach (var member in property.ContainingType.GetMembers())
                 {
-                    if (BackingFieldOrProperty.TryCreateForDependencyProperty(member, out var candidate))
+                    if (BackingFieldOrProperty.Match(member) is { } candidate)
                     {
                         if (candidate.Name.IsParts(property.Name, "Property"))
                         {
@@ -103,11 +103,11 @@
                     backingGet.ContainingType.IsGenericType)
                 {
                     if (containingType.TryFindFirstMember(backingGet.Name, out var getMember) &&
-                        BackingFieldOrProperty.TryCreateForDependencyProperty(getMember, out backingGet) &&
+                        BackingFieldOrProperty.Match(getMember) is { } get &&
                         containingType.TryFindFirstMember(backingSet.Name, out var setMember) &&
-                        BackingFieldOrProperty.TryCreateForDependencyProperty(setMember, out backingSet))
+                        BackingFieldOrProperty.Match(setMember) is { } set)
                     {
-                        return new ClrProperty(backingGet, backingSet, getValue, setValue);
+                        return new ClrProperty(get, set, getValue, setValue);
                     }
 
                     return null;

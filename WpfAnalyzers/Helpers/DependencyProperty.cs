@@ -38,53 +38,15 @@
                  TryGetOverrideMetadataCall(invocation, semanticModel, cancellationToken, out _)))
             {
                 if (semanticModel.TryGetSymbol(memberAccess.Expression, cancellationToken, out var symbol) &&
-                    BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty))
+                    BackingFieldOrProperty.Match(symbol) is { } backing)
                 {
-                    return fieldOrProperty.RegisteredName(semanticModel, cancellationToken);
+                    return backing.RegisteredName(semanticModel, cancellationToken);
                 }
 
                 return null;
             }
 
             return null;
-        }
-
-        internal static bool TryGetDependencyPropertyKeyFieldOrProperty(BackingFieldOrProperty backing, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
-        {
-            result = default;
-            if (backing.TryGetAssignedValue(cancellationToken, out var value) &&
-                semanticModel.TryGetSymbol(value, cancellationToken, out var symbol))
-            {
-                if (symbol is IMethodSymbol method)
-                {
-                    return method == KnownSymbols.DependencyProperty.AddOwner &&
-                           value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } &&
-                           semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate) &&
-                           BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result) &&
-                           TryGetDependencyPropertyKeyFieldOrProperty(result, semanticModel, cancellationToken, out result);
-                }
-                else
-                {
-                    return symbol is IPropertySymbol property &&
-                           property == KnownSymbols.DependencyPropertyKey.DependencyProperty &&
-                           value is MemberAccessExpressionSyntax { Expression: { } expression } &&
-                           semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate) &&
-                           BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out result);
-                }
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetDependencyAddOwnerSourceField(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken, out BackingFieldOrProperty result)
-        {
-            result = default;
-
-            return fieldOrProperty.TryGetAssignedValue(cancellationToken, out var value) &&
-                   value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
-                   semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
-                   semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol) &&
-                   BackingFieldOrProperty.TryCreateForDependencyProperty(addOwnerSymbol, out result);
         }
 
         internal readonly struct Register
@@ -105,12 +67,12 @@
                     return register;
                 }
 
-                if (TryGetDependencyPropertyKeyFieldOrProperty(fieldOrProperty, semanticModel, cancellationToken, out var keyField))
+                if (fieldOrProperty.FindKey(semanticModel, cancellationToken) is { } keyField)
                 {
                     return FindRecursive(keyField, semanticModel, cancellationToken);
                 }
 
-                if (TryGetDependencyAddOwnerSourceField(fieldOrProperty, semanticModel, cancellationToken, out var addOwnerSource))
+                if (fieldOrProperty.FindAddOwnerSource(semanticModel, cancellationToken) is { } addOwnerSource)
                 {
                     return FindRecursive(addOwnerSource, semanticModel, cancellationToken);
                 }

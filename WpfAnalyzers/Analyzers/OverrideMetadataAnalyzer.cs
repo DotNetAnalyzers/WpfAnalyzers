@@ -30,11 +30,11 @@
                 context.ContainingSymbol is { } &&
                 DependencyProperty.TryGetOverrideMetadataCall(invocation, context.SemanticModel, context.CancellationToken, out var method) &&
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var candidate) &&
-                BackingFieldOrProperty.TryCreateForDependencyProperty(candidate, out var fieldOrProperty) &&
+                BackingFieldOrProperty.Match(candidate) is { } backing &&
                 method.TryFindParameter(KnownSymbols.PropertyMetadata, out var parameter) &&
                 invocation.TryFindArgument(parameter, out var metadataArg))
             {
-                if (fieldOrProperty.TryGetAssignedValue(context.CancellationToken, out var value) &&
+                if (backing.TryGetAssignedValue(context.CancellationToken, out var value) &&
                     value is InvocationExpressionSyntax registerInvocation)
                 {
                     if (DependencyProperty.Register.MatchAny(registerInvocation, context.SemanticModel, context.CancellationToken) is { } register)
@@ -48,7 +48,7 @@
                         }
                     }
                 }
-                else if (fieldOrProperty.Symbol == KnownSymbols.FrameworkElement.DefaultStyleKeyProperty &&
+                else if (backing.Symbol == KnownSymbols.FrameworkElement.DefaultStyleKeyProperty &&
                          metadataArg.Expression is ObjectCreationExpressionSyntax metadataCreation)
                 {
                     if (!context.SemanticModel.TryGetSymbol(metadataCreation, KnownSymbols.FrameworkPropertyMetadata, context.CancellationToken, out _))

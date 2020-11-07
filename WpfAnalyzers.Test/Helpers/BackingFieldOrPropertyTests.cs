@@ -38,8 +38,7 @@ namespace N
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            Assert.AreEqual(true,     BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-            var result = fieldOrProperty.RegisteredName(semanticModel, CancellationToken.None);
+            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
             Assert.AreEqual(argument, result?.Argument?.ToString());
             Assert.AreEqual("Bar",    result?.Value);
         }
@@ -74,8 +73,7 @@ namespace N
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
             var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
-            Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-            var result = fieldOrProperty.RegisteredName(semanticModel, CancellationToken.None);
+            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
             Assert.AreEqual(argument, result?.Argument?.ToString());
             Assert.AreEqual("Bar",    result?.Value);
         }
@@ -105,8 +103,7 @@ namespace N
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-            var result = fieldOrProperty.RegisteredName(semanticModel, CancellationToken.None);
+            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
             Assert.AreEqual(null, result?.Argument);
             Assert.AreEqual("FontSize",    result?.Value);
         }
@@ -136,8 +133,7 @@ namespace N
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            Assert.AreEqual(true, BackingFieldOrProperty.TryCreateForDependencyProperty(symbol, out var fieldOrProperty));
-            var result = fieldOrProperty.RegisteredName(semanticModel, CancellationToken.None);
+            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
             Assert.AreEqual(null,              result?.Argument);
             Assert.AreEqual("BorderThickness",             result?.Value);
         }
