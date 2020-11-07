@@ -303,14 +303,14 @@ namespace WpfAnalyzers
             isEnabledByDefault: true,
             description: "Avoid side effects in CLR accessors.");
 
-        internal static readonly DiagnosticDescriptor WPF0043DoNotUseSetCurrentValueForDataContext = Create(
+        internal static readonly DiagnosticDescriptor WPF0043DoNotUseSetCurrentValue = Create(
             id: "WPF0043",
-            title: "Don't set DataContext using SetCurrentValue.",
+            title: "Don't set DataContext and Style using SetCurrentValue.",
             messageFormat: "Use SetValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Set DataContext using SetValue.");
+            description: "Set DataContext and Style using SetValue.");
 
         internal static readonly DiagnosticDescriptor WPF0050XmlnsPrefixMustMatchXmlnsDefinition = Create(
             id: "WPF0050",

@@ -46,7 +46,7 @@ Roslyn analyzers for WPF.
 | [WPF0040](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md)| A readonly DependencyProperty must be set with DependencyPropertyKey.
 | [WPF0041](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md)| Set mutable dependency properties using SetCurrentValue.
 | [WPF0042](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md)| Avoid side effects in CLR accessors.
-| [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext using SetCurrentValue.
+| [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext and Style using SetCurrentValue.
 | [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition.
 | [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace.
 | [WPF0052](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md)| XmlnsDefinitions does not map all namespaces with public types.

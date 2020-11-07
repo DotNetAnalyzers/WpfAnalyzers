@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0043DontUseSetCurrentValueForDataContextTests
+namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

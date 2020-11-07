@@ -16,7 +16,7 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.WPF0014SetValueMustUseRegisteredType,
             Descriptors.WPF0040SetUsingDependencyPropertyKey,
-            Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext);
+            Descriptors.WPF0043DoNotUseSetCurrentValue);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -57,11 +57,12 @@
 
                 if (target == KnownSymbols.DependencyObject.SetCurrentValue &&
                     backing.Symbol is IFieldSymbol setField &&
-                    setField == KnownSymbols.FrameworkElement.DataContextProperty)
+                    (setField == KnownSymbols.FrameworkElement.DataContextProperty ||
+                     setField.Name == "StyleProperty"))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext,
+                            Descriptors.WPF0043DoNotUseSetCurrentValue,
                             invocation.GetLocation(),
                             setField.Name,
                             invocation.ArgumentList.Arguments[1]));

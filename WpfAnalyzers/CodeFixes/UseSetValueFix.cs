@@ -17,7 +17,7 @@
     internal class UseSetValueFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0043DoNotUseSetCurrentValueForDataContext.Id,
+            Descriptors.WPF0043DoNotUseSetCurrentValue.Id,
             Descriptors.WPF0035ClrPropertyUseSetValueInSetter.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
