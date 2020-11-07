@@ -69,7 +69,7 @@
                     }
                 }
                 else if (method is { ReturnsVoid: true, IsVirtual: true } &&
-                         TryGetSingleInvocation(method, methodDeclaration, context, out var singleInvocation) &&
+                         SingleInvocation(method, methodDeclaration, context) is { } singleInvocation &&
                          TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var backing))
                 {
                     if (backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
@@ -372,9 +372,9 @@
             }
         }
 
-        private static bool TryGetSingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
+        private static InvocationExpressionSyntax? SingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context)
         {
-            invocation = null;
+            InvocationExpressionSyntax? invocation = null;
             if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
             {
                 using var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, methodDeclaration.Identifier.ValueText);
@@ -386,8 +386,7 @@
                     {
                         if (invocation is { })
                         {
-                            invocation = null;
-                            return false;
+                            return null;
                         }
 
                         invocation = candidate;
@@ -395,7 +394,7 @@
                 }
             }
 
-            return invocation is { };
+            return invocation;
         }
 
         private static PooledSet<ArgumentSyntax> GetCallbackArguments(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration)
