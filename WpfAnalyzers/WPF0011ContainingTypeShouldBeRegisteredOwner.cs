@@ -28,12 +28,11 @@
                 context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol is { IsStatic: true })
             {
-                if (invocation.TryGetArgumentAtIndex(2, out var argument) &&
-                    (DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { }))
+                if (DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { OwnerTypeArgument: { } ownerTypeArgument })
                 {
-                    HandleArgument(context, argument);
+                    HandleArgument(context, ownerTypeArgument);
                 }
-                else if (invocation.TryGetArgumentAtIndex(0, out argument))
+                else if (invocation.TryGetArgumentAtIndex(0, out var argument))
                 {
                     if (DependencyProperty.AddOwner.Match(invocation, context.SemanticModel, context.CancellationToken) is { })
                     {

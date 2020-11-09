@@ -1,7 +1,5 @@
 ﻿namespace WpfAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -13,19 +11,14 @@
     {
         internal static ArgumentAndValue<string?>? TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { } register)
+            if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { NameArgument:{} nameArgument } register)
             {
-                if (register.NameArgument() is { } argument)
+                if (nameArgument.TryGetStringValue(semanticModel, cancellationToken, out var registeredName))
                 {
-                    if (argument.TryGetStringValue(semanticModel, cancellationToken, out var registeredName))
-                    {
-                        return new ArgumentAndValue<string?>(argument, registeredName);
-                    }
-
-                    return new ArgumentAndValue<string?>(argument, null);
+                    return new ArgumentAndValue<string?>(nameArgument, registeredName);
                 }
 
-                return null;
+                return new ArgumentAndValue<string?>(nameArgument, null);
             }
 
             if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -54,6 +47,12 @@
                 this.Invocation = invocation;
                 this.Target = target;
             }
+
+            internal ArgumentSyntax? NameArgument => this.FindArgument("name");
+
+            internal ArgumentSyntax? PropertyTypeArgument => this.FindArgument("propertyType");
+
+            internal ArgumentSyntax? OwnerTypeArgument => this.FindArgument("ownerType");
 
             internal static Register? FindRecursive(BackingFieldOrProperty fieldOrProperty, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
@@ -133,10 +132,6 @@
                 return null;
             }
 
-            internal ArgumentSyntax? NameArgument() => this.FindArgument("name");
-
-            internal ArgumentSyntax? PropertyTypeArgument() => this.FindArgument("propertyType");
-
             internal ArgumentSyntax? FindArgument(string name)
             {
                 if (this.Target.TryFindParameter(name, out var parameter))
@@ -159,7 +154,7 @@
 
             internal ITypeSymbol? PropertyType(INamedTypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                if (this.PropertyTypeArgument() is { Expression: TypeOfExpressionSyntax { Type: { } typeSyntax } } &&
+                if (this.PropertyTypeArgument is { Expression: TypeOfExpressionSyntax { Type: { } typeSyntax } } &&
                     TypeSymbol.TryGet(typeSyntax, containingType, semanticModel, cancellationToken) is { } type)
                 {
                     if (type.IsReferenceType &&
@@ -194,7 +189,7 @@
 
             internal string? PropertyName(SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                return this.NameArgument() is { } argument &&
+                return this.NameArgument is { } argument &&
                        argument.TryGetStringValue(semanticModel, cancellationToken, out var name)
                     ? name
                     : null;

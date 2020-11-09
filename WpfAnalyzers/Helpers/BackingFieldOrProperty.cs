@@ -75,19 +75,14 @@
 
         internal ArgumentAndValue<string?>? RegisteredName(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { } register)
+            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { NameArgument: { } nameArgument })
             {
-                if (register.NameArgument() is { } argument)
+                if (nameArgument.TryGetStringValue(semanticModel, cancellationToken, out var name))
                 {
-                    if (argument.TryGetStringValue(semanticModel, cancellationToken, out var name))
-                    {
-                        return new ArgumentAndValue<string?>(argument, name);
-                    }
-
-                    return new ArgumentAndValue<string?>(argument, name);
+                    return new ArgumentAndValue<string?>(nameArgument, name);
                 }
 
-                return null;
+                return new ArgumentAndValue<string?>(nameArgument, name);
             }
 
             if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&
@@ -107,19 +102,14 @@
 
         internal ArgumentAndValue<ITypeSymbol?>? RegisteredType(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { } register)
+            if (DependencyProperty.Register.FindRecursive(this, semanticModel, cancellationToken) is { PropertyTypeArgument: { } propertyTypeArgument } register)
             {
-                if (register.PropertyTypeArgument() is { } argument)
+                if (register.PropertyType(this.ContainingType, semanticModel, cancellationToken) is { } type)
                 {
-                    if (register.PropertyType(this.ContainingType, semanticModel, cancellationToken) is { } type)
-                    {
-                        return new ArgumentAndValue<ITypeSymbol?>(argument, type);
-                    }
-
-                    return new ArgumentAndValue<ITypeSymbol?>(argument, null);
+                    return new ArgumentAndValue<ITypeSymbol?>(propertyTypeArgument, type);
                 }
 
-                return null;
+                return new ArgumentAndValue<ITypeSymbol?>(propertyTypeArgument, null);
             }
 
             if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&

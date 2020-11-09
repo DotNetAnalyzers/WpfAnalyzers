@@ -32,8 +32,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
                 context.ContainingSymbol is { IsStatic: true } &&
-                DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { } register &&
-                register.NameArgument() is { } nameArg &&
+                DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { NameArgument: { } nameArgument } register &&
                 register.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName)
             {
                 if (register.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
@@ -90,16 +89,16 @@
                     }
                 }
 
-                if (nameArg.Expression is { } nameExpression &&
+                if (nameArgument.Expression is { } nameExpression &&
                     nameExpression.IsNameof() == false &&
                     context.ContainingSymbol.ContainingType.TryFindProperty(registeredName, out var property))
                 {
-                    if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                    if (nameArgument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                nameArg.GetLocation(),
+                                nameArgument.GetLocation(),
                                 ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), property.Name),
                                 property.Name));
                     }
