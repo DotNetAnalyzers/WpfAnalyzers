@@ -679,8 +679,11 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [Test]
-        public static void IgnoreSetDataContext()
+        [TestCase("control.DataContext = 1")]
+        [TestCase("control.SetValue(FrameworkElement.DataContextProperty, 1)")]
+        [TestCase("control.Style = new Style(typeof(FooControl))")]
+        [TestCase("control.SetValue(FrameworkElement.StyleProperty, new Style(typeof(FooControl)))")]
+        public static void IgnoreProperties(string expression)
         {
             var code = @"
 namespace N
@@ -699,11 +702,10 @@ namespace N
         public static void Meh()
         {
             var control = new Control();
-            control.SetValue(FrameworkElement.DataContextProperty, 1);
             control.DataContext = 1;
         }
     }
-}";
+}".AssertReplace("control.DataContext = 1", expression);
 
             RoslynAssert.Valid(Analyzer, code);
         }

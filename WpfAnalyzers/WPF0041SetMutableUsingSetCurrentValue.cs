@@ -31,7 +31,7 @@
                 !IsInObjectInitializer(assignment) &&
                 !IsInConstructor(assignment) &&
                 context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
-                property != KnownSymbols.FrameworkElement.DataContext &&
+                !IsIgnored(property) &&
                 ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { BackingSet: { } backingSet } &&
                 backingSet.FieldOrProperty.Type == KnownSymbols.DependencyProperty &&
                 !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
@@ -44,6 +44,12 @@
                         ImmutableDictionary<string, string?>.Empty.Add(nameof(BackingFieldOrProperty), propertyArgument),
                         propertyArgument,
                         assignment.Right));
+            }
+
+            static bool IsIgnored(IPropertySymbol property)
+            {
+                return property == KnownSymbols.FrameworkElement.DataContext ||
+                       property == KnownSymbols.FrameworkElement.Style;
             }
         }
 
@@ -59,7 +65,7 @@
                 context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var symbol) &&
                 BackingFieldOrProperty.Match(symbol) is { } backing &&
                 backing.Type != KnownSymbols.DependencyPropertyKey &&
-                backing.Symbol != KnownSymbols.FrameworkElement.DataContextProperty &&
+                !IsIgnored(backing.Symbol) &&
                 !IsAssignedCreatedInScope(invocationExpression, context.SemanticModel, context.CancellationToken) &&
                 context.ContainingProperty() is null)
             {
@@ -75,6 +81,12 @@
                         invocation.GetLocation(),
                         backing,
                         invocation.ArgumentList.Arguments[1]));
+            }
+
+            static bool IsIgnored(ISymbol field)
+            {
+                return field == KnownSymbols.FrameworkElement.DataContextProperty ||
+                       field == KnownSymbols.FrameworkElement.StyleProperty;
             }
         }
 
@@ -101,5 +113,6 @@
                    statement.TryFirstAncestor<ConstructorDeclarationSyntax>(out _) &&
                    !statement.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _);
         }
+
     }
 }

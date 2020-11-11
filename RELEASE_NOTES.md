@@ -1,3 +1,6 @@
+#### 3.5.1
+* BUGFIX: WPF0041 should not nag about StyleProperty
+
 #### 3.5.0
 * BREAKING: Change all DiagnosticSeverity.Error to DiagnosticSeverity.Warning
 
