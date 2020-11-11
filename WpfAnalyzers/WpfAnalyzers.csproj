@@ -55,7 +55,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gu.Analyzers" Version="1.8.2" PrivateAssets="all" />
+    <PackageReference Include="Gu.Analyzers" Version="1.8.3" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Extensions" Version="0.14.4" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" PrivateAssets="all" />
