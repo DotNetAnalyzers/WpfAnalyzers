@@ -11,7 +11,7 @@
     {
         internal static ArgumentAndValue<string?>? TryGetRegisteredName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { NameArgument:{} nameArgument } register)
+            if (Register.MatchAny(invocation, semanticModel, cancellationToken) is { NameArgument: { } nameArgument })
             {
                 if (nameArgument.TryGetStringValue(semanticModel, cancellationToken, out var registeredName))
                 {

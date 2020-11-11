@@ -113,6 +113,5 @@
                    statement.TryFirstAncestor<ConstructorDeclarationSyntax>(out _) &&
                    !statement.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _);
         }
-
     }
 }
