@@ -274,7 +274,7 @@ namespace WpfAnalyzers
                         => Match(invocation, semanticModel, cancellationToken),
                     { ExpressionBody: { } expressionBody } => Walk(expressionBody),
                     { Body: { Statements: { } statements } }
-                        when statements.Last() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                        when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
                         => Match(invocation, semanticModel, cancellationToken),
                     { Body: { } body } => Walk(body),
                     _ => null,
