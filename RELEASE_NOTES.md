@@ -1,3 +1,6 @@
+#### 3.5.2
+* BUGFIX: Handle empty bodies #291
+
 #### 3.5.1
 * BUGFIX: WPF0041 should not nag about StyleProperty
 
