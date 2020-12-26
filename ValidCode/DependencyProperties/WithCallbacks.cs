@@ -25,7 +25,9 @@
             new PropertyMetadata(
                 default(int),
                 (d, e) => d.CoerceValue(P1Property),
+#pragma warning disable WPF0023
                 CoerceP2),
+#pragma warning restore WPF0023
             o => true);
 #pragma warning restore WPF0150 // Use nameof().
 
