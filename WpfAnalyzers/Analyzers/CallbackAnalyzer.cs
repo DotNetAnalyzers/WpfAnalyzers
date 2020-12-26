@@ -180,6 +180,7 @@
                 return true;
             }
 
+            fieldOrProperty = default;
             return false;
 
             bool IsCalledOnSender()
@@ -253,6 +254,7 @@
                     return true;
                 }
 
+                backing = default;
                 return false;
             }
         }
