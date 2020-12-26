@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1573
-namespace WpfAnalyzers
+﻿namespace WpfAnalyzers
 {
     using System.Threading;
 

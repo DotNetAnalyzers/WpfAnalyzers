@@ -57,7 +57,7 @@ namespace ValidCode.Repro
                 // Call the base property to add arrows on the ends.
                 return base.DefiningGeometry;
 
-                bool IsNan(Point p) => double.IsNaN(p.X) || double.IsNaN(p.Y);
+                static bool IsNan(Point p) => double.IsNaN(p.X) || double.IsNaN(p.Y);
             }
         }
     }

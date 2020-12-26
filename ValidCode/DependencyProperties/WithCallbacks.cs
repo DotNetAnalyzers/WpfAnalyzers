@@ -50,13 +50,11 @@
 
         private static object CoerceP2(DependencyObject d, object o)
         {
-            switch (o)
+            return o switch
             {
-                case int i:
-                    return Math.Max(0, i);
-                default:
-                    return -1;
-            }
+                int i => Math.Max(0, i),
+                _ => -1,
+            };
         }
     }
 }
