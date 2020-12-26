@@ -161,7 +161,7 @@
                 using var set = PooledSet<ITypeSymbol>.Borrow();
                 set.UnionWith(t1.RecursiveBaseTypes());
                 set.IntersectWith(t2.RecursiveBaseTypes());
-                return set.TryFirst(x => x is INamedTypeSymbol namedType && namedType.IsGenericType, out result) ||
+                return set.TryFirst(x => x is INamedTypeSymbol { IsGenericType: true }, out result) ||
                        set.TryFirst(out result);
             }
         }
