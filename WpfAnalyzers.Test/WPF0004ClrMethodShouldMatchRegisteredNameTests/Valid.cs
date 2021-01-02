@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -460,6 +460,79 @@ namespace N
 }";
 
             RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void AttachedPropertyNullableEnumerable()
+        {
+            var binary = MetadataReferences.CreateBinary(@"
+namespace BinaryReference
+{
+    using System.Collections;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public static class DataGridExt
+    {
+        /// <summary>
+        /// An <see cref=""IEnumerable""/> of rows where each row is an <see cref=""IEnumerable""/> with the values.
+        /// </summary>
+        public static readonly DependencyProperty EnumerableProperty = DependencyProperty.RegisterAttached(
+            ""Enumerable"",
+            typeof(IEnumerable),
+            typeof(DataGridExt),
+            new PropertyMetadata(default(IEnumerable)));
+
+        /// <summary>Helper for setting <see cref=""EnumerableProperty""/> on <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DataGrid""/> to set <see cref=""EnumerableProperty""/> on.</param>
+        /// <param name=""value"">Enumerable property value.</param>
+        public static void SetEnumerable(this DataGrid element, IEnumerable? value)
+        {
+            if (element is null)
+            {
+                throw new System.ArgumentNullException(nameof(element));
+            }
+
+            element.SetValue(EnumerableProperty, value);
+        }
+
+        /// <summary>Helper for getting <see cref=""EnumerableProperty""/> from <paramref name=""element""/>.</summary>
+        /// <param name=""element""><see cref=""DataGrid""/> to read <see cref=""EnumerableProperty""/> from.</param>
+        /// <returns>Enumerable property value.</returns>
+        [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
+        [AttachedPropertyBrowsableForType(typeof(DataGrid))]
+        public static IEnumerable? GetEnumerable(this DataGrid element)
+        {
+            if (element is null)
+            {
+                throw new System.ArgumentNullException(nameof(element));
+            }
+
+            return (IEnumerable)element.GetValue(EnumerableProperty);
+        }
+    }
+}");
+            var code = @"
+namespace N
+{
+    using System.Collections.ObjectModel;
+    using System.Windows.Controls;
+
+    using BinaryReference;
+
+    public static class C
+    {
+        public static DataGrid M1()
+        {
+            var dataGrid = new DataGrid();
+            var xs = new ObservableCollection<int>(new[] { 1, 2 });
+            dataGrid.SetValue(DataGridExt.EnumerableProperty, xs);
+            return dataGrid;
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code, metadataReferences:MetadataReferences.FromAttributes().Add(binary));
         }
     }
 }
