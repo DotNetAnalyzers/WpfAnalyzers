@@ -86,7 +86,7 @@
             }
 
             if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&
-                !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
+                !SymbolComparer.Equal(source.Symbol, this.Symbol))
             {
                 return source.RegisteredName(semanticModel, cancellationToken);
             }
@@ -113,7 +113,7 @@
             }
 
             if (this.FindAddOwnerSource(semanticModel, cancellationToken) is { } source &&
-                !SymbolEqualityComparer.Default.Equals(source.Symbol, this.Symbol))
+                !SymbolComparer.Equal(source.Symbol, this.Symbol))
             {
                 return source.RegisteredType(semanticModel, cancellationToken);
             }
