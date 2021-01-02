@@ -1,4 +1,4 @@
-﻿namespace ValidCode.Repro
+﻿namespace ValidCode.Netcore.Repro
 {
     using System.Collections;
     using System.Collections.ObjectModel;
@@ -18,7 +18,7 @@
 
         /// <summary>Helper for setting <see cref="EnumerableProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DataGrid"/> to set <see cref="EnumerableProperty"/> on.</param>
-        /// <param name="value">RowsSource property value.</param>
+        /// <param name="value">Enumerable property value.</param>
         public static void SetEnumerable(this DataGrid element, IEnumerable? value)
         {
             if (element is null)
@@ -31,7 +31,7 @@
 
         /// <summary>Helper for getting <see cref="EnumerableProperty"/> from <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DataGrid"/> to read <see cref="EnumerableProperty"/> from.</param>
-        /// <returns>RowsSource property value.</returns>
+        /// <returns>Enumerable property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(DataGrid))]
         public static IEnumerable? GetEnumerable(this DataGrid element)
