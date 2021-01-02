@@ -1,3 +1,6 @@
+#### 3.5.3
+* BUGFIX: Don't use SymbolEquaityComparer
+
 #### 3.5.2
 * BUGFIX: Handle empty bodies #291
 
