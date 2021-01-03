@@ -132,6 +132,12 @@
 
         internal static bool IsValueValidForRegisteredType(ExpressionSyntax value, ITypeSymbol registeredType, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            // quick check
+            if (semanticModel.IsRepresentationPreservingConversion(value, registeredType))
+            {
+                return true;
+            }
+
             if (value.FirstAncestor<TypeDeclarationSyntax>() is { } containingTypeDeclaration &&
                 semanticModel.TryGetNamedType(containingTypeDeclaration, cancellationToken, out var containingType))
             {
