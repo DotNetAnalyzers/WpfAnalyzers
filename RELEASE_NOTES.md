@@ -1,3 +1,6 @@
+#### 3.5.4
+* BUFIX: IsRepresentationPreservingConversion when cast reference type.
+
 #### 3.5.3
 * BUGFIX: Don't use SymbolEquaityComparer
 
