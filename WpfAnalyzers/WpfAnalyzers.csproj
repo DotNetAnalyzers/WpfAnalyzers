@@ -72,7 +72,7 @@
     <PackageReference Include="Gu.Analyzers" Version="1.8.4" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Extensions" Version="0.15.7" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.312" PrivateAssets="all" />
   </ItemGroup>
