@@ -19,7 +19,7 @@
   
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.12.1" />
-    <PackageReference Include="Gu.Analyzers" Version="1.8.4" PrivateAssets="all" />
+    <PackageReference Include="Gu.Analyzers" Version="1.8.5" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Asserts" Version="3.3.2" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" />
