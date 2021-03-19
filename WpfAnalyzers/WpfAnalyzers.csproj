@@ -70,7 +70,7 @@
 
   <ItemGroup>
     <PackageReference Include="Gu.Analyzers" Version="1.8.5" PrivateAssets="all" />
-    <PackageReference Include="Gu.Roslyn.Extensions" Version="0.15.7" />
+    <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.15.7" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60" PrivateAssets="all" />
@@ -80,10 +80,5 @@
   <ItemGroup>
     <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[3.1.0]" />
     <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="tools\*" Pack="true" PackagePath="" />
-    <None Include="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\Gu.Roslyn.Extensions.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 </Project>
