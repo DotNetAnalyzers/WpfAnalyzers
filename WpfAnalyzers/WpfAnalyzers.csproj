@@ -19,13 +19,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Version>3.5.4</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
@@ -66,11 +59,13 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Gu.Analyzers" Version="1.8.5" PrivateAssets="all" />
-    <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.15.7" />
+    <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.15.7" PrivateAssets="all"/>
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60" PrivateAssets="all" />
@@ -78,7 +73,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[3.1.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[5.0.0]" />
     <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tools\*" Pack="true" PackagePath="" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
   </ItemGroup>
 </Project>
