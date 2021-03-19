@@ -20,7 +20,7 @@ namespace WpfAnalyzers.Test
         private static readonly IReadOnlyList<DiagnosticAnalyzer> Analyzers = typeof(AnalyzerCategory)
                                                                               .Assembly
                                                                               .GetTypes()
-                                                                              .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t))
+                                                                              .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
                                                                               .OrderBy(x => x.Name)
                                                                               .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                               .ToArray();
