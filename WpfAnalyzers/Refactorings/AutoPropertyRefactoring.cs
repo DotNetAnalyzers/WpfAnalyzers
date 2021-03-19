@@ -140,7 +140,7 @@
                                                             SyntaxFactory.XmlElement(
                                                                 "returns",
                                                                 SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                                                     SyntaxFactory.XmlText("Value property value."))),
+                                                                     SyntaxFactory.XmlText($"{property.Identifier.ValueText} property value."))),
                                                             EndComment,
                                                         }),
                                                     endOfComment: SyntaxFactory.Token(SyntaxKind.EndOfDocumentationCommentToken)))),

@@ -354,7 +354,7 @@ namespace N
 
         /// <summary>Helper for getting <see cref=""NumberProperty""/> from <paramref name=""element""/>.</summary>
         /// <param name=""element""><see cref=""DependencyObject""/> to read <see cref=""NumberProperty""/> from.</param>
-        /// <returns>Value property value.</returns>
+        /// <returns>Number property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static int GetNumber(DependencyObject element)
         {
