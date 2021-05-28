@@ -34,7 +34,7 @@
     <PackageReference Include="Gu.Roslyn.Asserts.Analyzers" Version="3.3.1" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.10.56" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" PrivateAssets="all" />
