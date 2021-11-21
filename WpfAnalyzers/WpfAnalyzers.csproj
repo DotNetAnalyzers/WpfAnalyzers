@@ -18,13 +18,24 @@
     <AssemblyOriginatorKeyFile>..\WpfAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
+  <!-- Specific to packing an analyzer -->
   <PropertyGroup>
-    <Version>3.5.4</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <AppendTargetFrameworkToOutputDirectory>false</AppendTargetFrameworkToOutputDirectory>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Version>4.0.0</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for WPF.</Description>
     <PackageTags>WPF Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      4.0.0
+      BREAKING: For VS2022+ now.
+      BUGFIX: AD0001 -> Could not load file or assembly
       3.5.4
       BUFIX: IsRepresentationPreservingConversion when cast reference type.
       3.5.3
@@ -59,8 +70,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/WpfAnalyzers</RepositoryUrl>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
