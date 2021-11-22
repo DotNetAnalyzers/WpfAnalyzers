@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Benchmarks.Benchmarks
+﻿namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -9,11 +9,13 @@ namespace WpfAnalyzers.Benchmarks.Benchmarks
 
     public static class Code
     {
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbols).Assembly
-                                                                                                    .GetTypes()
-                                                                                                    .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                                    .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-                                                                                                    .ToArray();
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+            typeof(KnownSymbols)
+            .Assembly
+            .GetTypes()
+            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+            .ToArray();
 
         public static Solution ValidCodeProject { get; } = CodeFactory.CreateSolution(
             ProjectFile.Find("ValidCode.csproj"),

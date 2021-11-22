@@ -11,11 +11,13 @@
     [Ignore("Broken By Roslyn 3.5.0")]
     public static class BenchmarkTests
     {
-        private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbols).Assembly
-                                                                                                    .GetTypes()
-                                                                                                    .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                                    .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-                                                                                                    .ToArray();
+        private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } =
+            typeof(KnownSymbols)
+            .Assembly
+            .GetTypes()
+            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+            .ToArray();
 
         private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarks { get; } = AllAnalyzers
             .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, x))
