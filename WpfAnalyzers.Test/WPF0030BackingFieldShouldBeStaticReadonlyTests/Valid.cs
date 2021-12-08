@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -64,7 +64,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public static class Foo
     {

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
+﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -74,11 +74,9 @@ namespace N
         [Test]
         public static void PropertyKeyInOtherClass()
         {
-            var linkCode = @"
+            var link = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class Link : ButtonBase
@@ -86,18 +84,18 @@ namespace N
     }
 }";
 
-            var modernLinksCode = @"
+            var links = @"
 namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
 
-    public class ModernLinks : ItemsControl
+    public class Links : ItemsControl
     {
         internal static readonly DependencyPropertyKey SelectedLinkPropertyKey = DependencyProperty.RegisterReadOnly(
             ""SelectedLink"",
             typeof(Link),
-            typeof(ModernLinks),
+            typeof(Links),
             new FrameworkPropertyMetadata(null));
 
         /// <summary>Identifies the <see cref=""SelectedLink""/> dependency property.</summary>
@@ -105,26 +103,25 @@ namespace N
     }
 }";
 
-            var linkGroupCode = @"
+            var linkGroup = @"
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class LinkGroup : ButtonBase
     {
         /// <summary>Identifies the <see cref=""SelectedLink""/> dependency property.</summary>
-        public static readonly DependencyProperty SelectedLinkProperty = ModernLinks.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
+        public static readonly DependencyProperty SelectedLinkProperty = Links.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
 
         public Link SelectedLink
         {
             get { return (Link)this.GetValue(SelectedLinkProperty); }
-            protected set { this.SetValue(ModernLinks.SelectedLinkPropertyKey, value); }
+            protected set { this.SetValue(Links.SelectedLinkPropertyKey, value); }
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
+            RoslynAssert.Valid(Analyzer, link, links, linkGroup);
         }
     }
 }

@@ -837,7 +837,7 @@ namespace N2
         [Test]
         public static void PropertyKeyInOtherClass()
         {
-            var linkCode = @"
+            var link = @"
 namespace N
 {
     using System.Windows.Controls.Primitives;
@@ -847,13 +847,13 @@ namespace N
     }
 }";
 
-            var modernLinksCode = @"
+            var links = @"
 namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
 
-    public class ModernLinks : ItemsControl
+    public class Links : ItemsControl
     {
         /// <summary>
         /// Identifies the SelectedSource dependency property.
@@ -861,14 +861,14 @@ namespace N
         internal static readonly DependencyPropertyKey SelectedLinkPropertyKey = DependencyProperty.RegisterReadOnly(
             ""SelectedLink"",
             typeof(Link),
-            typeof(ModernLinks),
+            typeof(Links),
             new FrameworkPropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLinkProperty = SelectedLinkPropertyKey.DependencyProperty;
     }
 }";
 
-            var linkGroupCode = @"
+            var linkGroup = @"
 namespace N
 {
     using System.Windows;
@@ -876,16 +876,16 @@ namespace N
 
     public class LinkGroup : ButtonBase
     {
-        public static readonly DependencyProperty SelectedLinkProperty = ModernLinks.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
+        public static readonly DependencyProperty SelectedLinkProperty = Links.SelectedLinkProperty.AddOwner(typeof(LinkGroup));
 
         public Link SelectedLink
         {
             get { return (Link)this.GetValue(SelectedLinkProperty); }
-            protected set { this.SetValue(ModernLinks.SelectedLinkPropertyKey, value); }
+            protected set { this.SetValue(Links.SelectedLinkPropertyKey, value); }
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, linkCode, modernLinksCode, linkGroupCode);
+            RoslynAssert.Valid(Analyzer, link, links, linkGroup);
         }
 
         [Test]
