@@ -107,7 +107,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public partial class FooControl
     {

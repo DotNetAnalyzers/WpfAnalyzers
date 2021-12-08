@@ -159,9 +159,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public static class Foo
     {
         public static void Meh()
@@ -227,7 +224,7 @@ namespace N
         [Test]
         public static void DependencyPropertyRegisterAttached()
         {
-            var booleanBoxesCode = @"
+            var booleanBoxes = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -247,7 +244,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Windows;
 
     public static class Foo
@@ -269,13 +265,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
+            RoslynAssert.Valid(Analyzer, booleanBoxes, code);
         }
 
         [Test]
         public static void DependencyPropertyRegisterAttachedWhenBoxed()
         {
-            var booleanBoxesCode = @"
+            var booleanBoxes = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -295,7 +291,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Windows;
 
     public static class Foo
@@ -317,7 +312,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
+            RoslynAssert.Valid(Analyzer, booleanBoxes, code);
         }
 
         [Test]
@@ -362,7 +357,7 @@ namespace N
             typeof(string),
             typeof(FooControl));
 
-        public string Value
+        public string? Value
         {
             get { return this.GetValue(ValueProperty) as string; }
             set { this.SetValue(ValueProperty, value); }
@@ -699,7 +694,7 @@ namespace N
             DataContext = 1;
         }
 
-        public static void Meh()
+        public static void Meh(DependencyProperty notUsed)
         {
             var control = new Control();
             control.DataContext = 1;

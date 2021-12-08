@@ -1,4 +1,4 @@
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
 {
     using Gu.Roslyn.Asserts;
@@ -274,7 +274,7 @@ namespace N
 
     sealed class ↓Foo : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return null;
         }
@@ -295,7 +295,7 @@ namespace N
     {
         static readonly Foo Default = new Foo();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return null;
         }

@@ -99,8 +99,6 @@ namespace N
             var link = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class Link : ButtonBase
@@ -133,7 +131,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class LinkGroup : ButtonBase

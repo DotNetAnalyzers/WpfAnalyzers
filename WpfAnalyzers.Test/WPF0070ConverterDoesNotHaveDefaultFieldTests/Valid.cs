@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
+﻿namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -388,7 +388,6 @@ namespace N
 namespace N
 {
     using System;
-    using System.Collections;
     using System.Globalization;
     using System.Windows.Data;
 
@@ -549,7 +548,7 @@ namespace WpfCopyDeploy
     {
         public static readonly DirectoryInfoStringConverter Default = new DirectoryInfoStringConverter();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is DirectoryInfo directoryInfo)
             {
@@ -559,7 +558,7 @@ namespace WpfCopyDeploy
             return string.Empty;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is string text)
             {
