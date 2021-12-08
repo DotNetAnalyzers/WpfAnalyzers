@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
 {
+    using System.Linq;
     using Gu.Roslyn.Asserts;
 
     using NUnit.Framework;
@@ -533,7 +534,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences.FromAttributes().Add(binary));
+            RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithMetadataReferences(x => x.Append(binary)));
         }
     }
 }

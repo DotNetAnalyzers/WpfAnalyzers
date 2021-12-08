@@ -17,9 +17,7 @@
             .ToArray();
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
-            ProjectFile.Find("ValidCode.Netcore.csproj"),
-            CodeFactory.DefaultCompilationOptions(AllAnalyzers, null).WithNullableContextOptions(NullableContextOptions.Enable),
-            MetadataReferences.FromAttributes());
+            ProjectFile.Find("ValidCode.Netcore.csproj"));
 
         [Test]
         public static void NotEmpty()

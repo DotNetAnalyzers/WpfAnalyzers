@@ -20,14 +20,11 @@
                                .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            new FileInfo("C:\\Git\\_GuOrg\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
-            AllAnalyzers,
-            MetadataReferences.FromAttributes());
+            new FileInfo("C:\\Git\\_GuOrg\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"));
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
-            Assert.Inconclusive("VS does not understand [Explicit]");
             RoslynAssert.Valid(analyzer, Solution);
         }
 

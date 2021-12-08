@@ -18,14 +18,10 @@
             .ToArray();
 
         private static readonly Solution AnalyzerProjectSolution = CodeFactory.CreateSolution(
-            ProjectFile.Find("WpfAnalyzers.csproj"),
-            AllAnalyzers,
-            MetadataReferences.FromAttributes());
+            ProjectFile.Find("WpfAnalyzers.csproj"));
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
-            ProjectFile.Find("ValidCode.csproj"),
-            AllAnalyzers,
-            MetadataReferences.FromAttributes());
+            ProjectFile.Find("ValidCode.csproj"));
 
         [Test]
         public static void NotEmpty()

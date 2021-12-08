@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Exe</OutputType>
+    <UseWpf>true</UseWpf>
+    <LangVersion>latest</LangVersion>
     <StartupObject>WpfAnalyzers.Benchmarks.Program</StartupObject>
   </PropertyGroup>
 
@@ -32,13 +34,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\WpfAnalyzers\WpfAnalyzers.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   
   <ItemGroup>

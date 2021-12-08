@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests
+﻿namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -60,7 +60,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, allowCompilationErrors: AllowCompilationErrors.Yes);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

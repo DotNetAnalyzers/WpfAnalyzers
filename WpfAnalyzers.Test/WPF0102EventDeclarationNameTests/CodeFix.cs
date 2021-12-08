@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
+﻿namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -141,7 +141,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, allowCompilationErrors: AllowCompilationErrors.Yes);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }
