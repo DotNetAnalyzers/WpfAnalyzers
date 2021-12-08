@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -456,8 +456,8 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("(↓System.Collections.IEnumerable)e.NewValue", "(string)e.NewValue")]
-        [TestCase("(↓System.Collections.IEnumerable)e.OldValue", "(string)e.OldValue")]
+        [TestCase("(↓System.Collections.IEnumerable?)e.NewValue", "(string?)e.NewValue")]
+        [TestCase("(↓System.Collections.IEnumerable?)e.OldValue", "(string?)e.OldValue")]
         public static void DependencyPropertyRegisterCast(string cast, string expectedCast)
         {
             var before = @"
@@ -474,18 +474,18 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(default(string), OnValueChanged));
 
-        public string Value
+        public string? Value
         {
-            get { return (string)this.GetValue(ValueProperty); }
+            get { return (string?)this.GetValue(ValueProperty); }
             set { this.SetValue(ValueProperty, value); }
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (↓System.Collections.IEnumerable)e.NewValue;
+            var value = (↓System.Collections.IEnumerable?)e.NewValue;
         }
     }
-}".AssertReplace("(↓System.Collections.IEnumerable)e.NewValue", cast);
+}".AssertReplace("(↓System.Collections.IEnumerable?)e.NewValue", cast);
 
             var after = @"
 namespace N
@@ -501,18 +501,18 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(default(string), OnValueChanged));
 
-        public string Value
+        public string? Value
         {
-            get { return (string)this.GetValue(ValueProperty); }
+            get { return (string?)this.GetValue(ValueProperty); }
             set { this.SetValue(ValueProperty, value); }
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
-}".AssertReplace("(string)e.NewValue", expectedCast);
+}".AssertReplace("(string?)e.NewValue", expectedCast);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
@@ -653,7 +653,7 @@ namespace N
 
         public static void SetBar(this FrameworkElement element, string value) => element.SetValue(BarPropertyKey, value);
 
-        public static string GetBar(this FrameworkElement element) => (string)element.GetValue(BarProperty);
+        public static string? GetBar(this FrameworkElement element) => (string?)element.GetValue(BarProperty);
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -679,11 +679,11 @@ namespace N
 
         public static void SetBar(this FrameworkElement element, string value) => element.SetValue(BarPropertyKey, value);
 
-        public static string GetBar(this FrameworkElement element) => (string)element.GetValue(BarProperty);
+        public static string? GetBar(this FrameworkElement element) => (string?)element.GetValue(BarProperty);
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
 }";
@@ -708,15 +708,9 @@ namespace N
                 default(string), 
                 FrameworkPropertyMetadataOptions.Inherits));
 
-        public static void SetBar(DependencyObject element, string value)
-        {
-            element.SetValue(BarProperty, value);
-        }
+        public static void SetBar(DependencyObject element, string value) => element.SetValue(BarProperty, value);
 
-        public static string GetBar(DependencyObject element)
-        {
-            return (string) element.GetValue(BarProperty);
-        }
+        public static string? GetBar(DependencyObject element) => (string?)element.GetValue(BarProperty);
     }
 }";
 
@@ -734,9 +728,9 @@ namespace N
                 default(string), 
                 OnBarChanged));
 
-        public string Bar
+        public string? Bar
         {
-            get => (string)this.GetValue(BarProperty);
+            get => (string?)this.GetValue(BarProperty);
             set => this.SetValue(BarProperty, value);
         }
 
@@ -761,15 +755,15 @@ namespace N
                 default(string), 
                 OnBarChanged));
 
-        public string Bar
+        public string? Bar
         {
-            get => (string)this.GetValue(BarProperty);
+            get => (string?)this.GetValue(BarProperty);
             set => this.SetValue(BarProperty, value);
         }
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
 }";
@@ -794,9 +788,9 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(default(string)));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
     }
@@ -837,7 +831,7 @@ namespace N
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
 }";

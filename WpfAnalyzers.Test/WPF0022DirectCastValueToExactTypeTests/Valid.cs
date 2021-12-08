@@ -1,6 +1,7 @@
-namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static class Valid
@@ -89,6 +90,7 @@ namespace N
         public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
         {
             var code = @"
+#nullable disable
 namespace N
 {
     using System.Windows;
@@ -123,7 +125,7 @@ namespace N
 
         private static bool ValidateValue(object baseValue)
         {
-            return ((int)baseValue) != null;
+            return ((int)baseValue) != default;
         }
     }
 }".AssertReplace("int", type);
@@ -167,12 +169,12 @@ namespace N
             var newValue = e.NewValue as string;
         }
 
-        private static object CoerceValue(DependencyObject d, object baseValue)
+        private static object? CoerceValue(DependencyObject d, object? baseValue)
         {
             return baseValue as string;
         }
 
-        private static bool ValidateValue(object baseValue)
+        private static bool ValidateValue(object? baseValue)
         {
             return (baseValue as string) != null;
         }
@@ -477,7 +479,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
 
     public class FooControl : FrameworkElement

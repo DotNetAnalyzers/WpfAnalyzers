@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -259,7 +259,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
 
     public class FooControl : FrameworkElement
