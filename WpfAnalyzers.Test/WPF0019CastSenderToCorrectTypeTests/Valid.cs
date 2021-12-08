@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -266,7 +266,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
 
     public class FooControl : FrameworkElement

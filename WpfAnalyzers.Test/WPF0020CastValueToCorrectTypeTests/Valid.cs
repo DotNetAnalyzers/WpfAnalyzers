@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -170,13 +170,13 @@ namespace N
             var newValue = e.NewValue as string;
         }
 
-        private static object CoerceValue(DependencyObject d, object baseValue)
+        private static object? CoerceValue(DependencyObject d, object? baseValue)
         {
             var value = baseValue as string;
             return value;
         }
 
-        private static bool ValidateValue(object baseValue)
+        private static bool ValidateValue(object? baseValue)
         {
             var value = baseValue as string;
             return value != null;
@@ -482,7 +482,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
 
     public class FooControl : FrameworkElement

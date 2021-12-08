@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgumentTests
+﻿namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgumentTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -36,7 +36,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {
@@ -80,7 +79,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {

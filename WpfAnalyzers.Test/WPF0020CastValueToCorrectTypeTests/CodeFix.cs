@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0020CastValueToCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -855,15 +855,9 @@ namespace N
                 default(string), 
                 FrameworkPropertyMetadataOptions.Inherits));
 
-        public static void SetBar(DependencyObject element, string value)
-        {
-            element.SetValue(BarProperty, value);
-        }
+        public static void SetBar(DependencyObject element, string? value) => element.SetValue(BarProperty, value);
 
-        public static string GetBar(DependencyObject element)
-        {
-            return (string) element.GetValue(BarProperty);
-        }
+        public static string? GetBar(DependencyObject element) => (string?)element.GetValue(BarProperty);
     }
 }";
 
@@ -881,9 +875,9 @@ namespace N
                 default(string), 
                 OnBarChanged));
 
-        public string Bar
+        public string? Bar
         {
-            get => (string)this.GetValue(BarProperty);
+            get => (string?)this.GetValue(BarProperty);
             set => this.SetValue(BarProperty, value);
         }
 
@@ -908,15 +902,15 @@ namespace N
                 default(string), 
                 OnBarChanged));
 
-        public string Bar
+        public string? Bar
         {
-            get => (string)this.GetValue(BarProperty);
+            get => (string?)this.GetValue(BarProperty);
             set => this.SetValue(BarProperty, value);
         }
 
         private static void OnBarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
 }";
@@ -941,9 +935,9 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(default(string)));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
     }
@@ -984,7 +978,7 @@ namespace N
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var value = (string)e.NewValue;
+            var value = (string?)e.NewValue;
         }
     }
 }";
