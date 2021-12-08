@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -75,7 +75,7 @@ namespace N
             EventManager.RegisterClassHandler(typeof(UIElement), ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(OnManipulationStarting));
         }
 
-        private static void OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        private static void OnManipulationStarting(object? sender, ManipulationStartingEventArgs e)
         {
             throw new System.NotImplementedException();
         }

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEventTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -23,7 +23,7 @@ namespace N
             this.AddHandler(SizeChangedEvent, new RoutedEventHandler(OnSizeChanged));
         }
 
-        private static void OnSizeChanged(object sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object? sender, RoutedEventArgs e)
         {
             throw new System.NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace N
             this.AddHandler(SizeChangedEvent, new RoutedEventHandler(OnSizeChanged));
         }
 
-        private static void OnSizeChanged(object sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object? sender, RoutedEventArgs e)
         {
             throw new System.NotImplementedException();
         }
@@ -74,7 +74,7 @@ namespace N
             this.AddHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(OnManipulationStarting));
         }
 
-        private static void OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        private static void OnManipulationStarting(object? sender, ManipulationStartingEventArgs e)
         {
             throw new System.NotImplementedException();
         }
@@ -100,7 +100,7 @@ namespace N
             this.RemoveHandler(ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(OnManipulationStarting));
         }
 
-        private static void OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        private static void OnManipulationStarting(object? sender, ManipulationStartingEventArgs e)
         {
             throw new System.NotImplementedException();
         }
