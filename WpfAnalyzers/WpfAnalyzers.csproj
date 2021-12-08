@@ -35,7 +35,7 @@
     <PackageReleaseNotes>
       4.0.0
       BREAKING: For VS2022+ now.
-      BUGFIX: AD0001 -> Could not load file or assembly
+      BUGFIX: AD0001 -&gt; Could not load file or assembly
       3.5.4
       BUFIX: IsRepresentationPreservingConversion when cast reference type.
       3.5.3
@@ -74,11 +74,11 @@
 
   <ItemGroup>
     <PackageReference Include="Gu.Analyzers" Version="2.0.0" PrivateAssets="all" />
-    <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.16.2" PrivateAssets="all"/>
+    <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.16.2" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.312" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
