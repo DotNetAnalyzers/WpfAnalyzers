@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -43,6 +43,8 @@ namespace N
         public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -137,6 +139,8 @@ namespace N
         public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;

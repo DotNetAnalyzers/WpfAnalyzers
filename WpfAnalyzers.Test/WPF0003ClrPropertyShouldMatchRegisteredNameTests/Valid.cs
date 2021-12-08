@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -146,7 +146,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public partial class FooControl
     {

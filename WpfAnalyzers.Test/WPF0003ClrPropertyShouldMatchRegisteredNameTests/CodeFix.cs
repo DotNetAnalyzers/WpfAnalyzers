@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -219,7 +219,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, part2 }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, part2 }, after, settings: Settings.Default.WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS8602")));
         }
 
         [Test]

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -14,9 +14,6 @@ namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     using System.Windows;
     using System.Windows.Controls;
 
@@ -89,7 +86,8 @@ namespace N
         public static void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
         {
             var code = @"
-#pragma warning disable WPF0016 // Default value is shared reference type.
+#nullable disable
+#pragma warning disable WPF0016, CS0105, CS8019 // Default value is shared reference type.
 namespace N
 {
     using System;
@@ -210,9 +208,6 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class FooControl : Control
     {
         private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
@@ -281,7 +276,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Windows;
 
     public static class Foo
@@ -393,7 +387,7 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl
+    public class FooControl : Control
     {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             ""Value"",
@@ -407,7 +401,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {

@@ -148,9 +148,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class Foo
     {
         public void Meh()
@@ -347,9 +344,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class FooControl : FooControl<int>
     {
         public void Meh()
@@ -497,9 +491,6 @@ namespace N
             var fooControlPart2 = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public partial class FooControl
     {
         public FooControl()
@@ -564,7 +555,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
     using System.Windows.Controls;
 
     public static class Foo
@@ -724,7 +714,6 @@ namespace N
         public static void ObservableCollectionOfIntWhenNullableIEnumerable()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Collections;
@@ -851,8 +840,6 @@ namespace N2
             var linkCode = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class Link : ButtonBase
@@ -885,7 +872,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
 
     public class LinkGroup : ButtonBase

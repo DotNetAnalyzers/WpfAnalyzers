@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -19,8 +19,6 @@ namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredN
                 var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 

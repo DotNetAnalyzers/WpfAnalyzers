@@ -85,7 +85,7 @@ namespace N
             }
         }
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static object? CoerceBar(DependencyObject d, object? baseValue)
         {
             if (baseValue is int i &&
                 i < 0)
@@ -230,7 +230,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
 
     public class FooControl : FrameworkElement
@@ -281,7 +280,7 @@ namespace N
             Meh(null);
         }
 
-        private static void Meh(DependencyObject o)
+        private static void Meh(DependencyObject? o)
         {
         }
     }

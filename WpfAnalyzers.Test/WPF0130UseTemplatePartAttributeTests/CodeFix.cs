@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -176,7 +176,7 @@ namespace N
 
     public class FooControl : Control
     {
-        private Border bar;
+        private Border? bar;
 
         public override void OnApplyTemplate()
         {
@@ -199,7 +199,7 @@ namespace N
     [TemplatePart(Name = ""PART_Bar"", Type = typeof(Border))]
     public class FooControl : Control
     {
-        private Border bar;
+        private Border? bar;
 
         public override void OnApplyTemplate()
         {

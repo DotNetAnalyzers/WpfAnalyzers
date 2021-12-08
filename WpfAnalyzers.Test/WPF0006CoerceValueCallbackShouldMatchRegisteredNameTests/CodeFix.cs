@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -17,8 +17,6 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
             var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 

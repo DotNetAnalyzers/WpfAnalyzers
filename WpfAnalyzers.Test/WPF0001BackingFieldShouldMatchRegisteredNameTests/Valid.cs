@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -111,7 +111,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public partial class FooControl
     {

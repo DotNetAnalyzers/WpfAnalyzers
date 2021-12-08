@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -16,6 +16,8 @@ namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
         public static void DependencyProperty(string typeName)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -158,6 +160,8 @@ namespace N
         public static void ReadOnlyDependencyProperty(string typeName)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;

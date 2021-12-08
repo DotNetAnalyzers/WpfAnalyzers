@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -13,9 +13,6 @@ namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameT
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     using System.Windows;
     using System.Windows.Controls;
 
@@ -73,7 +70,7 @@ namespace N
             // nop
         }
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static object? CoerceBar(DependencyObject d, object? baseValue)
         {
             if (baseValue is int i &&
                 i < 0)
@@ -114,7 +111,7 @@ namespace N
             set { this.SetValue(ValuePropertyKey, value); }
         }
 
-        private static object CoerceValue(DependencyObject d, object baseValue)
+        private static object? CoerceValue(DependencyObject d, object? baseValue)
         {
             if (baseValue is int i &&
                 i < 0)
@@ -149,7 +146,7 @@ namespace N
 
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static object? CoerceBar(DependencyObject d, object? baseValue)
         {
             if (baseValue is int i &&
                 i < 0)
@@ -192,7 +189,7 @@ namespace N
             // nop
         }
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static object? CoerceBar(DependencyObject d, object? baseValue)
         {
             if (baseValue is int i &&
                 i < 0)

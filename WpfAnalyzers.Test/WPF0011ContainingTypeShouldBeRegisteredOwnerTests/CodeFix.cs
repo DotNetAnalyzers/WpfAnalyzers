@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
+﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -17,7 +17,6 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
             var barControlCode = @"
 namespace N
 {
-    using System.Windows;
     using System.Windows.Controls;
 
     public class BarControl : Control

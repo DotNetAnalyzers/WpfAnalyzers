@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -15,8 +15,6 @@ namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
             var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
 
     public static class Foo
@@ -116,9 +114,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class FooControl : FooControl<int>
     {
         public void Meh()
@@ -197,9 +192,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     public partial class FooControl
     {
         public FooControl()
@@ -400,8 +392,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
 
     public static class Foo
@@ -438,7 +428,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
     using System.Windows.Controls;
 
     public static class Foo
@@ -461,7 +450,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
 

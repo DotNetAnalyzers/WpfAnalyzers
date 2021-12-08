@@ -234,7 +234,7 @@ namespace N
             typeof(Foo),
             new PropertyMetadata(default(int)));
 
-        public static object SomeName(FrameworkElement element, int value)
+        public static object? SomeName(FrameworkElement element, int value)
         {
             element.SetValue(BarProperty, value);
             return null;

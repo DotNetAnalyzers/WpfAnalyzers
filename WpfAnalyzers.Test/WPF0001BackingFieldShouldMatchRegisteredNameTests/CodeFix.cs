@@ -1,8 +1,10 @@
-namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0001BackingFieldShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+
     using NUnit.Framework;
 
     public static class CodeFix
@@ -152,7 +154,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, part2 }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { before, part2 }, after, settings: Settings.Default.WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS8602")));
         }
 
         [Test]

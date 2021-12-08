@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -18,7 +18,7 @@ namespace N
 {
     internal static class CommonValidation
     {
-        public static bool ValidateDoubleIsGreaterThanZero(object value)
+        public static bool ValidateDoubleIsGreaterThanZero(object? value)
         {
             if (value is double d)
             {
@@ -109,7 +109,7 @@ namespace N
             set => this.SetValue(BazProperty, value);
         }
 
-        private static bool ValidateDoubleIsGreaterThanZero(object value)
+        private static bool ValidateDoubleIsGreaterThanZero(object? value)
         {
             if (value is double d)
             {
@@ -129,9 +129,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
-
     using System.Windows;
     using System.Windows.Controls;
 
@@ -179,7 +176,7 @@ namespace N
             set { this.SetValue(ValueProperty, value); }
         }
 
-        private static bool ValidateValue(object value)
+        private static bool ValidateValue(object? value)
         {
             if (value is int i)
             {
@@ -225,7 +222,7 @@ namespace N
             return baseValue;
         }
 
-        private static bool ValidateValue(object value)
+        private static bool ValidateValue(object? value)
         {
             if (value is int i)
             {
@@ -265,7 +262,7 @@ namespace N
             return baseValue;
         }
 
-        private static bool ValidateBar(object value)
+        private static bool ValidateBar(object? value)
         {
             if (value is int i)
             {
@@ -313,7 +310,7 @@ namespace N
             return baseValue;
         }
 
-        private static bool ValidateBar(object value)
+        private static bool ValidateBar(object? value)
         {
             if (value is int i)
             {
@@ -336,7 +333,7 @@ namespace N
 {
     internal static class CommonValidation
     {
-        public static bool ValidateDoubleIsGreaterThanZero(object value)
+        public static bool ValidateDoubleIsGreaterThanZero(object? value)
         {
             if (value is double d)
             {

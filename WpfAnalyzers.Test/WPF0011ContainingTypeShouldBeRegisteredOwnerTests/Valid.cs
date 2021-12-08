@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
+﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -14,8 +14,6 @@ namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
             var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -45,8 +43,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -165,7 +161,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {
@@ -211,7 +206,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public static class Foo
     {
