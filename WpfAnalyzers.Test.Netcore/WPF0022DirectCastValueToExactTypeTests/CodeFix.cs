@@ -15,7 +15,6 @@
         public static void NullableStringControl()
         {
             var before = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -50,7 +49,6 @@ namespace N
 }";
 
             var after = @"
-#nullable enable
 namespace N
 {
     using System.Windows;

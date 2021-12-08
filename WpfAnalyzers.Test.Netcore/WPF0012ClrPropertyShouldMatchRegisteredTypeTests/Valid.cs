@@ -8,15 +8,13 @@
         private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
 
         [TestCase("default(string)")]
-        [TestCase("(object)null")]
+        [TestCase("null")]
+        [TestCase("(object?)null")]
         public static void DependencyProperty(string typeName)
         {
             var code = @"
-#nullable enable
 namespace N
 {
-    using System;
-    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -43,7 +41,6 @@ namespace N
         public static void DependencyPropertyWithThis()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -72,7 +69,6 @@ namespace N
         public static void NotNull()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -101,7 +97,6 @@ namespace N
         public static void NullableInt()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -130,7 +125,6 @@ namespace N
         public static void Integer()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;

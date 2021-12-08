@@ -12,7 +12,6 @@
         public static void Nullable()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -55,6 +54,7 @@ namespace N
         public static void NotNullable()
         {
             var code = @"
+#nullable disable
 namespace N
 {
     using System.Windows;

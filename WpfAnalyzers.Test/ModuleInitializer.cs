@@ -10,7 +10,7 @@
         {
             Settings.Default = Settings.Default.WithMetadataReferences(
                 MetadataReferences.Transitive(
-                    typeof(ModuleInitializer)));
+                    typeof(System.Windows.Window)));
         }
     }
 }

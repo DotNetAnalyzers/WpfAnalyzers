@@ -15,7 +15,6 @@
         public static void Message()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -46,7 +45,6 @@ namespace N
         public static void GetMethod(string expression)
         {
             var before = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -74,7 +72,6 @@ namespace N
 }".AssertReplace("default(string)", expression);
 
             var after = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -106,11 +103,10 @@ namespace N
 
         [TestCase("default(string)")]
         [TestCase("null")]
-        [TestCase("(object)null")]
+        [TestCase("(object?)null")]
         public static void SetMethod(string expression)
         {
             var before = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -138,7 +134,6 @@ namespace N
 }".AssertReplace("default(string)", expression);
 
             var after = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -172,7 +167,6 @@ namespace N
         public static void ImplicitPropertyMetadata()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;

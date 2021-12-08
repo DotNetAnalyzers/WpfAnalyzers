@@ -11,7 +11,6 @@
         public static void DependencyPropertyRegisterAttachedNotNull()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -51,7 +50,6 @@ namespace N
         public static void DependencyPropertyRegisterAttachedNull(string expression)
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;

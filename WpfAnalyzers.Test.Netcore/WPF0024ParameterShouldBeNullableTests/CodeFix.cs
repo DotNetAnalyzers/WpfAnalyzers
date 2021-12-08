@@ -16,7 +16,6 @@
         public static void NullableCoerce()
         {
             var before = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -52,7 +51,6 @@ namespace N
 }";
 
             var after = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -93,7 +91,6 @@ namespace N
         public static void NullableValidate()
         {
             var before = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
@@ -127,7 +124,6 @@ namespace N
 }";
 
             var after = @"
-#nullable enable
 namespace N
 {
     using System.Windows;

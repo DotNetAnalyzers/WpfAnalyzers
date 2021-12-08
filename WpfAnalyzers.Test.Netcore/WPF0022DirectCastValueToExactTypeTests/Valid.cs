@@ -11,7 +11,6 @@
         public static void NullableStringControl()
         {
             var code = @"
-#nullable enable
 namespace N
 {
     using System.Windows;
