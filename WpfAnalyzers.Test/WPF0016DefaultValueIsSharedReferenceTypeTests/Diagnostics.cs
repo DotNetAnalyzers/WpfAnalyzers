@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -14,6 +14,7 @@ namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
         public static void DependencyProperty(string typeName, string metadata)
         {
             var code = @"
+#pragma warning disable CS8019
 namespace N
 {
     using System;
@@ -52,7 +53,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
@@ -83,7 +83,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.Windows;
 
@@ -110,7 +109,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.Windows;
 

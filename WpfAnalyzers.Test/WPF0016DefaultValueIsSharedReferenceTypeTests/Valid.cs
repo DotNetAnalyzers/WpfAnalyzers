@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -82,15 +82,14 @@ namespace N
         public static void DependencyPropertyWithMetadata(string typeName, string metadata)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-
     using System.Windows;
     using System.Windows.Controls;
 
@@ -175,9 +174,6 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    using System.Windows;
-    using System.Windows.Controls;
-
     public class FooControl : Control
     {
         private static readonly DependencyPropertyKey ValuePropertyKey = DependencyProperty.RegisterReadOnly(
@@ -246,7 +242,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.Windows;
 
     public static class Foo
@@ -305,7 +300,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Media;
 
     public class FooControl : FrameworkElement
@@ -333,7 +327,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Media;
 

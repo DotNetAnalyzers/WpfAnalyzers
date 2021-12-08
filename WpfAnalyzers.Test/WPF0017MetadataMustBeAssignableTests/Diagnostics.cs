@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
+﻿namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -38,7 +38,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {
@@ -81,7 +80,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {

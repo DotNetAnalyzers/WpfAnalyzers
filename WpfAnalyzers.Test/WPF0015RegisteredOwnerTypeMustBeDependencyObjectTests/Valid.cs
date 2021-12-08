@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
+﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -85,7 +85,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public partial class FooControl
     {
@@ -182,7 +181,6 @@ namespace N
 namespace N
 {
     using System.Windows;
-    using System.Windows.Controls;
 
     public class BarControl : FooControl
     {
