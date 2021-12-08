@@ -239,8 +239,8 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((↓↓System.Collections.IEnumerable)e.OldValue, (string)e.NewValue)")]
-        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (↓↓System.Collections.IEnumerable)e.NewValue)")]
+        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((↓↓System.Collections.IEnumerable?)e.OldValue, (string?)e.NewValue)")]
+        [TestCase("(d, e) => ((FooControl)d).OnValueChanged((string?)e.OldValue, (↓↓System.Collections.IEnumerable?)e.NewValue)")]
         public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod(string lambda)
         {
             var code = @"
@@ -257,19 +257,19 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(
                 default(string),
-                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+                (d, e) => ((FooControl)d).OnValueChanged((string?)e.OldValue, (string?)e.NewValue)));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged(object oldValue, object newValue)
+        protected virtual void OnValueChanged(object? oldValue, object? newValue)
         {
         }
     }
-}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)", lambda);
+}".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((string?)e.OldValue, (string?)e.NewValue)", lambda);
 
             var after = @"
 namespace N
@@ -285,15 +285,15 @@ namespace N
             typeof(FooControl),
             new PropertyMetadata(
                 default(string),
-                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+                (d, e) => ((FooControl)d).OnValueChanged((string?)e.OldValue, (string?)e.NewValue)));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged(object oldValue, object newValue)
+        protected virtual void OnValueChanged(object? oldValue, object? newValue)
         {
         }
     }

@@ -103,19 +103,19 @@ namespace N
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
                 ↓OnValueChanged));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged(string oldValue, string newValue)
+        protected virtual void OnValueChanged(string? oldValue, string? newValue)
         {
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue);
+            ((FooControl)d).OnValueChanged((string?)e.OldValue, (string?)e.NewValue);
         }
     }
 }";
@@ -135,15 +135,15 @@ namespace N
             new FrameworkPropertyMetadata(
                 default(string),
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
-                (d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)));
+                (d, e) => ((FooControl)d).OnValueChanged((string?)e.OldValue, (string?)e.NewValue)));
 
-        public string Value
+        public string? Value
         {
-            get => (string)this.GetValue(ValueProperty);
+            get => (string?)this.GetValue(ValueProperty);
             set => this.SetValue(ValueProperty, value);
         }
 
-        protected virtual void OnValueChanged(string oldValue, string newValue)
+        protected virtual void OnValueChanged(string? oldValue, string? newValue)
         {
         }
     }
@@ -197,9 +197,9 @@ namespace N
         /// <returns>
         /// The URI that specifies the source of the element. The default is null.
         /// </returns>
-        public Uri Source
+        public Uri? Source
         {
-            get => (Uri)this.GetValue(SourceProperty);
+            get => (Uri?)this.GetValue(SourceProperty);
             set => this.SetValue(SourceProperty, value);
         }
 
@@ -208,7 +208,7 @@ namespace N
             ((MediaElementWrapper)d).OnSourceChanged(e.NewValue as Uri);
         }
 
-        private static object OnSourceCoerce(DependencyObject d, object baseValue)
+        private static object? OnSourceCoerce(DependencyObject d, object? baseValue)
         {
             var uri = baseValue as Uri;
             if (string.IsNullOrWhiteSpace(uri?.OriginalString))
@@ -250,13 +250,13 @@ namespace N
         /// <returns>
         /// The URI that specifies the source of the element. The default is null.
         /// </returns>
-        public Uri Source
+        public Uri? Source
         {
-            get => (Uri)this.GetValue(SourceProperty);
+            get => (Uri?)this.GetValue(SourceProperty);
             set => this.SetValue(SourceProperty, value);
         }
 
-        private static object OnSourceCoerce(DependencyObject d, object baseValue)
+        private static object? OnSourceCoerce(DependencyObject d, object? baseValue)
         {
             var uri = baseValue as Uri;
             if (string.IsNullOrWhiteSpace(uri?.OriginalString))

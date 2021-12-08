@@ -85,7 +85,7 @@ namespace N
             var newValue = (int)e.NewValue;
         }
 
-        private static object CoerceBar(DependencyObject d, object baseValue)
+        private static object? CoerceBar(DependencyObject d, object? baseValue)
         {
             var o = baseValue;
             return o;
@@ -100,6 +100,7 @@ namespace N
         public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
         {
             var code = @"
+#nullable disable
 namespace N
 {
     using System.Windows;
@@ -136,8 +137,8 @@ namespace N
 
         private static bool ValidateValue(object baseValue)
         {
-            var notNull = ((int)baseValue) != null;
-            return notNull;
+            var notOne = ((int)baseValue) != 1;
+            return notOne;
         }
     }
 }";
@@ -209,6 +210,8 @@ namespace N
             get => (int)this.GetValue(NumberProperty);
             set => this.SetValue(NumberProperty, value);
         }
+
+        public int N => this.n;
 
         /// <summary>This method is invoked when the <see cref=""NumberProperty""/> changes.</summary>
         protected virtual void OnNumberChanged()

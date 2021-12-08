@@ -1,7 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static class Valid
