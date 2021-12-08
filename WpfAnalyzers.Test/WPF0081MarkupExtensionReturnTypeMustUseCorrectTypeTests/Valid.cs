@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -57,6 +57,7 @@ namespace N
         public static void EnumerableExtension(string attribute)
         {
             var code = @"
+#pragma warning disable CS8019
 namespace N
 {
     using System;

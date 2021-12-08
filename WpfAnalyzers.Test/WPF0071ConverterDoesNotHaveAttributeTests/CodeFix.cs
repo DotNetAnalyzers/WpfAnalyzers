@@ -355,6 +355,7 @@ namespace N
         public static void Issue188()
         {
             var before = @"
+#nullable disable
 namespace N
 {
     using System;
@@ -406,6 +407,7 @@ namespace N
 }";
 
             var after = @"
+#nullable disable
 namespace N
 {
     using System;
@@ -463,6 +465,7 @@ namespace N
         public static void Issue189()
         {
             var before = @"
+#nullable disable
 namespace N
 {
     using System;
@@ -509,6 +512,7 @@ namespace N
 }";
 
             var after = @"
+#nullable disable
 namespace N
 {
     using System;

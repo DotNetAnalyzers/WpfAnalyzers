@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -182,6 +182,7 @@ namespace N
         public static void Issue249()
         {
             var code = @"
+#nullable disable
 namespace WpfCopyDeploy
 {
     using System;

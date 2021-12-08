@@ -253,6 +253,7 @@ namespace N
         public static void IfIsPatternIssue249()
         {
             var code = @"
+#nullable disable
 namespace WpfCopyDeploy
 {
     using System;

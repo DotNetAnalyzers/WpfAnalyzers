@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
+﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -185,7 +185,6 @@ namespace N
 namespace N
 {
     using System;
-    using System.Collections;
     using System.Globalization;
     using System.Windows.Data;
 
@@ -197,7 +196,38 @@ namespace N
             return value;
         }
 
-         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    partial class C
+    {
+    }
+}";
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void WhenHasAttributePartialNullable()
+        {
+            var code = @"
+namespace N
+{
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+
+    [ValueConversion(typeof(object), typeof(object))]
+    partial class C : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return value;
         }
@@ -236,7 +266,7 @@ namespace WpfCopyDeploy
             return string.Empty;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string text)
             {

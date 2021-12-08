@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -362,7 +362,6 @@ namespace N
 namespace N
 {
     using System;
-    using System.Collections;
     using System.Globalization;
     using System.Windows.Data;
 
@@ -473,7 +472,7 @@ namespace WpfCopyDeploy
             return string.Empty;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string text)
             {

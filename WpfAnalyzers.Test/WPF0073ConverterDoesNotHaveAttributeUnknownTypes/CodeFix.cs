@@ -15,6 +15,7 @@
         public static void AddAttributeDirectCast()
         {
             var before = @"
+#nullable disable
 namespace Gu.Wpf.PropertyGrid
 {
     using System;
@@ -122,6 +123,7 @@ namespace Gu.Wpf.PropertyGrid
 }";
 
             var after = @"
+#nullable disable
 namespace Gu.Wpf.PropertyGrid
 {
     using System;
@@ -228,7 +230,7 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings:Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
         }
     }
 }

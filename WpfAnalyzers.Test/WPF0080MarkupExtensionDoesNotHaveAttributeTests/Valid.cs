@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -71,6 +71,7 @@ namespace N
         public static void WhenIsGeneric()
         {
             var code = @"
+#nullable disable
 namespace N
 {
     using System;

@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
+﻿namespace WpfAnalyzers.Test.WPF0082ConstructorArgumentTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -50,7 +50,7 @@ namespace N
     [MarkupExtensionReturnType(typeof(string))]
     public class FooExtension : MarkupExtension
     {
-        private string text;
+        private string? text;
 
         public FooExtension(string text)
         {
@@ -58,14 +58,14 @@ namespace N
         }
 
         [ConstructorArgument(""text"")]
-        public string Text
+        public string? Text
         {
             get { return this.text; }
             set { this.text = value; }
         }
 
         /// <inheritdoc />
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public override object? ProvideValue(IServiceProvider serviceProvider)
         {
             return this.Text;
         }
@@ -122,10 +122,10 @@ namespace N
     [MarkupExtensionReturnType(typeof(string))]
     public class FooExtension : MarkupExtension
     {
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         /// <inheritdoc />
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public override object? ProvideValue(IServiceProvider serviceProvider)
         {
             return Text;
         }
@@ -188,6 +188,7 @@ namespace N
         public static void Issue185WithEnsure()
         {
             var ensureCode = @"
+#nullable disable
 namespace N
 {
     using System;
@@ -235,7 +236,7 @@ namespace N
     using System.Windows.Markup;
 
     /// <summary>
-    /// Markupextension for getting Enum.GetValues(this.Type)
+    /// Markup extension for getting Enum.GetValues(this.Type)
     /// </summary>
     [MarkupExtensionReturnType(typeof(Array))]
     public class EnumValuesForExtension : MarkupExtension

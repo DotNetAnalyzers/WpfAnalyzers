@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -50,10 +50,10 @@ namespace N
     [MarkupExtensionReturnType(typeof(string))]
     public class FooExtension : MarkupExtension
     {
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         /// <inheritdoc />
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public override object? ProvideValue(IServiceProvider serviceProvider)
         {
             return Text;
         }
