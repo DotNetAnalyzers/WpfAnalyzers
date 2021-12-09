@@ -97,24 +97,24 @@
                                                 FieldSymbolComparer.Equal(assigned, field) &&
                                                 semanticModel.GetType(assignment.Right, cancellationToken) is { } rightType)
                                             {
-                                                returnTypes.Add(rightType);
+                                                _ = returnTypes.Add(rightType);
                                             }
                                         }
                                     }
                                     else
                                     {
-                                        returnTypes.Add(field.Type);
+                                        _ = returnTypes.Add(field.Type);
                                     }
 
                                     return;
                                 case IPropertySymbol property:
-                                    returnTypes.Add(property.Type);
+                                    _ = returnTypes.Add(property.Type);
                                     return;
                             }
                         }
                         else if (type is { })
                         {
-                            returnTypes.Add(type);
+                            _ = returnTypes.Add(type);
                         }
 
                         break;

@@ -1,8 +1,10 @@
 ﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
 {
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+
     using NUnit.Framework;
 
     public static class CodeFix
@@ -230,7 +232,7 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings:Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
         }
     }
 }
