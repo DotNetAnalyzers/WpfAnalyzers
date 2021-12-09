@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CA1305 // Specify IFormatProvider
+#pragma warning disable CA1307 // Specify StringComparison for clarity
 namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     using System;

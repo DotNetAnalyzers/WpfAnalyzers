@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Converters
 {
     using System;
@@ -12,7 +12,7 @@ namespace ValidCode.Converters
     [ValueConversion(typeof(object), typeof(object))]
     public class ValueConverterGroup : IValueConverter
     {
-        public List<IValueConverter> Converters { get; } = new List<IValueConverter>();
+        public List<IValueConverter> Converters { get; } = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => this.Converters

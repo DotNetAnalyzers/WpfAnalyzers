@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Converters
 {
     using System;
@@ -8,8 +8,8 @@ namespace ValidCode.Converters
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BoolToVisibilityConverter : IValueConverter
     {
-        public static readonly BoolToVisibilityConverter VisibleWhenTrue = new BoolToVisibilityConverter(Visibility.Visible, Visibility.Collapsed);
-        public static readonly BoolToVisibilityConverter VisibleWhenFalse = new BoolToVisibilityConverter(Visibility.Collapsed, Visibility.Visible);
+        public static readonly BoolToVisibilityConverter VisibleWhenTrue = new(Visibility.Visible, Visibility.Collapsed);
+        public static readonly BoolToVisibilityConverter VisibleWhenFalse = new(Visibility.Collapsed, Visibility.Visible);
 
         private readonly object whenTrue;
         private readonly object whenFalse;

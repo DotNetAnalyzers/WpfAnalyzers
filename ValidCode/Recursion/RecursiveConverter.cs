@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Recursion
 {
     using System;
@@ -9,7 +9,7 @@ namespace ValidCode.Recursion
     public sealed class RecursiveConverter : IValueConverter
     {
         /// <summary> Gets the default instance </summary>
-        public static readonly RecursiveConverter Default = new RecursiveConverter();
+        public static readonly RecursiveConverter Default = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

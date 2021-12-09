@@ -8,7 +8,7 @@
     [ValueConversion(typeof(DirectoryInfo), typeof(string))]
     public class DirectoryInfoStringConverter : IValueConverter
     {
-        public static readonly DirectoryInfoStringConverter Default = new DirectoryInfoStringConverter();
+        public static readonly DirectoryInfoStringConverter Default = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

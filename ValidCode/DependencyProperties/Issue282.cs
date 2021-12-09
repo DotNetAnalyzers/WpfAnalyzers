@@ -6,7 +6,7 @@
 
     public class Issue282 : Shape
     {
-        private readonly PathGeometry pathGeometry = new PathGeometry();
+        private readonly PathGeometry pathGeometry = new();
 
         /// <summary>Identifies the <see cref="IsTrue"/> dependency property.</summary>
         public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(

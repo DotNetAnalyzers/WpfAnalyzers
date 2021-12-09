@@ -1,4 +1,4 @@
-namespace ValidCode.Converters
+﻿namespace ValidCode.Converters
 {
     using System;
     using System.Globalization;
@@ -8,7 +8,7 @@ namespace ValidCode.Converters
     sealed partial class PartialConverter : IValueConverter
     {
         /// <summary> Gets the default instance </summary>
-        static readonly PartialConverter Default = new PartialConverter();
+        static readonly PartialConverter Default = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
