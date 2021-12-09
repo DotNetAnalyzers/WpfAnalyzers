@@ -28,7 +28,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type. Expected: N.FooExtension"), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type Expected: N.FooExtension"), code);
         }
 
         [Test]

@@ -58,14 +58,14 @@ Roslyn analyzers for WPF.
 | [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types
 | [WPF0073](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md)| Add ValueConversion attribute (unknown types)
 | [WPF0074](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md)| Use containing type
-| [WPF0080](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md)| Add MarkupExtensionReturnType attribute.
-| [WPF0081](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md)| MarkupExtensionReturnType must use correct return type.
-| [WPF0082](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md)| [ConstructorArgument] must match.
-| [WPF0083](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md)| Add [ConstructorArgument].
-| [WPF0084](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0084.md)| Target of [XamlSetMarkupExtension] should exist and have correct signature.
-| [WPF0085](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md)| Target of [XamlSetTypeConverter] should exist and have correct signature.
-| [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName.
-| [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName.
+| [WPF0080](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md)| Add MarkupExtensionReturnType attribute
+| [WPF0081](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md)| MarkupExtensionReturnType must use correct return type
+| [WPF0082](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md)| [ConstructorArgument] must match
+| [WPF0083](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0083.md)| Add [ConstructorArgument]
+| [WPF0084](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0084.md)| Target of [XamlSetMarkupExtension] should exist and have correct signature
+| [WPF0085](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md)| Target of [XamlSetTypeConverter] should exist and have correct signature
+| [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName
+| [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName
 | [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name.
 | [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner
 | [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name.

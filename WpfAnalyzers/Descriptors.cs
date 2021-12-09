@@ -409,12 +409,12 @@ namespace WpfAnalyzers
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use containing type");
+            description: "Use containing type.");
 
         internal static readonly DiagnosticDescriptor WPF0080MarkupExtensionDoesNotHaveAttribute = Create(
             id: "WPF0080",
-            title: "Add MarkupExtensionReturnType attribute.",
-            messageFormat: "Add MarkupExtensionReturnType attribute.",
+            title: "Add MarkupExtensionReturnType attribute",
+            messageFormat: "Add MarkupExtensionReturnType attribute",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -422,8 +422,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0081MarkupExtensionReturnTypeMustUseCorrectType = Create(
             id: "WPF0081",
-            title: "MarkupExtensionReturnType must use correct return type.",
-            messageFormat: "MarkupExtensionReturnType must use correct return type. Expected: {0}",
+            title: "MarkupExtensionReturnType must use correct return type",
+            messageFormat: "MarkupExtensionReturnType must use correct return type Expected: {0}",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -431,8 +431,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0082ConstructorArgument = Create(
             id: "WPF0082",
-            title: "[ConstructorArgument] must match.",
-            messageFormat: "[ConstructorArgument] must match. Expected: {0}",
+            title: "[ConstructorArgument] must match",
+            messageFormat: "[ConstructorArgument] must match Expected: {0}",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -440,7 +440,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0083UseConstructorArgumentAttribute = Create(
             id: "WPF0083",
-            title: "Add [ConstructorArgument].",
+            title: "Add [ConstructorArgument]",
             messageFormat: "Add [ConstructorArgument(\"{0}\"]",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Info,
@@ -449,8 +449,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0084XamlSetMarkupExtensionAttributeTarget = Create(
             id: "WPF0084",
-            title: "Target of [XamlSetMarkupExtension] should exist and have correct signature.",
-            messageFormat: "Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs).",
+            title: "Target of [XamlSetMarkupExtension] should exist and have correct signature",
+            messageFormat: "Expected a method with signature void ReceiveMarkupExtension(object, XamlSetMarkupExtensionEventArgs)",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -458,8 +458,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0085XamlSetTypeConverterTarget = Create(
             id: "WPF0085",
-            title: "Target of [XamlSetTypeConverter] should exist and have correct signature.",
-            messageFormat: "Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs).",
+            title: "Target of [XamlSetTypeConverter] should exist and have correct signature",
+            messageFormat: "Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs)",
             category: AnalyzerCategory.MarkupExtension,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -467,8 +467,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent = Create(
             id: "WPF0090",
-            title: "Name the invoked method OnEventName.",
-            messageFormat: "Rename to {0} to match the event.",
+            title: "Name the invoked method OnEventName",
+            messageFormat: "Rename to {0} to match the event",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -476,8 +476,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent = Create(
             id: "WPF0091",
-            title: "Name the invoked method OnEventName.",
-            messageFormat: "Rename to {0} to match the event.",
+            title: "Name the invoked method OnEventName",
+            messageFormat: "Rename to {0} to match the event",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,

@@ -27,7 +27,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add MarkupExtensionReturnType attribute."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add MarkupExtensionReturnType attribute"), code);
         }
 
         [Test]

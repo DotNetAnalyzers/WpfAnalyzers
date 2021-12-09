@@ -37,7 +37,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[ConstructorArgument] must match. Expected: text"), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[ConstructorArgument] must match Expected: text"), code);
         }
 
         [Test]
