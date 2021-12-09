@@ -485,17 +485,17 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0100BackingFieldShouldMatchRegisteredName = Create(
             id: "WPF0100",
-            title: "Backing field for a RoutedEvent should match registered name.",
+            title: "Backing field for a RoutedEvent should match registered name",
             messageFormat: "Field '{0}' that is backing field for the RoutedEvent registered as '{1}' must be named '{1}Event'",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "A routed event's backing field should be named with the name it is registered with suffixed by 'Event'");
+            description: "A routed event's backing field should be named with the name it is registered with suffixed by 'Event'.");
 
         internal static readonly DiagnosticDescriptor WPF0101RegisterContainingTypeAsOwner = Create(
             id: "WPF0101",
             title: "Containing type should be used as registered owner",
-            messageFormat: "Register containing type: '{0}' as owner.",
+            messageFormat: "Register containing type: '{0}' as owner",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -503,8 +503,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0102EventDeclarationName = Create(
             id: "WPF0102",
-            title: "Name of the event should match registered name.",
-            messageFormat: "Rename to: '{0}'.",
+            title: "Name of the event should match registered name",
+            messageFormat: "Rename to: '{0}'",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -512,8 +512,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0103EventDeclarationAddRemove = Create(
             id: "WPF0103",
-            title: "Use same event in add and remove.",
-            messageFormat: "Add uses: '{0}', remove uses: '{1}'.",
+            title: "Use same event in add and remove",
+            messageFormat: "Add uses: '{0}', remove uses: '{1}'",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -521,8 +521,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0104EventDeclarationAddHandlerInAdd = Create(
             id: "WPF0104",
-            title: "Call AddHandler in add.",
-            messageFormat: "Call AddHandler in add.",
+            title: "Call AddHandler in add",
+            messageFormat: "Call AddHandler in add",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -530,8 +530,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0105EventDeclarationRemoveHandlerInRemove = Create(
             id: "WPF0105",
-            title: "Call RemoveHandler in remove.",
-            messageFormat: "Call RemoveHandler in remove.",
+            title: "Call RemoveHandler in remove",
+            messageFormat: "Call RemoveHandler in remove",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -539,8 +539,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0106EventDeclarationUseRegisteredHandlerType = Create(
             id: "WPF0106",
-            title: "Use the registered handler type.",
-            messageFormat: "Use the registered handler type {0}.",
+            title: "Use the registered handler type",
+            messageFormat: "Use the registered handler type {0}",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -548,8 +548,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0107BackingMemberShouldBeStaticReadonly = Create(
             id: "WPF0107",
-            title: "Backing member for a RoutedEvent should be static and readonly.",
-            messageFormat: "Backing member for a RoutedEvent and should be static and readonly.",
+            title: "Backing member for a RoutedEvent should be static and readonly",
+            messageFormat: "Backing member for a RoutedEvent and should be static and readonly",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -557,8 +557,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0108DocumentRoutedEventBackingMember = Create(
             id: "WPF0108",
-            title: "Backing member for RoutedEvent should have standard documentation text.",
-            messageFormat: "Backing member for RoutedEvent should have standard documentation text.",
+            title: "Backing member for RoutedEvent should have standard documentation text",
+            messageFormat: "Backing member for RoutedEvent should have standard documentation text",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -566,8 +566,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0120RegisterContainingMemberAsNameForRoutedCommand = Create(
             id: "WPF0120",
-            title: "Register containing member name as name for routed command.",
-            messageFormat: "Register {0} as name.",
+            title: "Register containing member name as name for routed command",
+            messageFormat: "Register {0} as name",
             category: AnalyzerCategory.RoutedCommand,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -575,8 +575,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0121RegisterContainingTypeAsOwnerForRoutedCommand = Create(
             id: "WPF0121",
-            title: "Register containing type as owner for routed command.",
-            messageFormat: "Register {0} as owner.",
+            title: "Register containing type as owner for routed command",
+            messageFormat: "Register {0} as owner",
             category: AnalyzerCategory.RoutedCommand,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,

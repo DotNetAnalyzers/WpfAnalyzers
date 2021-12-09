@@ -36,7 +36,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly"), code);
         }
 
         [Test]

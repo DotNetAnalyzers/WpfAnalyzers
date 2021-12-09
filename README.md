@@ -66,17 +66,17 @@ Roslyn analyzers for WPF.
 | [WPF0085](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md)| Target of [XamlSetTypeConverter] should exist and have correct signature
 | [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName
 | [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName
-| [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name.
+| [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name
 | [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner
-| [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name.
-| [WPF0103](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md)| Use same event in add and remove.
-| [WPF0104](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md)| Call AddHandler in add.
-| [WPF0105](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md)| Call RemoveHandler in remove.
-| [WPF0106](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md)| Use the registered handler type.
-| [WPF0107](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md)| Backing member for a RoutedEvent should be static and readonly.
-| [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent should have standard documentation text.
-| [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command.
-| [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command.
+| [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name
+| [WPF0103](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md)| Use same event in add and remove
+| [WPF0104](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md)| Call AddHandler in add
+| [WPF0105](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0105.md)| Call RemoveHandler in remove
+| [WPF0106](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0106.md)| Use the registered handler type
+| [WPF0107](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0107.md)| Backing member for a RoutedEvent should be static and readonly
+| [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent should have standard documentation text
+| [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command
+| [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command
 | [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command.
 | [WPF0123](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md)| Backing field for a RoutedCommand should be static and readonly.
 | [WPF0130](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md)| Add [TemplatePart] to the type.
