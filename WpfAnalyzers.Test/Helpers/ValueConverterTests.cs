@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test
+﻿namespace WpfAnalyzers.Test
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -36,7 +36,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
             Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
@@ -79,7 +79,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
             Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
@@ -139,7 +139,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
             Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
@@ -200,7 +200,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
             Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));

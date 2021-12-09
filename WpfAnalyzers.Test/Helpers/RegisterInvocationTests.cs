@@ -52,7 +52,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("AddOwner");
             Assert.AreEqual("AddOwner", DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
@@ -94,7 +94,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("OverrideMetadata");
             Assert.AreEqual("OverrideMetadata", DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);

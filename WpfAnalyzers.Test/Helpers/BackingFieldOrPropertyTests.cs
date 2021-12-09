@@ -34,7 +34,7 @@ namespace N
     }
 }".AssertReplace("nameof(Bar)", argument);
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
@@ -69,7 +69,7 @@ namespace N
     }
 }".AssertReplace("nameof(Bar)", argument);
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
             var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
@@ -99,7 +99,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
@@ -129,7 +129,7 @@ namespace N
     }
 }";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
             var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);

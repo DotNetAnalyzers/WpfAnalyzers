@@ -34,7 +34,7 @@ namespace N
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Register");
                 Assert.AreEqual("Register", DependencyProperty.Register.MatchRegister(invocation, semanticModel, CancellationToken.None)?.Target.Name);
@@ -72,7 +72,7 @@ namespace N
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterReadOnly");
                 Assert.AreEqual("RegisterReadOnly", DependencyProperty.Register.MatchRegisterReadOnly(invocation, semanticModel, CancellationToken.None)?.Target.Name);
@@ -111,7 +111,7 @@ namespace N
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterAttached");
                 Assert.AreEqual("RegisterAttached", DependencyProperty.Register.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None)?.Target.Name);
@@ -147,7 +147,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterAttached");
                 Assert.AreEqual("RegisterAttached", DependencyProperty.Register.MatchRegisterAttached(invocation, semanticModel, CancellationToken.None)?.Target.Name);
@@ -182,7 +182,7 @@ namespace N
     }
 }";
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RegisterAttachedReadOnly");
                 Assert.AreEqual("RegisterAttachedReadOnly", DependencyProperty.Register.MatchRegisterAttachedReadOnly(invocation, semanticModel, CancellationToken.None)?.Target.Name);
