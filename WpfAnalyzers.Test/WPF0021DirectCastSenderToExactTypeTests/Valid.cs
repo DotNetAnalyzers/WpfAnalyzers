@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
+        private static readonly CallbackAnalyzer Analyzer = new();
 
         [Test]
         public static void DependencyPropertyRegisterNoMetadata()

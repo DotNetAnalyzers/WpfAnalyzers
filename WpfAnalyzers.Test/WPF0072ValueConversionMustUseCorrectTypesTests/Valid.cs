@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new ValueConverterAnalyzer();
+        private static readonly ValueConverterAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenHasAttribute()

@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
+﻿namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
+        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
 
         [Test]
         public static void DependencyProperty()

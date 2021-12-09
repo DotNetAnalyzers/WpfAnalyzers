@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
+﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
+        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
 
         [Test]
         public static void WhenXmlnsDefinitionMatches()

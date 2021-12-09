@@ -10,7 +10,7 @@
 
     internal sealed class InvocationWalker : PooledWalker<InvocationWalker>
     {
-        private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
+        private readonly List<IdentifierNameSyntax> identifierNames = new();
         private IMethodSymbol method = null!;
         private SemanticModel semanticModel = null!;
         private CancellationToken cancellationToken;

@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests
+﻿namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly SetValueAnalyzer Analyzer = new();
 
         [Test]
         public static void IgnoreSetDataContext()

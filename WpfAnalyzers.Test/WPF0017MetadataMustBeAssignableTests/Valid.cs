@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly OverrideMetadataAnalyzer Analyzer = new OverrideMetadataAnalyzer();
+        private static readonly OverrideMetadataAnalyzer Analyzer = new();
 
         [TestCase("new PropertyMetadata(1)")]
         [TestCase("new FrameworkPropertyMetadata(default(int))")]

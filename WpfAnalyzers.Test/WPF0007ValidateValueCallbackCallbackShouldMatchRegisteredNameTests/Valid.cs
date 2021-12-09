@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly RegistrationAnalyzer Analyzer = new RegistrationAnalyzer();
+        private static readonly RegistrationAnalyzer Analyzer = new();
 
         [TestCase("CommonValidation.ValidateDoubleIsGreaterThanZero")]
         [TestCase("o => CommonValidation.ValidateDoubleIsGreaterThanZero(o)")]

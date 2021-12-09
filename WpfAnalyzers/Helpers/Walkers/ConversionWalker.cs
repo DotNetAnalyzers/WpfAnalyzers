@@ -10,11 +10,11 @@
 
     internal sealed class ConversionWalker : PooledWalker<ConversionWalker>
     {
-        private readonly List<CastExpressionSyntax> casts = new List<CastExpressionSyntax>();
-        private readonly List<BinaryExpressionSyntax> asCasts = new List<BinaryExpressionSyntax>();
-        private readonly List<BinaryExpressionSyntax> isChecks = new List<BinaryExpressionSyntax>();
-        private readonly List<IsPatternExpressionSyntax> isPatterns = new List<IsPatternExpressionSyntax>();
-        private readonly List<CasePatternSwitchLabelSyntax> caseLabels = new List<CasePatternSwitchLabelSyntax>();
+        private readonly List<CastExpressionSyntax> casts = new();
+        private readonly List<BinaryExpressionSyntax> asCasts = new();
+        private readonly List<BinaryExpressionSyntax> isChecks = new();
+        private readonly List<IsPatternExpressionSyntax> isPatterns = new();
+        private readonly List<CasePatternSwitchLabelSyntax> caseLabels = new();
 
         private ConversionWalker()
         {

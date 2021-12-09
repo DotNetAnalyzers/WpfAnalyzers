@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
+        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
 
         [Test]
         public static void EventManagerRegisterRoutedEvent()

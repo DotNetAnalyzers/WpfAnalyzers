@@ -13,8 +13,8 @@
             this.Body = body;
         }
 
-        internal static MethodOrAccessor Create(AccessorDeclarationSyntax accessor) => new MethodOrAccessor(accessor.ExpressionBody, accessor.Body);
+        internal static MethodOrAccessor Create(AccessorDeclarationSyntax accessor) => new(accessor.ExpressionBody, accessor.Body);
 
-        internal static MethodOrAccessor Create(MethodDeclarationSyntax accessor) => new MethodOrAccessor(accessor.ExpressionBody, accessor.Body);
+        internal static MethodOrAccessor Create(MethodDeclarationSyntax accessor) => new(accessor.ExpressionBody, accessor.Body);
     }
 }

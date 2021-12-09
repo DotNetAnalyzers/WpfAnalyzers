@@ -6,7 +6,7 @@
 
     public static class Valid
     {
-        private static readonly CallbackAnalyzer Analyzer = new CallbackAnalyzer();
+        private static readonly CallbackAnalyzer Analyzer = new();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0020CastValueToCorrectType;
 
         [Test]

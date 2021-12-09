@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new WPF0015RegisteredOwnerTypeMustBeDependencyObject();
+        private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new();
 
         [Test]
         public static void DependencyProperty()

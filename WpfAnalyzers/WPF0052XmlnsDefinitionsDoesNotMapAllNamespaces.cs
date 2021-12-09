@@ -48,8 +48,8 @@
         {
             private static readonly IReadOnlyList<string> Ignored = new[] { "Annotations", "Properties", "XamlGeneratedNamespace" };
 
-            private readonly HashSet<NameSyntax> namespaces = new HashSet<NameSyntax>(NameSyntaxComparer.Default);
-            private readonly List<string> mappedNamespaces = new List<string>();
+            private readonly HashSet<NameSyntax> namespaces = new(NameSyntaxComparer.Default);
+            private readonly List<string> mappedNamespaces = new();
 
             private SemanticModel semanticModel = null!;
             private CancellationToken cancellationToken;
@@ -138,7 +138,7 @@
 
             private sealed class NameSyntaxComparer : IEqualityComparer<NameSyntax>
             {
-                internal static readonly NameSyntaxComparer Default = new NameSyntaxComparer();
+                internal static readonly NameSyntaxComparer Default = new();
 
                 private NameSyntaxComparer()
                 {

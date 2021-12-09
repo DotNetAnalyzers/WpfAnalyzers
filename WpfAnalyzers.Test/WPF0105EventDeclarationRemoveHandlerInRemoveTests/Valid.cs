@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
+﻿namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
+        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
 
         [TestCase("\"ValueChanged\"")]
         [TestCase("nameof(ValueChanged)")]

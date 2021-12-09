@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
 
         [Test]
         public static void DependencyPropertyRegisterReadOnly()

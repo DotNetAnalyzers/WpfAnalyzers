@@ -9,7 +9,7 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class Sa1202Suppressor : DiagnosticSuppressor
     {
-        private static readonly SuppressionDescriptor Descriptor = new SuppressionDescriptor(nameof(Sa1202Suppressor), "SA1202", "Does not handle attached properties correctly.");
+        private static readonly SuppressionDescriptor Descriptor = new(nameof(Sa1202Suppressor), "SA1202", "Does not handle attached properties correctly.");
 
         public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; } = ImmutableArray.Create(
             Descriptor);

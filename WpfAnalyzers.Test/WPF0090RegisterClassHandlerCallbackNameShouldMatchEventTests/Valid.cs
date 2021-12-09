@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly RoutedEventCallbackAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
+        private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenCorrectNameSizeChangedEvent()

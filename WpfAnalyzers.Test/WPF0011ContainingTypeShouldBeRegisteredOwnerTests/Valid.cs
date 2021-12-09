@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
+        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
 
         [TestCase("FooControl")]
         [TestCase("FooControl<T>")]

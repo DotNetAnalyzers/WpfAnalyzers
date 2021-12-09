@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new PropertyMetadataAnalyzer();
+        private static readonly PropertyMetadataAnalyzer Analyzer = new();
 
         [Test]
         public static void DependencyPropertyNoMetadata()

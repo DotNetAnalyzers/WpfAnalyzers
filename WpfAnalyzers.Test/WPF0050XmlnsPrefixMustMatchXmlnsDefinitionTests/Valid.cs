@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
+﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new WPF0050XmlnsPrefixMustMatchXmlnsDefinition();
+        private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new();
 
         [Test]
         public static void WhenXmlnsDefinitionMatches()

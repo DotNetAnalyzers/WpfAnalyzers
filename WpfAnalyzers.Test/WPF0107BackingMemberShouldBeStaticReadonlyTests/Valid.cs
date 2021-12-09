@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -6,7 +6,7 @@ namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
 
     public static class Valid
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new RoutedEventBackingFieldOrPropertyAnalyzer();
+        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0107BackingMemberShouldBeStaticReadonly;
 
         [TestCase("\"ValueChanged\"")]

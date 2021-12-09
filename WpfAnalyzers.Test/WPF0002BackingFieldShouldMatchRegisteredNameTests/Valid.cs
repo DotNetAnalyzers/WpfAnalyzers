@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
 
         [TestCase("\"Bar\"")]
         [TestCase("nameof(Bar)")]

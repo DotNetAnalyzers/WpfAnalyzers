@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
+        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
         [Test]
         public static void DependencyProperty()

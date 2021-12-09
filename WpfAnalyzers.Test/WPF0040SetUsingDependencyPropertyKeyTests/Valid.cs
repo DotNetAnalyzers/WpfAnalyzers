@@ -1,11 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly SetValueAnalyzer Analyzer = new();
 
         [TestCase("SetValue")]
         [TestCase("this.SetValue")]

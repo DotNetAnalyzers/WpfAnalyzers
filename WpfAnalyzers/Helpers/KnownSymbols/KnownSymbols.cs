@@ -1,20 +1,20 @@
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers
 {
     using Gu.Roslyn.AnalyzerExtensions;
 
     internal static class KnownSymbols
     {
-        internal static readonly ObjectType Object = new ObjectType();
+        internal static readonly ObjectType Object = new();
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
         internal static readonly QualifiedType IEnumerable = Create("System.Collections.IEnumerable");
         internal static readonly QualifiedType IServiceProvider = Create("System.IServiceProvider");
 
-        internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
-        internal static readonly FrameworkElementType FrameworkElement = new FrameworkElementType();
-        internal static readonly EventManagerType EventManager = new EventManagerType();
-        internal static readonly DependencyPropertyType DependencyProperty = new DependencyPropertyType();
-        internal static readonly DependencyPropertyKeyType DependencyPropertyKey = new DependencyPropertyKeyType();
+        internal static readonly DependencyObjectType DependencyObject = new();
+        internal static readonly FrameworkElementType FrameworkElement = new();
+        internal static readonly EventManagerType EventManager = new();
+        internal static readonly DependencyPropertyType DependencyProperty = new();
+        internal static readonly DependencyPropertyKeyType DependencyPropertyKey = new();
         internal static readonly QualifiedType Freezable = Create("System.Windows.Freezable");
         internal static readonly QualifiedType UIPropertyMetadata = Create("System.Windows.UIPropertyMetadata");
         internal static readonly QualifiedType PropertyMetadata = Create("System.Windows.PropertyMetadata");
@@ -45,13 +45,13 @@ namespace WpfAnalyzers
         internal static readonly QualifiedType ConstructorArgumentAttribute = Create("System.Windows.Markup.ConstructorArgumentAttribute");
         internal static readonly QualifiedType ContentPropertyAttribute = Create("System.Windows.Markup.ContentPropertyAttribute");
         internal static readonly QualifiedType DependsOnAttribute = Create("System.Windows.Markup.DependsOnAttribute");
-        internal static readonly QualifiedType XmlnsPrefixAttribute = new QualifiedType("System.Windows.Markup.XmlnsPrefixAttribute");
+        internal static readonly QualifiedType XmlnsPrefixAttribute = new("System.Windows.Markup.XmlnsPrefixAttribute");
 
         internal static readonly QualifiedType IValueConverter = Create("System.Windows.Data.IValueConverter");
         internal static readonly QualifiedType IMultiValueConverter = Create("System.Windows.Data.IMultiValueConverter");
-        internal static readonly QualifiedType ValueConversionAttribute = new QualifiedType("System.Windows.Data.ValueConversionAttribute");
+        internal static readonly QualifiedType ValueConversionAttribute = new("System.Windows.Data.ValueConversionAttribute");
 
-        internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
+        internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new();
 
         private static QualifiedType Create(string qualifiedName, string? alias = null)
         {

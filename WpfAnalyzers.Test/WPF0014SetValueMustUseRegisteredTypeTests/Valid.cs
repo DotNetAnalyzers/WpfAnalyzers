@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly SetValueAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly SetValueAnalyzer Analyzer = new();
 
         [TestCase("this.SetValue(BarProperty, 1);")]
         [TestCase("this.SetCurrentValue(BarProperty, 1);")]

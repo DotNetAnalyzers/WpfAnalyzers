@@ -5,7 +5,7 @@
 
     public static class Valid
     {
-        private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new WPF0041SetMutableUsingSetCurrentValue();
+        private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new();
 
         [Test]
         public static void DependencyProperty()
