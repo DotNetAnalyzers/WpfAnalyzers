@@ -15,10 +15,10 @@ Roslyn analyzers for WPF.
 | :--      | :--
 | [WPF0001](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md)| Backing field for a DependencyProperty should match registered name
 | [WPF0002](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md)| Backing field for a DependencyPropertyKey should match registered name
-| [WPF0003](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md)| CLR property for a DependencyProperty should match registered name.
-| [WPF0004](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md)| CLR method for a DependencyProperty must match registered name.
-| [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name.
-| [WPF0006](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md)| Name of CoerceValueCallback should match registered name.
+| [WPF0003](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md)| CLR property for a DependencyProperty should match registered name
+| [WPF0004](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md)| CLR method for a DependencyProperty must match registered name
+| [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name
+| [WPF0006](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md)| Name of CoerceValueCallback should match registered name
 | [WPF0007](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md)| Name of ValidateValueCallback should match registered name.
 | [WPF0008](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0008.md)| [DependsOn(target)] must exist.
 | [WPF0010](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md)| Default value type must match registered type.

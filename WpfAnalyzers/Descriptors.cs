@@ -26,7 +26,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0003ClrPropertyShouldMatchRegisteredName = Create(
             id: "WPF0003",
-            title: "CLR property for a DependencyProperty should match registered name.",
+            title: "CLR property for a DependencyProperty should match registered name",
             messageFormat: "Property '{0}' must be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -35,7 +35,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0004ClrMethodShouldMatchRegisteredName = Create(
             id: "WPF0004",
-            title: "CLR method for a DependencyProperty must match registered name.",
+            title: "CLR method for a DependencyProperty must match registered name",
             messageFormat: "Method '{0}' must be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -44,7 +44,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0005PropertyChangedCallbackShouldMatchRegisteredName = Create(
             id: "WPF0005",
-            title: "Name of PropertyChangedCallback should match registered name.",
+            title: "Name of PropertyChangedCallback should match registered name",
             messageFormat: "Method '{0}' should be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -53,7 +53,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0006CoerceValueCallbackShouldMatchRegisteredName = Create(
             id: "WPF0006",
-            title: "Name of CoerceValueCallback should match registered name.",
+            title: "Name of CoerceValueCallback should match registered name",
             messageFormat: "Method '{0}' should be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
