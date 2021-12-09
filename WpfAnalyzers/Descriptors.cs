@@ -125,7 +125,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0015RegisteredOwnerTypeMustBeDependencyObject = Create(
             id: "WPF0015",
-            title: "Registered owner type must inherit DependencyObject.",
+            title: "Registered owner type must inherit DependencyObject",
             messageFormat: "Maybe you intended to use '{0}'?",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -134,8 +134,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0016DefaultValueIsSharedReferenceType = Create(
             id: "WPF0016",
-            title: "Default value is shared reference type.",
-            messageFormat: "Default value for '{0}' is a reference type that will be shared among all instances.",
+            title: "Default value is shared reference type",
+            messageFormat: "Default value for '{0}' is a reference type that will be shared among all instances",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -143,8 +143,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0017MetadataMustBeAssignable = Create(
             id: "WPF0017",
-            title: "Metadata must be of same type or super type.",
-            messageFormat: "Metadata must be of same type or super type.",
+            title: "Metadata must be of same type or super type",
+            messageFormat: "Metadata must be of same type or super type",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -152,7 +152,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0018DefaultStyleKeyPropertyOverrideMetadataArgument = Create(
             id: "WPF0018",
-            title: "Use containing type.",
+            title: "Use containing type",
             messageFormat: "Expected new FrameworkPropertyMetadata(typeof({0}))",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -161,8 +161,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0019CastSenderToCorrectType = Create(
             id: "WPF0019",
-            title: "Cast sender to correct type.",
-            messageFormat: "Sender is of type {0}.",
+            title: "Cast sender to correct type",
+            messageFormat: "Sender is of type {0}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -170,8 +170,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0020CastValueToCorrectType = Create(
             id: "WPF0020",
-            title: "Cast value to correct type.",
-            messageFormat: "Value is of type {0}.",
+            title: "Cast value to correct type",
+            messageFormat: "Value is of type {0}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -184,16 +184,16 @@ namespace WpfAnalyzers
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Cast sender to correct type.");
+            description: "Cast sender to correct type");
 
         internal static readonly DiagnosticDescriptor WPF0022DirectCastValueToExactType = Create(
             id: "WPF0022",
-            title: "Cast value to correct type.",
+            title: "Cast value to correct type",
             messageFormat: "Value is of type {0}.",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Cast value to correct type.");
+            description: "Cast value to correct type");
 
         internal static readonly DiagnosticDescriptor WPF0023ConvertToLambda = Create(
             id: "WPF0023",
@@ -404,12 +404,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0074DefaultMemberOfWrongType = Create(
             id: "WPF0074",
-            title: "Use containing type.",
-            messageFormat: "Use containing type.",
+            title: "Use containing type",
+            messageFormat: "Use containing type",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use containing type.");
+            description: "Use containing type");
 
         internal static readonly DiagnosticDescriptor WPF0080MarkupExtensionDoesNotHaveAttribute = Create(
             id: "WPF0080",

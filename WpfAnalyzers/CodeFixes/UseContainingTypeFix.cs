@@ -45,7 +45,7 @@
                         (editor, _) => editor.ReplaceNode(
                             typeofExpression.Type,
                             x => SyntaxFactory.ParseTypeName(containingTypeName).WithTriviaFrom(x)),
-                        "Use containing type.",
+                        "Use containing type",
                         diagnostic);
                 }
             }

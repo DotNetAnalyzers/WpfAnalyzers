@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0019CastSenderToCorrectTypeTests
 {
     using System.Globalization;
     using Gu.Roslyn.Asserts;
@@ -42,7 +42,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Sender is of type FooControl"), code);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]

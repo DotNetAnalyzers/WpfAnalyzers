@@ -87,7 +87,7 @@ namespace N
         {
             var code = @"
 #nullable disable
-#pragma warning disable WPF0016, CS0105, CS8019 // Default value is shared reference type.
+#pragma warning disable WPF0016, CS0105, CS8019 // Default value is shared reference type
 namespace N
 {
     using System;

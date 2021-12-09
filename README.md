@@ -26,14 +26,14 @@ Roslyn analyzers for WPF.
 | [WPF0012](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md)| CLR property type should match registered type
 | [WPF0013](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md)| CLR accessor for attached property must match registered type
 | [WPF0014](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md)| SetValue must use registered type
-| [WPF0015](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md)| Registered owner type must inherit DependencyObject.
-| [WPF0016](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md)| Default value is shared reference type.
-| [WPF0017](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0017.md)| Metadata must be of same type or super type.
-| [WPF0018](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0018.md)| Use containing type.
-| [WPF0019](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0019.md)| Cast sender to correct type.
-| [WPF0020](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0020.md)| Cast value to correct type.
+| [WPF0015](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md)| Registered owner type must inherit DependencyObject
+| [WPF0016](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md)| Default value is shared reference type
+| [WPF0017](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0017.md)| Metadata must be of same type or super type
+| [WPF0018](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0018.md)| Use containing type
+| [WPF0019](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0019.md)| Cast sender to correct type
+| [WPF0020](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0020.md)| Cast value to correct type
 | [WPF0021](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md)| Cast sender to containing type.
-| [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type.
+| [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type
 | [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda.
 | [WPF0024](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0024.md)| Parameter type should be nullable.
 | [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly.
@@ -57,7 +57,7 @@ Roslyn analyzers for WPF.
 | [WPF0071](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md)| Add ValueConversion attribute.
 | [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types.
 | [WPF0073](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md)| Add ValueConversion attribute (unknown types).
-| [WPF0074](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md)| Use containing type.
+| [WPF0074](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md)| Use containing type
 | [WPF0080](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md)| Add MarkupExtensionReturnType attribute.
 | [WPF0081](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md)| MarkupExtensionReturnType must use correct return type.
 | [WPF0082](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0082.md)| [ConstructorArgument] must match.
