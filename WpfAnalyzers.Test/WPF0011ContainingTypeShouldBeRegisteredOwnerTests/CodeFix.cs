@@ -86,7 +86,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("typeof(BarControl)", $"typeof({typeName.AssertReplace("<T>", "<int>")})");
+}".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
 
             var after = @"
 namespace N
