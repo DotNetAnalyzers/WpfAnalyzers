@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
+﻿namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
+        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenExpectedArguments()

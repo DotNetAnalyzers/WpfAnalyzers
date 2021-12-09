@@ -1,15 +1,13 @@
-namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
+﻿namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
-        private static readonly CodeFixProvider UseContainingTypeFix = new UseContainingTypeFix();
-        private static readonly CodeFixProvider ComponentResourceKeyFix = new ComponentResourceKeyFix();
+        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
+        private static readonly UseContainingTypeFix UseContainingTypeFix = new();
+        private static readonly ComponentResourceKeyFix ComponentResourceKeyFix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0140UseContainingTypeComponentResourceKey);
 
         [Test]

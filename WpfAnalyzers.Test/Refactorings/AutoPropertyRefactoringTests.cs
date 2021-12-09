@@ -2,15 +2,13 @@
 {
     using Gu.Roslyn.Asserts;
 
-    using Microsoft.CodeAnalysis.CodeRefactorings;
-
     using NUnit.Framework;
 
     using WpfAnalyzers.Refactorings;
 
     public static class AutoPropertyRefactoringTests
     {
-        private static readonly CodeRefactoringProvider Refactoring = new AutoPropertyRefactoring();
+        private static readonly AutoPropertyRefactoring Refactoring = new();
 
         [Test]
         public static void AutoProperty()

@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
+﻿namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ClrPropertyDeclarationAnalyzer();
+        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
         [Test]

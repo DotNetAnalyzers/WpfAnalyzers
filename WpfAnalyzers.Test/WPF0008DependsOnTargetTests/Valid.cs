@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
+        private static readonly AttributeAnalyzer Analyzer = new();
 
         [TestCase("[DependsOn(nameof(Value2))]")]
         [TestCase("[DependsOn(\"Value2\")]")]

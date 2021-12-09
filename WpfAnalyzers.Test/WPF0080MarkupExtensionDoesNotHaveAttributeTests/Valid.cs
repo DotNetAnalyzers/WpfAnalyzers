@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0080MarkupExtensionDoesNotHaveAttribute();
+        private static readonly WPF0080MarkupExtensionDoesNotHaveAttribute Analyzer = new();
 
         [Test]
         public static void WhenHasAttribute()

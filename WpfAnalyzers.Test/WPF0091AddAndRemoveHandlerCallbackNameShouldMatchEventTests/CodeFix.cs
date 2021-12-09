@@ -1,14 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEventTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventCallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new RenameMemberFix();
+        private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
+        private static readonly RenameMemberFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
 
         [Test]

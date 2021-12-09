@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
+﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces();
-        private static readonly CodeFixProvider Fix = new XmlnsDefinitionFix();
+        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
+        private static readonly XmlnsDefinitionFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces);
 
         [Test]

@@ -1,15 +1,13 @@
-namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
 {
     using System;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseDependencyPropertyKeyFix();
+        private static readonly SetValueAnalyzer Analyzer = new();
+        private static readonly UseDependencyPropertyKeyFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey);
 
         [TestCase("SetValue")]

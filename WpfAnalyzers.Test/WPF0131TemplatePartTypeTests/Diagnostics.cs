@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
+        private static readonly GetTemplateChildAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0131TemplatePartType);
 
         [Test]

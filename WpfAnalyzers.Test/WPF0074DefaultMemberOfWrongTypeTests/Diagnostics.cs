@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
+        private static readonly ValueConverterAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0074DefaultMemberOfWrongType);
 
         [Test]

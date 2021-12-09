@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
+        private static readonly AttributeAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenHasAttribute()

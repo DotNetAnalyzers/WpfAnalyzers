@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0151UseNameofInsteadOfConstantTests
+﻿namespace WpfAnalyzers.Test.WPF0151UseNameofInsteadOfConstantTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly CodeFixProvider Fix = new UseNameofFix();
+        private static readonly UseNameofFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0151UseNameofInsteadOfConstant);
 
         [Test]

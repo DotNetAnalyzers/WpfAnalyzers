@@ -6,7 +6,7 @@ namespace ValidCode.Recursion
 
     public class WithDependencyProperties : Control
     {
-#pragma warning disable WPF0023 // The callback is trivial, convert to lambda.
+#pragma warning disable WPF0023 // The callback is trivial, convert to lambda
         /// <summary>Identifies the <see cref="P1"/> dependency property.</summary>
         public static readonly DependencyProperty P1Property = DependencyProperty.Register(
            nameof(P1),
@@ -17,7 +17,7 @@ namespace ValidCode.Recursion
                (d, e) => OnP1Changed(e.OldValue, e.NewValue),
                (d, e) => CoerceP1(d, e)),
            ValidateP1);
-#pragma warning restore WPF0023 // The callback is trivial, convert to lambda.
+#pragma warning restore WPF0023 // The callback is trivial, convert to lambda
 
         /// <summary>Identifies the <see cref="P2"/> dependency property.</summary>
         public static readonly DependencyProperty P2Property = DependencyProperty.Register(

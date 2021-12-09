@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
+﻿namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
+        private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
+        private static readonly UseContainingTypeFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0121RegisterContainingTypeAsOwnerForRoutedCommand);
 
         [Test]

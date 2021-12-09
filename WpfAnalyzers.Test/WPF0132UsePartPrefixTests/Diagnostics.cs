@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
+﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
+        private static readonly AttributeAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0132UsePartPrefix);
 
         [Test]

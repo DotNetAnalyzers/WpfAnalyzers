@@ -1,13 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests
+﻿namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AttributeAnalyzer();
+        private static readonly AttributeAnalyzer Analyzer = new();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0174StyleTypedPropertyStyleSpecified;
 
         [Test]

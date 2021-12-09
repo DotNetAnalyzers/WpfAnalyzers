@@ -1,14 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
-        private static readonly CodeFixProvider Fix = new CastFix();
+        private static readonly CallbackAnalyzer Analyzer = new();
+        private static readonly CastFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0022DirectCastValueToExactType);
 
         [Test]
@@ -41,7 +39,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type string."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value is of type string"), code);
         }
 
         [TestCase("new PropertyMetadata(1, OnValueChanged)")]

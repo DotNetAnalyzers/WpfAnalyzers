@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ComponentResourceKeyAnalyzer();
-        private static readonly CodeFixProvider Fix = new ComponentResourceKeyFix();
+        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
+        private static readonly ComponentResourceKeyFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0141UseContainingMemberComponentResourceKey);
 
         [Test]

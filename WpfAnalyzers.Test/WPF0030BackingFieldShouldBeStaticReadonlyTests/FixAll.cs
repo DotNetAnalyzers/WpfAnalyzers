@@ -1,16 +1,14 @@
-namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
         public static class FixAll
         {
-            private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-            private static readonly CodeFixProvider Fix = new MakeFieldStaticReadonlyFix();
+            private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+            private static readonly MakeFieldStaticReadonlyFix Fix = new();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0030BackingFieldShouldBeStaticReadonly);
 
             [TestCase("public static", "public static readonly")]

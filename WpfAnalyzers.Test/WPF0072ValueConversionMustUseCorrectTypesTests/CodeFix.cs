@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
+﻿namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
-        private static readonly CodeFixProvider Fix = new ValueConversionAttributeArgumentFix();
+        private static readonly ValueConverterAnalyzer Analyzer = new();
+        private static readonly ValueConversionAttributeArgumentFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes);
 
         [Test]

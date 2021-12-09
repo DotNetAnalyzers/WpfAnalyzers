@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0120RegisterContainingMemberAsNameForRoutedCommandTests
+﻿namespace WpfAnalyzers.Test.WPF0120RegisterContainingMemberAsNameForRoutedCommandTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseNameofFix();
+        private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
+        private static readonly UseNameofFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand);
 
         [Test]

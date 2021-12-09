@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
+﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
+        private static readonly GetTemplateChildAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenPartPrefix()

@@ -1,13 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.Refactorings
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeRefactorings;
     using NUnit.Framework;
     using WpfAnalyzers.Refactorings;
 
     public static class ReadOnlyRefactoringTests
     {
-        private static readonly CodeRefactoringProvider Refactoring = new ReadOnlyRefactoring();
+        private static readonly ReadOnlyRefactoring Refactoring = new();
 
         [Test]
         public static void ChangeToReadOnly()

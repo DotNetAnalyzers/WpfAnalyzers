@@ -179,26 +179,26 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0021DirectCastSenderToExactType = Create(
             id: "WPF0021",
-            title: "Cast sender to containing type.",
-            messageFormat: "Sender is of type {0}.",
+            title: "Cast sender to containing type",
+            messageFormat: "Sender is of type {0}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Cast sender to correct type");
+            description: "Cast sender to correct type.");
 
         internal static readonly DiagnosticDescriptor WPF0022DirectCastValueToExactType = Create(
             id: "WPF0022",
             title: "Cast value to correct type",
-            messageFormat: "Value is of type {0}.",
+            messageFormat: "Value is of type {0}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Cast value to correct type");
+            description: "Cast value to correct type.");
 
         internal static readonly DiagnosticDescriptor WPF0023ConvertToLambda = Create(
             id: "WPF0023",
-            title: "The callback is trivial, convert to lambda.",
-            messageFormat: "Convert to lambda.",
+            title: "The callback is trivial, convert to lambda",
+            messageFormat: "Convert to lambda",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -206,8 +206,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0024ParameterShouldBeNullable = Create(
             id: "WPF0024",
-            title: "Parameter type should be nullable.",
-            messageFormat: "Parameter type should be nullable.",
+            title: "Parameter type should be nullable",
+            messageFormat: "Parameter type should be nullable",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -215,8 +215,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0030BackingFieldShouldBeStaticReadonly = Create(
             id: "WPF0030",
-            title: "Backing field for a DependencyProperty should be static and readonly.",
-            messageFormat: "Field '{0}' is backing field for a DependencyProperty and should be static and readonly.",
+            title: "Backing field for a DependencyProperty should be static and readonly",
+            messageFormat: "Field '{0}' is backing field for a DependencyProperty and should be static and readonly",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,

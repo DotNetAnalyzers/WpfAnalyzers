@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
+﻿namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new RoutedEventEventDeclarationAnalyzer();
+        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0103EventDeclarationAddRemove);
 
         [Test]

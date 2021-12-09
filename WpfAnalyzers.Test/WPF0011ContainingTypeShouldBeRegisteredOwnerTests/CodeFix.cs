@@ -1,14 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0011ContainingTypeShouldBeRegisteredOwner();
-        private static readonly CodeFixProvider Fix = new UseContainingTypeFix();
+        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
+        private static readonly UseContainingTypeFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner);
 
         [Test]

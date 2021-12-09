@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0062DocumentPropertyChangedCallbackTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new CallbackAnalyzer();
+        private static readonly CallbackAnalyzer Analyzer = new();
 
         [Test]
         public static void NoParameterCompact()

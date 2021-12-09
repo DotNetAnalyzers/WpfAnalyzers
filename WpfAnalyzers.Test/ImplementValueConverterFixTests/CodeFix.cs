@@ -1,13 +1,12 @@
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly CodeFixProvider Fix = new ImplementValueConverterFix();
+        private static readonly ImplementValueConverterFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
         [Test]

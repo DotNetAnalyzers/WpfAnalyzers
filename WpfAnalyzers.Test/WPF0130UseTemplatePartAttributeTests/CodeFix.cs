@@ -1,14 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new GetTemplateChildAnalyzer();
-        private static readonly CodeFixProvider Fix = new AddAttributeListFix();
+        private static readonly GetTemplateChildAnalyzer Analyzer = new();
+        private static readonly AddAttributeListFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0130UseTemplatePartAttribute);
 
         [Test]

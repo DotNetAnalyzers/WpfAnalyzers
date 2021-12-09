@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
+        private static readonly WPF0083UseConstructorArgumentAttribute Analyzer = new();
 
         [Test]
         public static void WhenHasAttribute()

@@ -1,14 +1,12 @@
 ﻿namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
-        private static readonly CodeFixProvider Fix = new UseSetValueFix();
+        private static readonly SetValueAnalyzer Analyzer = new();
+        private static readonly UseSetValueFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0043DoNotUseSetCurrentValue);
 
         [TestCase("this.SetCurrentValue(DataContextProperty, null);",                  "this.SetValue(DataContextProperty, null);")]

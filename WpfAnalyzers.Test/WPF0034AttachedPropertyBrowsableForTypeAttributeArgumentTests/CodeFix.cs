@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0034AttachedPropertyBrowsableForTypeAttributeArgumentTests
+﻿namespace WpfAnalyzers.Test.WPF0034AttachedPropertyBrowsableForTypeAttributeArgumentTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ClrMethodDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new AttachedPropertyBrowsableForTypeArgumentFix();
+        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
+        private static readonly AttachedPropertyBrowsableForTypeArgumentFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0034AttachedPropertyBrowsableForTypeAttributeArgument);
 
         [Test]

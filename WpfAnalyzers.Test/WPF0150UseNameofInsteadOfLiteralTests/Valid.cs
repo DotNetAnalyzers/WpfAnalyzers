@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0150UseNameofTests
+namespace WpfAnalyzers.Test.WPF0150UseNameofInsteadOfLiteralTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;

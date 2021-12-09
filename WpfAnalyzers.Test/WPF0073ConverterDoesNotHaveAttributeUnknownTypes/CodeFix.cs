@@ -2,15 +2,12 @@
 {
     using Gu.Roslyn.Asserts;
 
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
-        private static readonly CodeFixProvider Fix = new ValueConversionAttributeFix();
+        private static readonly ValueConverterAnalyzer Analyzer = new();
+        private static readonly ValueConversionAttributeFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes);
 
         [Test]

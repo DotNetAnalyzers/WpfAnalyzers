@@ -1,14 +1,12 @@
-namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new WPF0083UseConstructorArgumentAttribute();
-        private static readonly CodeFixProvider Fix = new ConstructorArgumentAttributeFix();
+        private static readonly WPF0083UseConstructorArgumentAttribute Analyzer = new();
+        private static readonly ConstructorArgumentAttributeFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0083UseConstructorArgumentAttribute);
 
         [Test]

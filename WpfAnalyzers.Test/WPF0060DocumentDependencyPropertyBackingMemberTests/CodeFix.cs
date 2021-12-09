@@ -2,14 +2,12 @@
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly CodeFixProvider Fix = new DocumentationFix();
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+        private static readonly DocumentationFix Fix = new();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0060DocumentDependencyPropertyBackingMember;
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptor);
 

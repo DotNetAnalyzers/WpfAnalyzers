@@ -32,11 +32,11 @@ Roslyn analyzers for WPF.
 | [WPF0018](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0018.md)| Use containing type
 | [WPF0019](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0019.md)| Cast sender to correct type
 | [WPF0020](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0020.md)| Cast value to correct type
-| [WPF0021](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md)| Cast sender to containing type.
+| [WPF0021](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0021.md)| Cast sender to containing type
 | [WPF0022](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0022.md)| Cast value to correct type
-| [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda.
-| [WPF0024](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0024.md)| Parameter type should be nullable.
-| [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly.
+| [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda
+| [WPF0024](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0024.md)| Parameter type should be nullable
+| [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly
 | [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey member must be declared before DependencyProperty member.
 | [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set.
 | [WPF0033](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md)| Add [AttachedPropertyBrowsableForType]

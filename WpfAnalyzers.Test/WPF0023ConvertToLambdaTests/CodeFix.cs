@@ -2,15 +2,12 @@
 {
     using Gu.Roslyn.Asserts;
 
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
-        private static readonly CodeFixProvider Fix = new ConvertToLambdaFix();
+        private static readonly PropertyMetadataAnalyzer Analyzer = new();
+        private static readonly ConvertToLambdaFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
 
         [TestCase("OnValueChanged", "(d, e) => ((FooControl)d).OnValueChanged((string)e.OldValue, (string)e.NewValue)")]

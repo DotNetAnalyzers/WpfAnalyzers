@@ -2,12 +2,11 @@
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ValueConverterAnalyzer();
+        private static readonly ValueConverterAnalyzer Analyzer = new();
         private static readonly DiagnosticDescriptor DiagnosticDescriptor = Descriptors.WPF0070ConverterDoesNotHaveDefaultField;
 
         [Test]

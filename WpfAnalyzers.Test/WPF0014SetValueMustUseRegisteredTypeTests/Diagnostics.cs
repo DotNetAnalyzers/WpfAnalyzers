@@ -1,12 +1,11 @@
 ﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetValueAnalyzer();
+        private static readonly SetValueAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0014SetValueMustUseRegisteredType);
 
         [Test]

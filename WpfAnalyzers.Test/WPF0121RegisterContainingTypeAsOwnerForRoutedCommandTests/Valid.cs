@@ -1,12 +1,11 @@
-namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
+﻿namespace WpfAnalyzers.Test.WPF0121RegisterContainingTypeAsOwnerForRoutedCommandTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new RoutedCommandCreationAnalyzer();
+        private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
 
         [Test]
         public static void RoutedCommand()
