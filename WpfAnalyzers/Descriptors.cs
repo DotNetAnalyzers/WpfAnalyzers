@@ -62,7 +62,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName = Create(
             id: "WPF0007",
-            title: "Name of ValidateValueCallback should match registered name.",
+            title: "Name of ValidateValueCallback should match registered name",
             messageFormat: "Method '{0}' should be named '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -71,8 +71,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0008DependsOnTarget = Create(
             id: "WPF0008",
-            title: "[DependsOn(target)] must exist.",
-            messageFormat: "[DependsOn(target)] must exist.",
+            title: "[DependsOn(target)] must exist",
+            messageFormat: "[DependsOn(target)] must exist",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -80,7 +80,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0010DefaultValueMustMatchRegisteredType = Create(
             id: "WPF0010",
-            title: "Default value type must match registered type.",
+            title: "Default value type must match registered type",
             messageFormat: "Default value for '{0}' must be of type {1}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -89,8 +89,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0011ContainingTypeShouldBeRegisteredOwner = Create(
             id: "WPF0011",
-            title: "Containing type should be used as registered owner.",
-            messageFormat: "Register containing type: '{0}' as owner.",
+            title: "Containing type should be used as registered owner",
+            messageFormat: "Register containing type: '{0}' as owner",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -98,7 +98,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0012ClrPropertyShouldMatchRegisteredType = Create(
             id: "WPF0012",
-            title: "CLR property type should match registered type.",
+            title: "CLR property type should match registered type",
             messageFormat: "Property '{0}' must be of type {1}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -107,7 +107,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0013ClrMethodMustMatchRegisteredType = Create(
             id: "WPF0013",
-            title: "CLR accessor for attached property must match registered type.",
+            title: "CLR accessor for attached property must match registered type",
             messageFormat: "{0} must match registered type {1}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -116,12 +116,12 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0014SetValueMustUseRegisteredType = Create(
             id: "WPF0014",
-            title: "SetValue must use registered type.",
+            title: "SetValue must use registered type",
             messageFormat: "{0} must use registered type {1}",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use a type that matches registered type when setting the value of a DependencyProperty");
+            description: "Use a type that matches registered type when setting the value of a DependencyProperty.");
 
         internal static readonly DiagnosticDescriptor WPF0015RegisteredOwnerTypeMustBeDependencyObject = Create(
             id: "WPF0015",
@@ -494,7 +494,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0101RegisterContainingTypeAsOwner = Create(
             id: "WPF0101",
-            title: "Containing type should be used as registered owner.",
+            title: "Containing type should be used as registered owner",
             messageFormat: "Register containing type: '{0}' as owner.",
             category: AnalyzerCategory.RoutedEvent,
             defaultSeverity: DiagnosticSeverity.Warning,

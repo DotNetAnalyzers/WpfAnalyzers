@@ -49,7 +49,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner."), barControlCode, code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner"), barControlCode, code);
         }
 
         [TestCase("BarControl")]

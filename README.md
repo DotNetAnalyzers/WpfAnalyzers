@@ -19,13 +19,13 @@ Roslyn analyzers for WPF.
 | [WPF0004](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md)| CLR method for a DependencyProperty must match registered name
 | [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name
 | [WPF0006](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0006.md)| Name of CoerceValueCallback should match registered name
-| [WPF0007](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md)| Name of ValidateValueCallback should match registered name.
-| [WPF0008](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0008.md)| [DependsOn(target)] must exist.
-| [WPF0010](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md)| Default value type must match registered type.
-| [WPF0011](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md)| Containing type should be used as registered owner.
-| [WPF0012](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md)| CLR property type should match registered type.
-| [WPF0013](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md)| CLR accessor for attached property must match registered type.
-| [WPF0014](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md)| SetValue must use registered type.
+| [WPF0007](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0007.md)| Name of ValidateValueCallback should match registered name
+| [WPF0008](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0008.md)| [DependsOn(target)] must exist
+| [WPF0010](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0010.md)| Default value type must match registered type
+| [WPF0011](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0011.md)| Containing type should be used as registered owner
+| [WPF0012](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0012.md)| CLR property type should match registered type
+| [WPF0013](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0013.md)| CLR accessor for attached property must match registered type
+| [WPF0014](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0014.md)| SetValue must use registered type
 | [WPF0015](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0015.md)| Registered owner type must inherit DependencyObject.
 | [WPF0016](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0016.md)| Default value is shared reference type.
 | [WPF0017](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0017.md)| Metadata must be of same type or super type.
@@ -67,7 +67,7 @@ Roslyn analyzers for WPF.
 | [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName.
 | [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName.
 | [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name.
-| [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner.
+| [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner
 | [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name.
 | [WPF0103](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0103.md)| Use same event in add and remove.
 | [WPF0104](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0104.md)| Call AddHandler in add.
