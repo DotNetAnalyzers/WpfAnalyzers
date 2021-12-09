@@ -158,7 +158,7 @@
                 return true;
             }
 
-            if (!(cast is CastExpressionSyntax))
+            if (cast is not CastExpressionSyntax)
             {
                 return castType.IsAssignableTo(partType, compilation);
             }

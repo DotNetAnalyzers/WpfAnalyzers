@@ -1,15 +1,14 @@
 ﻿namespace WpfAnalyzers.Test.Netcore.WPF0024ParameterShouldBeNullableTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer PropertyMetadataAnalyzer = new PropertyMetadataAnalyzer();
-        private static readonly DiagnosticAnalyzer RegistrationAnalyzer = new RegistrationAnalyzer();
-        private static readonly CodeFixProvider Fix = new MakeNullableFix();
+        private static readonly PropertyMetadataAnalyzer PropertyMetadataAnalyzer = new();
+        private static readonly RegistrationAnalyzer RegistrationAnalyzer = new();
+        private static readonly MakeNullableFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable);
 
         [Test]

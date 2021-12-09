@@ -125,7 +125,7 @@ namespace WpfAnalyzers.Test
             {
                 var start = doc.IndexOf(startToken, StringComparison.Ordinal);
                 var end = doc.IndexOf(endToken, StringComparison.Ordinal) + endToken.Length;
-                return doc.Substring(start, end - start);
+                return doc[start..end];
             }
         }
 
@@ -320,7 +320,7 @@ Or put this at the top of the file to disable all instances.
 
             public string Name { get; }
 
-            public string Uri => "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" + this.Name.Substring(SolutionDirectory.FullName.Length)
+            public string Uri => "https://github.com/DotNetAnalyzers/WpfAnalyzers/blob/master" + this.Name[SolutionDirectory.FullName.Length..]
                                                                                                              .Replace("\\", "/");
 
             public static CodeFile Find(Type type)

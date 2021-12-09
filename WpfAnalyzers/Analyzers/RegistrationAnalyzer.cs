@@ -81,8 +81,7 @@
 
                         if (context.SemanticModel.GetNullableContext(declaration.SpanStart).HasFlag(NullableContext.Enabled) &&
                             declaration.ParameterList is { Parameters: { Count: 1 } parameters } &&
-                            parameters[0] is { Type: { } type } &&
-                            !(type is NullableTypeSyntax))
+                            parameters[0] is { Type: { } type and not NullableTypeSyntax })
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable, type.GetLocation()));
                         }
