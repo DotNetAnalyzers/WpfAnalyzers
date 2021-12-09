@@ -11,6 +11,38 @@
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0140UseContainingTypeComponentResourceKey);
 
         [Test]
+        public static void Message()
+        {
+            var before = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class ResourceKeys
+    {
+        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
+            ↓typeof(string),
+            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Windows;
+
+    public static class ResourceKeys
+    {
+        public static readonly ComponentResourceKey FooKey = new ComponentResourceKey(
+            typeof(ResourceKeys),
+            $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
+    }
+}";
+            RoslynAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, before);
+            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys"), before, after);
+        }
+
+        [Test]
         public static void WhenNotContainingType()
         {
             var before = @"
@@ -39,7 +71,7 @@ namespace N
     }
 }";
             RoslynAssert.NoFix(Analyzer, ComponentResourceKeyFix, ExpectedDiagnostic, before);
-            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic.WithMessage("Use containing type: ResourceKeys."), before, after);
+            RoslynAssert.CodeFix(Analyzer, UseContainingTypeFix, ExpectedDiagnostic, before, after);
         }
 
         [Test]

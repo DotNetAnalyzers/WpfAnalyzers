@@ -27,7 +27,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use correct [TemplatePart] type."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use correct [TemplatePart] type"), code);
         }
 
         [Test]

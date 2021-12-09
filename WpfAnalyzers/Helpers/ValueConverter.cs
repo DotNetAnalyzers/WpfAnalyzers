@@ -130,7 +130,7 @@
                     default:
                         if (semanticModel.GetType(returnValue, cancellationToken) is { } returnValueType)
                         {
-                            returnTypes.Add(returnValueType);
+                            _ = returnTypes.Add(returnValueType);
                         }
 
                         break;

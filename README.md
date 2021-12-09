@@ -77,23 +77,23 @@ Roslyn analyzers for WPF.
 | [WPF0108](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0108.md)| Backing member for RoutedEvent should have standard documentation text
 | [WPF0120](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0120.md)| Register containing member name as name for routed command
 | [WPF0121](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0121.md)| Register containing type as owner for routed command
-| [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command.
-| [WPF0123](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md)| Backing field for a RoutedCommand should be static and readonly.
-| [WPF0130](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md)| Add [TemplatePart] to the type.
-| [WPF0131](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md)| Use correct [TemplatePart] type.
-| [WPF0132](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md)| Use PART prefix.
-| [WPF0133](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0133.md)| ContentProperty target does not exist.
-| [WPF0140](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md)| Use containing type when creating a ComponentResourceKey.
-| [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey.
-| [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof() instead of literal.
-| [WPF0151](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0151.md)| Use nameof() instead of constant.
-| [WPF0170](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0170.md)| StyleTypedProperty.Property must exist.
-| [WPF0171](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0171.md)| StyleTypedProperty.Property must specify a property of type Style.
-| [WPF0172](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0172.md)| StyleTypedProperty.Property must be specified.
-| [WPF0173](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0173.md)| StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.
-| [WPF0174](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0174.md)| StyleTypedProperty.StyleTargetType must be specified.
-| [WPF0175](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0175.md)| StyleTypedProperty.Property must be specified only once.
-| [WPF0176](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0176.md)| StyleTypedProperty is missing.
+| [WPF0122](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0122.md)| Register name and owning type for routed command
+| [WPF0123](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0123.md)| Backing field for a RoutedCommand should be static and readonly
+| [WPF0130](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0130.md)| Add [TemplatePart] to the type
+| [WPF0131](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0131.md)| Use correct [TemplatePart] type
+| [WPF0132](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0132.md)| Use PART prefix
+| [WPF0133](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0133.md)| ContentProperty target does not exist
+| [WPF0140](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0140.md)| Use containing type when creating a ComponentResourceKey
+| [WPF0141](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0141.md)| Use containing member as key when creating a ComponentResourceKey
+| [WPF0150](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0150.md)| Use nameof() instead of literal
+| [WPF0151](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0151.md)| Use nameof() instead of constant
+| [WPF0170](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0170.md)| StyleTypedProperty.Property must exist
+| [WPF0171](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0171.md)| StyleTypedProperty.Property must specify a property of type Style
+| [WPF0172](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0172.md)| StyleTypedProperty.Property must be specified
+| [WPF0173](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0173.md)| StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property
+| [WPF0174](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0174.md)| StyleTypedProperty.StyleTargetType must be specified
+| [WPF0175](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0175.md)| StyleTypedProperty.Property must be specified only once
+| [WPF0176](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0176.md)| StyleTypedProperty is missing
 
 ## Using WpfAnalyzers
 

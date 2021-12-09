@@ -24,7 +24,7 @@ namespace N
             ↓nameof(ResourceKeys));
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)"), code);
         }
 
         [Test]

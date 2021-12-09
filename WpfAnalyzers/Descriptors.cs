@@ -584,8 +584,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0122RegisterRoutedCommand = Create(
             id: "WPF0122",
-            title: "Register name and owning type for routed command.",
-            messageFormat: "Register name and owning type for routed command.",
+            title: "Register name and owning type for routed command",
+            messageFormat: "Register name and owning type for routed command",
             category: AnalyzerCategory.RoutedCommand,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -593,8 +593,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0123BackingMemberShouldBeStaticReadonly = Create(
             id: "WPF0123",
-            title: "Backing field for a RoutedCommand should be static and readonly.",
-            messageFormat: "Backing member for a RoutedCommand and should be static and readonly.",
+            title: "Backing field for a RoutedCommand should be static and readonly",
+            messageFormat: "Backing member for a RoutedCommand and should be static and readonly",
             category: AnalyzerCategory.RoutedCommand,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -602,8 +602,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0130UseTemplatePartAttribute = Create(
             id: "WPF0130",
-            title: "Add [TemplatePart] to the type.",
-            messageFormat: "Add {0} to the type.",
+            title: "Add [TemplatePart] to the type",
+            messageFormat: "Add {0} to the type",
             category: AnalyzerCategory.TemplatePart,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -611,8 +611,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0131TemplatePartType = Create(
             id: "WPF0131",
-            title: "Use correct [TemplatePart] type.",
-            messageFormat: "Use correct [TemplatePart] type.",
+            title: "Use correct [TemplatePart] type",
+            messageFormat: "Use correct [TemplatePart] type",
             category: AnalyzerCategory.TemplatePart,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -620,8 +620,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0132UsePartPrefix = Create(
             id: "WPF0132",
-            title: "Use PART prefix.",
-            messageFormat: "Use PART prefix.",
+            title: "Use PART prefix",
+            messageFormat: "Use PART prefix",
             category: AnalyzerCategory.TemplatePart,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -629,8 +629,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0133ContentPropertyTarget = Create(
             id: "WPF0133",
-            title: "ContentProperty target does not exist.",
-            messageFormat: "ContentProperty target does not exist.",
+            title: "ContentProperty target does not exist",
+            messageFormat: "ContentProperty target does not exist",
             category: AnalyzerCategory.Correctness,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -638,8 +638,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0140UseContainingTypeComponentResourceKey = Create(
             id: "WPF0140",
-            title: "Use containing type when creating a ComponentResourceKey.",
-            messageFormat: "Use containing type: {0}.",
+            title: "Use containing type when creating a ComponentResourceKey",
+            messageFormat: "Use containing type: {0}",
             category: AnalyzerCategory.ComponentResourceKey,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -647,8 +647,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0141UseContainingMemberComponentResourceKey = Create(
             id: "WPF0141",
-            title: "Use containing member as key when creating a ComponentResourceKey.",
-            messageFormat: "Use containing member: {0}.",
+            title: "Use containing member as key when creating a ComponentResourceKey",
+            messageFormat: "Use containing member: {0}",
             category: AnalyzerCategory.ComponentResourceKey,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -656,8 +656,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0150UseNameofInsteadOfLiteral = Create(
             id: "WPF0150",
-            title: "Use nameof() instead of literal.",
-            messageFormat: "Use nameof({0}).",
+            title: "Use nameof() instead of literal",
+            messageFormat: "Use nameof({0})",
             category: AnalyzerCategory.Correctness,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -665,8 +665,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0151UseNameofInsteadOfConstant = Create(
             id: "WPF0151",
-            title: "Use nameof() instead of constant.",
-            messageFormat: "Use nameof({0}).",
+            title: "Use nameof() instead of constant",
+            messageFormat: "Use nameof({0})",
             category: AnalyzerCategory.Correctness,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -674,8 +674,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0170StyleTypedPropertyPropertyTarget = Create(
             id: "WPF0170",
-            title: "StyleTypedProperty.Property must exist.",
-            messageFormat: "StyleTypedProperty.Property must exist.",
+            title: "StyleTypedProperty.Property must exist",
+            messageFormat: "StyleTypedProperty.Property must exist",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -683,8 +683,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0171StyleTypedPropertyPropertyType = Create(
             id: "WPF0171",
-            title: "StyleTypedProperty.Property must specify a property of type Style.",
-            messageFormat: "StyleTypedProperty.Property must specify a property of type Style.",
+            title: "StyleTypedProperty.Property must specify a property of type Style",
+            messageFormat: "StyleTypedProperty.Property must specify a property of type Style",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -692,8 +692,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0172StyleTypedPropertyPropertySpecified = Create(
             id: "WPF0172",
-            title: "StyleTypedProperty.Property must be specified.",
-            messageFormat: "StyleTypedProperty.Property must be specified.",
+            title: "StyleTypedProperty.Property must be specified",
+            messageFormat: "StyleTypedProperty.Property must be specified",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -701,8 +701,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0173StyleTypedPropertyStyleTargetType = Create(
             id: "WPF0173",
-            title: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.",
-            messageFormat: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property.",
+            title: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property",
+            messageFormat: "StyleTypedProperty.StyleTargetType must be assignable to a type that has a Style property",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -710,8 +710,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0174StyleTypedPropertyStyleSpecified = Create(
             id: "WPF0174",
-            title: "StyleTypedProperty.StyleTargetType must be specified.",
-            messageFormat: "StyleTypedProperty.StyleTargetType must be specified.",
+            title: "StyleTypedProperty.StyleTargetType must be specified",
+            messageFormat: "StyleTypedProperty.StyleTargetType must be specified",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -719,8 +719,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0175StyleTypedPropertyPropertyUnique = Create(
             id: "WPF0175",
-            title: "StyleTypedProperty.Property must be specified only once.",
-            messageFormat: "StyleTypedProperty.Property must be specified only once.",
+            title: "StyleTypedProperty.Property must be specified only once",
+            messageFormat: "StyleTypedProperty.Property must be specified only once",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -728,8 +728,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0176StyleTypedPropertyMissing = Create(
             id: "WPF0176",
-            title: "StyleTypedProperty is missing.",
-            messageFormat: "StyleTypedProperty should be specified for {0}.",
+            title: "StyleTypedProperty is missing",
+            messageFormat: "StyleTypedProperty should be specified for {0}",
             category: AnalyzerCategory.StyleTypedProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
