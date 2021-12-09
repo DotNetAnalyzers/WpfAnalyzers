@@ -1,4 +1,5 @@
-﻿namespace WpfAnalyzers.Benchmarks.Benchmarks
+﻿#pragma warning disable CA1305 // Specify IFormatProvider
+namespace WpfAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -72,7 +73,7 @@
                        .AppendLine("        {")
                        .AppendLine($"            {analyzer.GetType().Name}Benchmark.Run();")
                        .AppendLine("        }");
-                if (!ReferenceEquals(analyzer, AllAnalyzers[AllAnalyzers.Count - 1]))
+                if (!ReferenceEquals(analyzer, AllAnalyzers[^1]))
                 {
                     builder.AppendLine();
                 }
