@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Recursion
 {
     using System.Windows;
@@ -54,8 +54,8 @@ namespace ValidCode.Recursion
             OnP1Changed(oldValue, newValue);
         }
 
-        private static object CoerceP1(DependencyObject d, object baseValue) => CoerceP1(d, baseValue);
+        private static object CoerceP1(DependencyObject d, object? baseValue) => CoerceP1(d, baseValue);
 
-        private static bool ValidateP1(object value) => ValidateP1(value);
+        private static bool ValidateP1(object? value) => ValidateP1(value);
     }
 }

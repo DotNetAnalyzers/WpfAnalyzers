@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.DependencyProperties
 {
     using System.Windows;
@@ -19,16 +19,16 @@ namespace ValidCode.DependencyProperties
             typeof(WithDependsOn));
 
         [DependsOn(nameof(Value2))]
-        public string Value1
+        public string? Value1
         {
-            get => (string)this.GetValue(Value1Property);
+            get => (string?)this.GetValue(Value1Property);
             set => this.SetValue(Value1Property, value);
         }
 
         [DependsOn(nameof(Value1))]
-        public string Value2
+        public string? Value2
         {
-            get => (string)this.GetValue(Value2Property);
+            get => (string?)this.GetValue(Value2Property);
             set => this.SetValue(Value2Property, value);
         }
     }

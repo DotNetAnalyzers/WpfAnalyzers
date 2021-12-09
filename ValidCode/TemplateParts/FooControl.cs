@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.TemplateParts
 {
     using System.Windows;
@@ -10,7 +10,7 @@ namespace ValidCode.TemplateParts
     {
         private const string PartBar = "PART_Bar";
 
-        private FrameworkElement bar;
+        private FrameworkElement? bar;
 
         public override void OnApplyTemplate()
         {

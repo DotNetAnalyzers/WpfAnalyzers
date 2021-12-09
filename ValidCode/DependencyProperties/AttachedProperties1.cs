@@ -1,21 +1,21 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.DependencyProperties
 {
     using System.Windows;
     using System.Windows.Controls;
 
-    public static class Foo1
+    public static class AttachedProperties1
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
             "Bar",
             typeof(bool),
-            typeof(Foo1),
+            typeof(AttachedProperties1),
             new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty OtherProperty = DependencyProperty.RegisterAttached(
             "Other",
             typeof(string),
-            typeof(Foo1),
+            typeof(AttachedProperties1),
             new FrameworkPropertyMetadata(
                 "abc",
                 FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange,
@@ -25,7 +25,7 @@ namespace ValidCode.DependencyProperties
         private static readonly DependencyPropertyKey ReadOnlyPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "ReadOnly",
             typeof(bool),
-            typeof(Foo1),
+            typeof(AttachedProperties1),
             new PropertyMetadata(default(bool)));
 
         /// <summary>Identifies the <see cref="ReadOnlyProperty"/> dependency property.</summary>
@@ -79,7 +79,7 @@ namespace ValidCode.DependencyProperties
             return (bool)element.GetValue(ReadOnlyProperty);
         }
 
-        private static object CoerceOther(DependencyObject d, object basevalue)
+        private static object CoerceOther(DependencyObject d, object? basevalue)
         {
             // very strange stuff here, tests things.
 #pragma warning disable WPF0041

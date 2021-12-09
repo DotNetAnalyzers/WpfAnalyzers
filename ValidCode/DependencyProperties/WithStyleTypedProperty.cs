@@ -1,4 +1,4 @@
-namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -13,9 +13,9 @@ namespace ValidCode.DependencyProperties
             typeof(WithStyleTypedProperty),
             new PropertyMetadata(default(Style)));
 
-        public Style BarStyle
+        public Style? BarStyle
         {
-            get => (Style)this.GetValue(BarStyleProperty);
+            get => (Style?)this.GetValue(BarStyleProperty);
             set => this.SetValue(BarStyleProperty, value);
         }
     }

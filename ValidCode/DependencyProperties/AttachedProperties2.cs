@@ -3,18 +3,18 @@ namespace ValidCode.DependencyProperties
 {
     using System.Windows;
 
-    public static class Foo
+    public static class AttachedProperties2
     {
         public static readonly DependencyProperty Bar1Property = DependencyProperty.RegisterAttached(
             "Bar1",
             typeof(int),
-            typeof(Foo),
+            typeof(AttachedProperties2),
             new PropertyMetadata(default(int)));
 
         private static readonly DependencyPropertyKey Bar2PropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "Bar2",
             typeof(int),
-            typeof(Foo),
+            typeof(AttachedProperties2),
             new PropertyMetadata(default(int)));
 
         public static readonly DependencyProperty Bar2Property = Bar2PropertyKey.DependencyProperty;

@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Issues.N
+﻿#nullable disable
+namespace ValidCode.Issues.N
 {
     using System.Windows;
     using AliasedType = AliasedType;

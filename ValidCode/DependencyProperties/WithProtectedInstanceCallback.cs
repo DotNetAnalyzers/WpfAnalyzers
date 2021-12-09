@@ -21,6 +21,8 @@
             set => this.SetValue(NumberProperty, value);
         }
 
+        public int N() => this.n;
+
         /// <summary>This method is invoked when the <see cref="NumberProperty"/> changes.</summary>
         protected virtual void OnNumberChanged()
         {

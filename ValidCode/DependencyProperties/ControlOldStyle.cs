@@ -1,22 +1,23 @@
 ﻿// ReSharper disable All
+#nullable disable
 namespace ValidCode.DependencyProperties
 {
     using System.Windows;
     using System.Windows.Media;
 
-    public class FooControl1 : FrameworkElement
+    public class ControlOldStyle : FrameworkElement
     {
         /// <summary>Identifies the <see cref="DoubleValue"/> dependency property.</summary>
         public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(
             nameof(DoubleValue),
             typeof(double),
-            typeof(FooControl1));
+            typeof(ControlOldStyle));
 
         /// <summary>Identifies the <see cref="IntValue"/> dependency property.</summary>
         public static readonly DependencyProperty IntValueProperty = DependencyProperty.Register(
             nameof(IntValue),
             typeof(int),
-            typeof(FooControl1),
+            typeof(ControlOldStyle),
             new FrameworkPropertyMetadata(
                 default(int),
                 FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure,
@@ -25,13 +26,13 @@ namespace ValidCode.DependencyProperties
             ValidateIntValue);
 
         /// <summary>Identifies the <see cref="Bar"/> dependency property.</summary>
-        public static readonly DependencyProperty BarProperty = Foo1.BarProperty.AddOwner(typeof(FooControl1));
+        public static readonly DependencyProperty BarProperty = AttachedProperties1.BarProperty.AddOwner(typeof(ControlOldStyle));
 
 #pragma warning disable WPF0150 // Use nameof().
         private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
             "ReadOnlyValue",
             typeof(string),
-            typeof(FooControl1),
+            typeof(ControlOldStyle),
             new PropertyMetadata(default(string)));
 #pragma warning restore WPF0150 // Use nameof().
 
@@ -42,7 +43,7 @@ namespace ValidCode.DependencyProperties
         public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
             nameof(Brush),
             typeof(Brush),
-            typeof(FooControl1),
+            typeof(ControlOldStyle),
             new PropertyMetadata(default(Brush)));
 
         public double DoubleValue

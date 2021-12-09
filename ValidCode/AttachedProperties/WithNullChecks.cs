@@ -15,7 +15,7 @@ namespace ValidCode.AttachedProperties
         /// <summary>Helper for setting <see cref="TextProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DependencyObject"/> to set <see cref="TextProperty"/> on.</param>
         /// <param name="value">Text property value.</param>
-        public static void SetText(DependencyObject element, string value)
+        public static void SetText(DependencyObject element, string? value)
         {
             if (element is null)
             {
@@ -29,14 +29,14 @@ namespace ValidCode.AttachedProperties
         /// <param name="element"><see cref="DependencyObject"/> to read <see cref="TextProperty"/> from.</param>
         /// <returns>Text property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
-        public static string GetText(DependencyObject element)
+        public static string? GetText(DependencyObject element)
         {
             if (element is null)
             {
                 throw new ArgumentNullException(nameof(element));
             }
 
-            return (string)element.GetValue(TextProperty);
+            return (string?)element.GetValue(TextProperty);
         }
     }
 }

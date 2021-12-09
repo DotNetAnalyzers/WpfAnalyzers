@@ -42,7 +42,7 @@
             ((IntControl)d).OnNumberChanged((int)e.NewValue, (int)e.OldValue);
         }
 
-        private static object CoerceNumber(DependencyObject d, object baseValue)
+        private static object CoerceNumber(DependencyObject d, object? baseValue)
         {
             if (DesignerProperties.GetIsInDesignMode(d))
             {
@@ -56,7 +56,7 @@
             };
         }
 
-        private static bool ValidateNumber(object value)
+        private static bool ValidateNumber(object? value)
         {
             if (value is int)
             {

@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>library</OutputType>
     <TargetFramework>net48</TargetFramework>
+    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Issues
+﻿#nullable disable
+namespace ValidCode.Issues
 {
     using System.Collections.Generic;
     using System.Windows;

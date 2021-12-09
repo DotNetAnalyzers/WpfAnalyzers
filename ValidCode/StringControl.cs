@@ -42,7 +42,7 @@
             ((StringControl)d).OnTextChanged((string)e.NewValue, (string)e.OldValue);
         }
 
-        private static object CoerceText(DependencyObject d, object baseValue)
+        private static object CoerceText(DependencyObject d, object? baseValue)
         {
             if (DesignerProperties.GetIsInDesignMode(d))
             {
@@ -56,7 +56,7 @@
             };
         }
 
-        private static bool ValidateText(object value)
+        private static bool ValidateText(object? value)
         {
             if (value is int)
             {

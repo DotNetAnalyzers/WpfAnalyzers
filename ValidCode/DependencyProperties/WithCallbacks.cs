@@ -50,7 +50,7 @@
         {
         }
 
-        private static object CoerceP2(DependencyObject d, object o)
+        private static object CoerceP2(DependencyObject d, object? o)
         {
             return o switch
             {
