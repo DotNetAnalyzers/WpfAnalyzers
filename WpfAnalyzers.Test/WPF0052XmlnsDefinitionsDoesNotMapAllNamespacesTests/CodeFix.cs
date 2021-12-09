@@ -82,9 +82,7 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var message = "XmlnsDefinitions does not map all namespaces with public types.\r\n" +
-                          "The following namespaces are not mapped:\r\n" +
-                          "Gu.Wpf.Geometry.Meh";
+            var message = "The following namespaces are not mapped: Gu.Wpf.Geometry.Meh";
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), code);
         }
 

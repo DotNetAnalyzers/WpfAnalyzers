@@ -35,7 +35,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: System.Collections.ICollection"), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: System.Collections.ICollection"), code);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types. Expected: int"), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: int"), code);
         }
 
         [Test]

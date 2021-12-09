@@ -305,7 +305,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0043DoNotUseSetCurrentValue = Create(
             id: "WPF0043",
-            title: "Don't set DataContext and Style using SetCurrentValue.",
+            title: "Don't set DataContext and Style using SetCurrentValue",
             messageFormat: "Use SetValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -314,7 +314,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0050XmlnsPrefixMustMatchXmlnsDefinition = Create(
             id: "WPF0050",
-            title: "XmlnsPrefix must map to the same url as XmlnsDefinition.",
+            title: "XmlnsPrefix must map to the same url as XmlnsDefinition",
             messageFormat: "There is no [{0}] mapping to '{1}'",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -323,8 +323,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0051XmlnsDefinitionMustMapExistingNamespace = Create(
             id: "WPF0051",
-            title: "XmlnsDefinition must map to existing namespace.",
-            messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist.",
+            title: "XmlnsDefinition must map to existing namespace",
+            messageFormat: "[XmlnsDefinition] maps to '{0}' that does not exist",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -332,8 +332,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces = Create(
             id: "WPF0052",
-            title: "XmlnsDefinitions does not map all namespaces with public types.",
-            messageFormat: "XmlnsDefinitions does not map all namespaces with public types.\r\nThe following namespaces are not mapped:\r\n{0}",
+            title: "XmlnsDefinitions does not map all namespaces with public types",
+            messageFormat: "The following namespaces are not mapped: {0}",
             category: AnalyzerCategory.XmlnsDefinition,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -341,8 +341,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0060DocumentDependencyPropertyBackingMember = Create(
             id: "WPF0060",
-            title: "Backing member for DependencyProperty should have standard documentation text.",
-            messageFormat: "Backing member for DependencyProperty should have standard documentation text.",
+            title: "Backing member for DependencyProperty should have standard documentation text",
+            messageFormat: "Backing member for DependencyProperty should have standard documentation text",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -350,8 +350,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0061DocumentClrMethod = Create(
             id: "WPF0061",
-            title: "Accessor method for attached property should have standard documentation text.",
-            messageFormat: "Accessor method for attached property should have standard documentation text.",
+            title: "Accessor method for attached property should have standard documentation text",
+            messageFormat: "Accessor method for attached property should have standard documentation text",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -359,8 +359,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0062DocumentPropertyChangedCallback = Create(
             id: "WPF0062",
-            title: "Property changed callback should have standard documentation text.",
-            messageFormat: "Property changed callback should have standard documentation text.",
+            title: "Property changed callback should have standard documentation text",
+            messageFormat: "Property changed callback should have standard documentation text",
             category: AnalyzerCategory.Documentation,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -368,8 +368,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0070ConverterDoesNotHaveDefaultField = Create(
             id: "WPF0070",
-            title: "Add default field to converter.",
-            messageFormat: "Add default field to converter.",
+            title: "Add default field to converter",
+            messageFormat: "Add default field to converter",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -377,8 +377,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0071ConverterDoesNotHaveAttribute = Create(
             id: "WPF0071",
-            title: "Add ValueConversion attribute.",
-            messageFormat: "Add ValueConversion attribute.",
+            title: "Add ValueConversion attribute",
+            messageFormat: "Add ValueConversion attribute",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -386,8 +386,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0072ValueConversionMustUseCorrectTypes = Create(
             id: "WPF0072",
-            title: "ValueConversion must use correct types.",
-            messageFormat: "ValueConversion must use correct types. Expected: {0}",
+            title: "ValueConversion must use correct types",
+            messageFormat: "ValueConversion must use correct types Expected: {0}",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -395,8 +395,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0073ConverterDoesNotHaveAttributeUnknownTypes = Create(
             id: "WPF0073",
-            title: "Add ValueConversion attribute (unknown types).",
-            messageFormat: "Add ValueConversion attribute (unknown types).",
+            title: "Add ValueConversion attribute (unknown types)",
+            messageFormat: "Add ValueConversion attribute (unknown types)",
             category: AnalyzerCategory.IValueConverter,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,

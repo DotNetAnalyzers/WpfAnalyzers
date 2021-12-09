@@ -46,17 +46,17 @@ Roslyn analyzers for WPF.
 | [WPF0040](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md)| A readonly DependencyProperty must be set with DependencyPropertyKey
 | [WPF0041](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md)| Set mutable dependency properties using SetCurrentValue
 | [WPF0042](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md)| Avoid side effects in CLR accessors
-| [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext and Style using SetCurrentValue.
-| [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition.
-| [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace.
-| [WPF0052](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md)| XmlnsDefinitions does not map all namespaces with public types.
-| [WPF0060](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md)| Backing member for DependencyProperty should have standard documentation text.
-| [WPF0061](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md)| Accessor method for attached property should have standard documentation text.
-| [WPF0062](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md)| Property changed callback should have standard documentation text.
-| [WPF0070](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md)| Add default field to converter.
-| [WPF0071](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md)| Add ValueConversion attribute.
-| [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types.
-| [WPF0073](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md)| Add ValueConversion attribute (unknown types).
+| [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext and Style using SetCurrentValue
+| [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition
+| [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace
+| [WPF0052](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0052.md)| XmlnsDefinitions does not map all namespaces with public types
+| [WPF0060](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0060.md)| Backing member for DependencyProperty should have standard documentation text
+| [WPF0061](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0061.md)| Accessor method for attached property should have standard documentation text
+| [WPF0062](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0062.md)| Property changed callback should have standard documentation text
+| [WPF0070](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0070.md)| Add default field to converter
+| [WPF0071](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0071.md)| Add ValueConversion attribute
+| [WPF0072](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0072.md)| ValueConversion must use correct types
+| [WPF0073](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0073.md)| Add ValueConversion attribute (unknown types)
 | [WPF0074](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0074.md)| Use containing type
 | [WPF0080](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0080.md)| Add MarkupExtensionReturnType attribute.
 | [WPF0081](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0081.md)| MarkupExtensionReturnType must use correct return type.
