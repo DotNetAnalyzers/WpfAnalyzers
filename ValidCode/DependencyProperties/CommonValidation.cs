@@ -1,8 +1,8 @@
-namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties
 {
     internal static class CommonValidation
     {
-        public static bool ValidateDoubleIsGreaterThanZero(object value)
+        public static bool ValidateDoubleIsGreaterThanZero(object? value)
         {
             if (value is double d)
             {

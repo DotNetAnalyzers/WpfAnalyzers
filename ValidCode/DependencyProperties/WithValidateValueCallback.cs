@@ -1,4 +1,4 @@
-namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties
 {
     using System.Windows;
 
@@ -138,7 +138,7 @@ namespace ValidCode.DependencyProperties
             return (double)element.GetValue(Value8Property);
         }
 
-        private static bool ValidateValue2(object value)
+        private static bool ValidateValue2(object? value)
         {
             if (value is int i)
             {
@@ -148,7 +148,7 @@ namespace ValidCode.DependencyProperties
             return false;
         }
 
-        private static bool ValidateGreaterThanZero(object value)
+        private static bool ValidateGreaterThanZero(object? value)
         {
             if (value is int i)
             {
