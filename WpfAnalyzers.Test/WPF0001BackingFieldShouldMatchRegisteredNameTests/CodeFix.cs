@@ -53,7 +53,7 @@ namespace N
         }
     }
 }";
-            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' should be named 'BarProperty'.");
+            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyProperty registered as 'Bar' should be named 'BarProperty'");
             RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Rename to: 'BarProperty'.");
         }
 

@@ -13,8 +13,8 @@ Roslyn analyzers for WPF.
 
 | Id       | Title
 | :--      | :--
-| [WPF0001](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md)| Backing field for a DependencyProperty should match registered name.
-| [WPF0002](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md)| Backing field for a DependencyPropertyKey should match registered name.
+| [WPF0001](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0001.md)| Backing field for a DependencyProperty should match registered name
+| [WPF0002](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0002.md)| Backing field for a DependencyPropertyKey should match registered name
 | [WPF0003](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0003.md)| CLR property for a DependencyProperty should match registered name.
 | [WPF0004](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0004.md)| CLR method for a DependencyProperty must match registered name.
 | [WPF0005](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0005.md)| Name of PropertyChangedCallback should match registered name.
