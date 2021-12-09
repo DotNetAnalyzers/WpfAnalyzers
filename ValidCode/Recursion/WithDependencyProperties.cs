@@ -38,9 +38,9 @@ namespace ValidCode.Recursion
         public int P2
         {
             get { return this.P2; }
-#pragma warning disable WPF0041 // Set mutable dependency properties using SetCurrentValue.
+#pragma warning disable WPF0041 // Set mutable dependency properties using SetCurrentValue
             set { this.P2 = value; }
-#pragma warning restore WPF0041 // Set mutable dependency properties using SetCurrentValue.
+#pragma warning restore WPF0041 // Set mutable dependency properties using SetCurrentValue
         }
 
         public static void SetP3(DependencyObject element, int value) => SetP3(element, value);

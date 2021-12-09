@@ -224,7 +224,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0031FieldOrder = Create(
             id: "WPF0031",
-            title: "DependencyPropertyKey member must be declared before DependencyProperty member.",
+            title: "DependencyPropertyKey member must be declared before DependencyProperty member",
             messageFormat: "'{0}' must be declared before '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -233,7 +233,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0032ClrPropertyGetAndSetSameDependencyProperty = Create(
             id: "WPF0032",
-            title: "Use same dependency property in get and set.",
+            title: "Use same dependency property in get and set",
             messageFormat: "Property '{0}' must access same dependency property in getter and setter",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -247,7 +247,7 @@ namespace WpfAnalyzers
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Add [AttachedPropertyBrowsableForType]");
+            description: "Add [AttachedPropertyBrowsableForType].");
 
         internal static readonly DiagnosticDescriptor WPF0034AttachedPropertyBrowsableForTypeAttributeArgument = Create(
             id: "WPF0034",
@@ -256,12 +256,12 @@ namespace WpfAnalyzers
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            description: "Use correct argument for [AttachedPropertyBrowsableForType]");
+            description: "Use correct argument for [AttachedPropertyBrowsableForType].");
 
         internal static readonly DiagnosticDescriptor WPF0035ClrPropertyUseSetValueInSetter = Create(
             id: "WPF0035",
-            title: "Use SetValue in setter.",
-            messageFormat: "Use SetValue in setter.",
+            title: "Use SetValue in setter",
+            messageFormat: "Use SetValue in setter",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -269,8 +269,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0036AvoidSideEffectsInClrAccessors = Create(
             id: "WPF0036",
-            title: "Avoid side effects in CLR accessors.",
-            messageFormat: "Avoid side effects in CLR accessors.",
+            title: "Avoid side effects in CLR accessors",
+            messageFormat: "Avoid side effects in CLR accessors",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -278,7 +278,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0040SetUsingDependencyPropertyKey = Create(
             id: "WPF0040",
-            title: "A readonly DependencyProperty must be set with DependencyPropertyKey.",
+            title: "A readonly DependencyProperty must be set with DependencyPropertyKey",
             messageFormat: "Set '{0}' using '{1}'",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -287,7 +287,7 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0041SetMutableUsingSetCurrentValue = Create(
             id: "WPF0041",
-            title: "Set mutable dependency properties using SetCurrentValue.",
+            title: "Set mutable dependency properties using SetCurrentValue",
             messageFormat: "Use SetCurrentValue({0}, {1})",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
@@ -296,8 +296,8 @@ namespace WpfAnalyzers
 
         internal static readonly DiagnosticDescriptor WPF0042AvoidSideEffectsInClrAccessors = Create(
             id: "WPF0042",
-            title: "Avoid side effects in CLR accessors.",
-            messageFormat: "Avoid side effects in CLR accessors.",
+            title: "Avoid side effects in CLR accessors",
+            messageFormat: "Avoid side effects in CLR accessors",
             category: AnalyzerCategory.DependencyProperty,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,

@@ -56,7 +56,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use SetValue in setter."), before, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use SetValue in setter"), before, after);
         }
 
         [Test]

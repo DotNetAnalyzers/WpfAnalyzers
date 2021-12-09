@@ -37,15 +37,15 @@ Roslyn analyzers for WPF.
 | [WPF0023](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0023.md)| The callback is trivial, convert to lambda
 | [WPF0024](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0024.md)| Parameter type should be nullable
 | [WPF0030](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0030.md)| Backing field for a DependencyProperty should be static and readonly
-| [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey member must be declared before DependencyProperty member.
-| [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set.
+| [WPF0031](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0031.md)| DependencyPropertyKey member must be declared before DependencyProperty member
+| [WPF0032](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0032.md)| Use same dependency property in get and set
 | [WPF0033](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0033.md)| Add [AttachedPropertyBrowsableForType]
 | [WPF0034](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0034.md)| Use correct argument for [AttachedPropertyBrowsableForType]
-| [WPF0035](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0035.md)| Use SetValue in setter.
-| [WPF0036](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0036.md)| Avoid side effects in CLR accessors.
-| [WPF0040](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md)| A readonly DependencyProperty must be set with DependencyPropertyKey.
-| [WPF0041](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md)| Set mutable dependency properties using SetCurrentValue.
-| [WPF0042](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md)| Avoid side effects in CLR accessors.
+| [WPF0035](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0035.md)| Use SetValue in setter
+| [WPF0036](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0036.md)| Avoid side effects in CLR accessors
+| [WPF0040](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0040.md)| A readonly DependencyProperty must be set with DependencyPropertyKey
+| [WPF0041](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0041.md)| Set mutable dependency properties using SetCurrentValue
+| [WPF0042](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0042.md)| Avoid side effects in CLR accessors
 | [WPF0043](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0043.md)| Don't set DataContext and Style using SetCurrentValue.
 | [WPF0050](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0050.md)| XmlnsPrefix must map to the same url as XmlnsDefinition.
 | [WPF0051](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0051.md)| XmlnsDefinition must map to existing namespace.
