@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
 {
+    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -86,7 +87,7 @@ namespace N
             set { this.SetValue(BarProperty, value); }
         }
     }
-}".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>")})");
+}".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>", StringComparison.OrdinalIgnoreCase)})");
 
             var after = @"
 namespace N
