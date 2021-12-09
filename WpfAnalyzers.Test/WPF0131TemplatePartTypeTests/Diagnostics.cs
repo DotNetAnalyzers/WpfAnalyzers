@@ -1,4 +1,4 @@
-namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -45,7 +45,7 @@ namespace N
     {
         private const string PartBar = ""PART_Bar"";
 
-        private Button bar;
+        private Button? bar;
 
         public override void OnApplyTemplate()
         {
@@ -75,7 +75,7 @@ namespace N
     {
         private const string PartBar = ""PART_Bar"";
 
-        private Button bar;
+        private Button? bar;
 
         public override void OnApplyTemplate()
         {
