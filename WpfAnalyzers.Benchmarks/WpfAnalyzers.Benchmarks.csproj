@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1" />
     <PackageReference Include="Gu.Analyzers" Version="2.0.0" PrivateAssets="all" />
-    <PackageReference Include="Gu.Roslyn.Asserts" Version="4.0.2" />
+    <PackageReference Include="Gu.Roslyn.Asserts" Version="4.0.3" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64" PrivateAssets="all" />
