@@ -467,7 +467,7 @@ namespace N
         [Test]
         public static void AttachedPropertyNullableEnumerable()
         {
-            var binary = MetadataReferences.CreateBinary(@"
+            var binary = BinaryReference.Compile(@"
 namespace BinaryReference
 {
     using System.Collections;
