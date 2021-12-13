@@ -474,9 +474,7 @@
 
         private readonly struct OnPropertyChangedDocumentationErrors : IEnumerable<(Location Location, string Text)>
         {
-#pragma warning disable RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             private readonly SymbolAndDeclaration<IMethodSymbol, MethodDeclarationSyntax> method;
-#pragma warning restore RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             private readonly InvocationExpressionSyntax invocation;
             private readonly BackingFieldOrProperty backing;
 
