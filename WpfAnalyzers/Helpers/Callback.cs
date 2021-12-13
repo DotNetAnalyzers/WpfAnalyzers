@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     internal readonly struct Callback
     {
@@ -59,6 +60,33 @@
 
                 return null;
             }
+        }
+
+        internal static InvocationExpressionSyntax? SingleInvocation(IMethodSymbol method, SyntaxNode? scope, SyntaxNodeAnalysisContext context)
+        {
+            if (scope is null)
+            {
+                return null;
+            }
+
+            InvocationExpressionSyntax? invocation = null;
+            using var walker = SpecificIdentifierNameWalker.Borrow(scope, method.Name);
+            foreach (var identifierName in walker.IdentifierNames)
+            {
+                if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
+                    context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
+                    MethodSymbolComparer.Equal(symbol, method))
+                {
+                    if (invocation is { })
+                    {
+                        return null;
+                    }
+
+                    invocation = candidate;
+                }
+            }
+
+            return invocation;
         }
 
         internal static bool CanInlineBody(MethodDeclarationSyntax method)

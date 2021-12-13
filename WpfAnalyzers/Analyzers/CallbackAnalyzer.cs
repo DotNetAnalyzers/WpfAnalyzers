@@ -69,7 +69,7 @@
                     }
                 }
                 else if (method is { ReturnsVoid: true, IsVirtual: true } &&
-                         SingleInvocation(method, methodDeclaration, context) is { } singleInvocation &&
+                         Callback.SingleInvocation(method, methodDeclaration.Parent, context) is { } singleInvocation &&
                          TryGetDpFromInstancePropertyChanged(singleInvocation, context, out var backing))
                 {
                     if (backing.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
@@ -372,31 +372,6 @@
                     }
                 }
             }
-        }
-
-        private static InvocationExpressionSyntax? SingleInvocation(IMethodSymbol method, MethodDeclarationSyntax methodDeclaration, SyntaxNodeAnalysisContext context)
-        {
-            InvocationExpressionSyntax? invocation = null;
-            if (methodDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
-            {
-                using var walker = SpecificIdentifierNameWalker.Borrow(classDeclaration, methodDeclaration.Identifier.ValueText);
-                foreach (var identifierName in walker.IdentifierNames)
-                {
-                    if (identifierName.Parent is MemberAccessExpressionSyntax { Parent: InvocationExpressionSyntax candidate } &&
-                        context.SemanticModel.TryGetSymbol(identifierName, context.CancellationToken, out IMethodSymbol? symbol) &&
-                        MethodSymbolComparer.Equal(symbol, method))
-                    {
-                        if (invocation is { })
-                        {
-                            return null;
-                        }
-
-                        invocation = candidate;
-                    }
-                }
-            }
-
-            return invocation;
         }
 
         private static PooledSet<ArgumentSyntax> GetCallbackArguments(SyntaxNodeAnalysisContext context, IMethodSymbol method, MethodDeclarationSyntax methodDeclaration)

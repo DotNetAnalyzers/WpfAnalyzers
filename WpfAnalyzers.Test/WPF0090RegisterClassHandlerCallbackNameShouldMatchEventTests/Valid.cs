@@ -109,5 +109,30 @@ namespace N
 }";
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [Test]
+        public static void WhenUsedByTwo()
+        {
+            var code = @"
+namespace N;
+
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+public static class C
+{
+    static C()
+    {
+        EventManager.RegisterClassHandler(typeof(TreeViewItem), UIElement.MouseLeftButtonDownEvent,  new MouseButtonEventHandler(OnDown));
+        EventManager.RegisterClassHandler(typeof(TreeViewItem), UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(OnDown));
+
+        static void OnDown(object sender, MouseButtonEventArgs e)
+        {
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

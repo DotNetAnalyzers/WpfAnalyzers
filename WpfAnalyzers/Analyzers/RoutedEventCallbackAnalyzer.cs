@@ -28,9 +28,11 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation } &&
                 objectCreation.TrySingleArgument(out var callbackArg) &&
-                callbackArg.Expression is IdentifierNameSyntax && handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
+                callbackArg.Expression is IdentifierNameSyntax &&
+                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
             {
-                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { EventArgument: { } eventArgument })
+                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument } &&
+                    Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { })
                 {
                     HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent);
                 }
