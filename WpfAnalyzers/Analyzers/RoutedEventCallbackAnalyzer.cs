@@ -34,7 +34,7 @@
                 if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
                 {
                     if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
-                        CheckName(context, eventArgument, callbackArg) is var (messageArg, properties))
+                        CheckName(eventArgument, callbackArg) is var (messageArg, properties))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -48,7 +48,7 @@
                           EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                           invocation.TryGetArgumentAtIndex(0, out eventArgument))
                 {
-                    if (CheckName(context, eventArgument, callbackArg) is var (messageArg, properties))
+                    if (CheckName(eventArgument, callbackArg) is var (messageArg, properties))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -61,7 +61,7 @@
             }
         }
 
-        private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+        private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
         {
             if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
                 Identifier() is { } identifier)
@@ -72,10 +72,8 @@
                     {
                         return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
                     }
-                    else
-                    {
-                        return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
-                    }
+
+                    return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
                 }
             }
 
