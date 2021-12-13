@@ -31,21 +31,37 @@
                 callbackArg.Expression is IdentifierNameSyntax &&
                 handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
             {
-                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument } &&
-                    Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { })
+                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
                 {
-                    HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent);
+                    if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
+                        CheckName(context, eventArgument, callbackArg) is var (messageArg, properties))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
+                                callbackArg.GetLocation(),
+                                properties,
+                                messageArg));
+                    }
                 }
                 else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                           EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                           invocation.TryGetArgumentAtIndex(0, out eventArgument))
                 {
-                    HandleCallback(context, eventArgument, callbackArg, Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
+                    if (CheckName(context, eventArgument, callbackArg) is var (messageArg, properties))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+                                callbackArg.GetLocation(),
+                                properties,
+                                messageArg));
+                    }
                 }
             }
         }
 
-        private static void HandleCallback(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg, DiagnosticDescriptor descriptor)
+        private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(SyntaxNodeAnalysisContext context, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
         {
             if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
                 Identifier() is { } identifier)
@@ -54,19 +70,16 @@
                 {
                     if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                descriptor,
-                                callbackArg.GetLocation(),
-                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName),
-                                expectedName));
+                        return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(descriptor, callbackArg.GetLocation(), "On" + identifier.Identifier.ValueText));
+                        return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
                     }
                 }
             }
+
+            return null;
 
             IdentifierNameSyntax? Identifier()
             {
