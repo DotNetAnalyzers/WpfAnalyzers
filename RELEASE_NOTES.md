@@ -1,3 +1,10 @@
+#### 4.0.1
+* BUGFIX: WPF0090 no warning when used by more than one registration.
+
+#### 4.0.0
+* BREAKING: For VS2022+ now.
+* BUGFIX: AD0001 Could not load file or assembly
+
 #### 3.5.4
 * BUFIX: IsRepresentationPreservingConversion when cast reference type.
 
