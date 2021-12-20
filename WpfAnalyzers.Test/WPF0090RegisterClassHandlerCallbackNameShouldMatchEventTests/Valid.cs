@@ -111,7 +111,7 @@ namespace N
         }
 
         [Test]
-        public static void WhenUsedByTwo()
+        public static void WhenUsedByTwoMouseButtonEventArgs()
         {
             var code = @"
 namespace N;
@@ -128,6 +128,32 @@ public static class C
         EventManager.RegisterClassHandler(typeof(TreeViewItem), UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(OnDown));
 
         static void OnDown(object sender, MouseButtonEventArgs e)
+        {
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void WhenUsedByTwoEventArgs()
+        {
+            var code = @"
+namespace N;
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+public static class C
+{
+    static C()
+    {
+        EventManager.RegisterClassHandler(typeof(DataGridRow), UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnDown));
+        EventManager.RegisterClassHandler(typeof(DataGridRow), UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(OnDown));
+
+        static void OnDown(object? sender, EventArgs e)
         {
         }
     }
