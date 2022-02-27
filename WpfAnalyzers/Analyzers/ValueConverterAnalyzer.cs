@@ -62,8 +62,7 @@ internal class ValueConverterAnalyzer : DiagnosticAnalyzer
                 {
                     if (ValueConverter.TryGetConversionTypes(classDeclaration, context.SemanticModel, context.CancellationToken, out var sourceType, out var targetType))
                     {
-                        if (sourceType is { } &&
-                            sourceType != QualifiedType.System.Object &&
+                        if (sourceType != QualifiedType.System.Object &&
                             attribute.TryFindArgument(0, "sourceType", out var arg) &&
                             arg.Expression is TypeOfExpressionSyntax sourceTypeOf &&
                             TypeSymbol.TryGet(sourceTypeOf, type, context.SemanticModel, context.CancellationToken, out var argType) &&
@@ -81,7 +80,8 @@ internal class ValueConverterAnalyzer : DiagnosticAnalyzer
                         }
                     }
                 }
-                else if (!classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                else if (!classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+                         !type.IsGenericType)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
