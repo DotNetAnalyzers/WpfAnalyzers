@@ -1,3 +1,8 @@
+#### 4.0.2
+* BUGFIX: WPF0012 Allow accessor property to be nullable
+* BUGFIX: WPF0073 don't warn when generic
+* BUGFIX: Handle GetAsFrozen
+
 #### 4.0.1
 * BUGFIX: WPF0090 no warning when used by more than one registration.
 
