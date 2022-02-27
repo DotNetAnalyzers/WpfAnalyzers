@@ -663,7 +663,7 @@ namespace ValidCode.Repro
         [Test]
         public static void SubTypeIssue354()
         {
-            var code = @"
+            var typeA = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -680,7 +680,15 @@ namespace ValidCode.Repro
 
         public static readonly DependencyProperty IconGeometryProperty =
             DependencyProperty.Register(nameof(IconGeometry), typeof(Geometry), typeof(TypeA), new PropertyMetadata(null));
-    }
+    }	
+}";
+
+            var typeB = @"
+namespace ValidCode.Repro
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
 	
     public class TypeB : Image
     {
@@ -697,7 +705,7 @@ namespace ValidCode.Repro
     }	
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, code);
+            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, typeA, typeB);
         }
     }
 }
