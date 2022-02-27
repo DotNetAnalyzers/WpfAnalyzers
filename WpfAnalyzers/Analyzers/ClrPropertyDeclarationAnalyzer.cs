@@ -36,15 +36,13 @@ internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
         {
             if (ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { SetValue: { } setValue, BackingSet: { } backingSet, GetValue: { } getValue, BackingGet: { } backingGet })
             {
-                if (getter.Body is { Statements: { } getStatements } &&
-                    getStatements.Count > 1 &&
+                if (getter.Body is { Statements: { Count: > 1 } getStatements } &&
                     getStatements.TryFirst(x => !x.Contains(getValue), out var statement))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                 }
 
-                if (setter.Body is { Statements: { } setStatements } &&
-                    setStatements.Count > 1 &&
+                if (setter.Body is { Statements: { Count: > 1 } setStatements } &&
                     setStatements.TryFirst(x => !x.Contains(setValue), out var sideEffect))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
@@ -73,7 +71,7 @@ internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
 
                 if (backingGet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType })
                 {
-                    if (!TypeSymbolComparer.Equal(property.Type, registeredType))
+                    if (!MatchesRegisteredType(property.Type, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -85,7 +83,7 @@ internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
                     }
                     else if (getValue is { Parent: CastExpressionSyntax { Type: { } type } } &&
                              context.SemanticModel.GetType(type, context.CancellationToken) is { } castType &&
-                             !TypeSymbolComparer.Equal(registeredType, castType))
+                             !MatchesRegisteredType(castType, registeredType))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -94,6 +92,22 @@ internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
                                 ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
                                 property,
                                 registeredType));
+                    }
+
+                    static bool MatchesRegisteredType(ITypeSymbol candidate, ITypeSymbol registeredType)
+                    {
+                        if (TypeSymbolComparer.Equal(candidate, registeredType))
+                        {
+                            return true;
+                        }
+
+                        if (candidate.NullableAnnotation == NullableAnnotation.Annotated &&
+                            registeredType.NullableAnnotation == NullableAnnotation.NotAnnotated)
+                        {
+                            return TypeSymbolComparer.Equal(candidate.OriginalDefinition, registeredType);
+                        }
+
+                        return false;
                     }
                 }
 

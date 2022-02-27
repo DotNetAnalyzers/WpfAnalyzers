@@ -291,4 +291,34 @@ namespace N
 }";
         RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
     }
+
+    [Test]
+    public static void AllowNullableAccessorIssue293()
+    {
+        var code = @"
+namespace N;
+
+using System.Drawing;
+using System.Windows;
+
+public class C : FrameworkElement
+{
+    /// <summary>Identifies the <see cref=""Background""/> dependency property.</summary>
+    public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
+        nameof(Background),
+        typeof(Brush),
+        typeof(C),
+        new FrameworkPropertyMetadata(
+            Brushes.Transparent,
+            FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender));
+
+    public Brush? Background
+    {
+        get => (Brush?)this.GetValue(BackgroundProperty);
+        set => this.SetValue(BackgroundProperty, value);
+    }
+}";
+
+        RoslynAssert.Valid(Analyzer, code);
+    }
 }
