@@ -523,6 +523,40 @@ namespace N
     }
 
     [Test]
+    public static void FrozenGeometry()
+    {
+        var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class C : Control
+    {
+        public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(
+            nameof(Geometry),
+            typeof(Geometry),
+            typeof(C),
+            new PropertyMetadata(Default()));
+
+        public Geometry? Geometry
+        {
+            get => (Geometry?)this.GetValue(GeometryProperty);
+            set => this.SetValue(GeometryProperty, value);
+        }
+
+        private static Freezable Default()
+        {
+            var geometry = new EllipseGeometry(default, 5, 5);
+            return geometry.GetAsFrozen();
+        }
+    }
+}";
+        RoslynAssert.Valid(Analyzer, code);
+    }
+
+    [Test]
     public static void EnumIssue211()
     {
         var code = @"

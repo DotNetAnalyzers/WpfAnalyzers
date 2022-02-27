@@ -83,8 +83,8 @@ internal readonly struct PropertyMetadata
     {
         if (objectCreation is { ArgumentList: { } })
         {
-            if (semanticModel.TryGetSymbol(objectCreation, KnownSymbols.PropertyMetadata,          cancellationToken, out var constructor) ||
-                semanticModel.TryGetSymbol(objectCreation, KnownSymbols.UIPropertyMetadata,        cancellationToken, out constructor) ||
+            if (semanticModel.TryGetSymbol(objectCreation, KnownSymbols.PropertyMetadata, cancellationToken, out var constructor) ||
+                semanticModel.TryGetSymbol(objectCreation, KnownSymbols.UIPropertyMetadata, cancellationToken, out constructor) ||
                 semanticModel.TryGetSymbol(objectCreation, KnownSymbols.FrameworkPropertyMetadata, cancellationToken, out constructor))
             {
                 return new PropertyMetadata(objectCreation, constructor);
@@ -152,7 +152,7 @@ internal readonly struct PropertyMetadata
             switch (value)
             {
                 case ConditionalExpressionSyntax { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse }:
-                    return IsValueValidForRegisteredType(whenTrue,  registeredType, recursion) &&
+                    return IsValueValidForRegisteredType(whenTrue, registeredType, recursion) &&
                            IsValueValidForRegisteredType(whenFalse, registeredType, recursion);
 
                 case BinaryExpressionSyntax { Left: { }, Right: { } right } binary
@@ -201,6 +201,8 @@ internal readonly struct PropertyMetadata
                         return IsAssignedValueOfRegisteredType(property, declaration);
                     case { Symbol: IMethodSymbol _, Declaration: MethodDeclarationSyntax declaration }:
                         return IsReturnValueOfRegisteredType(declaration);
+                    case { Symbol: IMethodSymbol { MetadataName: "GetAsFrozen" }, Source: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } }:
+                        return recursion.SemanticModel.IsRepresentationPreservingConversion(expression, registeredType);
                     case { Symbol: IFieldSymbol { Type: { SpecialType: SpecialType.System_Object } } }:
                         return true;
                     case { Symbol: IPropertySymbol { Type: { SpecialType: SpecialType.System_Object } } }:
