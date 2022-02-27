@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RegistrationAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly RegistrationAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -47,20 +47,20 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'ValidateValue'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'ValidateValue'"), code);
+    }
 
-        [TestCase("↓WrongName", "ValidateValue")]
-        [TestCase("x => ↓WrongName(x)", "x => ValidateValue(x)")]
-        [TestCase("x => FooControl.↓WrongName(x)", "x => FooControl.ValidateValue(x)")]
-        [TestCase("FooControl.↓WrongName", "FooControl.ValidateValue")]
-        [TestCase("new ValidateValueCallback(↓WrongName)", "new ValidateValueCallback(ValidateValue)")]
-        [TestCase("new ValidateValueCallback(FooControl.↓WrongName)", "new ValidateValueCallback(FooControl.ValidateValue)")]
-        [TestCase("new ValidateValueCallback(x => ↓WrongName(x))", "new ValidateValueCallback(x => ValidateValue(x))")]
-        [TestCase("new ValidateValueCallback(x => FooControl.↓WrongName(x))", "new ValidateValueCallback(x => FooControl.ValidateValue(x))")]
-        public static void DependencyPropertyWithCallback(string callback, string expected)
-        {
-            var before = @"
+    [TestCase("↓WrongName",                                               "ValidateValue")]
+    [TestCase("x => ↓WrongName(x)",                                       "x => ValidateValue(x)")]
+    [TestCase("x => FooControl.↓WrongName(x)",                            "x => FooControl.ValidateValue(x)")]
+    [TestCase("FooControl.↓WrongName",                                    "FooControl.ValidateValue")]
+    [TestCase("new ValidateValueCallback(↓WrongName)",                    "new ValidateValueCallback(ValidateValue)")]
+    [TestCase("new ValidateValueCallback(FooControl.↓WrongName)",         "new ValidateValueCallback(FooControl.ValidateValue)")]
+    [TestCase("new ValidateValueCallback(x => ↓WrongName(x))",            "new ValidateValueCallback(x => ValidateValue(x))")]
+    [TestCase("new ValidateValueCallback(x => FooControl.↓WrongName(x))", "new ValidateValueCallback(x => FooControl.ValidateValue(x))")]
+    public static void DependencyPropertyWithCallback(string callback, string expected)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -88,7 +88,7 @@ namespace N
     }
 }".AssertReplace("↓WrongName", callback);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -116,13 +116,13 @@ namespace N
     }
 }".AssertReplace("ValidateValue);", $"{expected});");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -157,7 +157,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -191,13 +191,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -222,7 +222,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -246,13 +246,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -284,7 +284,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -315,13 +315,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCallbackMatchesOtherProperty()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCallbackMatchesOtherProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -369,14 +369,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), code);
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), code);
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenCallbackMatchesOtherPropertyParts()
-        {
-            var part1 = @"
+    [Test]
+    public static void WhenCallbackMatchesOtherPropertyParts()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -409,7 +409,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -432,8 +432,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), part1, code);
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, part1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'ValidateBar' should be named 'ValidateBaz'"), part1, code);
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, part1, code);
     }
 }

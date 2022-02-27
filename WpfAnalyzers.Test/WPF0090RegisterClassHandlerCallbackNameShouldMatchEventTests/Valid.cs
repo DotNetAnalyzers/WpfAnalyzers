@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0090RegisterClassHandlerCallbackNameShouldMatchEventTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenCorrectNameSizeChangedEvent()
     {
-        private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenCorrectNameSizeChangedEvent()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -29,13 +29,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenCorrectNameSizeChangedEventHandledEventsToo()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCorrectNameSizeChangedEventHandledEventsToo()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -54,13 +54,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenCorrectNameManipulationStartingEvent()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCorrectNameManipulationStartingEvent()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -81,13 +81,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenCorrectNameMouseDownEvent()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCorrectNameMouseDownEvent()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -107,13 +107,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenUsedByTwoMouseButtonEventArgs()
-        {
-            var code = @"
+    [Test]
+    public static void WhenUsedByTwoMouseButtonEventArgs()
+    {
+        var code = @"
 namespace N;
 
 using System.Windows;
@@ -132,13 +132,13 @@ public static class C
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenUsedByTwoEventArgs()
-        {
-            var code = @"
+    [Test]
+    public static void WhenUsedByTwoEventArgs()
+    {
+        var code = @"
 namespace N;
 
 using System;
@@ -158,7 +158,6 @@ public static class C
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

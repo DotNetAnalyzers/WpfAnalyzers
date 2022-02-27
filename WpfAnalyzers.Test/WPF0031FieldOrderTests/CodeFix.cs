@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
+﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly MoveFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0031FieldOrder);
 
-    public static class CodeFix
+    [Test]
+    public static void Messages()
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly MoveFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0031FieldOrder);
-
-        [Test]
-        public static void Messages()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -36,7 +36,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -60,13 +60,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("'BarPropertyKey' must be declared before 'BarProperty'"), before, after, fixTitle: "Move");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("'BarPropertyKey' must be declared before 'BarProperty'"), before, after, fixTitle: "Move");
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -90,7 +90,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -113,13 +113,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyWithComments()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyWithComments()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -145,7 +145,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -170,13 +170,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ReadOnlyAttachedProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyAttachedProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -203,7 +203,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -229,7 +229,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

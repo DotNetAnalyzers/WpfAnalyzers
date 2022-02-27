@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
+﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace);
 
-    public static class Diagnostics
+    [Test]
+    public static void WhenNoNamespace()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0051XmlnsDefinitionMustMapExistingNamespace);
-
-        [Test]
-        public static void WhenNoNamespace()
-        {
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -37,13 +37,13 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist"), code);
+    }
 
-        [Test]
-        public static void WhenMissingNamespace()
-        {
-            var code = @"
+    [Test]
+    public static void WhenMissingNamespace()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -69,7 +69,6 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ↓""Gu.Wpf.Geometry"")]";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("[XmlnsDefinition] maps to \'\"Gu.Wpf.Geometry\"\' that does not exist"), code);
     }
 }

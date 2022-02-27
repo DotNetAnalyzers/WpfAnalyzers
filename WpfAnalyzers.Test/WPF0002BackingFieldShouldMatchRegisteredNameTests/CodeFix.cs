@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0002BackingFieldShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0002BackingFieldShouldMatchRegisteredName);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0002BackingFieldShouldMatchRegisteredName);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -36,13 +36,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'Error' that is backing field for the DependencyPropertyKey registered as 'Bar' must be named 'BarPropertyKey'"), code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingFields()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingFields()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -66,7 +66,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -89,13 +89,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingProperties()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingProperties()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -119,7 +119,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -142,13 +142,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlyBackingFields()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlyBackingFields()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -175,7 +175,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -201,13 +201,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlyBackingProperties()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlyBackingProperties()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -234,7 +234,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -260,7 +260,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

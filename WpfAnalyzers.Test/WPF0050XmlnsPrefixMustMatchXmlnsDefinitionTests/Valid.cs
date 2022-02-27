@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
+﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenXmlnsDefinitionMatches()
     {
-        private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new();
-
-        [Test]
-        public static void WhenXmlnsDefinitionMatches()
-        {
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -37,13 +37,13 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenTwoXmlnsDefinitions()
-        {
-            var code = @"
+    [Test]
+    public static void WhenTwoXmlnsDefinitions()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -71,7 +71,6 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]
 [assembly: XmlnsPrefix(""http://gu.se/Geometry"", ""geometry"")]";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

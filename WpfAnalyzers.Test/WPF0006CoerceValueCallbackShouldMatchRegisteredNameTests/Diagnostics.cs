@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyMetadataAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName);
 
-    public static class Diagnostics
+    [Test]
+    public static void UsedByMoreThanOnePropertyMatchingNeither()
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName);
-
-        [Test]
-        public static void UsedByMoreThanOnePropertyMatchingNeither()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -66,8 +66,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
     }
 }

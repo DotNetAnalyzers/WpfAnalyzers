@@ -1,18 +1,18 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
+namespace WpfAnalyzers.Test.ImplementValueConverterFixTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ImplementValueConverterFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
-    public static class CodeFix
+    [Test]
+    public static void IValueConverterConvertBack()
     {
-        private static readonly ImplementValueConverterFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
-
-        [Test]
-        public static void IValueConverterConvertBack()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Data;
@@ -26,7 +26,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Data;
@@ -44,13 +44,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void IMultiValueConverterConvertBack()
-        {
-            var before = @"
+    [Test]
+    public static void IMultiValueConverterConvertBack()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Data;
@@ -64,7 +64,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Data;
@@ -83,7 +83,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
     }
 }

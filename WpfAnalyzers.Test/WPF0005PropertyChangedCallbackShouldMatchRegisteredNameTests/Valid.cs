@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+[TestFixture(typeof(CallbackAnalyzer))]
+[TestFixture(typeof(PropertyMetadataAnalyzer))]
+public static class Valid<T>
+    where T : DiagnosticAnalyzer, new()
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly DiagnosticAnalyzer Analyzer = new T();
 
-    [TestFixture(typeof(CallbackAnalyzer))]
-    [TestFixture(typeof(PropertyMetadataAnalyzer))]
-    public static class Valid<T>
-        where T : DiagnosticAnalyzer, new()
+    [Test]
+    public static void DependencyPropertyRegisterNoMetadata()
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new T();
-
-        [Test]
-        public static void DependencyPropertyRegisterNoMetadata()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,23 +34,23 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("new PropertyMetadata(OnBarChanged)")]
-        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
-        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata(default(int), (d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue))")]
-        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback((d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue)))")]
-        [TestCase("new PropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        [TestCase("new FrameworkPropertyMetadata(coerceValueCallback: CoerceBar, propertyChangedCallback: OnBarChanged)")]
-        public static void DependencyPropertyRegisterWithMetadata(string metadata)
-        {
-            var code = @"
+    [TestCase("new PropertyMetadata(OnBarChanged)")]
+    [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
+    [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata(default(int), (d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue))")]
+    [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback((d, e) => ((FooControl)d).OnBarChanged(e.OldValue, e.NewValue)))")]
+    [TestCase("new PropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
+    [TestCase("new FrameworkPropertyMetadata(coerceValueCallback: CoerceBar, propertyChangedCallback: OnBarChanged)")]
+    public static void DependencyPropertyRegisterWithMetadata(string metadata)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -98,13 +98,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -132,13 +132,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -162,13 +162,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -194,13 +194,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -220,13 +220,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -245,13 +245,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void LambdaCallingMethodCalledInOtherPlaces()
-        {
-            var code = @"
+    [Test]
+    public static void LambdaCallingMethodCalledInOtherPlaces()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -285,13 +285,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void UsedByMoreThanOnePropertyMatchingNeither()
-        {
-            var code = @"
+    [Test]
+    public static void UsedByMoreThanOnePropertyMatchingNeither()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -334,13 +334,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Issue210()
-        {
-            var code = @"
+    [Test]
+    public static void Issue210()
+    {
+        var code = @"
 namespace ValidCode.DependencyProperties
 {
     using System.Windows;
@@ -370,7 +370,6 @@ namespace ValidCode.DependencyProperties
     }
 }
 ";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

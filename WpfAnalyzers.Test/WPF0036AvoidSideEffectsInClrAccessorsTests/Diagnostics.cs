@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests
+﻿namespace WpfAnalyzers.Test.WPF0036AvoidSideEffectsInClrAccessorsTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -46,13 +46,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Avoid side effects in CLR accessors"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Avoid side effects in CLR accessors"), code);
+    }
 
-        [Test]
-        public static void DependencyPropertySideEffectInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertySideEffectInGetter()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -87,13 +87,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertySideEffectInSetter()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertySideEffectInSetter()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -132,13 +132,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -170,7 +170,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

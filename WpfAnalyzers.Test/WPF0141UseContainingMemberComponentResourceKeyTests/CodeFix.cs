@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
+    private static readonly ComponentResourceKeyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0141UseContainingMemberComponentResourceKey);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
-        private static readonly ComponentResourceKeyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0141UseContainingMemberComponentResourceKey);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -24,13 +24,13 @@ namespace N
             ↓nameof(ResourceKeys));
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use containing member: nameof(FooKey)"), code);
+    }
 
-        [Test]
-        public static void WhenNotUsingNameofContainingMember()
-        {
-            var before = @"
+    [Test]
+    public static void WhenNotUsingNameofContainingMember()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -43,7 +43,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -55,13 +55,13 @@ namespace N
             nameof(FooKey));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingWrongStringLiteral()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingWrongStringLiteral()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -74,7 +74,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -86,7 +86,6 @@ namespace N
             nameof(FooKey));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests
+﻿namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0174StyleTypedPropertyStyleSpecified);
 
-    public static class Diagnostics
+    [Test]
+    public static void WhenMissing()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0174StyleTypedPropertyStyleSpecified);
-
-        [Test]
-        public static void WhenMissing()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

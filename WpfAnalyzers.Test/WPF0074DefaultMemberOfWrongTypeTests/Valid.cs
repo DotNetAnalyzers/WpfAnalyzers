@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenDefaultField()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenDefaultField()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -55,13 +55,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenTwoFields()
-        {
-            var code = @"
+    [Test]
+    public static void WhenTwoFields()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -103,13 +103,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenDefaultProperty()
-        {
-            var code = @"
+    [Test]
+    public static void WhenDefaultProperty()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -154,13 +154,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenMarkupExtension()
-        {
-            var code = @"
+    [Test]
+    public static void WhenMarkupExtension()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -204,13 +204,13 @@ namespace N
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenHasMutableMembersExtension()
-        {
-            var code = @"
+    [Test]
+    public static void WhenHasMutableMembersExtension()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -253,13 +253,13 @@ namespace N
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenAbstract()
-        {
-            var code = @"
+    [Test]
+    public static void WhenAbstract()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -302,13 +302,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenVirtual()
-        {
-            var code = @"
+    [Test]
+    public static void WhenVirtual()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -351,13 +351,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenConstructorWithParameters()
-        {
-            var code = @"
+    [Test]
+    public static void WhenConstructorWithParameters()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -385,13 +385,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void InternalIMultiValueConverterWithDefaultField()
-        {
-            var boolBoxes = @"
+    [Test]
+    public static void InternalIMultiValueConverterWithDefaultField()
+    {
+        var boolBoxes = @"
 namespace Gu.Wpf.ToolTips
 {
     internal static class BoolBoxes
@@ -407,7 +407,7 @@ namespace Gu.Wpf.ToolTips
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace Gu.Wpf.ToolTips
 {
     using System;
@@ -442,13 +442,13 @@ namespace Gu.Wpf.ToolTips
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, boolBoxes, code);
-        }
+        RoslynAssert.Valid(Analyzer, boolBoxes, code);
+    }
 
-        [Test]
-        public static void Issue249()
-        {
-            var code = @"
+    [Test]
+    public static void Issue249()
+    {
+        var code = @"
 namespace WpfCopyDeploy
 {
     using System;
@@ -487,7 +487,6 @@ namespace WpfCopyDeploy
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

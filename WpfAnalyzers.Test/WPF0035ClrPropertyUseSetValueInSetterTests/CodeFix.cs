@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests
+﻿namespace WpfAnalyzers.Test.WPF0035ClrPropertyUseSetValueInSetterTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly UseSetValueFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0035ClrPropertyUseSetValueInSetter);
 
-    public static class CodeFix
+    [Test]
+    public static void DependencyProperty()
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly UseSetValueFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0035ClrPropertyUseSetValueInSetter);
-
-        [Test]
-        public static void DependencyProperty()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -56,13 +56,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use SetValue in setter"), before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Use SetValue in setter"), before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyExpressionBodyAccessors()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyExpressionBodyAccessors()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -84,7 +84,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -106,13 +106,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyExpressionBodies()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyExpressionBodies()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -136,7 +136,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -160,13 +160,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyStatementBodies()
-        {
-            var before = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyStatementBodies()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -190,7 +190,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -214,7 +214,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

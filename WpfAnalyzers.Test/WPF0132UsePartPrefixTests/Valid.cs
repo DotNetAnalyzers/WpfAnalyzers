@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
+﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly GetTemplateChildAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenPartPrefix()
     {
-        private static readonly GetTemplateChildAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenPartPrefix()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -26,7 +26,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

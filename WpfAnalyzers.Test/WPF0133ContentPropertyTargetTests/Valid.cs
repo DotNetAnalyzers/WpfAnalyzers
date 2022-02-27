@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0133ContentPropertyTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0133ContentPropertyTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenExists()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenExists()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -35,7 +35,6 @@ namespace N
     }
 }
 ";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

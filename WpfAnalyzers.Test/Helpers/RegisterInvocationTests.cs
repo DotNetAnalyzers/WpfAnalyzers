@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test
+﻿namespace WpfAnalyzers.Test;
+
+using System.Threading;
+
+using Gu.Roslyn.Asserts;
+
+using Microsoft.CodeAnalysis.CSharp;
+
+using NUnit.Framework;
+
+public static class DependencyPropertyRegisterTests
 {
-    using System.Threading;
-
-    using Gu.Roslyn.Asserts;
-
-    using Microsoft.CodeAnalysis.CSharp;
-
-    using NUnit.Framework;
-
-    public static class DependencyPropertyRegisterTests
+    [Test]
+    public static void AddOwnerMatch()
     {
-        [Test]
-        public static void AddOwnerMatch()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -51,20 +51,20 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("AddOwner");
-            Assert.AreEqual("AddOwner", DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("AddOwner");
+        Assert.AreEqual("AddOwner", DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(null, DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual(null, DependencyProperty.AddOwner.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [Test]
-        public static void TryGetOverrideMetadataCall()
-        {
-            var code = @"
+    [Test]
+    public static void TryGetOverrideMetadataCall()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -93,14 +93,13 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("OverrideMetadata");
-            Assert.AreEqual("OverrideMetadata", DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("OverrideMetadata");
+        Assert.AreEqual("OverrideMetadata", DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(null, DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual(null, DependencyProperty.OverrideMetadata.Match(invocation, semanticModel, CancellationToken.None));
     }
 }

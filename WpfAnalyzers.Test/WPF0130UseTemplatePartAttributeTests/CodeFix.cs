@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly GetTemplateChildAnalyzer Analyzer = new();
+    private static readonly AddAttributeListFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0130UseTemplatePartAttribute);
 
-    public static class CodeFix
+    [Test]
+    public static void StringLiteralFullyQualified()
     {
-        private static readonly GetTemplateChildAnalyzer Analyzer = new();
-        private static readonly AddAttributeListFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0130UseTemplatePartAttribute);
-
-        [Test]
-        public static void StringLiteralFullyQualified()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -27,7 +27,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -42,13 +42,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void StringLiteralNoCast()
-        {
-            var before = @"
+    [Test]
+    public static void StringLiteralNoCast()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -64,7 +64,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -80,13 +80,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void StringLiteralNoCastWhenHasOtherAttribute()
-        {
-            var before = @"
+    [Test]
+    public static void StringLiteralNoCastWhenHasOtherAttribute()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -104,7 +104,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -122,13 +122,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void CastStringLiteral()
-        {
-            var before = @"
+    [Test]
+    public static void CastStringLiteral()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -144,7 +144,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -160,13 +160,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void IsPatternStringLiteral()
-        {
-            var before = @"
+    [Test]
+    public static void IsPatternStringLiteral()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -188,7 +188,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -210,13 +210,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void CastConstant()
-        {
-            var before = @"
+    [Test]
+    public static void CastConstant()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -234,7 +234,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -252,13 +252,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void CastNameof()
-        {
-            var before = @"
+    [Test]
+    public static void CastNameof()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -274,7 +274,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -290,13 +290,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenWrongAttributeCastStringLiteral()
-        {
-            var before = @"
+    [Test]
+    public static void WhenWrongAttributeCastStringLiteral()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -313,7 +313,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -330,7 +330,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

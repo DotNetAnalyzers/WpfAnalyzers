@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyPropertyTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyPropertyTargetTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0170StyleTypedPropertyPropertyTarget;
 
-    public static class Valid
+    [TestCase("[StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]")]
+    [TestCase("[StyleTypedProperty(Property = \"BarStyle\", StyleTargetType = typeof(Control))]")]
+    [TestCase("[StyleTypedProperty(Property = BarStyleName, StyleTargetType = typeof(Control))]")]
+    public static void WhenExists(string attribute)
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0170StyleTypedPropertyPropertyTarget;
-
-        [TestCase("[StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]")]
-        [TestCase("[StyleTypedProperty(Property = \"BarStyle\", StyleTargetType = typeof(Control))]")]
-        [TestCase("[StyleTypedProperty(Property = BarStyleName, StyleTargetType = typeof(Control))]")]
-        public static void WhenExists(string attribute)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -39,13 +39,13 @@ namespace N
         }
     }
 }".AssertReplace("[StyleTypedProperty(Property = nameof(BarStyle), StyleTargetType = typeof(Control))]", attribute);
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void OtherAttributeAndAlias()
-        {
-            var code = @"
+    [Test]
+    public static void OtherAttributeAndAlias()
+    {
+        var code = @"
     using System;
     using Window = System.Windows.Window;
 
@@ -56,13 +56,13 @@ namespace N
         {
         }
     }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void AttachedProperty()
-        {
-            var code = @"
+    [Test]
+    public static void AttachedProperty()
+    {
+        var code = @"
 namespace ValidCode.AttachedProperties
 {
     using System.Windows;
@@ -95,7 +95,6 @@ namespace ValidCode.AttachedProperties
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

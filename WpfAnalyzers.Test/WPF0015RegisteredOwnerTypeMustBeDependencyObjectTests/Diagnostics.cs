@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests
+﻿namespace WpfAnalyzers.Test.WPF0015RegisteredOwnerTypeMustBeDependencyObjectTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly WPF0015RegisteredOwnerTypeMustBeDependencyObject Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,13 +32,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Maybe you intended to use 'RegisterAttached'?"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Maybe you intended to use 'RegisterAttached'?"), code);
+    }
 
-        [Test]
-        public static void DependencyRegister()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyRegister()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -59,13 +59,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -82,13 +82,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -99,7 +99,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -126,13 +126,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code, part2);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code, part2);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -148,7 +148,7 @@ namespace N
     }
 }";
 
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -162,7 +162,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
     }
 }

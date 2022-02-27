@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ChangeTypeofFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ChangeTypeofFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0081MarkupExtensionReturnTypeMustUseCorrectType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -28,13 +28,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type Expected: N.FooExtension"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("MarkupExtensionReturnType must use correct return type Expected: N.FooExtension"), code);
+    }
 
-        [Test]
-        public static void ReturnThis()
-        {
-            var before = @"
+    [Test]
+    public static void ReturnThis()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -50,7 +50,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -65,7 +65,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

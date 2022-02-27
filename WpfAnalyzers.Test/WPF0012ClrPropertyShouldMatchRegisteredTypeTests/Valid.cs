@@ -1,21 +1,21 @@
-﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0012ClrPropertyShouldMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("int")]
+    [TestCase("int?")]
+    [TestCase("Nullable<int>")]
+    [TestCase("int[]")]
+    [TestCase("int?[]")]
+    [TestCase("ObservableCollection<int>")]
+    public static void DependencyProperty(string typeName)
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-
-        [TestCase("int")]
-        [TestCase("int?")]
-        [TestCase("Nullable<int>")]
-        [TestCase("int[]")]
-        [TestCase("int?[]")]
-        [TestCase("ObservableCollection<int>")]
-        public static void DependencyProperty(string typeName)
-        {
-            var code = @"
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -41,13 +41,13 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyWithThis()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyWithThis()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -69,13 +69,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyGeneric()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyGeneric()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -97,13 +97,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var part1 = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -121,7 +121,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -148,18 +148,18 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [TestCase("int")]
-        [TestCase("int?")]
-        [TestCase("Nullable<int>")]
-        [TestCase("int[]")]
-        [TestCase("int?[]")]
-        [TestCase("ObservableCollection<int>")]
-        public static void ReadOnlyDependencyProperty(string typeName)
-        {
-            var code = @"
+    [TestCase("int")]
+    [TestCase("int?")]
+    [TestCase("Nullable<int>")]
+    [TestCase("int[]")]
+    [TestCase("int?[]")]
+    [TestCase("ObservableCollection<int>")]
+    public static void ReadOnlyDependencyProperty(string typeName)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -187,13 +187,13 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void EnumIssue211()
-        {
-            var code = @"
+    [Test]
+    public static void EnumIssue211()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -215,7 +215,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"namespace N
+        var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -223,13 +223,13 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, code, enumCode);
-        }
+        RoslynAssert.Valid(Analyzer, code, enumCode);
+    }
 
-        [Test]
-        public static void EnumAddOwnerIssue211()
-        {
-            var fooCode = @"
+    [Test]
+    public static void EnumAddOwnerIssue211()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -259,7 +259,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -281,7 +281,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"namespace N
+        var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -289,7 +289,6 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
     }
 }

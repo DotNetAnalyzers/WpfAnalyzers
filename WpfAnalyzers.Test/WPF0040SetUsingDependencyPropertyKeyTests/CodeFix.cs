@@ -1,22 +1,22 @@
-﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests;
+
+using System;
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using System;
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetValueAnalyzer Analyzer = new();
+    private static readonly UseDependencyPropertyKeyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey);
 
-    public static class CodeFix
+    [TestCase("SetValue")]
+    [TestCase("this.SetValue")]
+    [TestCase("SetCurrentValue")]
+    [TestCase("this.SetCurrentValue")]
+    public static void ReadOnlyDependencyProperty(string method)
     {
-        private static readonly SetValueAnalyzer Analyzer = new();
-        private static readonly UseDependencyPropertyKeyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0040SetUsingDependencyPropertyKey);
-
-        [TestCase("SetValue")]
-        [TestCase("this.SetValue")]
-        [TestCase("SetCurrentValue")]
-        [TestCase("this.SetCurrentValue")]
-        public static void ReadOnlyDependencyProperty(string method)
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -40,7 +40,7 @@ namespace N
     }
 }".AssertReplace("SetValue", method);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -64,16 +64,16 @@ namespace N
     }
 }".AssertReplace("SetValue", method.StartsWith("this.", StringComparison.Ordinal) ? "this.SetValue" : "SetValue");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("this.SetValue")]
-        [TestCase("SetCurrentValue")]
-        [TestCase("this.SetCurrentValue")]
-        public static void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
-        {
-            var before = @"
+    [TestCase("SetValue")]
+    [TestCase("this.SetValue")]
+    [TestCase("SetCurrentValue")]
+    [TestCase("this.SetCurrentValue")]
+    public static void ReadOnlyDependencyPropertyExpressionBodyAccessors(string method)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -97,7 +97,7 @@ namespace N
     }
 }".AssertReplace("SetValue", method);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -121,14 +121,14 @@ namespace N
     }
 }".AssertReplace("SetValue", method.StartsWith("this.", StringComparison.Ordinal) ? "this.SetValue" : "SetValue");
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void DependencyPropertyRegisterAttachedReadOnly(string method)
-        {
-            var before = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void DependencyPropertyRegisterAttachedReadOnly(string method)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -154,7 +154,7 @@ namespace N
         }
     }
 }".AssertReplace("SetValue", method);
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -181,7 +181,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0071ConverterDoesNotHaveAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
+    private static readonly ValueConversionAttributeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0071ConverterDoesNotHaveAttribute);
 
-    public static class CodeFix
+    [Test]
+    public static void AddAttributeDirectCast()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-        private static readonly ValueConversionAttributeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0071ConverterDoesNotHaveAttribute);
-
-        [Test]
-        public static void AddAttributeDirectCast()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System;
@@ -34,7 +34,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -56,13 +56,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddAttributeAsCast()
-        {
-            var before = @"
+    [Test]
+    public static void AddAttributeAsCast()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -90,7 +90,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -118,13 +118,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddAttributeIsPattern()
-        {
-            var before = @"
+    [Test]
+    public static void AddAttributeIsPattern()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -151,7 +151,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -178,13 +178,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddAttributeSwitchPattern()
-        {
-            var before = @"
+    [Test]
+    public static void AddAttributeSwitchPattern()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -212,7 +212,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -240,13 +240,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenReturningThisObjectFields()
-        {
-            var before = @"
+    [Test]
+    public static void WhenReturningThisObjectFields()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -296,7 +296,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -346,13 +346,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void Issue188()
-        {
-            var before = @"
+    [Test]
+    public static void Issue188()
+    {
+        var before = @"
 #nullable disable
 namespace N
 {
@@ -404,7 +404,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 #nullable disable
 namespace N
 {
@@ -456,13 +456,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void Issue189()
-        {
-            var before = @"
+    [Test]
+    public static void Issue189()
+    {
+        var before = @"
 #nullable disable
 namespace N
 {
@@ -509,7 +509,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 #nullable disable
 namespace N
 {
@@ -556,13 +556,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void NotNullReturnsTrueConverter()
-        {
-            var before = @"
+    [Test]
+    public static void NotNullReturnsTrueConverter()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -585,7 +585,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -609,13 +609,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void NullToVisibilityConverter()
-        {
-            var before = @"
+    [Test]
+    public static void NullToVisibilityConverter()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -649,7 +649,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -684,7 +684,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEventTests
+﻿namespace WpfAnalyzers.Test.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEventTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
 
-    public static class CodeFix
+    [Test]
+    public static void MessageAddHandler()
     {
-        private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
-
-        [Test]
-        public static void MessageAddHandler()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,13 +32,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to OnSizeChanged to match the event"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to OnSizeChanged to match the event"), code);
+    }
 
-        [Test]
-        public static void MessageRemoveHandler()
-        {
-            var code = @"
+    [Test]
+    public static void MessageRemoveHandler()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -58,13 +58,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to OnSizeChanged to match the event"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to OnSizeChanged to match the event"), code);
+    }
 
-        [Test]
-        public static void WhenCorrectNameAddHandlerSizeChangedEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameAddHandlerSizeChangedEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -84,7 +84,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -103,13 +103,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCorrectNameRemoveHandlerSizeChangedEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameRemoveHandlerSizeChangedEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -129,7 +129,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -148,13 +148,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCorrectNameAddHandlerManipulationStartingEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameAddHandlerManipulationStartingEvent()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -175,7 +175,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -195,13 +195,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameRemoveHandlerManipulationStartingEvent()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -222,7 +222,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -242,13 +242,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCorrectNameAddHandlerMouseDownEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameAddHandlerMouseDownEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -268,7 +268,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -287,13 +287,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenCorrectNameRemoveHandlerMouseDownEvent()
-        {
-            var before = @"
+    [Test]
+    public static void WhenCorrectNameRemoveHandlerMouseDownEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -313,7 +313,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -332,7 +332,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests
+﻿namespace WpfAnalyzers.Test.WPF0103EventDeclarationAddRemoveTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0103EventDeclarationAddRemove);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0103EventDeclarationAddRemove);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,13 +41,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add uses: 'ValueChangedEvent', remove uses: 'Value2ChangedEvent'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add uses: 'ValueChangedEvent', remove uses: 'Value2ChangedEvent'"), code);
+    }
 
-        [Test]
-        public static void EventManagerRegisterRoutedEvent()
-        {
-            var code = @"
+    [Test]
+    public static void EventManagerRegisterRoutedEvent()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -77,13 +77,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void EventManagerRegisterRoutedEventExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void EventManagerRegisterRoutedEventExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -113,7 +113,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

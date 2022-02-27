@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0021DirectCastSenderToExactTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly CallbackAnalyzer Analyzer = new();
+    private static readonly CastFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0021DirectCastSenderToExactType);
 
-    public static class FixAll
+    [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
+    [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
+    public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
     {
-        private static readonly CallbackAnalyzer Analyzer = new();
-        private static readonly CastFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0021DirectCastSenderToExactType);
-
-        [TestCase("new PropertyMetadata(1, OnValueChanged, CoerceValue)")]
-        [TestCase("new PropertyMetadata(1, new PropertyChangedCallback(OnValueChanged), new CoerceValueCallback(CoerceValue))")]
-        public static void DependencyPropertyRegisterCoerceValueCallback(string metadata)
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -46,7 +46,7 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -79,7 +79,6 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1, OnValueChanged, CoerceValue)", metadata);
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

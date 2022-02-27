@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests
+﻿namespace WpfAnalyzers.Test.WPF0041SetMutableUsingSetCurrentValueTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyProperty()
     {
-        private static readonly WPF0041SetMutableUsingSetCurrentValue Analyzer = new();
-
-        [Test]
-        public static void DependencyProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -37,14 +37,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
-        [TestCase("this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
-        public static void DependencyPropertyFromOutside(string setExpression)
-        {
-            var fooCode = @"
+    [TestCase("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+    [TestCase("this.fooControl?.SetCurrentValue(FooControl.BarProperty, 1);")]
+    public static void DependencyPropertyFromOutside(string setExpression)
+    {
+        var fooCode = @"
 namespace N
 {
     public class Foo
@@ -57,7 +57,7 @@ namespace N
         }
     }
 }".AssertReplace("this.fooControl.SetCurrentValue(FooControl.BarProperty, 1);", setExpression);
-            var fooControlCode = @"
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -83,13 +83,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, fooControlCode);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, fooControlCode);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -126,13 +126,13 @@ namespace N
         private int CreateValue() => 4;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyFromOutside()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyFromOutside()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -156,7 +156,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public static class Foo
@@ -175,13 +175,13 @@ namespace N
         private static object CreateObjectValue() => 4;
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooControlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyThis()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyThis()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -218,13 +218,13 @@ namespace N
         private int CreateValue() => 4;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var booleanBoxes = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var booleanBoxes = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -241,7 +241,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -265,13 +265,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxes, code);
-        }
+        RoslynAssert.Valid(Analyzer, booleanBoxes, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedWhenBoxed()
-        {
-            var booleanBoxes = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedWhenBoxed()
+    {
+        var booleanBoxes = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -288,7 +288,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -312,13 +312,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxes, code);
-        }
+        RoslynAssert.Valid(Analyzer, booleanBoxes, code);
+    }
 
-        [Test]
-        public static void IgnoredDependencyPropertyInClrProperty()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredDependencyPropertyInClrProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -338,13 +338,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoredDependencyPropertyInClrPropertyWithAsCast()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredDependencyPropertyInClrPropertyWithAsCast()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -364,13 +364,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoredDependencyPropertyInClrPropertyBoxed()
-        {
-            var boolBoxesCode = @"
+    [Test]
+    public static void IgnoredDependencyPropertyInClrPropertyBoxed()
+    {
+        var boolBoxesCode = @"
 namespace N
 {
     public static class BooleanBoxes
@@ -380,7 +380,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -401,13 +401,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, boolBoxesCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, boolBoxesCode, code);
+    }
 
-        [Test]
-        public static void IgnoredAttachedPropertyInClrSetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredAttachedPropertyInClrSetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -433,13 +433,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
-        {
-            var boolBoxesCode = @"
+    [Test]
+    public static void IgnoredAttachedPropertyInClrSetMethodWhenBoxedTernary()
+    {
+        var boolBoxesCode = @"
 namespace N
 {
     public static class BooleanBoxes
@@ -449,7 +449,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -475,13 +475,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, boolBoxesCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, boolBoxesCode, code);
+    }
 
-        [Test]
-        public static void IgnoredClrPropertyInObjectInitializer()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredClrPropertyInObjectInitializer()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -500,13 +500,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoredClrPropertyInConstructor()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredClrPropertyInConstructor()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -531,13 +531,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoredSetValueInConstructor()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoredSetValueInConstructor()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -563,14 +563,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("textBox.Visibility = Visibility.Hidden;")]
-        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public static void IgnoredWhenCreatedInScope(string setCall)
-        {
-            var code = @"
+    [TestCase("textBox.Visibility = Visibility.Hidden;")]
+    [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+    public static void IgnoredWhenCreatedInScope(string setCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -586,14 +586,14 @@ namespace N
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("textBox.Visibility = Visibility.Hidden;")]
-        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public static void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
-        {
-            var code = @"
+    [TestCase("textBox.Visibility = Visibility.Hidden;")]
+    [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+    public static void IgnoredWhenCreatedInScopeWithBeginEndInit(string setCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -611,14 +611,14 @@ namespace N
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("textBox.Visibility = Visibility.Hidden;")]
-        [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
-        public static void IgnoredWhenCreatedInScopeWithIf(string setCall)
-        {
-            var code = @"
+    [TestCase("textBox.Visibility = Visibility.Hidden;")]
+    [TestCase("textBox.SetValue(TextBox.VisibilityProperty, Visibility.Hidden);")]
+    public static void IgnoredWhenCreatedInScopeWithIf(string setCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -637,14 +637,14 @@ namespace N
     }
 }".AssertReplace("textBox.Visibility = Visibility.Hidden;", setCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void IgnoredPropertyAsParameter(string setValueCall)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void IgnoredPropertyAsParameter(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -671,16 +671,16 @@ namespace N
     }
 }".AssertReplace("SetCurrentValue", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("control.DataContext = 1")]
-        [TestCase("control.SetValue(FrameworkElement.DataContextProperty, 1)")]
-        [TestCase("control.Style = new Style(typeof(FooControl))")]
-        [TestCase("control.SetValue(FrameworkElement.StyleProperty, new Style(typeof(FooControl)))")]
-        public static void IgnoreProperties(string expression)
-        {
-            var code = @"
+    [TestCase("control.DataContext = 1")]
+    [TestCase("control.SetValue(FrameworkElement.DataContextProperty, 1)")]
+    [TestCase("control.Style = new Style(typeof(FooControl))")]
+    [TestCase("control.SetValue(FrameworkElement.StyleProperty, new Style(typeof(FooControl)))")]
+    public static void IgnoreProperties(string expression)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -702,13 +702,13 @@ namespace N
     }
 }".AssertReplace("control.DataContext = 1", expression);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Issue240()
-        {
-            var code = @"
+    [Test]
+    public static void Issue240()
+    {
+        var code = @"
 namespace N
 {
     public class Foo
@@ -728,13 +728,13 @@ namespace N
         public int[,] Data2D { get; set; }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void BooleanBoxes()
-        {
-            var boxes = @"
+    [Test]
+    public static void BooleanBoxes()
+    {
+        var boxes = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -751,7 +751,7 @@ namespace N
     }
 }
 ";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -774,7 +774,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, boxes, code);
-        }
+        RoslynAssert.Valid(Analyzer, boxes, code);
     }
 }

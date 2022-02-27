@@ -1,21 +1,21 @@
-﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
+﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFixRegistrationAnalyzer
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RegistrationAnalyzer Analyzer = new();
+    private static readonly ConvertToLambdaFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
 
-    public static class CodeFixRegistrationAnalyzer
+    [TestCase("ValidateValue",                                    "value => (int)value >= 0")]
+    [TestCase("x => ValidateValue(x)",                            "x => (int)x >= 0")]
+    [TestCase("new ValidateValueCallback(ValidateValue)",         "new ValidateValueCallback(value => (int)value >= 0)")]
+    [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(x => (int)x >= 0)")]
+    public static void RemoveMethod(string callback, string lambda)
     {
-        private static readonly RegistrationAnalyzer Analyzer = new();
-        private static readonly ConvertToLambdaFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0023ConvertToLambda);
-
-        [TestCase("ValidateValue", "value => (int)value >= 0")]
-        [TestCase("x => ValidateValue(x)", "x => (int)x >= 0")]
-        [TestCase("new ValidateValueCallback(ValidateValue)", "new ValidateValueCallback(value => (int)value >= 0)")]
-        [TestCase("new ValidateValueCallback(x => ValidateValue(x))", "new ValidateValueCallback(x => (int)x >= 0)")]
-        public static void RemoveMethod(string callback, string lambda)
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -43,7 +43,7 @@ namespace N
     }
 }".AssertReplace("ValidateValue);", $"{callback});");
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -66,7 +66,6 @@ namespace N
     }
 }".AssertReplace("value => (int)value >= 0", lambda);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Convert to lambda");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Convert to lambda");
     }
 }

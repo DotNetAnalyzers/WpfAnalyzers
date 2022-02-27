@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
+﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
+    private static readonly XmlnsDefinitionFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
-        private static readonly XmlnsDefinitionFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -82,14 +82,14 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var message = "The following namespaces are not mapped: Gu.Wpf.Geometry.Meh";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), code);
-        }
+        var message = "The following namespaces are not mapped: Gu.Wpf.Geometry.Meh";
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage(message), code);
+    }
 
-        [Test]
-        public static void WhenMissingNamespace()
-        {
-            var before = @"
+    [Test]
+    public static void WhenMissingNamespace()
+    {
+        var before = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -159,7 +159,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            var after = @"
+        var after = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -230,13 +230,13 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenMissingNamespaceWithNameColon()
-        {
-            var before = @"
+    [Test]
+    public static void WhenMissingNamespaceWithNameColon()
+    {
+        var before = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -306,7 +306,7 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            var after = @"
+        var after = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -377,7 +377,6 @@ namespace Gu.Wpf.Geometry.Meh
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

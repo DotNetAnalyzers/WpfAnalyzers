@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes
+﻿namespace WpfAnalyzers.Test.WPF0073ConverterDoesNotHaveAttributeUnknownTypes;
+
+using Gu.Roslyn.Asserts;
+
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
+    private static readonly ValueConversionAttributeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes);
 
-    using NUnit.Framework;
-
-    public static class CodeFix
+    [Test]
+    public static void AddAttributeDirectCast()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-        private static readonly ValueConversionAttributeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0073ConverterDoesNotHaveAttributeUnknownTypes);
-
-        [Test]
-        public static void AddAttributeDirectCast()
-        {
-            var before = @"
+        var before = @"
 #nullable disable
 namespace Gu.Wpf.PropertyGrid
 {
@@ -121,7 +121,7 @@ namespace Gu.Wpf.PropertyGrid
     }
 }";
 
-            var after = @"
+        var after = @"
 #nullable disable
 namespace Gu.Wpf.PropertyGrid
 {
@@ -229,7 +229,6 @@ namespace Gu.Wpf.PropertyGrid
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
     }
 }

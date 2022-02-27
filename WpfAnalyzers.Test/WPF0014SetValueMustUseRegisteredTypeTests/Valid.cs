@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetValueAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("this.SetValue(BarProperty, 1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+    public static void DependencyProperty(string setValueCall)
     {
-        private static readonly SetValueAnalyzer Analyzer = new();
-
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public static void DependencyProperty(string setValueCall)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -38,14 +38,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public static void DependencyPropertyPartial(string setValueCall)
-        {
-            var part1 = @"
+    [TestCase("this.SetValue(BarProperty, 1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+    public static void DependencyPropertyPartial(string setValueCall)
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -67,7 +67,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     public partial class FooControl
@@ -78,16 +78,16 @@ namespace N
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, null);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public static void DependencyPropertyOfTypeNullableInt(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(BarProperty, 1);")]
+    [TestCase("this.SetValue(BarProperty, null);")]
+    [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, null);")]
+    public static void DependencyPropertyOfTypeNullableInt(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -114,16 +114,16 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);")]
-        [TestCase("fooControl.SetValue(FooControl.BarProperty, null);")]
-        [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
-        [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, null);")]
-        public static void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
-        {
-            var fooControlCode = @"
+    [TestCase("fooControl.SetValue(FooControl.BarProperty, 1);")]
+    [TestCase("fooControl.SetValue(FooControl.BarProperty, null);")]
+    [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, 1);")]
+    [TestCase("fooControl.SetCurrentValue(FooControl.BarProperty, null);")]
+    public static void DependencyPropertyOfTypeNullableFromOutside(string setValueCall)
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -145,7 +145,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public class Foo
@@ -158,14 +158,14 @@ namespace N
     }
 }".AssertReplace("fooControl.SetValue(BarProperty, 1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, meh);")]
-        [TestCase("this.SetCurrentValue(BarProperty, meh);")]
-        public static void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(BarProperty, meh);")]
+    [TestCase("this.SetCurrentValue(BarProperty, meh);")]
+    public static void DependencyPropertyOfTypeNullableIntParameter(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -192,14 +192,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, meh);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(ValueProperty, meh);")]
-        [TestCase("this.SetCurrentValue(ValueProperty, meh);")]
-        public static void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(ValueProperty, meh);")]
+    [TestCase("this.SetCurrentValue(ValueProperty, meh);")]
+    public static void DependencyPropertyOfTypeNullableTParameter(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -227,16 +227,16 @@ namespace N
     }
 }".AssertReplace("this.SetValue(ValueProperty, meh);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetValue(BarProperty, null);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, null);")]
-        public static void DependencyPropertyOfTypeObject(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(BarProperty, 1);")]
+    [TestCase("this.SetValue(BarProperty, null);")]
+    [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, null);")]
+    public static void DependencyPropertyOfTypeObject(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -263,14 +263,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, new Foo());")]
-        [TestCase("this.SetCurrentValue(BarProperty, new Foo());")]
-        public static void DependencyPropertyOfInterfaceType(string setValueCall)
-        {
-            var interfaceCode = @"
+    [TestCase("this.SetValue(BarProperty, new Foo());")]
+    [TestCase("this.SetCurrentValue(BarProperty, new Foo());")]
+    public static void DependencyPropertyOfInterfaceType(string setValueCall)
+    {
+        var interfaceCode = @"
 namespace N
 {
     public interface IFoo
@@ -278,14 +278,14 @@ namespace N
     }
 }";
 
-            var fooCode = @"
+        var fooCode = @"
 namespace N
 {
     public class Foo : IFoo
     {
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -312,14 +312,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, new Foo());", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, interfaceCode, fooCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, interfaceCode, fooCode, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, 1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, 1);")]
-        public static void DependencyPropertyGeneric(string setValueCall)
-        {
-            var fooControlGeneric = @"
+    [TestCase("this.SetValue(BarProperty, 1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, 1);")]
+    public static void DependencyPropertyGeneric(string setValueCall)
+    {
+        var fooControlGeneric = @"
 namespace N
 {
     using System.Windows;
@@ -341,7 +341,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public class FooControl : FooControl<int>
@@ -353,14 +353,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, 1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, fooControlGeneric, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlGeneric, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, (object)1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, (object)1);")]
-        public static void DependencyPropertySetValueOfTypeObject(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(BarProperty, (object)1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, (object)1);")]
+    public static void DependencyPropertySetValueOfTypeObject(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -387,14 +387,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, (object)1);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, value);")]
-        [TestCase("this.SetCurrentValue(BarProperty, value);")]
-        public static void DependencyPropertySetValueOfTypeObject2(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(BarProperty, value);")]
+    [TestCase("this.SetCurrentValue(BarProperty, value);")]
+    public static void DependencyPropertySetValueOfTypeObject2(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -422,14 +422,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, value);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, true);")]
-        [TestCase("this.SetCurrentValue(BarProperty, true);")]
-        public static void DependencyPropertyAddOwner(string setValueCall)
-        {
-            var fooCode = @"
+    [TestCase("this.SetValue(BarProperty, true);")]
+    [TestCase("this.SetCurrentValue(BarProperty, true);")]
+    public static void DependencyPropertyAddOwner(string setValueCall)
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -454,7 +454,7 @@ namespace N
     }
 }";
 
-            var fooControlPart1 = @"
+        var fooControlPart1 = @"
 namespace N
 {
     using System.Windows;
@@ -488,7 +488,7 @@ namespace N
     }
 }";
 
-            var fooControlPart2 = @"
+        var fooControlPart2 = @"
 namespace N
 {
     public partial class FooControl
@@ -499,14 +499,14 @@ namespace N
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, false);", setValueCall);
-            RoslynAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, fooControlPart1, fooControlPart2);
+    }
 
-        [TestCase("this.SetValue(VolumeProperty, 1.0);")]
-        [TestCase("this.SetCurrentValue(VolumeProperty, 1.0);")]
-        public static void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
-        {
-            var code = @"
+    [TestCase("this.SetValue(VolumeProperty, 1.0);")]
+    [TestCase("this.SetCurrentValue(VolumeProperty, 1.0);")]
+    public static void DependencyPropertyAddOwnerMediaElementVolume(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -545,14 +545,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(VolumeProperty, 2.0);", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
-        [TestCase("textBox.SetCurrentValue(TextBox.TextProperty, \"abc\");")]
-        public static void TextBoxText(string setValueCall)
-        {
-            var code = @"
+    [TestCase("textBox.SetValue(TextBox.TextProperty, \"abc\");")]
+    [TestCase("textBox.SetCurrentValue(TextBox.TextProperty, \"abc\");")]
+    public static void TextBoxText(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -567,13 +567,13 @@ namespace N
     }
 }".AssertReplace("textBox.SetValue(TextBox.TextProperty, \"abc\");", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SetCurrentValueInLambda()
-        {
-            var code = @"
+    [Test]
+    public static void SetCurrentValueInLambda()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -602,14 +602,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void IgnoredPropertyAsParameter(string setValueCall)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void IgnoredPropertyAsParameter(string setValueCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -636,14 +636,14 @@ namespace N
     }
 }".AssertReplace("SetCurrentValue", setValueCall);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void IgnoresFreezable(string call)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void IgnoresFreezable(string call)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -671,13 +671,13 @@ namespace N
     }
 }".AssertReplace("SetCurrentValue", call);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ObservableCollectionOfIntWhenIEnumerable()
-        {
-            var code = @"
+    [Test]
+    public static void ObservableCollectionOfIntWhenIEnumerable()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections;
@@ -707,13 +707,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ObservableCollectionOfIntWhenNullableIEnumerable()
-        {
-            var code = @"
+    [Test]
+    public static void ObservableCollectionOfIntWhenNullableIEnumerable()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections;
@@ -743,13 +743,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ObservableCollectionOfIntWhenIEnumerableAttached()
-        {
-            var code = @"
+    [Test]
+    public static void ObservableCollectionOfIntWhenIEnumerableAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections;
@@ -783,13 +783,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ObservableCollectionOfIntWhenIEnumerableAttachedOtherProject()
-        {
-            var c1 = @"
+    [Test]
+    public static void ObservableCollectionOfIntWhenIEnumerableAttachedOtherProject()
+    {
+        var c1 = @"
 namespace N1
 {
     using System.Collections;
@@ -815,7 +815,7 @@ namespace N1
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N2
 {
     using System.Collections.ObjectModel;
@@ -831,13 +831,13 @@ namespace N2
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void PropertyKeyInOtherClass()
-        {
-            var link = @"
+    [Test]
+    public static void PropertyKeyInOtherClass()
+    {
+        var link = @"
 namespace N
 {
     using System.Windows.Controls.Primitives;
@@ -847,7 +847,7 @@ namespace N
     }
 }";
 
-            var links = @"
+        var links = @"
 namespace N
 {
     using System.Windows;
@@ -868,7 +868,7 @@ namespace N
     }
 }";
 
-            var linkGroup = @"
+        var linkGroup = @"
 namespace N
 {
     using System.Windows;
@@ -885,13 +885,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, link, links, linkGroup);
-        }
+        RoslynAssert.Valid(Analyzer, link, links, linkGroup);
+    }
 
-        [Test]
-        public static void CastIntToDouble()
-        {
-            var code = @"
+    [Test]
+    public static void CastIntToDouble()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -919,13 +919,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void EnumIssue211()
-        {
-            var code = @"
+    [Test]
+    public static void EnumIssue211()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -947,7 +947,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"namespace N
+        var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -955,13 +955,13 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, code, enumCode);
-        }
+        RoslynAssert.Valid(Analyzer, code, enumCode);
+    }
 
-        [Test]
-        public static void EnumAddOwnerIssue211()
-        {
-            var fooCode = @"
+    [Test]
+    public static void EnumAddOwnerIssue211()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -991,7 +991,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -1013,7 +1013,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"namespace N
+        var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -1021,13 +1021,13 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
+    }
 
-        [Test]
-        public static void Issue278NullCoalesce()
-        {
-            var code = @"
+    [Test]
+    public static void Issue278NullCoalesce()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -1054,13 +1054,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Issue278NewList()
-        {
-            var code = @"
+    [Test]
+    public static void Issue278NewList()
+    {
+        var code = @"
 namespace N
 {
      using System.Collections.Generic;
@@ -1089,13 +1089,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SubTypeIssue354()
-        {
-            var typeA = @"
+    [Test]
+    public static void SubTypeIssue354()
+    {
+        var typeA = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -1115,7 +1115,7 @@ namespace ValidCode.Repro
     }	
 }";
 
-            var typeB = @"
+        var typeB = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -1137,7 +1137,6 @@ namespace ValidCode.Repro
     }	
 }";
 
-            RoslynAssert.Valid(Analyzer, typeA, typeB);
-        }
+        RoslynAssert.Valid(Analyzer, typeA, typeB);
     }
 }

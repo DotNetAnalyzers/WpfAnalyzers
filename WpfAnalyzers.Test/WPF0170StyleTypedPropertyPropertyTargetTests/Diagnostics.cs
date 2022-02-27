@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyPropertyTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0170StyleTypedPropertyPropertyTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0170StyleTypedPropertyPropertyTarget);
 
-    public static class Diagnostics
+    [TestCase("[StyleTypedProperty(Property = ↓\"MISSING\", StyleTargetType = typeof(Control))]")]
+    [TestCase("[StyleTypedProperty(Property = nameof(↓WithStyleTypedProperty), StyleTargetType = typeof(Control))]")]
+    [TestCase("[StyleTypedProperty(Property = ↓WrongName, StyleTargetType = typeof(Control))]")]
+    public static void WhenWrong(string attribute)
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0170StyleTypedPropertyPropertyTarget);
-
-        [TestCase("[StyleTypedProperty(Property = ↓\"MISSING\", StyleTargetType = typeof(Control))]")]
-        [TestCase("[StyleTypedProperty(Property = nameof(↓WithStyleTypedProperty), StyleTargetType = typeof(Control))]")]
-        [TestCase("[StyleTypedProperty(Property = ↓WrongName, StyleTargetType = typeof(Control))]")]
-        public static void WhenWrong(string attribute)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -38,7 +38,6 @@ namespace N
         }
     }
 }".AssertReplace("[StyleTypedProperty(Property = ↓\"MISSING\", StyleTargetType = typeof(Control))]", attribute);
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

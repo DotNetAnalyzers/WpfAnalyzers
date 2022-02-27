@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0100BackingFieldShouldMatchRegisteredName);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0100BackingFieldShouldMatchRegisteredName);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Field 'WrongName' that is backing field for the RoutedEvent registered as 'ValueChanged' must be named 'ValueChangedEvent'"), code);
+    }
 
-        [Test]
-        public static void EventManagerRegisterRoutedEvent()
-        {
-            var before = @"
+    [Test]
+    public static void EventManagerRegisterRoutedEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -64,7 +64,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -87,7 +87,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

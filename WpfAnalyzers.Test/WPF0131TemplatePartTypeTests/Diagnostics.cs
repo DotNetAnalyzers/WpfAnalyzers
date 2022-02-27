@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0131TemplatePartTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly GetTemplateChildAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0131TemplatePartType);
 
-    public static class Diagnostics
+    [Test]
+    public static void CastNotMatching()
     {
-        private static readonly GetTemplateChildAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0131TemplatePartType);
-
-        [Test]
-        public static void CastNotMatching()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use correct [TemplatePart] type"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use correct [TemplatePart] type"), code);
+    }
 
-        [Test]
-        public static void IsPatternNotMatching()
-        {
-            var code = @"
+    [Test]
+    public static void IsPatternNotMatching()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -57,13 +57,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void AsCastNotMatching()
-        {
-            var code = @"
+    [Test]
+    public static void AsCastNotMatching()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -83,13 +83,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenMissingType()
-        {
-            var code = @"
+    [Test]
+    public static void WhenMissingType()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -105,7 +105,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

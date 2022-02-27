@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests
+﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyProperty()
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,13 +32,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyWithThis()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyWithThis()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -60,13 +60,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -90,13 +90,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyPropertyWithNonStandardKeyField()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyPropertyWithNonStandardKeyField()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -120,13 +120,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void PropertyKeyInOtherClass()
-        {
-            var link = @"
+    [Test]
+    public static void PropertyKeyInOtherClass()
+    {
+        var link = @"
 namespace N
 {
     using System.Windows.Controls.Primitives;
@@ -136,7 +136,7 @@ namespace N
     }
 }";
 
-            var links = @"
+        var links = @"
 namespace N
 {
     using System.Windows;
@@ -157,7 +157,7 @@ namespace N
     }
 }";
 
-            var linkGroup = @"
+        var linkGroup = @"
 namespace N
 {
     using System.Windows;
@@ -174,7 +174,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, link, links, linkGroup);
-        }
+        RoslynAssert.Valid(Analyzer, link, links, linkGroup);
     }
 }

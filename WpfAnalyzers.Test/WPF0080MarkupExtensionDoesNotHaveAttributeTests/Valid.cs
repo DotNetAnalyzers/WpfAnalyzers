@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0080MarkupExtensionDoesNotHaveAttribute Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenHasAttribute()
     {
-        private static readonly WPF0080MarkupExtensionDoesNotHaveAttribute Analyzer = new();
-
-        [Test]
-        public static void WhenHasAttribute()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -25,13 +25,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenNotOverridingProvideValue()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNotOverridingProvideValue()
+    {
+        var code = @"
 namespace N
 {
     using System.Reflection;
@@ -48,13 +48,13 @@ namespace N
         public override Assembly Assembly => typeof(Foo).Assembly;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenAbstract()
-        {
-            var code = @"
+    [Test]
+    public static void WhenAbstract()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Markup;
@@ -63,13 +63,13 @@ namespace N
     {
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenIsGeneric()
-        {
-            var code = @"
+    [Test]
+    public static void WhenIsGeneric()
+    {
+        var code = @"
 #nullable disable
 namespace N
 {
@@ -93,7 +93,6 @@ namespace N
         public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

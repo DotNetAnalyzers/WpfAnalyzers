@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgumentTests
+﻿namespace WpfAnalyzers.Test.WPF0018DefaultStyleKeyPropertyOverrideMetadataArgumentTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly OverrideMetadataAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("new PropertyMetadata(1)")]
+    [TestCase("new FrameworkPropertyMetadata(default(int))")]
+    public static void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
     {
-        private static readonly OverrideMetadataAnalyzer Analyzer = new();
-
-        [TestCase("new PropertyMetadata(1)")]
-        [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public static void DependencyPropertyOverrideMetadataWhenBaseHasNone(string metadata)
-        {
-            var fooControlCode = @"
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -32,7 +32,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -46,14 +46,14 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, code);
+    }
 
-        [TestCase("new PropertyMetadata(1)")]
-        [TestCase("new FrameworkPropertyMetadata(default(int))")]
-        public static void DependencyPropertyOverrideMetadataWithSameType(string metadata)
-        {
-            var fooControlCode = @"
+    [TestCase("new PropertyMetadata(1)")]
+    [TestCase("new FrameworkPropertyMetadata(default(int))")]
+    public static void DependencyPropertyOverrideMetadataWithSameType(string metadata)
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -75,7 +75,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -89,13 +89,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1)", metadata);
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, code);
+    }
 
-        [Test]
-        public static void DefaultStyleKeyPropertyOverrideMetadata()
-        {
-            var code = @"
+    [Test]
+    public static void DefaultStyleKeyPropertyOverrideMetadata()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -110,7 +110,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

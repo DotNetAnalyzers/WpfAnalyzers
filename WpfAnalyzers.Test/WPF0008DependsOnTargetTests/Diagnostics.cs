@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0008DependsOnTarget);
 
-    public static class Diagnostics
+    [TestCase("[DependsOn(nameof(↓WithDependsOn))]")]
+    [TestCase("[DependsOn(↓\"MISSING\")]")]
+    public static void WhenMissing(string attribute)
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0008DependsOnTarget);
-
-        [TestCase("[DependsOn(nameof(↓WithDependsOn))]")]
-        [TestCase("[DependsOn(↓\"MISSING\")]")]
-        public static void WhenMissing(string attribute)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -47,7 +47,6 @@ namespace N
         }
     }
 }".AssertReplace("[DependsOn(↓\"MISSING\")]", attribute);
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

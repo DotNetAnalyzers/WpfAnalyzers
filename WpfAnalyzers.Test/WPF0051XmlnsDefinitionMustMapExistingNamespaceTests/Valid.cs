@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests
+﻿namespace WpfAnalyzers.Test.WPF0051XmlnsDefinitionMustMapExistingNamespaceTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenXmlnsDefinitionMatches()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenXmlnsDefinitionMatches()
-        {
-            var controlCode = @"namespace Gu.Wpf.Geometry
+        var controlCode = @"namespace Gu.Wpf.Geometry
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -31,7 +31,7 @@
         }
     }
 }";
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -56,13 +56,13 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, controlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, controlCode, code);
+    }
 
-        [Test]
-        public static void WhenTwoXmlnsDefinitions()
-        {
-            var code = @"
+    [Test]
+    public static void WhenTwoXmlnsDefinitions()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -133,7 +133,6 @@ namespace Gu.Wpf.Geometry.Balloons
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

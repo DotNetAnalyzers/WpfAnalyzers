@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests
+﻿namespace WpfAnalyzers.Test.WPF0174StyleTypedPropertyStyleSpecifiedTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0174StyleTypedPropertyStyleSpecified;
 
-    public static class Valid
+    [Test]
+    public static void WhenExists()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0174StyleTypedPropertyStyleSpecified;
-
-        [Test]
-        public static void WhenExists()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

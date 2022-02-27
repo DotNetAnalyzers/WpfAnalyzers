@@ -1,14 +1,14 @@
-namespace WpfAnalyzers.Test.WPF0150UseNameofInsteadOfLiteralTests
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+namespace WpfAnalyzers.Test.WPF0150UseNameofInsteadOfLiteralTests;
 
-    public static class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
+{
+    [Test]
+    public static void DependencyPropertyRegisterWhenNoProperty()
     {
-        [Test]
-        public static void DependencyPropertyRegisterWhenNoProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -24,13 +24,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(new RegistrationAnalyzer(), code);
-        }
+        RoslynAssert.Valid(new RegistrationAnalyzer(), code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterWhenNameof()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterWhenNameof()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -53,7 +53,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(new RegistrationAnalyzer(), code);
-        }
+        RoslynAssert.Valid(new RegistrationAnalyzer(), code);
     }
 }

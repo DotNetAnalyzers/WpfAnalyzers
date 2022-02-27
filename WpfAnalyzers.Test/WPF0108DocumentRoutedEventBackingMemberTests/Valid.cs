@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests
+﻿namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0108DocumentRoutedEventBackingMember;
 
-    public static class Valid
+    [TestCase("\"ValueChanged\"")]
+    [TestCase("nameof(ValueChanged)")]
+    [TestCase("nameof(FooControl.ValueChanged)")]
+    public static void EventManagerRegisterRoutedEvent(string argument)
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0108DocumentRoutedEventBackingMember;
-
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public static void EventManagerRegisterRoutedEvent(string argument)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -37,15 +37,15 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", argument);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public static void EventManagerRegisterRoutedEventExpressionBodies(string argument)
-        {
-            var code = @"
+    [TestCase("\"ValueChanged\"")]
+    [TestCase("nameof(ValueChanged)")]
+    [TestCase("nameof(FooControl.ValueChanged)")]
+    public static void EventManagerRegisterRoutedEventExpressionBodies(string argument)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -68,7 +68,6 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", argument);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test
-{
-    using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace WpfAnalyzers.Test;
 
-    public static class BackingFieldOrPropertyTests
+using System.Threading;
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class BackingFieldOrPropertyTests
+{
+    [TestCase("nameof(Bar)")]
+    [TestCase("\"Bar\"")]
+    public static void DependencyPropertyBackingField(string argument)
     {
-        [TestCase("nameof(Bar)")]
-        [TestCase("\"Bar\"")]
-        public static void DependencyPropertyBackingField(string argument)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -33,21 +33,21 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", argument);
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
-            var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
-            Assert.AreEqual(argument, result?.Argument?.ToString());
-            Assert.AreEqual("Bar",    result?.Value);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var declaration = syntaxTree.FindFieldDeclaration("BarProperty");
+        var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
+        var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
+        Assert.AreEqual(argument, result?.Argument?.ToString());
+        Assert.AreEqual("Bar",    result?.Value);
+    }
 
-        [TestCase("nameof(Bar)")]
-        [TestCase("\"Bar\"")]
-        public static void DependencyPropertyBackingProperty(string argument)
-        {
-            var code = @"
+    [TestCase("nameof(Bar)")]
+    [TestCase("\"Bar\"")]
+    public static void DependencyPropertyBackingProperty(string argument)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -68,20 +68,20 @@ namespace N
         }
     }
 }".AssertReplace("nameof(Bar)", argument);
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
-            var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
-            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
-            Assert.AreEqual(argument, result?.Argument?.ToString());
-            Assert.AreEqual("Bar",    result?.Value);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var declaration = syntaxTree.FindPropertyDeclaration("BarProperty");
+        var symbol = semanticModel.GetDeclaredSymbol(declaration, CancellationToken.None);
+        var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
+        Assert.AreEqual(argument, result?.Argument?.ToString());
+        Assert.AreEqual("Bar",    result?.Value);
+    }
 
-        [Test]
-        public static void TextElementFontSizePropertyAddOwner()
-        {
-            var code = @"
+    [Test]
+    public static void TextElementFontSizePropertyAddOwner()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -98,20 +98,20 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
-            var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
-            Assert.AreEqual(null, result?.Argument);
-            Assert.AreEqual("FontSize",    result?.Value);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var declaration = syntaxTree.FindFieldDeclaration("FontSizeProperty");
+        var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
+        var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
+        Assert.AreEqual(null,       result?.Argument);
+        Assert.AreEqual("FontSize", result?.Value);
+    }
 
-        [Test]
-        public static void BorderBorderThicknessPropertyAddOwner()
-        {
-            var code = @"
+    [Test]
+    public static void BorderBorderThicknessPropertyAddOwner()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -128,14 +128,13 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
-            var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
-            var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
-            Assert.AreEqual(null,              result?.Argument);
-            Assert.AreEqual("BorderThickness",             result?.Value);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var declaration = syntaxTree.FindFieldDeclaration("BorderThicknessProperty");
+        var symbol = semanticModel.GetDeclaredSymbolSafe(declaration, CancellationToken.None);
+        var result = BackingFieldOrProperty.Match(symbol)?.RegisteredName(semanticModel, CancellationToken.None);
+        Assert.AreEqual(null,              result?.Argument);
+        Assert.AreEqual("BorderThickness", result?.Value);
     }
 }

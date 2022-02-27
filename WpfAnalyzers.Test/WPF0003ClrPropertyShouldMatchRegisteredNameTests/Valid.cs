@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0003ClrPropertyShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("\"Bar\"")]
+    [TestCase("nameof(Bar)")]
+    [TestCase("nameof(FooControl.Bar)")]
+    public static void DependencyPropertyOneLine(string nameof)
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-
-        [TestCase("\"Bar\"")]
-        [TestCase("nameof(Bar)")]
-        [TestCase("nameof(FooControl.Bar)")]
-        public static void DependencyPropertyOneLine(string nameof)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -30,13 +30,13 @@ namespace N
     }
 }".AssertReplace("nameof(Bar)", nameof);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyFormatted()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyFormatted()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -64,13 +64,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyFormattedExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyFormattedExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -92,13 +92,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyWithThis()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyWithThis()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -120,13 +120,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyPartial()
-        {
-            var part1 = @"
+    [Test]
+    public static void DependencyPropertyPartial()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -142,7 +142,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -158,13 +158,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var part1 = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -182,7 +182,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -209,13 +209,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [Test]
-        public static void ReadonlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadonlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -239,7 +239,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests
+﻿namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly AddAttributeListFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0176StyleTypedPropertyMissing);
 
-    public static class CodeFix
+    [Test]
+    public static void WhenMissing()
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly AddAttributeListFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0176StyleTypedPropertyMissing);
-
-        [Test]
-        public static void WhenMissing()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -58,7 +58,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors));
     }
 }

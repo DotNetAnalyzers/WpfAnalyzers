@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
+﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests;
+
+using System;
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using System;
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
+    private static readonly UseContainingTypeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
-        private static readonly UseContainingTypeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0011ContainingTypeShouldBeRegisteredOwner);
-
-        [Test]
-        public static void Message()
-        {
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -23,7 +23,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -48,14 +48,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner"), barControlCode, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Register containing type: 'N.FooControl' as owner"), barControlCode, code);
+    }
 
-        [TestCase("BarControl")]
-        [TestCase("BarControl<T>")]
-        public static void DependencyPropertyRegister(string typeName)
-        {
-            var barControlCode = @"
+    [TestCase("BarControl")]
+    [TestCase("BarControl<T>")]
+    public static void DependencyPropertyRegister(string typeName)
+    {
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -66,7 +66,7 @@ namespace N
     }
 }".AssertReplace("class BarControl", $"class {typeName}");
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -89,7 +89,7 @@ namespace N
     }
 }".AssertReplace("typeof(BarControl)", $"typeof({typeName.Replace("<T>", "<int>", StringComparison.OrdinalIgnoreCase)})");
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -111,13 +111,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var barControlCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -128,7 +128,7 @@ namespace N
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -153,7 +153,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -178,20 +178,20 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barControlCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var barCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var barCode = @"
 namespace N
 {
     public class Bar
     {
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -216,7 +216,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -241,20 +241,20 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedQualifiedTypeNames()
-        {
-            var barCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedQualifiedTypeNames()
+    {
+        var barCode = @"
 namespace N
 {
     public class Bar
     {
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     public static class Foo
@@ -277,7 +277,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public static class Foo
@@ -300,13 +300,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var barCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var barCode = @"
 namespace N
 {
     public class Bar
@@ -314,7 +314,7 @@ namespace N
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -341,7 +341,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -367,13 +367,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var fooCode = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -401,7 +401,7 @@ namespace N
     }
 }";
 
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -411,7 +411,7 @@ namespace N
     {
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -429,7 +429,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -447,13 +447,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, barControlCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, barControlCode, before }, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -475,7 +475,7 @@ namespace N
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -490,7 +490,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -505,7 +505,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
     }
 }

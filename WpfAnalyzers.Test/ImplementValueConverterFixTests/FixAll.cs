@@ -1,18 +1,18 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace WpfAnalyzers.Test.ImplementValueConverterFixTests
+namespace WpfAnalyzers.Test.ImplementValueConverterFixTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ImplementValueConverterFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
-    public static class FixAll
+    [Test]
+    public static void IValueConverter()
     {
-        private static readonly ImplementValueConverterFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
-
-        [Test]
-        public static void IValueConverter()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Data;
@@ -22,7 +22,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Data;
@@ -41,13 +41,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void FullyQualifiedIValueConverter()
-        {
-            var before = @"
+    [Test]
+    public static void FullyQualifiedIValueConverter()
+    {
+        var before = @"
 namespace N
 {
     public class C : ↓System.Windows.Data.IValueConverter
@@ -55,7 +55,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C : System.Windows.Data.IValueConverter
@@ -71,13 +71,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void IMultiValueConverter()
-        {
-            var before = @"
+    [Test]
+    public static void IMultiValueConverter()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Data;
@@ -87,7 +87,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Data;
@@ -106,13 +106,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void FullyQualifiedIMultiValueConverter()
-        {
-            var before = @"
+    [Test]
+    public static void FullyQualifiedIMultiValueConverter()
+    {
+        var before = @"
 namespace N
 {
     public class C : ↓System.Windows.Data.IMultiValueConverter
@@ -120,7 +120,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C : System.Windows.Data.IMultiValueConverter
@@ -136,7 +136,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
     }
 }

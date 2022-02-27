@@ -1,19 +1,19 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests
+namespace WpfAnalyzers.Test.WPF0070ConverterDoesNotHaveDefaultFieldTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
+    private static readonly AddDefaultMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0070ConverterDoesNotHaveDefaultField);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-        private static readonly AddDefaultMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0070ConverterDoesNotHaveDefaultField);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -59,13 +59,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add default field to converter"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add default field to converter"), code);
+    }
 
-        [Test]
-        public static void IValueConverterAddDefaultFieldPublic()
-        {
-            var before = @"
+    [Test]
+    public static void IValueConverterAddDefaultFieldPublic()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -111,7 +111,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -158,13 +158,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
+    }
 
-        [Test]
-        public static void IValueConverterAddDefaultFieldInternal()
-        {
-            var before = @"
+    [Test]
+    public static void IValueConverterAddDefaultFieldInternal()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -210,7 +210,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -257,13 +257,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
+    }
 
-        [Test]
-        public static void IValueConverterAddDefaultFieldWhenSealedIssue225()
-        {
-            var before = @"
+    [Test]
+    public static void IValueConverterAddDefaultFieldWhenSealedIssue225()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -282,7 +282,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -302,13 +302,13 @@ namespace N
             => throw new NotImplementedException();
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
+    }
 
-        [Test]
-        public static void IMultiValueConverterAddDefaultField()
-        {
-            var before = @"
+    [Test]
+    public static void IMultiValueConverterAddDefaultField()
+    {
+        var before = @"
 namespace N
 {
     public class ↓FooConverter : System.Windows.Data.IMultiValueConverter
@@ -325,7 +325,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public sealed class FooConverter : System.Windows.Data.IMultiValueConverter
@@ -343,13 +343,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field.");
+    }
 
-        [Test]
-        public static void AddDefaultFieldWithDocs()
-        {
-            var before = @"
+    [Test]
+    public static void AddDefaultFieldWithDocs()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -395,7 +395,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -443,13 +443,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field with docs.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default field with docs.");
+    }
 
-        [Test]
-        public static void AddDefaultProperty()
-        {
-            var before = @"
+    [Test]
+    public static void AddDefaultProperty()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -495,7 +495,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -542,13 +542,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property.");
+    }
 
-        [Test]
-        public static void AddDefaultPropertyWithDocs()
-        {
-            var before = @"
+    [Test]
+    public static void AddDefaultPropertyWithDocs()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -594,7 +594,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -642,7 +642,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property with docs.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, "Add default property with docs.");
     }
 }

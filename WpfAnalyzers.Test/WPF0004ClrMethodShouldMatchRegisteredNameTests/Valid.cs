@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0004ClrMethodShouldMatchRegisteredNameTests;
+
+using System.Linq;
+using Gu.Roslyn.Asserts;
+
+using NUnit.Framework;
+
+public static class Valid
 {
-    using System.Linq;
-    using Gu.Roslyn.Asserts;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
-    using NUnit.Framework;
-
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -43,13 +43,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedExtensionMethods()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedExtensionMethods()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -81,13 +81,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedExpressionBody()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -112,13 +112,13 @@ namespace N
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -145,13 +145,13 @@ namespace N
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenSetMethodIsNotUsingValue()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenSetMethodIsNotUsingValue()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -180,13 +180,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenSetMethodHasTooManyArguments()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenSetMethodHasTooManyArguments()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -215,13 +215,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenSetMethodIsNotVoid()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenSetMethodIsNotVoid()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -251,13 +251,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenGetMethodIsVoid()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenGetMethodIsVoid()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -285,13 +285,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenGetMethodHasTooManyArguments()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenGetMethodHasTooManyArguments()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -319,13 +319,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenSetMethodIsNotStatic()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenSetMethodIsNotStatic()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -354,13 +354,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenGetMethodIsNotStatic()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenGetMethodIsNotStatic()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -388,13 +388,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenSetMethodIsNotSettingElement()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenSetMethodIsNotSettingElement()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -425,13 +425,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenGetMethodIsNotGettingElement()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresWhenGetMethodIsNotGettingElement()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -461,13 +461,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void AttachedPropertyNullableEnumerable()
-        {
-            var binary = BinaryReference.Compile(@"
+    [Test]
+    public static void AttachedPropertyNullableEnumerable()
+    {
+        var binary = BinaryReference.Compile(@"
 namespace BinaryReference
 {
     using System.Collections;
@@ -514,7 +514,7 @@ namespace BinaryReference
         }
     }
 }");
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -534,7 +534,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithMetadataReferences(x => x.Append(binary)));
-        }
+        RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithMetadataReferences(x => x.Append(binary)));
     }
 }

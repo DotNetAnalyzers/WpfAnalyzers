@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0085XamlSetTypeConverterTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0085XamlSetTypeConverterTarget);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -24,13 +24,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs)"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Expected a method with signature void ReceiveTypeConverter(object, XamlSetTypeConverterEventArgs)"), code);
+    }
 
-        [Test]
-        public static void WhenReturningInt()
-        {
-            var code = @"
+    [Test]
+    public static void WhenReturningInt()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -43,13 +43,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenNoParameters()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNoParameters()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -64,13 +64,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenMOreThanTwoParameters()
-        {
-            var code = @"
+    [Test]
+    public static void WhenMOreThanTwoParameters()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -85,13 +85,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenFirstParameterIsInt()
-        {
-            var code = @"
+    [Test]
+    public static void WhenFirstParameterIsInt()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -106,13 +106,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void WhenSecondParameterIsInt()
-        {
-            var code = @"
+    [Test]
+    public static void WhenSecondParameterIsInt()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -127,7 +127,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

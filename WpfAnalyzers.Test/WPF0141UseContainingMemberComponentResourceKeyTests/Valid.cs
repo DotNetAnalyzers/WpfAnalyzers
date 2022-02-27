@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0141UseContainingMemberComponentResourceKeyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenExpectedLiteral()
     {
-        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenExpectedLiteral()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -22,13 +22,13 @@ namespace N
             ""FooKey"");
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenExpectedNameof()
-        {
-            var code = @"
+    [Test]
+    public static void WhenExpectedNameof()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -40,7 +40,6 @@ namespace N
             nameof(FooKey));
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

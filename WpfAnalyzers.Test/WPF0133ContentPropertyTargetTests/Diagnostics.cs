@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0133ContentPropertyTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0133ContentPropertyTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0133ContentPropertyTarget);
 
-    public static class Diagnostics
+    [Test]
+    public static void WhenWrong()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0133ContentPropertyTarget);
-
-        [Test]
-        public static void WhenWrong()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -36,7 +36,6 @@ namespace N
     }
 }
 ";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

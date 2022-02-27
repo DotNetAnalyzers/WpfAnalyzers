@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0081MarkupExtensionReturnTypeMustUseCorrectTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenHasAttribute()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenHasAttribute()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -25,13 +25,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenReturnTypeIsObjectAndAttributeIsMoreSpecific()
-        {
-            var code = @"
+    [Test]
+    public static void WhenReturnTypeIsObjectAndAttributeIsMoreSpecific()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -48,14 +48,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable))]")]
-        [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable<int>))]")]
-        public static void EnumerableExtension(string attribute)
-        {
-            var code = @"
+    [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable))]")]
+    [TestCase("[MarkupExtensionReturnType(typeof(IEnumerable<int>))]")]
+    public static void EnumerableExtension(string attribute)
+    {
+        var code = @"
 #pragma warning disable CS8019
 namespace N
 {
@@ -74,15 +74,15 @@ namespace N
         }
     }
 }".AssertReplace("[MarkupExtensionReturnType(typeof(IEnumerable))]", attribute);
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("[MarkupExtensionReturnType(typeof(IdExtension))]")]
-        [TestCase("[MarkupExtensionReturnType(typeof(MarkupExtension))]")]
-        [TestCase("[MarkupExtensionReturnType(typeof(IDisposable))]")]
-        public static void IdExtension(string attribute)
-        {
-            var code = @"
+    [TestCase("[MarkupExtensionReturnType(typeof(IdExtension))]")]
+    [TestCase("[MarkupExtensionReturnType(typeof(MarkupExtension))]")]
+    [TestCase("[MarkupExtensionReturnType(typeof(IDisposable))]")]
+    public static void IdExtension(string attribute)
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -99,7 +99,6 @@ namespace N
         public void Dispose() { }
     }
 }".AssertReplace("[MarkupExtensionReturnType(typeof(IdExtension))]", attribute);
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

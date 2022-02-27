@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
+﻿namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0102EventDeclarationName);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0102EventDeclarationName);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to: 'ValueChanged'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to: 'ValueChanged'"), code);
+    }
 
-        [Test]
-        public static void EventManagerRegisterRoutedEvent()
-        {
-            var before = @"
+    [Test]
+    public static void EventManagerRegisterRoutedEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -64,7 +64,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -87,13 +87,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void EventManagerRegisterRoutedEventExpressionBodies()
-        {
-            var before = @"
+    [Test]
+    public static void EventManagerRegisterRoutedEventExpressionBodies()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -116,7 +116,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -139,7 +139,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

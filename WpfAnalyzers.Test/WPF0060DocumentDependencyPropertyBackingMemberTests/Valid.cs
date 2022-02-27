@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests
+﻿namespace WpfAnalyzers.Test.WPF0060DocumentDependencyPropertyBackingMemberTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterBackingField()
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterBackingField()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -28,13 +28,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterBackingProperty()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterBackingProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -52,13 +52,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterFormatted()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterFormatted()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -81,13 +81,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterPartial()
-        {
-            var part1 = @"
+    [Test]
+    public static void DependencyPropertyRegisterPartial()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -103,7 +103,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -121,13 +121,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -152,13 +152,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingFields()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingFields()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -182,13 +182,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingProperties()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingProperties()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -212,13 +212,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var fooCode = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -245,7 +245,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -264,13 +264,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, code);
+    }
 
-        [Test]
-        public static void Multiline()
-        {
-            var code = @"
+    [Test]
+    public static void Multiline()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -290,7 +290,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests
+﻿namespace WpfAnalyzers.Test.WPF0105EventDeclarationRemoveHandlerInRemoveTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0105EventDeclarationRemoveHandlerInRemove);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0105EventDeclarationRemoveHandlerInRemove);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,13 +34,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Call RemoveHandler in remove"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Call RemoveHandler in remove"), code);
+    }
 
-        [Test]
-        public static void Remove()
-        {
-            var code = @"
+    [Test]
+    public static void Remove()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -63,7 +63,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

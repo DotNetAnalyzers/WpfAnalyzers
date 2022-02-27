@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0013ClrMethodMustMatchRegisteredType);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0013ClrMethodMustMatchRegisteredType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -32,16 +32,16 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type int"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type int"), code);
+    }
 
-        [TestCase("double")]
-        [TestCase("int?")]
-        [TestCase("Nullable<int>")]
-        [TestCase("ObservableCollection<int>")]
-        public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
-        {
-            var code = @"
+    [TestCase("double")]
+    [TestCase("int?")]
+    [TestCase("Nullable<int>")]
+    [TestCase("ObservableCollection<int>")]
+    public static void DependencyPropertyRegisterAttachedSetMethod(string typeName)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -70,13 +70,13 @@ namespace N
     }
 }".AssertReplace("double", typeName);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedSetMethodAsExtensionMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -101,13 +101,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlySetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlySetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -128,16 +128,16 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("double")]
-        [TestCase("int?")]
-        [TestCase("Nullable<int>")]
-        [TestCase("ObservableCollection<int>")]
-        public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
-        {
-            var code = @"
+    [TestCase("double")]
+    [TestCase("int?")]
+    [TestCase("Nullable<int>")]
+    [TestCase("ObservableCollection<int>")]
+    public static void DependencyPropertyRegisterAttachedGetMethod(string typeName)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -166,13 +166,13 @@ namespace N
     }
 }".AssertReplace("double", typeName);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedGetMethodAsExtensionMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -197,7 +197,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

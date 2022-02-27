@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0130UseTemplatePartAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly GetTemplateChildAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void StringLiterals()
     {
-        private static readonly GetTemplateChildAnalyzer Analyzer = new();
-
-        [Test]
-        public static void StringLiterals()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -26,13 +26,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Constant()
-        {
-            var code = @"
+    [Test]
+    public static void Constant()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -50,13 +50,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TemplatePartAttribute()
-        {
-            var code = @"
+    [Test]
+    public static void TemplatePartAttribute()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -72,13 +72,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void BaseClassLiteral()
-        {
-            var baseCode = @"
+    [Test]
+    public static void BaseClassLiteral()
+    {
+        var baseCode = @"
 namespace N
 {
     using System.Windows;
@@ -90,7 +90,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -104,14 +104,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, baseCode, code);
-            RoslynAssert.Valid(Analyzer, code, baseCode);
-        }
+        RoslynAssert.Valid(Analyzer, baseCode, code);
+        RoslynAssert.Valid(Analyzer, code,     baseCode);
+    }
 
-        [Test]
-        public static void BaseClassConstant()
-        {
-            var baseCode = @"
+    [Test]
+    public static void BaseClassConstant()
+    {
+        var baseCode = @"
 namespace N
 {
     using System.Windows;
@@ -124,7 +124,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -138,14 +138,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, baseCode, code);
-            RoslynAssert.Valid(Analyzer, code, baseCode);
-        }
+        RoslynAssert.Valid(Analyzer, baseCode, code);
+        RoslynAssert.Valid(Analyzer, code,     baseCode);
+    }
 
-        [Test]
-        public static void IsPatternStringLiteral()
-        {
-            var code = @"
+    [Test]
+    public static void IsPatternStringLiteral()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -170,15 +170,15 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("as FrameworkElement")]
-        [TestCase("as UIElement")]
-        [TestCase("as Control")]
-        public static void AsCastStringLiteral(string cast)
-        {
-            var code = @"
+    [TestCase("as FrameworkElement")]
+    [TestCase("as UIElement")]
+    [TestCase("as Control")]
+    public static void AsCastStringLiteral(string cast)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -199,7 +199,6 @@ namespace N
     }
 }".AssertReplace("as FrameworkElement", cast);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

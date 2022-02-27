@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0107BackingMemberShouldBeStaticReadonlyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly MakeFieldStaticReadonlyFix FieldFix = new();
+    private static readonly MakePropertyStaticReadonlyFix PropertyFix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0107BackingMemberShouldBeStaticReadonly);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly MakeFieldStaticReadonlyFix FieldFix = new();
-        private static readonly MakePropertyStaticReadonlyFix PropertyFix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0107BackingMemberShouldBeStaticReadonly);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -36,13 +36,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Backing member for a RoutedEvent and should be static and readonly"), code);
+    }
 
-        [Test]
-        public static void MutableInstanceField()
-        {
-            var before = @"
+    [Test]
+    public static void MutableInstanceField()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -65,7 +65,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -88,13 +88,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void MutableInstanceProperty()
-        {
-            var before = @"
+    [Test]
+    public static void MutableInstanceProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -117,7 +117,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -140,13 +140,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionBodyeProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionBodyeProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -169,7 +169,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -192,7 +192,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
     }
 }

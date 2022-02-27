@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests
+﻿namespace WpfAnalyzers.Test.WPF0132UsePartPrefixTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0132UsePartPrefix);
 
-    public static class Diagnostics
+    [Test]
+    public static void MissingPrefix()
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0132UsePartPrefix);
-
-        [Test]
-        public static void MissingPrefix()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -27,7 +27,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use PART prefix"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use PART prefix"), code);
     }
 }

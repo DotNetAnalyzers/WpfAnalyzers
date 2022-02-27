@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0033UseAttachedPropertyBrowsableForTypeAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenHasAttribute()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenHasAttribute()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -42,7 +42,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

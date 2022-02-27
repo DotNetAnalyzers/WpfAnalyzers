@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0150UseNameofInsteadOfLiteralTests
+﻿namespace WpfAnalyzers.Test.WPF0150UseNameofInsteadOfLiteralTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly UseNameofFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0150UseNameofInsteadOfLiteral);
 
-    public static class CodeFix
+    [Test]
+    public static void RoutedCommand()
     {
-        private static readonly UseNameofFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0150UseNameofInsteadOfLiteral);
-
-        [Test]
-        public static void RoutedCommand()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -22,7 +22,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -32,13 +32,13 @@ namespace N
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(new RoutedCommandCreationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new RoutedCommandCreationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommand()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommand()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -49,7 +49,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -59,13 +59,13 @@ namespace N
         public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(new RoutedCommandCreationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new RoutedCommandCreationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegister()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegister()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -83,7 +83,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -100,13 +100,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterArgumentPerLine()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterArgumentPerLine()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -128,7 +128,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -149,13 +149,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new RegistrationAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RegisterRoutedEvent()
-        {
-            var before = @"
+    [Test]
+    public static void RegisterRoutedEvent()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -178,7 +178,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -200,13 +200,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(new RoutedEventBackingFieldOrPropertyAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new RoutedEventBackingFieldOrPropertyAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependsOn()
-        {
-            var before = @"
+    [Test]
+    public static void DependsOn()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -240,7 +240,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -273,13 +273,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ContentProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ContentProperty()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -304,7 +304,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -328,7 +328,6 @@ namespace N
             => throw new NotImplementedException();
     }
 }";
-            RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(new AttributeAnalyzer(), Fix, ExpectedDiagnostic, before, after);
     }
 }

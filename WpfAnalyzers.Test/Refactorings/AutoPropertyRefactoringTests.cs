@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.Refactorings
+﻿namespace WpfAnalyzers.Test.Refactorings;
+
+using Gu.Roslyn.Asserts;
+
+using NUnit.Framework;
+
+using WpfAnalyzers.Refactorings;
+
+public static class AutoPropertyRefactoringTests
 {
-    using Gu.Roslyn.Asserts;
+    private static readonly AutoPropertyRefactoring Refactoring = new();
 
-    using NUnit.Framework;
-
-    using WpfAnalyzers.Refactorings;
-
-    public static class AutoPropertyRefactoringTests
+    [Test]
+    public static void AutoProperty()
     {
-        private static readonly AutoPropertyRefactoring Refactoring = new();
-
-        [Test]
-        public static void AutoProperty()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -24,7 +24,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -46,13 +46,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
+    }
 
-        [Test]
-        public static void AutoProperty2()
-        {
-            var before = @"
+    [Test]
+    public static void AutoProperty2()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -63,7 +63,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -85,13 +85,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertyNotQualifiedMethodAccess()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertyNotQualifiedMethodAccess()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -104,7 +104,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -128,13 +128,13 @@ namespace N
         public int M() => M();
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
+    }
 
-        [Test]
-        public static void InsertsBackingFieldAtCorrectPosition()
-        {
-            var before = @"
+    [Test]
+    public static void InsertsBackingFieldAtCorrectPosition()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -172,7 +172,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -220,13 +220,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to dependency property");
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to dependency property");
+    }
 
-        [Test]
-        public static void InsertsReadonlyBackingFieldsAtCorrectPosition()
-        {
-            var before = @"
+    [Test]
+    public static void InsertsReadonlyBackingFieldsAtCorrectPosition()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -268,7 +268,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -322,13 +322,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to readonly dependency property");
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after, title: "Change to readonly dependency property");
+    }
 
-        [Test]
-        public static void StaticAutoProperty()
-        {
-            var before = @"
+    [Test]
+    public static void StaticAutoProperty()
+    {
+        var before = @"
 namespace N
 {
     public static class C
@@ -337,7 +337,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -368,13 +368,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
+    }
 
-        [Test]
-        public static void StaticAutoProperty2()
-        {
-            var before = @"
+    [Test]
+    public static void StaticAutoProperty2()
+    {
+        var before = @"
 namespace N
 {
     public static class Foo
@@ -383,7 +383,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -414,7 +414,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
     }
 }

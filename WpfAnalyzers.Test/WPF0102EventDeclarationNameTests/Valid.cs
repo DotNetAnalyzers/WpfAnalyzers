@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests
+﻿namespace WpfAnalyzers.Test.WPF0102EventDeclarationNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("\"ValueChanged\"")]
+    [TestCase("nameof(ValueChanged)")]
+    [TestCase("nameof(FooControl.ValueChanged)")]
+    public static void EventManagerRegisterRoutedEvent(string nameof)
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
-
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public static void EventManagerRegisterRoutedEvent(string nameof)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,7 +35,6 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

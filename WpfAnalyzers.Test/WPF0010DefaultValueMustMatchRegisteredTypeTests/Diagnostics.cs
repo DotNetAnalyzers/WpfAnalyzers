@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyMetadataAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0010DefaultValueMustMatchRegisteredType);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0010DefaultValueMustMatchRegisteredType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -33,21 +33,21 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Default value for 'N.FooControl<T>.BarProperty' must be of type T"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Default value for 'N.FooControl<T>.BarProperty' must be of type T"), code);
+    }
 
-        [TestCase("int", "new PropertyMetadata(↓default(double))")]
-        [TestCase("int", "new PropertyMetadata(↓0.0)")]
-        [TestCase("int", "new PropertyMetadata(↓0.0, OnValueChanged)")]
-        [TestCase("int", "new PropertyMetadata(↓(object?)null)")]
-        [TestCase("int", "new PropertyMetadata(↓null, OnValueChanged)")]
-        [TestCase("double", "new PropertyMetadata(↓1)")]
-        [TestCase("double?", "new PropertyMetadata(↓1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
-        [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new System.Collections.ObjectModel.ObservableCollection<double>())")]
-        public static void DependencyPropertyRegister(string typeName, string metadata)
-        {
-            var code = @"
+    [TestCase("int",                                                      "new PropertyMetadata(↓default(double))")]
+    [TestCase("int",                                                      "new PropertyMetadata(↓0.0)")]
+    [TestCase("int",                                                      "new PropertyMetadata(↓0.0, OnValueChanged)")]
+    [TestCase("int",                                                      "new PropertyMetadata(↓(object?)null)")]
+    [TestCase("int",                                                      "new PropertyMetadata(↓null, OnValueChanged)")]
+    [TestCase("double",                                                   "new PropertyMetadata(↓1)")]
+    [TestCase("double?",                                                  "new PropertyMetadata(↓1)")]
+    [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓1)")]
+    [TestCase("System.Collections.ObjectModel.ObservableCollection<int>", "new PropertyMetadata(↓new System.Collections.ObjectModel.ObservableCollection<double>())")]
+    public static void DependencyPropertyRegister(string typeName, string metadata)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -75,13 +75,13 @@ namespace N
 }".AssertReplace("double", typeName)
   .AssertReplace("new PropertyMetadata(↓1)", metadata);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterGenericContainingType()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterGenericContainingType()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -102,13 +102,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -131,13 +131,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -156,13 +156,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -183,13 +183,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var fooCode = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -216,7 +216,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -234,13 +234,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code, fooCode);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code, fooCode);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -256,7 +256,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -270,13 +270,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, code);
+    }
 
-        [Test]
-        public static void IntWhenTypeIsEnum()
-        {
-            var e = @"
+    [Test]
+    public static void IntWhenTypeIsEnum()
+    {
+        var e = @"
 namespace N
 {
     public enum E
@@ -285,7 +285,7 @@ namespace N
         M2
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -308,7 +308,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, e, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, e, code);
     }
 }

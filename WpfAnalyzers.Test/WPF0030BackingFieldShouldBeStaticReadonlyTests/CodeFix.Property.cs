@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class CodeFix
+    public static class Property
     {
-        public static class Property
-        {
-            private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-            private static readonly MakePropertyStaticReadonlyFix Fix = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0030BackingFieldShouldBeStaticReadonly);
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+        private static readonly MakePropertyStaticReadonlyFix Fix = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0030BackingFieldShouldBeStaticReadonly);
 
-            [Test]
-            public static void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterBackingPropertyGetOnlyNotStatic()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -32,7 +32,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -49,13 +49,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyRegisterBackingPropertyGetSet()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterBackingPropertyGetSet()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -74,7 +74,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -92,13 +92,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyRegisterBackingPropertyExpressionBody()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterBackingPropertyExpressionBody()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -118,7 +118,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -137,8 +137,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests
+﻿namespace WpfAnalyzers.Test.WPF0050XmlnsPrefixMustMatchXmlnsDefinitionTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition);
 
-    public static class Diagnostics
+    [Test]
+    public static void WhenNoXmlnsDefinition()
     {
-        private static readonly WPF0050XmlnsPrefixMustMatchXmlnsDefinition Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0050XmlnsPrefixMustMatchXmlnsDefinition);
-
-        [Test]
-        public static void WhenNoXmlnsDefinition()
-        {
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -37,13 +37,13 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsPrefix(↓""http://gu.se/Geometry"", ""geometry"")]";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("There is no [XmlnsDefinition] mapping to 'http://gu.se/Geometry'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("There is no [XmlnsDefinition] mapping to 'http://gu.se/Geometry'"), code);
+    }
 
-        [Test]
-        public static void WhenNoXmlnsPrefix()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNoXmlnsPrefix()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -69,13 +69,13 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(↓""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("There is no [XmlnsPrefix] mapping to 'http://gu.se/Geometry'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("There is no [XmlnsPrefix] mapping to 'http://gu.se/Geometry'"), code);
+    }
 
-        [Test]
-        public static void WhenXmlnsDefinitionIsNotMatching()
-        {
-            var code = @"
+    [Test]
+    public static void WhenXmlnsDefinitionIsNotMatching()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -102,7 +102,6 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(↓""http://gu.se/SomewhereElse"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsPrefix(↓""http://gu.se/Geometry"", ""geometry"")]";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

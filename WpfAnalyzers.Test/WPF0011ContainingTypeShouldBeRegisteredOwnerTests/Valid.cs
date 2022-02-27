@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests
+﻿namespace WpfAnalyzers.Test.WPF0011ContainingTypeShouldBeRegisteredOwnerTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
 
-    public static class Valid
+    [TestCase("FooControl")]
+    [TestCase("FooControl<T>")]
+    public static void DependencyPropertyRegister(string typeName)
     {
-        private static readonly WPF0011ContainingTypeShouldBeRegisteredOwner Analyzer = new();
-
-        [TestCase("FooControl")]
-        [TestCase("FooControl<T>")]
-        public static void DependencyPropertyRegister(string typeName)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,13 +34,13 @@ namespace N
     }
 }".AssertReplace("FooControl", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -63,13 +63,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -95,13 +95,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -129,13 +129,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -157,7 +157,7 @@ namespace N
     }
 }";
 
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -170,13 +170,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooControlCode, barControlCode);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, barControlCode);
+    }
 
-        [Test]
-        public static void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreOverrideMetadataWhenContainingTypeIsNotSubclassOfOwningType()
+    {
+        var code = @"
 namespace N
 {
     using System.Globalization;
@@ -195,14 +195,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("FooControl")]
-        [TestCase("FooControl<T>")]
-        public static void DependencyPropertyAddOwner(string typeName)
-        {
-            var fooCode = @"
+    [TestCase("FooControl")]
+    [TestCase("FooControl<T>")]
+    public static void DependencyPropertyAddOwner(string typeName)
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -228,7 +228,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -246,7 +246,6 @@ namespace N
     }
 }".AssertReplace("FooControl", typeName);
 
-            RoslynAssert.Valid(Analyzer, fooCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, code);
     }
 }

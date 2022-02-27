@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests
+﻿namespace WpfAnalyzers.Test.WPF0043DoNotUseSetCurrentValueForDataContextTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetValueAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void IgnoreSetDataContext()
     {
-        private static readonly SetValueAnalyzer Analyzer = new();
-
-        [Test]
-        public static void IgnoreSetDataContext()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

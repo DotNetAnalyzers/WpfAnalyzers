@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0016DefaultValueIsSharedReferenceTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyMetadataAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType);
 
-    public static class Diagnostics
+    [TestCase("ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<int>())")]
+    [TestCase("int[]",                     "new PropertyMetadata(↓new int[1])")]
+    public static void DependencyProperty(string typeName, string metadata)
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0016DefaultValueIsSharedReferenceType);
-
-        [TestCase("ObservableCollection<int>", "new PropertyMetadata(↓new ObservableCollection<int>())")]
-        [TestCase("int[]", "new PropertyMetadata(↓new int[1])")]
-        public static void DependencyProperty(string typeName, string metadata)
-        {
-            var code = @"
+        var code = @"
 #pragma warning disable CS8019
 namespace N
 {
@@ -43,13 +43,13 @@ namespace N
 }".AssertReplace("double", typeName)
   .AssertReplace("new PropertyMetadata(↓1)", metadata);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -73,13 +73,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -99,13 +99,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -127,7 +127,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

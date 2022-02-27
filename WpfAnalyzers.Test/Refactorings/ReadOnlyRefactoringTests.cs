@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.Refactorings
+﻿namespace WpfAnalyzers.Test.Refactorings;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using WpfAnalyzers.Refactorings;
+
+public static class ReadOnlyRefactoringTests
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using WpfAnalyzers.Refactorings;
+    private static readonly ReadOnlyRefactoring Refactoring = new();
 
-    public static class ReadOnlyRefactoringTests
+    [Test]
+    public static void ChangeToReadOnly()
     {
-        private static readonly ReadOnlyRefactoring Refactoring = new();
-
-        [Test]
-        public static void ChangeToReadOnly()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -58,7 +58,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Refactoring(Refactoring, before, after);
-        }
+        RoslynAssert.Refactoring(Refactoring, before, after);
     }
 }

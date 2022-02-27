@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0106EventDeclarationUseRegisteredHandlerTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0106EventDeclarationUseRegisteredHandlerType);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventEventDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0106EventDeclarationUseRegisteredHandlerType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use the registered handler type RoutedEventHandler"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Use the registered handler type RoutedEventHandler"), code);
+    }
 
-        [Test]
-        public static void WrongType()
-        {
-            var code = @"
+    [Test]
+    public static void WrongType()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -65,7 +65,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

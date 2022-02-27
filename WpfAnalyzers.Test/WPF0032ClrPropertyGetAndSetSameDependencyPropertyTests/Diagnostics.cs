@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests
+﻿namespace WpfAnalyzers.Test.WPF0032ClrPropertyGetAndSetSameDependencyPropertyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty);
 
-    public static class Diagnostics
+    [Test]
+    public static void DependencyProperty()
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty);
-
-        [Test]
-        public static void DependencyProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -39,13 +39,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), code);
+    }
 
-        [Test]
-        public static void DependencyPropertyExpressionBodyAccessors()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyExpressionBodyAccessors()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -72,13 +72,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAndReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyAndReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -108,7 +108,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'Bar' must access same dependency property in getter and setter"), code);
     }
 }

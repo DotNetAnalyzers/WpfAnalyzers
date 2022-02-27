@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0100BackingFieldShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0100BackingFieldShouldMatchRegisteredName;
 
-    public static class Valid
+    [TestCase("\"ValueChanged\"")]
+    [TestCase("nameof(ValueChanged)")]
+    [TestCase("nameof(FooControl.ValueChanged)")]
+    public static void DependencyPropertyRegisterBackingField(string nameof)
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0100BackingFieldShouldMatchRegisteredName;
-
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public static void DependencyPropertyRegisterBackingField(string nameof)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -37,15 +37,15 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [TestCase("\"ValueChanged\"")]
-        [TestCase("nameof(ValueChanged)")]
-        [TestCase("nameof(FooControl.ValueChanged)")]
-        public static void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
-        {
-            var code = @"
+    [TestCase("\"ValueChanged\"")]
+    [TestCase("nameof(ValueChanged)")]
+    [TestCase("nameof(FooControl.ValueChanged)")]
+    public static void DependencyPropertyRegisterBackingFieldExpressionBodies(string nameof)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -68,7 +68,6 @@ namespace N
     }
 }".AssertReplace("nameof(ValueChanged)", nameof);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

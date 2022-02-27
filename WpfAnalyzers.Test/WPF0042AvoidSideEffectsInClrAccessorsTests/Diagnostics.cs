@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests
+﻿namespace WpfAnalyzers.Test.WPF0042AvoidSideEffectsInClrAccessorsTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0042AvoidSideEffectsInClrAccessors);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,13 +41,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Avoid side effects in CLR accessors"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Avoid side effects in CLR accessors"), code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedWithSideEffectInSetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -77,13 +77,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedWithSideEffectInGetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -113,13 +113,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInSetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -151,13 +151,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlyWithSideEffectInGetMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -190,7 +190,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

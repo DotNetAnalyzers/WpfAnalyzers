@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RegistrationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("CommonValidation.ValidateDoubleIsGreaterThanZero")]
+    [TestCase("o => CommonValidation.ValidateDoubleIsGreaterThanZero(o)")]
+    [TestCase("new ValidateValueCallback(CommonValidation.ValidateDoubleIsGreaterThanZero)")]
+    [TestCase("new ValidateValueCallback(o => CommonValidation.ValidateDoubleIsGreaterThanZero(o))")]
+    public static void WhenValidationMethodInHelperClass(string callback)
     {
-        private static readonly RegistrationAnalyzer Analyzer = new();
-
-        [TestCase("CommonValidation.ValidateDoubleIsGreaterThanZero")]
-        [TestCase("o => CommonValidation.ValidateDoubleIsGreaterThanZero(o)")]
-        [TestCase("new ValidateValueCallback(CommonValidation.ValidateDoubleIsGreaterThanZero)")]
-        [TestCase("new ValidateValueCallback(o => CommonValidation.ValidateDoubleIsGreaterThanZero(o))")]
-        public static void WhenValidationMethodInHelperClass(string callback)
-        {
-            var validationCode = @"
+        var validationCode = @"
 namespace N
 {
     internal static class CommonValidation
@@ -29,7 +29,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -67,13 +67,13 @@ namespace N
     }
 }".AssertReplace("CommonValidation.ValidateDoubleIsGreaterThanZero", callback);
 
-            RoslynAssert.Valid(Analyzer, validationCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, validationCode, code);
+    }
 
-        [Test]
-        public static void WhenValidationMethodIsUsedMoreThanOnce()
-        {
-            var code = @"
+    [Test]
+    public static void WhenValidationMethodIsUsedMoreThanOnce()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -120,13 +120,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyNoCallback()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyNoCallback()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -146,16 +146,16 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("ValidateValue);")]
-        [TestCase("o => ValidateValue(o));")]
-        [TestCase("new ValidateValueCallback(ValidateValue));")]
-        [TestCase("o => (int)o >= 0);")]
-        public static void DependencyPropertyWithCallback(string metadata)
-        {
-            var code = @"
+    [TestCase("ValidateValue);")]
+    [TestCase("o => ValidateValue(o));")]
+    [TestCase("new ValidateValueCallback(ValidateValue));")]
+    [TestCase("o => (int)o >= 0);")]
+    public static void DependencyPropertyWithCallback(string metadata)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -188,13 +188,13 @@ namespace N
     }
 }".AssertReplace("ValidateValue);", metadata);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -233,13 +233,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -274,13 +274,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -322,13 +322,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenUsingMethodInOtherClass()
-        {
-            var commonValidation = @"
+    [Test]
+    public static void WhenUsingMethodInOtherClass()
+    {
+        var commonValidation = @"
 namespace N
 {
     internal static class CommonValidation
@@ -344,7 +344,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -368,7 +368,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, commonValidation, code);
-        }
+        RoslynAssert.Valid(Analyzer, commonValidation, code);
     }
 }

@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests
+﻿namespace WpfAnalyzers.Test.WPF0140UseContainingTypeComponentResourceTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenExpectedArguments()
     {
-        private static readonly ComponentResourceKeyAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenExpectedArguments()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -22,7 +22,6 @@ namespace N
             $""{typeof(ResourceKeys).FullName}.{nameof(FooKey)}"");
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

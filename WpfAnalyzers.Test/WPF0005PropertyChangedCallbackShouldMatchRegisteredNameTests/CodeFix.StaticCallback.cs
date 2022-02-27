@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0005PropertyChangedCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class CodeFix
+    public static class StaticCallback
     {
-        public static class StaticCallback
-        {
-            private static readonly PropertyMetadataAnalyzer Analyzer = new();
-            private static readonly RenameMemberFix Fix = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName);
+        private static readonly PropertyMetadataAnalyzer Analyzer = new();
+        private static readonly RenameMemberFix Fix = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0005PropertyChangedCallbackShouldMatchRegisteredName);
 
-            [Test]
-            public static void Message()
-            {
-                var code = @"
+        [Test]
+        public static void Message()
+        {
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,16 +41,16 @@ namespace N
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'OnValueChanged'"), code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'OnValueChanged'"), code);
+        }
 
-            [TestCase("new PropertyMetadata(default(double), ↓WrongName)", "new PropertyMetadata(default(double), OnValueChanged)")]
-            [TestCase("new PropertyMetadata(default(double), FooControl.↓WrongName)", "new PropertyMetadata(default(double), FooControl.OnValueChanged)")]
-            [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(↓WrongName))", "new PropertyMetadata(default(double), new PropertyChangedCallback(OnValueChanged))")]
-            [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.↓WrongName))", "new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.OnValueChanged))")]
-            public static void DependencyPropertyRegister(string oldMetadata, string newMetadata)
-            {
-                var before = @"
+        [TestCase("new PropertyMetadata(default(double), ↓WrongName)",                                         "new PropertyMetadata(default(double), OnValueChanged)")]
+        [TestCase("new PropertyMetadata(default(double), FooControl.↓WrongName)",                              "new PropertyMetadata(default(double), FooControl.OnValueChanged)")]
+        [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(↓WrongName))",            "new PropertyMetadata(default(double), new PropertyChangedCallback(OnValueChanged))")]
+        [TestCase("new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.↓WrongName))", "new PropertyMetadata(default(double), new PropertyChangedCallback(FooControl.OnValueChanged))")]
+        public static void DependencyPropertyRegister(string oldMetadata, string newMetadata)
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -77,7 +77,7 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(double), ↓WrongName)", oldMetadata);
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -104,14 +104,14 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(double), OnValueChanged)", newMetadata);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [TestCase("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
-            [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
-            public static void DependencyPropertyRegisterInstanceMethod(string lambdaBefore, string lambdaAfter)
-            {
-                var before = @"
+        [TestCase("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)",                              "(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)")]
+        [TestCase("new PropertyChangedCallback((d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue))", "new PropertyChangedCallback((d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue))")]
+        public static void DependencyPropertyRegisterInstanceMethod(string lambdaBefore, string lambdaAfter)
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -137,7 +137,7 @@ namespace N
     }
 }".AssertReplace("(d, e) => ((FooControl)d).↓WrongName((double)e.NewValue, (double)e.OldValue)", lambdaBefore);
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -163,13 +163,13 @@ namespace N
     }
 }".AssertReplace("(d, e) => ((FooControl)d).OnValueChanged((double)e.NewValue, (double)e.OldValue)", lambdaAfter);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyRegisterReadOnly()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterReadOnly()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -198,7 +198,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -226,13 +226,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyRegisterAttached()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterAttached()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -256,7 +256,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -279,13 +279,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyRegisterAttachedReadOnly()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyRegisterAttachedReadOnly()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -311,7 +311,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -336,13 +336,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyOverrideMetadata()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyOverrideMetadata()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -363,7 +363,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -383,13 +383,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void DependencyPropertyAddOwner()
-            {
-                var before = @"
+        [Test]
+        public static void DependencyPropertyAddOwner()
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -410,7 +410,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -430,8 +430,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

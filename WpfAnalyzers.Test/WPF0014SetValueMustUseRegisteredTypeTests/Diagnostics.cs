@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0014SetValueMustUseRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetValueAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0014SetValueMustUseRegisteredType);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly SetValueAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0014SetValueMustUseRegisteredType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -41,20 +41,20 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("SetValue must use registered type int"), code);
+    }
 
-        [TestCase("SetValue(BarProperty, ↓1.0)")]
-        [TestCase("SetCurrentValue(BarProperty, ↓1.0)")]
-        [TestCase("this.SetValue(BarProperty, ↓1.0)")]
-        [TestCase("this.SetCurrentValue(BarProperty, ↓1.0)")]
-        [TestCase("SetValue(BarProperty, ↓null)")]
-        [TestCase("SetCurrentValue(BarProperty, ↓null)")]
-        [TestCase("SetValue(BarProperty, ↓\"abc\")")]
-        [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
-        public static void DependencyProperty(string setCall)
-        {
-            var code = @"
+    [TestCase("SetValue(BarProperty, ↓1.0)")]
+    [TestCase("SetCurrentValue(BarProperty, ↓1.0)")]
+    [TestCase("this.SetValue(BarProperty, ↓1.0)")]
+    [TestCase("this.SetCurrentValue(BarProperty, ↓1.0)")]
+    [TestCase("SetValue(BarProperty, ↓null)")]
+    [TestCase("SetCurrentValue(BarProperty, ↓null)")]
+    [TestCase("SetValue(BarProperty, ↓\"abc\")")]
+    [TestCase("SetCurrentValue(BarProperty, ↓\"abc\")")]
+    public static void DependencyProperty(string setCall)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -81,14 +81,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1)", setCall);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, ↓1.0);")]
-        [TestCase("this.SetCurrentValue(BarProperty, ↓1.0);")]
-        public static void DependencyPropertyGeneric(string setValueCall)
-        {
-            var fooControlGeneric = @"
+    [TestCase("this.SetValue(BarProperty, ↓1.0);")]
+    [TestCase("this.SetCurrentValue(BarProperty, ↓1.0);")]
+    public static void DependencyPropertyGeneric(string setValueCall)
+    {
+        var fooControlGeneric = @"
 namespace N
 {
     using System.Windows;
@@ -110,7 +110,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public class FooControl : FooControl<int>
@@ -122,14 +122,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1.0)", setValueCall);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlGeneric, code);
+    }
 
-        [TestCase("this.SetValue(BarProperty, ↓1);")]
-        [TestCase("this.SetCurrentValue(BarProperty, ↓1);")]
-        public static void DependencyPropertyAddOwner(string setValueCall)
-        {
-            var fooCode = @"
+    [TestCase("this.SetValue(BarProperty, ↓1);")]
+    [TestCase("this.SetCurrentValue(BarProperty, ↓1);")]
+    public static void DependencyPropertyAddOwner(string setValueCall)
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -154,7 +154,7 @@ namespace N
     }
 }";
 
-            var fooControlPart1 = @"
+        var fooControlPart1 = @"
 namespace N
 {
     using System.Windows;
@@ -188,7 +188,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public partial class FooControl
@@ -199,13 +199,13 @@ namespace N
         }
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓1);", setValueCall);
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooCode, fooControlPart1, code);
+    }
 
-        [Test]
-        public static void AddOwnerTextElementFontSize()
-        {
-            var code = @"
+    [Test]
+    public static void AddOwnerTextElementFontSize()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -225,13 +225,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void AddOwnerBorderBorderThicknessProperty()
-        {
-            var code = @"
+    [Test]
+    public static void AddOwnerBorderBorderThicknessProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -251,14 +251,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void DependencyPropertyOfInterfaceType(string methodName)
-        {
-            var iFooCode = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void DependencyPropertyOfInterfaceType(string methodName)
+    {
+        var iFooCode = @"
 namespace N
 {
     public interface IFoo
@@ -266,14 +266,14 @@ namespace N
     }
 }";
 
-            var iMehCode = @"
+        var iMehCode = @"
 namespace N
 {
     public interface IMeh
     {
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -299,14 +299,14 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, ↓value);", $"this.{methodName}(BarProperty, ↓value);");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, iFooCode, iMehCode, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void DependencyPropertyAddOwnerMediaElementVolume(string methodName)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -345,15 +345,15 @@ namespace N
     }
 }".AssertReplace("this.SetValue(VolumeProperty, ↓1);", $"this.{methodName}(VolumeProperty, ↓1);");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("1.0")]
-        [TestCase("null")]
-        [TestCase("\"abc\"")]
-        public static void ReadOnlyDependencyProperty(string value)
-        {
-            var code = @"
+    [TestCase("1.0")]
+    [TestCase("null")]
+    [TestCase("\"abc\"")]
+    public static void ReadOnlyDependencyProperty(string value)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -382,13 +382,13 @@ namespace N
     }
 }".AssertReplace("<value>", value);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -417,14 +417,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void TextBoxTextProperty(string setMethod)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void TextBoxTextProperty(string setMethod)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -439,14 +439,14 @@ namespace N
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void TextElementFontSizeProperty(string setMethod)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void TextElementFontSizeProperty(string setMethod)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows.Controls;
@@ -462,14 +462,14 @@ namespace N
     }
 }".AssertReplace("textBox.SetValue", $"textBox.{setMethod}");
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void SetCurrentValueInLambda(string setMethod)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void SetCurrentValueInLambda(string setMethod)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -499,7 +499,6 @@ namespace N
     }
 }".AssertReplace("SetCurrentValue", setMethod);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

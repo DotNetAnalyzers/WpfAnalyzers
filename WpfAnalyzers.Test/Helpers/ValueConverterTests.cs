@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace WpfAnalyzers.Test;
 
-    public static class ValueConverterTests
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class ValueConverterTests
+{
+    [Test]
+    public static void TryGetConversionTypesDirectCast()
     {
-        [Test]
-        public static void TryGetConversionTypesDirectCast()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -35,19 +35,19 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
-            Assert.AreEqual("ICollection", sourceType.Name);
-            Assert.AreEqual("Int32", targetType.Name);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
+        Assert.AreEqual(true,          ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+        Assert.AreEqual("ICollection", sourceType.Name);
+        Assert.AreEqual("Int32",       targetType.Name);
+    }
 
-        [Test]
-        public static void TryGetConversionTypesAsCast()
-        {
-            var code = @"
+    [Test]
+    public static void TryGetConversionTypesAsCast()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -78,19 +78,19 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
-            Assert.AreEqual("ICollection", sourceType.Name);
-            Assert.AreEqual("Int32", targetType.Name);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
+        Assert.AreEqual(true,          ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+        Assert.AreEqual("ICollection", sourceType.Name);
+        Assert.AreEqual("Int32",       targetType.Name);
+    }
 
-        [Test]
-        public static void TryGetConversionTypesTwoAsCastWhenOneIsOther()
-        {
-            var code = @"
+    [Test]
+    public static void TryGetConversionTypesTwoAsCastWhenOneIsOther()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -138,19 +138,19 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
-            Assert.AreEqual("IEnumerable", sourceType.Name);
-            Assert.AreEqual("Int32", targetType.Name);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
+        Assert.AreEqual(true,          ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+        Assert.AreEqual("IEnumerable", sourceType.Name);
+        Assert.AreEqual("Int32",       targetType.Name);
+    }
 
-        [Test]
-        public static void TryGetConversionTypesTwoAsCastListAndArray()
-        {
-            var code = @"
+    [Test]
+    public static void TryGetConversionTypesTwoAsCastListAndArray()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -199,13 +199,12 @@ namespace N
         }
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
-            Assert.AreEqual(true, ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
-            Assert.AreEqual("IList`1", sourceType.MetadataName);
-            Assert.AreEqual("Int32", targetType.MetadataName);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var classDeclaration = syntaxTree.FindClassDeclaration("CountConverter");
+        Assert.AreEqual(true,      ValueConverter.TryGetConversionTypes(classDeclaration, semanticModel, CancellationToken.None, out var sourceType, out var targetType));
+        Assert.AreEqual("IList`1", sourceType.MetadataName);
+        Assert.AreEqual("Int32",   targetType.MetadataName);
     }
 }

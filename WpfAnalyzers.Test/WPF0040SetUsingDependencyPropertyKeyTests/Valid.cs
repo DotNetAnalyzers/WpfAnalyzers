@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests
+﻿namespace WpfAnalyzers.Test.WPF0040SetUsingDependencyPropertyKeyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetValueAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("SetValue")]
+    [TestCase("this.SetValue")]
+    [TestCase("SetCurrentValue")]
+    [TestCase("this.SetCurrentValue")]
+    public static void DependencyProperty(string method)
     {
-        private static readonly SetValueAnalyzer Analyzer = new();
-
-        [TestCase("SetValue")]
-        [TestCase("this.SetValue")]
-        [TestCase("SetCurrentValue")]
-        [TestCase("this.SetCurrentValue")]
-        public static void DependencyProperty(string method)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,13 +35,13 @@ namespace N
     }
 }".AssertReplace("SetValue", method);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ReadOnlyDependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void ReadOnlyDependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -64,14 +64,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("SetValue")]
-        [TestCase("SetCurrentValue")]
-        public static void DependencyPropertyRegisterAttached(string method)
-        {
-            var code = @"
+    [TestCase("SetValue")]
+    [TestCase("SetCurrentValue")]
+    public static void DependencyPropertyRegisterAttached(string method)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -96,13 +96,13 @@ namespace N
     }
 }".AssertReplace("SetValue", method);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -128,7 +128,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

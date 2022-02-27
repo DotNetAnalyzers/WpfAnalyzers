@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests
+﻿namespace WpfAnalyzers.Test.WPF0072ValueConversionMustUseCorrectTypesTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
+    private static readonly ValueConversionAttributeArgumentFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes);
 
-    public static class CodeFix
+    [Test]
+    public static void MessageWhenWrongSourceType()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-        private static readonly ValueConversionAttributeArgumentFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0072ValueConversionMustUseCorrectTypes);
-
-        [Test]
-        public static void MessageWhenWrongSourceType()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: System.Collections.ICollection"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: System.Collections.ICollection"), code);
+    }
 
-        [Test]
-        public static void MessageWhenWrongTargetType()
-        {
-            var code = @"
+    [Test]
+    public static void MessageWhenWrongTargetType()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -64,13 +64,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: int"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("ValueConversion must use correct types Expected: int"), code);
+    }
 
-        [Test]
-        public static void DirectCastWrongSourceType()
-        {
-            var before = @"
+    [Test]
+    public static void DirectCastWrongSourceType()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -93,7 +93,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -115,13 +115,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DirectCastWrongSourceTypeFullyQualified()
-        {
-            var before = @"
+    [Test]
+    public static void DirectCastWrongSourceTypeFullyQualified()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -143,7 +143,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -164,13 +164,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
-        {
-            var before = @"
+    [Test]
+    public static void DirectCastWrongSourceTypeFullyQualifiedIncludeAttribute()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -192,7 +192,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -213,13 +213,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DirectCastWrongTargetType()
-        {
-            var before = @"
+    [Test]
+    public static void DirectCastWrongTargetType()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -242,7 +242,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -264,7 +264,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

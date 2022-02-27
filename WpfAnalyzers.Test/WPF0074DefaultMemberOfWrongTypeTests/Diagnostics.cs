@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0074DefaultMemberOfWrongTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ValueConverterAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0074DefaultMemberOfWrongType);
 
-    public static class Diagnostics
+    [Test]
+    public static void DefaultField()
     {
-        private static readonly ValueConverterAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0074DefaultMemberOfWrongType);
-
-        [Test]
-        public static void DefaultField()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -60,13 +60,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DefaultProperty()
-        {
-            var code = @"
+    [Test]
+    public static void DefaultProperty()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -115,7 +115,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

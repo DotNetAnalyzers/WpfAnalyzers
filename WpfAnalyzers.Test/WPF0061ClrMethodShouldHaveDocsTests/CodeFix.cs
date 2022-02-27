@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
+﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
+    private static readonly DocumentationFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0061DocumentClrMethod);
 
-    public static class CodeFix
+    [Test]
+    public static void GetMissingDocs()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-        private static readonly DocumentationFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0061DocumentClrMethod);
-
-        [Test]
-        public static void GetMissingDocs()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -40,7 +40,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -70,13 +70,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetSummaryMissing()
-        {
-            var before = @"
+    [Test]
+    public static void GetSummaryMissing()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -106,7 +106,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -136,13 +136,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetSummaryWrong()
-        {
-            var before = @"
+    [Test]
+    public static void GetSummaryWrong()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -173,7 +173,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -203,14 +203,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Ignore("tbd")]
-        [Test]
-        public static void GetSummaryWrongMultiline()
-        {
-            var before = @"
+    [Ignore("tbd")]
+    [Test]
+    public static void GetSummaryWrongMultiline()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -243,7 +243,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -273,13 +273,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetSummaryWrongCref()
-        {
-            var before = @"
+    [Test]
+    public static void GetSummaryWrongCref()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -310,7 +310,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -340,13 +340,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetSummaryWrongParamref()
-        {
-            var before = @"
+    [Test]
+    public static void GetSummaryWrongParamref()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -377,7 +377,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -407,13 +407,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetParamMissing()
-        {
-            var before = @"
+    [Test]
+    public static void GetParamMissing()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -443,7 +443,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -473,13 +473,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetParamWrong()
-        {
-            var before = @"
+    [Test]
+    public static void GetParamWrong()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -510,7 +510,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -540,13 +540,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetReturnsMissing()
-        {
-            var before = @"
+    [Test]
+    public static void GetReturnsMissing()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -576,7 +576,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -606,13 +606,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void GetReturnsWrong()
-        {
-            var before = @"
+    [Test]
+    public static void GetReturnsWrong()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -643,7 +643,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -673,13 +673,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SetMissingDocs()
-        {
-            var before = @"
+    [Test]
+    public static void SetMissingDocs()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -707,7 +707,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -737,7 +737,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

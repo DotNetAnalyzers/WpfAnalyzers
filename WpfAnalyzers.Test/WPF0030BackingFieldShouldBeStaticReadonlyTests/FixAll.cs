@@ -1,24 +1,24 @@
-﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0030BackingFieldShouldBeStaticReadonlyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class CodeFix
+    public static class FixAll
     {
-        public static class FixAll
-        {
-            private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-            private static readonly MakeFieldStaticReadonlyFix Fix = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0030BackingFieldShouldBeStaticReadonly);
+        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
+        private static readonly MakeFieldStaticReadonlyFix Fix = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0030BackingFieldShouldBeStaticReadonly);
 
-            [TestCase("public static", "public static readonly")]
-            [TestCase("public", "public static readonly")]
-            [TestCase("public readonly", "public static readonly")]
-            [TestCase("private static", "private static readonly")]
-            [TestCase("private", "private static readonly")]
-            public static void DependencyPropertyRegisterBackingField(string modifiersBefore, string modifiersAfter)
-            {
-                var before = @"
+        [TestCase("public static",   "public static readonly")]
+        [TestCase("public",          "public static readonly")]
+        [TestCase("public readonly", "public static readonly")]
+        [TestCase("private static",  "private static readonly")]
+        [TestCase("private",         "private static readonly")]
+        public static void DependencyPropertyRegisterBackingField(string modifiersBefore, string modifiersAfter)
+        {
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -36,7 +36,7 @@ namespace N
     }
 }".AssertReplace("public static DependencyProperty", modifiersBefore + " DependencyProperty");
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.Windows;
@@ -54,8 +54,7 @@ namespace N
     }
 }".AssertReplace("public static readonly DependencyProperty", modifiersAfter + " DependencyProperty");
 
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

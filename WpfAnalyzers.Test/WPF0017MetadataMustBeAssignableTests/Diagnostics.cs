@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests
+﻿namespace WpfAnalyzers.Test.WPF0017MetadataMustBeAssignableTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly OverrideMetadataAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable);
 
-    public static class Diagnostics
+    [Test]
+    public static void DependencyPropertyOverrideMetadataWithBaseType()
     {
-        private static readonly OverrideMetadataAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0017MetadataMustBeAssignable);
-
-        [Test]
-        public static void DependencyPropertyOverrideMetadataWithBaseType()
-        {
-            var fooControlCode = @"
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -33,7 +33,7 @@ namespace N
     }
 }";
 
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -47,13 +47,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadataWithBaseTypeFullyQualified()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadataWithBaseTypeFullyQualified()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -75,7 +75,7 @@ namespace N
     }
 }";
 
-            var barControlCode = @"
+        var barControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -89,13 +89,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, fooControlCode, barControlCode);
+    }
 
-        [Test]
-        public static void DefaultStyleKeyPropertyOverrideMetadata()
-        {
-            var code = @"
+    [Test]
+    public static void DefaultStyleKeyPropertyOverrideMetadata()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -110,7 +110,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

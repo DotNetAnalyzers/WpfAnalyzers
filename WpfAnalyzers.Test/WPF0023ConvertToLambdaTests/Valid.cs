@@ -1,23 +1,23 @@
-﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests
+﻿namespace WpfAnalyzers.Test.WPF0023ConvertToLambdaTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+[TestFixture(typeof(RegistrationAnalyzer))]
+[TestFixture(typeof(PropertyMetadataAnalyzer))]
+public static class Valid<T>
+    where T : DiagnosticAnalyzer, new()
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly DiagnosticAnalyzer Analyzer = new T();
+    //// ReSharper disable once StaticMemberInGenericType
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0023ConvertToLambda;
 
-    [TestFixture(typeof(RegistrationAnalyzer))]
-    [TestFixture(typeof(PropertyMetadataAnalyzer))]
-    public static class Valid<T>
-        where T : DiagnosticAnalyzer, new()
+    [Test]
+    public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new T();
-        //// ReSharper disable once StaticMemberInGenericType
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0023ConvertToLambda;
-
-        [Test]
-        public static void DependencyPropertyRegisterPropertyChangedCallbackLambdaCallingInstanceMethod()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -45,20 +45,20 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [TestCase("new PropertyMetadata(OnBarChanged)")]
-        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
-        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public static void DependencyPropertyRegisterWithMetadata(string metadata)
-        {
-            var code = @"
+    [TestCase("new PropertyMetadata(OnBarChanged)")]
+    [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
+    [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
+    public static void DependencyPropertyRegisterWithMetadata(string metadata)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -93,13 +93,13 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterWithAllCallbacksMoreThanOneStatement()
+    {
+        var code = @"
 #nullable disable
 namespace N
 {
@@ -143,13 +143,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterOnPropertyChangedIf()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterOnPropertyChangedIf()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -178,16 +178,16 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("protected")]
-        [TestCase("protected virtual")]
-        [TestCase("internal")]
-        [TestCase("public")]
-        public static void IgnoreProtectedVirtualInstanceMethod(string modifiers)
-        {
-            var code = @"
+    [TestCase("protected")]
+    [TestCase("protected virtual")]
+    [TestCase("internal")]
+    [TestCase("public")]
+    public static void IgnoreProtectedVirtualInstanceMethod(string modifiers)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -221,7 +221,6 @@ namespace N
     }
 }".AssertReplace("protected virtual", modifiers);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

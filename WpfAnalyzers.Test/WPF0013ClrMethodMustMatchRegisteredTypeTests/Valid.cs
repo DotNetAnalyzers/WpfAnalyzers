@@ -1,21 +1,21 @@
-﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0013ClrMethodMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("int")]
+    [TestCase("int?")]
+    [TestCase("int[]")]
+    [TestCase("int?[]")]
+    [TestCase("Nullable<int>")]
+    [TestCase("ObservableCollection<int>")]
+    public static void DependencyPropertyRegisterAttached(string typeName)
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-
-        [TestCase("int")]
-        [TestCase("int?")]
-        [TestCase("int[]")]
-        [TestCase("int?[]")]
-        [TestCase("Nullable<int>")]
-        [TestCase("ObservableCollection<int>")]
-        public static void DependencyPropertyRegisterAttached(string typeName)
-        {
-            var code = @"
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -51,18 +51,18 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("int")]
-        [TestCase("int?")]
-        [TestCase("int[]")]
-        [TestCase("int?[]")]
-        [TestCase("Nullable<int>")]
-        [TestCase("ObservableCollection<int>")]
-        public static void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
-        {
-            var code = @"
+    [TestCase("int")]
+    [TestCase("int?")]
+    [TestCase("int[]")]
+    [TestCase("int?[]")]
+    [TestCase("Nullable<int>")]
+    [TestCase("ObservableCollection<int>")]
+    public static void DependencyPropertyRegisterAttachedExtensionMethods(string typeName)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -99,13 +99,13 @@ namespace N
     }
 }".AssertReplace("int", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedWhenBoxed()
-        {
-            var booleanBoxesCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedWhenBoxed()
+    {
+        var booleanBoxesCode = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -122,7 +122,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -153,13 +153,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedSettingValueInCallback()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedSettingValueInCallback()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -198,13 +198,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -232,7 +232,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

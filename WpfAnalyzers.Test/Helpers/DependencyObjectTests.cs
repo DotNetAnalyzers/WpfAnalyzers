@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace WpfAnalyzers.Test;
 
-    public static class DependencyObjectTests
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class DependencyObjectTests
+{
+    [TestCase("SetValue(BarProperty, value)")]
+    [TestCase("this.SetValue(BarProperty, value)")]
+    [TestCase("base.SetValue(BarProperty, value)")]
+    public static void SetValueMatch(string call)
     {
-        [TestCase("SetValue(BarProperty, value)")]
-        [TestCase("this.SetValue(BarProperty, value)")]
-        [TestCase("base.SetValue(BarProperty, value)")]
-        public static void SetValueMatch(string call)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,21 +34,21 @@ namespace N
     }
 }".AssertReplace("this.SetValue(BarProperty, value)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("SetValue");
+        Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [TestCase(".SetValue")]
-        [TestCase("?.SetValue")]
-        public static void SetValueMatchInstance(string call)
-        {
-            var code = @"
+    [TestCase(".SetValue")]
+    [TestCase("?.SetValue")]
+    public static void SetValueMatchInstance(string call)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -72,22 +72,22 @@ namespace N
         }
     }
 }".AssertReplace(".SetValue", call);
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("SetValue");
+        Assert.AreEqual("SetValue", DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual(null, DependencyObject.SetValue.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [TestCase("SetCurrentValue(BarProperty, value)")]
-        [TestCase("this.SetCurrentValue(BarProperty, value)")]
-        [TestCase("base.SetCurrentValue(BarProperty, value)")]
-        public static void SetCurrentValueMatch(string call)
-        {
-            var code = @"
+    [TestCase("SetCurrentValue(BarProperty, value)")]
+    [TestCase("this.SetCurrentValue(BarProperty, value)")]
+    [TestCase("base.SetCurrentValue(BarProperty, value)")]
+    public static void SetCurrentValueMatch(string call)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -109,20 +109,20 @@ namespace N
     }
 }".AssertReplace("this.SetCurrentValue(BarProperty, value)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("SetCurrentValue");
-            Assert.AreEqual("SetCurrentValue", DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("SetCurrentValue");
+        Assert.AreEqual("SetCurrentValue", DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual(null, DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual(null, DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [Test]
-        public static void SetCurrentValueMatchInstance()
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+    [Test]
+    public static void SetCurrentValueMatchInstance()
+    {
+        var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.Windows;
@@ -142,21 +142,21 @@ namespace N
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("SetCurrentValue");
-            Assert.AreEqual("SetCurrentValue", DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("SetCurrentValue");
+        Assert.AreEqual("SetCurrentValue", DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("RegisterAttached");
-            Assert.AreEqual(null, DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("RegisterAttached");
+        Assert.AreEqual(null, DependencyObject.SetCurrentValue.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [TestCase("GetValue(BarProperty)")]
-        [TestCase("this.GetValue(BarProperty)")]
-        [TestCase("base.GetValue(BarProperty)")]
-        public static void GetValueMatch(string call)
-        {
-            var code = @"
+    [TestCase("GetValue(BarProperty)")]
+    [TestCase("this.GetValue(BarProperty)")]
+    [TestCase("base.GetValue(BarProperty)")]
+    public static void GetValueMatch(string call)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -178,20 +178,20 @@ namespace N
     }
 }".AssertReplace("this.GetValue(BarProperty)", call);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual("GetValue", DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual("GetValue", DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(null, DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("SetValue");
+        Assert.AreEqual(null, DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None));
+    }
 
-        [Test]
-        public static void GetValueMatchInstance()
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+    [Test]
+    public static void GetValueMatchInstance()
+    {
+        var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.Windows;
@@ -215,13 +215,12 @@ namespace N
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var invocation = syntaxTree.FindInvocation("GetValue");
-            Assert.AreEqual("GetValue", DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var invocation = syntaxTree.FindInvocation("GetValue");
+        Assert.AreEqual("GetValue", DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None)?.Target.Name);
 
-            invocation = syntaxTree.FindInvocation("SetValue");
-            Assert.AreEqual(null, DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None));
-        }
+        invocation = syntaxTree.FindInvocation("SetValue");
+        Assert.AreEqual(null, DependencyObject.GetValue.Match(invocation, semanticModel, CancellationToken.None));
     }
 }

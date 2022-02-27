@@ -1,19 +1,19 @@
-namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests
+namespace WpfAnalyzers.Test.WPF0176StyleTypedPropertyMissingTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0176StyleTypedPropertyMissing;
 
-    public static class Valid
+    [Test]
+    public static void WhenExists()
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new DependencyPropertyBackingFieldOrPropertyAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.WPF0176StyleTypedPropertyMissing;
-
-        [Test]
-        public static void WhenExists()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -36,7 +36,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

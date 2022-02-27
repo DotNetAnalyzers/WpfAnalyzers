@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests
+﻿namespace WpfAnalyzers.Test.WPF0052XmlnsDefinitionsDoesNotMapAllNamespacesTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenXmlnsDefinitionMatches()
     {
-        private static readonly WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces Analyzer = new();
-
-        [Test]
-        public static void WhenXmlnsDefinitionMatches()
-        {
-            var controlCode = @"
+        var controlCode = @"
 namespace Gu.Wpf.Geometry
 {
     using System.Windows;
@@ -32,7 +32,7 @@ namespace Gu.Wpf.Geometry
         }
     }
 }";
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -57,13 +57,13 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, controlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, controlCode, code);
+    }
 
-        [Test]
-        public static void WhenTwoPublicTypesInSameNamespace()
-        {
-            var control1Code = @"
+    [Test]
+    public static void WhenTwoPublicTypesInSameNamespace()
+    {
+        var control1Code = @"
 namespace Gu.Wpf.Geometry
 {
     using System.Windows;
@@ -86,7 +86,7 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var control2Code = @"
+        var control2Code = @"
 namespace Gu.Wpf.Geometry
 {
     using System.Windows;
@@ -109,7 +109,7 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -134,13 +134,13 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, code, control1Code, control2Code);
-        }
+        RoslynAssert.Valid(Analyzer, code, control1Code, control2Code);
+    }
 
-        [Test]
-        public static void WhenTwoXmlnsDefinitions()
-        {
-            var controlCode1 = @"
+    [Test]
+    public static void WhenTwoXmlnsDefinitions()
+    {
+        var controlCode1 = @"
 namespace Gu.Wpf.Geometry
 {
     using System.Windows;
@@ -163,7 +163,7 @@ namespace Gu.Wpf.Geometry
     }
 }";
 
-            var controlCode2 = @"
+        var controlCode2 = @"
 namespace Gu.Wpf.Geometry.Balloons
 {
     using System.Windows;
@@ -186,7 +186,7 @@ namespace Gu.Wpf.Geometry.Balloons
     }
 }";
 
-            var code = @"
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -213,13 +213,13 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry.Balloons"")]";
 
-            RoslynAssert.Valid(Analyzer, controlCode1, controlCode2, code);
-        }
+        RoslynAssert.Valid(Analyzer, controlCode1, controlCode2, code);
+    }
 
-        [Test]
-        public static void WhenNoNamespace()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNoNamespace()
+    {
+        var code = @"
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -244,7 +244,6 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: XmlnsDefinition(""http://gu.se/Geometry"", ""Gu.Wpf.Geometry"")]";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0022DirectCastValueToExactTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly CallbackAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterNoMetadata()
     {
-        private static readonly CallbackAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterNoMetadata()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -30,20 +30,20 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("new PropertyMetadata(OnBarChanged)")]
-        [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
-        [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
-        [TestCase("new PropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
-        [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
-        public static void DependencyPropertyRegisterWithMetadata(string metadata)
-        {
-            var code = @"
+    [TestCase("new PropertyMetadata(OnBarChanged)")]
+    [TestCase("new PropertyMetadata(new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata(default(int), OnBarChanged)")]
+    [TestCase("new PropertyMetadata(default(int), new PropertyChangedCallback(OnBarChanged))")]
+    [TestCase("new PropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata((o, e) => { })")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged)")]
+    [TestCase("new FrameworkPropertyMetadata(OnBarChanged, CoerceBar)")]
+    public static void DependencyPropertyRegisterWithMetadata(string metadata)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -77,18 +77,18 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(default(int), OnBarChanged)", metadata);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("int")]
-        [TestCase("string")]
-        [TestCase("System.IO.Stream")]
-        [TestCase("System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IList")]
-        [TestCase("System.Collections.Generic.IEnumerable<int>")]
-        public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
-        {
-            var code = @"
+    [TestCase("int")]
+    [TestCase("string")]
+    [TestCase("System.IO.Stream")]
+    [TestCase("System.Collections.IEnumerable")]
+    [TestCase("System.Collections.IList")]
+    [TestCase("System.Collections.Generic.IEnumerable<int>")]
+    public static void DependencyPropertyRegisterWithAllCallbacksDirectCast(string type)
+    {
+        var code = @"
 #nullable disable
 namespace N
 {
@@ -129,18 +129,18 @@ namespace N
     }
 }".AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("object", "string")]
-        [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("bool", "bool?")]
-        [TestCase("System.IO.Stream", "System.IDisposable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public static void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
-        {
-            var code = @"
+    [TestCase("object",                         "string")]
+    [TestCase("object",                         "System.Collections.IEnumerable")]
+    [TestCase("bool",                           "bool?")]
+    [TestCase("System.IO.Stream",               "System.IDisposable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+    public static void DependencyPropertyRegisterWithAllCallbacksAsCast(string type, string asType)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -181,18 +181,18 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", asType);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("object", "string")]
-        [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("object", "bool")]
-        [TestCase("System.IO.Stream", "System.IDisposable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
-        {
-            var code = @"
+    [TestCase("object",                         "string")]
+    [TestCase("object",                         "System.Collections.IEnumerable")]
+    [TestCase("object",                         "bool")]
+    [TestCase("System.IO.Stream",               "System.IDisposable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+    public static void DependencyPropertyRegisterWithAllCallbacksIsPatterns(string type, string isType)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -251,18 +251,18 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", isType);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("object", "string")]
-        [TestCase("object", "System.Collections.IEnumerable")]
-        [TestCase("object", "bool")]
-        [TestCase("System.IO.Stream", "System.IDisposable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
-        [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
-        public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
-        {
-            var code = @"
+    [TestCase("object",                         "string")]
+    [TestCase("object",                         "System.Collections.IEnumerable")]
+    [TestCase("object",                         "bool")]
+    [TestCase("System.IO.Stream",               "System.IDisposable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IEnumerable")]
+    [TestCase("System.Collections.IEnumerable", "System.Collections.IList")]
+    public static void DependencyPropertyRegisterWithAllCallbacksSwitchPatterns(string type, string caseType)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -338,13 +338,13 @@ namespace N
 }".AssertReplace("int", type)
   .AssertReplace("string", caseType);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -374,13 +374,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -406,13 +406,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -440,13 +440,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -468,13 +468,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -495,7 +495,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

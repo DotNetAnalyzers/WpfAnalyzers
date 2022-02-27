@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests
+﻿namespace WpfAnalyzers.Test.WPF0008DependsOnTargetTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AttributeAnalyzer Analyzer = new();
 
-    public static class Valid
+    [TestCase("[DependsOn(nameof(Value2))]")]
+    [TestCase("[DependsOn(\"Value2\")]")]
+    public static void WhenPropertyExists(string attribute)
     {
-        private static readonly AttributeAnalyzer Analyzer = new();
-
-        [TestCase("[DependsOn(nameof(Value2))]")]
-        [TestCase("[DependsOn(\"Value2\")]")]
-        public static void WhenPropertyExists(string attribute)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -45,7 +45,6 @@ namespace N
         }
     }
 }".AssertReplace("[DependsOn(nameof(Value2))]", attribute);
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

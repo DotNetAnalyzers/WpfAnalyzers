@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests
+﻿namespace WpfAnalyzers.Test.WPF0061ClrMethodShouldHaveDocsTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -42,13 +42,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Multiline()
-        {
-            var code = @"
+    [Test]
+    public static void Multiline()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -92,13 +92,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -132,13 +132,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnlyExpressionBodyExtensionMethods()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -165,13 +165,13 @@ namespace N
         public static int GetBar(this FrameworkElement element) => (int)element.GetValue(BarProperty);
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingFields()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingFields()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -195,13 +195,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnlyBackingProperties()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnlyBackingProperties()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -225,13 +225,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var fooCode = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -264,7 +264,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -283,13 +283,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooCode, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterBackingField()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterBackingField()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -307,13 +307,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterBackingProperty()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterBackingProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -331,13 +331,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterFormatted()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterFormatted()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -360,13 +360,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterPartial()
-        {
-            var part1 = @"
+    [Test]
+    public static void DependencyPropertyRegisterPartial()
+    {
+        var part1 = @"
 namespace N
 {
     using System.Windows;
@@ -382,7 +382,7 @@ namespace N
     }
 }";
 
-            var part2 = @"
+        var part2 = @"
 namespace N
 {
     using System.Windows;
@@ -400,13 +400,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, part1, part2);
-        }
+        RoslynAssert.Valid(Analyzer, part1, part2);
+    }
 
-        [Test]
-        public static void FullyQualified()
-        {
-            var code = @"
+    [Test]
+    public static void FullyQualified()
+    {
+        var code = @"
 namespace ValidCode.AttachedProperties
 {
     using System;
@@ -470,7 +470,6 @@ namespace ValidCode.AttachedProperties
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

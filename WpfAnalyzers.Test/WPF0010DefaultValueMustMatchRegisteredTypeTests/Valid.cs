@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.WPF0010DefaultValueMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyMetadataAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterNoMetadata()
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterNoMetadata()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -30,13 +30,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterWithMetadataWithCallbackOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -62,29 +62,29 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("int", "new PropertyMetadata()")]
-        [TestCase("int", "new FrameworkPropertyMetadata()")]
-        [TestCase("int", "new PropertyMetadata(default(int))")]
-        [TestCase("int", "new PropertyMetadata(1, OnValueChanged)")]
-        [TestCase("int", "new PropertyMetadata(1)")]
-        [TestCase("int?", "new PropertyMetadata(1)")]
-        [TestCase("int?", "new PropertyMetadata(null)")]
-        [TestCase("bool?", "new PropertyMetadata(null)")]
-        [TestCase("bool?", "new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)")]
-        [TestCase("int?", "new PropertyMetadata(default(int?))")]
-        [TestCase("Nullable<int>", "new PropertyMetadata(default(int?))")]
-        [TestCase("int", "new PropertyMetadata(CreateDefaultValue())")]
-        [TestCase("int", "new PropertyMetadata(CreateObjectValue())")]
-        [TestCase("ObservableCollection<int>", "new PropertyMetadata(null)")]
-        [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
-        [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
-        [TestCase("IEnumerable", "new PropertyMetadata(new ObservableCollection<int>())")]
-        public static void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
-        {
-            var code = @"
+    [TestCase("int",                       "new PropertyMetadata()")]
+    [TestCase("int",                       "new FrameworkPropertyMetadata()")]
+    [TestCase("int",                       "new PropertyMetadata(default(int))")]
+    [TestCase("int",                       "new PropertyMetadata(1, OnValueChanged)")]
+    [TestCase("int",                       "new PropertyMetadata(1)")]
+    [TestCase("int?",                      "new PropertyMetadata(1)")]
+    [TestCase("int?",                      "new PropertyMetadata(null)")]
+    [TestCase("bool?",                     "new PropertyMetadata(null)")]
+    [TestCase("bool?",                     "new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)")]
+    [TestCase("int?",                      "new PropertyMetadata(default(int?))")]
+    [TestCase("Nullable<int>",             "new PropertyMetadata(default(int?))")]
+    [TestCase("int",                       "new PropertyMetadata(CreateDefaultValue())")]
+    [TestCase("int",                       "new PropertyMetadata(CreateObjectValue())")]
+    [TestCase("ObservableCollection<int>", "new PropertyMetadata(null)")]
+    [TestCase("ObservableCollection<int>", "new PropertyMetadata(new ObservableCollection<int>())")]
+    [TestCase("ObservableCollection<int>", "new PropertyMetadata(default(ObservableCollection<int>))")]
+    [TestCase("IEnumerable",               "new PropertyMetadata(new ObservableCollection<int>())")]
+    public static void DependencyPropertyRegisterWithMetadata(string typeName, string metadata)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable WPF0016, CS0105, CS8019 // Default value is shared reference type
 namespace N
@@ -124,13 +124,13 @@ namespace N
 }".AssertReplace("new PropertyMetadata(1)", metadata)
   .AssertReplace("double", typeName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterWhenGenericContainingType()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterWhenGenericContainingType()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -151,13 +151,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterWhenBoxed()
-        {
-            var booleanBoxesCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterWhenBoxed()
+    {
+        var booleanBoxesCode = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -174,7 +174,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -195,13 +195,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -224,13 +224,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -249,13 +249,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedWhenBoxed()
-        {
-            var booleanBoxesCode = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedWhenBoxed()
+    {
+        var booleanBoxesCode = @"
 namespace N
 {
     internal static class BooleanBoxes
@@ -272,7 +272,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -296,13 +296,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, booleanBoxesCode, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -323,13 +323,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var fooCode = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -356,7 +356,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -374,13 +374,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code, fooCode);
-        }
+        RoslynAssert.Valid(Analyzer, code, fooCode);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var fooControlCode = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var fooControlCode = @"
 namespace N
 {
     using System.Windows;
@@ -396,7 +396,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -410,13 +410,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooControlCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, fooControlCode, code);
+    }
 
-        [Test]
-        public static void CastIntToDouble()
-        {
-            var code = @"
+    [Test]
+    public static void CastIntToDouble()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -439,13 +439,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void FontFamilyConverterConvertFromString()
-        {
-            var code = @"
+    [Test]
+    public static void FontFamilyConverterConvertFromString()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -481,13 +481,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void BoxedBool()
-        {
-            var code = @"
+    [Test]
+    public static void BoxedBool()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -519,13 +519,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void EnumIssue211()
-        {
-            var code = @"
+    [Test]
+    public static void EnumIssue211()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -547,7 +547,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"
+        var enumCode = @"
 namespace N
 {
     public enum FooEnum
@@ -556,14 +556,14 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, code, enumCode);
-            RoslynAssert.Valid(Analyzer, enumCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, code,     enumCode);
+        RoslynAssert.Valid(Analyzer, enumCode, code);
+    }
 
-        [Test]
-        public static void EnumAddOwnerIssue211()
-        {
-            var fooCode = @"
+    [Test]
+    public static void EnumAddOwnerIssue211()
+    {
+        var fooCode = @"
 namespace N
 {
     using System.Windows;
@@ -593,7 +593,7 @@ namespace N
         }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -615,7 +615,7 @@ namespace N
         }
     }
 }";
-            var enumCode = @"namespace N
+        var enumCode = @"namespace N
 {
     public enum FooEnum
     {
@@ -623,18 +623,18 @@ namespace N
         Baz
     }
 }";
-            RoslynAssert.Valid(Analyzer, code, enumCode, fooCode);
-            RoslynAssert.Valid(Analyzer, code, fooCode, enumCode);
-            RoslynAssert.Valid(Analyzer, fooCode, code, enumCode);
-            RoslynAssert.Valid(Analyzer, fooCode, enumCode, code);
-            RoslynAssert.Valid(Analyzer, enumCode, fooCode, code);
-            RoslynAssert.Valid(Analyzer, enumCode, code, fooCode);
-        }
+        RoslynAssert.Valid(Analyzer, code,     enumCode, fooCode);
+        RoslynAssert.Valid(Analyzer, code,     fooCode,  enumCode);
+        RoslynAssert.Valid(Analyzer, fooCode,  code,     enumCode);
+        RoslynAssert.Valid(Analyzer, fooCode,  enumCode, code);
+        RoslynAssert.Valid(Analyzer, enumCode, fooCode,  code);
+        RoslynAssert.Valid(Analyzer, enumCode, code,     fooCode);
+    }
 
-        [Test]
-        public static void SubTypeIssue354Simple()
-        {
-            var code = @"
+    [Test]
+    public static void SubTypeIssue354Simple()
+    {
+        var code = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -657,13 +657,13 @@ namespace ValidCode.Repro
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, code);
+    }
 
-        [Test]
-        public static void SubTypeIssue354()
-        {
-            var typeA = @"
+    [Test]
+    public static void SubTypeIssue354()
+    {
+        var typeA = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -683,7 +683,7 @@ namespace ValidCode.Repro
     }	
 }";
 
-            var typeB = @"
+        var typeB = @"
 namespace ValidCode.Repro
 {
     using System.Windows;
@@ -705,7 +705,6 @@ namespace ValidCode.Repro
     }	
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, typeA, typeB);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, typeA, typeB);
     }
 }

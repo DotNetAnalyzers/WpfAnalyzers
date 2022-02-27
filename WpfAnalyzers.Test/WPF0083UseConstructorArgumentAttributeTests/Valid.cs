@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0083UseConstructorArgumentAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0083UseConstructorArgumentAttribute Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenHasAttribute()
     {
-        private static readonly WPF0083UseConstructorArgumentAttribute Analyzer = new();
-
-        [Test]
-        public static void WhenHasAttribute()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -34,13 +34,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenNoAttribute()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNoAttribute()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -58,7 +58,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

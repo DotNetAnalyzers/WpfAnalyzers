@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests
+﻿namespace WpfAnalyzers.Test.WPF0006CoerceValueCallbackShouldMatchRegisteredNameTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyMetadataAnalyzer Analyzer = new();
+    private static readonly RenameMemberFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly PropertyMetadataAnalyzer Analyzer = new();
-        private static readonly RenameMemberFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -38,14 +38,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'CoerceValue'"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Method 'WrongName' should be named 'CoerceValue'"), code);
+    }
 
-        [TestCase("new PropertyMetadata(1, null, ↓WrongName)")]
-        [TestCase("new PropertyMetadata(1, null, new CoerceValueCallback(↓WrongName))")]
-        public static void DependencyPropertyRegister(string metadata)
-        {
-            var before = @"
+    [TestCase("new PropertyMetadata(1, null, ↓WrongName)")]
+    [TestCase("new PropertyMetadata(1, null, new CoerceValueCallback(↓WrongName))")]
+    public static void DependencyPropertyRegister(string metadata)
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -73,7 +73,7 @@ namespace N
         }
     }
 }".AssertReplace("new PropertyMetadata(1, null, ↓WrongName)", metadata);
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -102,14 +102,14 @@ namespace N
     }
 }".AssertReplace("new PropertyMetadata(1, null, CoerceValue)", metadata.AssertReplace("↓WrongName", "CoerceValue"));
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -138,7 +138,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -166,13 +166,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttached()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttached()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -196,7 +196,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -219,13 +219,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -251,7 +251,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -276,13 +276,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyOverrideMetadata()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyOverrideMetadata()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -303,7 +303,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -323,13 +323,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void DependencyPropertyAddOwner()
-        {
-            var before = @"
+    [Test]
+    public static void DependencyPropertyAddOwner()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -350,7 +350,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -370,7 +370,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

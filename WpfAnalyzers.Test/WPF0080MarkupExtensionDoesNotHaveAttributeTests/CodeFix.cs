@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests
+﻿namespace WpfAnalyzers.Test.WPF0080MarkupExtensionDoesNotHaveAttributeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly WPF0080MarkupExtensionDoesNotHaveAttribute Analyzer = new();
+    private static readonly MarkupExtensionReturnTypeAttributeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly WPF0080MarkupExtensionDoesNotHaveAttribute Analyzer = new();
-        private static readonly MarkupExtensionReturnTypeAttributeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0080MarkupExtensionDoesNotHaveAttribute);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -27,13 +27,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add MarkupExtensionReturnType attribute"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Add MarkupExtensionReturnType attribute"), code);
+    }
 
-        [Test]
-        public static void ReturnsThis()
-        {
-            var before = @"
+    [Test]
+    public static void ReturnsThis()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -48,7 +48,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -63,13 +63,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenDocumented()
-        {
-            var before = @"
+    [Test]
+    public static void WhenDocumented()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -87,7 +87,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -105,7 +105,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

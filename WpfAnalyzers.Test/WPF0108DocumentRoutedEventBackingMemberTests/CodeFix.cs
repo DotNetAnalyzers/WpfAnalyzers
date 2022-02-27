@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests
+﻿namespace WpfAnalyzers.Test.WPF0108DocumentRoutedEventBackingMemberTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
+    private static readonly DocumentationFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0108DocumentRoutedEventBackingMember);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly RoutedEventBackingFieldOrPropertyAnalyzer Analyzer = new();
-        private static readonly DocumentationFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0108DocumentRoutedEventBackingMember);
-
-        [Test]
-        public static void Message()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -34,7 +34,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -57,7 +57,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Backing member for RoutedEvent should have standard documentation text"), before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Backing member for RoutedEvent should have standard documentation text"), before, after);
     }
 }

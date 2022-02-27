@@ -1,19 +1,19 @@
-namespace WpfAnalyzers.Test
-{
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+namespace WpfAnalyzers.Test;
 
-    public static class InvocationExpressionSyntaxExtTests
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class InvocationExpressionSyntaxExtTests
+{
+    [TestCase("Method1()",            "Method1")]
+    [TestCase("this.Method1()",       "Method1")]
+    [TestCase("new Foo()?.Method1()", "Method1")]
+    [TestCase("this.Method2<int>()",  "Method2")]
+    public static void TryGetInvokedMethodName(string invocationString, string expected)
     {
-        [TestCase("Method1()", "Method1")]
-        [TestCase("this.Method1()", "Method1")]
-        [TestCase("new Foo()?.Method1()", "Method1")]
-        [TestCase("this.Method2<int>()", "Method2")]
-        public static void TryGetInvokedMethodName(string invocationString, string expected)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     public class Foo
@@ -32,10 +32,9 @@ namespace N
         private int Method2<T>() => 2;
     }
 }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var invocation = syntaxTree.FindInvocation(invocationString);
-            Assert.AreEqual(true, invocation.TryGetMethodName(out var name));
-            Assert.AreEqual(expected, name);
-        }
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var invocation = syntaxTree.FindInvocation(invocationString);
+        Assert.AreEqual(true,     invocation.TryGetMethodName(out var name));
+        Assert.AreEqual(expected, name);
     }
 }

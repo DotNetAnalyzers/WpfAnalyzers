@@ -1,19 +1,19 @@
-﻿namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests
+﻿namespace WpfAnalyzers.Test.WPF0123BackingFieldShouldBeStaticReadonlyTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
+    private static readonly MakeFieldStaticReadonlyFix FieldFix = new();
+    private static readonly MakePropertyStaticReadonlyFix PropertyFix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0123BackingMemberShouldBeStaticReadonly);
 
-    public static class CodeFix
+    [Test]
+    public static void RoutedCommandNotReadonlyField()
     {
-        private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
-        private static readonly MakeFieldStaticReadonlyFix FieldFix = new();
-        private static readonly MakePropertyStaticReadonlyFix PropertyFix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0123BackingMemberShouldBeStaticReadonly);
-
-        [Test]
-        public static void RoutedCommandNotReadonlyField()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -24,7 +24,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -34,13 +34,13 @@ namespace N
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedCommandNotStaticField()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedCommandNotStaticField()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -51,7 +51,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -61,13 +61,13 @@ namespace N
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedCommandMutableField()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedCommandMutableField()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -78,7 +78,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -88,13 +88,13 @@ namespace N
         public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, FieldFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommandStaticMutableProperty()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommandStaticMutableProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -105,7 +105,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -115,13 +115,13 @@ namespace N
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommandStaticExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommandStaticExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -132,7 +132,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -142,13 +142,13 @@ namespace N
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommandInstanceExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommandInstanceExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -159,7 +159,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -169,13 +169,13 @@ namespace N
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommandInstanceProperty()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommandInstanceProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -186,7 +186,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -196,13 +196,13 @@ namespace N
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void RoutedUICommandMutableInstanceProperty()
-        {
-            var before = @"
+    [Test]
+    public static void RoutedUICommandMutableInstanceProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows.Input;
@@ -213,7 +213,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows.Input;
@@ -223,7 +223,6 @@ namespace N
         public static RoutedUICommand Bar { get; } = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, PropertyFix, ExpectedDiagnostic, before, after);
     }
 }

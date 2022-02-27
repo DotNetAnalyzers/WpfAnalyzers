@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests
+﻿namespace WpfAnalyzers.Test.WPF0031FieldOrderTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterReadOnly()
     {
-        private static readonly DependencyPropertyBackingFieldOrPropertyAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterReadOnly()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void DependencyPropertyRegisterAttachedReadOnly()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyPropertyRegisterAttachedReadOnly()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -68,13 +68,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void PropertyKeyInOtherClass()
-        {
-            var link = @"
+    [Test]
+    public static void PropertyKeyInOtherClass()
+    {
+        var link = @"
 namespace N
 {
     using System.Windows.Controls.Primitives;
@@ -84,7 +84,7 @@ namespace N
     }
 }";
 
-            var links = @"
+        var links = @"
 namespace N
 {
     using System.Windows;
@@ -103,7 +103,7 @@ namespace N
     }
 }";
 
-            var linkGroup = @"
+        var linkGroup = @"
 namespace N
 {
     using System.Windows;
@@ -121,7 +121,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, link, links, linkGroup);
-        }
+        RoslynAssert.Valid(Analyzer, link, links, linkGroup);
     }
 }
