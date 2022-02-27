@@ -274,6 +274,40 @@ namespace N
     }
 
     [Test]
+    public static void FrozenGeometry()
+    {
+        var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class C : Control
+    {
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(C),
+            new PropertyMetadata(↓Default()));
+
+        public string? Text
+        {
+            get => (string?)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        private static Freezable Default()
+        {
+            var geometry = new EllipseGeometry(default, 5, 5);
+            return geometry.GetAsFrozen();
+        }
+    }
+}";
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
+
+    [Test]
     public static void IntWhenTypeIsEnum()
     {
         var e = @"
