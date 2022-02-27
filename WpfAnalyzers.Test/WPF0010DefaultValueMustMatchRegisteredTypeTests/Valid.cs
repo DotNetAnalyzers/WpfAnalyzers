@@ -630,5 +630,74 @@ namespace N
             RoslynAssert.Valid(Analyzer, enumCode, fooCode, code);
             RoslynAssert.Valid(Analyzer, enumCode, code, fooCode);
         }
+
+        [Test]
+        public static void SubTypeIssue354Simple()
+        {
+            var code = @"
+namespace ValidCode.Repro
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class C : Image
+    {
+        public static readonly DependencyProperty IconGeometryProperty = DependencyProperty.Register(
+            nameof(IconGeometry),
+            typeof(Geometry),
+            typeof(C),
+            new PropertyMetadata(new EllipseGeometry(default, 5, 5)));
+
+        public Geometry IconGeometry
+        {
+            get => (Geometry)GetValue(IconGeometryProperty);
+            set => SetValue(IconGeometryProperty, value);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, code);
+        }
+
+        [Test]
+        public static void SubTypeIssue354()
+        {
+            var code = @"
+namespace ValidCode.Repro
+{
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
+    public class TypeA : Image
+    {
+        public Geometry IconGeometry
+        {
+            get => (Geometry)GetValue(IconGeometryProperty);
+            set => SetValue(IconGeometryProperty, value);
+        }
+
+        public static readonly DependencyProperty IconGeometryProperty =
+            DependencyProperty.Register(nameof(IconGeometry), typeof(Geometry), typeof(TypeA), new PropertyMetadata(null));
+    }
+	
+    public class TypeB : Image
+    {
+        public Geometry IconGeometry
+        {
+            get => (Geometry)GetValue(IconGeometryProperty);
+            // WPF0014 SetValue must use registered type System.Windows.Media.Geometry
+            set => SetValue(IconGeometryProperty, value);
+        }
+
+        public static readonly DependencyProperty IconGeometryProperty =
+            // WPF0010 Default value for 'TypeA.IconGeometryProperty' must be of type System.Windows.Media.Geometry
+            TypeA.IconGeometryProperty.AddOwner(typeof(TypeB), new FrameworkPropertyMetadata(new EllipseGeometry(default, 5, 5)));
+    }	
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptors.WPF0010DefaultValueMustMatchRegisteredType, code);
+        }
     }
 }
