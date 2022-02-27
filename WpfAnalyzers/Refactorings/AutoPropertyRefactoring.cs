@@ -61,11 +61,9 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
         var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                          .ConfigureAwait(false);
 
-        if (syntaxRoot is { } &&
-            syntaxRoot.FindNode(context.Span) is { } node &&
+        if (syntaxRoot?.FindNode(context.Span) is { } node &&
             node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is { Parent: ClassDeclarationSyntax containingClass } property &&
-            property.IsAutoProperty() &&
-            semanticModel is { })
+            property.IsAutoProperty() && semanticModel is { })
         {
             if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
@@ -494,7 +492,11 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
 
                     if (!withStandardDocs)
                     {
-                        return SyntaxFactory.Token(default, keyword, SyntaxFactory.TriviaList(SyntaxFactory.Space));
+                        return SyntaxFactory.Token(
+                            SyntaxFactory.TriviaList(
+                                SyntaxFactory.Whitespace(property.LeadingWhitespace() ?? "        ")),
+                            keyword,
+                            SyntaxFactory.TriviaList(SyntaxFactory.Space));
                     }
 
                     return SyntaxFactory.Token(
