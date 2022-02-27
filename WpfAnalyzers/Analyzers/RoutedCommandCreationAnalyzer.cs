@@ -57,7 +57,8 @@
                         if (objectCreation.TryFindArgument(nameParameter, out var nameArg) &&
                             nameArg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName))
                         {
-                            if (registeredName != fieldOrProperty.Name)
+                            if (registeredName != fieldOrProperty.Name &&
+                                !fieldOrProperty.Name.IsParts(registeredName ?? string.Empty, "Command"))
                             {
                                 context.ReportDiagnostic(
                                     Diagnostic.Create(
@@ -66,23 +67,27 @@
                                         ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
                                         fieldOrProperty.Name));
                             }
-                            else if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+
+                            if (registeredName == fieldOrProperty.Name)
                             {
-                                context.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        Descriptors.WPF0150UseNameofInsteadOfLiteral,
-                                        nameArg.GetLocation(),
-                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
-                                        fieldOrProperty.Name));
-                            }
-                            else if (!nameArg.Expression.IsNameof())
-                            {
-                                context.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        Descriptors.WPF0151UseNameofInsteadOfConstant,
-                                        nameArg.GetLocation(),
-                                        ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
-                                        fieldOrProperty.Name));
+                                if (nameArg.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0150UseNameofInsteadOfLiteral,
+                                            nameArg.GetLocation(),
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                            fieldOrProperty.Name));
+                                }
+                                else if (!nameArg.Expression.IsNameof())
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.WPF0151UseNameofInsteadOfConstant,
+                                            nameArg.GetLocation(),
+                                            ImmutableDictionary<string, string?>.Empty.Add(nameof(IdentifierNameSyntax), fieldOrProperty.Name),
+                                            fieldOrProperty.Name));
+                                }
                             }
                         }
                     }

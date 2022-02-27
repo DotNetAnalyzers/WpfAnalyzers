@@ -8,19 +8,36 @@
         private static readonly RoutedCommandCreationAnalyzer Analyzer = new();
 
         [Test]
-        public static void RoutedCommand()
+        public static void RoutedCommandNameOf()
         {
             var code = @"
 namespace N
 {
     using System.Windows.Input;
 
-    public static class Foo
+    public static class C
     {
-        public static readonly RoutedCommand Bar = new RoutedCommand(nameof(Bar), typeof(Foo));
+        public static readonly RoutedCommand F = new RoutedCommand(nameof(F), typeof(C));
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [TestCase("F")]
+        [TestCase("FCommand")]
+        public static void RoutedCommandLiteralName(string fieldName)
+        {
+            var code = @"
+namespace N
+{
+    using System.Windows.Input;
+
+    public static class C
+    {
+        public static readonly RoutedCommand F = new RoutedCommand(""F"", typeof(C));
+    }
+}".AssertReplace("public static readonly RoutedCommand F", $"public static readonly RoutedCommand {fieldName}");
+            RoslynAssert.Valid(Analyzer, Descriptors.WPF0120RegisterContainingMemberAsNameForRoutedCommand, code);
         }
 
         [Test]
@@ -31,9 +48,9 @@ namespace N
 {
     using System.Windows.Input;
 
-    public static class Foo
+    public static class C
     {
-        public static readonly RoutedUICommand Bar = new RoutedUICommand(""Some text"", nameof(Bar), typeof(Foo));
+        public static readonly RoutedUICommand F = new RoutedUICommand(""Some text"", nameof(F), typeof(C));
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
