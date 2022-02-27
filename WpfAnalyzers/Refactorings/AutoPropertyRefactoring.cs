@@ -391,7 +391,7 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                                    .WithAccessorList(
                                        SyntaxFactory.AccessorList(
                                            openBraceToken: SyntaxFactory.Token(
-                                               leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                               leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(containingClass.LeadingWhitespace() + new string(' ', 4))),
                                                kind: SyntaxKind.OpenBraceToken,
                                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
                                            accessors: SyntaxFactory.List(
@@ -416,7 +416,7 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                                                                         leading: default,
                                                                         kind: SyntaxKind.SemicolonToken,
                                                                         trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)))
-                                                                .WithLeadingTrivia(SyntaxFactory.Whitespace("            ")),
+                                                                .WithLeadingTrivia(SyntaxFactory.Whitespace(containingClass.LeadingWhitespace() + new string(' ', 8))),
                                                    SyntaxFactory.AccessorDeclaration(
                                                                     kind: SyntaxKind.SetAccessorDeclaration,
                                                                     attributeLists: property.Setter()!.AttributeLists,
@@ -439,10 +439,10 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                                                                         leading: default,
                                                                         kind: SyntaxKind.SemicolonToken,
                                                                         trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)))
-                                                                .WithLeadingTrivia(SyntaxFactory.Whitespace("            ")),
+                                                                .WithLeadingTrivia(SyntaxFactory.Whitespace(containingClass.LeadingWhitespace() + new string(' ', 8))),
                                                }),
                                            closeBraceToken: SyntaxFactory.Token(
-                                               leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        ")),
+                                               leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(containingClass.LeadingWhitespace() + new string(' ', 4))),
                                                kind: SyntaxKind.CloseBraceToken,
                                                trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))));
 
@@ -528,6 +528,7 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
 
             static InvocationExpressionSyntax Register(string methodName, ExpressionSyntax name, TypeSyntax type, ClassDeclarationSyntax containingClass)
             {
+                var leadingWhitespace = SyntaxFactory.Whitespace(containingClass.LeadingWhitespace() + new string(' ', 8));
                 return SyntaxFactory.InvocationExpression(
                     expression: SyntaxFactory.MemberAccessExpression(
                         kind: SyntaxKind.SimpleMemberAccessExpression,
@@ -541,13 +542,13 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                         arguments: SyntaxFactory.SeparatedList(
                             new[]
                             {
-                                SyntaxFactory.Argument(expression: name.WithLeadingTrivia(SyntaxFactory.Whitespace("            "))),
+                                SyntaxFactory.Argument(expression: name.WithLeadingTrivia(leadingWhitespace)),
                                 SyntaxFactory.Argument(
                                     nameColon: default,
                                     refKindKeyword: default,
                                     expression: SyntaxFactory.TypeOfExpression(
                                         keyword: SyntaxFactory.Token(
-                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                            leading: SyntaxFactory.TriviaList(leadingWhitespace),
                                             kind: SyntaxKind.TypeOfKeyword,
                                             trailing: default),
                                         openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
@@ -558,7 +559,7 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                                     refKindKeyword: default,
                                     expression: SyntaxFactory.TypeOfExpression(
                                         keyword: SyntaxFactory.Token(
-                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                            leading: SyntaxFactory.TriviaList(leadingWhitespace),
                                             kind: SyntaxKind.TypeOfKeyword,
                                             trailing: default),
                                         openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
@@ -569,7 +570,7 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
                                     refKindKeyword: default,
                                     expression: SyntaxFactory.ObjectCreationExpression(
                                         newKeyword: SyntaxFactory.Token(
-                                            leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            ")),
+                                            leading: SyntaxFactory.TriviaList(leadingWhitespace),
                                             kind: SyntaxKind.NewKeyword,
                                             trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
                                         type: SyntaxFactory.IdentifierName("PropertyMetadata"),

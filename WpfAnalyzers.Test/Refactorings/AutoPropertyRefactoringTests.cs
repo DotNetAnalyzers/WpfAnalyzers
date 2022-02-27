@@ -89,6 +89,43 @@ namespace N
     }
 
     [Test]
+    public static void AutoPropertyFileScopedNamespace()
+    {
+        var before = @"
+namespace N;
+
+using System.Windows.Controls;
+
+public class C : Control
+{
+    public int ↓Number { get; set; }
+}";
+
+        var after = @"
+namespace N;
+
+using System.Windows;
+using System.Windows.Controls;
+
+public class C : Control
+{
+    /// <summary>Identifies the <see cref=""Number""/> dependency property.</summary>
+    public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+        nameof(Number),
+        typeof(int),
+        typeof(C),
+        new PropertyMetadata(default(int)));
+
+    public int Number
+    {
+        get => (int)this.GetValue(NumberProperty);
+        set => this.SetValue(NumberProperty, value);
+    }
+}";
+        RoslynAssert.Refactoring(Refactoring, before, after);
+    }
+
+    [Test]
     public static void AutoPropertyNotQualifiedMethodAccess()
     {
         var before = @"
