@@ -600,7 +600,14 @@ internal class AutoPropertyRefactoring : CodeRefactoringProvider
             static InvocationExpressionSyntax Nameof(PropertyDeclarationSyntax property)
             {
                 return SyntaxFactory.InvocationExpression(
-                    expression: SyntaxFactory.IdentifierName("nameof"),
+                    expression: SyntaxFactory.IdentifierName(
+                        SyntaxFactory.Identifier(
+                            SyntaxFactory.TriviaList(
+                                SyntaxFactory.Whitespace(property.LeadingWhitespace() + new string(' ', 4))),
+                            SyntaxKind.NameOfKeyword,
+                            "nameof",
+                            "nameof",
+                            default)),
                     argumentList: SyntaxFactory.ArgumentList(
                         arguments: SyntaxFactory.SingletonSeparatedList(
                             SyntaxFactory.Argument(
