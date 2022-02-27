@@ -11,11 +11,12 @@ using NUnit.Framework;
 
 public static class ValidWithAll
 {
-    private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbols)
-                                                                             .Assembly.GetTypes()
-                                                                             .Where(x => typeof(DiagnosticAnalyzer).IsAssignableFrom(x) && !x.IsAbstract)
-                                                                             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-                                                                             .ToArray();
+    private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+        typeof(KnownSymbols)
+            .Assembly.GetTypes()
+            .Where(x => typeof(DiagnosticAnalyzer).IsAssignableFrom(x) && !x.IsAbstract)
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+            .ToArray();
 
     private static readonly Solution AnalyzerProjectSolution = CodeFactory.CreateSolution(
         ProjectFile.Find("WpfAnalyzers.csproj"));
