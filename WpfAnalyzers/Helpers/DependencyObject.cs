@@ -1,352 +1,351 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Threading;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+internal static class DependencyObject
 {
-    using System.Threading;
-
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-    internal static class DependencyObject
+    internal readonly struct GetValue
     {
-        internal readonly struct GetValue
-        {
-            internal readonly InvocationExpressionSyntax Invocation;
-            internal readonly IMethodSymbol Target;
+        internal readonly InvocationExpressionSyntax Invocation;
+        internal readonly IMethodSymbol Target;
 
-            private GetValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+        private GetValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+        {
+            this.Invocation = invocation;
+            this.Target = target;
+        }
+
+        internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
+        internal static GetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                arguments[0] is { Expression: { } } &&
+                semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.GetValue, cancellationToken, out var method))
             {
-                this.Invocation = invocation;
-                this.Target = target;
+                return new GetValue(invocation, method);
             }
 
-            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+            return null;
+        }
 
-            internal static GetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static GetValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return node switch
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
-                    arguments[0] is { Expression: { } } &&
-                    semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.GetValue, cancellationToken, out var method))
+                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } } }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { } expressionBody } => Walk(expressionBody),
+                { Body: { Statements: { } statements } }
+                    when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { Body: { Statements: { } statements } }
+                    when statements.LastOrDefault() is ReturnStatementSyntax { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { Body: { } body } => Walk(body),
+                _ => null,
+            };
+
+            GetValue? Walk(SyntaxNode body)
+            {
+                using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
+                if (walker is { HasError: false, Result: { } match })
                 {
-                    return new GetValue(invocation, method);
+                    return match;
                 }
 
                 return null;
-            }
-
-            internal static GetValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                return node switch
-                {
-                    { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { ExpressionBody: { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } } }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                    { Body: { Statements: { } statements } }
-                        when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { Body: { Statements: { } statements } }
-                        when statements.LastOrDefault() is ReturnStatementSyntax { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { Body: { } body } => Walk(body),
-                    _ => null,
-                };
-
-                GetValue? Walk(SyntaxNode body)
-                {
-                    using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
-                    if (walker is { HasError: false, Result: { } match })
-                    {
-                        return match;
-                    }
-
-                    return null;
-                }
-            }
-
-            private class Walker : PooledWalker<Walker>
-            {
-                internal bool HasError;
-                internal GetValue? Result;
-
-                private SemanticModel semanticModel = null!;
-                private CancellationToken cancellationToken;
-
-                private Walker()
-                {
-                }
-
-                public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
-                {
-                    if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
-                    {
-                        if (this.Result is { })
-                        {
-                            this.HasError = true;
-                            this.Result = null;
-                        }
-                        else
-                        {
-                            this.Result = match;
-                        }
-                    }
-
-                    base.VisitInvocationExpression(invocation);
-                }
-
-                public override void Visit(SyntaxNode? node)
-                {
-                    if (this.HasError)
-                    {
-                        return;
-                    }
-
-                    base.Visit(node);
-                }
-
-                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
-                {
-                    var walker = Borrow(() => new Walker());
-                    walker.semanticModel = semanticModel;
-                    walker.cancellationToken = cancellationToken;
-                    walker.Visit(node);
-                    return walker;
-                }
-
-                protected override void Clear()
-                {
-                    this.semanticModel = null!;
-                    this.cancellationToken = CancellationToken.None;
-                    this.HasError = false;
-                    this.Result = null;
-                }
             }
         }
 
-        internal readonly struct SetValue
+        private class Walker : PooledWalker<Walker>
         {
-            internal readonly InvocationExpressionSyntax Invocation;
-            internal readonly IMethodSymbol Target;
+            internal bool HasError;
+            internal GetValue? Result;
 
-            private SetValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            private SemanticModel semanticModel = null!;
+            private CancellationToken cancellationToken;
+
+            private Walker()
             {
-                this.Invocation = invocation;
-                this.Target = target;
             }
 
-            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
-
-            internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
-
-            internal static SetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
-                    arguments[0] is { Expression: { } } &&
-                    arguments[1] is { Expression: { } } &&
-                    semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetValue, cancellationToken, out var method))
+                if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
                 {
-                    return new SetValue(invocation, method);
+                    if (this.Result is { })
+                    {
+                        this.HasError = true;
+                        this.Result = null;
+                    }
+                    else
+                    {
+                        this.Result = match;
+                    }
+                }
+
+                base.VisitInvocationExpression(invocation);
+            }
+
+            public override void Visit(SyntaxNode? node)
+            {
+                if (this.HasError)
+                {
+                    return;
+                }
+
+                base.Visit(node);
+            }
+
+            internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+            {
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
+                walker.Visit(node);
+                return walker;
+            }
+
+            protected override void Clear()
+            {
+                this.semanticModel = null!;
+                this.cancellationToken = CancellationToken.None;
+                this.HasError = false;
+                this.Result = null;
+            }
+        }
+    }
+
+    internal readonly struct SetValue
+    {
+        internal readonly InvocationExpressionSyntax Invocation;
+        internal readonly IMethodSymbol Target;
+
+        private SetValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+        {
+            this.Invocation = invocation;
+            this.Target = target;
+        }
+
+        internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
+        internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
+
+        internal static SetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                arguments[0] is { Expression: { } } &&
+                arguments[1] is { Expression: { } } &&
+                semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetValue, cancellationToken, out var method))
+            {
+                return new SetValue(invocation, method);
+            }
+
+            return null;
+        }
+
+        internal static SetValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return node switch
+            {
+                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { } expressionBody } => Walk(expressionBody),
+                { Body: { Statements: { } statements } }
+                    when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { Body: { } body } => Walk(body),
+                _ => null,
+            };
+
+            SetValue? Walk(SyntaxNode body)
+            {
+                using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
+                if (walker is { HasError: false, Result: { } match })
+                {
+                    return match;
                 }
 
                 return null;
-            }
-
-            internal static SetValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                return node switch
-                {
-                    { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                    { Body: { Statements: { } statements } }
-                        when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { Body: { } body } => Walk(body),
-                    _ => null,
-                };
-
-                SetValue? Walk(SyntaxNode body)
-                {
-                    using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
-                    if (walker is { HasError: false, Result: { } match })
-                    {
-                        return match;
-                    }
-
-                    return null;
-                }
-            }
-
-            private class Walker : PooledWalker<Walker>
-            {
-                internal bool HasError;
-                internal SetValue? Result;
-
-                private SemanticModel semanticModel = null!;
-                private CancellationToken cancellationToken;
-
-                private Walker()
-                {
-                }
-
-                public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
-                {
-                    if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
-                    {
-                        if (this.Result is { })
-                        {
-                            this.HasError = true;
-                            this.Result = null;
-                        }
-                        else
-                        {
-                            this.Result = match;
-                        }
-                    }
-
-                    base.VisitInvocationExpression(invocation);
-                }
-
-                public override void Visit(SyntaxNode? node)
-                {
-                    if (this.HasError)
-                    {
-                        return;
-                    }
-
-                    base.Visit(node);
-                }
-
-                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
-                {
-                    var walker = Borrow(() => new Walker());
-                    walker.semanticModel = semanticModel;
-                    walker.cancellationToken = cancellationToken;
-                    walker.Visit(node);
-                    return walker;
-                }
-
-                protected override void Clear()
-                {
-                    this.semanticModel = null!;
-                    this.cancellationToken = CancellationToken.None;
-                    this.HasError = false;
-                    this.Result = null;
-                }
             }
         }
 
-        internal readonly struct SetCurrentValue
+        private class Walker : PooledWalker<Walker>
         {
-            internal readonly InvocationExpressionSyntax Invocation;
-            internal readonly IMethodSymbol Target;
+            internal bool HasError;
+            internal SetValue? Result;
 
-            private SetCurrentValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+            private SemanticModel semanticModel = null!;
+            private CancellationToken cancellationToken;
+
+            private Walker()
             {
-                this.Invocation = invocation;
-                this.Target = target;
             }
 
-            internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
-
-            internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
-
-            internal static SetCurrentValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
-                    arguments[0] is { Expression: { } } &&
-                    arguments[1] is { Expression: { } } &&
-                    semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetCurrentValue, cancellationToken, out var method))
+                if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
                 {
-                    return new SetCurrentValue(invocation, method);
+                    if (this.Result is { })
+                    {
+                        this.HasError = true;
+                        this.Result = null;
+                    }
+                    else
+                    {
+                        this.Result = match;
+                    }
+                }
+
+                base.VisitInvocationExpression(invocation);
+            }
+
+            public override void Visit(SyntaxNode? node)
+            {
+                if (this.HasError)
+                {
+                    return;
+                }
+
+                base.Visit(node);
+            }
+
+            internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+            {
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
+                walker.Visit(node);
+                return walker;
+            }
+
+            protected override void Clear()
+            {
+                this.semanticModel = null!;
+                this.cancellationToken = CancellationToken.None;
+                this.HasError = false;
+                this.Result = null;
+            }
+        }
+    }
+
+    internal readonly struct SetCurrentValue
+    {
+        internal readonly InvocationExpressionSyntax Invocation;
+        internal readonly IMethodSymbol Target;
+
+        private SetCurrentValue(InvocationExpressionSyntax invocation, IMethodSymbol target)
+        {
+            this.Invocation = invocation;
+            this.Target = target;
+        }
+
+        internal ArgumentSyntax PropertyArgument => this.Invocation.ArgumentList.Arguments[0];
+
+        internal ArgumentSyntax ValueArgument => this.Invocation.ArgumentList.Arguments[1];
+
+        internal static SetCurrentValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                arguments[0] is { Expression: { } } &&
+                arguments[1] is { Expression: { } } &&
+                semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetCurrentValue, cancellationToken, out var method))
+            {
+                return new SetCurrentValue(invocation, method);
+            }
+
+            return null;
+        }
+
+        internal static SetCurrentValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return node switch
+            {
+                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { ExpressionBody: { } expressionBody } => Walk(expressionBody),
+                { Body: { Statements: { } statements } }
+                    when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                    => Match(invocation, semanticModel, cancellationToken),
+                { Body: { } body } => Walk(body),
+                _ => null,
+            };
+
+            SetCurrentValue? Walk(SyntaxNode body)
+            {
+                using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
+                if (walker is { HasError: false, Result: { } match })
+                {
+                    return match;
                 }
 
                 return null;
             }
+        }
 
-            internal static SetCurrentValue? Find(MethodOrAccessor node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private class Walker : PooledWalker<Walker>
+        {
+            internal bool HasError;
+            internal SetCurrentValue? Result;
+
+            private SemanticModel semanticModel = null!;
+            private CancellationToken cancellationToken;
+
+            private Walker()
             {
-                return node switch
-                {
-                    { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                    { Body: { Statements: { } statements } }
-                        when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
-                        => Match(invocation, semanticModel, cancellationToken),
-                    { Body: { } body } => Walk(body),
-                    _ => null,
-                };
-
-                SetCurrentValue? Walk(SyntaxNode body)
-                {
-                    using var walker = Walker.Borrow(semanticModel, body, cancellationToken);
-                    if (walker is { HasError: false, Result: { } match })
-                    {
-                        return match;
-                    }
-
-                    return null;
-                }
             }
 
-            private class Walker : PooledWalker<Walker>
+            public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
             {
-                internal bool HasError;
-                internal SetCurrentValue? Result;
-
-                private SemanticModel semanticModel = null!;
-                private CancellationToken cancellationToken;
-
-                private Walker()
+                if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
                 {
-                }
-
-                public override void VisitInvocationExpression(InvocationExpressionSyntax invocation)
-                {
-                    if (Match(invocation, this.semanticModel, this.cancellationToken) is { } match)
+                    if (this.Result is { })
                     {
-                        if (this.Result is { })
-                        {
-                            this.HasError = true;
-                            this.Result = null;
-                        }
-                        else
-                        {
-                            this.Result = match;
-                        }
+                        this.HasError = true;
+                        this.Result = null;
                     }
-
-                    base.VisitInvocationExpression(invocation);
-                }
-
-                public override void Visit(SyntaxNode? node)
-                {
-                    if (this.HasError)
+                    else
                     {
-                        return;
+                        this.Result = match;
                     }
-
-                    base.Visit(node);
                 }
 
-                internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+                base.VisitInvocationExpression(invocation);
+            }
+
+            public override void Visit(SyntaxNode? node)
+            {
+                if (this.HasError)
                 {
-                    var walker = Borrow(() => new Walker());
-                    walker.semanticModel = semanticModel;
-                    walker.cancellationToken = cancellationToken;
-                    walker.Visit(node);
-                    return walker;
+                    return;
                 }
 
-                protected override void Clear()
-                {
-                    this.semanticModel = null!;
-                    this.cancellationToken = CancellationToken.None;
-                    this.HasError = false;
-                    this.Result = null;
-                }
+                base.Visit(node);
+            }
+
+            internal static Walker Borrow(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+            {
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
+                walker.Visit(node);
+                return walker;
+            }
+
+            protected override void Clear()
+            {
+                this.semanticModel = null!;
+                this.cancellationToken = CancellationToken.None;
+                this.HasError = false;
+                this.Result = null;
             }
         }
     }

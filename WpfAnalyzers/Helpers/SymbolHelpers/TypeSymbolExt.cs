@@ -1,26 +1,25 @@
-﻿namespace WpfAnalyzers
-{
-    using System.Collections.Generic;
-    using Microsoft.CodeAnalysis;
+﻿namespace WpfAnalyzers;
 
-    internal static class TypeSymbolExt
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+
+internal static class TypeSymbolExt
+{
+    internal static IEnumerable<ITypeSymbol> RecursiveBaseTypes(this ITypeSymbol type)
     {
-        internal static IEnumerable<ITypeSymbol> RecursiveBaseTypes(this ITypeSymbol type)
+        while (type is { })
         {
-            while (type is { })
+            foreach (var @interface in type.AllInterfaces)
             {
-                foreach (var @interface in type.AllInterfaces)
-                {
-                    yield return @interface;
-                }
+                yield return @interface;
+            }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                type = type.BaseType;
+            type = type.BaseType;
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-                if (type is { })
-                {
-                    yield return type;
-                }
+            if (type is { })
+            {
+                yield return type;
             }
         }
     }

@@ -1,27 +1,26 @@
-namespace WpfAnalyzers
+namespace WpfAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class DependencyPropertyType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedMethod Register;
+    internal readonly QualifiedMethod RegisterReadOnly;
+    internal readonly QualifiedMethod RegisterAttached;
+    internal readonly QualifiedMethod RegisterAttachedReadOnly;
 
-    internal class DependencyPropertyType : QualifiedType
+    internal readonly QualifiedMethod AddOwner;
+    internal readonly QualifiedMethod OverrideMetadata;
+
+    internal DependencyPropertyType()
+        : base("System.Windows.DependencyProperty")
     {
-        internal readonly QualifiedMethod Register;
-        internal readonly QualifiedMethod RegisterReadOnly;
-        internal readonly QualifiedMethod RegisterAttached;
-        internal readonly QualifiedMethod RegisterAttachedReadOnly;
+        this.Register = new QualifiedMethod(this,                 nameof(this.Register));
+        this.RegisterReadOnly = new QualifiedMethod(this,         nameof(this.RegisterReadOnly));
+        this.RegisterAttached = new QualifiedMethod(this,         nameof(this.RegisterAttached));
+        this.RegisterAttachedReadOnly = new QualifiedMethod(this, nameof(this.RegisterAttachedReadOnly));
 
-        internal readonly QualifiedMethod AddOwner;
-        internal readonly QualifiedMethod OverrideMetadata;
-
-        internal DependencyPropertyType()
-            : base("System.Windows.DependencyProperty")
-        {
-            this.Register = new QualifiedMethod(this, nameof(this.Register));
-            this.RegisterReadOnly = new QualifiedMethod(this, nameof(this.RegisterReadOnly));
-            this.RegisterAttached = new QualifiedMethod(this, nameof(this.RegisterAttached));
-            this.RegisterAttachedReadOnly = new QualifiedMethod(this, nameof(this.RegisterAttachedReadOnly));
-
-            this.AddOwner = new QualifiedMethod(this, nameof(this.AddOwner));
-            this.OverrideMetadata = new QualifiedMethod(this, nameof(this.OverrideMetadata));
-        }
+        this.AddOwner = new QualifiedMethod(this,         nameof(this.AddOwner));
+        this.OverrideMetadata = new QualifiedMethod(this, nameof(this.OverrideMetadata));
     }
 }

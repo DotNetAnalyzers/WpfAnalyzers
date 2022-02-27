@@ -1,43 +1,42 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Collections.Immutable;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+internal class WPF0083UseConstructorArgumentAttribute : DiagnosticAnalyzer
 {
-    using System.Collections.Immutable;
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+        Descriptors.WPF0083UseConstructorArgumentAttribute);
 
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF0083UseConstructorArgumentAttribute : DiagnosticAnalyzer
+    public override void Initialize(AnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.WPF0083UseConstructorArgumentAttribute);
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
+        context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.PropertyDeclaration);
+    }
 
-        public override void Initialize(AnalysisContext context)
+    private static void Handle(SyntaxNodeAnalysisContext context)
+    {
+        if (!context.IsExcludedFromAnalysis() &&
+            context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+            context.ContainingSymbol is IPropertySymbol property &&
+            property.ContainingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation) &&
+            !Attribute.TryFind(propertyDeclaration, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
+            ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.PropertyDeclaration);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (!context.IsExcludedFromAnalysis() &&
-                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                context.ContainingSymbol is IPropertySymbol property &&
-                property.ContainingType.IsAssignableTo(KnownSymbols.MarkupExtension, context.SemanticModel.Compilation) &&
-                !Attribute.TryFind(propertyDeclaration, KnownSymbols.ConstructorArgumentAttribute, context.SemanticModel, context.CancellationToken, out _) &&
-                ConstructorArgument.TryGetParameterName(property, context.SemanticModel, context.CancellationToken, out var parameterName))
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptors.WPF0083UseConstructorArgumentAttribute,
-                        propertyDeclaration.Identifier.GetLocation(),
-                        ImmutableDictionary<string, string?>.Empty.Add(nameof(ConstructorArgument), parameterName),
-                        parameterName));
-            }
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    Descriptors.WPF0083UseConstructorArgumentAttribute,
+                    propertyDeclaration.Identifier.GetLocation(),
+                    ImmutableDictionary<string, string?>.Empty.Add(nameof(ConstructorArgument), parameterName),
+                    parameterName));
         }
     }
 }

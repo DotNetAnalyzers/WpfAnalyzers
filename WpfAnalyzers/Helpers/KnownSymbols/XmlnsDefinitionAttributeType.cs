@@ -1,18 +1,17 @@
-namespace WpfAnalyzers
+namespace WpfAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class XmlnsDefinitionAttributeType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly string XmlNamespaceArgumentName = "xmlNamespace";
+    internal readonly string ClrNamespaceArgumentName = "clrNamespace";
 
-    internal class XmlnsDefinitionAttributeType : QualifiedType
+    internal readonly QualifiedProperty AssemblyName;
+
+    internal XmlnsDefinitionAttributeType()
+        : base("System.Windows.Markup.XmlnsDefinitionAttribute")
     {
-        internal readonly string XmlNamespaceArgumentName = "xmlNamespace";
-        internal readonly string ClrNamespaceArgumentName = "clrNamespace";
-
-        internal readonly QualifiedProperty AssemblyName;
-
-        internal XmlnsDefinitionAttributeType()
-            : base("System.Windows.Markup.XmlnsDefinitionAttribute")
-        {
-            this.AssemblyName = new QualifiedProperty(this, nameof(this.AssemblyName));
-        }
+        this.AssemblyName = new QualifiedProperty(this, nameof(this.AssemblyName));
     }
 }

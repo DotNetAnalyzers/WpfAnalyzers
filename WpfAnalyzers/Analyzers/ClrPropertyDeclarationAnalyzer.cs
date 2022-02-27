@@ -1,122 +1,121 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Collections.Immutable;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
 {
-    using System.Collections.Immutable;
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+        Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
+        Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+        Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
+        Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
+        Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
 
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
+    public override void Initialize(AnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
-            Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
-            Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
-            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
-            Descriptors.WPF0036AvoidSideEffectsInClrAccessors);
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
+        context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.PropertyDeclaration);
+    }
 
-        public override void Initialize(AnalysisContext context)
+    private static void Handle(SyntaxNodeAnalysisContext context)
+    {
+        if (!context.IsExcludedFromAnalysis() &&
+            context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
+            context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+            propertyDeclaration.Getter() is { } getter &&
+            propertyDeclaration.Setter() is { } setter)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.PropertyDeclaration);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (!context.IsExcludedFromAnalysis() &&
-                context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
-                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                propertyDeclaration.Getter() is { } getter &&
-                propertyDeclaration.Setter() is { } setter)
+            if (ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { SetValue: { } setValue, BackingSet: { } backingSet, GetValue: { } getValue, BackingGet: { } backingGet })
             {
-                if (ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { SetValue: { } setValue, BackingSet: { } backingSet, GetValue: { } getValue, BackingGet: { } backingGet })
+                if (getter.Body is { Statements: { } getStatements } &&
+                    getStatements.Count > 1 &&
+                    getStatements.TryFirst(x => !x.Contains(getValue), out var statement))
                 {
-                    if (getter.Body is { Statements: { } getStatements } &&
-                        getStatements.Count > 1 &&
-                        getStatements.TryFirst(x => !x.Contains(getValue), out var statement))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
-                    }
-
-                    if (setter.Body is { Statements: { } setStatements } &&
-                        setStatements.Count > 1 &&
-                        setStatements.TryFirst(x => !x.Contains(setValue), out var sideEffect))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
-                    }
-
-                    if (IsGettingAndSettingDifferent())
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
-                                propertyDeclaration.GetLocation(),
-                                context.ContainingSymbol.Name));
-                    }
-
-                    if (backingGet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
-                        registeredName != property.Name)
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
-                                propertyDeclaration.Identifier.GetLocation(),
-                                ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName),
-                                property.Name,
-                                registeredName));
-                    }
-
-                    if (backingGet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType })
-                    {
-                        if (!TypeSymbolComparer.Equal(property.Type, registeredType))
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
-                                    propertyDeclaration.Type.GetLocation(),
-                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
-                                    property,
-                                    registeredType));
-                        }
-                        else if (getValue is { Parent: CastExpressionSyntax { Type: { } type } } &&
-                                 context.SemanticModel.GetType(type, context.CancellationToken) is { } castType &&
-                                 !TypeSymbolComparer.Equal(registeredType, castType))
-                        {
-                            context.ReportDiagnostic(
-                                Diagnostic.Create(
-                                    Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
-                                    type.GetLocation(),
-                                    ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
-                                    property,
-                                    registeredType));
-                        }
-                    }
-
-                    bool IsGettingAndSettingDifferent()
-                    {
-                        if (DependencyProperty.Register.FindRecursive(backingGet, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
-                            DependencyProperty.Register.FindRecursive(backingSet, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
-                        {
-                            return getRegistration != setRegistration;
-                        }
-
-                        return false;
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, statement.GetLocation()));
                 }
 
-                if (DependencyObject.SetCurrentValue.Find(MethodOrAccessor.Create(setter), context.SemanticModel, context.CancellationToken) is { Invocation: { } setCurrentValue })
+                if (setter.Body is { Statements: { } setStatements } &&
+                    setStatements.Count > 1 &&
+                    setStatements.TryFirst(x => !x.Contains(setValue), out var sideEffect))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0036AvoidSideEffectsInClrAccessors, sideEffect.GetLocation()));
+                }
+
+                if (IsGettingAndSettingDifferent())
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
-                            setCurrentValue.GetLocation(),
+                            Descriptors.WPF0032ClrPropertyGetAndSetSameDependencyProperty,
+                            propertyDeclaration.GetLocation(),
                             context.ContainingSymbol.Name));
                 }
+
+                if (backingGet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName } &&
+                    registeredName != property.Name)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0003ClrPropertyShouldMatchRegisteredName,
+                            propertyDeclaration.Identifier.GetLocation(),
+                            ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", registeredName),
+                            property.Name,
+                            registeredName));
+                }
+
+                if (backingGet.RegisteredType(context.SemanticModel, context.CancellationToken) is { Value: { } registeredType })
+                {
+                    if (!TypeSymbolComparer.Equal(property.Type, registeredType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+                                propertyDeclaration.Type.GetLocation(),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                property,
+                                registeredType));
+                    }
+                    else if (getValue is { Parent: CastExpressionSyntax { Type: { } type } } &&
+                             context.SemanticModel.GetType(type, context.CancellationToken) is { } castType &&
+                             !TypeSymbolComparer.Equal(registeredType, castType))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType,
+                                type.GetLocation(),
+                                ImmutableDictionary<string, string?>.Empty.Add(nameof(TypeSyntax), registeredType.ToMinimalDisplayString(context.SemanticModel, context.Node.SpanStart)),
+                                property,
+                                registeredType));
+                    }
+                }
+
+                bool IsGettingAndSettingDifferent()
+                {
+                    if (DependencyProperty.Register.FindRecursive(backingGet, context.SemanticModel, context.CancellationToken) is { Invocation: { } getRegistration } &&
+                        DependencyProperty.Register.FindRecursive(backingSet, context.SemanticModel, context.CancellationToken) is { Invocation: { } setRegistration })
+                    {
+                        return getRegistration != setRegistration;
+                    }
+
+                    return false;
+                }
+            }
+
+            if (DependencyObject.SetCurrentValue.Find(MethodOrAccessor.Create(setter), context.SemanticModel, context.CancellationToken) is { Invocation: { } setCurrentValue })
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        Descriptors.WPF0035ClrPropertyUseSetValueInSetter,
+                        setCurrentValue.GetLocation(),
+                        context.ContainingSymbol.Name));
             }
         }
     }

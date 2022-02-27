@@ -1,93 +1,92 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Collections.Immutable;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
 {
-    using System.Collections.Immutable;
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+        Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
+        Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
 
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
+    public override void Initialize(AnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
-            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
+        context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.Argument);
+    }
 
-        public override void Initialize(AnalysisContext context)
+    private static void Handle(SyntaxNodeAnalysisContext context)
+    {
+        if (!context.IsExcludedFromAnalysis() &&
+            context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation } &&
+            objectCreation.TrySingleArgument(out var callbackArg) &&
+            callbackArg.Expression is IdentifierNameSyntax &&
+            handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.Argument);
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context)
-        {
-            if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation } &&
-                objectCreation.TrySingleArgument(out var callbackArg) &&
-                callbackArg.Expression is IdentifierNameSyntax &&
-                handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
+            if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
             {
-                if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
+                if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
+                    CheckName(eventArgument, callbackArg) is var (messageArg, properties))
                 {
-                    if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
-                        CheckName(eventArgument, callbackArg) is var (messageArg, properties))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
-                                callbackArg.GetLocation(),
-                                properties,
-                                messageArg));
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
+                            callbackArg.GetLocation(),
+                            properties,
+                            messageArg));
                 }
-                else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
-                          EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
-                          invocation.TryGetArgumentAtIndex(0, out eventArgument))
+            }
+            else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
+                      EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
+                     invocation.TryGetArgumentAtIndex(0, out eventArgument))
+            {
+                if (CheckName(eventArgument, callbackArg) is var (messageArg, properties))
                 {
-                    if (CheckName(eventArgument, callbackArg) is var (messageArg, properties))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
-                                callbackArg.GetLocation(),
-                                properties,
-                                messageArg));
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+                            callbackArg.GetLocation(),
+                            properties,
+                            messageArg));
                 }
             }
         }
+    }
 
-        private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+    private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+    {
+        if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
+            Identifier() is { } identifier)
         {
-            if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
-                Identifier() is { } identifier)
+            if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
             {
-                if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
+                if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
                 {
-                    if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
-                    {
-                        return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
-                    }
-
-                    return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
+                    return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
                 }
+
+                return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
             }
+        }
 
-            return null;
+        return null;
 
-            IdentifierNameSyntax? Identifier()
+        IdentifierNameSyntax? Identifier()
+        {
+            return eventArgument switch
             {
-                return eventArgument switch
-                {
-                    { Expression: IdentifierNameSyntax name } => name,
-                    { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
-                    _ => null,
-                };
-            }
+                { Expression: IdentifierNameSyntax name } => name,
+                { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
+                _ => null,
+            };
         }
     }
 }

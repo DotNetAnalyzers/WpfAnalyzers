@@ -1,120 +1,119 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Threading;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+/// <summary>
+/// Exposes helper methods for working with CLR-properties for DependencyProperty.
+/// </summary>
+internal readonly struct ClrProperty
 {
-    using System.Threading;
+    internal readonly BackingFieldOrProperty BackingGet;
+    internal readonly BackingFieldOrProperty BackingSet;
+    internal readonly InvocationExpressionSyntax? GetValue;
+    internal readonly InvocationExpressionSyntax? SetValue;
 
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    private ClrProperty(BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
+    {
+        this.BackingGet = backingGet;
+        this.BackingSet = backingSet;
+        this.GetValue = getValue;
+        this.SetValue = setValue;
+    }
 
     /// <summary>
-    /// Exposes helper methods for working with CLR-properties for DependencyProperty.
+    /// Get the single DependencyProperty backing field for <paramref name="property"/>
+    /// Returns false for accessors for readonly dependency properties.
     /// </summary>
-    internal readonly struct ClrProperty
+    internal static ClrProperty? Match(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        internal readonly BackingFieldOrProperty BackingGet;
-        internal readonly BackingFieldOrProperty BackingSet;
-        internal readonly InvocationExpressionSyntax? GetValue;
-        internal readonly InvocationExpressionSyntax? SetValue;
-
-        private ClrProperty(BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
+        if (property is { IsIndexer: false, IsReadOnly: false, IsWriteOnly: false, IsStatic: false } &&
+            property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
         {
-            this.BackingGet = backingGet;
-            this.BackingSet = backingSet;
-            this.GetValue = getValue;
-            this.SetValue = setValue;
+            if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration))
+            {
+                if (propertyDeclaration.Getter() is { } getter &&
+                    propertyDeclaration.Setter() is { } setter)
+                {
+                    if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
+                        semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
+                        BackingFieldOrProperty.Match(symbol) is { } backingGet &&
+                        DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument: { Expression: { } setProperty } } &&
+                        semanticModel.TryGetSymbol(setProperty, cancellationToken, out symbol) &&
+                        BackingFieldOrProperty.Match(symbol) is { } backingSet)
+                    {
+                        return Create(property.ContainingType, backingGet, backingSet, getValue, setValue);
+                    }
+                }
+
+                return null;
+            }
+
+            return CreateByName(property);
         }
 
-        /// <summary>
-        /// Get the single DependencyProperty backing field for <paramref name="property"/>
-        /// Returns false for accessors for readonly dependency properties.
-        /// </summary>
-        internal static ClrProperty? Match(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        return null;
+
+        static ClrProperty? CreateByName(IPropertySymbol property)
         {
-            if (property is { IsIndexer: false, IsReadOnly: false, IsWriteOnly: false, IsStatic: false } &&
-                property.ContainingType.IsAssignableTo(KnownSymbols.DependencyObject, semanticModel.Compilation))
+            BackingFieldOrProperty? getField = null;
+            BackingFieldOrProperty? setField = null;
+            foreach (var member in property.ContainingType.GetMembers())
             {
-                if (property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? propertyDeclaration))
+                if (BackingFieldOrProperty.Match(member) is { } candidate)
                 {
-                    if (propertyDeclaration.Getter() is { } getter &&
-                        propertyDeclaration.Setter() is { } setter)
+                    if (candidate.Name.IsParts(property.Name, "Property"))
                     {
-                        if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
-                            semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
-                            BackingFieldOrProperty.Match(symbol) is { } backingGet &&
-                            DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument: { Expression: { } setProperty } } &&
-                            semanticModel.TryGetSymbol(setProperty, cancellationToken, out symbol) &&
-                            BackingFieldOrProperty.Match(symbol) is { } backingSet)
+                        if (candidate.Type != KnownSymbols.DependencyProperty)
                         {
-                            return Create(property.ContainingType, backingGet, backingSet, getValue, setValue);
-                        }
-                    }
-
-                    return null;
-                }
-
-                return CreateByName(property);
-            }
-
-            return null;
-
-            static ClrProperty? CreateByName(IPropertySymbol property)
-            {
-                BackingFieldOrProperty? getField = null;
-                BackingFieldOrProperty? setField = null;
-                foreach (var member in property.ContainingType.GetMembers())
-                {
-                    if (BackingFieldOrProperty.Match(member) is { } candidate)
-                    {
-                        if (candidate.Name.IsParts(property.Name, "Property"))
-                        {
-                            if (candidate.Type != KnownSymbols.DependencyProperty)
-                            {
-                                return null;
-                            }
-
-                            getField = candidate;
+                            return null;
                         }
 
-                        if (candidate.Name.IsParts(property.Name, "PropertyKey"))
-                        {
-                            if (candidate.Type != KnownSymbols.DependencyPropertyKey)
-                            {
-                                return null;
-                            }
-
-                            setField = candidate;
-                        }
+                        getField = candidate;
                     }
-                }
 
-                if (getField is null)
-                {
-                    return null;
-                }
-
-                setField ??= getField;
-                return Create(property.ContainingType, getField.Value, setField.Value, null, null);
-            }
-
-            static ClrProperty? Create(INamedTypeSymbol containingType, BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
-            {
-                if (!TypeSymbolComparer.Equal(containingType, backingGet.ContainingType) &&
-                    backingGet.ContainingType.IsGenericType)
-                {
-                    if (containingType.TryFindFirstMember(backingGet.Name, out var getMember) &&
-                        BackingFieldOrProperty.Match(getMember) is { } get &&
-                        containingType.TryFindFirstMember(backingSet.Name, out var setMember) &&
-                        BackingFieldOrProperty.Match(setMember) is { } set)
+                    if (candidate.Name.IsParts(property.Name, "PropertyKey"))
                     {
-                        return new ClrProperty(get, set, getValue, setValue);
-                    }
+                        if (candidate.Type != KnownSymbols.DependencyPropertyKey)
+                        {
+                            return null;
+                        }
 
-                    return null;
+                        setField = candidate;
+                    }
+                }
+            }
+
+            if (getField is null)
+            {
+                return null;
+            }
+
+            setField ??= getField;
+            return Create(property.ContainingType, getField.Value, setField.Value, null, null);
+        }
+
+        static ClrProperty? Create(INamedTypeSymbol containingType, BackingFieldOrProperty backingGet, BackingFieldOrProperty backingSet, InvocationExpressionSyntax? getValue, InvocationExpressionSyntax? setValue)
+        {
+            if (!TypeSymbolComparer.Equal(containingType, backingGet.ContainingType) &&
+                backingGet.ContainingType.IsGenericType)
+            {
+                if (containingType.TryFindFirstMember(backingGet.Name, out var getMember) &&
+                    BackingFieldOrProperty.Match(getMember) is { } get &&
+                    containingType.TryFindFirstMember(backingSet.Name, out var setMember) &&
+                    BackingFieldOrProperty.Match(setMember) is { } set)
+                {
+                    return new ClrProperty(get, set, getValue, setValue);
                 }
 
-                return new ClrProperty(backingGet, backingSet, getValue, setValue);
+                return null;
             }
+
+            return new ClrProperty(backingGet, backingSet, getValue, setValue);
         }
     }
 }

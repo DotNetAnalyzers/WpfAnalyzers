@@ -1,15 +1,14 @@
-namespace WpfAnalyzers
+namespace WpfAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class DependencyPropertyKeyType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedProperty DependencyProperty;
 
-    internal class DependencyPropertyKeyType : QualifiedType
+    internal DependencyPropertyKeyType()
+        : base("System.Windows.DependencyPropertyKey")
     {
-        internal readonly QualifiedProperty DependencyProperty;
-
-        internal DependencyPropertyKeyType()
-            : base("System.Windows.DependencyPropertyKey")
-        {
-            this.DependencyProperty = new QualifiedProperty(this, nameof(this.DependencyProperty));
-        }
+        this.DependencyProperty = new QualifiedProperty(this, nameof(this.DependencyProperty));
     }
 }

@@ -1,43 +1,42 @@
-﻿namespace WpfAnalyzers
+﻿namespace WpfAnalyzers;
+
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading.Tasks;
+
+using Gu.Roslyn.CodeFixExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddAttributeListFix))]
+[Shared]
+internal class AddAttributeListFix : DocumentEditorCodeFixProvider
 {
-    using System.Collections.Immutable;
-    using System.Composition;
-    using System.Threading.Tasks;
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+        Descriptors.WPF0130UseTemplatePartAttribute.Id,
+        Descriptors.WPF0176StyleTypedPropertyMissing.Id);
 
-    using Gu.Roslyn.CodeFixExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddAttributeListFix))]
-    [Shared]
-    internal class AddAttributeListFix : DocumentEditorCodeFixProvider
+    protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.WPF0130UseTemplatePartAttribute.Id,
-            Descriptors.WPF0176StyleTypedPropertyMissing.Id);
-
-        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
+        var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                      .ConfigureAwait(false);
+        foreach (var diagnostic in context.Diagnostics)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                           .ConfigureAwait(false);
-            foreach (var diagnostic in context.Diagnostics)
+            if (syntaxRoot is { } &&
+                syntaxRoot.TryFindNodeOrAncestor<ClassDeclarationSyntax>(diagnostic, out var classDeclaration) &&
+                diagnostic.Properties.TryGetValue(nameof(AttributeListSyntax), out var attribute) &&
+                attribute is { })
             {
-                if (syntaxRoot is { } &&
-                    syntaxRoot.TryFindNodeOrAncestor<ClassDeclarationSyntax>(diagnostic, out var classDeclaration) &&
-                    diagnostic.Properties.TryGetValue(nameof(AttributeListSyntax), out var attribute) &&
-                    attribute is { })
-                {
-                    context.RegisterCodeFix(
-                        $"Add {attribute}.",
-                        (e, _) => e.ReplaceNode(
-                            classDeclaration,
-                            x => x.WithLeadingElasticLineFeed().AddAttributeLists(Parse.AttributeList(attribute).WithLeadingTrivia(SyntaxFactory.ElasticSpace).WithSimplifiedNames())),
-                        attribute,
-                        diagnostic);
-                }
+                context.RegisterCodeFix(
+                    $"Add {attribute}.",
+                    (e, _) => e.ReplaceNode(
+                        classDeclaration,
+                        x => x.WithLeadingElasticLineFeed().AddAttributeLists(Parse.AttributeList(attribute).WithLeadingTrivia(SyntaxFactory.ElasticSpace).WithSimplifiedNames())),
+                    attribute,
+                    diagnostic);
             }
         }
     }

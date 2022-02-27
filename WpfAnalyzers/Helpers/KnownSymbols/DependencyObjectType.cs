@@ -1,19 +1,18 @@
-namespace WpfAnalyzers
+namespace WpfAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class DependencyObjectType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedMethod GetValue;
+    internal readonly QualifiedMethod SetValue;
+    internal readonly QualifiedMethod SetCurrentValue;
 
-    internal class DependencyObjectType : QualifiedType
+    internal DependencyObjectType()
+        : base("System.Windows.DependencyObject")
     {
-        internal readonly QualifiedMethod GetValue;
-        internal readonly QualifiedMethod SetValue;
-        internal readonly QualifiedMethod SetCurrentValue;
-
-        internal DependencyObjectType()
-            : base("System.Windows.DependencyObject")
-        {
-            this.GetValue = new QualifiedMethod(this, "GetValue");
-            this.SetValue = new QualifiedMethod(this, "SetValue");
-            this.SetCurrentValue = new QualifiedMethod(this, "SetCurrentValue");
-        }
+        this.GetValue = new QualifiedMethod(this,        "GetValue");
+        this.SetValue = new QualifiedMethod(this,        "SetValue");
+        this.SetCurrentValue = new QualifiedMethod(this, "SetCurrentValue");
     }
 }
