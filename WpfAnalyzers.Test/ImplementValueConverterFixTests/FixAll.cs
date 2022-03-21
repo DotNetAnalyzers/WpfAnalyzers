@@ -4,6 +4,7 @@ namespace WpfAnalyzers.Test.ImplementValueConverterFixTests;
 using Gu.Roslyn.Asserts;
 using NUnit.Framework;
 
+[Explicit("Seems like assert hangs")]
 public static class FixAll
 {
     private static readonly ImplementValueConverterFix Fix = new();
@@ -108,7 +109,7 @@ namespace N
 
         RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
     }
-
+    
     [Test]
     public static void FullyQualifiedIMultiValueConverter()
     {

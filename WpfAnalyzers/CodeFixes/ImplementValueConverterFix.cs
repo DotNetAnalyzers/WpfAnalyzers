@@ -19,12 +19,6 @@ using Microsoft.CodeAnalysis.Editing;
 [Shared]
 internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
 {
-    private static readonly MethodDeclarationSyntax IMultiValueConverterConvert = ParseMethod(
-        @"        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new System.NotImplementedException();
-        }");
-
     public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS0535");
 
     protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -32,11 +26,16 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
         var document = context.Document;
         var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
                                        .ConfigureAwait(false);
+
+        var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
+                                       .ConfigureAwait(false);
         foreach (var diagnostic in context.Diagnostics)
         {
             if (syntaxRoot is { } &&
+                semanticModel is { } &&
                 syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
             {
+                var nullableContext = semanticModel.GetNullableContext(diagnostic.Location.SourceSpan.Start);
                 if (HasInterface(classDeclaration, KnownSymbols.IValueConverter))
                 {
                     if (diagnostic.GetMessage(CultureInfo.InvariantCulture)
@@ -44,7 +43,10 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                     {
                         context.RegisterCodeFix(
                             "Implement IValueConverter.Convert for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, Convert(editor.Generator)),
+                            (editor, _) =>
+                            {
+                                editor.AddMethod(classDeclaration, IValueConverter.Convert(editor.Generator, nullableContext));
+                            },
                             "Implement IValueConverter",
                             diagnostic);
                     }
@@ -54,7 +56,7 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                     {
                         context.RegisterCodeFix(
                             "Implement IValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, ConvertBack(editor.Generator, classDeclaration.Identifier.ValueText)),
+                            (editor, _) => editor.AddMethod(classDeclaration, IValueConverter.ConvertBack(editor.Generator, classDeclaration.Identifier.ValueText, nullableContext)),
                             "Implement IValueConverter",
                             diagnostic);
                     }
@@ -67,7 +69,7 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                     {
                         context.RegisterCodeFix(
                             "Implement IMultiValueConverter.Convert for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvert),
+                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverter.Convert(editor.Generator, nullableContext)),
                             "Implement IMultiValueConverter",
                             diagnostic);
                     }
@@ -106,48 +108,77 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
         return false;
     }
 
-    private static MethodDeclarationSyntax Convert(SyntaxGenerator generator)
+    private static MethodDeclarationSyntax IMultiValueConverterConvertBack(string containingTypeName)
     {
-        return (MethodDeclarationSyntax)generator.MethodDeclaration(
-            accessibility: Accessibility.Public,
-            returnType: SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-            name: "Convert",
-            parameters: new[]
-            {
-                generator.ParameterDeclaration("value",      SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
-                generator.ParameterDeclaration("targetType", SyntaxFactory.ParseTypeName("System.Type").WithSimplifiedNames()),
-                generator.ParameterDeclaration("parameter",  SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
-                generator.ParameterDeclaration("culture",    SyntaxFactory.ParseTypeName("System.Globalization.CultureInfo").WithSimplifiedNames()),
-            },
-            statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(SyntaxFactory.ParseTypeName("System.NotImplementedException").WithSimplifiedNames())) });
+        var code = StringBuilderPool.Borrow()
+                                    .AppendLine("        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)")
+                                    .AppendLine("        {")
+                                    .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
+                                    .AppendLine("        }")
+                                    .Return();
+        return ParseMethod(code);
     }
 
-    private static MethodDeclarationSyntax ConvertBack(SyntaxGenerator generator, string containingTypeName)
-    {
-        return ((MethodDeclarationSyntax)generator.MethodDeclaration(
-            returnType: SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-            name: "ConvertBack",
-            parameters: new[]
-            {
-                generator.ParameterDeclaration("value",      SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
-                generator.ParameterDeclaration("targetType", SyntaxFactory.ParseTypeName("System.Type").WithSimplifiedNames()),
-                generator.ParameterDeclaration("parameter",  SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
-                generator.ParameterDeclaration("culture",    SyntaxFactory.ParseTypeName("System.Globalization.CultureInfo").WithSimplifiedNames()),
-            },
-            statements: new[] { Throw() }))
-            .WithExplicitInterfaceSpecifier(SyntaxFactory.ExplicitInterfaceSpecifier(SyntaxFactory.ParseName("IValueConverter")));
+    private static TypeSyntax ParseTypeName(string text) => SyntaxFactory.ParseTypeName(text).WithSimplifiedNames();
 
-        ThrowStatementSyntax Throw()
+    private static TypeSyntax Object(NullableContext nullableContext) => nullableContext switch
+    {
+        NullableContext.WarningsEnabled => SyntaxFactory.NullableType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
+        _ => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+    };
+
+    private static MethodDeclarationSyntax ParseMethod(string code)
+    {
+        return Parse.MethodDeclaration(code)
+                    .WithSimplifiedNames()
+                    .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
+    }
+
+    private static class IValueConverter
+    {
+        internal static MethodDeclarationSyntax Convert(SyntaxGenerator generator, NullableContext nullableContext)
         {
-            return (ThrowStatementSyntax)generator.ThrowStatement(
-                generator.ObjectCreationExpression(
-                    SyntaxFactory.ParseTypeName("System.NotSupportedException"),
-                    SyntaxFactory.Argument(
-                        expression: SyntaxFactory.InterpolatedStringExpression(
-                            stringStartToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
-                            contents: SyntaxFactory.List(
-                                new InterpolatedStringContentSyntax[]
-                                {
+            return (MethodDeclarationSyntax)generator.MethodDeclaration(
+                accessibility: Accessibility.Public,
+                returnType: Object(nullableContext),
+                name: "Convert",
+                parameters: new[]
+                {
+                generator.ParameterDeclaration("value",      Object(nullableContext)),
+                generator.ParameterDeclaration("targetType", ParseTypeName("System.Type")),
+                generator.ParameterDeclaration("parameter",  Object(nullableContext)),
+                generator.ParameterDeclaration("culture",    ParseTypeName("System.Globalization.CultureInfo")),
+                },
+                statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(ParseTypeName("System.NotImplementedException"))) });
+        }
+
+        internal static MethodDeclarationSyntax ConvertBack(SyntaxGenerator generator, string containingTypeName, NullableContext nullableContext)
+        {
+            return ((MethodDeclarationSyntax)generator.MethodDeclaration(
+                returnType: Object(nullableContext),
+                name: "ConvertBack",
+                parameters: new[]
+                {
+                generator.ParameterDeclaration("value",      Object(nullableContext)),
+                generator.ParameterDeclaration("targetType", ParseTypeName("System.Type")),
+                generator.ParameterDeclaration("parameter",  Object(nullableContext)),
+                generator.ParameterDeclaration("culture",    ParseTypeName("System.Globalization.CultureInfo")),
+                },
+                statements: new[] { Throw() }))
+                .WithExplicitInterfaceSpecifier(SyntaxFactory.ExplicitInterfaceSpecifier(SyntaxFactory.ParseName("IValueConverter")));
+
+            ThrowStatementSyntax Throw()
+            {
+                return (ThrowStatementSyntax)generator.ThrowStatement(
+                    generator.ObjectCreationExpression(
+                        ParseTypeName("System.NotSupportedException"),
+                        SyntaxFactory.Argument(
+                            expression: SyntaxFactory.InterpolatedStringExpression(
+                                stringStartToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
+                                contents: SyntaxFactory.List(
+                                    new InterpolatedStringContentSyntax[]
+                                    {
                                     SyntaxFactory.Interpolation(
                                         openBraceToken: SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
                                         expression: (ExpressionSyntax)generator.NameOfExpression(SyntaxFactory.ParseTypeName(containingTypeName)),
@@ -161,27 +192,28 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                                             text: " can only be used in OneWay bindings",
                                             valueText: " can only be used in OneWay bindings",
                                             trailing: default)),
-                                }),
-                            stringEndToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringEndToken)))));
+                                    }),
+                                stringEndToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringEndToken)))));
+            }
         }
     }
 
-    private static MethodDeclarationSyntax IMultiValueConverterConvertBack(string containingTypeName)
+    private static class IMultiValueConverter
     {
-        var code = StringBuilderPool.Borrow()
-                                    .AppendLine("        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)")
-                                    .AppendLine("        {")
-                                    .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
-                                    .AppendLine("        }")
-                                    .Return();
-        return ParseMethod(code);
-    }
-
-    private static MethodDeclarationSyntax ParseMethod(string code)
-    {
-        return Parse.MethodDeclaration(code)
-                    .WithSimplifiedNames()
-                    .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
+        internal static MethodDeclarationSyntax Convert(SyntaxGenerator generator, NullableContext nullableContext)
+        {
+            return (MethodDeclarationSyntax)generator.MethodDeclaration(
+                accessibility: Accessibility.Public,
+                returnType: Object(nullableContext),
+                name: "Convert",
+                parameters: new[]
+                {
+                    generator.ParameterDeclaration("value",      SyntaxFactory.ArrayType(Object(nullableContext))),
+                    generator.ParameterDeclaration("targetType", ParseTypeName("System.Type")),
+                    generator.ParameterDeclaration("parameter",  Object(nullableContext)),
+                    generator.ParameterDeclaration("culture",    ParseTypeName("System.Globalization.CultureInfo")),
+                },
+                statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(ParseTypeName("System.NotImplementedException"))) });
+        }
     }
 }
