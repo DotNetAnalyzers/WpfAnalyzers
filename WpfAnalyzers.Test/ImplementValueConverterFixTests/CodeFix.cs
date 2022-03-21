@@ -48,6 +48,44 @@ namespace N
     }
 
     [Test]
+    public static void IValueConverterConvertBackFileScopedNamespace()
+    {
+        var before = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : ↓IValueConverter
+{
+    public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotImplementedException();
+    }
+}
+";
+
+        var after = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : IValueConverter
+{
+    public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+    }
+}
+";
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
     public static void IMultiValueConverterConvertBack()
     {
         var before = @"
