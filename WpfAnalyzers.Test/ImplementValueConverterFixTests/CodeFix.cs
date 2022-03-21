@@ -10,6 +10,82 @@ public static class CodeFix
     private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
     [Test]
+    public static void IValueConverterConvert()
+    {
+        var before = @"
+namespace N
+{
+    using System.Windows.Data;
+
+    public class C : ↓IValueConverter
+    {
+        object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+        }
+    }
+}";
+
+        var after = @"
+namespace N
+{
+    using System.Windows.Data;
+
+    public class C : IValueConverter
+    {
+        object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+        }
+
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}";
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
+    public static void IValueConverterConvertFileScopedNamespace()
+    {
+        var before = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : ↓IValueConverter
+{
+    object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+    }
+}
+";
+
+        var after = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : IValueConverter
+{
+    object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+    }
+
+    public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotImplementedException();
+    }
+}
+";
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
     public static void IValueConverterConvertBack()
     {
         var before = @"
