@@ -24,7 +24,8 @@ public class Sa1202Suppressor : DiagnosticSuppressor
                 switch (root.FindNode(diagnostic.Location.SourceSpan))
                 {
                     case VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax { Type: { } type } }
-                        when type == KnownSymbols.DependencyProperty:
+                        when type == KnownSymbols.DependencyProperty ||
+                             type == KnownSymbols.RoutedEvent:
                         context.ReportSuppression(Suppression.Create(Descriptor, diagnostic));
                         break;
                     case MethodDeclarationSyntax method
