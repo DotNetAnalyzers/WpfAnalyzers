@@ -79,7 +79,7 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                     {
                         context.RegisterCodeFix(
                             "Implement IMultiValueConverter.ConvertBack for one way bindings.",
-                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverterConvertBack(classDeclaration.Identifier.ValueText)),
+                            (editor, _) => editor.AddMethod(classDeclaration, IMultiValueConverter.ConvertBack(classDeclaration.Identifier.ValueText)),
                             "Implement IMultiValueConverter",
                             diagnostic);
                     }
@@ -108,17 +108,6 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
         return false;
     }
 
-    private static MethodDeclarationSyntax IMultiValueConverterConvertBack(string containingTypeName)
-    {
-        var code = StringBuilderPool.Borrow()
-                                    .AppendLine("        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)")
-                                    .AppendLine("        {")
-                                    .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
-                                    .AppendLine("        }")
-                                    .Return();
-        return ParseMethod(code);
-    }
-
     private static TypeSyntax ParseTypeName(string text) => SyntaxFactory.ParseTypeName(text).WithSimplifiedNames();
 
     private static TypeSyntax Object(NullableContext nullableContext) => nullableContext switch
@@ -126,14 +115,6 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
         NullableContext.WarningsEnabled => SyntaxFactory.NullableType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
         _ => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
     };
-
-    private static MethodDeclarationSyntax ParseMethod(string code)
-    {
-        return Parse.MethodDeclaration(code)
-                    .WithSimplifiedNames()
-                    .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
-    }
 
     private static class IValueConverter
     {
@@ -214,6 +195,25 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                     generator.ParameterDeclaration("culture",    ParseTypeName("System.Globalization.CultureInfo")),
                 },
                 statements: new[] { generator.ThrowStatement(generator.ObjectCreationExpression(ParseTypeName("System.NotImplementedException"))) });
+        }
+
+        internal static MethodDeclarationSyntax ConvertBack(string containingTypeName)
+        {
+            var code = StringBuilderPool.Borrow()
+                                        .AppendLine("        object[] System.Windows.Data.IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)")
+                                        .AppendLine("        {")
+                                        .AppendLine($"            throw new System.NotSupportedException($\"{{nameof({containingTypeName})}} can only be used in OneWay bindings\");")
+                                        .AppendLine("        }")
+                                        .Return();
+            return ParseMethod(code);
+
+            static MethodDeclarationSyntax ParseMethod(string code)
+            {
+                return Parse.MethodDeclaration(code)
+                            .WithSimplifiedNames()
+                            .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                            .WithTrailingTrivia(SyntaxFactory.ElasticMarker);
+            }
         }
     }
 }
