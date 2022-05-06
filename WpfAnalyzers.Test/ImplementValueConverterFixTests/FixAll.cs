@@ -44,6 +44,7 @@ namespace N
         RoslynAssert.FixAll(Fix, ExpectedDiagnostic, before, after);
     }
 
+    [Explicit]
     [Test]
     public static void FullyQualifiedIValueConverter()
     {
