@@ -194,4 +194,5 @@ csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
+dotnet_diagnostic.CS1508.severity = none # Adds 200 s to build time 
 dotnet_diagnostic.CS8762.severity = none # Analyzer buggy (Parameter may not have a null value when exiting in some condition.)
