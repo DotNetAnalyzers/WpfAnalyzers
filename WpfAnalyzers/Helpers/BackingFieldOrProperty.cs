@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers;
 
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -26,6 +27,13 @@ internal readonly struct BackingFieldOrProperty
     internal ITypeSymbol Type => this.FieldOrProperty.Type;
 
     internal INamedTypeSymbol ContainingType => this.FieldOrProperty.ContainingType;
+
+    internal Accessibility DeclaredAccessibility => this.FieldOrProperty.Symbol switch
+    {
+        IFieldSymbol field => field.DeclaredAccessibility,
+        IPropertySymbol property => property.DeclaredAccessibility,
+        _ => throw new NotSupportedException("Neither field nor property."),
+    };
 
     internal string Name => this.FieldOrProperty.Name;
 
@@ -167,7 +175,7 @@ internal readonly struct BackingFieldOrProperty
         if (this.Value(cancellationToken) is { } value &&
             value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
             semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
-            semanticModel.TryGetSymbol(addOwner,   cancellationToken,                        out var addOwnerSymbol))
+            semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol))
         {
             return Match(addOwnerSymbol);
         }

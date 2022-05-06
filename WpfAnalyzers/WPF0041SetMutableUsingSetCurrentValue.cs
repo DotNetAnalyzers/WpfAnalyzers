@@ -32,7 +32,7 @@ internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
             !IsInConstructor(assignment) &&
             context.SemanticModel.TryGetSymbol(left, context.CancellationToken, out IPropertySymbol? property) &&
             !IsIgnored(property) &&
-            ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { BackingSet: { } backingSet } &&
+            ClrProperty.Match(property, context.SemanticModel, context.CancellationToken) is { BackingSet: { DeclaredAccessibility: not Accessibility.Private } backingSet } &&
             backingSet.FieldOrProperty.Type == KnownSymbols.DependencyProperty &&
             !IsAssignedCreatedInScope(left, context.SemanticModel, context.CancellationToken))
         {
