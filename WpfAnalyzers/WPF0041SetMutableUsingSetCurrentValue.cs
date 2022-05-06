@@ -58,7 +58,7 @@ internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
         if (!context.IsExcludedFromAnalysis() &&
             context.Node is InvocationExpressionSyntax invocation &&
             !IsInConstructor(invocation) &&
-            invocation is { Expression: { } invocationExpression, ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+            invocation is { Expression: { } invocationExpression, ArgumentList.Arguments: { Count: 2 } arguments } &&
             arguments.TryElementAt(0, out var propertyArg) &&
             propertyArg is { Expression: { } expression } &&
             DependencyObject.SetValue.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
@@ -97,7 +97,7 @@ internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
             MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax identifier }
                 => semanticModel.TryGetSymbol(identifier, cancellationToken, out var symbol) &&
                    symbol.Kind == SymbolKind.Local,
-            MemberAccessExpressionSyntax { Expression: { Parent: ObjectCreationExpressionSyntax _ } } => true,
+            MemberAccessExpressionSyntax { Expression.Parent: ObjectCreationExpressionSyntax _ } => true,
             _ => false,
         };
     }

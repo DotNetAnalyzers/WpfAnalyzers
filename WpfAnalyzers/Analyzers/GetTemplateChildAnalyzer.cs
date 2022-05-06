@@ -26,13 +26,13 @@ internal class GetTemplateChildAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } invocation &&
+            context.Node is InvocationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } invocation &&
             invocation.TryGetMethodName(out var name) &&
             name == "GetTemplateChild" &&
             arguments.TrySingle(out var argument) &&
             argument.Expression is { } expression &&
             context.SemanticModel.TryGetConstantValue<string>(expression, context.CancellationToken, out var partName) &&
-            context.ContainingSymbol is IMethodSymbol { Name: "OnApplyTemplate", IsOverride: true, Parameters: { Length: 0 } } containingMethod)
+            context.ContainingSymbol is IMethodSymbol { Name: "OnApplyTemplate", IsOverride: true, Parameters.Length: 0 } containingMethod)
         {
             if (FindAttribute(containingMethod.ContainingType, partName) is { } attribute)
             {

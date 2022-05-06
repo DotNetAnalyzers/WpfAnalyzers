@@ -10,9 +10,9 @@ internal static class FieldSymbolExt
     internal static ExpressionSyntax? Value(this IFieldSymbol field, CancellationToken cancellationToken)
     {
         if (field.TrySingleDeclaration(cancellationToken, out var declaration) &&
-            declaration is { Declaration: { Variables: { } variables } } &&
+            declaration is { Declaration.Variables: { } variables } &&
             variables.TryLast(out var variable) &&
-            variable is { Initializer: { Value: { } value } })
+            variable is { Initializer.Value: { } value })
         {
             return value;
         }

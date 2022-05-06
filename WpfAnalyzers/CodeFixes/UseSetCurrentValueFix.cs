@@ -47,7 +47,7 @@ internal class UseSetCurrentValueFix : DocumentEditorCodeFixProvider
             }
             else if (syntaxRoot is { } &&
                      syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? setValue) &&
-                     Name(setValue) is { Identifier: { ValueText: "SetValue" } } name)
+                     Name(setValue) is { Identifier.ValueText: "SetValue" } name)
             {
                 context.RegisterCodeFix(
                     setValue.ToString().Replace("SetValue", "SetCurrentValue"),

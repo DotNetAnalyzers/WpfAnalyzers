@@ -44,7 +44,7 @@ internal static class ValueConverter
         sourceType = null;
         targetType = null;
         if (classDeclaration.TryFindMethod("Convert", out var convertMethod) &&
-            convertMethod is { ReturnType: { } returnType, ParameterList: { Parameters: { Count: 4 } parameters } } &&
+            convertMethod is { ReturnType: { } returnType, ParameterList.Parameters: { Count: 4 } parameters } &&
             returnType == KnownSymbols.Object &&
             parameters.TryFirst<ParameterSyntax>(out var valueParameter))
         {

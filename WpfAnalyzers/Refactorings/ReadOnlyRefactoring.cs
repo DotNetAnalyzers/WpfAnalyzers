@@ -27,7 +27,7 @@ internal class ReadOnlyRefactoring : CodeRefactoringProvider
             syntaxRoot.FindNode(context.Span) is { } node &&
             node.FirstAncestorOrSelf<FieldDeclarationSyntax>() is { Parent: ClassDeclarationSyntax containingClass } field &&
             field is { Declaration: { Type: { } type, Variables: { Count: 1 } variables } } &&
-            variables[0] is { Initializer: { Value: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax methodName } } register } } variable &&
+            variables[0] is { Initializer.Value: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax methodName } } register } variable &&
             semanticModel is { })
         {
             if (type == KnownSymbols.DependencyProperty)
@@ -107,7 +107,7 @@ internal class ReadOnlyRefactoring : CodeRefactoringProvider
         {
             return node switch
             {
-                { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { Identifier: { ValueText: "SetValue" } } } } } } }
+                { Parent: ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name.Identifier.ValueText: "SetValue" } } } } }
                     when node.Identifier.Text == this.before
                     => node.WithIdentifier(SyntaxFactory.Identifier(this.after))!,
                 _ => base.VisitIdentifierName(node)!,

@@ -173,11 +173,11 @@ internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
             using var walker = Borrow(() => new BackingFieldWalker());
             walker.memberName = memberName;
             walker.Visit(typeDeclaration);
-            if (walker.backingField is { Initializer: { Value: InvocationExpressionSyntax fieldRegistration } })
+            if (walker.backingField is { Initializer.Value: InvocationExpressionSyntax fieldRegistration })
             {
                 registration = fieldRegistration;
             }
-            else if (walker.backingProperty is { Initializer: { Value: InvocationExpressionSyntax propertyRegistration } })
+            else if (walker.backingProperty is { Initializer.Value: InvocationExpressionSyntax propertyRegistration })
             {
                 registration = propertyRegistration;
             }
@@ -186,7 +186,7 @@ internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
                 return false;
             }
 
-            return registration is { ArgumentList: { Arguments: { Count: 4 } } } &&
+            return registration is { ArgumentList.Arguments.Count: 4 } &&
                    registration.TryGetMethodName(out var name) &&
                    name == "RegisterRoutedEvent";
         }

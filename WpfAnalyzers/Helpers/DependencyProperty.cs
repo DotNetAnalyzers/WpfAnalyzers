@@ -174,8 +174,8 @@ internal static class DependencyProperty
                         return defaultValue switch
                         {
                             { Expression: DefaultExpressionSyntax _ } => true,
-                            { Expression: LiteralExpressionSyntax { Token: { ValueText: "null" } } } => true,
-                            { Expression: CastExpressionSyntax { Expression: LiteralExpressionSyntax { Token: { ValueText: "null" } } } } => true,
+                            { Expression: LiteralExpressionSyntax { Token.ValueText: "null" } } => true,
+                            { Expression: CastExpressionSyntax { Expression: LiteralExpressionSyntax { Token.ValueText: "null" } } } => true,
                             _ => false,
                         };
                     }

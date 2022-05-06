@@ -39,10 +39,10 @@ internal readonly struct ClrProperty
                 if (propertyDeclaration.Getter() is { } getter &&
                     propertyDeclaration.Setter() is { } setter)
                 {
-                    if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument: { Expression: { } getProperty } } &&
+                    if (DependencyObject.GetValue.Find(MethodOrAccessor.Create(getter), semanticModel, cancellationToken) is { Invocation: { } getValue, PropertyArgument.Expression: { } getProperty } &&
                         semanticModel.TryGetSymbol(getProperty, cancellationToken, out var symbol) &&
                         BackingFieldOrProperty.Match(symbol) is { } backingGet &&
-                        DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument: { Expression: { } setProperty } } &&
+                        DependencyObject.SetValue.Find(MethodOrAccessor.Create(setter), semanticModel, cancellationToken) is { Invocation: { } setValue, PropertyArgument.Expression: { } setProperty } &&
                         semanticModel.TryGetSymbol(setProperty, cancellationToken, out symbol) &&
                         BackingFieldOrProperty.Match(symbol) is { } backingSet)
                     {

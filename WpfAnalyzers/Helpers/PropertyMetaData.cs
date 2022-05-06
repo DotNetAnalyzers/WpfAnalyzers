@@ -203,11 +203,11 @@ internal readonly struct PropertyMetadata
                         return IsReturnValueOfRegisteredType(declaration);
                     case { Symbol: IMethodSymbol { MetadataName: "GetAsFrozen" }, Source: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } }:
                         return recursion.SemanticModel.IsRepresentationPreservingConversion(expression, registeredType);
-                    case { Symbol: IFieldSymbol { Type: { SpecialType: SpecialType.System_Object } } }:
+                    case { Symbol: IFieldSymbol { Type.SpecialType: SpecialType.System_Object } }:
                         return true;
-                    case { Symbol: IPropertySymbol { Type: { SpecialType: SpecialType.System_Object } } }:
+                    case { Symbol: IPropertySymbol { Type.SpecialType: SpecialType.System_Object } }:
                         return true;
-                    case { Symbol: IMethodSymbol { ReturnType: { SpecialType: SpecialType.System_Object } } }:
+                    case { Symbol: IMethodSymbol { ReturnType.SpecialType: SpecialType.System_Object } }:
                         return true;
                     default:
                         return recursion.SemanticModel.IsRepresentationPreservingConversion(value, registeredType);

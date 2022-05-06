@@ -45,7 +45,7 @@ internal class ValueConversionAttributeArgumentFix : DocumentEditorCodeFixProvid
 
     private static void FixArgument(DocumentEditor editor, AttributeSyntax attributeSyntax, ITypeSymbol inType, ITypeSymbol outType)
     {
-        if (attributeSyntax is { ArgumentList: { Arguments: { Count: 2 } arguments } })
+        if (attributeSyntax is { ArgumentList.Arguments: { Count: 2 } arguments })
         {
             editor.ReplaceNode(
                 arguments[0],

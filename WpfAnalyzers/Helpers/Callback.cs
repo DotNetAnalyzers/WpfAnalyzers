@@ -44,7 +44,7 @@ internal readonly struct Callback
                     _ => null,
                 },
 
-            ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } creation
+            ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } creation
                 when creation.IsType(handlerType, semanticModel, cancellationToken)
                 => Match(arguments[0], handlerType, semanticModel, cancellationToken),
             _ => null,
@@ -99,9 +99,9 @@ internal readonly struct Callback
         return method switch
         {
             { ExpressionBody: { } } => true,
-            { Body: { Statements: { Count: 1 } statements } } => statements[0].IsEither(SyntaxKind.ExpressionStatement, SyntaxKind.ReturnStatement),
-            { Body: { Statements: { Count: 2 } statements } }
-                when statements[0] is LocalDeclarationStatementSyntax { Declaration: { Variables: { Count: 1 } variables } } &&
+            { Body.Statements: { Count: 1 } statements } => statements[0].IsEither(SyntaxKind.ExpressionStatement, SyntaxKind.ReturnStatement),
+            { Body.Statements: { Count: 2 } statements }
+                when statements[0] is LocalDeclarationStatementSyntax { Declaration.Variables: { Count: 1 } variables } &&
                      variables[0].Initializer is { Value: CastExpressionSyntax _ }
                 => statements[1].IsEither(SyntaxKind.ExpressionStatement, SyntaxKind.ReturnStatement),
             _ => false,

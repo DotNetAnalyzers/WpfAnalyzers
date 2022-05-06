@@ -168,14 +168,14 @@ internal class WPF0052XmlnsDefinitionsDoesNotMapAllNamespaces : DiagnosticAnalyz
                     return false;
                 }
 
-                if (x is IdentifierNameSyntax { Identifier: { ValueText: { } xText } } &&
-                    y is IdentifierNameSyntax { Identifier: { ValueText: { } yText } })
+                if (x is IdentifierNameSyntax { Identifier.ValueText: { } xText } &&
+                    y is IdentifierNameSyntax { Identifier.ValueText: { } yText })
                 {
                     return xText == yText;
                 }
 
-                if (x is QualifiedNameSyntax { Left: { } xLeft, Right: { Identifier: { ValueText: { } xRight } } } &&
-                    y is QualifiedNameSyntax { Left: { } yLeft, Right: { Identifier: { ValueText: { } yRight } } })
+                if (x is QualifiedNameSyntax { Left: { } xLeft, Right.Identifier.ValueText: { } xRight } &&
+                    y is QualifiedNameSyntax { Left: { } yLeft, Right.Identifier.ValueText: { } yRight })
                 {
                     return xRight == yRight &&
                            RecursiveEquals(xLeft, yLeft);

@@ -32,7 +32,7 @@ internal class UseSetValueFix : DocumentEditorCodeFixProvider
                 syntaxRoot.TryFindNodeOrAncestor(diagnostic, out InvocationExpressionSyntax? invocation) &&
                 IdentifierName(invocation.Expression) is { } methodIdentifier &&
                 semanticModel is { } &&
-                invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                invocation is { ArgumentList.Arguments: { Count: 2 } arguments } &&
                 semanticModel.TryGetSymbol(arguments[0].Expression, context.CancellationToken, out var symbol) &&
                 BackingFieldOrProperty.Match(symbol) is { } backing)
             {

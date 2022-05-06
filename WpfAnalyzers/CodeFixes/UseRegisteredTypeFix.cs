@@ -46,7 +46,7 @@ internal class UseRegisteredTypeFix : DocumentEditorCodeFixProvider
                         nameof(UseRegisteredTypeFix),
                         diagnostic);
                 }
-                else if (typeSyntax.Parent is MethodDeclarationSyntax { ParameterList: { Parameters: { Count: 1 } } } method &&
+                else if (typeSyntax.Parent is MethodDeclarationSyntax { ParameterList.Parameters.Count: 1 } method &&
                          method.Identifier.ValueText.StartsWith("Get", StringComparison.Ordinal))
                 {
                     context.RegisterCodeFix(

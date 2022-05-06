@@ -21,7 +21,7 @@ internal readonly struct GetAttached
 
     internal static GetAttached? Match(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        if (method is { Parent: TypeDeclarationSyntax containingType, ParameterList: { Parameters: { Count: 1 } parameters } } &&
+        if (method is { Parent: TypeDeclarationSyntax containingType, ParameterList.Parameters: { Count: 1 } parameters } &&
             !method.ReturnType.IsVoid() &&
             method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
             DependencyObject.GetValue.Find(MethodOrAccessor.Create(method), semanticModel, cancellationToken) is { Invocation: { } invocation } getValue &&
@@ -40,7 +40,7 @@ internal readonly struct GetAttached
         {
             return invocation switch
             {
-                { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax { Identifier: { ValueText: { } name } } } } => name == parameter.Identifier.ValueText,
+                { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: { } name } } } => name == parameter.Identifier.ValueText,
                 _ => false,
             };
         }

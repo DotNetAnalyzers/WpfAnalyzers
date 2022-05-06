@@ -69,7 +69,7 @@ internal static class EventManager
 
         internal static RegisterClassHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { } arguments } &&
                 (arguments.Count == 3 || arguments.Count == 4) &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterClassHandler, cancellationToken, out var method))
             {
@@ -97,7 +97,7 @@ internal static class EventManager
 
         internal static RegisterRoutedEvent? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 4 } } } &&
+            if (invocation is { ArgumentList.Arguments.Count: 4 } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterRoutedEvent, cancellationToken, out var method))
             {
                 return new RegisterRoutedEvent(invocation, method);
@@ -120,7 +120,7 @@ internal static class EventManager
 
         internal static AddHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { } arguments } &&
                 (arguments.Count == 2 || arguments.Count == 3) &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "AddHandler" &&
@@ -148,7 +148,7 @@ internal static class EventManager
 
         internal static RemoveHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 2 } } } &&
+            if (invocation is { ArgumentList.Arguments.Count: 2 } &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "RemoveHandler" &&
                 semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&

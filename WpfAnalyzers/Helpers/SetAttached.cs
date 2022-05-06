@@ -25,7 +25,7 @@ internal readonly struct SetAttached
     /// </summary>
     internal static bool CanMatch(IMethodSymbol method, Compilation compilation)
     {
-        return method is { IsStatic: true, ReturnsVoid: true, Parameters: { Length: 2 } } &&
+        return method is { IsStatic: true, ReturnsVoid: true, Parameters.Length: 2 } &&
                method.Name.StartsWith("Set", StringComparison.Ordinal) &&
                method.Parameters.TryElementAt(0, out var parameter) &&
                parameter.Type.IsAssignableTo(KnownSymbols.DependencyObject, compilation);
@@ -44,7 +44,7 @@ internal readonly struct SetAttached
 
     internal static SetAttached? Match(MethodDeclarationSyntax method, SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        if (method is { Parent: TypeDeclarationSyntax containingType, ReturnType: PredefinedTypeSyntax { Keyword: { ValueText: "void" } }, ParameterList: { Parameters: { Count: 2 } parameters } } &&
+        if (method is { Parent: TypeDeclarationSyntax containingType, ReturnType: PredefinedTypeSyntax { Keyword.ValueText: "void" }, ParameterList.Parameters: { Count: 2 } parameters } &&
             method.Modifiers.Any(SyntaxKind.StaticKeyword) &&
             DependencyObject.SetValue.Find(MethodOrAccessor.Create(method), semanticModel, cancellationToken) is { Invocation: { } invocation } getValue &&
             InvokedOnParameter(parameters[0], invocation) &&
@@ -73,7 +73,7 @@ internal readonly struct SetAttached
         {
             return invocation switch
             {
-                { ArgumentList: { Arguments: { Count: 2 } arguments } }
+                { ArgumentList.Arguments: { Count: 2 } arguments }
                     => arguments[1] switch
                     {
                         { Expression: IdentifierNameSyntax identifierName } => identifierName.Identifier.ValueText == parameter.Identifier.ValueText,

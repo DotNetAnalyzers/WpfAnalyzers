@@ -37,7 +37,7 @@ internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
             method.Parameters.TryElementAt(0, out var element) &&
             element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
         {
-            if (GetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { GetValue: { Invocation: { } getValue }, Backing: { } backingGet })
+            if (GetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { GetValue.Invocation: { } getValue, Backing: { } backingGet })
             {
                 if (backingGet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
@@ -147,7 +147,7 @@ internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
                 }
             }
             else if (method.Parameters.TryElementAt(1, out var value) &&
-                     SetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { SetValue: { Invocation: { } setValue }, Backing: { } backingSet })
+                     SetAttached.Match(methodDeclaration, context.SemanticModel, context.CancellationToken) is { SetValue.Invocation: { } setValue, Backing: { } backingSet })
             {
                 if (backingSet.RegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
                 {
@@ -253,7 +253,7 @@ internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
                 case IfStatementSyntax { Condition: { } condition, Statement: ThrowStatementSyntax { }, Else: null }
                     when NullCheck.IsNullCheck(condition, null, CancellationToken.None, out _):
                     continue;
-                case IfStatementSyntax { Condition: { } condition, Statement: BlockSyntax { Statements: { Count: 0 } }, Else: null }
+                case IfStatementSyntax { Condition: { } condition, Statement: BlockSyntax { Statements.Count: 0 }, Else: null }
                     when NullCheck.IsNullCheck(condition, null, CancellationToken.None, out _):
                     continue;
                 case IfStatementSyntax { Condition: { } condition, Statement: BlockSyntax { Statements: { Count: 1 } statements }, Else: null }

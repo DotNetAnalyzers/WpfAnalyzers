@@ -27,7 +27,7 @@ internal class ComponentResourceKeyFix : DocumentEditorCodeFixProvider
             if (syntaxRoot is { } &&
                 diagnostic.Id == Descriptors.WPF0140UseContainingTypeComponentResourceKey.Id &&
                 syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ObjectCreationExpressionSyntax? objectCreation) &&
-                objectCreation.ArgumentList is { Arguments: { Count: 0 } } argumentList &&
+                objectCreation.ArgumentList is { Arguments.Count: 0 } argumentList &&
                 diagnostic.Properties.TryGetValue(nameof(ArgumentListSyntax), out var argumentListString))
             {
                 context.RegisterCodeFix(

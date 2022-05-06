@@ -100,7 +100,7 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
             switch (typeSyntax.Type)
             {
                 case SimpleNameSyntax name when name.Identifier.ValueText == type.Type:
-                case QualifiedNameSyntax { Right: { Identifier: { } right } } when right.ValueText == type.Type:
+                case QualifiedNameSyntax { Right.Identifier: { } right } when right.ValueText == type.Type:
                     return true;
             }
         }

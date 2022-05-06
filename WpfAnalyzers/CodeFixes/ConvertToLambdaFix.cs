@@ -133,17 +133,17 @@ internal class ConvertToLambdaFix : DocumentEditorCodeFixProvider
     {
         return declaration switch
         {
-            { ExpressionBody: { Expression: { } expression } } => expression,
-            { Body: { Statements: { Count: 1 } statements } } =>
+            { ExpressionBody.Expression: { } expression } => expression,
+            { Body.Statements: { Count: 1 } statements } =>
                 statements[0] switch
                 {
                     ReturnStatementSyntax { Expression: { } expression } => expression,
                     ExpressionStatementSyntax { Expression: { } expression } => expression,
                     _ => null,
                 },
-            { Body: { Statements: { Count: 2 } statements } }
-                when statements[0] is LocalDeclarationStatementSyntax { Declaration: { Variables: { Count: 1 } variables } } &&
-                     variables[0] is { Identifier: { } identifier, Initializer: { Value: CastExpressionSyntax cast } }
+            { Body.Statements: { Count: 2 } statements }
+                when statements[0] is LocalDeclarationStatementSyntax { Declaration.Variables: { Count: 1 } variables } &&
+                     variables[0] is { Identifier: { } identifier, Initializer.Value: CastExpressionSyntax cast }
                 =>
                 statements[1] switch
                 {

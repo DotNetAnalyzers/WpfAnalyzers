@@ -24,7 +24,7 @@ internal static class DependencyObject
 
         internal static GetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { Count: 1 } arguments } &&
                 arguments[0] is { Expression: { } } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.GetValue, cancellationToken, out var method))
             {
@@ -38,15 +38,15 @@ internal static class DependencyObject
         {
             return node switch
             {
-                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                { ExpressionBody.Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
-                { ExpressionBody: { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } } }
+                { ExpressionBody.Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } }
                     => Match(invocation, semanticModel, cancellationToken),
                 { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                { Body: { Statements: { } statements } }
+                { Body.Statements: { } statements }
                     when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
-                { Body: { Statements: { } statements } }
+                { Body.Statements: { } statements }
                     when statements.LastOrDefault() is ReturnStatementSyntax { Expression: CastExpressionSyntax { Expression: InvocationExpressionSyntax invocation } }
                     => Match(invocation, semanticModel, cancellationToken),
                 { Body: { } body } => Walk(body),
@@ -141,7 +141,7 @@ internal static class DependencyObject
 
         internal static SetValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { Count: 2 } arguments } &&
                 arguments[0] is { Expression: { } } &&
                 arguments[1] is { Expression: { } } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetValue, cancellationToken, out var method))
@@ -156,10 +156,10 @@ internal static class DependencyObject
         {
             return node switch
             {
-                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                { ExpressionBody.Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
                 { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                { Body: { Statements: { } statements } }
+                { Body.Statements: { } statements }
                     when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
                 { Body: { } body } => Walk(body),
@@ -254,7 +254,7 @@ internal static class DependencyObject
 
         internal static SetCurrentValue? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { Count: 2 } arguments } &&
                 arguments[0] is { Expression: { } } &&
                 arguments[1] is { Expression: { } } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyObject.SetCurrentValue, cancellationToken, out var method))
@@ -269,10 +269,10 @@ internal static class DependencyObject
         {
             return node switch
             {
-                { ExpressionBody: { Expression: InvocationExpressionSyntax invocation } }
+                { ExpressionBody.Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
                 { ExpressionBody: { } expressionBody } => Walk(expressionBody),
-                { Body: { Statements: { } statements } }
+                { Body.Statements: { } statements }
                     when statements.LastOrDefault() is ReturnStatementSyntax { Expression: InvocationExpressionSyntax invocation }
                     => Match(invocation, semanticModel, cancellationToken),
                 { Body: { } body } => Walk(body),
