@@ -162,6 +162,45 @@ public class C : IValueConverter
     }
 
     [Test]
+    public static void IMultiValueConverterConvert()
+    {
+        var before = @"
+namespace N
+{
+    using System.Windows.Data;
+
+    public class C : ↓IMultiValueConverter
+    {
+        object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+        }
+    }
+}";
+
+        var after = @"
+namespace N
+{
+    using System.Windows.Data;
+
+    public class C : IMultiValueConverter
+    {
+        object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+        }
+
+        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}";
+
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
     public static void IMultiValueConverterConvertBack()
     {
         var before = @"
@@ -196,6 +235,45 @@ namespace N
         }
     }
 }";
+
+        RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
+    public static void IMultiValueConverterConvertBackFileScopedNamespace()
+    {
+        var before = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : ↓IMultiValueConverter
+{
+    public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotImplementedException();
+    }
+}
+";
+
+        var after = @"
+namespace N;
+
+using System.Windows.Data;
+
+public class C : IMultiValueConverter
+{
+    public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    object[] IMultiValueConverter.ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotSupportedException($""{nameof(C)} can only be used in OneWay bindings"");
+    }
+}
+";
 
         RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after);
     }
