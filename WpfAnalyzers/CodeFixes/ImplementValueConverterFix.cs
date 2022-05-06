@@ -123,6 +123,34 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                 SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                     SyntaxFactory.OmittedArraySizeExpression()))));
 
+    private static ThrowStatementSyntax ThrowNotSupportedException(string containingTypeName, SyntaxGenerator generator)
+    {
+        return (ThrowStatementSyntax)generator.ThrowStatement(
+            generator.ObjectCreationExpression(
+                ParseTypeName("System.NotSupportedException"),
+                SyntaxFactory.Argument(
+                    expression: SyntaxFactory.InterpolatedStringExpression(
+                        stringStartToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
+                        contents: SyntaxFactory.List(
+                            new InterpolatedStringContentSyntax[]
+                            {
+                                SyntaxFactory.Interpolation(
+                                    openBraceToken: SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
+                                    expression: (ExpressionSyntax)generator.NameOfExpression(SyntaxFactory.ParseTypeName(containingTypeName)),
+                                    alignmentClause: default,
+                                    formatClause: default,
+                                    closeBraceToken: SyntaxFactory.Token(SyntaxKind.CloseBraceToken)),
+                                SyntaxFactory.InterpolatedStringText(
+                                    textToken: SyntaxFactory.Token(
+                                        leading: default,
+                                        kind: SyntaxKind.InterpolatedStringTextToken,
+                                        text: " can only be used in OneWay bindings",
+                                        valueText: " can only be used in OneWay bindings",
+                                        trailing: default)),
+                            }),
+                        stringEndToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringEndToken)))));
+    }
+
     private static class IValueConverter
     {
         internal static MethodDeclarationSyntax Convert(SyntaxGenerator generator, NullableContext nullableContext)
@@ -153,36 +181,8 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                 generator.ParameterDeclaration("parameter",  Object(nullableContext)),
                 generator.ParameterDeclaration("culture",    ParseTypeName("System.Globalization.CultureInfo")),
                 },
-                statements: new[] { Throw() }))
+                statements: new[] { ThrowNotSupportedException(containingTypeName, generator) }))
                 .WithExplicitInterfaceSpecifier(SyntaxFactory.ExplicitInterfaceSpecifier(SyntaxFactory.ParseName("IValueConverter")));
-
-            ThrowStatementSyntax Throw()
-            {
-                return (ThrowStatementSyntax)generator.ThrowStatement(
-                    generator.ObjectCreationExpression(
-                        ParseTypeName("System.NotSupportedException"),
-                        SyntaxFactory.Argument(
-                            expression: SyntaxFactory.InterpolatedStringExpression(
-                                stringStartToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
-                                contents: SyntaxFactory.List(
-                                    new InterpolatedStringContentSyntax[]
-                                    {
-                                    SyntaxFactory.Interpolation(
-                                        openBraceToken: SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
-                                        expression: (ExpressionSyntax)generator.NameOfExpression(SyntaxFactory.ParseTypeName(containingTypeName)),
-                                        alignmentClause: default,
-                                        formatClause: default,
-                                        closeBraceToken: SyntaxFactory.Token(SyntaxKind.CloseBraceToken)),
-                                    SyntaxFactory.InterpolatedStringText(
-                                        textToken: SyntaxFactory.Token(
-                                            leading: default,
-                                            kind: SyntaxKind.InterpolatedStringTextToken,
-                                            text: " can only be used in OneWay bindings",
-                                            valueText: " can only be used in OneWay bindings",
-                                            trailing: default)),
-                                    }),
-                                stringEndToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringEndToken)))));
-            }
         }
     }
 
@@ -216,36 +216,8 @@ internal class ImplementValueConverterFix : DocumentEditorCodeFixProvider
                         generator.ParameterDeclaration("parameter",   Object(nullableContext)),
                         generator.ParameterDeclaration("culture",     ParseTypeName("System.Globalization.CultureInfo")),
                     },
-                    statements: new[] { Throw() }))
+                    statements: new[] { ThrowNotSupportedException(containingTypeName, generator) }))
                 .WithExplicitInterfaceSpecifier(SyntaxFactory.ExplicitInterfaceSpecifier(SyntaxFactory.ParseName("System.Windows.Data.IMultiValueConverter").WithSimplifiedNames()));
-
-            ThrowStatementSyntax Throw()
-            {
-                return (ThrowStatementSyntax)generator.ThrowStatement(
-                    generator.ObjectCreationExpression(
-                        ParseTypeName("System.NotSupportedException"),
-                        SyntaxFactory.Argument(
-                            expression: SyntaxFactory.InterpolatedStringExpression(
-                                stringStartToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
-                                contents: SyntaxFactory.List(
-                                    new InterpolatedStringContentSyntax[]
-                                    {
-                                    SyntaxFactory.Interpolation(
-                                        openBraceToken: SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
-                                        expression: (ExpressionSyntax)generator.NameOfExpression(SyntaxFactory.ParseTypeName(containingTypeName)),
-                                        alignmentClause: default,
-                                        formatClause: default,
-                                        closeBraceToken: SyntaxFactory.Token(SyntaxKind.CloseBraceToken)),
-                                    SyntaxFactory.InterpolatedStringText(
-                                        textToken: SyntaxFactory.Token(
-                                            leading: default,
-                                            kind: SyntaxKind.InterpolatedStringTextToken,
-                                            text: " can only be used in OneWay bindings",
-                                            valueText: " can only be used in OneWay bindings",
-                                            trailing: default)),
-                                    }),
-                                stringEndToken: SyntaxFactory.Token(SyntaxKind.InterpolatedStringEndToken)))));
-            }
         }
     }
 }
