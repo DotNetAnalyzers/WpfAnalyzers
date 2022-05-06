@@ -49,7 +49,8 @@ internal class WPF0041SetMutableUsingSetCurrentValue : DiagnosticAnalyzer
         static bool IsIgnored(IPropertySymbol property)
         {
             return property == KnownSymbols.FrameworkElement.DataContext ||
-                   property == KnownSymbols.FrameworkElement.Style;
+                   property == KnownSymbols.FrameworkElement.Style ||
+                   property.DeclaredAccessibility == Accessibility.Private;
         }
     }
 
