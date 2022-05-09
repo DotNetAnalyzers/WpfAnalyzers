@@ -92,5 +92,40 @@ namespace N
 ";
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [Test]
+        public static void CoerceValueCallback()
+        {
+            var code = @"
+#pragma warning disable WPF0023
+namespace N;
+
+using System;
+using System.Windows;
+
+public class Chart : FrameworkElement
+{
+    /// <summary>Identifies the <see cref=""Time""/> dependency property.</summary>
+    public static readonly DependencyProperty TimeProperty = DependencyProperty.Register(
+        nameof(Time),
+        typeof(DateTimeOffset),
+        typeof(Chart),
+        new FrameworkPropertyMetadata(
+            default(DateTimeOffset),
+            FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            propertyChangedCallback: null,
+            coerceValueCallback: (_, o) => Min(DateTimeOffset.Now, (DateTimeOffset)o)));
+
+    public DateTimeOffset Time
+    {
+        get => (DateTimeOffset)this.GetValue(TimeProperty);
+        set => this.SetValue(TimeProperty, value);
+    }
+	
+	private static DateTimeOffset Min(DateTimeOffset x, DateTimeOffset y) => x < y ? x : y;
+}
+";
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

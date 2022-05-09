@@ -372,4 +372,72 @@ namespace N
 }";
         RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
+
+    [TestCase("private static object? WrongName(DependencyObject d, object? baseValue)", "private static object? CoerceValue(DependencyObject d, object? baseValue)")]
+    [TestCase("private static object? WrongName(DependencyObject d, object baseValue)", "private static object? CoerceValue(DependencyObject d, object baseValue)")]
+    [TestCase("private static object WrongName(DependencyObject d, object? baseValue)",  "private static object CoerceValue(DependencyObject d, object? baseValue)")]
+    public static void Nullable(string beforeSignature, string afterSignature)
+    {
+        var before = @"
+#pragma warning disable CS8603
+namespace N
+{
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(1, null, ↓WrongName));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static object? WrongName(DependencyObject d, object? baseValue)
+        {
+            return baseValue;
+        }
+    }
+}".AssertReplace("private static object? WrongName(DependencyObject d, object? baseValue)", beforeSignature);
+        var after = @"
+#pragma warning disable CS8603
+namespace N
+{
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl : Control
+    {
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
+            typeof(double),
+            typeof(FooControl),
+            new PropertyMetadata(1, null, CoerceValue));
+
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
+        }
+
+        private static object? CoerceValue(DependencyObject d, object? baseValue)
+        {
+            return baseValue;
+        }
+    }
+}".AssertReplace("private static object? CoerceValue(DependencyObject d, object? baseValue)", afterSignature);
+
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 }

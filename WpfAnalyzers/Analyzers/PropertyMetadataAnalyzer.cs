@@ -86,7 +86,10 @@ internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
                 if (propertyMetadata.CoerceValueArgument is { } coerceValueArgument &&
                     CoerceValueCallback.Match(coerceValueArgument, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
                 {
-                    if (TypeSymbolComparer.Equal(coerce.ContainingType, context.ContainingSymbol.ContainingType) &&
+                    if (coerce.Parameters.Length == 2 &&
+                        coerce.Parameters[0].Type == KnownSymbols.DependencyObject &&
+                        coerce.Parameters[1].Type == KnownSymbols.Object &&
+                        TypeSymbolComparer.Equal(coerce.ContainingType, context.ContainingSymbol.ContainingType) &&
                         !coerce.Name.IsParts("Coerce", registeredName))
                     {
                         using var walker = InvocationWalker.InContainingClass(coerce, context.SemanticModel, context.CancellationToken);
@@ -127,7 +130,10 @@ internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0023ConvertToLambda, coerceValueArgument.GetLocation()));
                         }
 
-                        if (context.SemanticModel.GetNullableContext(declaration.SpanStart).HasFlag(NullableContext.Enabled) &&
+                        if (coerce.Parameters.Length == 2 &&
+                            coerce.Parameters[0].Type == KnownSymbols.DependencyObject &&
+                            coerce.Parameters[1].Type == KnownSymbols.Object &&
+                            context.SemanticModel.GetNullableContext(declaration.SpanStart).HasFlag(NullableContext.Enabled) &&
                             declaration.ParameterList is { Parameters: { Count: 2 } parameters } &&
                             parameters[1] is { Type: { } type and not NullableTypeSyntax })
                         {

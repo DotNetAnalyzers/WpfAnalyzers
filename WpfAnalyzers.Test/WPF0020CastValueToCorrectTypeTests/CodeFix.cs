@@ -982,4 +982,38 @@ namespace N
 }";
         RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooControlCode, before }, after);
     }
+
+    [Test]
+    public static void CoerceMinTime()
+    {
+        var code = @"
+namespace N;
+
+using System;
+using System.Windows;
+
+public class Chart : FrameworkElement
+{
+    /// <summary>Identifies the <see cref=""Time""/> dependency property.</summary>
+    public static readonly DependencyProperty TimeProperty = DependencyProperty.Register(
+        nameof(Time),
+        typeof(TimeSpan),
+        typeof(Chart),
+        new FrameworkPropertyMetadata(
+            default(TimeSpan),
+            FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            propertyChangedCallback: null,
+            coerceValueCallback: (_, o) => Min(DateTimeOffset.Now, (↓DateTimeOffset)o)));
+
+    public TimeSpan Time
+    {
+        get => (TimeSpan)this.GetValue(TimeProperty);
+        set => this.SetValue(TimeProperty, value);
+    }
+	
+	private static DateTimeOffset Min(DateTimeOffset x, DateTimeOffset y) => x < y ? x : y;
+}
+";
+        RoslynAssert.Diagnostics(Analyzer, Gu.Roslyn.Asserts.ExpectedDiagnostic.Create(Descriptors.WPF0020CastValueToCorrectType), code);
+    }
 }
