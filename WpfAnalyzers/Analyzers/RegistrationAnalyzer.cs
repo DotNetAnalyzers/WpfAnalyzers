@@ -36,7 +36,7 @@ internal class RegistrationAnalyzer : DiagnosticAnalyzer
             register.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName)
         {
             if (register.FindArgument(KnownSymbols.ValidateValueCallback) is { } validateValueCallback &&
-                Callback.Match(validateValueCallback, KnownSymbols.ValidateValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } identifier, Target: { } target })
+                ValidateValueCallback.Match(validateValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } identifier, Target: { } target })
             {
                 if (TypeSymbolComparer.Equal(target.ContainingType, context.ContainingSymbol.ContainingType) &&
                     !MatchesValidateValueCallbackName(validateValueCallback, target, context))
