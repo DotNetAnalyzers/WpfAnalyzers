@@ -84,7 +84,7 @@ internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
                 }
 
                 if (propertyMetadata.CoerceValueArgument is { } coerceValueArgument &&
-                    Callback.Match(coerceValueArgument, KnownSymbols.CoerceValueCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
+                    CoerceValueCallback.Match(coerceValueArgument, context.SemanticModel, context.CancellationToken) is { Identifier: { } coerceNode, Target: { } coerce })
                 {
                     if (TypeSymbolComparer.Equal(coerce.ContainingType, context.ContainingSymbol.ContainingType) &&
                         !coerce.Name.IsParts("Coerce", registeredName))
