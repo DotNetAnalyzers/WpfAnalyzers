@@ -38,7 +38,7 @@ internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
             if (propertyMetadata.FindRegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
             {
                 if (propertyMetadata.PropertyChangedArgument is { } propertyChangeArgument &&
-                    Callback.Match(propertyChangeArgument, KnownSymbols.PropertyChangedCallback, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
+                    PropertyChangedCallback.Match(propertyChangeArgument, context.SemanticModel, context.CancellationToken) is { Identifier: { } onPropertyChangedNode, Target: { } onPropertyChanged })
                 {
                     if (TypeSymbolComparer.Equal(onPropertyChanged.ContainingType, context.ContainingSymbol.ContainingType) &&
                         !onPropertyChanged.Name.IsParts("On", registeredName, "Changed") &&
