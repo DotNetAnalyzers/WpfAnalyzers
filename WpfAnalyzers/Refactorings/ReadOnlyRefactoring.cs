@@ -23,10 +23,8 @@ internal class ReadOnlyRefactoring : CodeRefactoringProvider
                                       .ConfigureAwait(false);
         var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                          .ConfigureAwait(false);
-        if (syntaxRoot is { } &&
-            syntaxRoot.FindNode(context.Span) is { } node &&
-            node.FirstAncestorOrSelf<FieldDeclarationSyntax>() is { Parent: ClassDeclarationSyntax containingClass } field &&
-            field is { Declaration: { Type: { } type, Variables: { Count: 1 } variables } } &&
+        if (syntaxRoot?.FindNode(context.Span) is { } node &&
+            node.FirstAncestorOrSelf<FieldDeclarationSyntax>() is { Declaration: { Type: { } type, Variables: { Count: 1 } variables }, Parent: ClassDeclarationSyntax containingClass } &&
             variables[0] is { Initializer.Value: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax methodName } } register } variable &&
             semanticModel is { })
         {
