@@ -66,6 +66,7 @@ Roslyn analyzers for WPF.
 | [WPF0085](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0085.md)| Target of [XamlSetTypeConverter] should exist and have correct signature
 | [WPF0090](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0090.md)| Name the invoked method OnEventName
 | [WPF0091](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0091.md)| Name the invoked method OnEventName
+| [WPF0092](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0092.md)| Use correct handler type
 | [WPF0100](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0100.md)| Backing field for a RoutedEvent should match registered name
 | [WPF0101](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0101.md)| Containing type should be used as registered owner
 | [WPF0102](https://github.com/DotNetAnalyzers/WpfAnalyzers/tree/master/documentation/WPF0102.md)| Name of the event should match registered name

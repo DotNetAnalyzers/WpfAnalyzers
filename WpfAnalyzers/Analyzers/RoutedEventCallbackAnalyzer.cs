@@ -1,5 +1,6 @@
 ﻿namespace WpfAnalyzers;
 
+using System;
 using System.Collections.Immutable;
 
 using Gu.Roslyn.AnalyzerExtensions;
@@ -14,20 +15,20 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
         Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
-        Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
+        Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+        Descriptors.WPF0092WrongDelegateType);
 
     public override void Initialize(AnalysisContext context)
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
-        context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.Argument);
+        context.RegisterSyntaxNodeAction(x => Handle(x), SyntaxKind.InvocationExpression);
     }
 
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { } } argument &&
-            argument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
+            context.Node is InvocationExpressionSyntax { } invocation)
         {
             if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } registerClassHandler)
             {
@@ -39,6 +40,14 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                             location,
                             properties,
                             expectedName));
+                }
+
+                if (WrongType(registerClassHandler.EventArgument, registerClassHandler.DelegateArgument))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0092WrongDelegateType,
+                            registerClassHandler.DelegateArgument.GetLocation()));
                 }
             }
             else if (EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } addHandler)
@@ -52,6 +61,14 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                             properties,
                             expectedName));
                 }
+
+                if (WrongType(addHandler.EventArgument, addHandler.DelegateArgument))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0092WrongDelegateType,
+                            addHandler.DelegateArgument.GetLocation()));
+                }
             }
             else if (EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } removeHandler)
             {
@@ -63,6 +80,14 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                             location,
                             properties,
                             expectedName));
+                }
+
+                if (WrongType(removeHandler.EventArgument, removeHandler.DelegateArgument))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0092WrongDelegateType,
+                            removeHandler.DelegateArgument.GetLocation()));
                 }
             }
 
@@ -89,6 +114,7 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                 {
                     return callbackArg switch
                     {
+                        { Expression: IdentifierNameSyntax { Identifier.ValueText: "value" } } => null,
                         { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } }
                             => Identifier(arguments[0].Expression),
                         _ => Identifier(callbackArg.Expression),
@@ -104,6 +130,19 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                         _ => null,
                     };
                 }
+            }
+
+            bool WrongType(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+            {
+                if (context.SemanticModel.GetSymbolSafe(eventArgument.Expression, context.CancellationToken) is { } routedSymbol &&
+                    routedSymbol.Name.EndsWith("Event", StringComparison.Ordinal) &&
+                    routedSymbol.ContainingType.TryFindEvent(routedSymbol.Name.Substring(0, routedSymbol.Name.Length - 5), out var accessor) &&
+                    context.SemanticModel.GetType(callbackArg.Expression, context.CancellationToken) is { } actualType)
+                {
+                    return !TypeSymbolComparer.Equal(actualType, accessor.Type);
+                }
+
+                return false;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29201.188
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{A1A96555-15B1-4A0C-ADC1-059CEAA3F788}"
 	ProjectSection(SolutionItems) = preProject
@@ -69,6 +69,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6
 		documentation\WPF0085.md = documentation\WPF0085.md
 		documentation\WPF0090.md = documentation\WPF0090.md
 		documentation\WPF0091.md = documentation\WPF0091.md
+		documentation\WPF0092.md = documentation\WPF0092.md
 		documentation\WPF0100.md = documentation\WPF0100.md
 		documentation\WPF0101.md = documentation\WPF0101.md
 		documentation\WPF0102.md = documentation\WPF0102.md

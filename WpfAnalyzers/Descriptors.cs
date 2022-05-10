@@ -483,6 +483,15 @@ internal static class Descriptors
         isEnabledByDefault: true,
         description: "Name the invoked method OnEventName.");
 
+    internal static readonly DiagnosticDescriptor WPF0092WrongDelegateType = Create(
+        id: "WPF0092",
+        title: "Use correct handler type",
+        messageFormat: "Use correct handler type",
+        category: AnalyzerCategory.RoutedEvent,
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: "Use correct handler type.");
+
     internal static readonly DiagnosticDescriptor WPF0100BackingFieldShouldMatchRegisteredName = Create(
         id: "WPF0100",
         title: "Backing field for a RoutedEvent should match registered name",

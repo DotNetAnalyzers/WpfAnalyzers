@@ -20,10 +20,10 @@ namespace N
     {
         static FooControl()
         {
-            EventManager.RegisterClassHandler(typeof(TextBlock), SizeChangedEvent, new RoutedEventHandler(OnSizeChanged));
+            EventManager.RegisterClassHandler(typeof(TextBlock), SizeChangedEvent, new SizeChangedEventHandler(OnSizeChanged));
         }
 
-        private static void OnSizeChanged(object sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             throw new System.NotImplementedException();
         }
@@ -45,10 +45,10 @@ namespace N
     {
         static FooControl()
         {
-            EventManager.RegisterClassHandler(typeof(TextBlock), SizeChangedEvent, new RoutedEventHandler(OnSizeChanged), true);
+            EventManager.RegisterClassHandler(typeof(TextBlock), SizeChangedEvent, new SizeChangedEventHandler(OnSizeChanged), true);
         }
 
-        private static void OnSizeChanged(object sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             throw new System.NotImplementedException();
         }

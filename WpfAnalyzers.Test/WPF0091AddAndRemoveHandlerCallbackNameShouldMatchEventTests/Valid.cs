@@ -20,10 +20,10 @@ namespace N
     {
         public FooControl()
         {
-            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(OnSizeChanged));
+            this.AddHandler(SizeChangedEvent, new SizeChangedEventHandler(OnSizeChanged));
         }
 
-        private static void OnSizeChanged(object? sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object? sender, SizeChangedEventArgs e)
         {
             throw new System.NotImplementedException();
         }
@@ -45,10 +45,10 @@ namespace N
     {
         public FooControl()
         {
-            this.AddHandler(SizeChangedEvent, new RoutedEventHandler(OnSizeChanged));
+            this.AddHandler(SizeChangedEvent, new SizeChangedEventHandler(OnSizeChanged));
         }
 
-        private static void OnSizeChanged(object? sender, RoutedEventArgs e)
+        private static void OnSizeChanged(object? sender, SizeChangedEventArgs e)
         {
             throw new System.NotImplementedException();
         }
