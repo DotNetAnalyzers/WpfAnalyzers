@@ -287,4 +287,36 @@ namespace N
 
         RoslynAssert.Valid(Analyzer, code);
     }
+
+    [Test]
+    public static void Issue302()
+    {
+        var code = @"
+namespace N
+{
+    using System.Windows;
+    using System.Windows.Controls;
+
+    public class FooControl
+    {
+        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
+            ""Bar"",
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
+
+        public FooControl()
+        {
+            this.InitializeComponent();
+        }
+
+        public int Bar
+        {
+            get { return (int)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+    }
+}";
+        RoslynAssert.NoAnalyzerDiagnostics(Analyzer, code);
+    }
 }

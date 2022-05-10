@@ -1,7 +1,9 @@
 ﻿namespace WpfAnalyzers;
 
 using System.Collections.Immutable;
+
 using Gu.Roslyn.AnalyzerExtensions;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,9 +46,29 @@ internal class WPF0015RegisteredOwnerTypeMustBeDependencyObject : DiagnosticAnal
     private static void HandleArgument(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
     {
         if (argument.TryGetTypeofValue(context.SemanticModel, context.CancellationToken, out var ownerType) &&
-            !ownerType.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
+            !ownerType.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation) &&
+            !IsUserControl())
         {
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.WPF0015RegisteredOwnerTypeMustBeDependencyObject, argument.GetLocation(), KnownSymbols.DependencyProperty.RegisterAttached.Name));
+        }
+
+        bool IsUserControl() => context.Node.FirstAncestor<ClassDeclarationSyntax>() is { } classDeclaration &&
+                                !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                                classDeclaration.TryFindConstructor(x => x.ParameterList.Parameters.Count == 0, out var ctor) &&
+                                InvokesInitializeComponent(ctor);
+
+        bool InvokesInitializeComponent(ConstructorDeclarationSyntax ctor)
+        {
+            using var walker = Gu.Roslyn.AnalyzerExtensions.InvocationWalker.Borrow(ctor);
+            foreach (var candidate in walker.Invocations)
+            {
+                if (candidate.MethodName() == "InitializeComponent")
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
