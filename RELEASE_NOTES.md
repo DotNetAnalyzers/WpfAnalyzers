@@ -1,3 +1,8 @@
+#### 4.1.0
+* BUGFIX: WPF0023 when missing explicit : UserControl
+* FEATURE: Check delegate types
+* FEATURE: Refactor event to routed event
+
 #### 4.0.2
 * BUGFIX: WPF0012 Allow accessor property to be nullable
 * BUGFIX: WPF0073 don't warn when generic
