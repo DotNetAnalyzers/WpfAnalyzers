@@ -110,10 +110,14 @@ internal static class EventManager
             this.Target = target;
         }
 
+        internal ArgumentSyntax EventArgument => this.Invocation.ArgumentList.Arguments[0];
+
+        internal ArgumentSyntax DelegateArgument => this.Invocation.ArgumentList.Arguments[1];
+
         internal static AddHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (invocation is { ArgumentList.Arguments: { } arguments } &&
-                (arguments.Count == 2 || arguments.Count == 3) &&
+                arguments.Count is 2 or 3 &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "AddHandler" &&
                 semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
@@ -137,6 +141,10 @@ internal static class EventManager
             this.Invocation = invocation;
             this.Target = target;
         }
+
+        internal ArgumentSyntax EventArgument => this.Invocation.ArgumentList.Arguments[0];
+
+        internal ArgumentSyntax DelegateArgument => this.Invocation.ArgumentList.Arguments[1];
 
         internal static RemoveHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
