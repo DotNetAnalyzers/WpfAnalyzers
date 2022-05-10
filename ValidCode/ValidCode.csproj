@@ -14,8 +14,4 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Themes\Generic.xaml" Generator="MSBuild:Compile" SubType="Designer" />
-  </ItemGroup>
 </Project>
