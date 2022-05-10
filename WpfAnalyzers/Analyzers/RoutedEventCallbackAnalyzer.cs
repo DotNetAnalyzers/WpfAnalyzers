@@ -32,62 +32,65 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
         {
             if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } registerClassHandler)
             {
-                if (ShouldRename(registerClassHandler.Target, registerClassHandler.EventArgument, registerClassHandler.DelegateArgument) is var (location, properties, expectedName))
+                if (ShouldRename(registerClassHandler.Target, registerClassHandler.EventArgument, registerClassHandler.DelegateArgument) is var (location, nameProperties, expectedName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
                             location,
-                            properties,
+                            nameProperties,
                             expectedName));
                 }
 
-                if (WrongType(registerClassHandler.EventArgument, registerClassHandler.DelegateArgument))
+                if (WrongType(registerClassHandler.EventArgument, registerClassHandler.DelegateArgument) is { } typeProperties)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0092WrongDelegateType,
-                            registerClassHandler.DelegateArgument.GetLocation()));
+                            registerClassHandler.DelegateArgument.GetLocation(),
+                            typeProperties));
                 }
             }
             else if (EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } addHandler)
             {
-                if (ShouldRename(addHandler.Target, addHandler.EventArgument, addHandler.DelegateArgument) is var (location, properties, expectedName))
+                if (ShouldRename(addHandler.Target, addHandler.EventArgument, addHandler.DelegateArgument) is var (location, nameProperties, expectedName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
                             location,
-                            properties,
+                            nameProperties,
                             expectedName));
                 }
 
-                if (WrongType(addHandler.EventArgument, addHandler.DelegateArgument))
+                if (WrongType(addHandler.EventArgument, addHandler.DelegateArgument) is { } typeProperties)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0092WrongDelegateType,
-                            addHandler.DelegateArgument.GetLocation()));
+                            addHandler.DelegateArgument.GetLocation(),
+                            typeProperties));
                 }
             }
             else if (EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } removeHandler)
             {
-                if (ShouldRename(removeHandler.Target, removeHandler.EventArgument, removeHandler.DelegateArgument) is var (location, properties, expectedName))
+                if (ShouldRename(removeHandler.Target, removeHandler.EventArgument, removeHandler.DelegateArgument) is var (location, nameProperties, expectedName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
                             location,
-                            properties,
+                            nameProperties,
                             expectedName));
                 }
 
-                if (WrongType(removeHandler.EventArgument, removeHandler.DelegateArgument))
+                if (WrongType(removeHandler.EventArgument, removeHandler.DelegateArgument) is { } typeProperties)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0092WrongDelegateType,
-                            removeHandler.DelegateArgument.GetLocation()));
+                            removeHandler.DelegateArgument.GetLocation(),
+                            typeProperties));
                 }
             }
 
@@ -132,17 +135,18 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                 }
             }
 
-            bool WrongType(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+            ImmutableDictionary<string, string?>? WrongType(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
             {
                 if (context.SemanticModel.GetSymbolSafe(eventArgument.Expression, context.CancellationToken) is { } routedSymbol &&
                     routedSymbol.Name.EndsWith("Event", StringComparison.Ordinal) &&
                     routedSymbol.ContainingType.TryFindEvent(routedSymbol.Name.Substring(0, routedSymbol.Name.Length - 5), out var accessor) &&
-                    context.SemanticModel.GetType(callbackArg.Expression, context.CancellationToken) is { } actualType)
+                    context.SemanticModel.GetType(callbackArg.Expression, context.CancellationToken) is { } actualType &&
+                    !TypeSymbolComparer.Equal(actualType, accessor.Type))
                 {
-                    return !TypeSymbolComparer.Equal(actualType, accessor.Type);
+                    return ImmutableDictionary<string, string?>.Empty.Add(nameof(ITypeSymbol), accessor.Type.MetadataName);
                 }
 
-                return false;
+                return null;
             }
         }
     }

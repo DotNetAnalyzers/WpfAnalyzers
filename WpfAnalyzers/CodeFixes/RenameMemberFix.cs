@@ -41,7 +41,7 @@ internal class RenameMemberFix : CodeFixProvider
         foreach (var diagnostic in context.Diagnostics)
         {
             if (syntaxRoot is { } &&
-                syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is { Parent: { } parent } token &&
+                syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is { Parent: { } } token &&
                 token.IsKind(SyntaxKind.IdentifierToken) &&
                 semanticModel is { } &&
                 semanticModel.TryGetSymbol(token, context.CancellationToken, out ISymbol? symbol) &&
