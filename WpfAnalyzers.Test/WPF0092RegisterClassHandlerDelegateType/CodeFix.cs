@@ -73,4 +73,28 @@ public static class C
 }";
         RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
+
+    [Test]
+    public static void CastAction()
+    {
+        var code = @"
+namespace N;
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
+public static class C
+{
+    static C()
+    {
+        EventManager.RegisterClassHandler(
+            typeof(PasswordBox),
+            PasswordBox.PasswordChangedEvent,
+            ↓(Action<object, RoutedEventArgs>)((sender, e) => { }));
+    }
+}";
+
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 }
