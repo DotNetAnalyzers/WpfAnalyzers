@@ -54,23 +54,15 @@ internal static class EventManager
             this.Target = target;
         }
 
-        internal ArgumentSyntax? EventArgument
-        {
-            get
-            {
-                if (this.Invocation.TryGetArgumentAtIndex(1, out var argument))
-                {
-                    return argument;
-                }
+        internal ArgumentSyntax TypeArgument => this.Invocation.ArgumentList.Arguments[0];
 
-                return null;
-            }
-        }
+        internal ArgumentSyntax EventArgument => this.Invocation.ArgumentList.Arguments[1];
+
+        internal ArgumentSyntax DelegateArgument => this.Invocation.ArgumentList.Arguments[2];
 
         internal static RegisterClassHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList.Arguments: { } arguments } &&
-                (arguments.Count == 3 || arguments.Count == 4) &&
+            if (invocation is { ArgumentList.Arguments: { Count: 3 or 4 } } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterClassHandler, cancellationToken, out var method))
             {
                 return new RegisterClassHandler(invocation, method);
