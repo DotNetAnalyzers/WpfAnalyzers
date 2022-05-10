@@ -15,7 +15,7 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
         Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
-        Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+        Descriptors.WPF0091CallbackNameShouldMatchEvent,
         Descriptors.WPF0092WrongDelegateType);
 
     public override void Initialize(AnalysisContext context)
@@ -28,7 +28,7 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax { } invocation)
+            context.Node is InvocationExpressionSyntax invocation)
         {
             if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } registerClassHandler)
             {
@@ -57,7 +57,7 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+                            Descriptors.WPF0091CallbackNameShouldMatchEvent,
                             location,
                             nameProperties,
                             expectedName));
@@ -78,7 +78,7 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+                            Descriptors.WPF0091CallbackNameShouldMatchEvent,
                             location,
                             nameProperties,
                             expectedName));
@@ -113,16 +113,17 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
 
                 return null;
 
-                IdentifierNameSyntax? CallbackIdentifier()
+                IdentifierNameSyntax? CallbackIdentifier() => callbackArg switch
                 {
-                    return callbackArg switch
-                    {
-                        { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } }
-                            when arguments[0].Expression is IdentifierNameSyntax name
-                            => name,
-                        _ => null,
-                    };
-                }
+                    { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } }
+                        => arguments[0].Expression switch
+                        {
+                            IdentifierNameSyntax name => name,
+                            ParenthesizedLambdaExpressionSyntax { Body: InvocationExpressionSyntax inner } => inner.Expression as IdentifierNameSyntax,
+                            _ => null,
+                        },
+                    _ => null,
+                };
 
                 IdentifierNameSyntax? Identifier(ExpressionSyntax expression)
                 {

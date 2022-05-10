@@ -25,7 +25,7 @@ internal class RenameMemberFix : CodeFixProvider
         Descriptors.WPF0006CoerceValueCallbackShouldMatchRegisteredName.Id,
         Descriptors.WPF0007ValidateValueCallbackCallbackShouldMatchRegisteredName.Id,
         Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent.Id,
-        Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent.Id,
+        Descriptors.WPF0091CallbackNameShouldMatchEvent.Id,
         Descriptors.WPF0100BackingFieldShouldMatchRegisteredName.Id,
         Descriptors.WPF0102EventDeclarationName.Id);
 
@@ -33,15 +33,11 @@ internal class RenameMemberFix : CodeFixProvider
 
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var document = context.Document;
-        var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken)
-                                       .ConfigureAwait(false);
-        var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+        var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
         foreach (var diagnostic in context.Diagnostics)
         {
-            if (syntaxRoot is { } &&
-                syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is { Parent: { } } token &&
+            if (syntaxRoot?.FindToken(diagnostic.Location.SourceSpan.Start) is { Parent: { } } token &&
                 token.IsKind(SyntaxKind.IdentifierToken) &&
                 semanticModel is { } &&
                 semanticModel.TryGetSymbol(token, context.CancellationToken, out ISymbol? symbol) &&
@@ -51,7 +47,7 @@ internal class RenameMemberFix : CodeFixProvider
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         $"Rename to: '{newName}'.",
-                        cancellationToken => Renamer.RenameSymbolAsync(document.Project.Solution, symbol, newName, document.Project.Solution.Workspace.Options, cancellationToken),
+                        cancellationToken => Renamer.RenameSymbolAsync(context.Document.Project.Solution, symbol, newName, context.Document.Project.Solution.Workspace.Options, cancellationToken),
                         this.GetType().FullName),
                     diagnostic);
             }

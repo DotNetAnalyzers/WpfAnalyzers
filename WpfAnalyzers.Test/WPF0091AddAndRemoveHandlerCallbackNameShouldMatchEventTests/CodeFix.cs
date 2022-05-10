@@ -7,7 +7,7 @@ public static class CodeFix
 {
     private static readonly RoutedEventCallbackAnalyzer Analyzer = new();
     private static readonly RenameMemberFix Fix = new();
-    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent);
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0091CallbackNameShouldMatchEvent);
 
     [Test]
     public static void MessageAddHandler()
@@ -61,8 +61,9 @@ namespace N
         RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Rename to OnSizeChanged to match the event"), code);
     }
 
-    [Test]
-    public static void WhenCorrectNameAddHandlerSizeChangedEvent()
+    [TestCase("new RoutedEventHandler(↓WrongName)", "new RoutedEventHandler(OnSizeChanged)")]
+    [TestCase("new RoutedEventHandler((o, e) => ↓WrongName(o, e))", "new RoutedEventHandler((o, e) => OnSizeChanged(o, e))")]
+    public static void WhenCorrectNameAddHandlerSizeChangedEvent(string beforeExpression, string afterExpression)
     {
         var before = @"
 namespace N
@@ -82,7 +83,7 @@ namespace N
             throw new System.NotImplementedException();
         }
     }
-}";
+}".AssertReplace("new RoutedEventHandler(↓WrongName)", beforeExpression);
 
         var after = @"
 namespace N
@@ -102,12 +103,13 @@ namespace N
             throw new System.NotImplementedException();
         }
     }
-}";
+}".AssertReplace("new RoutedEventHandler(OnSizeChanged)", afterExpression);
         RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 
-    [Test]
-    public static void WhenCorrectNameRemoveHandlerSizeChangedEvent()
+    [TestCase("new RoutedEventHandler(↓WrongName)",                 "new RoutedEventHandler(OnSizeChanged)")]
+    [TestCase("new RoutedEventHandler((o, e) => ↓WrongName(o, e))", "new RoutedEventHandler((o, e) => OnSizeChanged(o, e))")]
+    public static void WhenCorrectNameRemoveHandlerSizeChangedEvent(string beforeExpression, string afterExpression)
     {
         var before = @"
 namespace N
@@ -127,7 +129,7 @@ namespace N
             throw new System.NotImplementedException();
         }
     }
-}";
+}".AssertReplace("new RoutedEventHandler(↓WrongName)", beforeExpression);
 
         var after = @"
 namespace N
@@ -147,7 +149,7 @@ namespace N
             throw new System.NotImplementedException();
         }
     }
-}";
+}".AssertReplace("new RoutedEventHandler(OnSizeChanged)", afterExpression);
         RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 

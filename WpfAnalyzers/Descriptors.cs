@@ -474,7 +474,7 @@ internal static class Descriptors
         isEnabledByDefault: true,
         description: "Name the invoked method OnEventName.");
 
-    internal static readonly DiagnosticDescriptor WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent = Create(
+    internal static readonly DiagnosticDescriptor WPF0091CallbackNameShouldMatchEvent = Create(
         id: "WPF0091",
         title: "Name the invoked method OnEventName",
         messageFormat: "Rename to {0} to match the event",
