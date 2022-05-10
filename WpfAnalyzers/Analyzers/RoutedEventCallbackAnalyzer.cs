@@ -26,63 +26,81 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { Parent: ArgumentSyntax handlerArgument } objectCreation } &&
-            objectCreation.TrySingleArgument(out var callbackArg) &&
-            callbackArg.Expression is IdentifierNameSyntax &&
-            handlerArgument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
+            context.Node is ArgumentSyntax { Expression: ObjectCreationExpressionSyntax { } } argument &&
+            argument.FirstAncestor<InvocationExpressionSyntax>() is { } invocation)
         {
-            if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
+            if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } registerClassHandler)
             {
-                if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
-                    CheckName(eventArgument, callbackArg) is var (expectedName, properties))
+                if (ShouldRename(registerClassHandler.Target, registerClassHandler.EventArgument, registerClassHandler.DelegateArgument) is var (location, properties, expectedName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
-                            callbackArg.GetLocation(),
+                            location,
                             properties,
                             expectedName));
                 }
             }
-            else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
-                      EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
-                     invocation.TryGetArgumentAtIndex(0, out eventArgument))
+            else if (EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } addHandler)
             {
-                if (CheckName(eventArgument, callbackArg) is var (expectedName, properties))
+                if (ShouldRename(addHandler.Target, addHandler.EventArgument, addHandler.DelegateArgument) is var (location, properties, expectedName))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
-                            callbackArg.GetLocation(),
+                            location,
+                            properties,
+                            expectedName));
+                }
+            }
+            else if (EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } removeHandler)
+            {
+                if (ShouldRename(removeHandler.Target, removeHandler.EventArgument, removeHandler.DelegateArgument) is var (location, properties, expectedName))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
+                            location,
                             properties,
                             expectedName));
                 }
             }
 
-            static (string ExpectedName, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
+            (Location Location, ImmutableDictionary<string, string?> Properties, string ExpectedName)? ShouldRename(IMethodSymbol target, ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
             {
-                if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
-                    Identifier() is { } identifier)
+                if (CallbackIdentifier() is { } handler &&
+                    Identifier(eventArgument.Expression) is { } eventField)
                 {
-                    if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
+                    if (EventManager.IsMatch(handler.Identifier.ValueText, eventField.Identifier.ValueText) == false &&
+                        Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { })
                     {
-                        if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
+                        if (EventManager.TryGetExpectedCallbackName(eventField.Identifier.ValueText, out var expectedName))
                         {
-                            return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
+                            return (handler.GetLocation(), ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName), expectedName);
                         }
 
-                        return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
+                        return (handler.GetLocation(), ImmutableDictionary<string, string?>.Empty, "On" + eventField.Identifier.ValueText);
                     }
                 }
 
                 return null;
 
-                IdentifierNameSyntax? Identifier()
+                IdentifierNameSyntax? CallbackIdentifier()
                 {
-                    return eventArgument switch
+                    return callbackArg switch
                     {
-                        { Expression: IdentifierNameSyntax name } => name,
-                        { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
+                        { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } }
+                            => Identifier(arguments[0].Expression),
+                        _ => Identifier(callbackArg.Expression),
+                    };
+                }
+
+                IdentifierNameSyntax? Identifier(ExpressionSyntax expression)
+                {
+                    return expression switch
+                    {
+                        IdentifierNameSyntax name => name,
+                        MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } => name,
                         _ => null,
                     };
                 }
