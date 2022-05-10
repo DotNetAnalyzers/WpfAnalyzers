@@ -117,10 +117,10 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                 {
                     return callbackArg switch
                     {
-                        { Expression: IdentifierNameSyntax { Identifier.ValueText: "value" } } => null,
                         { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } }
-                            => Identifier(arguments[0].Expression),
-                        _ => Identifier(callbackArg.Expression),
+                            when arguments[0].Expression is IdentifierNameSyntax name
+                            => name,
+                        _ => null,
                     };
                 }
 

@@ -20,7 +20,8 @@ public static class ReproBox
                             .ToArray();
 
     private static readonly Solution Solution = CodeFactory.CreateSolution(
-        new FileInfo("C:\\Git\\_GuOrg\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"));
+        new FileInfo("C:\\Git\\_GuOrg\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D\\Gu.Wpf.DataGrid2D.csproj"),
+        Settings.Default.WithCompilationOptions(Settings.Default.CompilationOptions.WithSuppressedDiagnostics("CS8019", "CS8602", "CS8603", "CS8604", "CS8622", "CS8765")));
 
     [TestCaseSource(nameof(AllAnalyzers))]
     public static void SolutionRepro(DiagnosticAnalyzer analyzer)
@@ -35,7 +36,6 @@ public static class ReproBox
 namespace N
 {
     using System;
-    using Window = System.Windows.Window;
 
     class C
     {
