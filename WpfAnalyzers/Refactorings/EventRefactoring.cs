@@ -154,6 +154,7 @@ internal class EventRefactoring : CodeRefactoringProvider
 
             static EventDeclarationSyntax Event(EventFieldDeclarationSyntax eventDeclaration)
             {
+                var leadingWhitespace = eventDeclaration.LeadingWhitespace() ?? "        ";
                 return SyntaxFactory.EventDeclaration(
                                attributeLists: default,
                                modifiers: eventDeclaration.Modifiers,
@@ -166,7 +167,7 @@ internal class EventRefactoring : CodeRefactoringProvider
                                    trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
                                accessorList: SyntaxFactory.AccessorList(
                                    openBraceToken: SyntaxFactory.Token(
-                                       leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(eventDeclaration.LeadingWhitespace())),
+                                       leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(leadingWhitespace)),
                                        kind: SyntaxKind.OpenBraceToken,
                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed)),
                                    accessors: SyntaxFactory.List(
@@ -177,7 +178,7 @@ internal class EventRefactoring : CodeRefactoringProvider
                             attributeLists: default,
                             modifiers: default,
                             keyword: SyntaxFactory.Token(
-                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(eventDeclaration.LeadingWhitespace() + new string(' ', 4))),
+                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(leadingWhitespace + new string(' ', 4))),
                                 kind: SyntaxKind.AddKeyword,
                                 trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
                             body: default,
@@ -218,7 +219,7 @@ internal class EventRefactoring : CodeRefactoringProvider
                             attributeLists: default,
                             modifiers: default,
                             keyword: SyntaxFactory.Token(
-                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(eventDeclaration.LeadingWhitespace() + new string(' ', 4))),
+                                leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(leadingWhitespace + new string(' ', 4))),
                                 kind: SyntaxKind.RemoveKeyword,
                                 trailing: SyntaxFactory.TriviaList(SyntaxFactory.Space)),
                             body: default,
@@ -256,7 +257,7 @@ internal class EventRefactoring : CodeRefactoringProvider
                                 trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))),
                                        }),
                                    closeBraceToken: SyntaxFactory.Token(
-                                       leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(eventDeclaration.LeadingWhitespace())),
+                                       leading: SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(leadingWhitespace)),
                                        kind: SyntaxKind.CloseBraceToken,
                                        trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))),
                                semicolonToken: default);
