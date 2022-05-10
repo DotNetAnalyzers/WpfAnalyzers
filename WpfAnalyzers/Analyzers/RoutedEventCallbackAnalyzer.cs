@@ -34,59 +34,59 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
             if (EventManager.RegisterClassHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { Target: { } target, EventArgument: { } eventArgument })
             {
                 if (Callback.SingleInvocation(target, invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>(), context) is { } &&
-                    CheckName(eventArgument, callbackArg) is var (messageArg, properties))
+                    CheckName(eventArgument, callbackArg) is var (expectedName, properties))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0090RegisterClassHandlerCallbackNameShouldMatchEvent,
                             callbackArg.GetLocation(),
                             properties,
-                            messageArg));
+                            expectedName));
                 }
             }
             else if ((EventManager.AddHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                       EventManager.RemoveHandler.Match(invocation, context.SemanticModel, context.CancellationToken) is { }) &&
                      invocation.TryGetArgumentAtIndex(0, out eventArgument))
             {
-                if (CheckName(eventArgument, callbackArg) is var (messageArg, properties))
+                if (CheckName(eventArgument, callbackArg) is var (expectedName, properties))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.WPF0091AddAndRemoveHandlerCallbackNameShouldMatchEvent,
                             callbackArg.GetLocation(),
                             properties,
-                            messageArg));
+                            expectedName));
                 }
             }
-        }
-    }
 
-    private static (string MessageArg, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
-    {
-        if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
-            Identifier() is { } identifier)
-        {
-            if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
+            static (string ExpectedName, ImmutableDictionary<string, string?> Properties)? CheckName(ArgumentSyntax eventArgument, ArgumentSyntax callbackArg)
             {
-                if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
+                if (callbackArg.Expression is IdentifierNameSyntax invokedHandler &&
+                    Identifier() is { } identifier)
                 {
-                    return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
+                    if (EventManager.IsMatch(invokedHandler.Identifier.ValueText, identifier.Identifier.ValueText) == false)
+                    {
+                        if (EventManager.TryGetExpectedCallbackName(identifier.Identifier.ValueText, out var expectedName))
+                        {
+                            return (expectedName, ImmutableDictionary<string, string?>.Empty.Add("ExpectedName", expectedName));
+                        }
+
+                        return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
+                    }
                 }
 
-                return ("On" + identifier.Identifier.ValueText, ImmutableDictionary<string, string?>.Empty);
+                return null;
+
+                IdentifierNameSyntax? Identifier()
+                {
+                    return eventArgument switch
+                    {
+                        { Expression: IdentifierNameSyntax name } => name,
+                        { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
+                        _ => null,
+                    };
+                }
             }
-        }
-
-        return null;
-
-        IdentifierNameSyntax? Identifier()
-        {
-            return eventArgument switch
-            {
-                { Expression: IdentifierNameSyntax name } => name,
-                { Expression: MemberAccessExpressionSyntax { Name: IdentifierNameSyntax name } } => name,
-                _ => null,
-            };
         }
     }
 }

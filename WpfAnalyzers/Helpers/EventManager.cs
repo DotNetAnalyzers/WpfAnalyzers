@@ -62,7 +62,7 @@ internal static class EventManager
 
         internal static RegisterClassHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList.Arguments: { Count: 3 or 4 } } &&
+            if (invocation is { ArgumentList.Arguments.Count: 3 or 4 } &&
                 semanticModel.TryGetSymbol(invocation, KnownSymbols.EventManager.RegisterClassHandler, cancellationToken, out var method))
             {
                 return new RegisterClassHandler(invocation, method);
