@@ -1,3 +1,6 @@
+#### 4.1.1
+* BUGFIX: WPF0092 allow RoutedEventHandler
+
 #### 4.1.0
 * BUGFIX: WPF0023 when missing explicit : UserControl
 * FEATURE: Check delegate types
