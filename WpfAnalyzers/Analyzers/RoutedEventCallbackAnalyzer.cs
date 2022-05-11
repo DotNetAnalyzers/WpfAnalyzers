@@ -142,7 +142,8 @@ internal class RoutedEventCallbackAnalyzer : DiagnosticAnalyzer
                     routedSymbol.Name.EndsWith("Event", StringComparison.Ordinal) &&
                     routedSymbol.ContainingType.TryFindEvent(routedSymbol.Name.Substring(0, routedSymbol.Name.Length - 5), out var accessor) &&
                     context.SemanticModel.GetType(callbackArg.Expression, context.CancellationToken) is { } actualType &&
-                    !TypeSymbolComparer.Equal(actualType, accessor.Type))
+                    !TypeSymbolComparer.Equal(actualType, accessor.Type) &&
+                    actualType != KnownSymbols.RoutedEventHandler)
                 {
                     return ImmutableDictionary<string, string?>.Empty.Add(nameof(ITypeSymbol), accessor.Type.MetadataName);
                 }

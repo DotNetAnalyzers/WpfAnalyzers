@@ -37,8 +37,11 @@ public static class C
     }
 
     [TestCase("new KeyEventHandler(OnKeyDown)")]
+    [TestCase("new RoutedEventHandler(On)")]
     [TestCase("new KeyEventHandler((sender, e) => { })")]
+    [TestCase("new RoutedEventHandler((sender, e) => { })")]
     [TestCase("new KeyEventHandler((sender, e) => OnKeyDown(sender, e))")]
+    [TestCase("new RoutedEventHandler((sender, e) => On(sender, e))")]
     public static void RegisterClassHandlerKeyDownEvent(string expression)
     {
         var code = @"
@@ -50,6 +53,7 @@ using System.Windows.Input;
 
 public static class C
 {
+#pragma warning disable CS8321, WPF0090
     static C()
     {
         EventManager.RegisterClassHandler(
@@ -57,8 +61,11 @@ public static class C
             TextBox.KeyDownEvent,
             new KeyEventHandler(OnKeyDown));
 
-#pragma warning disable CS8321
         static void OnKeyDown(object sender, KeyEventArgs e)
+        {
+        }
+
+        static void On(object sender, RoutedEventArgs e)
         {
         }
     }

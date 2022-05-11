@@ -21,6 +21,7 @@ internal static class KnownSymbols
     internal static readonly QualifiedType FrameworkPropertyMetadata = Create("System.Windows.FrameworkPropertyMetadata");
     internal static readonly QualifiedType DependencyPropertyChangedEventArgs = Create("System.Windows.DependencyPropertyChangedEventArgs");
     internal static readonly QualifiedType RoutedEvent = Create("System.Windows.RoutedEvent");
+    internal static readonly QualifiedType RoutedEventHandler = Create("System.Windows.RoutedEventHandler");
     internal static readonly QualifiedType Style = Create("System.Windows.Style");
     internal static readonly QualifiedType TemplatePartAttribute = Create("System.Windows.TemplatePartAttribute");
     internal static readonly QualifiedType AttachedPropertyBrowsableForTypeAttribute = Create("System.Windows.AttachedPropertyBrowsableForTypeAttribute");
