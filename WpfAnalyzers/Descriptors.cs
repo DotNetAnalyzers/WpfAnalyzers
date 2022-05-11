@@ -488,7 +488,7 @@ internal static class Descriptors
         title: "Use correct handler type",
         messageFormat: "Use correct handler type",
         category: AnalyzerCategory.RoutedEvent,
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Use correct handler type.");
 

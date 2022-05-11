@@ -9,7 +9,8 @@
 Roslyn analyzers for WPF.
 * 1.x versions are for Visual Studio 2015.
 * 2.x versions are for Visual Studio 2017.
-* 3.x versions are for Visual Studio 2019+.
+* 3.x versions are for Visual Studio 2019.
+* 4.x versions are for Visual Studio 2022+.
 
 | Id       | Title
 | :--      | :--
