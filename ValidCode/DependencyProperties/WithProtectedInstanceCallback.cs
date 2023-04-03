@@ -1,32 +1,31 @@
-﻿namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties;
+
+using System.Windows;
+
+public class WithProtectedInstanceCallback : FrameworkElement
 {
-    using System.Windows;
+    /// <summary>Identifies the <see cref="Number"/> dependency property.</summary>
+    public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+        nameof(Number),
+        typeof(int),
+        typeof(WithProtectedInstanceCallback),
+        new PropertyMetadata(
+            default(int),
+            (d, e) => ((WithProtectedInstanceCallback)d).OnNumberChanged()));
 
-    public class WithProtectedInstanceCallback : FrameworkElement
+    private int n;
+
+    public int Number
     {
-        /// <summary>Identifies the <see cref="Number"/> dependency property.</summary>
-        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
-            nameof(Number),
-            typeof(int),
-            typeof(WithProtectedInstanceCallback),
-            new PropertyMetadata(
-                default(int),
-                (d, e) => ((WithProtectedInstanceCallback)d).OnNumberChanged()));
+        get => (int)this.GetValue(NumberProperty);
+        set => this.SetValue(NumberProperty, value);
+    }
 
-        private int n;
+    public int N() => this.n;
 
-        public int Number
-        {
-            get => (int)this.GetValue(NumberProperty);
-            set => this.SetValue(NumberProperty, value);
-        }
-
-        public int N() => this.n;
-
-        /// <summary>This method is invoked when the <see cref="NumberProperty"/> changes.</summary>
-        protected virtual void OnNumberChanged()
-        {
-            n = 0;
-        }
+    /// <summary>This method is invoked when the <see cref="NumberProperty"/> changes.</summary>
+    protected virtual void OnNumberChanged()
+    {
+        n = 0;
     }
 }

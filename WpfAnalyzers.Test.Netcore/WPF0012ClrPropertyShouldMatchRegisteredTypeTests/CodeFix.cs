@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0012ClrPropertyShouldMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0012ClrPropertyShouldMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly UseRegisteredTypeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly ClrPropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly UseRegisteredTypeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0012ClrPropertyShouldMatchRegisteredType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -34,13 +34,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'N.FooControl.Bar' must be of type string?"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Property 'N.FooControl.Bar' must be of type string?"), code);
+    }
 
-        [TestCase("default(string)")]
-        public static void DependencyProperty(string expression)
-        {
-            var before = @"
+    [TestCase("default(string)")]
+    public static void DependencyProperty(string expression)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -62,7 +62,7 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -84,7 +84,6 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

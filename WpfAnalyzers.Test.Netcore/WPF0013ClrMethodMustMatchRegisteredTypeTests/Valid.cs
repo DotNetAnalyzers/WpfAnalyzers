@@ -1,16 +1,16 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0013ClrMethodMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0013ClrMethodMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void DependencyPropertyRegisterAttachedNotNull()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-
-        [Test]
-        public static void DependencyPropertyRegisterAttachedNotNull()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -42,14 +42,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("default(string)")]
-        [TestCase("null")]
-        public static void DependencyPropertyRegisterAttachedNull(string expression)
-        {
-            var code = @"
+    [TestCase("default(string)")]
+    [TestCase("null")]
+    public static void DependencyPropertyRegisterAttachedNull(string expression)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -81,7 +81,6 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

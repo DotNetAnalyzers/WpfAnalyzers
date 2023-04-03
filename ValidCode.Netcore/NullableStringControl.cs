@@ -1,73 +1,72 @@
-﻿namespace ValidCode.Netcore
+﻿namespace ValidCode.Netcore;
+
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+
+public class NullableStringControl : Control
 {
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Controls;
+    /// <summary>Identifies the <see cref="Text"/> dependency property.</summary>
+    public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+        nameof(Text),
+        typeof(string),
+        typeof(NullableStringControl),
+        new PropertyMetadata(
+            null,
+            OnTextChanged,
+            CoerceText),
+        ValidateText);
 
-    public class NullableStringControl : Control
+    static NullableStringControl()
     {
-        /// <summary>Identifies the <see cref="Text"/> dependency property.</summary>
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(NullableStringControl),
-            new PropertyMetadata(
-                null,
-                OnTextChanged,
-                CoerceText),
-            ValidateText);
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(NullableStringControl), new FrameworkPropertyMetadata(typeof(NullableStringControl)));
+    }
 
-        static NullableStringControl()
+    public string? Text
+    {
+        get => (string?)this.GetValue(TextProperty);
+        set => this.SetValue(TextProperty, value);
+    }
+
+    protected void OnTextChanged(string? oldValue, string? newValue)
+    {
+    }
+
+    private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (DesignerProperties.GetIsInDesignMode(d))
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NullableStringControl), new FrameworkPropertyMetadata(typeof(NullableStringControl)));
+            return;
         }
 
-        public string? Text
+        ((NullableStringControl)d).OnTextChanged((string?)e.NewValue, (string?)e.OldValue);
+    }
+
+    private static object? CoerceText(DependencyObject d, object? baseValue)
+    {
+        if (DesignerProperties.GetIsInDesignMode(d))
         {
-            get => (string?)this.GetValue(TextProperty);
-            set => this.SetValue(TextProperty, value);
+            return null;
         }
 
-        protected void OnTextChanged(string? oldValue, string? newValue)
+        return baseValue switch
         {
+            string s => s,
+            _ => null,
+        };
+    }
+
+    private static bool ValidateText(object? value)
+    {
+        if (value is null)
+        {
+            return true;
         }
 
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        return value switch
         {
-            if (DesignerProperties.GetIsInDesignMode(d))
-            {
-                return;
-            }
-
-            ((NullableStringControl)d).OnTextChanged((string?)e.NewValue, (string?)e.OldValue);
-        }
-
-        private static object? CoerceText(DependencyObject d, object? baseValue)
-        {
-            if (DesignerProperties.GetIsInDesignMode(d))
-            {
-                return null;
-            }
-
-            return baseValue switch
-            {
-                string s => s,
-                _ => null,
-            };
-        }
-
-        private static bool ValidateText(object? value)
-        {
-            if (value is null)
-            {
-                return true;
-            }
-
-            return value switch
-            {
-                string s => s.Length > 1,
-                _ => false,
-            };
-        }
+            string s => s.Length > 1,
+            _ => false,
+        };
     }
 }

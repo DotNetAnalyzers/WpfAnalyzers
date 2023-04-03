@@ -1,16 +1,15 @@
-﻿namespace WpfAnalyzers.Test
-{
-    using System.Runtime.CompilerServices;
-    using Gu.Roslyn.Asserts;
+﻿namespace WpfAnalyzers.Test;
 
-    internal static class ModuleInitializer
+using System.Runtime.CompilerServices;
+using Gu.Roslyn.Asserts;
+
+internal static class ModuleInitializer
+{
+    [ModuleInitializer]
+    internal static void Initialize()
     {
-        [ModuleInitializer]
-        internal static void Initialize()
-        {
-            Settings.Default = Settings.Default.WithMetadataReferences(
-                MetadataReferences.Transitive(
-                    typeof(System.Windows.Window)));
-        }
+        Settings.Default = Settings.Default.WithMetadataReferences(
+            MetadataReferences.Transitive(
+                typeof(System.Windows.Window)));
     }
 }

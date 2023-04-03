@@ -1,8 +1,7 @@
-namespace ValidCode.WithEnum
+namespace ValidCode.WithEnum;
+
+public enum FooEnum
 {
-    public enum FooEnum
-    {
-        Bar,
-        Baz
-    }
+    Bar,
+    Baz
 }

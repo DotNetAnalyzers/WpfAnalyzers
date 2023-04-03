@@ -1,38 +1,37 @@
-﻿namespace ValidCode.Converters
+﻿namespace ValidCode.Converters;
+
+using System;
+using System.Globalization;
+using System.IO;
+using System.Windows.Data;
+
+[ValueConversion(typeof(DirectoryInfo), typeof(string))]
+public class DirectoryInfoStringConverter : IValueConverter
 {
-    using System;
-    using System.Globalization;
-    using System.IO;
-    using System.Windows.Data;
+    public static readonly DirectoryInfoStringConverter Default = new();
 
-    [ValueConversion(typeof(DirectoryInfo), typeof(string))]
-    public class DirectoryInfoStringConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public static readonly DirectoryInfoStringConverter Default = new();
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        if (value is DirectoryInfo directoryInfo)
         {
-            if (value is DirectoryInfo directoryInfo)
-            {
-                return directoryInfo.FullName;
-            }
-
-            return string.Empty;
+            return directoryInfo.FullName;
         }
 
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string text)
-            {
-                if (string.IsNullOrWhiteSpace(text))
-                {
-                    return null;
-                }
+        return string.Empty;
+    }
 
-                return new DirectoryInfo(text);
+    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return null;
             }
 
-            return null;
+            return new DirectoryInfo(text);
         }
+
+        return null;
     }
 }

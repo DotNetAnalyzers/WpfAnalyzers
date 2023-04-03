@@ -1,24 +1,23 @@
-﻿namespace ValidCode.RoutedEvents
+﻿namespace ValidCode.RoutedEvents;
+
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+
+public class WithCustomEventHandler : Control
 {
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Controls;
+    /// <summary>Identifies the <see cref="ValueChanged"/> routed event.</summary>
+    public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
+        nameof(ValueChanged),
+        RoutingStrategy.Direct,
+        typeof(ValueChangedEventHandler),
+        typeof(WithCustomEventHandler));
 
-    public class WithCustomEventHandler : Control
+    [Browsable(true)]
+    public event ValueChangedEventHandler ValueChanged
     {
-        /// <summary>Identifies the <see cref="ValueChanged"/> routed event.</summary>
-        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
-            nameof(ValueChanged),
-            RoutingStrategy.Direct,
-            typeof(ValueChangedEventHandler),
-            typeof(WithCustomEventHandler));
-
-        [Browsable(true)]
-        public event ValueChangedEventHandler ValueChanged
-        {
-            add => this.AddHandler(ValueChangedEvent, value);
-            remove => this.RemoveHandler(ValueChangedEvent, value);
-        }
+        add => this.AddHandler(ValueChangedEvent, value);
+        remove => this.RemoveHandler(ValueChangedEvent, value);
     }
 }
 

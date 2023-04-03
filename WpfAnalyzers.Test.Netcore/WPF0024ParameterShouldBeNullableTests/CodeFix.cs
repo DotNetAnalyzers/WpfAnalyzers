@@ -1,20 +1,20 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0024ParameterShouldBeNullableTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0024ParameterShouldBeNullableTests;
+
+using Gu.Roslyn.Asserts;
+
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
+    private static readonly PropertyMetadataAnalyzer PropertyMetadataAnalyzer = new();
+    private static readonly RegistrationAnalyzer RegistrationAnalyzer = new();
+    private static readonly MakeNullableFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable);
 
-    using NUnit.Framework;
-
-    public static class CodeFix
+    [Test]
+    public static void NullableCoerce()
     {
-        private static readonly PropertyMetadataAnalyzer PropertyMetadataAnalyzer = new();
-        private static readonly RegistrationAnalyzer RegistrationAnalyzer = new();
-        private static readonly MakeNullableFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0024ParameterShouldBeNullable);
-
-        [Test]
-        public static void NullableCoerce()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -49,7 +49,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -83,13 +83,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(PropertyMetadataAnalyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(PropertyMetadataAnalyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void NullableValidate()
-        {
-            var before = @"
+    [Test]
+    public static void NullableValidate()
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -122,7 +122,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -154,7 +154,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(RegistrationAnalyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(RegistrationAnalyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

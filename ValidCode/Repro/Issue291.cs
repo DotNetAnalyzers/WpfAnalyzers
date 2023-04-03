@@ -1,13 +1,12 @@
-﻿namespace ValidCode.Repro
-{
-    using System.Windows.Controls;
+﻿namespace ValidCode.Repro;
 
-    public class Issue291 : Control
+using System.Windows.Controls;
+
+public class Issue291 : Control
+{
+    public bool IsAcknowledged
     {
-        public bool IsAcknowledged
-        {
-            get { return false; }
-            set { }
-        }
+        get { return false; }
+        set { }
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0022DirectCastValueToExactTypeTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0022DirectCastValueToExactTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly CallbackAnalyzer Analyzer = new();
+    private static readonly CastFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0022DirectCastValueToExactType);
 
-    public static class CodeFix
+    [Test]
+    public static void NullableStringControl()
     {
-        private static readonly CallbackAnalyzer Analyzer = new();
-        private static readonly CastFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0022DirectCastValueToExactType);
-
-        [Test]
-        public static void NullableStringControl()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -46,7 +46,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -79,7 +79,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,32 +1,31 @@
-﻿namespace ValidCode.DependencyProperties
+﻿namespace ValidCode.DependencyProperties;
+
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
+
+public class Issue282 : Shape
 {
-    using System.Windows;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
+    private readonly PathGeometry pathGeometry = new();
 
-    public class Issue282 : Shape
+    /// <summary>Identifies the <see cref="IsTrue"/> dependency property.</summary>
+    public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(
+        nameof(IsTrue),
+        typeof(bool),
+        typeof(Issue282), new PropertyMetadata(default(bool)));
+
+    public bool IsTrue
     {
-        private readonly PathGeometry pathGeometry = new();
+        get => (bool)this.GetValue(IsTrueProperty);
+        set => this.SetValue(IsTrueProperty, value);
+    }
 
-        /// <summary>Identifies the <see cref="IsTrue"/> dependency property.</summary>
-        public static readonly DependencyProperty IsTrueProperty = DependencyProperty.Register(
-            nameof(IsTrue),
-            typeof(bool),
-            typeof(Issue282), new PropertyMetadata(default(bool)));
-
-        public bool IsTrue
+    protected override Geometry DefiningGeometry
+    {
+        get
         {
-            get => (bool)this.GetValue(IsTrueProperty);
-            set => this.SetValue(IsTrueProperty, value);
-        }
-
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                this.pathGeometry.Figures.Clear();
-                return this.pathGeometry;
-            }
+            this.pathGeometry.Figures.Clear();
+            return this.pathGeometry;
         }
     }
 }

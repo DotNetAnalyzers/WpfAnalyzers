@@ -1,6 +1,5 @@
-namespace ValidCode.Converters
+namespace ValidCode.Converters;
+
+partial class PartialConverter
 {
-    partial class PartialConverter
-    {
-    }
 }

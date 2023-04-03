@@ -1,13 +1,12 @@
-namespace ValidCode.DependencyProperties
-{
-    using System.Windows.Controls;
-    using System.Windows.Markup;
+namespace ValidCode.DependencyProperties;
 
-    [XamlSetTypeConverter(nameof(ReceiveTypeConverter))]
-    public class WithXamlSetTypeConverter : Control
+using System.Windows.Controls;
+using System.Windows.Markup;
+
+[XamlSetTypeConverter(nameof(ReceiveTypeConverter))]
+public class WithXamlSetTypeConverter : Control
+{
+    public static void ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
     {
-        public static void ReceiveTypeConverter(object targetObject, XamlSetTypeConverterEventArgs eventArgs)
-        {
-        }
     }
 }

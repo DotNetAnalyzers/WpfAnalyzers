@@ -1,21 +1,20 @@
-namespace ValidCode.RoutedEvents
+namespace ValidCode.RoutedEvents;
+
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    /// <summary>Identifies the <see cref="ValueChanged"/> routed event.</summary>
+    public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
+        nameof(ValueChanged),
+        RoutingStrategy.Direct,
+        typeof(RoutedEventHandler),
+        typeof(FooControl));
 
-    public class FooControl : Control
+    public event RoutedEventHandler ValueChanged
     {
-        /// <summary>Identifies the <see cref="ValueChanged"/> routed event.</summary>
-        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
-            nameof(ValueChanged),
-            RoutingStrategy.Direct,
-            typeof(RoutedEventHandler),
-            typeof(FooControl));
-
-        public event RoutedEventHandler ValueChanged
-        {
-            add { this.AddHandler(ValueChangedEvent, value); }
-            remove { this.RemoveHandler(ValueChangedEvent, value); }
-        }
+        add { this.AddHandler(ValueChangedEvent, value); }
+        remove { this.RemoveHandler(ValueChangedEvent, value); }
     }
 }

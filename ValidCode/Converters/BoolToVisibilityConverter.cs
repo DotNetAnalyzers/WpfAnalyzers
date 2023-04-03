@@ -1,38 +1,37 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Converters
+namespace ValidCode.Converters;
+
+using System;
+using System.Windows;
+using System.Windows.Data;
+
+[ValueConversion(typeof(bool), typeof(Visibility))]
+public class BoolToVisibilityConverter : IValueConverter
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Data;
+    public static readonly BoolToVisibilityConverter VisibleWhenTrue = new(Visibility.Visible, Visibility.Collapsed);
+    public static readonly BoolToVisibilityConverter VisibleWhenFalse = new(Visibility.Collapsed, Visibility.Visible);
 
-    [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class BoolToVisibilityConverter : IValueConverter
+    private readonly object whenTrue;
+    private readonly object whenFalse;
+
+    public BoolToVisibilityConverter(Visibility whenTrue, Visibility whenFalse)
     {
-        public static readonly BoolToVisibilityConverter VisibleWhenTrue = new(Visibility.Visible, Visibility.Collapsed);
-        public static readonly BoolToVisibilityConverter VisibleWhenFalse = new(Visibility.Collapsed, Visibility.Visible);
+        this.whenTrue = whenTrue;
+        this.whenFalse = whenFalse;
+    }
 
-        private readonly object whenTrue;
-        private readonly object whenFalse;
-
-        public BoolToVisibilityConverter(Visibility whenTrue, Visibility whenFalse)
+    public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (value is bool b)
         {
-            this.whenTrue = whenTrue;
-            this.whenFalse = whenFalse;
+            return b ? this.whenTrue : this.whenFalse;
         }
 
-        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is bool b)
-            {
-                return b ? this.whenTrue : this.whenFalse;
-            }
+        throw new ArgumentException("Expected a bool", nameof(value));
+    }
 
-            throw new ArgumentException("Expected a bool", nameof(value));
-        }
-
-        object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new System.NotSupportedException($"{nameof(BoolToVisibilityConverter)} can only be used in OneWay bindings");
-        }
+    object IValueConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new System.NotSupportedException($"{nameof(BoolToVisibilityConverter)} can only be used in OneWay bindings");
     }
 }

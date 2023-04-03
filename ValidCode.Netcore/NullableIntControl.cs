@@ -1,73 +1,72 @@
-﻿namespace ValidCode.Netcore
+﻿namespace ValidCode.Netcore;
+
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+
+public class NullableIntControl : Control
 {
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Controls;
+    /// <summary>Identifies the <see cref="Number"/> dependency property.</summary>
+    public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+        nameof(Number),
+        typeof(int?),
+        typeof(NullableIntControl),
+        new PropertyMetadata(
+            null,
+            OnNumberChanged,
+            CoerceNumber),
+        ValidateNumber);
 
-    public class NullableIntControl : Control
+    static NullableIntControl()
     {
-        /// <summary>Identifies the <see cref="Number"/> dependency property.</summary>
-        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
-            nameof(Number),
-            typeof(int?),
-            typeof(NullableIntControl),
-            new PropertyMetadata(
-                null,
-                OnNumberChanged,
-                CoerceNumber),
-            ValidateNumber);
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(NullableIntControl), new FrameworkPropertyMetadata(typeof(NullableIntControl)));
+    }
 
-        static NullableIntControl()
+    public int? Number
+    {
+        get => (int?)this.GetValue(NumberProperty);
+        set => this.SetValue(NumberProperty, value);
+    }
+
+    protected void OnNumberChanged(int? oldValue, int? newValue)
+    {
+    }
+
+    private static void OnNumberChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (DesignerProperties.GetIsInDesignMode(d))
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NullableIntControl), new FrameworkPropertyMetadata(typeof(NullableIntControl)));
+            return;
         }
 
-        public int? Number
+        ((NullableIntControl)d).OnNumberChanged((int?)e.NewValue, (int?)e.OldValue);
+    }
+
+    private static object CoerceNumber(DependencyObject d, object? baseValue)
+    {
+        if (DesignerProperties.GetIsInDesignMode(d))
         {
-            get => (int?)this.GetValue(NumberProperty);
-            set => this.SetValue(NumberProperty, value);
+            return -1;
         }
 
-        protected void OnNumberChanged(int? oldValue, int? newValue)
+        return baseValue switch
         {
+            int i => i,
+            _ => 0,
+        };
+    }
+
+    private static bool ValidateNumber(object? value)
+    {
+        if (value is int)
+        {
+            return false;
         }
 
-        private static void OnNumberChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        return value switch
         {
-            if (DesignerProperties.GetIsInDesignMode(d))
-            {
-                return;
-            }
-
-            ((NullableIntControl)d).OnNumberChanged((int?)e.NewValue, (int?)e.OldValue);
-        }
-
-        private static object CoerceNumber(DependencyObject d, object? baseValue)
-        {
-            if (DesignerProperties.GetIsInDesignMode(d))
-            {
-                return -1;
-            }
-
-            return baseValue switch
-            {
-                int i => i,
-                _ => 0,
-            };
-        }
-
-        private static bool ValidateNumber(object? value)
-        {
-            if (value is int)
-            {
-                return false;
-            }
-
-            return value switch
-            {
-                string s => s.Length > 1,
-                _ => false,
-            };
-        }
+            string s => s.Length > 1,
+            _ => false,
+        };
     }
 }

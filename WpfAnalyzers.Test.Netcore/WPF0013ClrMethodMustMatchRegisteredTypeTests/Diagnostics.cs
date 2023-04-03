@@ -1,18 +1,18 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0013ClrMethodMustMatchRegisteredTypeTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0013ClrMethodMustMatchRegisteredTypeTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
+    private static readonly UseRegisteredTypeFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0013ClrMethodMustMatchRegisteredType);
 
-    public static class CodeFix
+    [Test]
+    public static void Message()
     {
-        private static readonly ClrMethodDeclarationAnalyzer Analyzer = new();
-        private static readonly UseRegisteredTypeFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.WPF0013ClrMethodMustMatchRegisteredType);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -35,14 +35,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type string?"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("Value type must match registered type string?"), code);
+    }
 
-        [TestCase("default(string)")]
-        [TestCase("null")]
-        public static void GetMethod(string expression)
-        {
-            var before = @"
+    [TestCase("default(string)")]
+    [TestCase("null")]
+    public static void GetMethod(string expression)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -69,7 +69,7 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -96,15 +96,15 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("default(string)")]
-        [TestCase("null")]
-        [TestCase("(object?)null")]
-        public static void SetMethod(string expression)
-        {
-            var before = @"
+    [TestCase("default(string)")]
+    [TestCase("null")]
+    [TestCase("(object?)null")]
+    public static void SetMethod(string expression)
+    {
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -131,7 +131,7 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -158,13 +158,13 @@ namespace N
     }
 }".AssertReplace("default(string)", expression);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ImplicitPropertyMetadata()
-        {
-            var code = @"
+    [Test]
+    public static void ImplicitPropertyMetadata()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -188,7 +188,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

@@ -1,15 +1,14 @@
 // ReSharper disable RedundantNameQualifier
-namespace WpfAnalyzers.Benchmarks.Benchmarks
-{
-    [BenchmarkDotNet.Attributes.MemoryDiagnoser]
-    public class DependencyPropertyBackingFieldOrPropertyAnalyzerBenchmarks
-    {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
+namespace WpfAnalyzers.Benchmarks.Benchmarks;
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void RunOnValidCodeProject()
-        {
-            Benchmark.Run();
-        }
+[BenchmarkDotNet.Attributes.MemoryDiagnoser]
+public class DependencyPropertyBackingFieldOrPropertyAnalyzerBenchmarks
+{
+    private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new WpfAnalyzers.DependencyPropertyBackingFieldOrPropertyAnalyzer());
+
+    [BenchmarkDotNet.Attributes.Benchmark]
+    public void RunOnValidCodeProject()
+    {
+        Benchmark.Run();
     }
 }

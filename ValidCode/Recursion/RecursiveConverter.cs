@@ -1,24 +1,23 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Recursion
+namespace ValidCode.Recursion;
+
+using System;
+using System.Globalization;
+using System.Windows.Data;
+
+[ValueConversion(typeof(object), typeof(object))]
+public sealed class RecursiveConverter : IValueConverter
 {
-    using System;
-    using System.Globalization;
-    using System.Windows.Data;
+    /// <summary> Gets the default instance </summary>
+    public static readonly RecursiveConverter Default = new();
 
-    [ValueConversion(typeof(object), typeof(object))]
-    public sealed class RecursiveConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        /// <summary> Gets the default instance </summary>
-        public static readonly RecursiveConverter Default = new();
+        return this.Convert(value, targetType, parameter, culture);
+    }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return this.Convert(value, targetType, parameter, culture);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return this.ConvertBack(value, targetType, parameter, culture);
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return this.ConvertBack(value, targetType, parameter, culture);
     }
 }

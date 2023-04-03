@@ -1,47 +1,46 @@
 ﻿// ReSharper disable All
-namespace ValidCode.DependencyProperties
+namespace ValidCode.DependencyProperties;
+
+using System.Windows;
+
+public class GenericNullable<T> : FrameworkElement
+    where T : struct
 {
-    using System.Windows;
+    /// <summary>Identifies the <see cref="Value"/> dependency property.</summary>
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(T?),
+        typeof(GenericNullable<T>),
+        new PropertyMetadata(
+            default(T?),
+            OnValueChanged));
 
-    public class GenericNullable<T> : FrameworkElement
-        where T : struct
+    public T? Value
     {
-        /// <summary>Identifies the <see cref="Value"/> dependency property.</summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(T?),
-            typeof(GenericNullable<T>),
-            new PropertyMetadata(
-                default(T?),
-                OnValueChanged));
+        get => (T?)this.GetValue(ValueProperty);
+        set => this.SetValue(ValueProperty, value);
+    }
 
-        public T? Value
+    public static void UpdateStatic(GenericNullable<T> control, T value)
+    {
+        control.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
+        control.SetCurrentValue(ValueProperty, value);
+    }
+
+    public void Update(T value)
+    {
+        this.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
+        this.SetCurrentValue(ValueProperty, value);
+    }
+
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.OldValue is T oldValue)
         {
-            get => (T?)this.GetValue(ValueProperty);
-            set => this.SetValue(ValueProperty, value);
         }
 
-        public static void UpdateStatic(GenericNullable<T> control, T value)
+        if (e.NewValue is T newValue)
         {
-            control.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
-            control.SetCurrentValue(ValueProperty, value);
-        }
-
-        public void Update(T value)
-        {
-            this.SetCurrentValue(GenericNullable<T>.ValueProperty, value);
-            this.SetCurrentValue(ValueProperty, value);
-        }
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.OldValue is T oldValue)
-            {
-            }
-
-            if (e.NewValue is T newValue)
-            {
-            }
         }
     }
 }

@@ -1,13 +1,12 @@
-namespace ValidCode
-{
-    using System.Windows.Controls;
-    using System.Windows.Markup;
+namespace ValidCode;
 
-    [XamlSetMarkupExtension(nameof(ReceiveMarkupExtension))]
-    public class WithSetMarkupExtensionAttribute : Control
+using System.Windows.Controls;
+using System.Windows.Markup;
+
+[XamlSetMarkupExtension(nameof(ReceiveMarkupExtension))]
+public class WithSetMarkupExtensionAttribute : Control
+{
+    public static void ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
     {
-        public static void ReceiveMarkupExtension(object targetObject, XamlSetMarkupExtensionEventArgs eventArgs)
-        {
-        }
     }
 }

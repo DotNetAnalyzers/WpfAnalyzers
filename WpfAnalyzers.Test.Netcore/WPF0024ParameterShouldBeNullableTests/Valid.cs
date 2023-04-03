@@ -1,17 +1,17 @@
-﻿namespace WpfAnalyzers.Test.Netcore.WPF0024ParameterShouldBeNullableTests
+﻿namespace WpfAnalyzers.Test.Netcore.WPF0024ParameterShouldBeNullableTests;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
 
-    public static class Valid
+    [Test]
+    public static void Nullable()
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyMetadataAnalyzer();
-
-        [Test]
-        public static void Nullable()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -47,13 +47,13 @@ namespace N
     }
 }
 ";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void NotNullable()
-        {
-            var code = @"
+    [Test]
+    public static void NotNullable()
+    {
+        var code = @"
 #nullable disable
 namespace N
 {
@@ -90,13 +90,13 @@ namespace N
     }
 }
 ";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CoerceValueCallback()
-        {
-            var code = @"
+    [Test]
+    public static void CoerceValueCallback()
+    {
+        var code = @"
 #pragma warning disable WPF0023
 namespace N;
 
@@ -125,7 +125,6 @@ public class Chart : FrameworkElement
 	private static DateTimeOffset Min(DateTimeOffset x, DateTimeOffset y) => x < y ? x : y;
 }
 ";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }
