@@ -31,7 +31,8 @@ internal class AttachedPropertyBrowsableForTypeAttributeFix : DocumentEditorCode
             if (syntaxRoot is { } &&
                 syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MethodDeclarationSyntax? methodDeclaration) &&
                 methodDeclaration.ParameterList is { } parameterList &&
-                parameterList.Parameters.TrySingle(out var parameter))
+                parameterList.Parameters.TrySingle(out var parameter) &&
+                parameter.Type is { })
             {
                 context.RegisterCodeFix(
                     $"Add [AttachedPropertyBrowsableForType(typeof({parameter.Type}))].",

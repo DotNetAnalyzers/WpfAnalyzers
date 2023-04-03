@@ -25,8 +25,7 @@ internal class WPF0011ContainingTypeShouldBeRegisteredOwner : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax invocation &&
-            context.ContainingSymbol is { IsStatic: true })
+            context is { Node: InvocationExpressionSyntax invocation, ContainingSymbol.IsStatic: true })
         {
             if (DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { OwnerTypeArgument: { } ownerTypeArgument })
             {

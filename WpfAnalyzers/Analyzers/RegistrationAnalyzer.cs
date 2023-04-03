@@ -30,8 +30,7 @@ internal class RegistrationAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax invocation &&
-            context.ContainingSymbol is { IsStatic: true } &&
+            context is { Node: InvocationExpressionSyntax invocation, ContainingSymbol.IsStatic: true } &&
             DependencyProperty.Register.MatchAny(invocation, context.SemanticModel, context.CancellationToken) is { NameArgument: { } nameArgument } register &&
             register.PropertyName(context.SemanticModel, context.CancellationToken) is { } registeredName)
         {

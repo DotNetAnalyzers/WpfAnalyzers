@@ -28,8 +28,7 @@ internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.ContainingSymbol is IEventSymbol eventSymbol &&
-            context.Node is EventDeclarationSyntax eventDeclaration &&
+            context is { ContainingSymbol: IEventSymbol eventSymbol, Node: EventDeclarationSyntax eventDeclaration } &&
             EventDeclarationWalker.TryGetCalls(eventDeclaration, out var addCall, out var removeCall))
         {
             if (addCall.TryGetMethodName(out var addName) &&
@@ -65,8 +64,7 @@ internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
                             removeIdentifier.Identifier.ValueText));
                 }
                 else if (eventDeclaration.Parent is TypeDeclarationSyntax typeDeclaration &&
-                         BackingFieldWalker.TryGetRegistration(typeDeclaration, addIdentifier.Identifier.ValueText, out var registration) &&
-                         registration.ArgumentList is { })
+                         BackingFieldWalker.TryGetRegistration(typeDeclaration, addIdentifier.Identifier.ValueText, out var registration))
                 {
                     if (registration.TryGetArgumentAtIndex(0, out var nameARg) &&
                         nameARg.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var registeredName) &&

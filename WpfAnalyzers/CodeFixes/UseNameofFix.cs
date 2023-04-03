@@ -49,7 +49,7 @@ internal class UseNameofFix : DocumentEditorCodeFixProvider
 
                     if (!expression!.IsInStaticContext() &&
                         editor.SemanticModel.LookupSymbols(expression!.SpanStart, name: name).TrySingle(out var member) &&
-                        (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
+                        member is IFieldSymbol or IPropertySymbol or IMethodSymbol &&
                         !member.IsStatic &&
                         await Qualify(member).ConfigureAwait(false) != CodeStyleResult.No)
                     {

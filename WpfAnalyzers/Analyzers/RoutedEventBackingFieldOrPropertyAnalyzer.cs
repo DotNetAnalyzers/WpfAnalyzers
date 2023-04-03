@@ -30,8 +30,7 @@ internal class RoutedEventBackingFieldOrPropertyAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is MemberDeclarationSyntax memberDeclaration &&
-            context.ContainingSymbol is { } &&
+            context is { Node: MemberDeclarationSyntax memberDeclaration, ContainingSymbol: not null } &&
             FieldOrProperty.TryCreate(context.ContainingSymbol, out var backing) &&
             backing.Type == KnownSymbols.RoutedEvent &&
             backing.Value(context.CancellationToken) is InvocationExpressionSyntax invocation &&

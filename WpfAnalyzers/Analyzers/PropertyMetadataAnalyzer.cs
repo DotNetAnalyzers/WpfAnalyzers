@@ -31,8 +31,7 @@ internal class PropertyMetadataAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is ObjectCreationExpressionSyntax objectCreation &&
-            context.ContainingSymbol is { IsStatic: true } &&
+            context is { Node: ObjectCreationExpressionSyntax objectCreation, ContainingSymbol.IsStatic: true } &&
             PropertyMetadata.Match(objectCreation, context.SemanticModel, context.CancellationToken) is { } propertyMetadata)
         {
             if (propertyMetadata.FindRegisteredName(context.SemanticModel, context.CancellationToken) is { Value: { } registeredName })
