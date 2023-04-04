@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gu.Analyzers" Version="2.0.2" PrivateAssets="all" />
+    <PackageReference Include="Gu.Analyzers" Version="2.0.3" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Asserts" Version="4.3.0" />
     <PackageReference Include="Gu.Roslyn.Asserts.Analyzers" Version="4.0.0" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
