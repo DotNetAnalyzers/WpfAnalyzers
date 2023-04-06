@@ -15,7 +15,7 @@ using WpfAnalyzers.Benchmarks.Benchmarks;
 
 public static class Program
 {
-    public static string BenchmarksDirectory { get; } = Path.Combine(ProjectFile.Find("WpfAnalyzers.Benchmarks.csproj").DirectoryName, "Benchmarks");
+    public static string BenchmarksDirectory { get; } = Path.Combine(ProjectFile.Find("WpfAnalyzers.Benchmarks.csproj").DirectoryName!, "Benchmarks");
 
     public static void Main()
     {
