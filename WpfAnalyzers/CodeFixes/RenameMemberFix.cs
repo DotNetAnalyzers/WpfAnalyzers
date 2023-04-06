@@ -47,7 +47,7 @@ internal class RenameMemberFix : CodeFixProvider
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         $"Rename to: '{newName}'.",
-                        cancellationToken => Renamer.RenameSymbolAsync(context.Document.Project.Solution, symbol, newName, context.Document.Project.Solution.Workspace.Options, cancellationToken),
+                        cancellationToken => Renamer.RenameSymbolAsync(context.Document.Project.Solution, symbol, default, newName, cancellationToken),
                         this.GetType().FullName),
                     diagnostic);
             }

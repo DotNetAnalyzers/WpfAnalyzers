@@ -101,7 +101,7 @@ internal class RoutedEventEventDeclarationAnalyzer : DiagnosticAnalyzer
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             if (node.TryGetMethodName(out var name) &&
-                (name == "AddHandler" || name == "RemoveHandler") &&
+                name is "AddHandler" or "RemoveHandler" &&
                 node.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor)
             {
                 if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))

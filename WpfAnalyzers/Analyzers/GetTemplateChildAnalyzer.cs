@@ -102,8 +102,7 @@ internal class GetTemplateChildAnalyzer : DiagnosticAnalyzer
 
         bool IsMatch(KeyValuePair<string, TypedConstant> a)
         {
-            return a.Key == "Name" &&
-                   a.Value.Value is string candidate &&
+            return a is { Key: "Name", Value.Value: string candidate } &&
                    candidate == part;
         }
     }
@@ -135,9 +134,7 @@ internal class GetTemplateChildAnalyzer : DiagnosticAnalyzer
                 cast = castExpression;
                 type = castExpression.Type;
                 return true;
-            case IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax declarationPattern } isPattern
-                when
-                !declarationPattern.Type.IsVar:
+            case IsPatternExpressionSyntax { Pattern: DeclarationPatternSyntax { Type.IsVar: false } declarationPattern } isPattern:
                 {
                     cast = isPattern;
                     type = declarationPattern.Type;

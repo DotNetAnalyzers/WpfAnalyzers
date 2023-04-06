@@ -34,8 +34,7 @@ internal class CallbackAnalyzer : DiagnosticAnalyzer
     private static void HandleMethod(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is MethodDeclarationSyntax methodDeclaration &&
-            context.ContainingSymbol is IMethodSymbol { ContainingType: { } containingType } method)
+            context is { Node: MethodDeclarationSyntax methodDeclaration, ContainingSymbol: IMethodSymbol { ContainingType: { } containingType } method })
         {
             if (method.IsStatic)
             {
@@ -272,8 +271,7 @@ internal class CallbackAnalyzer : DiagnosticAnalyzer
             var parent = identifierName.Parent;
             if (parameter.Type == KnownSymbols.DependencyPropertyChangedEventArgs &&
                 parent is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax { Identifier: { } identifier } } memberAccess &&
-                (identifier.ValueText == "NewValue" ||
-                 identifier.ValueText == "OldValue"))
+                identifier.ValueText is "NewValue" or "OldValue")
             {
                 parent = memberAccess.Parent;
             }

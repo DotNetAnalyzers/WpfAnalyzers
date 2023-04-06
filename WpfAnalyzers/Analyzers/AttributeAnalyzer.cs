@@ -42,8 +42,7 @@ internal class AttributeAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.ContainingSymbol is { } &&
-            context.Node is AttributeSyntax attribute)
+            context is { ContainingSymbol: { }, Node: AttributeSyntax attribute })
         {
             if (context.SemanticModel.TryGetNamedType(attribute, KnownSymbols.DependsOnAttribute, context.CancellationToken, out _) &&
                 TryFindStringArgument(context, attribute, 0, "name", out var argument, out var expression, out var text))

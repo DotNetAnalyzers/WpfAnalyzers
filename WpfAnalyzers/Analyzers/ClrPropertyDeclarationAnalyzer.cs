@@ -29,8 +29,7 @@ internal class ClrPropertyDeclarationAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.ContainingSymbol is IPropertySymbol { IsStatic: false } property &&
-            context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+            context is { ContainingSymbol: IPropertySymbol { IsStatic: false } property, Node: PropertyDeclarationSyntax propertyDeclaration } &&
             propertyDeclaration.Getter() is { } getter &&
             propertyDeclaration.Setter() is { } setter)
         {

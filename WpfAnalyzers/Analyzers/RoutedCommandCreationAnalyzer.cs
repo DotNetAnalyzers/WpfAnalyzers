@@ -31,8 +31,7 @@ internal class RoutedCommandCreationAnalyzer : DiagnosticAnalyzer
 
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
-        if (context.Node is ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation &&
-            context.ContainingSymbol is { } containingSymbol &&
+        if (context is { Node: ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation, ContainingSymbol: { } containingSymbol } &&
             (objectCreation.Type == KnownSymbols.RoutedCommand || objectCreation.Type == KnownSymbols.RoutedUICommand) &&
             context.SemanticModel.TryGetSymbol(objectCreation, context.CancellationToken, out var ctor))
         {

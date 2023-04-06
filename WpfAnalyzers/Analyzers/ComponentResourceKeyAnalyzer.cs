@@ -26,8 +26,7 @@ internal class ComponentResourceKeyAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation &&
-            context.ContainingSymbol is { ContainingType: { } containingType } &&
+            context is { Node: ObjectCreationExpressionSyntax { ArgumentList: { } argumentList } objectCreation, ContainingSymbol.ContainingType: { } containingType } &&
             objectCreation.Type == KnownSymbols.ComponentResourceKey &&
             context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbols.ComponentResourceKey, context.CancellationToken, out var constructor) &&
             FieldOrProperty.TryCreate(context.ContainingSymbol, out var fieldOrProperty))

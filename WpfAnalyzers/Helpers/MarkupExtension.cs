@@ -15,10 +15,7 @@ internal static class MarkupExtension
     {
         returnType = null;
         if (classDeclaration.TryFindMethod("ProvideValue", out var convertMethod) &&
-            convertMethod.ReturnType is PredefinedTypeSyntax predefinedType &&
-            predefinedType.Keyword.ValueText == "object" &&
-            convertMethod.ParameterList is { } &&
-            convertMethod.ParameterList.Parameters.Count == 1)
+            convertMethod is { ReturnType: PredefinedTypeSyntax { Keyword.ValueText: "object" }, ParameterList.Parameters.Count: 1 })
         {
             using var walker = ReturnValueWalker.Borrow(convertMethod);
             using var returnTypes = PooledSet<ITypeSymbol>.Borrow();

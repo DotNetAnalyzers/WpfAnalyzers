@@ -26,8 +26,7 @@ internal class OverrideMetadataAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation &&
-            context.ContainingSymbol is { } &&
+            context is { Node: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } expression } } invocation, ContainingSymbol: not null } &&
             DependencyProperty.OverrideMetadata.Match(invocation, context.SemanticModel, context.CancellationToken) is { MetadataArgument: { } metadataArg } &&
             context.SemanticModel.TryGetSymbol(expression, context.CancellationToken, out var candidate) &&
             BackingFieldOrProperty.Match(candidate) is { } backing)

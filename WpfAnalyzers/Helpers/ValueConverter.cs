@@ -18,18 +18,13 @@ internal static class ValueConverter
         foreach (var member in type.GetMembers())
         {
             if (member.IsStatic &&
-                (member.DeclaredAccessibility == Accessibility.Public ||
-                 member.DeclaredAccessibility == Accessibility.Internal))
+                member.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal)
             {
                 if (FieldOrProperty.TryCreate(member, out var fieldOrProperty) &&
                     (fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IValueConverter,      compilation) ||
                      fieldOrProperty.Type.IsAssignableTo(KnownSymbols.IMultiValueConverter, compilation)))
                 {
-                    if (temp is null)
-                    {
-                        temp = new List<FieldOrProperty>();
-                    }
-
+                    temp ??= new List<FieldOrProperty>();
                     temp.Add(fieldOrProperty);
                 }
             }

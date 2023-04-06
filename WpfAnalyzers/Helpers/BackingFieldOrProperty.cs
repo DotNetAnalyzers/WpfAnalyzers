@@ -172,10 +172,9 @@ internal readonly struct BackingFieldOrProperty
 
     internal BackingFieldOrProperty? FindAddOwnerSource(SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        if (this.Value(cancellationToken) is { } value &&
-            value is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
+        if (this.Value(cancellationToken) is { } and InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } addOwner } } invocation &&
             semanticModel.TryGetSymbol(invocation, KnownSymbols.DependencyProperty.AddOwner, cancellationToken, out _) &&
-            semanticModel.TryGetSymbol(addOwner, cancellationToken, out var addOwnerSymbol))
+            semanticModel.TryGetSymbol(addOwner,   cancellationToken,                        out var addOwnerSymbol))
         {
             return Match(addOwnerSymbol);
         }

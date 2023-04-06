@@ -31,8 +31,7 @@ internal class DependencyPropertyBackingFieldOrPropertyAnalyzer : DiagnosticAnal
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.ContainingSymbol is { } &&
-            context.Node is MemberDeclarationSyntax memberDeclaration)
+            context is { ContainingSymbol: { }, Node: MemberDeclarationSyntax memberDeclaration })
         {
             if (BackingFieldOrProperty.Match(context.ContainingSymbol) is { } backing)
             {

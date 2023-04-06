@@ -116,8 +116,7 @@ internal static class EventManager
 
         internal static AddHandler? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList.Arguments: { } arguments } &&
-                arguments.Count is 2 or 3 &&
+            if (invocation is { ArgumentList.Arguments.Count: 2 or 3 } &&
                 invocation.TryGetMethodName(out var name) &&
                 name == "AddHandler" &&
                 semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&

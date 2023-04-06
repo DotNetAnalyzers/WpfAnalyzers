@@ -32,8 +32,7 @@ internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is MethodDeclarationSyntax methodDeclaration &&
-            context.ContainingSymbol is IMethodSymbol { IsStatic: true } method &&
+            context is { Node: MethodDeclarationSyntax methodDeclaration, ContainingSymbol: IMethodSymbol { IsStatic: true } method } &&
             method.Parameters.TryElementAt(0, out var element) &&
             element.Type.IsAssignableTo(KnownSymbols.DependencyObject, context.SemanticModel.Compilation))
         {

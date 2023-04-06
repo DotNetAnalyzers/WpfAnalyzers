@@ -107,11 +107,7 @@ internal sealed class ConversionWalker : PooledWalker<ConversionWalker>
         }
 
         // If we couldn't "guess" a source type we take parameters type
-        if (sourceType is null)
-        {
-            sourceType = symbol.Type;
-        }
-
+        sourceType ??= symbol.Type;
         return true;
 
         bool IsFor(ExpressionSyntax e, ISymbol s, SemanticModel sm, CancellationToken ct)
