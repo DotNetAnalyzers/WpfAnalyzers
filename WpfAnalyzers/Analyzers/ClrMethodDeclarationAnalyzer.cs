@@ -241,6 +241,13 @@ internal class ClrMethodDeclarationAnalyzer : DiagnosticAnalyzer
             switch (statement)
             {
                 case ExpressionStatementSyntax { Expression: { } expression }
+                    when NullCheck.IsNullCheck(expression, null, CancellationToken.None, out _):
+                    continue;
+                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax { } name } expression } }
+                    when name.ToString() == nameof(System.ArgumentNullException) &&
+                    expression.Name.ToString() == "ThrowIfNull":
+                    continue;
+                case ExpressionStatementSyntax { Expression: { } expression }
                     when expression == getOrSet:
                     continue;
                 case ReturnStatementSyntax { Expression: { } expression }
